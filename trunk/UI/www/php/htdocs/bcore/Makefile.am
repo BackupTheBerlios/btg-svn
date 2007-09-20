@@ -1,0 +1,16 @@
+SUBDIRS = command
+
+WWW_UI_DEST  = $(DESTDIR)/$(datadir)/wwwbtg/htdocs/bcore
+WWW_UI_FILES = addrport.php btgexception.php \
+command_factory.php file_info.php hash.php peer.php \
+sbuf.php serializable.php status.php xmlrpc.php trackerstatus.php
+
+EXTRA_DIST = $(WWW_UI_FILES)
+
+if BUILDWWW
+
+install-data-local:
+	$(mkinstalldirs) $(WWW_UI_DEST)
+	$(INSTALL_DATA) $(WWW_UI_FILES) $(WWW_UI_DEST)
+
+endif

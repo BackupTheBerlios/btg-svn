@@ -1,0 +1,977 @@
+/*
+ * btg Copyright (C) 2005 Michael Wojciechowski.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+/*
+ * $Id: ui_handler.cpp,v 1.1.2.3 2007/06/23 19:27:51 wojci Exp $
+ */
+
+#include "ui.h"
+
+#include <bcore/logmacro.h>
+
+#include "detailwindow.h"
+#include "helpwindow.h"
+#include "filelist.h"
+#include "fileview.h"
+#include "fileselect.h"
+#include "peerlist.h"
+
+#include "basemenu.h"
+#include "limitwindow.h"
+
+#include <bcore/client/handlerthr.h>
+#include "handler.h"
+
+#include <bcore/command/limit_base.h>
+#include <bcore/hrr.h>
+
+#define GET_HANDLER_INST \
+   boost::shared_ptr<boost::mutex> ptr = handlerthread_->mutex(); \
+   boost::mutex::scoped_lock interface_lock(*ptr); \
+   Handler* handler = dynamic_cast<Handler*>(handlerthread_->handler());
+
+namespace btg
+{
+   namespace UI
+   {
+      namespace cli
+      {
+         using namespace btg::core;
+
+         bool UI::handleKeyboard()
+         {
+            bool status = true; // Continue reading.
+
+            keyMapping::KEYLABEL label = mainwindow_.handleKeyboard();
+
+            switch (label)
+               {
+               case keyMapping::K_UNDEF:
+                  {
+                     // Handle status updates, used to fill the list
+                     // of torrents.
+                     {
+                        GET_HANDLER_INST;
+
+                        bool statusUpdated = handler->statusListUpdated();
+                        if (statusUpdated)
+                           {
+                              t_statusList statusList;
+                              handler->getStatusList(statusList);
+                              update(statusList);
+                              updateBandwidth(statusList);
+                           }
+                        // Make sure that 
+                        if (handler->statusSize() == 0)
+                           {
+                              clear();
+                           }
+
+                        refresh();
+                     }
+                     break;
+                  }
+               case keyMapping::K_QUIT:
+                  {
+                     status = handleQuit();
+                     switch (status)
+                        {
+                        case true:
+                           statuswindow_.setStatus("Quit aborted.");
+                           break;
+                        case false:
+                           statuswindow_.setStatus("Quitting.");
+                           break;
+                        }
+
+                     refresh();
+                     break;
+                  }
+               case keyMapping::K_DETACH:
+                  {
+                     {
+                        GET_HANDLER_INST;
+
+                        handler->reqDetach();
+                     }
+
+                     status = false;
+                     break;
+                  }
+               case keyMapping::K_DOWN:
+                  {
+                     mainwindow_.moveDown();
+                     refresh();
+                     break;
+                  }
+               case keyMapping::K_UP:
+                  {
+                     mainwindow_.moveUp();
+                     refresh();
+                     break;
+                  }
+               case keyMapping::K_LIST_START:
+                  {
+                     mainwindow_.toStart();
+                     refresh();
+                     break;
+                  }
+               case keyMapping::K_LIST_END:
+                  {
+                     mainwindow_.toEnd();
+                     refresh();
+                     break;
+                  }
+               case keyMapping::K_SELECT:
+                  {
+                     handleShowDetails();
+                     refresh();
+                     break;
+                  }
+               case keyMapping::K_MARK:
+                  {
+                     handleMark();
+                     break;
+                  }
+               case keyMapping::K_MARK_ALL:
+                  {
+                     handleMarkAll();
+                     break;
+                  }
+               case keyMapping::K_MENU:
+                  {
+                     handleMenu();
+                     refresh();
+                     break;
+                  }
+               case keyMapping::K_LOAD:
+                  {
+                     handleLoad();
+                     refresh();
+                     break;
+                  }
+               case keyMapping::K_GLIMIT:
+                  {
+                     handleGlobalLimit();
+                     refresh();
+                     break;
+                  }
+               case keyMapping::K_HELP:
+                  {
+                     switch (handleHelp())
+                        {
+                        case dialog::R_RESIZE:
+                           {
+                              handleResizeMainWindow();
+                              break;
+                           }
+                        case dialog::R_NCREAT:
+                           {
+                              statuswindow_.setError("Unable to show help - resize window.");
+                              break;
+                           }
+                        default:
+                           {
+                              setDefaultStatusText();
+                              break;
+                           }
+                        }
+
+                     refresh();
+                     break;
+                  }
+               case keyMapping::K_RESIZE:
+                  {
+                     handleResizeMainWindow();
+                     break;
+                  }
+               default:
+                  {
+                     break;
+                  }
+               }
+
+            return status;
+         }
+
+         dialog::RESULT UI::handleShowDetailsHelp()
+         {
+            // Show a help window on the middle of the screen.
+            std::vector<std::string> helpText;
+
+            helpText.push_back("Help");
+            helpText.push_back("    ");
+
+            std::string keyDescr;
+
+            if (helpWindow::generateHelpForKey(keymap_,
+                                               keyMapping::K_QUIT,
+                                               "to go back",
+                                               keyDescr))
+               {
+                  helpText.push_back(keyDescr);
+               }
+
+            helpText.push_back(" ");
+
+            helpWindow hw(keymap_, helpText);
+
+            return hw.run();
+         }
+
+         void UI::handleShowDetails()
+         {
+            btg::core::Status teststatus;
+            if (!mainwindow_.getSelection(teststatus))
+               {
+                  // Nothing to display.
+                  return;
+               }
+
+            bool details_resized = false;
+
+            windowSize detailsdimension;
+            mainwindow_.getSize(detailsdimension);
+            {
+               setDefaultStatusText();
+
+               mainwindow_.clear();
+               detailWindow dw(keymap_, mainwindow_);
+               dw.init(detailsdimension);
+               dw.refresh();
+
+               keyMapping::KEYLABEL label;
+
+               bool cont = true;
+
+               while (cont)
+                  {
+                     label = dw.handleKeyboard();
+                     switch (label)
+                        {
+                        case keyMapping::K_UNDEF:
+                           {
+                              {
+                                 GET_HANDLER_INST;
+
+                                 bool statusUpdated = handler->statusListUpdated();
+                                 if (statusUpdated)
+                                    {
+                                       t_statusList statusList;
+                                       handler->getStatusList(statusList);
+                                       update(statusList);
+                                       // Redraw the contents.
+                                       dw.refresh();
+                                    }
+                              }
+                              break;
+                           }
+                        case keyMapping::K_QUIT:
+                           {
+                              cont = false;
+                              dw.clear();
+                              break;
+                           }
+                        case keyMapping::K_HELP:
+                           {
+                              switch (handleShowDetailsHelp())
+                                 {
+                                 case dialog::R_RESIZE:
+                                    {
+                                       // window was resized.
+                                       cont            = false;
+                                       details_resized = true;
+                                       dw.clear();
+                                       break;
+                                    }
+                                 default:
+                                    {
+                                       break;
+                                    }
+                                 }
+                              break;
+                           }
+                        case keyMapping::K_RESIZE:
+                           {
+                              cont            = false;
+                              details_resized = true;
+                              dw.clear();
+                              break;
+                           }
+                        default:
+                           {
+                              // Do nothing.
+                              break;
+                           }
+                        }
+                  }
+
+               // dw.destroy();
+            }
+
+            setDefaultStatusText();
+
+            if (details_resized)
+               {
+                  handleResizeMainWindow();
+               }
+
+            mainwindow_.refresh();
+         }
+
+         void UI::handleMark()
+         {
+            mainwindow_.mark();
+            mainwindow_.moveDown();
+            refresh();
+         }
+
+         void UI::handleMarkAll()
+         {
+            mainwindow_.markAll();
+            refresh();
+         }
+
+         void UI::handleManyLimits(std::vector<t_int> const& _context_ids)
+         {
+            statuswindow_.setStatus("Limiting torrents.");
+
+            t_int download    = limitBase::LIMIT_DISABLED;
+            t_int upload      = limitBase::LIMIT_DISABLED;
+            t_int seedTimeout = limitBase::LIMIT_DISABLED;
+            t_int seedPercent = limitBase::LIMIT_DISABLED;
+
+            std::vector<t_int>::const_iterator iter = _context_ids.begin();
+
+            t_int context_id = *iter;
+
+            if (limitPopup(context_id,
+                           download,
+                           upload,
+                           seedTimeout,
+                           seedPercent))
+               {
+                  // Got limits, now set them on all the contexts.
+
+                  t_int succ = 0;
+                  t_int fail = 0;
+
+                  for (iter = _context_ids.begin();
+                       iter != _context_ids.end();
+                       iter++)
+                     {
+                        // Find the filename.
+                        btg::core::Status status;
+                        mainwindow_.get(*iter, status);
+
+                        std::string filename = status.filename();
+
+                        if (setLimit(*iter,
+                                     filename,
+                                     download,
+                                     upload,
+                                     seedTimeout,
+                                     seedPercent))
+                           {
+                              succ++;
+                           }
+                        else
+                           {
+                              fail++;
+                           }
+                     }
+
+                  if (fail == 0)
+                     {
+                        // Success for all torrents.
+                        statuswindow_.setStatus("Limited selected torrents.");
+                     }
+                  else
+                     {
+                        statuswindow_.setError("Unable to limit all selected torrents.");
+                     }
+               }
+            else
+               {
+                  statuswindow_.setStatus("Setting limits aborted.");
+               }
+         }
+
+         dialog::RESULT UI::handleHelp()
+         {
+            // Show a help window on the middle of the screen.
+            std::vector<std::string> helpText;
+
+            helpText.push_back("Help");
+            helpText.push_back("----");
+            helpText.push_back("    ");
+
+            std::string keyDescr;
+
+            if (helpWindow::generateHelpForKey(keymap_,
+                                               keyMapping::K_HELP,
+                                               "",
+                                               keyDescr,
+                                               false))
+               {
+                  helpText.push_back(keyDescr);
+                  helpText.push_back("  to show help");
+               }
+
+            if (helpWindow::generateHelpForKey(keymap_,
+                                               keyMapping::K_LOAD,
+                                               "",
+                                               keyDescr,
+                                               false))
+               {
+                  helpText.push_back(keyDescr);
+                  helpText.push_back("  to load a torrent");
+               }
+
+            if (helpWindow::generateHelpForKey(keymap_,
+                                               keyMapping::K_DOWN,
+                                               "",
+                                               keyDescr,
+                                               false))
+               {
+                  helpText.push_back(keyDescr);
+                  helpText.push_back("  to move down the list");
+               }
+
+            if (helpWindow::generateHelpForKey(keymap_,
+                                               keyMapping::K_UP,
+                                               "",
+                                               keyDescr,
+                                               false))
+               {
+                  helpText.push_back(keyDescr);
+                  helpText.push_back("  to move up the list");
+               }
+
+
+            if (helpWindow::generateHelpForKey(keymap_,
+                                               keyMapping::K_LIST_START,
+                                               "",
+                                               keyDescr,
+                                               false))
+               {
+                  helpText.push_back(keyDescr);
+                  helpText.push_back("  to move to the beg. of the list");
+               }
+
+            if (helpWindow::generateHelpForKey(keymap_,
+                                               keyMapping::K_LIST_END,
+                                               "",
+                                               keyDescr,
+                                               false))
+               {
+                  helpText.push_back(keyDescr);
+                  helpText.push_back("  to move to the end of the list");
+               }
+
+            if (helpWindow::generateHelpForKey(keymap_,
+                                               keyMapping::K_MARK,
+                                               "",
+                                               keyDescr,
+                                               false))
+               {
+                  helpText.push_back(keyDescr);
+                  helpText.push_back("  to mark a torrent");
+               }
+
+            if (helpWindow::generateHelpForKey(keymap_,
+                                               keyMapping::K_MARK_ALL,
+                                               "",
+                                               keyDescr,
+                                               false))
+               {
+                  helpText.push_back(keyDescr);
+                  helpText.push_back("  to mark all torrents");
+               }
+
+            if (helpWindow::generateHelpForKey(keymap_,
+                                               keyMapping::K_SELECT,
+                                               "",
+                                               keyDescr,
+                                               false))
+               {
+                  helpText.push_back(keyDescr);
+                  helpText.push_back("  to see details about a torrent");
+               }
+
+            if (helpWindow::generateHelpForKey(keymap_,
+                                               keyMapping::K_MENU,
+                                               "",
+                                               keyDescr,
+                                               false))
+               {
+                  helpText.push_back(keyDescr);
+                  helpText.push_back("  to show menu (start/stop torrent etc)");
+               }
+
+            if (helpWindow::generateHelpForKey(keymap_,
+                                               keyMapping::K_GLIMIT,
+                                               "",
+                                               keyDescr,
+                                               false))
+               {
+                  helpText.push_back(keyDescr);
+                  helpText.push_back("  to set global limits");
+               }
+
+            if (helpWindow::generateHelpForKey(keymap_,
+                                               keyMapping::K_DETACH,
+                                               "",
+                                               keyDescr,
+                                               false))
+               {
+                  helpText.push_back(keyDescr);
+                  helpText.push_back("  to detach from the daemon");
+               }
+
+            if (helpWindow::generateHelpForKey(keymap_,
+                                               keyMapping::K_QUIT,
+                                               "",
+                                               keyDescr,
+                                               false))
+               {
+                  helpText.push_back(keyDescr);
+                  helpText.push_back("  to quit the application");
+               }
+
+            helpText.push_back(" ");
+
+            helpWindow hw(keymap_, helpText);
+
+            return hw.run();
+         }
+
+         void UI::handleLoad()
+         {
+            std::string helpText;
+            genHelpText(helpText);
+
+            statuswindow_.setStatus("Loading file. " + helpText);
+
+            windowSize fldimensions;
+            mainwindow_.getSize(fldimensions);
+
+            // Show a window with a file list.
+            fileList fl(keymap_, fldimensions, load_directory_);
+
+            // Use the same dimenstions as the main window.
+            if (fl.run() == dialog::R_RESIZE)
+               {
+                  // the window was resized.
+                  handleResizeMainWindow();
+
+                  statuswindow_.setStatus("Loading file aborted.");
+
+                  return;
+               }
+
+            std::string filenameToLoad;
+
+            if (fl.getFile(filenameToLoad))
+               {
+                  {
+                     GET_HANDLER_INST;
+
+                     handler->reqCreate(filenameToLoad);
+
+                     if (handler->lastCommandSuccess())
+                        {
+                           actionSuccess("Load", filenameToLoad);
+                        }
+                     else
+                        {
+                           actionFailture("Load", filenameToLoad);
+                        }
+                  }
+
+                  // Force updating of contexts.
+                  handlerthread_->forceUpdate();
+               }
+            else
+               {
+                  statuswindow_.setStatus("Loading file aborted.");
+               }
+
+            load_directory_ = fl.getLastDirectory();
+
+            refresh();
+         }
+
+         void UI::handleLoad(t_strList const& _filelist)
+         {
+            t_strListCI iter;
+            for (iter = _filelist.begin(); iter != _filelist.end(); iter++)
+               {
+                  {
+                     GET_HANDLER_INST;
+	    
+                     handler->reqCreate(*iter);
+	    
+                     if (handler->lastCommandSuccess())
+                        {
+                           actionSuccess("Load", *iter);
+                        }
+                     else
+                        {
+                           actionFailture("Load", *iter);
+                        }
+                  }
+               }
+            // Force updating of contexts.
+            handlerthread_->forceUpdate();
+         }
+
+         void UI::handleGlobalLimit()
+         {
+            std::string helpText;
+            genHelpText(helpText);
+
+            statuswindow_.setStatus("Setting global limits. " + helpText);
+
+            t_int download        = limitBase::LIMIT_DISABLED;
+            t_int upload          = limitBase::LIMIT_DISABLED;
+            t_int max_uploads     = limitBase::LIMIT_DISABLED;
+            t_int max_connections = limitBase::LIMIT_DISABLED;
+
+            {
+               GET_HANDLER_INST;
+
+               handler->reqGlobalLimitStatus();
+
+               if (handler->lastCommandSuccess())
+                  {
+                     handler->getLastGlobalLimitStatus(upload,
+                                                       download,
+                                                       max_uploads,
+                                                       max_connections);
+                     
+                     if (upload != limitBase::LIMIT_DISABLED)
+                        {
+                           upload      /= limitBase::KiB_to_B;
+                        }
+
+                     if (download != limitBase::LIMIT_DISABLED)
+                        {
+                           download    /= limitBase::KiB_to_B;
+                        }
+                  }
+            }
+
+            windowSize limitdimensions;
+            mainwindow_.getSize(limitdimensions);
+
+            limitWindow limitwindow(keymap_,
+                                    limitdimensions,
+                                    upload,
+                                    limitBase::LIMIT_DISABLED, /* min */
+                                    65536,                     /* max */
+                                    "Global upload (KiB/sec)", /* label */
+                                    download,
+                                    limitBase::LIMIT_DISABLED,
+                                    65536,
+                                    "Global download (KiB/sec)",
+                                    max_uploads,
+                                    limitBase::LIMIT_DISABLED,
+                                    65536,
+                                    "Global max uploads",
+                                    max_connections,
+                                    limitBase::LIMIT_DISABLED,
+                                    65536,
+                                    "Global max connections");
+
+            if (limitwindow.run() == dialog::R_RESIZE)
+               {
+                  // the window was resized.
+                  handleResizeMainWindow();
+
+                  statuswindow_.setStatus("Setting global limits aborted.");
+
+                  // abort setting of limits, if the window was resized.
+                  return;
+               }
+
+            if (limitwindow.getLimits(upload,
+                                      download,
+                                      max_uploads,
+                                      max_connections))
+               {
+                  {
+                     GET_HANDLER_INST;
+
+                     if (upload != limitBase::LIMIT_DISABLED)
+                        {
+                           upload      *= limitBase::KiB_to_B;
+                        }
+
+                     if (download != limitBase::LIMIT_DISABLED)
+                        {
+                           download    *= limitBase::KiB_to_B;
+                        }
+
+                     handler->reqGlobalLimit(upload,
+                                             download,
+                                             max_uploads,
+                                             max_connections);
+                     if (handler->lastCommandSuccess())
+                        {
+                           statuswindow_.setStatus("Global limits set.");
+                        }
+                     else
+                        {
+                           statuswindow_.setError("Unable to set global limits.");
+                        }
+                  }
+               }
+            else
+               {
+                  statuswindow_.setStatus("Setting global limits aborted.");
+               }
+         }
+
+         bool UI::handleQuit()
+         {
+            bool status = true;
+
+            if (!neverAskQuestions_)
+               {
+                  statuswindow_.setStatus("Quit?");
+
+                  std::vector<menuEntry> contents;
+
+                  enum
+                     {
+                        QUIT_YES = 1,
+                        QUIT_NO  = 2
+                     };
+
+                  contents.push_back(menuEntry(QUIT_NO,  "No",  "Quit"));
+                  contents.push_back(menuEntry(QUIT_YES, "Yes", "Do not quit"));
+
+                  windowSize menudimensions;
+                  mainwindow_.getSize(menudimensions);
+
+                  baseMenu bm(keymap_, menudimensions, "Quit?", contents);
+
+                  switch(bm.run())
+                     {
+                     case dialog::R_RESIZE:
+                        {
+                           // the window was resized.
+                           handleResizeMainWindow();
+			
+                           statuswindow_.setStatus("Quit aborted.");
+
+                           // abort showing menu.
+                           return status;
+                           break;
+                        }
+                     case dialog::R_NCREAT:
+                        {
+                           return status;
+                           break;
+                        }
+                     default:
+                        {
+                           break;
+                        }
+                     }
+
+                  if (bm.getResult() == baseMenu::BM_cancel)
+                     {
+                        statuswindow_.setStatus("Quit aborted.");
+                        return status;
+                     }
+		  
+                  switch (bm.getResult())
+                     {
+                     case QUIT_YES:
+                        status = false;
+                        break;
+                     case QUIT_NO:
+                        status = true;
+                        break;
+                     }
+               }
+            else
+               {
+                  // No questions are asked, so just quit.
+                  status = false;
+               }
+
+            if (status)
+               {
+                  return status;
+               }
+
+            // Quit confirmed.
+            {
+               GET_HANDLER_INST;
+
+               handler->reqQuit();
+            }
+
+            return status;
+         }
+
+         void UI::handleResizeMainWindow()
+         {
+            windowSize ws;
+
+            baseWindow::getScreenSize(ws.width,
+                                      ws.height);
+            // Main window.
+            windowSize mainwndSize = mainwindow_.calculateDimenstions(ws);
+            mainwindow_.resize(mainwndSize);
+
+            // Top window.
+            windowSize topwndSize = topwindow_.calculateDimenstions(ws);
+            topwindow_.resize(topwndSize);
+
+            // Status window.
+            windowSize statuswndSize = statuswindow_.calculateDimenstions(ws);
+            statuswindow_.resize(statuswndSize);
+
+            refresh();
+         }
+
+         void UI::handleShowFiles(std::vector<btg::core::fileInformation> const& _fi)
+         {
+            std::string helpText;
+            genHelpText(helpText);
+
+            statuswindow_.setStatus("Showing file(s). " + helpText);
+
+            windowSize fldimensions;
+            mainwindow_.getSize(fldimensions);
+            
+            // Show a window with file information about a torrent.
+            fileView fv(keymap_, fldimensions, _fi);
+
+            // Use the same dimenstions as the main window.
+            if (fv.run() == dialog::R_RESIZE)
+               {
+                  // the window was resized.
+                  handleResizeMainWindow();
+
+                  statuswindow_.setStatus("Showing file(s) aborted.");
+
+                  return;
+               }
+
+            setDefaultStatusText();
+
+            refresh();
+         }
+
+         void UI::handleShowPeers(t_peerList & _peerlist)
+         {
+            std::string helpText;
+            genHelpText(helpText);
+	  
+            statuswindow_.setStatus("Showing peer(s). " + helpText);
+	  
+            windowSize fldimensions;
+            mainwindow_.getSize(fldimensions);
+            
+            // Show a window with file information about a torrent.
+            peerList pl(keymap_, fldimensions, _peerlist);
+
+            // Use the same dimenstions as the main window.
+            if (pl.run() == dialog::R_RESIZE)
+               {
+                  // the window was resized.
+                  handleResizeMainWindow();
+	      
+                  statuswindow_.setStatus("Showing peer(s) aborted.");
+	      
+                  return;
+               }
+
+            setDefaultStatusText();
+
+            refresh();            
+         }
+
+         UI::selectState UI::handleSelectFiles(t_int const _context_id,
+                                               btg::core::selectedFileEntryList const& _files)
+         {
+            std::string helpText;
+            genHelpText(helpText);
+
+            statuswindow_.setStatus("Selecting files. " + helpText);
+
+            windowSize fldimensions;
+            mainwindow_.getSize(fldimensions);
+            
+            // Show a window with file information about a torrent.
+            fileSelect fs(keymap_, fldimensions, _files);
+
+            // Use the same dimenstions as the main window.
+            if (fs.run() == dialog::R_RESIZE)
+               {
+                  // the window was resized.
+                  handleResizeMainWindow();
+
+                  return UI::sS_SELECT_RESIZE;
+               }
+
+            // User selected the list.
+            if (fs.pressed_select() && fs.changed())
+               {
+                  {
+                     // Got mutex already - in the calling function,
+                     // the menu handling.
+                     Handler* handler = dynamic_cast<Handler*>(handlerthread_->handler());
+
+                     btg::core::selectedFileEntryList filesToSet;
+                     fs.getFiles(filesToSet);
+                     handler->reqSetFiles(_context_id, filesToSet);
+
+                     if (handler->lastCommandSuccess())
+                        {
+                           return UI::sS_SELECT_SUCCESS;
+                        }
+                     else
+                        {
+                           return UI::sS_SELECT_FAILURE;
+                        }
+                  }
+               }
+            else if ((fs.pressed_select()) && (!fs.changed()))
+               {
+                  // No change to the list of selected files.
+                  // No reason to tell the daemon to set the list.
+                  return UI::sS_SELECT_SUCCESS;
+               }
+
+            setDefaultStatusText();
+
+            refresh();
+
+            return UI::sS_SELECT_ABORT;
+         }
+
+      } // namespace cli
+   } // namespace UI
+} // namespace btg
+
