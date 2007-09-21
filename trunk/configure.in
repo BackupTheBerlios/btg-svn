@@ -168,6 +168,17 @@ no)  buildgui=false ;;
 esac],[buildgui=false])
 AM_CONDITIONAL(BUILDGUI, test x$buildgui = xtrue)
 
+dnl Argument: build the AGAR/SDL viewer.
+
+AC_ARG_ENABLE(viewer,
+[  --enable-viewer         build AGAR viewer.],
+[case "${enableval}" in
+yes) buildviewer=true ;;
+no)  buildviewer=false ;;
+*) AC_MSG_ERROR(bad value ${enableval} for --enable-viewer) ;;
+esac],[buildviewer=false])
+AM_CONDITIONAL(BUILDVIEWER, test x$buildviewer = xtrue)
+
 dnl Argument: build the cli.
 
 AC_ARG_ENABLE(cli,
@@ -314,6 +325,13 @@ else
         AC_MSG_RESULT([no])
 fi
 
+AC_MSG_CHECKING([whether the AGAR viewer should be built])
+if test "$buildviewer" == "true"; then
+        AC_MSG_RESULT([yes])
+else
+        AC_MSG_RESULT([no])
+fi
+
 AC_MSG_CHECKING([whether the CLI should be built])
 if test "$buildcli" == "true"; then
         AC_MSG_RESULT([yes])
@@ -407,7 +425,7 @@ fi
 
 BTG_LINK_CHECK
 
-AC_OUTPUT(Makefile external/Makefile external/xmlrpc-epi/Makefile external/xmlrpc-epi/src/Makefile external/xmlrpc-epi/expat/Makefile external/xmlrpc-epi/expat/xmlparse/Makefile external/xmlrpc-epi/expat/xmltok/Makefile external/ini/Makefile external/plotmm/Makefile bcore/Makefile bcore/client/Makefile daemon/Makefile daemon/upnp/Makefile daemon/ipfilter/Makefile daemon/auth/Makefile utest/Makefile stest/Makefile doc/Makefile doc/commands/Makefile doc/site/Makefile UI/Makefile UI/cli/Makefile UI/cli/ncurses/Makefile UI/gui/Makefile UI/www/Makefile UI/www/php/Makefile UI/www/php/htdocs/bcore/command/Makefile UI/www/php/htdocs/bcore/Makefile UI/www/php/htdocs/images/Makefile UI/www/php/htdocs/Makefile UI/www/php/htdocs/version.php script/Makefile script/btgd script/btgq script/btg-config)
+AC_OUTPUT(Makefile external/Makefile external/xmlrpc-epi/Makefile external/xmlrpc-epi/src/Makefile external/xmlrpc-epi/expat/Makefile external/xmlrpc-epi/expat/xmlparse/Makefile external/xmlrpc-epi/expat/xmltok/Makefile external/ini/Makefile external/plotmm/Makefile bcore/Makefile bcore/client/Makefile daemon/Makefile daemon/upnp/Makefile daemon/ipfilter/Makefile daemon/auth/Makefile utest/Makefile stest/Makefile doc/Makefile doc/commands/Makefile doc/site/Makefile UI/Makefile UI/cli/Makefile UI/cli/ncurses/Makefile UI/gui/Makefile UI/gui/viewer/Makefile UI/gui/viewer/sdl/Makefile UI/www/Makefile UI/www/php/Makefile UI/www/php/htdocs/bcore/command/Makefile UI/www/php/htdocs/bcore/Makefile UI/www/php/htdocs/images/Makefile UI/www/php/htdocs/Makefile UI/www/php/htdocs/version.php script/Makefile script/btgd script/btgq script/btg-config)
 
 AC_MSG_NOTICE([Status:])
 
@@ -427,6 +445,12 @@ if test "$buildgui" == "true"; then
         AC_MSG_NOTICE([GUI           : enabled])
 else
         AC_MSG_NOTICE([GUI           : disabled])
+fi
+
+if test "$buildviewer" == "true"; then
+        AC_MSG_NOTICE([Viewer        : enabled])
+else
+        AC_MSG_NOTICE([Viewer        : disabled])
 fi
 
 if test "$buildwww" == "true"; then
