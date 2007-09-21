@@ -1,3 +1,7 @@
+if BUILDVIEWER
+  SUBDIRS = viewer
+endif
+
 bin_PROGRAMS = btgui
 
 btgui_SOURCES = initwindow.cpp \
