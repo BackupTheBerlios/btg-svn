@@ -23,5 +23,41 @@
 #ifndef BTGVS_H
 #define BTGVS_H
 
+// Define this so that NLS headers will not be included.
+#define _LIBINTL_H
+
+extern "C"
+{
+#include <agar/core/core.h>
+#include <agar/gui/gui.h>
+}
+
+#include <string>
+#include <vector>
+
+struct tableData
+{
+   std::string filename;
+};
+
+struct btgvsGui
+{
+   AG_Window*      window;
+   AG_VBox*        contents_box;
+   AG_Notebook*    notebook;
+   AG_Statusbar*   statusbar;
+   AG_Label*       statusbarlabel;
+   AG_NotebookTab* tabs[3];
+	AG_Table*       table;
+   AG_Graph*       plot;
+   AG_GraphItem*   plotItem;
+};
+
+void createGui(btgvsGui & _gui);
+
+void destroyGui(btgvsGui & _gui);
+
+void updateTable(btgvsGui & _gui, std::vector<tableData> const& _data);
+
 #endif
 
