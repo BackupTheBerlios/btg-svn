@@ -84,7 +84,7 @@ BOOST_SUFFIX="gcc41-mt-1_34"
 CONFIGURE_BOOST="--with-boost-date-time=$BOOST_SUFFIX --with-boost-filesystem=$BOOST_SUFFIX --with-boost-thread=$BOOST_SUFFIX --with-boost-regex=$BOOST_SUFFIX --with-boost-program_options=$BOOST_SUFFIX --with-boost-iostreams=$BOOST_SUFFIX"
 
 # Execute this configure command.
-CONFIGURE="./configure --disable-static $DEBUG --enable-cli $GUI_CLIENT --enable-unittest --enable-session-saving --enable-command-list --enable-event-callback --enable-upnp --enable-www --prefix=/pack/btg-cvs $CONFIGURE_BOOST"
+CONFIGURE="./configure --disable-static $DEBUG --enable-cli $GUI_CLIENT --enable-viewer --enable-unittest --enable-session-saving --enable-command-list --enable-event-callback --enable-upnp --enable-www --prefix=/pack/btg-cvs $CONFIGURE_BOOST"
 
 case "$1" in
   0.12)
