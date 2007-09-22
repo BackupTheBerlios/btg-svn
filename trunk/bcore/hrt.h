@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: hrt.h,v 1.1.2.3 2007/02/14 22:11:47 wojci Exp $
+ * $Id$
  */
 
 #ifndef HRT_H

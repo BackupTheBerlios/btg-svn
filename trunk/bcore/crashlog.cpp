@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: crashlog.cpp,v 1.3.4.1 2005/10/16 18:29:02 wojci Exp $
+ * $Id$
  */
 
 #include "crashlog.h"

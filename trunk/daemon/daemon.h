@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: daemon.h,v 1.4.4.1 2006/01/28 17:27:38 wojci Exp $
+ * $Id$
  */
 
 #ifndef DAEMON_H

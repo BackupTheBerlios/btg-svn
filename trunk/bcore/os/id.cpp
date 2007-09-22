@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: id.cpp,v 1.1.2.4 2006/05/14 10:56:22 wojci Exp $
+ * $Id$
  */
 
 #include "id.h"

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: helpwindow.cpp,v 1.1.2.8 2006/12/31 00:34:00 wojci Exp $
+ * $Id$
  */
 
 #include "helpwindow.h"

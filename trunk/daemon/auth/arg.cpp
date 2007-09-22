@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: arg.cpp,v 1.1.4.16 2006/10/28 16:00:11 wojci Exp $
+ * $Id$
  */
 
 #include "arg.h"

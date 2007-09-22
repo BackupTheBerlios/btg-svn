@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: limitdialog.h,v 1.4.4.5 2006/08/12 17:37:23 wojci Exp $
+ * $Id$
  */
 
 #ifndef LIMITDIALOG_H

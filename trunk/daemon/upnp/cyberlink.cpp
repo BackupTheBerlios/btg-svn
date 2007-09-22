@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: cyberlink.cpp,v 1.1.2.5 2006/09/23 13:19:29 wojci Exp $
+ * $Id$
  */
 
 #include "cyberlink.h"

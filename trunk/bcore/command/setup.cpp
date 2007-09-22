@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: setup.cpp,v 1.12.4.18 2007/05/28 10:33:02 wojci Exp $
+ * $Id$
  */
 
 #include "setup.h"

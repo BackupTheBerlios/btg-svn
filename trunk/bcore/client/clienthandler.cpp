@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: clienthandler.cpp,v 1.16.4.32 2007/06/06 22:04:31 wojci Exp $
+ * $Id$
  */
 
 #include <iostream>

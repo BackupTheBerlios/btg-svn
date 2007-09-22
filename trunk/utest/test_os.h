@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: test_os.h,v 1.1.2.5 2006/04/05 20:40:26 wojci Exp $
+ * $Id$
  */
 
 #include <cppunit/extensions/HelperMacros.h>

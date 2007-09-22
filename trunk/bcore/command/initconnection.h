@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: initconnection.h,v 1.1.4.2 2006/03/19 21:40:29 wojci Exp $
+ * $Id$
  */
 
 #ifndef COMMAND_INITCONNECTION_H

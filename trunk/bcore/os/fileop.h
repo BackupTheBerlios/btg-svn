@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: fileop.h,v 1.1.2.10 2006/09/27 19:00:22 wojci Exp $
+ * $Id$
  */
 
 #ifndef FILE_OP_H

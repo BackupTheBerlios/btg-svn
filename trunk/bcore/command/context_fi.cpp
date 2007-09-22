@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_fi.cpp,v 1.4.4.2 2006/03/13 18:40:47 jstrom Exp $
+ * $Id$
  */
 
 #include "context_fi.h"

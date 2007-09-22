@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: externalization.h,v 1.1.2.19 2007/04/12 12:53:35 wojci Exp $
+ * $Id$
  */
 
 #ifndef EXTERNALIZATION_H

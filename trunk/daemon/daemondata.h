@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: daemondata.h,v 1.1.2.19 2007/04/25 11:29:43 wojci Exp $
+ * $Id$
  */
 
 #ifndef DAEMONDATA_H

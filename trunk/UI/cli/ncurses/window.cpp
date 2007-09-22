@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: window.cpp,v 1.1.2.13 2007/08/21 17:42:30 wojci Exp $
+ * $Id$
  */
 
 #include "window.h"

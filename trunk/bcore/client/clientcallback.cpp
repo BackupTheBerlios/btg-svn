@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: clientcallback.cpp,v 1.14.4.2 2007/04/25 06:02:46 wojci Exp $
+ * $Id$
  */
 
 #include <iostream>

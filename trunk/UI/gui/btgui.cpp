@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: btgui.cpp,v 1.22.4.45 2007/06/23 14:42:31 wojci Exp $
+ * $Id$
  */
 
 #include <bcore/project.h>

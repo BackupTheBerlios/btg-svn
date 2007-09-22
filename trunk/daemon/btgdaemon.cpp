@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: btgdaemon.cpp,v 1.10.4.90 2007/09/01 22:52:07 wojci Exp $
+ * $Id$
  */
 
 #include <bcore/project.h>

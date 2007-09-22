@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: gzip.cpp,v 1.1.2.2 2007/08/30 20:50:50 wojci Exp $
+ * $Id$
  */
 
 #include "gzip.h"

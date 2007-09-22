@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: peertreeview.h,v 1.1.2.1 2006/03/23 21:15:48 wojci Exp $
+ * $Id$
  */
 
 #ifndef PEERTREEVIEW_H

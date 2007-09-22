@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: traficmodel.h,v 1.11.4.4 2007/02/27 17:02:32 wojci Exp $
+ * $Id$
  */
 
 #ifndef TRAFICMODEL_H

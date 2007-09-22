@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: argif.h,v 1.1.2.4 2007/01/16 20:26:36 wojci Exp $
+ * $Id$
  */
 
 #ifndef ARGIF_H

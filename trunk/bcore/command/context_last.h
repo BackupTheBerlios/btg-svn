@@ -17,7 +17,7 @@
  */
 
 /*
- * Id    : $Id: context_last.h,v 1.1.2.2 2007/04/25 06:02:46 wojci Exp $
+ * Id    : $Id$
  */
 
 #ifndef COMMAND_LAST_CID_H

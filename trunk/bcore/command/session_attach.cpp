@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: session_attach.cpp,v 1.8.4.11 2006/08/05 23:21:10 wojci Exp $
+ * $Id$
  */
 
 #include "session_attach.h"

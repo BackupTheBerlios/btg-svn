@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: sig_button_menu.h,v 1.10.4.6 2007/06/20 19:53:43 wojci Exp $
+ * $Id$
  */
 
 #ifndef SIG_BUTTON_MENU_H

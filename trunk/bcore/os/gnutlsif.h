@@ -23,7 +23,7 @@
  */
 
 /*
- * $Id: gnutlsif.h,v 1.1.4.5 2007/01/04 17:29:28 wojci Exp $
+ * $Id$
  */
 
 #ifndef GNUTLS_IF_H

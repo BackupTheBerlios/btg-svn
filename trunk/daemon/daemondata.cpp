@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: daemondata.cpp,v 1.1.2.8 2006/10/11 19:56:32 jstrom Exp $
+ * $Id$
  */
 
 #include "daemondata.h"

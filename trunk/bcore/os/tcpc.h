@@ -23,7 +23,7 @@
  */
 
 /*
- * $Id: tcpc.h,v 1.1.2.10 2006/05/20 18:31:19 wojci Exp $
+ * $Id$
  */
 
 #ifndef TCPC_H

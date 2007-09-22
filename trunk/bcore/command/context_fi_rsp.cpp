@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_fi_rsp.cpp,v 1.5.4.10 2006/08/05 23:21:09 wojci Exp $
+ * $Id$
  */
 
 #include "context_fi_rsp.h"

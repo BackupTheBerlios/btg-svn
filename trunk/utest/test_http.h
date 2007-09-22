@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: test_http.h,v 1.1.2.6 2006/03/13 18:40:49 jstrom Exp $
+ * $Id$
  */
 
 #include <cppunit/extensions/HelperMacros.h>

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: error.cpp,v 1.7.4.11 2006/05/20 18:31:18 wojci Exp $
+ * $Id$
  */
 
 #include "error.h"

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_clean_rsp.h,v 1.10.4.4 2006/03/13 18:40:47 jstrom Exp $
+ * $Id$
  */
 
 #ifndef COMMAND_CONTEXT_CLEAN_RESPONSE_H

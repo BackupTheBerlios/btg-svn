@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_li_status.h,v 1.3.4.2 2006/03/13 18:40:47 jstrom Exp $
+ * $Id$
  */
 
 #ifndef COMMAND_CONTEXT_LIMIT_STATUS_H

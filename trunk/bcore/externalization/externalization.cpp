@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: externalization.cpp,v 1.1.2.15 2007/06/06 22:04:31 wojci Exp $
+ * $Id$
  */
 
 #include "externalization.h"

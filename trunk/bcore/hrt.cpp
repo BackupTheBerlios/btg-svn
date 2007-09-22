@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: hrt.cpp,v 1.1.2.2 2007/02/12 21:31:36 wojci Exp $
+ * $Id$
  */
 
 #include "hrt.h"

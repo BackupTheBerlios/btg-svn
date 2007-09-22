@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: btgncli.cpp,v 1.1.2.17 2007/08/08 21:43:36 wojci Exp $
+ * $Id$
  */
 
 #include "ui.h"

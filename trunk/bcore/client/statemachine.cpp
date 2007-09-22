@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: statemachine.cpp,v 1.17.4.51 2007/06/06 22:04:31 wojci Exp $
+ * $Id$
  */
 
 #include <iostream>

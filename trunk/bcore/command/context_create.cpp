@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_create.cpp,v 1.6.4.15 2007/01/21 00:12:47 wojci Exp $
+ * $Id$
  */
 
 #include "context_create.h"

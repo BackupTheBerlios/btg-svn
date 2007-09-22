@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_fi_rsp.h,v 1.7.4.4 2006/03/13 18:40:47 jstrom Exp $
+ * $Id$
  */
 
 #ifndef COMMAND_CONTEXT_FILE_INFO_RESPONSE_H

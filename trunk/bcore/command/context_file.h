@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_file.h,v 1.1.2.2 2007/07/22 11:53:17 wojci Exp $
+ * $Id$
  */
 
 #ifndef CONTEXT_FILE_H

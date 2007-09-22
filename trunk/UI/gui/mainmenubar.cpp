@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: mainmenubar.cpp,v 1.14.4.10 2007/06/20 19:53:43 wojci Exp $
+ * $Id$
  */
 
 #include "mainmenubar.h"

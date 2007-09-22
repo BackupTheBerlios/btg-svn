@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: errordialog.h,v 1.1.2.3 2006/08/11 20:45:25 wojci Exp $
+ * $Id$
  */
 
 #ifndef ERROR_DIALOG_H

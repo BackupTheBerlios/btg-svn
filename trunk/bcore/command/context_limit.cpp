@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_limit.cpp,v 1.1.4.11 2006/10/28 19:26:13 wojci Exp $
+ * $Id$
  */
 
 #include "context_limit.h"

@@ -18,7 +18,7 @@
  */
 
 /*
- * $Id: http.h,v 1.1.2.21 2007/08/30 20:50:50 wojci Exp $
+ * $Id$
  */
 
 #ifndef HTTP_H

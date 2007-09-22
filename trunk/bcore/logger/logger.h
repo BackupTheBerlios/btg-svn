@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: logger.h,v 1.1.2.5 2006/12/25 23:25:54 wojci Exp $
+ * $Id$
  */
 
 #ifndef LOGGER_H

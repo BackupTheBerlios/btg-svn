@@ -23,7 +23,7 @@
  */
 
 /*
- * $Id: gnutlsif.cpp,v 1.1.4.9 2007/01/04 18:23:07 wojci Exp $
+ * $Id$
  */
 
 #include "gnutlsif.h"

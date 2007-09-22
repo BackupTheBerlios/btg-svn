@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: session_error.h,v 1.1.4.4 2006/03/13 18:40:48 jstrom Exp $
+ * $Id$
  */
 
 #ifndef SESSION_ERROR_COMMAND_H

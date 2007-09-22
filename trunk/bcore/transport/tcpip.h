@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: tcpip.h,v 1.1.2.20 2006/08/17 19:56:55 wojci Exp $
+ * $Id$
  */
 
 #ifndef TCPIP_H

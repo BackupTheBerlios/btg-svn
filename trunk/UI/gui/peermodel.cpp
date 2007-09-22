@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: peermodel.cpp,v 1.1.2.2 2006/08/11 20:45:25 wojci Exp $
+ * $Id$
  */
 
 #include <gtkmm/treeview.h>

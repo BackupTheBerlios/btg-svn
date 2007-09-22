@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_abort.h,v 1.7.4.3 2006/05/29 16:50:57 wojci Exp $
+ * $Id$
  */
 
 #ifndef COMMAND_ABORT_CONTEXT_H

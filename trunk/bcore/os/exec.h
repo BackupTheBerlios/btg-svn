@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: exec.h,v 1.1.2.2 2006/04/01 20:30:50 wojci Exp $
+ * $Id$
  */
 
 #ifndef EXEC_H

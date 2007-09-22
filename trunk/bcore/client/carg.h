@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: carg.h,v 1.12.4.23 2007/07/22 11:53:17 wojci Exp $
+ * $Id$
  */
 
 #ifndef CARG_H

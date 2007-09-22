@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: portmgr.cpp,v 1.1.2.5 2007/08/26 15:37:41 wojci Exp $
+ * $Id$
  */
 
 #include "portmgr.h"

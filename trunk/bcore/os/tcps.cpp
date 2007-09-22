@@ -23,7 +23,7 @@
  */
 
 /*
- * $Id: tcps.cpp,v 1.1.2.15 2006/11/29 18:06:29 wojci Exp $
+ * $Id$
  */
 
 #include "tcps.h"

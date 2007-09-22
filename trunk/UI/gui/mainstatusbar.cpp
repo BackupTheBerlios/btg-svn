@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: mainstatusbar.cpp,v 1.5.4.1 2007/02/25 21:32:50 wojci Exp $
+ * $Id$
  */
 
 #include "mainstatusbar.h"

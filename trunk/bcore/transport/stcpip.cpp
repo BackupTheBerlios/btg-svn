@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: stcpip.cpp,v 1.1.4.2 2006/11/29 18:06:29 wojci Exp $
+ * $Id$
  */
 
 #include "stcpip.h"

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: gen_cmd_docs.cpp,v 1.1.2.23 2007/05/26 18:42:08 wojci Exp $
+ * $Id$
  */
 
 #include <bcore/project.h>

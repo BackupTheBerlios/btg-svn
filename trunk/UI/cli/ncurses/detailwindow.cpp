@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: detailwindow.cpp,v 1.1.2.9 2007/02/13 22:38:57 wojci Exp $
+ * $Id$
  */
 
 #include "detailwindow.h"

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: mainmodel.h,v 1.9.4.4 2007/06/20 19:53:43 wojci Exp $
+ * $Id$
  */
 
 #ifndef MAINMODEL_H

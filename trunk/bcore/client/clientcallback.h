@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: clientcallback.h,v 1.16.4.20 2007/06/06 22:04:31 wojci Exp $
+ * $Id$
  */
 
 #ifndef CLIENTCALLBACK_H

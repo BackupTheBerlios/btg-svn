@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: traficplot.cpp,v 1.1.2.1 2007/02/24 13:15:08 wojci Exp $
+ * $Id$
  */
 
 #include <pangomm/layout.h>

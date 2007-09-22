@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: filemodel.h,v 1.6.4.2 2007/07/22 11:53:17 wojci Exp $
+ * $Id$
  */
 
 #ifndef FILEMODEL_H

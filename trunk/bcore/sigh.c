@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: sigh.c,v 1.3 2005/05/05 16:32:41 wojci Exp $
+ * $Id$
  */
 
 #include "sigh.h"

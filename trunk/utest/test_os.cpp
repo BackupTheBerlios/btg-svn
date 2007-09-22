@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: test_os.cpp,v 1.1.2.9 2006/04/05 20:40:26 wojci Exp $
+ * $Id$
  */
 
 #include "test_os.h"

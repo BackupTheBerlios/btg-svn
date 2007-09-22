@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: hru.cpp,v 1.7 2005/06/25 21:54:16 wojci Exp $
+ * $Id$
  */
 
 #include "hru.h"

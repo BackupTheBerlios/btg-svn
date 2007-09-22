@@ -18,7 +18,7 @@
  */
 
 /*
- * $Id: xmlrpc.cpp,v 1.1.2.21 2007/05/13 09:30:38 jstrom Exp $
+ * $Id$
  */
 
 #include "xmlrpc.h"

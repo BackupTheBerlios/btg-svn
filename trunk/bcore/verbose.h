@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: verbose.h,v 1.1.2.1 2006/07/06 19:10:58 wojci Exp $
+ * $Id$
  */
 
 #include <bcore/logmacro.h>

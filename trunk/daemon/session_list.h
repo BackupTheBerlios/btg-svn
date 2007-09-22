@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: session_list.h,v 1.1.2.12 2007/08/20 16:30:45 wojci Exp $
+ * $Id$
  */
 
 #ifndef SESSION_LIST_H

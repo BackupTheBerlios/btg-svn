@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: fipixbox.h,v 1.2.4.4 2007/07/22 11:53:17 wojci Exp $
+ * $Id$
  */
 
 #ifndef FILEINFOPIXBOX_H

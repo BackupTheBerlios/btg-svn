@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: nscreen.cpp,v 1.12.4.11 2007/08/21 17:42:30 wojci Exp $
+ * $Id$
  */
 
 #include "nscreen.h"

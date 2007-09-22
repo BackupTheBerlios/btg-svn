@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: test_bcore_client.h,v 1.2.4.4 2006/06/18 10:42:13 wojci Exp $
+ * $Id$
  */
 
 #include <cppunit/extensions/HelperMacros.h>

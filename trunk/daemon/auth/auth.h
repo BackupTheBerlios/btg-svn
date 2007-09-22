@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: auth.h,v 1.1.4.8 2006/11/14 21:33:46 wojci Exp $
+ * $Id$
  */
 
 #ifndef AUTH_H

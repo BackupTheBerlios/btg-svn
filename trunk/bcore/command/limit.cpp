@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: limit.cpp,v 1.1.2.3 2006/11/27 19:50:18 wojci Exp $
+ * $Id$
  */
 
 #include "limit.h"

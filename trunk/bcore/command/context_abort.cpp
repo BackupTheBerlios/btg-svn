@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_abort.cpp,v 1.5.4.3 2006/05/29 16:50:57 wojci Exp $
+ * $Id$
  */
 
 #include "context_abort.h"

@@ -19,7 +19,7 @@
  */
 
 /*
- * $Id: sessionsaver.cpp,v 1.1.2.38 2007/08/20 16:30:45 wojci Exp $
+ * $Id$
  */
 
 #include "daemondata.h"

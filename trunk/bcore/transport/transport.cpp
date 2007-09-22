@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: transport.cpp,v 1.1.2.9 2006/08/05 23:21:10 wojci Exp $
+ * $Id$
  */
 
 #include "transport.h"

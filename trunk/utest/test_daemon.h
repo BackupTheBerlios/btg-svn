@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: test_daemon.h,v 1.1.2.6 2006/11/14 19:29:33 wojci Exp $
+ * $Id$
  */
 
 #include <cppunit/extensions/HelperMacros.h>

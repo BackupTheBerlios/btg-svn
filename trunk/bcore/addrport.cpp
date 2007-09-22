@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: addrport.cpp,v 1.1.2.7 2006/09/22 21:37:17 wojci Exp $
+ * $Id$
  */
 
 #include "addrport.h"

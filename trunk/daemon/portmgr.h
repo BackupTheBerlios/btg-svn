@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: portmgr.h,v 1.1.2.4 2006/11/14 21:33:46 wojci Exp $
+ * $Id$
  */
 
 #ifndef PORTMGR_H

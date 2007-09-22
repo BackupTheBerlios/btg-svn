@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: topwindow.cpp,v 1.1.2.6 2006/12/31 00:34:00 wojci Exp $
+ * $Id$
  */
 
 #include "topwindow.h"

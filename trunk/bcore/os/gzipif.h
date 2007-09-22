@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: gzipif.h,v 1.1.2.1 2007/08/30 20:50:50 wojci Exp $
+ * $Id$
  */
 
 #ifndef GZIPIF_H

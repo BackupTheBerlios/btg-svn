@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: runstate.h,v 1.1.4.3 2006/05/21 18:52:15 wojci Exp $
+ * $Id$
  */
 
 #ifndef RUNSTATE_H

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: handler.h,v 1.1.2.15 2007/07/22 11:53:16 wojci Exp $
+ * $Id$
  */
 
 #ifndef CLI_H

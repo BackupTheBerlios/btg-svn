@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: keys.cpp,v 1.1.2.5 2006/12/30 00:18:02 wojci Exp $
+ * $Id$
  */
 
 #include "keys.h"

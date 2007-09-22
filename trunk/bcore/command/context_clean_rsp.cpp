@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_clean_rsp.cpp,v 1.7.4.10 2006/08/05 23:21:09 wojci Exp $
+ * $Id$
  */
 
 #include "context_clean_rsp.h"

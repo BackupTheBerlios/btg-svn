@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: authdialog.h,v 1.1.4.4 2006/08/12 17:37:22 wojci Exp $
+ * $Id$
  */
 
 #ifndef AUTHDIALOG_H

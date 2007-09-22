@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_last.cpp,v 1.1.2.2 2007/04/25 06:02:46 wojci Exp $
+ * $Id$
  */
 
 #include "context_last.h"

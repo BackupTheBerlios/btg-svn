@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: test_nscreen.cpp,v 1.4 2005/06/05 18:56:47 wojci Exp $
+ * $Id$
  */
 
 #include <cppunit/extensions/HelperMacros.h>

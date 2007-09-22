@@ -19,7 +19,7 @@
  */
 
 /*
- * $Id: sessionsaver.h,v 1.1.2.26 2007/07/29 21:40:41 jstrom Exp $
+ * $Id$
  */
 
 #ifndef SESSIONSAVER_H

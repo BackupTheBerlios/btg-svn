@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: fileselect.cpp,v 1.1.2.2 2007/06/07 22:10:16 wojci Exp $
+ * $Id$
  */
 
 #include "fileselect.h"

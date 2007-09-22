@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: mainnotebook.h,v 1.9.4.11 2007/07/22 11:53:17 wojci Exp $
+ * $Id$
  */
 
 #ifndef MAINNOTEBOOK_H

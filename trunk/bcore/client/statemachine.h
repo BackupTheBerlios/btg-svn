@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: statemachine.h,v 1.15.4.26 2007/06/06 22:04:31 wojci Exp $
+ * $Id$
  */
 
 #ifndef STATEMACHINE_H

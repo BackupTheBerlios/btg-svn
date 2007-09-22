@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: configuration.h,v 1.12.4.25 2007/05/28 10:33:02 wojci Exp $
+ * $Id$
  */
 
 #ifndef CLIENT_CONFIGURATION_H

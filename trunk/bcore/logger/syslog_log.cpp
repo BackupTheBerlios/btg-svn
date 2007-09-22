@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: syslog_log.cpp,v 1.5.4.2 2006/04/05 18:44:10 wojci Exp $
+ * $Id$
  */
 
 #include "syslog_log.h"

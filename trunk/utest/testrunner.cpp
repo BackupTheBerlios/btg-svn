@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: testrunner.cpp,v 1.4.4.5 2006/08/17 19:56:56 wojci Exp $
+ * $Id$
  */
 
 #include "testrunner.h"

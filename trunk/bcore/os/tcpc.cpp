@@ -23,7 +23,7 @@
  */
 
 /*
- * $Id: tcpc.cpp,v 1.1.2.11 2006/05/20 18:31:19 wojci Exp $
+ * $Id$
  */
 
 #include "tcpc.h"

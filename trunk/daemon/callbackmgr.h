@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: callbackmgr.h,v 1.1.2.7 2006/07/30 08:46:11 wojci Exp $
+ * $Id$
  */
 
 #ifndef CALLBACKMGR_H

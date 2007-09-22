@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: sessiondialog.h,v 1.1.2.3 2007/01/16 19:46:28 wojci Exp $
+ * $Id$
  */
 
 #ifndef SESSION_DIALOG_H

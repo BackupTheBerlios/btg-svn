@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: t_string.h,v 1.6.4.1 2007/01/16 20:26:36 wojci Exp $
+ * $Id$
  */
 
 #ifndef TFSTRING_H

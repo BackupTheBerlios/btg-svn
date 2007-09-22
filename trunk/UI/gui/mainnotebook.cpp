@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: mainnotebook.cpp,v 1.6.4.8 2007/06/21 21:53:23 wojci Exp $
+ * $Id$
  */
 
 #include <gtkmm/scrolledwindow.h>

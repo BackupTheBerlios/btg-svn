@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: auth.cpp,v 1.1.2.2 2006/10/28 16:00:11 wojci Exp $
+ * $Id$
  */
 
 #include "auth.h"

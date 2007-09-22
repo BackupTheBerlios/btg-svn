@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: ext_printer.h,v 1.1.2.7 2007/04/12 12:53:35 wojci Exp $
+ * $Id$
  */
 
 #ifndef EXTERNALIZATION_PRINTER_H

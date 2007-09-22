@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: connectionextrastate.h,v 1.1.2.2 2007/04/28 14:31:15 wojci Exp $
+ * $Id$
  */
 
 #ifndef CONNECTIONEXTRASTATE_H

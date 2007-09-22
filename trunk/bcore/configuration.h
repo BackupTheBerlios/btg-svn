@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: configuration.h,v 1.1.2.12 2007/05/26 18:42:07 wojci Exp $
+ * $Id$
  */
 
 #ifndef CONFIGURATION_H

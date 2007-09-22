@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: darg.cpp,v 1.10.4.18 2006/09/24 11:14:08 wojci Exp $
+ * $Id$
  */
 
 #include "darg.h"

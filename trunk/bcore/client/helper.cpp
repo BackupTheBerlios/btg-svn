@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: helper.cpp,v 1.3.4.41 2007/05/28 10:33:02 wojci Exp $
+ * $Id$
  */
 
 #include "helper.h"

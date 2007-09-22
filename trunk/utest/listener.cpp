@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: listener.cpp,v 1.1.2.1 2006/07/12 10:16:20 wojci Exp $
+ * $Id$
  */
 
 #include "listener.h"

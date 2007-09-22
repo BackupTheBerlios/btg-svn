@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: session_attach.h,v 1.10.4.5 2006/03/13 18:40:48 jstrom Exp $
+ * $Id$
  */
 
 #ifndef COMMAND_ATTACH_SESSION_H

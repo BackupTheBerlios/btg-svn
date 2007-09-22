@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: command_factory.cpp,v 1.9.4.26 2007/08/04 20:52:36 wojci Exp $
+ * $Id$
  */
 
 #include "command_factory.h"

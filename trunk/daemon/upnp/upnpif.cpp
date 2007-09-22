@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: upnpif.cpp,v 1.1.2.2 2006/09/22 21:37:17 wojci Exp $
+ * $Id$
  */
 
 #include "upnpif.h"

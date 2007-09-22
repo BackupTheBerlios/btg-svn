@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: list.cpp,v 1.6.4.7 2006/03/13 18:40:48 jstrom Exp $
+ * $Id$
  */
 
 #include "list.h"

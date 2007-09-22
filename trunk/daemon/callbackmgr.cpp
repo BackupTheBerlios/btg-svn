@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: callbackmgr.cpp,v 1.1.2.6 2006/11/26 19:12:55 wojci Exp $
+ * $Id$
  */
 
 #include "callbackmgr.h"

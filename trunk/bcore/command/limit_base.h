@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: limit_base.h,v 1.1.4.4 2006/08/05 23:21:10 wojci Exp $
+ * $Id$
  */
 
 #ifndef LIMIT_BASE_H

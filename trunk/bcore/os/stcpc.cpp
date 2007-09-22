@@ -23,7 +23,7 @@
  */
 
 /*
- * $Id: stcpc.cpp,v 1.1.4.2 2006/05/20 18:31:19 wojci Exp $
+ * $Id$
  */
 
 #include "stcpc.h"

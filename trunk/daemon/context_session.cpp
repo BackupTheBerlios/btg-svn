@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_session.cpp,v 1.1.2.5 2007/07/28 09:45:16 jstrom Exp $
+ * $Id$
  */
 
 #include "context.h"

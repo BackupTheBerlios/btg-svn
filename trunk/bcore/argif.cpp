@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: argif.cpp,v 1.1.2.6 2006/09/24 11:14:08 wojci Exp $
+ * $Id$
  */
 
 #include "argif.h"

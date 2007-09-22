@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: btgcli.cpp,v 1.11.4.38 2007/01/21 00:12:46 wojci Exp $
+ * $Id$
  */
 
 #include <bcore/project.h>

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: logtextview.cpp,v 1.6.4.4 2007/02/25 21:32:50 wojci Exp $
+ * $Id$
  */
 
 #include "logtextview.h"

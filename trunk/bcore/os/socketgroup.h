@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: socketgroup.h,v 1.1.2.5 2006/10/08 08:01:27 wojci Exp $
+ * $Id$
  */
 
 #ifndef SOCKETGROUP_H

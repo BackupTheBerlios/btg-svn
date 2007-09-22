@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: list.h,v 1.9.4.4 2006/03/13 18:40:48 jstrom Exp $
+ * $Id$
  */
 
 #ifndef COMMAND_LIST_H

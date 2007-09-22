@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: simple.cpp,v 1.1.2.15 2007/04/12 12:53:35 wojci Exp $
+ * $Id$
  */
 
 #include "simple.h"

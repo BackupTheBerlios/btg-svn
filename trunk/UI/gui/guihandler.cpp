@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: guihandler.cpp,v 1.20.4.34 2007/06/23 19:27:51 wojci Exp $
+ * $Id$
  */
 
 #include "guihandler.h"

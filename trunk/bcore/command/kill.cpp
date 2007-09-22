@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: kill.cpp,v 1.1.4.7 2006/03/13 18:40:48 jstrom Exp $
+ * $Id$
  */
 
 #include "kill.h"

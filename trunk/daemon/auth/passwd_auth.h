@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: passwd_auth.h,v 1.1.4.10 2006/11/14 21:33:46 wojci Exp $
+ * $Id$
  */
 
 #ifndef PASSWORD_AUTH_H

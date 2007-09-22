@@ -17,7 +17,7 @@
  */
 
 /*
- * Id    : $Id: context_fi.h,v 1.5.4.2 2006/03/13 18:40:47 jstrom Exp $
+ * Id    : $Id$
  */
 
 #ifndef COMMAND_CONTEXT_FILE_INFO_H

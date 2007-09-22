@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: statuswindow.cpp,v 1.1.2.6 2006/12/30 12:00:55 wojci Exp $
+ * $Id$
  */
 
 #include "statuswindow.h"

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_peers_rsp.h,v 1.1.2.6 2006/03/13 18:40:47 jstrom Exp $
+ * $Id$
  */
 
 #ifndef COMMAND_PEERS_RSP_H

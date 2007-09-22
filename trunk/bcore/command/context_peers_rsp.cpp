@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_peers_rsp.cpp,v 1.1.2.11 2006/08/05 23:21:09 wojci Exp $
+ * $Id$
  */
 
 #include "context_peers_rsp.h"

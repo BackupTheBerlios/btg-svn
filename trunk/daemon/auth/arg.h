@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: arg.h,v 1.1.4.9 2006/10/28 16:00:11 wojci Exp $
+ * $Id$
  */
 
 #ifndef AARG_H

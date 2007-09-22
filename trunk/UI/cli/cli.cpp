@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: cli.cpp,v 1.34.4.45 2007/06/06 22:04:30 wojci Exp $
+ * $Id$
  */
 
 #include "cli.h"

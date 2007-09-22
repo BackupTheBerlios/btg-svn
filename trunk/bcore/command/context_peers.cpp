@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_peers.cpp,v 1.1.2.3 2006/03/13 18:40:47 jstrom Exp $
+ * $Id$
  */
 
 #include "context_peers.h"

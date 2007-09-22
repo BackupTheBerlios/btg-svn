@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: limit.h,v 1.1.2.4 2006/11/27 19:50:18 wojci Exp $
+ * $Id$
  */
 
 #ifndef COMMAND_LIMIT_H

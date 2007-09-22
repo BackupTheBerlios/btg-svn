@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context.cpp,v 1.29.4.107 2007/06/20 19:53:43 wojci Exp $
+ * $Id$
  */
 
 #include <libtorrent/identify_client.hpp>

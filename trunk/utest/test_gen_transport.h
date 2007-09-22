@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: test_gen_transport.h,v 1.1.2.9 2006/08/17 19:56:56 wojci Exp $
+ * $Id$
  */
 
 #include <cppunit/extensions/HelperMacros.h>

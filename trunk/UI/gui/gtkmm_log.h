@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: gtkmm_log.h,v 1.8.4.1 2006/04/05 18:44:09 wojci Exp $
+ * $Id$
  */
 
 #ifndef GTKMM_LOGGER_H

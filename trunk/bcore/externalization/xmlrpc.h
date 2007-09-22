@@ -18,7 +18,7 @@
  */
 
 /*
- * $Id: xmlrpc.h,v 1.1.2.14 2007/04/12 12:53:35 wojci Exp $
+ * $Id$
  */
 
 #ifndef XMLRPC_H

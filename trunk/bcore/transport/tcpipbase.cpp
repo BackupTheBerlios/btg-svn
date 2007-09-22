@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: tcpipbase.cpp,v 1.1.4.9 2007/08/25 21:41:20 wojci Exp $
+ * $Id$
  */
 
 #include "tcpipbase.h"

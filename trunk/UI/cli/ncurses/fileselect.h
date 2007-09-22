@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: fileselect.h,v 1.1.2.2 2007/07/22 11:53:16 wojci Exp $
+ * $Id$
  */
 
 #ifndef FILESELECT_H

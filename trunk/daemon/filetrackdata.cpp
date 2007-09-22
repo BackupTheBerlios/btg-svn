@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: filetrackdata.cpp,v 1.1.2.1 2007/02/17 22:05:31 wojci Exp $
+ * $Id$
  */
 
 #include "filetrackdata.h"

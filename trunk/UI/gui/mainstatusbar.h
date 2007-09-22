@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: mainstatusbar.h,v 1.9 2005/07/10 21:55:06 wojci Exp $
+ * $Id$
  */
 
 #ifndef MAINSTATUSBAR_H

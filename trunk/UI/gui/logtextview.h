@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: logtextview.h,v 1.8.4.5 2006/08/11 20:45:25 wojci Exp $
+ * $Id$
  */
 
 #ifndef LOGTEXTVIEW_H

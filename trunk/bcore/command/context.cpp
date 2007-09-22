@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context.cpp,v 1.6.4.10 2006/05/29 16:50:57 wojci Exp $
+ * $Id$
  */
 
 #include "context.h"

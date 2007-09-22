@@ -17,7 +17,7 @@
  */
 
 /*
- * Id    : $Id: session_quit.h,v 1.9.4.4 2006/03/13 18:40:48 jstrom Exp $
+ * Id    : $Id$
  */
 
 #ifndef COMMAND_QUIT_SESSION_H

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: daemonhandler.cpp,v 1.1.2.50 2007/08/26 15:37:41 wojci Exp $
+ * $Id$
  */
 
 #include "daemonhandler.h"

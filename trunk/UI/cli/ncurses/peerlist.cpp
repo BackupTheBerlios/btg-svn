@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: peerlist.cpp,v 1.1.2.1 2007/01/01 15:45:09 wojci Exp $
+ * $Id$
  */
 
 #include "peerlist.h"

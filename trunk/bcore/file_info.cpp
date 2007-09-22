@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: file_info.cpp,v 1.9.4.14 2007/06/20 19:53:43 wojci Exp $
+ * $Id$
  */
 
 #include <bcore/file_info.h>

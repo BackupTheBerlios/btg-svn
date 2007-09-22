@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: command_factory.h,v 1.8.4.18 2007/06/06 22:04:31 wojci Exp $
+ * $Id$
  */
 
 #ifndef COMMAND_FACTORY_H

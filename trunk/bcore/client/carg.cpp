@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: carg.cpp,v 1.14.4.23 2007/05/28 10:33:02 wojci Exp $
+ * $Id$
  */
 
 #include "carg.h"

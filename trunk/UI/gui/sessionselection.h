@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: sessionselection.h,v 1.3.4.5 2006/08/12 17:37:23 wojci Exp $
+ * $Id$
  */
 
 #ifndef SESSION_SELECTION_H

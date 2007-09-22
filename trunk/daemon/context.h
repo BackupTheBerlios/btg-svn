@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context.h,v 1.17.4.83 2007/07/28 09:45:16 jstrom Exp $
+ * $Id$
  */
 
 #ifndef CONTEXT_H

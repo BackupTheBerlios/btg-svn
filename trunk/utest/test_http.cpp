@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: test_http.cpp,v 1.1.2.8 2006/03/13 18:40:49 jstrom Exp $
+ * $Id$
  */
 
 #include "test_http.h"

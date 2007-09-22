@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: status.cpp,v 1.16.4.15 2007/02/13 22:38:57 wojci Exp $
+ * $Id$
  */
 
 #include "status.h"

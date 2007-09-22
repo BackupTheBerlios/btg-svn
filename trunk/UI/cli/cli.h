@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: cli.h,v 1.25.4.39 2007/06/06 22:04:30 wojci Exp $
+ * $Id$
  */
 
 #ifndef CLI_H

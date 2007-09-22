@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: logif.h,v 1.1.2.1 2006/04/05 18:44:10 wojci Exp $
+ * $Id$
  */
 
 #ifndef LOGIF_H

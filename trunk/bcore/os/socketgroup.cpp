@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: socketgroup.cpp,v 1.1.2.7 2006/11/05 13:52:56 wojci Exp $
+ * $Id$
  */
 
 //#include "socket_exception.h"

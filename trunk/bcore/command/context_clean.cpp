@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_clean.cpp,v 1.5.4.3 2006/05/29 19:33:07 wojci Exp $
+ * $Id$
  */
 
 #include "context_clean.h"

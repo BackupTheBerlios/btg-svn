@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: upnpif.h,v 1.1.2.3 2006/09/30 14:55:29 wojci Exp $
+ * $Id$
  */
 
 #ifndef UPNPIF_H

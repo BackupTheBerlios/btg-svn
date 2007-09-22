@@ -23,7 +23,7 @@
  */
 
 /*
- * $Id: socket.cpp,v 1.1.2.17 2007/02/02 23:01:45 wojci Exp $
+ * $Id$
  */
 
 #include "socket.h"

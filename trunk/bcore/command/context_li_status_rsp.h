@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_li_status_rsp.h,v 1.5.4.5 2006/03/18 17:22:08 jstrom Exp $
+ * $Id$
  */
 
 #ifndef COMMAND_CONTEXT_LIMIT_STATUS_RSP_H

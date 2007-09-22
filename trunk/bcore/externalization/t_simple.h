@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: t_simple.h,v 1.1.2.3 2006/05/20 18:31:18 wojci Exp $
+ * $Id$
  */
 
 #ifndef T_SIMPLE_H

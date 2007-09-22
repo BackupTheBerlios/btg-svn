@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: null_log.h,v 1.6.4.2 2006/04/05 18:44:10 wojci Exp $
+ * $Id$
  */
 
 #ifndef CONSOLE_LOGGER_H

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_li_status_rsp.cpp,v 1.2.4.11 2006/08/05 23:21:09 wojci Exp $
+ * $Id$
  */
 
 #include "context_li_status_rsp.h"

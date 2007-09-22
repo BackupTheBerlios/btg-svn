@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: portmap.h,v 1.1.2.2 2006/09/30 14:55:29 wojci Exp $
+ * $Id$
  */
 
 #ifndef UPNPIF_PORTMAP_H

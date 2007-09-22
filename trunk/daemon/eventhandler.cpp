@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: eventhandler.cpp,v 1.23.4.68 2007/08/08 21:43:36 wojci Exp $
+ * $Id$
  */
 
 #include "eventhandler.h"

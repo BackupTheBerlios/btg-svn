@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: ui.cpp,v 1.1.2.38 2007/06/23 19:27:51 wojci Exp $
+ * $Id$
  */
 
 #include "ui.h"

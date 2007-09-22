@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: aboutdialog.h,v 1.4 2005/07/10 21:55:06 wojci Exp $
+ * $Id$
  */
 
 #ifndef ABOUTDIALOG_H

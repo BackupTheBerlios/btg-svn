@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: progress.h,v 1.1.2.3 2007/01/21 02:05:42 jstrom Exp $
+ * $Id$
  */
 
 #ifndef CLIENT_PROGRESS_H

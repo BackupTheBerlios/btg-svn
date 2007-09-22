@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: trackerstatus.h,v 1.1.2.11 2007/02/14 22:11:47 wojci Exp $
+ * $Id$
  */
 
 #ifndef TRACKERSTATUS_H

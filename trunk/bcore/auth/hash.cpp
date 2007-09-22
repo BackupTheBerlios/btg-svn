@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: hash.cpp,v 1.1.4.2 2007/06/06 22:04:31 wojci Exp $
+ * $Id$
  */
 
 #include "hash.h"

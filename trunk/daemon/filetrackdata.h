@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: filetrackdata.h,v 1.1.2.2 2007/02/27 17:02:32 wojci Exp $
+ * $Id$
  */
 
 #ifndef FILETRACKDATA_H

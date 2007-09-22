@@ -18,7 +18,7 @@
  */
 
 /*
- * $Id: http.cpp,v 1.1.2.30 2007/08/30 20:50:50 wojci Exp $
+ * $Id$
  */
 
 #include "http.h"

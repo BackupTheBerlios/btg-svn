@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: status.h,v 1.14.4.17 2007/02/25 21:32:50 wojci Exp $
+ * $Id$
  */
 
 #ifndef STATUS_H

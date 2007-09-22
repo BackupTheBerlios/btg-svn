@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: initwindow.cpp,v 1.1.2.3 2006/12/29 14:44:07 wojci Exp $
+ * $Id$
  */
 
 

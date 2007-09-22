@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: limitmgr.h,v 1.1.2.6 2006/12/31 13:51:29 wojci Exp $
+ * $Id$
  */
 
 #ifndef LIMIT_MGR_H

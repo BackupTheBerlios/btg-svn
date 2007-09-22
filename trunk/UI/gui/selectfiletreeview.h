@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: selectfiletreeview.h,v 1.1.2.3 2007/07/22 11:53:17 wojci Exp $
+ * $Id$
  */
 
 #ifndef SELECTFILETREEVIEW_H

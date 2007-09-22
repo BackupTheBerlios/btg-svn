@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: selectfiletreeview.cpp,v 1.1.2.2 2007/06/21 21:53:23 wojci Exp $
+ * $Id$
  */
 
 #include <string>

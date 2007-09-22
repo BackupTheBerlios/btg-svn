@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_status.h,v 1.7.4.3 2006/03/13 18:40:47 jstrom Exp $
+ * $Id$
  */
 
 #ifndef COMMAND_CONTEXT_STATUS_H

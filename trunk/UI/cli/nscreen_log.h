@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: nscreen_log.h,v 1.7.4.2 2006/04/05 18:44:09 wojci Exp $
+ * $Id$
  */
 
 #ifndef NSCREEN_LOGGER_H

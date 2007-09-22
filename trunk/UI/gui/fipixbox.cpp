@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: fipixbox.cpp,v 1.3.4.2 2007/06/20 19:53:43 wojci Exp $
+ * $Id$
  */
 
 #include "fipixbox.h"

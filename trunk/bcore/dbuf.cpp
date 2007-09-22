@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: dbuf.cpp,v 1.8.4.7 2006/08/17 19:56:55 wojci Exp $
+ * $Id$
  */
 
 #include "dbuf.h"

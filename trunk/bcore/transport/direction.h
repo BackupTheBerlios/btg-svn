@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: direction.h,v 1.1.2.3 2006/07/30 08:46:11 wojci Exp $
+ * $Id$
  */
 
 #ifndef DIRECTION_H

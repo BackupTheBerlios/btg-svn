@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: test_gen_transport.cpp,v 1.1.2.22 2006/08/17 19:56:56 wojci Exp $
+ * $Id$
  */
 
 #include "test_gen_transport.h"

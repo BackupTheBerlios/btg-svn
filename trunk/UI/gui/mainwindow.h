@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: mainwindow.h,v 1.16.4.18 2007/07/22 11:53:17 wojci Exp $
+ * $Id$
  */
 
 #ifndef MAIN_WINDOW_H

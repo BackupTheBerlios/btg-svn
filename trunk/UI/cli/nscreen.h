@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: nscreen.h,v 1.11.4.10 2006/08/12 17:37:15 wojci Exp $
+ * $Id$
  */
 
 #ifndef NSCREEN_H

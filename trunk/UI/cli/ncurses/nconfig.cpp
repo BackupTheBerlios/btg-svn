@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: nconfig.cpp,v 1.1.2.2 2006/12/31 00:34:00 wojci Exp $
+ * $Id$
  */
 
 #include "nconfig.h"

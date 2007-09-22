@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: ack.cpp,v 1.6.4.9 2006/03/13 18:40:47 jstrom Exp $
+ * $Id$
  */
 
 #include <iostream>

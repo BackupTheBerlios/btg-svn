@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: hash.h,v 1.1.4.1 2006/03/13 18:40:47 jstrom Exp $
+ * $Id$
  */
 
 #ifndef HASH_H

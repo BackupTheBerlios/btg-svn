@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: modulelog.h,v 1.1.2.4 2007/08/26 15:37:41 wojci Exp $
+ * $Id$
  */
 
 #ifndef MODULELOG_H

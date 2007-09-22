@@ -17,7 +17,7 @@
  */
 
 /*
- * Id    : $Id: kill.h,v 1.1.4.4 2006/03/13 18:40:48 jstrom Exp $
+ * Id    : $Id$
  */
 
 #ifndef KILL_H

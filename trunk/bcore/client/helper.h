@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: helper.h,v 1.2.4.18 2006/08/12 17:37:23 wojci Exp $
+ * $Id$
  */
 
 #ifndef HELPER_H

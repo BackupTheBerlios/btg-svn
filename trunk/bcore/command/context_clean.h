@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_clean.h,v 1.7.4.5 2006/07/21 08:49:39 wojci Exp $
+ * $Id$
  */
 
 #ifndef COMMAND_CONTEXT_CLEAN_H

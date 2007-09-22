@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: session_list.cpp,v 1.6.4.6 2006/03/13 18:40:48 jstrom Exp $
+ * $Id$
  */
 
 #include "session_list.h"

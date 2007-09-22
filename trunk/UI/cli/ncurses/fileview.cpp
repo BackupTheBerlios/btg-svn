@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: fileview.cpp,v 1.1.2.3 2007/01/01 15:45:09 wojci Exp $
+ * $Id$
  */
 
 #include "fileview.h"

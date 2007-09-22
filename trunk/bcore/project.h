@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: project.h,v 1.18.4.7 2006/07/15 20:43:07 wojci Exp $
+ * $Id$
  */
 
 #ifndef PROJECT_H

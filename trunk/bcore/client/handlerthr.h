@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: handlerthr.h,v 1.1.2.1 2007/06/23 14:42:32 wojci Exp $
+ * $Id$
  */
 
 #ifndef HANDLERTHR_H

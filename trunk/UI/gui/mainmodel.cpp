@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: mainmodel.cpp,v 1.7.4.7 2007/06/20 19:53:43 wojci Exp $
+ * $Id$
  */
 
 #include "mainmodel.h"

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: files.h,v 1.1.2.7 2007/08/04 20:52:36 wojci Exp $
+ * $Id$
  */
 
 // All files used for testing - that is all files that are actually

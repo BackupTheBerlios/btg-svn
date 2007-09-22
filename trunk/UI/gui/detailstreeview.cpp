@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: detailstreeview.cpp,v 1.1.2.2 2007/06/20 19:53:43 wojci Exp $
+ * $Id$
  */
 
 #include <string>

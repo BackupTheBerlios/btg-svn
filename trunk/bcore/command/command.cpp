@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: command.cpp,v 1.12.4.27 2007/06/06 22:04:31 wojci Exp $
+ * $Id$
  */
 
 #include "command.h"

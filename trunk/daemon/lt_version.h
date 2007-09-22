@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: lt_version.h,v 1.1.2.5 2007/05/26 18:42:08 wojci Exp $
+ * $Id$
  */
 
 #ifndef LT_VERSION_H

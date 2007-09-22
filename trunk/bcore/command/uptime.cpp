@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: uptime.cpp,v 1.1.2.10 2006/03/13 18:40:48 jstrom Exp $
+ * $Id$
  */
 
 #include "uptime.h"

@@ -23,7 +23,7 @@
  */
 
 /*
- * $Id: tcps.h,v 1.1.2.14 2006/11/29 18:06:29 wojci Exp $
+ * $Id$
  */
 
 #ifndef TCPS_H

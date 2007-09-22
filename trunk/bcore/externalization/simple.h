@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: simple.h,v 1.1.2.13 2007/04/12 12:53:35 wojci Exp $
+ * $Id$
  */
 
 #ifndef SIMPLE_H

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_limit.h,v 1.4.4.5 2006/03/18 17:22:08 jstrom Exp $
+ * $Id$
  */
 
 #ifndef COMMAND_CONTEXT_LIMIT_H

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: test_tcpip.cpp,v 1.1.2.11 2006/08/17 19:56:56 wojci Exp $
+ * $Id$
  */
 
 #include "test_tcpip.h"

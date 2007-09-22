@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: session_error.cpp,v 1.1.4.10 2006/03/13 18:40:48 jstrom Exp $
+ * $Id$
  */
 
 #include "session_error.h"

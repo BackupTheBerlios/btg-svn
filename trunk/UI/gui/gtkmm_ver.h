@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: gtkmm_ver.h,v 1.1.2.2 2006/06/18 10:42:12 wojci Exp $
+ * $Id$
  */
 
 #ifndef GTKMM_VER_H

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: fileop.cpp,v 1.1.2.9 2006/09/27 19:00:21 wojci Exp $
+ * $Id$
  */
 
 #include "fileop.h"

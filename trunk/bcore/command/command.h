@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: command.h,v 1.15.4.24 2007/06/06 22:04:31 wojci Exp $
+ * $Id$
  */
 
 #ifndef COMMAND_H

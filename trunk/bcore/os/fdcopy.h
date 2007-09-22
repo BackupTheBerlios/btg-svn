@@ -23,7 +23,7 @@
  */
 
 /*
- * $Id: fdcopy.h,v 1.1.2.1 2006/01/22 19:11:44 wojci Exp $
+ * $Id$
  */
 
 #ifndef FD_COPY

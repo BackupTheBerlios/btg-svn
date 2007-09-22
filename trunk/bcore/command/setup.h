@@ -17,7 +17,7 @@
  */
 
 /*
- * Id    : $Id: setup.h,v 1.15.4.16 2007/06/02 18:31:30 jstrom Exp $
+ * Id    : $Id$
  */
 
 #ifndef COMMAND_SETUP_H

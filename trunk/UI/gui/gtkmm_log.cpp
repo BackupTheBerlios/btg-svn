@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: gtkmm_log.cpp,v 1.5.4.1 2006/04/05 18:44:09 wojci Exp $
+ * $Id$
  */
 
 #include "gtkmm_log.h"

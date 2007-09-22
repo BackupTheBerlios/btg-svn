@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: guihandler.h,v 1.22.4.34 2007/07/22 11:53:17 wojci Exp $
+ * $Id$
  */
 
 #ifndef GUIHANDLER_H

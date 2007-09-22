@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: dconfig.h,v 1.1.2.31 2007/07/22 11:53:17 wojci Exp $
+ * $Id$
  */
 
 #ifndef DAEMON_CONFIGURATION_H

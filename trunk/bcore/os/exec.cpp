@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: exec.cpp,v 1.1.2.2 2006/11/09 19:04:33 wojci Exp $
+ * $Id$
  */
 
 #include "exec.h"

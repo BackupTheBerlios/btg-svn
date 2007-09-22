@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: eventhandler.h,v 1.11.4.54 2007/08/30 20:50:50 wojci Exp $
+ * $Id$
  */
 
 #ifndef EVENTHANDLER_H

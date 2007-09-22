@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: ipfilterif.h,v 1.1.2.9 2007/07/22 11:53:17 wojci Exp $
+ * $Id$
  */
 
 #ifndef IPFILTERIF_H

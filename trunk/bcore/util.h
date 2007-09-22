@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: util.h,v 1.17.4.20 2007/01/16 21:14:37 wojci Exp $
+ * $Id$
  */
 
 #ifndef UTIL_H

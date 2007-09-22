@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: ext_macro.h,v 1.1.4.1 2006/03/13 18:40:48 jstrom Exp $
+ * $Id$
  */
 
 #ifndef EXTERNALIZATION_MACRO_H

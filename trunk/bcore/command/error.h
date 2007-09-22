@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: error.h,v 1.9.4.5 2006/05/20 18:31:18 wojci Exp $
+ * $Id$
  */
 
 #ifndef ERROR_COMMAND_H

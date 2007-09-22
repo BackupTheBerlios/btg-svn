@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: file_log.cpp,v 1.6.4.2 2006/08/05 23:21:10 wojci Exp $
+ * $Id$
  */
 
 #include <config.h>

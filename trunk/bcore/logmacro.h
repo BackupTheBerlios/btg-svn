@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: logmacro.h,v 1.12.4.15 2007/01/16 20:26:36 wojci Exp $
+ * $Id$
  */
 
 #ifndef LOGMACRO_H

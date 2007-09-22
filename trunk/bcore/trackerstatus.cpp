@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: trackerstatus.cpp,v 1.1.2.10 2007/02/08 22:59:17 wojci Exp $
+ * $Id$
  */
 
 #include "trackerstatus.h"

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: questiondialog.h,v 1.1.2.1 2006/05/21 18:52:16 wojci Exp $
+ * $Id$
  */
 
 #ifndef QUESTION_DIALOG_H

@@ -23,7 +23,7 @@
  */
 
 /*
- * $Id: socket_exception.h,v 1.1.2.2 2005/11/12 13:00:31 wojci Exp $
+ * $Id$
  */
 
 #ifndef SOCKET_EXCEPTION_H

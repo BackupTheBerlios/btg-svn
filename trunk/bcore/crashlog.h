@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: crashlog.h,v 1.3.4.2 2007/01/16 20:26:36 wojci Exp $
+ * $Id$
  */
 
 #ifndef CRASHLOG_H

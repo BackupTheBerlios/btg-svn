@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: cyberlink.h,v 1.1.2.5 2006/09/30 14:55:29 wojci Exp $
+ * $Id$
  */
 
 #ifndef UPNP_CYBERLINK_H

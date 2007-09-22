@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: util.cpp,v 1.16.4.17 2007/01/16 21:14:37 wojci Exp $
+ * $Id$
  */
 
 #include "util.h"

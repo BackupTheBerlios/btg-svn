@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: limitmgr.cpp,v 1.1.2.8 2007/05/26 18:42:08 wojci Exp $
+ * $Id$
  */
 
 #include "limitmgr.h"

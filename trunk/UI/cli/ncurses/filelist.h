@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: filelist.h,v 1.1.2.11 2007/06/06 22:04:30 wojci Exp $
+ * $Id$
  */
 
 #ifndef FILELIST_H

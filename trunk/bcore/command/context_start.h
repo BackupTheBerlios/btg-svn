@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_start.h,v 1.8.4.3 2006/03/13 18:40:47 jstrom Exp $
+ * $Id$
  */
 
 #ifndef COMMAND_START_CONTEXT_H

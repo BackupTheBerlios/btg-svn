@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: timer.cpp,v 1.1.2.2 2006/11/25 16:01:31 wojci Exp $
+ * $Id$
  */
 
 #include "timer.h"

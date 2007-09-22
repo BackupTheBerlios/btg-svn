@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: levelone.cpp,v 1.1.2.8 2007/06/29 23:24:32 wojci Exp $
+ * $Id$
  */
 
 #include "levelone.h"

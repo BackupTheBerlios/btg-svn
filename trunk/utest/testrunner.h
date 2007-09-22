@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: testrunner.h,v 1.1.2.21 2007/04/12 12:53:35 wojci Exp $
+ * $Id$
  */
 
 // Use 1 to enable and 0 to disable.

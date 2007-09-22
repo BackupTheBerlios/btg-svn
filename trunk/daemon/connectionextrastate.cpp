@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: connectionextrastate.cpp,v 1.1.2.1 2007/04/25 06:03:33 wojci Exp $
+ * $Id$
  */
 
 #include "connectionextrastate.h"

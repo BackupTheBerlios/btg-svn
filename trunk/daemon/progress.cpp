@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: progress.cpp,v 1.1.2.4 2007/01/21 02:05:42 jstrom Exp $
+ * $Id$
  */
 
 #include <bcore/t_string.h>

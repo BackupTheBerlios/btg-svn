@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: listener.h,v 1.1.2.1 2006/07/12 10:16:20 wojci Exp $
+ * $Id$
  */
 
 #include <cppunit/extensions/TestFactoryRegistry.h>

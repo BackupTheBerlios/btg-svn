@@ -17,7 +17,7 @@
  */
 
 /*
- * Id    : $Id: context_create.h,v 1.9.4.8 2007/01/21 00:12:47 wojci Exp $
+ * Id    : $Id$
  */
 
 #ifndef COMMAND_CREATE_CONTEXT_H

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: sleep.cpp,v 1.1.2.4 2007/08/20 16:30:45 wojci Exp $
+ * $Id$
  */
 
 #include "sleep.h"

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: sigh.h,v 1.4.4.1 2007/01/16 20:26:36 wojci Exp $
+ * $Id$
  */
 
 #ifndef SIGNAL_HANDLER_H

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: type.h,v 1.13.4.5 2007/04/12 12:53:35 wojci Exp $
+ * $Id$
  */
 
 #ifndef BTG_TYPE_H

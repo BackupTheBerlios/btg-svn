@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: mainfiletreeview.h,v 1.10.4.4 2007/07/22 11:53:17 wojci Exp $
+ * $Id$
  */
 
 #ifndef MAINFILETREEVIEW_H

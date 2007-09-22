@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: limitwindow.cpp,v 1.1.2.9 2006/12/31 13:51:29 wojci Exp $
+ * $Id$
  */
 
 #include "limitwindow.h"

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: prefdialog.cpp,v 1.9.4.2 2007/02/25 21:32:50 wojci Exp $
+ * $Id$
  */
 
 #include "prefdialog.h"

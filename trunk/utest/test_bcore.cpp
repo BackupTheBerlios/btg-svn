@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: test_bcore.cpp,v 1.22.4.36 2007/08/04 20:52:36 wojci Exp $
+ * $Id$
  */
 
 #include <cppunit/extensions/HelperMacros.h>

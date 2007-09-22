@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: detailsmodel.h,v 1.1.2.3 2007/06/20 19:53:43 wojci Exp $
+ * $Id$
  */
 
 #ifndef DETAILSMODEL_H

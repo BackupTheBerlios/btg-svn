@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: project.cpp,v 1.13.4.10 2006/12/09 01:28:07 wojci Exp $
+ * $Id$
  */
 
 #include "project.h"

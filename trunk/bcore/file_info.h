@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: file_info.h,v 1.8.4.13 2007/06/20 19:53:43 wojci Exp $
+ * $Id$
  */
 
 #ifndef FILE_INFO_H

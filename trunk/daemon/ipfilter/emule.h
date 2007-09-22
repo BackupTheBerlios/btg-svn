@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: emule.h,v 1.1.2.2 2007/06/29 23:24:32 wojci Exp $
+ * $Id$
  */
 
 #ifndef EMULE_H

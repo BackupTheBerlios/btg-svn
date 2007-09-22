@@ -23,7 +23,7 @@
  */
 
 /*
- * $Id: stcps.h,v 1.1.4.4 2006/11/29 18:06:29 wojci Exp $
+ * $Id$
  */
 
 #ifndef STCPS_H

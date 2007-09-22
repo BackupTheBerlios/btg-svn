@@ -23,7 +23,7 @@
  */
 
 /*
- * $Id: stcpc.h,v 1.1.4.3 2006/08/05 23:21:10 wojci Exp $
+ * $Id$
  */
 
 #ifndef STCPC_H

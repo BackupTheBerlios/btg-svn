@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: traficmodel.cpp,v 1.7.4.3 2007/02/24 13:15:08 wojci Exp $
+ * $Id$
  */
 
 #include "traficmodel.h"

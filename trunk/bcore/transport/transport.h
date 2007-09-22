@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: transport.h,v 1.1.2.22 2006/08/12 17:37:23 wojci Exp $
+ * $Id$
  */
 
 #ifndef MESSAGETRANSPORT_H

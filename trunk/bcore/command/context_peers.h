@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: context_peers.h,v 1.1.2.2 2006/03/13 18:40:47 jstrom Exp $
+ * $Id$
  */
 
 #ifndef COMMAND_PEERS_H

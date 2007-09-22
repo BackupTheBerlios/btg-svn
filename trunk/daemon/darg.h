@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: darg.h,v 1.7.4.13 2006/09/24 11:14:08 wojci Exp $
+ * $Id$
  */
 
 #ifndef DARG_H

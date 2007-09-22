@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: daemonhandler.h,v 1.1.2.31 2007/08/26 18:00:31 wojci Exp $
+ * $Id$
  */
 
 #ifndef DAEMONHANDLER_H

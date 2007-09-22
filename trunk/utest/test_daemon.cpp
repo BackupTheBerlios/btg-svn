@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: test_daemon.cpp,v 1.1.2.28 2007/08/08 21:43:36 wojci Exp $
+ * $Id$
  */
 
 #include "test_daemon.h"

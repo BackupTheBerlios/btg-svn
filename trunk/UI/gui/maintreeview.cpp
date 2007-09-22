@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: maintreeview.cpp,v 1.18.4.8 2007/02/13 22:38:57 wojci Exp $
+ * $Id$
  */
 
 #include <string>

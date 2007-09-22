@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: ack.h,v 1.8.4.4 2006/03/13 18:40:47 jstrom Exp $
+ * $Id$
  */
 
 #ifndef COMMAND_ACK_H

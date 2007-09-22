@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: btgpasswd.cpp,v 1.1.4.21 2007/06/10 16:03:44 wojci Exp $
+ * $Id$
  */
 
 #include <bcore/project.h>

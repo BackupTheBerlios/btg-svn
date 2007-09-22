@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: lastfiles.h,v 1.1.2.3 2006/05/11 15:48:40 wojci Exp $
+ * $Id$
  */
 
 #ifndef LAST_FILES_H

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: portmap.cpp,v 1.1.2.1 2006/09/22 21:37:17 wojci Exp $
+ * $Id$
  */
 
 #include "portmap.h"

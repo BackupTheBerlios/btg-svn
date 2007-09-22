@@ -18,7 +18,7 @@
  */
 
 /*
- * $Id: connectionhandler.cpp,v 1.1.4.6 2007/04/25 06:02:46 wojci Exp $
+ * $Id$
  */
 
 #include <bcore/logmacro.h>

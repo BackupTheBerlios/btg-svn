@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: clienthandler.h,v 1.11.4.41 2007/06/23 14:42:32 wojci Exp $
+ * $Id$
  */
 
 #ifndef CLIENTHANDLER_H

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: mainwindow.cpp,v 1.1.2.20 2007/06/06 22:04:30 wojci Exp $
+ * $Id$
  */
 
 #include "mainwindow.h"

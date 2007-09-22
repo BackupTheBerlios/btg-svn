@@ -23,7 +23,7 @@
  */
 
 /*
- * $Id: socket_exception.cpp,v 1.1.2.1 2005/10/30 21:49:25 wojci Exp $
+ * $Id$
  */
 
 #include "socket_exception.h"

@@ -17,7 +17,7 @@
  */
 
 /*
- * Id    : $Id: uptime.h,v 1.1.2.6 2006/03/13 18:40:48 jstrom Exp $
+ * Id    : $Id$
  */
 
 #ifndef UPTIME_H

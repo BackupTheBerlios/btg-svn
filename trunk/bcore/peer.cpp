@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: peer.cpp,v 1.1.2.9 2006/08/05 23:21:08 wojci Exp $
+ * $Id$
  */
 
 #include "peer.h"
