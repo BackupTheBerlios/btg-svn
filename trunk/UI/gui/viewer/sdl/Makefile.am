@@ -1,8 +1,8 @@
 bin_PROGRAMS = btgvs
 
-btgvs_SOURCES = ui.cpp btgvs.cpp
+btgvs_SOURCES = handler.cpp ui.cpp btgvs.cpp
 
-noinst_HEADERS = ui.h btgvs.h
+noinst_HEADERS = handler.h ui.h btgvs.h
 
 btgvs_LDADD   = $(top_builddir)/bcore/libbtgcore.la \
                 $(top_builddir)/bcore/client/libbtgclient.la \

@@ -596,7 +596,6 @@ int main(int argc, char **argv)
       }
    
    // Only execute setup if we are not attaching to an existing session.
-   // if ((!cla->doAttach()) && (!cla->doAttachFirst()))
    if (executeSetup)
       {
          if (starthelper->execute(startupHelper::op_setup) == startupHelper::or_setup_failture)

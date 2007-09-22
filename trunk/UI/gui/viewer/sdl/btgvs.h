@@ -22,5 +22,51 @@
 
 #ifndef BTGVS_H
 #define BTGVS_H
+
+#include "handler.h"
+#include <bcore/externalization/xmlrpc.h>
+#include <bcore/client/configuration.h>
+#include <bcore/client/lastfiles.h>
+
+namespace btg
+{
+   namespace UI
+   {
+      namespace gui
+      {
+         namespace viewer
+         {
+
+
+            struct clientData
+            {
+            clientData()
+            : handlerthr(0),
+                  handler(0),
+                  externalization(0),
+                  config(0),
+                  lastfiles(0)
+               {
+               }
+
+               btg::core::client::handlerThread*             handlerthr;
+
+               btg::UI::gui::viewer::viewerHandler*          handler;
+
+               btg::core::externalization::Externalization*  externalization;
+
+               btg::core::client::clientConfiguration*       config;
+
+               btg::core::client::lastFiles*                 lastfiles;
+            };
+
+            bool initClient();
+            void deinitClient();
+
+         }
+      }
+   }
+}
+
 #endif
 

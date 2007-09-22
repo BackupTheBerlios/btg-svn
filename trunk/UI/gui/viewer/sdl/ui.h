@@ -35,49 +35,62 @@ extern "C"
 #include <string>
 #include <vector>
 
-struct tableData
+namespace btg
 {
-   std::string filename;
-   std::string status;
-   std::string progress;
-   std::string dlul;
-   std::string size;
-   std::string peers;
-};
-
-struct btgvsGui
-{
-   AG_Timeout      timer;
-   AG_Window*      window;
-   AG_VBox*        contents_box;
-   AG_Notebook*    notebook;
-   AG_Statusbar*   statusbar;
-   AG_Label*       statusbarlabel;
-   AG_NotebookTab* tabs[3];
-	AG_Table*       table;
-   AG_Graph*       plot;
-   AG_GraphItem*   plotItem;
-};
-
-struct timerData
-{
-   timerData(btgvsGui & _gui)
-   : gui(_gui)
+   namespace UI
    {
-   }
+      namespace gui
+      {
+         namespace viewer
+         {
+            struct tableData
+            {
+               std::string filename;
+               std::string status;
+               std::string progress;
+               std::string dlul;
+               std::string size;
+               std::string peers;
+            };
 
-   btgvsGui & gui;
-};
+            struct btgvsGui
+            {
+               AG_Timeout      timer;
+               AG_Window*      window;
+               AG_VBox*        contents_box;
+               AG_Notebook*    notebook;
+               AG_Statusbar*   statusbar;
+               AG_Label*       statusbarlabel;
+               AG_NotebookTab* tabs[3];
+               AG_Table*       table;
+               AG_Graph*       plot;
+               AG_GraphItem*   plotItem;
+            };
 
-void createGui(btgvsGui & _gui);
+            struct timerData
+            {
+            timerData(btgvsGui & _gui)
+            : gui(_gui)
+               {
+               }
 
-void createTimer(btgvsGui & _gui, timerData* _timerdata);
+               btgvsGui & gui;
+            };
 
-void run();
+            void createGui(btgvsGui & _gui);
 
-void destroyGui(btgvsGui & _gui);
+            void createTimer(btgvsGui & _gui, timerData* _timerdata);
 
-void updateTable(btgvsGui & _gui, std::vector<tableData> const& _data);
+            void run();
+
+            void destroyGui(btgvsGui & _gui);
+
+            void updateTable(btgvsGui & _gui, std::vector<tableData> const& _data);
+
+         } // namespace viewer
+      } // namespace gui
+   } // namespace UI
+} // namespace btg
 
 #endif
 

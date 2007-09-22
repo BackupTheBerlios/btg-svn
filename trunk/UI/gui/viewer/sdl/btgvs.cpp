@@ -23,12 +23,461 @@
 #include "btgvs.h"
 #include "ui.h"
 
+#include <bcore/project.h>
+#include <bcore/type.h>
+#include <bcore/util.h>
+#include <bcore/client/carg.h>
+#include <bcore/externalization/simple.h>
+#include <bcore/externalization/xmlrpc.h>
+#include <bcore/os/id.h>
+#include <bcore/os/fileop.h>
+#include <bcore/logger/logger.h>
+#include <bcore/logger/file_log.h>
+#include <bcore/t_string.h>
+#include <bcore/crashlog.h>
+#include <bcore/client/handlerthr.h>
 #include <iostream>
- 
-int main(int argc, char *argv)
+
+using namespace btg::core;
+using namespace btg::core::logger;
+using namespace btg::core::client;
+using namespace btg::UI::gui::viewer;
+using namespace std;
+
+clientData clientdata;
+
+void quitapp()
 {
+   if (!clientdata.handler)
+      {
+         return;
+      }
+
+   // Detach from session.
+   clientdata.handler->reqDetach();
+
+   // destroyGui(gui);
+
+   delete clientdata.handlerthr;
+   clientdata.handlerthr = 0;
+
+   // By deleting the gui handler, the transport used is also deleted.
+   delete clientdata.handler;
+   clientdata.handler = 0;
+
+   delete clientdata.externalization;
+   clientdata.externalization = 0;
+
+   delete clientdata.config;
+   clientdata.config = 0;
+
+   delete clientdata.lastfiles;
+   clientdata.lastfiles = 0;
+
+   projectDefaults::killInstance();
+   logWrapper::killInstance();
+
+   AG_Quit();
+}
+
+int main(int argc, char **argv)
+{
+   std::string clientName("btgvs");
+
+   btg::core::crashLog::init();
+
+   commandLineArgumentHandler* cla = new commandLineArgumentHandler(GPD->sGUI_CONFIG());
+
+   cla->setup();
+
+   // Parse command line arguments.
+   if (!cla->parse(argc, argv))
+      {
+         delete cla;
+         cla    = 0;
+
+         projectDefaults::killInstance();
+         logWrapper::killInstance();
+
+         return BTG_ERROR_EXIT;
+      }
+
+   // Before doing anything else, check if the user wants to get the
+   // syntax of the configuration file.
+   if (cla->listConfigFileSyntax())
+      {
+         clientConfiguration non_existing("non_existing");
+
+         std::cout << non_existing.getSyntax() << std::endl;
+
+         delete cla;
+         cla = 0;
+
+         projectDefaults::killInstance();
+         logWrapper::killInstance();
+
+         return BTG_NORMAL_EXIT;
+      }
+
+   bool verboseFlag = cla->beVerbose();
+
+   // Open the configuration file:
+   std::string config_filename = GPD->sCLI_CONFIG();
+
+   if (cla->configFileSet())
+      {
+         config_filename = cla->configFile();
+      }
+
+   string errorString;
+   if (!btg::core::os::fileOperation::check(config_filename, errorString, false))
+      {
+         BTG_FATAL_ERROR(clientName, "Could not open file '" << config_filename << "'");
+
+         return BTG_ERROR_EXIT;
+      }
+
+   // Open the configuration file:
+   clientdata.config = new clientConfiguration(config_filename);
+
+   bool const gotConfig = clientdata.config->read();
+
+   std::string lastfile_filename = GPD->sGUI_LASTFILES();
+   if (!btg::core::os::fileOperation::check(lastfile_filename, errorString, false))
+      {
+         BTG_NOTICE("Could not open file '" << lastfile_filename << "'.");
+      }
+
+   clientdata.lastfiles = new lastFiles(lastfile_filename);
+   clientdata.lastfiles->load();
+
+   if (!gotConfig)
+      {
+         BTG_FATAL_ERROR(clientName, "Could not read the config file, '" << GPD->sGUI_CONFIG() << "'. Create one.");
+         delete clientdata.config;
+         clientdata.config = 0;
+
+         delete clientdata.lastfiles;
+         clientdata.lastfiles = 0;
+
+         delete cla;
+         cla    = 0;
+
+         projectDefaults::killInstance();
+         logWrapper::killInstance();
+
+         return BTG_ERROR_EXIT;
+      }
+
+   // Create a transport to the daemon:
+   clientdata.externalization  = 0;
+   messageTransport* transport = 0;
+
+   transportHelper* transporthelper = new transportHelper("btgvs",
+                                                          clientdata.config,
+                                                          cla);
+
+   if (!transporthelper->initTransport(clientdata.externalization, transport))
+      {
+         BTG_FATAL_ERROR(clientName, transporthelper->getMessages());
+
+         delete clientdata.config;
+         clientdata.config = 0;
+
+         delete clientdata.lastfiles;
+         clientdata.lastfiles = 0;
+
+         delete cla;
+         cla    = 0;
+
+         delete transport;
+         transport = 0;
+
+         delete clientdata.externalization;
+         clientdata.externalization = 0;
+
+         delete transporthelper;
+         transporthelper = 0;
+
+         projectDefaults::killInstance();
+         logWrapper::killInstance();
+
+         return BTG_ERROR_EXIT;
+      }
+
+   delete transporthelper;
+   transporthelper = 0;
+
+   btgvsGui gui;
+
+   clientdata.handler = new viewerHandler(clientdata.externalization,
+                                          transport,
+                                          clientdata.config,
+                                          clientdata.lastfiles,
+                                          verboseFlag,
+                                          cla->automaticStart(),
+                                          gui);
+
+   string initialStatusMessage("");
+
+   // Create a helper to do the initial setup of this client.
+   startupHelper* starthelper = new viewerStartupHelper(clientdata.config,
+                                                        cla,
+                                                        transport,
+                                                        clientdata.handler);
+
+   if (!starthelper->init())
+      {
+
+         BTG_FATAL_ERROR(clientName, "Internal error: start up helper not initialized.");
+
+         delete starthelper;
+         starthelper = 0;
+
+         delete clientdata.handler;
+         clientdata.handler = 0;
+
+         delete clientdata.externalization;
+         clientdata.externalization = 0;
+
+         delete cla;
+         cla = 0;
+
+         delete clientdata.config;
+         clientdata.config = 0;
+
+         delete clientdata.lastfiles;
+         clientdata.lastfiles = 0;
+
+         projectDefaults::killInstance();
+         logWrapper::killInstance();
+
+         return BTG_ERROR_EXIT;
+      }
+
+#if BTG_DEBUG
+   // Set debug logging, if requested.
+   if (cla->doDebug())
+      {
+         logWrapper::getInstance()->setMinMessagePriority(logWrapper::PRIO_DEBUG);
+      }
+   else if (verboseFlag)
+      {
+         logWrapper::getInstance()->setMinMessagePriority(logWrapper::PRIO_VERBOSE);
+      }
+   else
+      {
+         // Default: only report errors.
+         logWrapper::getInstance()->setMinMessagePriority(logWrapper::PRIO_ERROR);
+      }
+#else
+   // No debug enabled, check for verbose flag.
+   if (verboseFlag)
+      {
+         logWrapper::getInstance()->setMinMessagePriority(logWrapper::PRIO_VERBOSE);
+      }
+   else
+      {
+         // Default: only report errors.
+         logWrapper::getInstance()->setMinMessagePriority(logWrapper::PRIO_ERROR);
+      }
+#endif // BTG_DEBUG
+
+   // Initialize logging.
+   if (starthelper->execute(startupHelper::op_log) != startupHelper::or_log_success)
+      {
+         BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to initialize logging");
+         delete starthelper;
+         starthelper = 0;
+
+         delete clientdata.handler;
+         clientdata.handler = 0;
+
+         delete clientdata.externalization;
+         clientdata.externalization = 0;
+
+         delete cla;
+         cla = 0;
+
+         delete clientdata.config;
+         clientdata.config = 0;
+
+         delete clientdata.lastfiles;
+         clientdata.lastfiles = 0;
+
+         projectDefaults::killInstance();
+         logWrapper::killInstance();
+
+         return BTG_ERROR_EXIT;
+      }
+
+   if (!clientdata.config->authSet())
+      {
+         BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "No auth info in client config file.");
+
+         delete starthelper;
+         starthelper = 0;
+         
+         delete clientdata.handler;
+         clientdata.handler = 0;
+         
+         delete clientdata.externalization;
+         clientdata.externalization = 0;
+         
+         delete cla;
+         cla = 0;
+         
+         delete clientdata.config;
+         clientdata.config = 0;
+
+         delete clientdata.lastfiles;
+         clientdata.lastfiles = 0;
+         
+         projectDefaults::killInstance();
+         logWrapper::killInstance();
+         
+         return BTG_ERROR_EXIT;
+      }
+
+   // Auth info is in the config.
+   starthelper->setUser(clientdata.config->getUserName());
+   starthelper->setPasswordHash(clientdata.config->getPasswordHash());
+
+   /// Initialize the transport
+   starthelper->execute(startupHelper::op_init);
+
    // Handle command line options:
-   // TODO: implement this.
+   if (cla->doList())
+      {
+         if (starthelper->execute(startupHelper::op_list) == startupHelper::or_list_failture)
+            {
+               BTG_FATAL_ERROR(clientName, starthelper->getMessages());
+            }
+
+         // Clean up, before quitting.
+         delete starthelper;
+         starthelper = 0;
+
+         delete clientdata.handler;
+         clientdata.handler = 0;
+
+         delete clientdata.externalization;
+         clientdata.externalization = 0;
+
+         delete cla;
+         cla = 0;
+
+         delete clientdata.config;
+         clientdata.config = 0;
+
+         delete clientdata.lastfiles;
+         clientdata.lastfiles = 0;
+
+         projectDefaults::killInstance();
+         logWrapper::killInstance();
+
+         return BTG_NORMAL_EXIT;
+      }
+   else if (cla->doAttachFirst())
+      {
+         // Attach to the first available session.
+
+         if (starthelper->execute(startupHelper::op_attach_first) == 
+             startupHelper::or_attach_first_failture)
+            {
+               BTG_FATAL_ERROR(clientName, "Unable to attach to session");
+
+               // Clean up, before quitting.
+               delete starthelper;
+               starthelper = 0;
+
+               delete clientdata.handler;
+               clientdata.handler = 0;
+
+               delete cla;
+               cla = 0;
+
+               delete clientdata.externalization;
+               clientdata.externalization = 0;
+
+               delete clientdata.config;
+               clientdata.config = 0;
+
+               delete clientdata.lastfiles;
+               clientdata.lastfiles = 0;
+
+               projectDefaults::killInstance();
+               logWrapper::killInstance();
+
+               return BTG_ERROR_EXIT;
+            }
+
+         initialStatusMessage = "Attached to session.";
+      }
+   else if (cla->doAttach())
+      {
+         // Attach to a certain session, either specified on the
+         // command line or chosen by the user from a list.
+
+         startupHelper::operationResult result = starthelper->execute(startupHelper::op_attach);
+
+         if (result == startupHelper::or_attach_failture)
+            {
+               BTG_FATAL_ERROR(clientName, "Unable to attach to session");
+            }
+         
+         if ((result == startupHelper::or_attach_failture) || 
+             (result == startupHelper::or_attach_cancelled))
+            {
+               // Clean up, before quitting.
+               delete starthelper;
+               starthelper = 0;
+	     
+               delete clientdata.handler;
+               clientdata.handler = 0;
+	     
+               delete clientdata.externalization;
+               clientdata.externalization = 0;
+	     
+               delete cla;
+               cla = 0;
+	     
+               delete clientdata.config;
+               clientdata.config = 0;
+	     
+               delete clientdata.lastfiles;
+               clientdata.lastfiles = 0;
+	     
+               projectDefaults::killInstance();
+               logWrapper::killInstance();
+
+               return BTG_ERROR_EXIT;
+            }
+
+         initialStatusMessage = "Attached to session.";
+      }
+
+   // Done using arguments.
+   delete cla;
+   cla = 0;
+
+   // Done using the start up helper.
+   delete starthelper;
+   starthelper = 0;
+
+   t_long session = clientdata.handler->session();
+   std::string str_session = btg::core::convertToString<t_long>(session);
+
+   // Start a thread that takes care of communicating with the daemon.
+   clientdata.handlerthr = new handlerThread(verboseFlag, clientdata.handler);
+
+   BTG_NOTICE(initialStatusMessage);
+
+   //
+   // 
+   // BTG initialized, start UI.
+   // 
+   //  
 
 	/* Initialize Agar. */
 	if (AG_InitCore("BTGVS", 0) == -1)
@@ -44,7 +493,7 @@ int main(int argc, char *argv)
          return -1;
       }
 
-   btgvsGui gui;
+   // btgvsGui gui;
    createGui(gui);
 
    tableData td;
@@ -78,10 +527,16 @@ int main(int argc, char *argv)
    timerData timerdata(gui);
    createTimer(gui, &timerdata);
 
+   // Bind ESC to a quit function which will tell the daemon that this
+   // client is detaching and clean up.
+   AG_BindGlobalKey(SDLK_ESCAPE, KMOD_NONE, quitapp);
+
+   // This will block until user presses ESC.
    run();
 
-   destroyGui(gui);
+   quitapp();
 
-	return 0;
+   return BTG_NORMAL_EXIT;
 }
+
 

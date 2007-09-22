@@ -23,125 +23,139 @@
 #include "ui.h"
 #include <iostream>
 
-static Uint32 update_event(void *obj, Uint32 ival, void *arg)
+namespace btg
 {
-   std::cout << "Timer!" << std::endl;
+   namespace UI
+   {
+      namespace gui
+      {
+         namespace viewer
+         {
 
-   timerData* timerdata = (timerData*)arg;
+            static Uint32 update_event(void *obj, Uint32 ival, void *arg)
+            {
+               std::cout << "Timer!" << std::endl;
 
-   std::vector<tableData> data;
+               timerData* timerdata = (timerData*)arg;
 
-   updateTable(timerdata->gui, data);
+               std::vector<tableData> data;
 
-	return ival;
-}
+               updateTable(timerdata->gui, data);
 
-void createTimer(btgvsGui & _gui, timerData* _timerdata)
-{
-   // Create a new timer.
-   AG_SetTimeout(&_gui.timer, update_event, _timerdata, 0);
-	AG_AddTimeout(_gui.table, &_gui.timer, 1000);
-}
+               return ival;
+            }
 
-void createGui(btgvsGui & _gui)
-{ 
-   AG_SetRefreshRate(25);
 
-   AG_InitConfigWin(0);
+            void createTimer(btgvsGui & _gui, timerData* _timerdata)
+            {
+               // Create a new timer.
+               AG_SetTimeout(&_gui.timer, update_event, _timerdata, 0);
+               AG_AddTimeout(_gui.table, &_gui.timer, 1000);
+            }
 
-	AG_BindGlobalKey(SDLK_ESCAPE, KMOD_NONE, AG_Quit);
+            void createGui(btgvsGui & _gui)
+            { 
+               AG_SetRefreshRate(25);
 
-	// Create a new window.
-	_gui.window = AG_WindowNewNamed(AG_WINDOW_NOTITLE | AG_WINDOW_NOBORDERS, "%s", "BTGVS");
-   AG_WindowSetCaption(_gui.window, "%s", "TEST");
+               AG_InitConfigWin(0);
 
-   _gui.contents_box = AG_VBoxNew(_gui.window, AG_VBOX_EXPAND);
-   _gui.notebook     = AG_NotebookNew(_gui.contents_box, AG_NOTEBOOK_EXPAND);
-   AG_NotebookSetTabAlignment(_gui.notebook, AG_NOTEBOOK_TABS_BOTTOM);
+               // Create a new window.
+               _gui.window = AG_WindowNewNamed(AG_WINDOW_NOTITLE | AG_WINDOW_NOBORDERS, "%s", "BTGVS");
+               AG_WindowSetCaption(_gui.window, "%s", "TEST");
 
-   // Status bar.
-   _gui.statusbar      = AG_StatusbarNew(_gui.contents_box, 1);
-   _gui.statusbarlabel = AG_StatusbarAddLabel(_gui.statusbar, AG_LABEL_STATIC, "Ready.");
+               _gui.contents_box = AG_VBoxNew(_gui.window, AG_VBOX_EXPAND);
+               _gui.notebook     = AG_NotebookNew(_gui.contents_box, AG_NOTEBOOK_EXPAND);
+               AG_NotebookSetTabAlignment(_gui.notebook, AG_NOTEBOOK_TABS_BOTTOM);
 
-   _gui.tabs[0] = AG_NotebookAddTab(_gui.notebook, "Torrents", AG_BOX_HORIZ);
-   _gui.tabs[1] = AG_NotebookAddTab(_gui.notebook, "Graph",    AG_BOX_HORIZ);
-   _gui.tabs[2] = AG_NotebookAddTab(_gui.notebook, "Info",     AG_BOX_HORIZ);
+               // Status bar.
+               _gui.statusbar      = AG_StatusbarNew(_gui.contents_box, 1);
+               _gui.statusbarlabel = AG_StatusbarAddLabel(_gui.statusbar, AG_LABEL_STATIC, "Ready.");
 
-   AG_NotebookSelectTab(_gui.notebook, _gui.tabs[0]);
+               _gui.tabs[0] = AG_NotebookAddTab(_gui.notebook, "Torrents", AG_BOX_HORIZ);
+               _gui.tabs[1] = AG_NotebookAddTab(_gui.notebook, "Graph",    AG_BOX_HORIZ);
+               _gui.tabs[2] = AG_NotebookAddTab(_gui.notebook, "Info",     AG_BOX_HORIZ);
 
-	// Create a new table that expands to fill the window.
-	_gui.table = AG_TableNew(_gui.tabs[0], AG_TABLE_EXPAND);
+               AG_NotebookSelectTab(_gui.notebook, _gui.tabs[0]);
+
+               // Create a new table that expands to fill the window.
+               _gui.table = AG_TableNew(_gui.tabs[0], AG_TABLE_EXPAND);
  
-	/* Insert the columns. */
-   char* sizeSpecifier = "<01234567890123456789>";
-	AG_TableAddCol(_gui.table, "Filename", sizeSpecifier, 0/*SortString*/);
-	AG_TableAddCol(_gui.table, "Status", sizeSpecifier, 0 /*SortInt*/);
-   AG_TableAddCol(_gui.table, "Progress", sizeSpecifier, 0 /*SortInt*/);
-   AG_TableAddCol(_gui.table, "Dl/Ul", sizeSpecifier, 0 /*SortInt*/);
-   AG_TableAddCol(_gui.table, "Size", sizeSpecifier, 0 /*SortInt*/);
-   AG_TableAddCol(_gui.table, "Peer/Seed", sizeSpecifier, 0 /*SortInt*/);
+               /* Insert the columns. */
+               char* sizeSpecifier = "<01234567890123456789>";
+               AG_TableAddCol(_gui.table, "Filename", sizeSpecifier, 0/*SortString*/);
+               AG_TableAddCol(_gui.table, "Status", sizeSpecifier, 0 /*SortInt*/);
+               AG_TableAddCol(_gui.table, "Progress", sizeSpecifier, 0 /*SortInt*/);
+               AG_TableAddCol(_gui.table, "Dl/Ul", sizeSpecifier, 0 /*SortInt*/);
+               AG_TableAddCol(_gui.table, "Size", sizeSpecifier, 0 /*SortInt*/);
+               AG_TableAddCol(_gui.table, "Peer/Seed", sizeSpecifier, 0 /*SortInt*/);
 
-	/* Insert the rows. */
-   /*
-   for (unsigned int i = 0;
-        i < 100;
-        i ++)
-      {
-         AG_TableAddRow(_gui.table, "%s:%s:%s:%s:%s:%s", 
-                        "Torrent filename",
-                        "Seed",
-                        "00:21:23",
-                        "50 Kib/s / 60 Kib/s",
-                        "1024 MiB",
-                        "10/500");
-      }
-   */   
-   // Plot.
+               /* Insert the rows. */
+               /*
+                 for (unsigned int i = 0;
+                 i < 100;
+                 i ++)
+                 {
+                 AG_TableAddRow(_gui.table, "%s:%s:%s:%s:%s:%s", 
+                 "Torrent filename",
+                 "Seed",
+                 "00:21:23",
+                 "50 Kib/s / 60 Kib/s",
+                 "1024 MiB",
+                 "10/500");
+                 }
+               */   
+               // Plot.
    
-   _gui.plot     = AG_GraphNew(_gui.tabs[1], AG_GRAPH_LINES, AG_GRAPH_EXPAND);
-   _gui.plotItem = AG_GraphAddItem(_gui.plot, "Plot 1", 255, 255, 255, 10000);
+               _gui.plot     = AG_GraphNew(_gui.tabs[1], AG_GRAPH_LINES, AG_GRAPH_EXPAND);
+               _gui.plotItem = AG_GraphAddItem(_gui.plot, "Plot 1", 255, 255, 255, 10000);
 
-   for (unsigned int i = 0;
-        i < 5000;
-        i ++)
-      {
-         AG_GraphPlot(_gui.plotItem, i);
-      }
+               for (unsigned int i = 0;
+                    i < 5000;
+                    i ++)
+                  {
+                     AG_GraphPlot(_gui.plotItem, i);
+                  }
 
-	// Show the window and enter event loop.
-	AG_WindowShow(_gui.window);
-   AG_WindowMaximize(_gui.window);
-}
+               // Show the window and enter event loop.
+               AG_WindowShow(_gui.window);
+               AG_WindowMaximize(_gui.window);
+            }
 
-void run()
-{
-   AG_EventLoop();
-}
+            void run()
+            {
+               AG_EventLoop();
+            }
 
-void destroyGui(btgvsGui & _gui)
-{
+            void destroyGui(btgvsGui & _gui)
+            {
    
-}
+            }
 
-void updateTable(btgvsGui & _gui, std::vector<tableData> const& _data)
-{
-   AG_TableBegin(_gui.table);
+            void updateTable(btgvsGui & _gui, std::vector<tableData> const& _data)
+            {
+               AG_TableBegin(_gui.table);
    
-   for (std::vector<tableData>::const_iterator iter = _data.begin();
-        iter != _data.end();
-        iter++)
-      {
-         const tableData & td = *iter;
-         AG_TableAddRow(_gui.table, "%s:%s:%s:%s:%s:%s", 
-                        td.filename.c_str(),
-                  td.status.c_str(),
-                  td.progress.c_str(),
-                  td.dlul.c_str(),
-                  td.size.c_str(),
-                  td.peers.c_str());
-      }
+               for (std::vector<tableData>::const_iterator iter = _data.begin();
+                    iter != _data.end();
+                    iter++)
+                  {
+                     const tableData & td = *iter;
+                     AG_TableAddRow(_gui.table, "%s:%s:%s:%s:%s:%s", 
+                                    td.filename.c_str(),
+                                    td.status.c_str(),
+                                    td.progress.c_str(),
+                                    td.dlul.c_str(),
+                                    td.size.c_str(),
+                                    td.peers.c_str());
+                  }
 
-   AG_TableEnd(_gui.table);
+               AG_TableEnd(_gui.table);
 
-   AG_TableRedrawCells(_gui.table);
-}
+               AG_TableRedrawCells(_gui.table);
+            }
+
+         } // namespace viewer
+      } // namespace gui
+   } // namespace UI
+} // namespace btg
+
