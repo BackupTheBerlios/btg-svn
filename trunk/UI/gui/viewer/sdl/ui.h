@@ -35,6 +35,8 @@ extern "C"
 #include <string>
 #include <vector>
 
+#include <bcore/client/handlerthr.h>
+
 namespace btg
 {
    namespace UI
@@ -67,14 +69,20 @@ namespace btg
                AG_GraphItem*   plotItem;
             };
 
+            class viewerHandler;
+
             struct timerData
             {
-            timerData(btgvsGui & _gui)
-            : gui(_gui)
+            timerData(btgvsGui &                           _gui,
+                      btg::core::client::handlerThread*    _handlerthr,
+                      viewerHandler* _handler)
+            : gui(_gui), handlerthr(_handlerthr), handler(_handler)
                {
                }
 
-               btgvsGui & gui;
+               btgvsGui &                           gui;
+               btg::core::client::handlerThread*    handlerthr;
+               viewerHandler* handler;
             };
 
             void createGui(btgvsGui & _gui);

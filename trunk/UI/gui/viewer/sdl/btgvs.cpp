@@ -346,39 +346,10 @@ int main(int argc, char **argv)
    /// Initialize the transport
    starthelper->execute(startupHelper::op_init);
 
+   bool attached = false;
+
    // Handle command line options:
-   if (cla->doList())
-      {
-         if (starthelper->execute(startupHelper::op_list) == startupHelper::or_list_failture)
-            {
-               BTG_FATAL_ERROR(clientName, starthelper->getMessages());
-            }
-
-         // Clean up, before quitting.
-         delete starthelper;
-         starthelper = 0;
-
-         delete clientdata.handler;
-         clientdata.handler = 0;
-
-         delete clientdata.externalization;
-         clientdata.externalization = 0;
-
-         delete cla;
-         cla = 0;
-
-         delete clientdata.config;
-         clientdata.config = 0;
-
-         delete clientdata.lastfiles;
-         clientdata.lastfiles = 0;
-
-         projectDefaults::killInstance();
-         logWrapper::killInstance();
-
-         return BTG_NORMAL_EXIT;
-      }
-   else if (cla->doAttachFirst())
+   if (cla->doAttachFirst())
       {
          // Attach to the first available session.
 
@@ -413,6 +384,7 @@ int main(int argc, char **argv)
             }
 
          initialStatusMessage = "Attached to session.";
+         attached = true;
       }
    else if (cla->doAttach())
       {
@@ -455,6 +427,44 @@ int main(int argc, char **argv)
             }
 
          initialStatusMessage = "Attached to session.";
+         attached = true;
+      }
+
+   // Attempt to the first session even if no arguments were given.
+   if (!attached)
+      {
+         // Attach to the first available session.
+         if (starthelper->execute(startupHelper::op_attach_first) == 
+             startupHelper::or_attach_first_failture)
+            {
+               BTG_FATAL_ERROR(clientName, "Unable to attach to session");
+
+               // Clean up, before quitting.
+               delete starthelper;
+               starthelper = 0;
+
+               delete clientdata.handler;
+               clientdata.handler = 0;
+
+               delete cla;
+               cla = 0;
+
+               delete clientdata.externalization;
+               clientdata.externalization = 0;
+
+               delete clientdata.config;
+               clientdata.config = 0;
+
+               delete clientdata.lastfiles;
+               clientdata.lastfiles = 0;
+
+               projectDefaults::killInstance();
+               logWrapper::killInstance();
+
+               return BTG_ERROR_EXIT;
+            }
+
+         initialStatusMessage = "Attached to session.";
       }
 
    // Done using arguments.
@@ -469,7 +479,8 @@ int main(int argc, char **argv)
    std::string str_session = btg::core::convertToString<t_long>(session);
 
    // Start a thread that takes care of communicating with the daemon.
-   clientdata.handlerthr = new handlerThread(verboseFlag, clientdata.handler);
+   // clientdata.handlerthr = new handlerThread(verboseFlag, clientdata.handler);
+   clientdata.handlerthr = 0;
 
    BTG_NOTICE(initialStatusMessage);
 
@@ -496,35 +507,8 @@ int main(int argc, char **argv)
    // btgvsGui gui;
    createGui(gui);
 
-   tableData td;
-   td.filename = "Torrent 0.torrent";
-   td.status   = "Downloading";
-   td.progress = "00:00:50";
-   td.dlul     = "10 KiB/sec / 25 KiB/sec";
-   td.size     = "1024 GiB";
-   td.peers    = "10/200";
-
-   std::vector<tableData> tdv;
-   tdv.push_back(td);
-
-   td.filename = "Torrent 1.torrent";
-   td.progress = "00:01:50";
-   tdv.push_back(td);
-   td.filename = "Torrent 2.torrent";
-   td.progress = "00:02:50";
-   tdv.push_back(td);
-   td.filename = "Torrent 3.torrent";
-   td.progress = "00:03:50";
-   tdv.push_back(td);
-   td.filename = "Torrent 4.torrent";
-   td.progress = "00:04:50";
-   tdv.push_back(td);
-
-   // Initial update of the torrent table.
-   updateTable(gui, tdv);
-
    // Create a timer which will refresh the UI.
-   timerData timerdata(gui);
+   timerData timerdata(gui, clientdata.handlerthr, clientdata.handler);
    createTimer(gui, &timerdata);
 
    // Bind ESC to a quit function which will tell the daemon that this

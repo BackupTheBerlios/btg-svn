@@ -20,8 +20,8 @@
  * $Id$
  */
 
-#ifndef HANDLER_H
-#define HANDLER_H
+#ifndef VIEWERHANDLER_H
+#define VIEWERHANDLER_H
 
 #include <string>
 

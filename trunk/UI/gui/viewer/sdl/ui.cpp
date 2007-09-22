@@ -23,6 +23,13 @@
 #include "ui.h"
 #include <iostream>
 
+#include "handler.h"
+
+#include <bcore/hrr.h>
+#include <bcore/hru.h>
+#include <bcore/t_string.h>
+#include <bcore/util.h>
+
 namespace btg
 {
    namespace UI
@@ -31,14 +38,123 @@ namespace btg
       {
          namespace viewer
          {
+            using namespace btg::core;
 
             static Uint32 update_event(void *obj, Uint32 ival, void *arg)
             {
-               std::cout << "Timer!" << std::endl;
-
                timerData* timerdata = (timerData*)arg;
 
+               t_statusList statuslist;
                std::vector<tableData> data;
+
+               timerdata->handler->reqStatus(-1, true);
+
+               if (timerdata->handler->statusListUpdated())
+                  {
+                     timerdata->handler->getStatusList(statuslist);
+                     timerdata->handler->resetStatusList();
+
+                     tableData td;
+
+                     for (t_statusListI iter = statuslist.begin();
+                          iter != statuslist.end();
+                          iter++)
+                        {
+                           std::string filename;
+
+                           if (Util::getFileFromPath(iter->filename(), filename))
+                              {
+                                 td.filename = filename;
+                              }
+                           else
+                              {
+                                 td.filename = iter->filename();
+                              }
+
+                           switch(iter->status())
+                              {
+                              case btg::core::Status::ts_undefined:
+                                 td.status = "Undefined";
+                                 break;
+                              case btg::core::Status::ts_queued:
+                                 td.status = "Queued";
+                                 break;
+                              case btg::core::Status::ts_checking:
+                                 td.status = "Checking file";
+                                 break;
+                              case btg::core::Status::ts_connecting:
+                                 td.status = "Connecting";
+                                 break;
+                              case btg::core::Status::ts_downloading:
+                                 td.status = "Downloading";
+                                 break;
+                              case btg::core::Status::ts_seeding:
+                                 td.status = "Seeding";
+                                 break;
+                              case btg::core::Status::ts_stopped:
+                                 td.status = "Stopped";
+                                 break;
+                              case btg::core::Status::ts_finished:
+                                 td.status = "Finished";
+                                 break;
+                              default:
+                                 td.status = "ERROR";
+                                 break;
+                              }
+
+                           humanReadableRate hrr = humanReadableRate::convert(iter->downloadRate());
+                           td.dlul = hrr.toString();
+
+                           td.dlul += " / ";
+
+                           hrr = humanReadableRate::convert(iter->uploadRate());
+                           td.dlul += hrr.toString();
+                           
+                           std::string progress;
+
+                           std::string done_str = convertToString<t_int>(iter->done()) + " %";
+
+                           if (iter->status() == btg::core::Status::ts_downloading)
+                              {
+                                 if (iter->validTimeLeft())
+                                    {
+                                       std::string timespec;
+                                       iter->timeLeftToString(timespec);
+                                       progress = timespec + " (" + done_str + ")";
+                                    }
+                                 else
+                                    {
+                                       // Invalid progress, show percent.
+                                       progress = done_str;
+                                    }
+                              } // downloading
+                           else
+                              {
+                                 // Not downloading.
+                                 progress = done_str;
+                              }
+
+                           td.progress = progress;
+
+                           // Convert the filesize to human readable form.
+                           t_ullong bytes = iter->filesize();
+                           hRU hru        = hRU::convert(bytes);
+                           td.size        = hru.toString();
+
+                           // Update the peer count.
+                           td.peers = convertToString<t_int>(iter->leechers()) + "/" +
+                              convertToString<t_int>(iter->seeders());
+
+                           data.push_back(td);
+                           // mtw->updateStatus(iter->contextID(),
+                           //*iter,
+                           //               doUpdateProgress);
+                           // Update the trafic graph.
+                           // mnb->getPlot()->updateCounter(*iter);
+
+                           //updateTrackerStatus(*iter);
+                        }
+                  }
 
                updateTable(timerdata->gui, data);
 

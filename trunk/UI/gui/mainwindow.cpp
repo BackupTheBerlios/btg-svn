@@ -205,18 +205,6 @@ namespace btg
                      handler->getStatusList(statuslist);
                      handler->resetStatusList();
                   }
-
-               // Update list of context IDs.
-               // handler->reqList();
-
-               // Get the status of all contexts.
-               // handler->reqStatus(0, true);
-
-               //if (handler->commandSuccess())
-               //   {
-               //      handler->getStatusList(statuslist);
-               //      gotStatus = true;
-               //   }
             }
 
             if (gotStatus)

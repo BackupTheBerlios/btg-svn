@@ -127,7 +127,7 @@ namespace btg
 
             string filename;
 
-            if (Util::getFileFromPath(_status.filename(), filename) == true)
+            if (Util::getFileFromPath(_status.filename(), filename))
                {
                   row[statusrecord.filename] = filename;
                }
@@ -239,7 +239,7 @@ namespace btg
             elemMap em;
             for (elemMap_citer i = selectedElements.begin(); i != selectedElements.end(); i++)
                {
-                  if (i->second == true)
+                  if (i->second)
                      {
                         em[i->first] = i->second;
                      }
@@ -253,7 +253,7 @@ namespace btg
             bool result = false;
             for (elemMap_citer i = selectedElements.begin(); i != selectedElements.end(); i++)
                {
-                  if (i->second == true)
+                  if (i->second)
                      {
                         result = true;
                         break;
@@ -268,7 +268,7 @@ namespace btg
 
             for (elemMap_citer i = selectedElements.begin(); i != selectedElements.end(); i++)
                {
-                  if (i->second == true)
+                  if (i->second)
                      {
                         n++;
                      }
