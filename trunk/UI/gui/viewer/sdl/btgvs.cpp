@@ -490,14 +490,14 @@ int main(int argc, char **argv)
    // 
    //  
 
-	/* Initialize Agar. */
+	// Initialize Agar.
 	if (AG_InitCore("BTGVS", 0) == -1)
       {
          std::cerr << "Unable to initialize agar subsystem." << std::endl;
          return -1;
       }
 
-   /* AG_VIDEO_FULLSCREEN */
+   // AG_VIDEO_FULLSCREEN.
    if (AG_InitVideo(800, 600, 32, AG_VIDEO_DOUBLEBUF | AG_VIDEO_RESIZABLE) == -1) 
       {
          std::cerr << "Unable to initialize agar gfx subsystem." << std::endl;

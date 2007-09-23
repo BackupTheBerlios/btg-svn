@@ -40,6 +40,11 @@ namespace btg
          {
             using namespace btg::core;
 
+            void scaleBW(t_uint & _max, 
+                         t_uint &_min, 
+                         t_uint _bw, 
+                         t_uint & _scaled);
+
             static Uint32 update_event(void *obj, Uint32 ival, void *arg)
             {
                timerData* timerdata = (timerData*)arg;
@@ -110,6 +115,10 @@ namespace btg
                            hrr = humanReadableRate::convert(iter->uploadRate());
                            td.dlul += hrr.toString();
                            
+                           // Rates in KiB/sec.
+                           td.dlCount = iter->downloadRate() / 1024;
+                           td.ulCount = iter->uploadRate() / 1024;
+
                            std::string progress;
 
                            std::string done_str = convertToString<t_int>(iter->done()) + " %";
@@ -146,17 +155,11 @@ namespace btg
                               convertToString<t_int>(iter->seeders());
 
                            data.push_back(td);
-                           // mtw->updateStatus(iter->contextID(),
-                           //*iter,
-                           //               doUpdateProgress);
-                           // Update the trafic graph.
-                           // mnb->getPlot()->updateCounter(*iter);
-
-                           //updateTrackerStatus(*iter);
                         }
                   }
 
                updateTable(timerdata->gui, data);
+               updateGraph(timerdata->gui, data);
 
                return ival;
             }
@@ -196,41 +199,21 @@ namespace btg
                // Create a new table that expands to fill the window.
                _gui.table = AG_TableNew(_gui.tabs[0], AG_TABLE_EXPAND);
  
-               /* Insert the columns. */
+               // Insert the columns.
                char* sizeSpecifier = "<01234567890123456789>";
-               AG_TableAddCol(_gui.table, "Filename", sizeSpecifier, 0/*SortString*/);
-               AG_TableAddCol(_gui.table, "Status", sizeSpecifier, 0 /*SortInt*/);
-               AG_TableAddCol(_gui.table, "Progress", sizeSpecifier, 0 /*SortInt*/);
-               AG_TableAddCol(_gui.table, "Dl/Ul", sizeSpecifier, 0 /*SortInt*/);
-               AG_TableAddCol(_gui.table, "Size", sizeSpecifier, 0 /*SortInt*/);
-               AG_TableAddCol(_gui.table, "Peer/Seed", sizeSpecifier, 0 /*SortInt*/);
+               AG_TableAddCol(_gui.table, "Filename", sizeSpecifier, 0);
+               AG_TableAddCol(_gui.table, "Status", sizeSpecifier, 0);
+               AG_TableAddCol(_gui.table, "Progress", sizeSpecifier, 0);
+               AG_TableAddCol(_gui.table, "Dl/Ul", sizeSpecifier, 0);
+               AG_TableAddCol(_gui.table, "Size", sizeSpecifier, 0);
+               AG_TableAddCol(_gui.table, "Peer/Seed", sizeSpecifier, 0);
 
-               /* Insert the rows. */
-               /*
-                 for (unsigned int i = 0;
-                 i < 100;
-                 i ++)
-                 {
-                 AG_TableAddRow(_gui.table, "%s:%s:%s:%s:%s:%s", 
-                 "Torrent filename",
-                 "Seed",
-                 "00:21:23",
-                 "50 Kib/s / 60 Kib/s",
-                 "1024 MiB",
-                 "10/500");
-                 }
-               */   
                // Plot.
-   
-               _gui.plot     = AG_GraphNew(_gui.tabs[1], AG_GRAPH_LINES, AG_GRAPH_EXPAND);
-               _gui.plotItem = AG_GraphAddItem(_gui.plot, "Plot 1", 255, 255, 255, 10000);
+               _gui.plot     = AG_GraphNew(_gui.tabs[1], AG_GRAPH_LINES, AG_GRAPH_SCROLL | AG_GRAPH_EXPAND);
 
-               for (unsigned int i = 0;
-                    i < 5000;
-                    i ++)
-                  {
-                     AG_GraphPlot(_gui.plotItem, i);
-                  }
+               _gui.plotDlItem   = AG_GraphAddItem(_gui.plot, "Download", 255, 255, 0,   512);
+               _gui.plotZeroItem = AG_GraphAddItem(_gui.plot, "Zero",     127, 127, 127, 512);
+               _gui.plotUlItem   = AG_GraphAddItem(_gui.plot, "Upload",   255, 0,   0,   512);
 
                // Show the window and enter event loop.
                AG_WindowShow(_gui.window);
@@ -268,6 +251,61 @@ namespace btg
                AG_TableEnd(_gui.table);
 
                AG_TableRedrawCells(_gui.table);
+            }
+
+            void scaleBW(t_uint & _max, 
+                         t_uint &_min, 
+                         t_uint _bw, 
+                         t_uint & _scaled)
+            {
+               if (_bw > _max)
+                  {
+                     _max = _bw;
+                  }
+
+               if (_bw < _min )
+                  {
+                     _min = _bw;
+                  }
+
+               t_int delta = _max-_min;
+
+               if (delta <= 0)
+                  {
+                     delta = 1;
+                  }
+               
+               _scaled = (_bw - _min) * 40 / delta;
+            }
+
+            void updateGraph(btgvsGui & _gui, std::vector<tableData> const& _data)
+            {
+               t_uint ul = 0;
+               t_uint dl = 0;
+               for (std::vector<tableData>::const_iterator iter = _data.begin();
+                    iter != _data.end();
+                    iter++)
+                  {
+                     ul += iter->ulCount;
+                     dl += iter->dlCount;
+                  }
+
+               t_uint ul_scaled = 0;
+               scaleBW(_gui.ul_max, _gui.ul_min, ul, ul_scaled);
+               t_uint dl_scaled = 0;
+               scaleBW(_gui.ul_max, _gui.ul_min, dl, dl_scaled);
+
+               // std::cout << ul_scaled << ":" << ul << std::endl;
+               // std::cout << dl_scaled << ":" << dl << std::endl;
+
+               //AG_GraphScale(_gui.plotDlItem, 512, dl);
+               //AG_GraphScale(_gui.plotUlItem, 512, ul);
+
+               // dl_scaled = 50;
+
+               AG_GraphPlot(_gui.plotDlItem, dl_scaled);
+               AG_GraphPlot(_gui.plotZeroItem, 0);
+               AG_GraphPlot(_gui.plotUlItem, -1*ul_scaled);
             }
 
          } // namespace viewer
