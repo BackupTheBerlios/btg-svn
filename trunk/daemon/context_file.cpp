@@ -247,15 +247,15 @@ namespace btg
                      file_path = file_path.branch_path();
                   }
 
-               // Fix of bug #11575.
+               // Fix of bug #11575 / #12055.
                // Check if the found file path is a directory.
                // If its not, then its just files in the seed
                // directory.
                
                try
                   {
-                     if (boost::filesystem::exists(file_path) && 
-                         boost::filesystem::is_directory(file_path))
+                     if (boost::filesystem::exists(seedDir_ / file_path) &&
+                         boost::filesystem::is_directory(seedDir_ / file_path))
                         {
                            file_path = seedDir_ / file_path;
                         }
