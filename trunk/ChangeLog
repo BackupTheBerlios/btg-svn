@@ -1,3 +1,9 @@
+BTG version 0.9.7
+-----------------
+The following bugs were fixed:
+
+012055 File checking fails on torrents that contain directories.
+
 BTG version 0.9.6
 -----------------
 The following bugs were fixed:
