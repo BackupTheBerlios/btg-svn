@@ -5,6 +5,7 @@ configuration.cpp lastfiles.cpp\
 statemachine.cpp \
 clienthandler.cpp \
 clientcallback.cpp \
+helper_argif.cpp \
 helper.cpp \
 handlerthr.cpp
 
@@ -13,6 +14,7 @@ configuration.h lastfiles.h \
 statemachine.h \
 clienthandler.h \
 clientcallback.h \
+helper_argif.h \
 helper.h \
 handlerthr.h
 

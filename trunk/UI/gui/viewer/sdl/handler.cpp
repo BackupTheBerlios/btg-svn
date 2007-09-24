@@ -412,7 +412,7 @@ namespace btg
             }
 
             viewerStartupHelper::viewerStartupHelper(btg::core::client::clientConfiguration*        _config,
-                                               btg::core::client::commandLineArgumentHandler* _clah,
+                                               vsCommandLineArgumentHandler* _clah,
                                                btg::core::messageTransport*                   _messageTransport,
                                                btg::core::client::clientHandler*              _handler)
                : btg::core::client::startupHelper("btgvs",

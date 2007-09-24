@@ -22,11 +22,11 @@
 
 #include "btgvs.h"
 #include "ui.h"
+#include "arg.h"
 
 #include <bcore/project.h>
 #include <bcore/type.h>
 #include <bcore/util.h>
-#include <bcore/client/carg.h>
 #include <bcore/externalization/simple.h>
 #include <bcore/externalization/xmlrpc.h>
 #include <bcore/os/id.h>
@@ -86,7 +86,7 @@ int main(int argc, char **argv)
 
    btg::core::crashLog::init();
 
-   commandLineArgumentHandler* cla = new commandLineArgumentHandler(GPD->sGUI_CONFIG());
+   vsCommandLineArgumentHandler* cla = new vsCommandLineArgumentHandler(GPD->sGUI_CONFIG());
 
    cla->setup();
 
@@ -101,6 +101,10 @@ int main(int argc, char **argv)
 
          return BTG_ERROR_EXIT;
       }
+
+   bool fullscreen  = cla->fullscreen();
+   bool res1440x900 = cla->res1440x900();
+   bool res1024x768 = cla->res1024x768();
 
    // Before doing anything else, check if the user wants to get the
    // syntax of the configuration file.
@@ -497,8 +501,29 @@ int main(int argc, char **argv)
          return -1;
       }
 
+   t_uint af_flags = AG_VIDEO_DOUBLEBUF | AG_VIDEO_RESIZABLE;
+   if (fullscreen)
+      {
+         af_flags |= AG_VIDEO_FULLSCREEN;
+      }
+
+   t_uint x = 800;
+   t_uint y = 600;
+
+   if (res1440x900)
+      {
+         x = 1440;
+         y = 900;
+      }
+
+   if (res1024x768)
+      {
+         x = 1024;
+         y = 768;
+      }
+
    // AG_VIDEO_FULLSCREEN.
-   if (AG_InitVideo(800, 600, 32, AG_VIDEO_DOUBLEBUF | AG_VIDEO_RESIZABLE) == -1) 
+   if (AG_InitVideo(x, y, 32, af_flags) == -1) 
       {
          std::cerr << "Unable to initialize agar gfx subsystem." << std::endl;
          return -1;

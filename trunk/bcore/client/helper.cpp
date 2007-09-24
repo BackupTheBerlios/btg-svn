@@ -51,7 +51,7 @@ namespace btg
       {
          Helper::Helper(std::string const&          _clientName,
                         clientConfiguration*        _config,
-                        commandLineArgumentHandler* _clah)
+                        HelperArgIf* _clah)
             : clientName(_clientName),
               config(_config),
               clah(_clah),
@@ -90,7 +90,7 @@ namespace btg
 
          startupHelper::startupHelper(std::string const&          _clientName,
                                       clientConfiguration*        _config,
-                                      commandLineArgumentHandler* _clah,
+                                      HelperArgIf*                _clah,
                                       messageTransport*           _mtrans,
                                       clientHandler*              _handler
                                       )
@@ -433,9 +433,9 @@ namespace btg
 
          /* -- */
 
-         transportHelper::transportHelper(std::string const&          _clientName,
-                                          clientConfiguration*        _config,
-                                          commandLineArgumentHandler* _clah)
+         transportHelper::transportHelper(std::string const&   _clientName,
+                                          clientConfiguration* _config,
+                                          HelperArgIf*         _clah)
             : Helper(
                      _clientName,
                      _config,

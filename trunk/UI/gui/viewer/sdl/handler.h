@@ -39,6 +39,8 @@
 #include <bcore/client/configuration.h>
 #include <bcore/client/handlerthr.h>
 
+#include "arg.h"
+
 #include "ui.h"
 
 namespace btg
@@ -217,7 +219,7 @@ namespace btg
                public:
                   /// Constructor.
                   viewerStartupHelper(btg::core::client::clientConfiguration*        _config,
-                                      btg::core::client::commandLineArgumentHandler* _clah,
+                                      vsCommandLineArgumentHandler* _clah,
                                       btg::core::messageTransport*                   _messageTransport,
                                       btg::core::client::clientHandler*              _handler);
 

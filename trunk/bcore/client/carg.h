@@ -32,6 +32,8 @@
 
 #include <bcore/argif.h>
 
+#include <bcore/client/helper_argif.h>
+
 namespace btg
 {
    namespace core
@@ -47,7 +49,9 @@ namespace btg
                /// This class implements parsing of arguments that can
                /// be passed to the btg client applications.
                class commandLineArgumentHandler: 
-                  public btg::core::argumentInterface, public Printable
+                  public btg::core::argumentInterface, 
+                  public HelperArgIf, 
+                  public Printable
                   {
                   public:
 

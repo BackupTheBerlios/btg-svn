@@ -25,9 +25,11 @@
 
 #include <bcore/transport/transport.h>
 #include <bcore/logmacro.h>
-#include "configuration.h"
-#include "clienthandler.h"
-#include "carg.h"
+
+#include <bcore/client/helper_argif.h>
+#include <bcore/client/configuration.h>
+#include <bcore/client/clienthandler.h>
+#include <bcore/client/carg.h>
 
 #include <string>
 
@@ -52,7 +54,7 @@ namespace btg
                      /// @param [in] _clah             The client command line arguments.
                      Helper(std::string const&          _clientName,
                             clientConfiguration*        _config,
-                            commandLineArgumentHandler* _clah);
+                            HelperArgIf* _clah);
                      /// Get all the saved messages as one string.
                      virtual std::string getMessages();
                      /// Destructor.
@@ -66,7 +68,7 @@ namespace btg
                      /// The client configuration used.
                      clientConfiguration*                         config;
                      /// The client command line arguments.
-                     commandLineArgumentHandler*                  clah;
+                     HelperArgIf*                                 clah;
                      /// The session.
                      t_long                                       session;
                      /// A list of saved messages.
@@ -138,7 +140,7 @@ namespace btg
 
                      startupHelper(std::string const&          _clientName,
                                    clientConfiguration*        _config,
-                                   commandLineArgumentHandler* _clah,
+                                   HelperArgIf*                _clah,
                                    messageTransport*           _messageTransport,
                                    clientHandler*              _handler
                                    );
@@ -231,7 +233,7 @@ namespace btg
                      /// @param [in] _clah             The client command line arguments.
                      transportHelper(std::string const&          _clientName,
                                      clientConfiguration*        _config,
-                                     commandLineArgumentHandler* _clah);
+                                     HelperArgIf*                _clah);
 
                      /// Init the message transport used and the
                      //externalization use to encode/decode commands
