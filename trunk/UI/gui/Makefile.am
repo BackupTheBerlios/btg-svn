@@ -2,6 +2,8 @@ if BUILDVIEWER
   SUBDIRS = viewer
 endif
 
+if BUILDGUI
+
 bin_PROGRAMS = btgui
 
 btgui_SOURCES = initwindow.cpp \
@@ -36,3 +38,5 @@ btgui_CFLAGS   = @CFLAGS@ @LIBGNUTLS_CFLAGS@ \
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/external
 man1_MANS  = btgui.man
 EXTRA_DIST = btgui.man
+
+endif # build gui
