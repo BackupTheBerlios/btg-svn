@@ -50,11 +50,25 @@ namespace btg
                std::string filename;
                std::string status;
                std::string progress;
+
+               /// Download rate in bytes per second.
+               t_uint      dlRate;
+
+               /// String describing download/upload rate in human
+               /// readable format.
                std::string dlul;
-               t_uint dlCount;
-               t_uint ulCount;
+
+               t_uint      dlCount;
+               t_uint      ulCount;
                std::string size;
                std::string peers;
+
+               /// Operator, used to sort by download rate.
+               bool operator<(tableData const& _td) const
+               {
+                  return (dlRate > _td.dlRate);
+               }
+
             };
 
             struct btgvsGui
@@ -73,7 +87,8 @@ namespace btg
                   ul_max(100),
                   ul_min(0),
                   dl_max(100),
-                  dl_min(0)
+                  dl_min(0),
+                  updateDelay(1000)
                {
                   tabs[0] = 0;
                   tabs[1] = 0;
@@ -97,6 +112,9 @@ namespace btg
                t_uint          ul_min;
                t_uint          dl_max;
                t_uint          dl_min;
+
+               /// How often the UI shall be updated.
+               t_uint          updateDelay;
             };
 
             class viewerHandler;
@@ -126,6 +144,8 @@ namespace btg
             void updateTable(btgvsGui & _gui, std::vector<tableData> const& _data);
 
             void updateGraph(btgvsGui & _gui, std::vector<tableData> const& _data);
+            
+            void update_ui(timerData* _timerdata);
 
          } // namespace viewer
       } // namespace gui

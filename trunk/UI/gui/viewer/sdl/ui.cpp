@@ -30,6 +30,8 @@
 #include <bcore/t_string.h>
 #include <bcore/util.h>
 
+#include <algorithm>
+
 namespace btg
 {
    namespace UI
@@ -48,16 +50,22 @@ namespace btg
             static Uint32 update_event(void *obj, Uint32 ival, void *arg)
             {
                timerData* timerdata = (timerData*)arg;
+               update_ui(timerdata);
 
+               return ival;
+            }
+
+            void update_ui(timerData* _timerdata)
+            {
                t_statusList statuslist;
                std::vector<tableData> data;
 
-               timerdata->handler->reqStatus(-1, true);
+               _timerdata->handler->reqStatus(-1, true);
 
-               if (timerdata->handler->statusListUpdated())
+               if (_timerdata->handler->statusListUpdated())
                   {
-                     timerdata->handler->getStatusList(statuslist);
-                     timerdata->handler->resetStatusList();
+                     _timerdata->handler->getStatusList(statuslist);
+                     _timerdata->handler->resetStatusList();
 
                      tableData td;
 
@@ -106,6 +114,8 @@ namespace btg
                                  td.status = "ERROR";
                                  break;
                               }
+
+                           td.dlRate = iter->downloadRate();
 
                            humanReadableRate hrr = humanReadableRate::convert(iter->downloadRate());
                            td.dlul = hrr.toString();
@@ -158,10 +168,11 @@ namespace btg
                         }
                   }
 
-               updateTable(timerdata->gui, data);
-               updateGraph(timerdata->gui, data);
+               // Sort the array by download bandwidth.
+               std::sort(data.begin(), data.end());
 
-               return ival;
+               updateTable(_timerdata->gui, data);
+               updateGraph(_timerdata->gui, data);
             }
 
 
@@ -169,7 +180,7 @@ namespace btg
             {
                // Create a new timer.
                AG_SetTimeout(&_gui.timer, update_event, _timerdata, 0);
-               AG_AddTimeout(_gui.table, &_gui.timer, 1000);
+               AG_AddTimeout(_gui.table, &_gui.timer, _gui.updateDelay * 1000);
             }
 
             void createGui(btgvsGui & _gui)

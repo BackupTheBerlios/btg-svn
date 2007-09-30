@@ -104,6 +104,10 @@ namespace btg
                bool res1440x900() const;
                bool res1024x768() const;
 
+               bool autoChangeTabs() const;
+               t_uint getAutoDelay() const;
+               t_uint getUpdateFreq() const;
+
                /// Destructor.
                virtual ~vsCommandLineArgumentHandler();
 
@@ -137,6 +141,11 @@ namespace btg
 
                bool                         res1440x900_set;
                bool                         res1024x768_set;
+
+               bool                         autoTab_set;
+               t_uint                       autoDelay;
+
+               t_uint                       updateFreq;
             };
 
             /** @} */

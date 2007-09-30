@@ -102,9 +102,13 @@ int main(int argc, char **argv)
          return BTG_ERROR_EXIT;
       }
 
-   bool fullscreen  = cla->fullscreen();
-   bool res1440x900 = cla->res1440x900();
-   bool res1024x768 = cla->res1024x768();
+   bool fullscreen   = cla->fullscreen();
+   bool res1440x900  = cla->res1440x900();
+   bool res1024x768  = cla->res1024x768();
+   
+   bool autochange   = cla->autoChangeTabs();
+   t_uint autodelay  = cla->getAutoDelay();
+   t_uint updateFreq = cla->getUpdateFreq();
 
    // Before doing anything else, check if the user wants to get the
    // syntax of the configuration file.
@@ -534,6 +538,12 @@ int main(int argc, char **argv)
 
    // Create a timer which will refresh the UI.
    timerData timerdata(gui, clientdata.handlerthr, clientdata.handler);
+   gui.updateDelay = updateFreq;
+
+   // Run an update the first time.
+   update_ui(&timerdata);
+
+   // Create a timer for future updates.
    createTimer(gui, &timerdata);
 
    // Bind ESC to a quit function which will tell the daemon that this
