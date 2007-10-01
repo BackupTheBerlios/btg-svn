@@ -33,7 +33,7 @@ following applications are installed:
 Daemon
 ~~~~~~
 - C and C++ compiler.
-- `Rasterbar Libtorrent`_ 0.9, 0.10, 0.11 or CVS. To decide which libtorrent version to use see `Rasterbar Libtorrent Versions`_.
+- `Rasterbar Libtorrent`_ 0.9, 0.10, 0.11 or SVN. To decide which libtorrent version to use see `Rasterbar Libtorrent Versions`_.
 - Boost 1.33 or better (Because of the use of Boost IOStreams), 
   multithreaded versions of the libs should be used.
 - `GNU TLS`_ 1.0 or better.
@@ -63,7 +63,7 @@ Support Scripts
 Building the Daemon
 -------------------
 
-Checking out from CVS
+Checking out from SVN
 ~~~~~~~~~~~~~~~~~~~~~
 Create a directory used for compiling.
 
@@ -71,12 +71,11 @@ Create a directory used for compiling.
 
  mkdir ~/btg-devel
 
-Fetch BTG from CVS.
+Fetch BTG from SVN.
 
 ::
 
- cvs -d:pserver:anonymous@cvs.btg.berlios.de:/cvsroot/btg login
- cvs -z3 -d:pserver:anonymous@cvs.btg.berlios.de:/cvsroot/btg co -r devel-branch btg
+ cd ~/btg-devel && svn checkout http://svn.berlios.de/svnroot/repos/btg/trunk
 
 Creating a Build System
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -84,7 +83,7 @@ Generate the build system.
 
 ::
 
- cd ~/btg-devel/btg
+ cd ~/btg-devel/trunk
  ./autogen.sh
 
 Configuring the Build
@@ -364,10 +363,11 @@ and wwwBTG is ready to use.
 
 Other:
 
-When there are updates in BTG you can run cvs update -dP in
-~/btg-devel/ again to download the latest source code, and then you
-run the autogen-stuff, configure as before and finaly make (you might
-want to run make clean before this to make sure no conflicts arises).
+When there are updates in BTG you can run svn update in
+~/btg-devel/trunk again to download the latest source code, and then
+you run the autogen-stuff, configure as before and finaly make (you
+might want to run make clean before this to make sure no conflicts
+arises).
 
 To stop the daemon just issue
 
@@ -578,9 +578,9 @@ One can use one of the following `Rasterbar Libtorrent`_ versions:
 - 0.10.
 - 0.11 - adds DHT support.
 - 0.12 - daemon wide download/upload/connection limits work.
-- SVN (future 0.13) - only with BTG CVS.
+- SVN (future 0.13) - only with BTG SVN.
 
-Setting global limits is no longer supported using other than libtorrent CVS.
+Setting global limits is no longer supported using other than libtorrent SVN.
 
 Supported Directory Structure
 =============================

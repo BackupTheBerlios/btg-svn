@@ -79,22 +79,7 @@ Stable Releases
 - `btg-0.9.5.tar.gz`_ (`Rasterbar Libtorrent`_ 0.9/0.10/0.11/0.12)
 - `btg-0.9.0.tar.gz`_ (`Rasterbar Libtorrent`_ 0.9/0.10/0.11)
 - `btg-0.8.5.tar.gz`_ (`Rasterbar Libtorrent`_ 0.9/0.10/0.11)
-- `btg-0.8.tar.gz`_ (`Rasterbar Libtorrent`_ 0.9/0.10/0.11)
-- `btg-0.7.tar.gz`_ (`Rasterbar Libtorrent`_ 0.9/0.10)
-- `btg-0.6.tar.gz`_ (`Rasterbar Libtorrent`_ 0.9/0.10)
-- `btg-0.5.tar.gz`_ (`Rasterbar Libtorrent`_ 0.9)
-- `btg-0.4.tar.gz`_ (`Rasterbar Libtorrent`_ 0.9)
-- `btg-0.3.tar.gz`_ (`Rasterbar Libtorrent`_ 0.9)
-- `btg-0.2.tar.gz`_ (`Rasterbar Libtorrent`_ 0.9)
-- btg-0.1 (exists only in cvs)
 
-.. _btg-0.2.tar.gz: http://download.berlios.de/btg/btg-0.2.tar.gz
-.. _btg-0.3.tar.gz: http://download.berlios.de/btg/btg-0.3.tar.gz
-.. _btg-0.4.tar.gz: http://download.berlios.de/btg/btg-0.4.tar.gz
-.. _btg-0.5.tar.gz: http://download.berlios.de/btg/btg-0.5.tar.gz
-.. _btg-0.6.tar.gz: http://download.berlios.de/btg/btg-0.6.tar.gz
-.. _btg-0.7.tar.gz: http://download.berlios.de/btg/btg-0.7.tar.gz
-.. _btg-0.8.tar.gz: http://download.berlios.de/btg/btg-0.8.tar.gz
 .. _btg-0.8.5.tar.gz: http://download.berlios.de/btg/btg-0.8.5.tar.gz
 .. _btg-0.9.0.tar.gz: http://download.berlios.de/btg/btg-0.9.0.tar.gz
 .. _btg-0.9.5.tar.gz: http://download.berlios.de/btg/btg-0.9.5.tar.gz
