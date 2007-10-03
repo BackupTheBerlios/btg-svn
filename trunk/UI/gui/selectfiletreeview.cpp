@@ -175,6 +175,8 @@ namespace btg
                }
 
             items.clear();
+            
+            _context_id = current_id;
 
             return status;
          }
