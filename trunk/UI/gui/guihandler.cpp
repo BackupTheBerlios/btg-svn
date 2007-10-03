@@ -460,17 +460,19 @@ namespace btg
             bool status = false;
 
             authDialog* authdialog = new authDialog();
-            authdialog->run();
 
-            std::string username;
-            std::string password;
+            if (authdialog->run() == Gtk::RESPONSE_OK)
+            {
+               std::string username;
+               std::string password;
 
-            if (authdialog->getUsernameAndPassword(username, password))
-               {
-                  setAuth(username, password);
+               if (authdialog->getUsernameAndPassword(username, password))
+                  {
+                     setAuth(username, password);
 
-                  status = true;
-               }
+                     status = true;
+                  }
+            }
 
             delete authdialog;
             authdialog = 0;
