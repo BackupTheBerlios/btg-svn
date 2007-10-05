@@ -53,6 +53,8 @@
 
 #include <bcore/client/handlerthr.h>
 
+#include <bcore/client/clientdynconfig.h>
+
 using namespace btg::core;
 using namespace btg::core::logger;
 using namespace btg::core::client;
@@ -130,16 +132,10 @@ int main(int argc, char **argv)
 
    bool const gotConfig = config->read();
 
-   std::string lastfile_filename = GPD->sGUI_LASTFILES();
-   if (!btg::core::os::fileOperation::check(lastfile_filename, errorString, false))
-      {
-         BTG_NOTICE("Could not open file '" << lastfile_filename << "'.");
-      }
-
    bool neverAskFlag = config->getNeverAskQuestions();
 
-   btg::core::client::lastFiles* lastfiles = new lastFiles(lastfile_filename);
-   lastfiles->load();
+   clientDynConfig cliDynConf(GPD->sCLI_DYNCONFIG());
+   lastFiles* lastfiles = new lastFiles(cliDynConf);
 
    // Update init dialog.
    iw->updateProgress(initWindow::IEV_RCONF_DONE);
@@ -712,7 +708,8 @@ int main(int argc, char **argv)
    mainWindow *mainWindow = new class mainWindow(str_session, 
                                                  verboseFlag, 
                                                  neverAskFlag,
-                                                 handlerthr
+                                                 handlerthr,
+                                                 cliDynConf
                                                  );
 
    BTG_NOTICE(initialStatusMessage);
@@ -748,11 +745,6 @@ int main(int argc, char **argv)
 
    delete config;
    config = 0;
-
-   if (lastfiles->modified())
-      {
-         lastfiles->save();
-      }
 
    delete lastfiles;
    lastfiles = 0;

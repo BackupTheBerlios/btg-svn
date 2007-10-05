@@ -115,32 +115,23 @@ namespace btg
 
 	bool fileTrackData::setFiles(libtorrent::entry const& _torrent_entry)
 	{
-	  bool status = false;
-
-	  libtorrent::torrent_info tinfo;
 	  try
 	    {
-	      tinfo  = libtorrent::torrent_info(_torrent_entry);
-	      status = true;
+              libtorrent::torrent_info tinfo(_torrent_entry);
+	      libtorrent::torrent_info::file_iterator iter;
+
+ 	      for (iter = tinfo.begin_files();
+	           iter != tinfo.end_files();
+	           iter++)
+                {
+	          libtorrent::file_entry const& fe = *iter;
+	          entries_.push_back(fe.path.string());
+	        }
 	    }
 	  catch (std::exception& e)
 	    {
 	      BTG_ERROR_LOG("libtorrent exception: " << e.what() );
-	    }
-
-	  if (!status)
-	    {
 	      return false;
-	    }
-
-	  libtorrent::torrent_info::file_iterator iter;
-
-	  for (iter = tinfo.begin_files();
-	       iter != tinfo.end_files();
-	       iter++)
-            {
-	      libtorrent::file_entry const& fe = *iter;
-	      entries_.push_back(fe.path.string());
 	    }
 
 	  return true;

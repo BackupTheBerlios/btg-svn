@@ -156,8 +156,8 @@ int main(int argc, char **argv)
          BTG_NOTICE("Could not open file '" << lastfile_filename << "'.");
       }
 
-   clientdata.lastfiles = new lastFiles(lastfile_filename);
-   clientdata.lastfiles->load();
+   clientDynConfig cliDynConf(GPD->sCLI_DYNCONFIG());
+   clientdata.lastfiles = new lastFiles(cliDynConf);
 
    if (!gotConfig)
       {

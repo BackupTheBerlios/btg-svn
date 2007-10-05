@@ -62,6 +62,9 @@
 #include <bcore/verbose.h>
 #include <bcore/file_info.h>
 
+#include <bcore/client/clientdynconfig.h>
+#include <bcore/project.h>
+
 #define GET_HANDLER_INST \
    boost::shared_ptr<boost::mutex> ptr = handlerthread->mutex(); \
    boost::mutex::scoped_lock interface_lock(*ptr); \
@@ -80,7 +83,8 @@ namespace btg
          mainWindow::mainWindow(std::string const& _session,
                                 bool const _verboseFlag,
                                 bool const _neverAskFlag,
-                                btg::core::client::handlerThread* _handlerthread)
+                                btg::core::client::handlerThread* _handlerthread,
+                                btg::core::client::clientDynConfig & dc)
             : Gtk::Window(Gtk::WINDOW_TOPLEVEL),
               verboseFlag(_verboseFlag),
               neverAskFlag(_neverAskFlag),
@@ -97,7 +101,8 @@ namespace btg
               updateContexts(true),
               progressCounter(0),
               progressMax(5),
-              trackerstatSerial()
+              trackerstatSerial(),
+              m_clientDynConfig(dc)
          {
             mmb                       = Gtk::manage(new class mainMenubar(this));
             mtw                       = Gtk::manage(new class mainTreeview());
@@ -144,6 +149,12 @@ namespace btg
                mmb->updateLastFileList(handler->getLastFiles());
             }
 
+            // Restore window geometry
+            move(m_clientDynConfig.get_gui_window_x(), m_clientDynConfig.get_gui_window_y());
+            resize(m_clientDynConfig.get_gui_window_width(), m_clientDynConfig.get_gui_window_height());
+            if (m_clientDynConfig.get_gui_window_maximized())
+               maximize();
+
             mtsw->show();
             ntsw->show();
 
@@ -162,7 +173,6 @@ namespace btg
             /// Tell the gui handler about the statusbar, so it can
             /// write messages on it.  As for now only used for daemon
             /// uptime.
-
             {
                GET_HANDLER_INST;
                handler->setStatusBar(msb);
@@ -1048,7 +1058,25 @@ namespace btg
             delete preferencesdialog;
             preferencesdialog = 0;
          }
-
+         
+         bool mainWindow::on_window_state_event (GdkEventWindowState* event)
+         {
+            BTG_NOTICE("Change window state to: " << ((event->new_window_state && Gdk::WINDOW_STATE_MAXIMIZED)?"MAXIMIZED":"unmaximized"));
+            m_clientDynConfig.set_gui_window_maximized(event->new_window_state && Gdk::WINDOW_STATE_MAXIMIZED);
+            return Gtk::Window::on_window_state_event(event);
+         }
+         
+         bool mainWindow::on_configure_event (GdkEventConfigure* event)
+         {
+            BTG_NOTICE("Resizing to: " << event->x << "x" << event->y << "+" << event->width << "+" << event->height);
+            // ugly hack related to state/configure events order
+            if (event->x)
+            {
+               m_clientDynConfig.set_gui_window_position(event->x,event->y);
+               m_clientDynConfig.set_gui_window_dimensions(event->width,event->height);
+            }
+            return Gtk::Window::on_configure_event(event);
+         }
 
       } // namespace gui
    } // namespace UI

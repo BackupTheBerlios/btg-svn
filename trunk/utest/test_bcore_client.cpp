@@ -128,6 +128,8 @@ void testBcoreClient::testConfigurationLastOpenFiles()
    using namespace btg::core;
    using namespace btg::core::logger;
 
+   // need to rewrite
+#if 0
    string config_filename        = TESTFILE_CONFIG;
    string lastfiles_filename     = std::string(TESTFILE_CONFIG)+".last";
    vector<string> last_files;
@@ -163,6 +165,7 @@ void testBcoreClient::testConfigurationLastOpenFiles()
 
    delete config;
    config = 0;
+#endif
 }
 
 void testBcoreClient::setConfigDefaults(btg::core::client::clientConfiguration* _config,

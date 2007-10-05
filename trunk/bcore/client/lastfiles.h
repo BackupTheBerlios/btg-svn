@@ -24,8 +24,8 @@
 #define LAST_FILES_H
 
 #include <bcore/type.h>
-
 #include <bcore/configuration.h>
+#include <bcore/client/clientdynconfig.h>
 
 #include <string>
 
@@ -35,19 +35,14 @@ namespace btg
       {
          namespace client
             {
+
                /// Client configuration.
                class lastFiles
                   {
                   public:
                      /// Constructor.
-                     /// @param [in] _filename The filename to use for reading/writing.
-                     lastFiles(std::string const& _filename);
-
-                     /// Load the list from file.
-                     bool load();
-
-                     /// Load the list to file.
-                     bool save();
+                     /// @param [in] cc The dynamic client configuration data object
+                     lastFiles(clientDynConfig & cc);
 
                      /// Return true if the list was modified.
                      bool modified() const { return data_modified_; };
@@ -66,13 +61,22 @@ namespace btg
 
                      /// Destructor.
                      virtual ~lastFiles();
+                  
+                  protected:
+                     /// Sets data modification flag
+                     /// @param [in] bMod true if data modified
+                     void set_modified(bool const bMod);
+
                   private:
-                     /// The filename.
-                     std::string                                 filename_;
+                     /// Dynamic configuration object
+                     clientDynConfig & m_cc;
+
                      /// Indicates if the list was modified.
-                     bool                                        data_modified_;
+                     bool data_modified_;
+
                      /// List of last opened files.
-                     t_strList                                   lastFiles_;
+                     /// (agregated by clientDynConfig now)
+                     t_strList & lastFiles_;
                   };
             } // namespace client
       } // namespace core

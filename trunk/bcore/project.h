@@ -65,14 +65,12 @@ namespace btg
                std::string sCLI_CLIENT()     const;
                /// The default client confiuration file.
                std::string sCLI_CONFIG()     const;
-               /// The defalt list of last opened files.
-               std::string sCLI_LASTFILES()  const;
+               /// Default client dynamic config file name.
+               std::string sCLI_DYNCONFIG() const;
                /// The GUI client name.
                std::string sGUI_CLIENT()     const;
                /// The default confiuration file.
                std::string sGUI_CONFIG()     const;
-               /// The defalt list of last opened files.
-               std::string sGUI_LASTFILES()  const;
                /// The daemon name.
                std::string sDAEMON()         const;
                /// The version of this software.
@@ -150,9 +148,9 @@ namespace btg
                std::string const cli_client_name;
                /// The name of the client config file.
                std::string       config_name;
-               /// The name of the files used to store last opened
-               /// files.
-               std::string       lastfiles;
+               /// Client dynamic configuration data file name
+               /// @see btg::core::client::clientDynConfig
+               std::string       dynconfig_name;
                /// The name of the GUI client.
                std::string const gui_client_name;
                /// The name of the daemon.

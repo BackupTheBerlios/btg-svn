@@ -58,7 +58,7 @@ namespace btg
          : project_name("btg"),
            cli_client_name("btg*cli"),
            config_name(),
-           lastfiles(),
+           dynconfig_name(),
            gui_client_name("btgui"),
            daemon_name("btgdaemon"),
            version(BTG_EXPAND(BTG_VERSION)),
@@ -86,7 +86,7 @@ namespace btg
            max_last_files(50)
       {
          config_name = home_char + path_separator + hidden_prefix + project_name + path_separator + "client.ini";
-         lastfiles   = config_name + ".last";
+         dynconfig_name = home_char + path_separator + hidden_prefix + project_name + path_separator + "client.dynconfig";
 
          // Convert the version string into:
          // majorVersion
@@ -152,19 +152,15 @@ namespace btg
          return config_name;
       }
 
-      std::string projectDefaults::sCLI_LASTFILES() const
+
+      std::string projectDefaults::sCLI_DYNCONFIG() const
       {
-         return lastfiles;
+         return dynconfig_name;
       }
 
       string projectDefaults::sGUI_CONFIG() const
       {
          return config_name;
-      }
-
-      std::string projectDefaults::sGUI_LASTFILES() const
-      {
-         return lastfiles;
       }
 
       string projectDefaults::sDAEMON() const

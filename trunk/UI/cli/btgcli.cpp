@@ -134,14 +134,8 @@ int main(int argc, char* argv[])
    clientConfiguration* config = new clientConfiguration(config_filename);
    bool const gotConfig = config->read();
 
-   std::string lastfile_filename = GPD->sCLI_LASTFILES();
-   if (!btg::core::os::fileOperation::check(lastfile_filename, errorString, false))
-      {
-         BTG_NOTICE("Could not open file '" << lastfile_filename << "'.");
-      }
-
-   lastFiles* lastfiles = new lastFiles(lastfile_filename);
-   lastfiles->load();
+   clientDynConfig cliDynConf(GPD->sCLI_DYNCONFIG());
+   lastFiles* lastfiles = new lastFiles(cliDynConf);
 
    if (!gotConfig)
       {
@@ -596,23 +590,6 @@ int main(int argc, char* argv[])
 
    delete config;
    config = 0;
-
-   if (lastfiles->modified())
-      {
-         bool status = lastfiles->save();
-         if (status)
-            {
-               BTG_NOTICE("Wrote lastfiles.");
-            }
-         else
-            {
-               BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to write the list of last opened files.");
-            }
-      }
-   else
-      {
-         BTG_NOTICE("Not writting lastfiles.");
-      }
 
    delete lastfiles;
    lastfiles = 0;

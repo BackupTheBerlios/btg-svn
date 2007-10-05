@@ -38,6 +38,8 @@
 
 #include <bcore/client/handlerthr.h>
 
+#include <bcore/client/clientdynconfig.h>
+
 namespace btg
 {
    namespace UI
@@ -64,7 +66,8 @@ namespace btg
                      mainWindow(std::string const& _session,
                                 bool const _verboseFlag, 
                                 bool const _neverAskFlag,
-                                btg::core::client::handlerThread* _handlerthread);
+                                btg::core::client::handlerThread* _handlerthread,
+                                btg::core::client::clientDynConfig & dc);
 
                      /// Used when a menu item is selected.
                      void on_menu_item_selected(buttonMenuIds::MENUID _which_item);
@@ -216,11 +219,18 @@ namespace btg
                      t_uint const              progressMax;
                      /// Map context id to serial.
                      std::map<t_int, t_int>    trackerstatSerial;
+                     /// Client dynamic configuration store
+                     btg::core::client::clientDynConfig & m_clientDynConfig;
                   private:
                      /// Copy constructor.
                      mainWindow(mainWindow const& _mw);
                      /// Assignment operator.
                      mainWindow& operator=(mainWindow const& _mw);
+                  
+                  // Other signal handlers (override)
+                  protected:
+                     virtual bool on_window_state_event (GdkEventWindowState* event);
+                     virtual bool on_configure_event (GdkEventConfigure* event);
                   };
 
                /** @} */
