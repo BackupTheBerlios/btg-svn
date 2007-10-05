@@ -1900,19 +1900,13 @@ namespace btg
       void Context::setProxyHttpSettings(btg::core::addressPort const& _proxy)
       {
          BTG_MNOTICE("setting session settings: proxy");
-#if (BTG_LT_0_13)
+
          libtorrent::proxy_settings ps;
          ps.hostname = _proxy.getIp();
          ps.port     = _proxy.getPort();
          torrent_session->set_peer_proxy(ps);
          torrent_session->set_web_seed_proxy(ps);
          torrent_session->set_tracker_proxy(ps);
-#elif (BTG_LT_0_12)
-         session_settings_.proxy_ip   = _proxy.getIp();
-         session_settings_.proxy_port = _proxy.getPort();
-
-         torrent_session->set_settings(session_settings_);
-#endif // libtorrent version.
       }
 
       void Context::setDestructionlHttpSettings()

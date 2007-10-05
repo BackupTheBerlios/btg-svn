@@ -53,19 +53,8 @@ namespace btg
                return false;
             }
 
-#if BTG_LT_0_12
-         if (!ti->handle.move_storage(_destination_dir))
-            {
-               std::string filename;
-               this->getFilename(_torrent_id, filename);
-               BTG_ERROR_LOG("Attempt to move '" << filename << "' to " << _destination_dir << " failed.");
-
-               result = false;
-            }
-#elif BTG_LT_0_13
          // TODO: check alert about moved storage.
          ti->handle.move_storage(_destination_dir);
-#endif // lt version
 
          BTG_MEXIT("moveToDirectory", result);
 

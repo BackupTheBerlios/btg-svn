@@ -25,11 +25,9 @@
 
 #include <libtorrent/version.hpp>
 
-#define BTG_LT_0_12 ((LIBTORRENT_VERSION_MAJOR == 0) && (LIBTORRENT_VERSION_MINOR == 12))
 #define BTG_LT_0_13 ((LIBTORRENT_VERSION_MAJOR == 0) && (LIBTORRENT_VERSION_MINOR == 13))
 
 #if BTG_LT_0_13
-#elif BTG_LT_0_12
 #else
 #  error "Using unknown libtorrent version."
 #endif // version check.

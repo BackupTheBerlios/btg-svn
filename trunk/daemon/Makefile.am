@@ -2,7 +2,7 @@ if BUILDUPNP
   EXTRA_DIR = upnp
 endif
 
-SUBDIRS = ipfilter auth $(EXTRA_DIR)
+SUBDIRS = resource ipfilter auth $(EXTRA_DIR)
 
 if BUILDSESSIONSAVING
   SSSOURCES = sessionsaver.cpp 
@@ -24,14 +24,14 @@ noinst_HEADERS = $(CALLBACKHEADERS) $(SSHEADERS) filetrackdata.h filetrack.h con
                  progress.h \
                  lt_version.h \
                  session_list.h \
-                 portmgr.h limitmgr.h \
+                 portmgr.h limitval.h limitmgr.h \
                  modulelog.h \
                  connectionextrastate.h
 
 libdaemon_la_SOURCES = dconfig.cpp darg.cpp \
                        filetrackdata.cpp filetrack.cpp connectionhandler.cpp \
                        session_list.cpp portmgr.cpp \
-                       limitmgr.cpp daemondata.cpp \
+                       limitval.cpp limitmgr.cpp daemondata.cpp \
                        daemonhandler.cpp progress.cpp \
                        context_alert.cpp context_file.cpp context_session.cpp context.cpp \
                        eventhandler.cpp connectionextrastate.cpp $(SSSOURCES) $(CALLBACKSOURCES)
@@ -53,6 +53,7 @@ endif
 
 btgdaemon_LDADD   = $(top_builddir)/bcore/libbtgcore.la \
                     libdaemon.la \
+                    $(top_builddir)/daemon/resource/libresource.la \
                     $(top_builddir)/daemon/ipfilter/libipfilter.la \
                     $(top_builddir)/daemon/auth/libauth.la $(EXTRA_LDADD) \
                     $(top_builddir)/external/ini/libini.la

@@ -30,6 +30,8 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/condition.hpp>
 
+#include "limitval.h"
+
 namespace libtorrent
 {
    class session;
@@ -44,93 +46,6 @@ namespace btg
           * \addtogroup daemon Daemon
           */
          /** @{ */
-
-         /// Session and data used for setting limits on a libtorrent
-         /// session.
-         class sessionData
-            {
-            public:
-               /// Default Constructor.
-               sessionData();
-
-               /// Constructor.
-               sessionData(libtorrent::session* _session);
-
-               /// Copy constructor.
-               sessionData(sessionData const& _sd);
-
-               /// The equality operator.
-               bool operator== (sessionData const& _sd) const;
-
-               /// The equality operator.
-               ///
-               /// Used for comparing to a session, which is also
-               /// contained in this class.
-               bool operator== (const libtorrent::session* _session) const;
-
-               /// The not equal operator.
-               bool operator!= (sessionData const& _sd) const;
-
-               /// The assignment operator.
-               sessionData& operator= (sessionData const& _sd);
-
-               /// Update the counters.
-               ///
-               /// Update the session's resource_request members using
-               /// this information.
-               void update(t_int const _upload_rate_limit,
-                           t_int const _download_rate_limit,
-                           t_int const _max_uploads,
-                           t_long const _max_connections,
-                           t_int const _interval);
-
-               /// Set the limits, which are stored in the contained
-               /// session.
-               void set();
-
-               /// Get the contained session.
-               libtorrent::session* session() const;
-
-               /// Destructor.
-               ~sessionData();
-            private:
-               /// Pointer to libtorrent session.
-               libtorrent::session*     session_;
-
-               /// The number of bytes uploaded. This is a difference
-               /// since last time update was called.
-               t_uint                   upload_bytes_;
-               /// The number of bytes uploaded, when update was
-               /// last called.
-               t_uint                   upload_bytes_last_;
-
-               /// The number of bytes downloaded. This is a difference
-               /// since last time update was called.
-               t_uint                   download_bytes_;
-               /// The number of bytes downloaded, when update was
-               /// last called.
-               t_uint                   download_bytes_last_;
-
-               /// The number of connections used. This is a
-               /// difference since last time update was called.
-               t_uint                   connections_;
-
-               /// The number of connections used, when update was
-               /// last called.
-               t_uint                   connections_last_;
-
-               /// The number of uploads used. This is a difference
-               /// since last time update was called.
-               t_uint                   uploads_;
-
-               /// The number of uploads used, when update was last
-               /// called.
-               t_uint                   uploads_last_;
-
-               /// The interval in seconds. This is the time between
-               /// calls to the update function.
-               t_int                    interval_;
-            };
 
          /// Thread which executes the limit operations.
          ///

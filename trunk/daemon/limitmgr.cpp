@@ -22,7 +22,6 @@
 
 #include "limitmgr.h"
 
-#include <libtorrent/allocate_resources.hpp>
 #include <libtorrent/session.hpp>
 
 #include <boost/bind.hpp>
@@ -36,6 +35,8 @@
 
 #include "modulelog.h"
 
+#include <daemon/resource/allocate_resources.h>
+
 namespace btg
 {
    namespace daemon
@@ -44,243 +45,6 @@ namespace btg
       using namespace btg::core;
 
       const std::string moduleName("lim");
-
-      sessionData::sessionData()
-         : session_(0),
-           upload_bytes_(0),
-           upload_bytes_last_(0),
-           download_bytes_(0),
-           download_bytes_last_(0),
-           connections_(0),
-           connections_last_(0),
-           uploads_(0),
-           uploads_last_(0),
-           interval_(0)
-      {
-      }
-
-      sessionData::sessionData(libtorrent::session* _session)
-         : session_(_session),
-           upload_bytes_(0),
-           upload_bytes_last_(0),
-           download_bytes_(0),
-           download_bytes_last_(0),
-           connections_(0),
-           connections_last_(0),
-           uploads_(0),
-           uploads_last_(0),
-           interval_(0)
-      {
-
-      }
-
-      sessionData::sessionData(sessionData const& _sd)
-         : session_(_sd.session_),
-           upload_bytes_(_sd.upload_bytes_),
-           upload_bytes_last_(_sd.upload_bytes_last_),
-           download_bytes_(_sd.download_bytes_),
-           download_bytes_last_(_sd.download_bytes_last_),
-           connections_(_sd.connections_),
-           connections_last_(_sd.connections_last_),
-           uploads_(_sd.uploads_),
-           uploads_last_(_sd.uploads_last_),
-           interval_(_sd.interval_)
-      {
-      }
-
-      bool sessionData::operator== (sessionData const& _sd) const
-      {
-         if ((_sd.session_             != session_)             ||
-             (_sd.upload_bytes_        != upload_bytes_)        ||
-             (_sd.upload_bytes_last_   != upload_bytes_last_)   ||
-             (_sd.download_bytes_      != download_bytes_)      ||
-             (_sd.download_bytes_last_ != download_bytes_last_) ||
-             (_sd.connections_         != connections_)         || 
-             (_sd.connections_last_    != connections_last_)    || 
-             (_sd.uploads_             != uploads_)             ||
-             (_sd.uploads_last_        != uploads_last_)        ||
-             (_sd.interval_            != interval_))
-            {
-               return false;
-            }
-
-         return true;
-      }
-
-      bool sessionData::operator== (const libtorrent::session* _session) const
-      {
-         if (_session != session_)
-            {
-               return false;
-            }
-
-         return true;
-      }
-
-      bool sessionData::operator!= (sessionData const& _sd) const
-      {
-         bool status = (_sd == *this);
-
-         return !status;
-      }
-
-      sessionData& sessionData::operator= (sessionData const& _sd)
-      {
-         if (_sd != *this)
-            {
-               session_             = _sd.session_;
-               upload_bytes_        = _sd.upload_bytes_;
-               upload_bytes_last_   = _sd.upload_bytes_last_;
-               download_bytes_      = _sd.download_bytes_;
-               download_bytes_last_ = _sd.download_bytes_last_;
-               connections_         = _sd.connections_;
-               connections_last_    = _sd.connections_last_;
-               uploads_             = _sd.uploads_;
-               uploads_last_        = _sd.uploads_last_;
-               interval_            = _sd.interval_;
-            }
-         return *this;
-      }
-
-      void sessionData::update(t_int const _upload_rate_limit,
-                               t_int const _download_rate_limit,
-                               t_int const _max_uploads,
-                               t_long const _max_connections,
-                               t_int const _interval)
-      {
-         interval_ = _interval;
-
-         const std::vector<libtorrent::torrent_handle> torrents = session_->get_torrents();
-
-         std::vector<libtorrent::torrent_handle>::const_iterator iter;
-
-         t_uint upl = 0;
-         t_uint dnl = 0;
-
-         for (iter = torrents.begin();
-              iter != torrents.end();
-              iter++)
-            {
-               const libtorrent::torrent_handle handle = *iter;
-               const libtorrent::torrent_status status = handle.status();
-
-               upl += status.total_upload;
-               dnl += status.total_download;
-            }
-
-         download_bytes_      = dnl - download_bytes_last_;
-         download_bytes_last_ = dnl;
-
-         upload_bytes_        = upl - upload_bytes_last_;
-         upload_bytes_last_   = upl;
-
-         BTG_MNOTICE("setting counters, dnl " << download_bytes_ << ", upl " << upload_bytes_);
-
-         session_->m_ul_bandwidth_quota.min  = 1;
-         session_->m_ul_bandwidth_quota.used = upload_bytes_;
-         if (_upload_rate_limit == limitBase::LIMIT_DISABLED)
-            {
-               session_->m_ul_bandwidth_quota.max  = libtorrent::resource_request::inf;
-            }
-         else
-            {
-               session_->m_ul_bandwidth_quota.max  = _upload_rate_limit * interval_;
-            }
-
-         session_->m_dl_bandwidth_quota.min  = 1;
-         session_->m_dl_bandwidth_quota.used = download_bytes_;
-         if (_download_rate_limit == limitBase::LIMIT_DISABLED)
-            {
-               session_->m_dl_bandwidth_quota.max  = libtorrent::resource_request::inf;
-            }
-         else
-            {
-               session_->m_dl_bandwidth_quota.max  = _download_rate_limit * interval_;
-            }
-
-         // Number of connections.
-         t_int connections   = session_->num_uploads();
-
-         connections_        = connections - connections_last_;
-         connections_last_   = connections;
-
-         session_->m_connections_quota.min  = 1;
-         session_->m_connections_quota.used = connections_;
-         if (_max_connections == limitBase::LIMIT_DISABLED)
-            {
-               session_->m_connections_quota.max  = libtorrent::resource_request::inf;
-            }
-         else
-            {
-               session_->m_connections_quota.max  = _max_connections * interval_;
-            }
-
-         // Number of uploads.
-         t_int uploads       = session_->num_connections();
-
-         uploads_      = uploads - uploads_last_;
-         uploads_last_ = uploads;
-
-         session_->m_uploads_quota.min  = 1;
-         session_->m_uploads_quota.used = uploads_;
-         if (_max_uploads == limitBase::LIMIT_DISABLED)
-            {
-               session_->m_uploads_quota.max  = libtorrent::resource_request::inf;
-            }
-         else
-            {
-               session_->m_uploads_quota.max  = _max_uploads * interval_;
-            }
-      }
-
-      void sessionData::set()
-      {
-         t_int ul = session_->m_ul_bandwidth_quota.given / interval_;
-         t_int dl = session_->m_dl_bandwidth_quota.given / interval_;
-
-         t_int connections = session_->m_uploads_quota.given / interval_;
-         t_int uploads     = session_->m_connections_quota.given / interval_;
-
-         if (ul == 0)
-            {
-               ul++;
-            }
-
-         if (dl == 0)
-            {
-               dl++;
-            }
-
-         if (connections == 0)
-            {
-               connections++;
-            }
-
-         if (uploads == 0)
-            {
-               uploads++;
-            }
-
-         BTG_MNOTICE("Setting limit:");
-         BTG_MNOTICE("ul = " << ul << " bytes/sec, dl = " << dl << " bytes/sec.");
-         BTG_MNOTICE("connections = " << connections << ", uploads = " << uploads << ".");
-
-         session_->set_upload_rate_limit(ul);
-         session_->set_download_rate_limit(dl);
-
-         session_->set_max_uploads(uploads);
-         session_->set_max_connections(connections);
-      }
-
-      libtorrent::session* sessionData::session() const
-      {
-         return session_;
-      }
-
-      sessionData::~sessionData()
-      {
-
-      }
 
       /* */
       /* */
@@ -431,6 +195,7 @@ namespace btg
       {
          // A session was just added.
          // It does not use any ressources yet.
+         /*
          param_session->m_ul_bandwidth_quota.used = 0;
          param_session->m_ul_bandwidth_quota.min  = 1;
          param_session->m_ul_bandwidth_quota.max  = 0;
@@ -448,6 +213,10 @@ namespace btg
          param_session->m_connections_quota.max   = 0;
 
          sessions_.push_back(sessionData(param_session));
+         */
+
+         sessions_.push_back(sessionData(param_session));
+
          param_session = 0;
       }
       void limitManager::work_remove()
@@ -473,19 +242,16 @@ namespace btg
          // update the session's used fields.
          updateUsed();
 
-         std::vector<libtorrent::session*> sessions;
-         getSessions(sessions);
-
          // Tick interval in seconds.
          t_int tick_interval = interval_;
 
-         t_int resources     = -1;
+         t_int resources     = limitValue::inf;
 
          // Upload rate.
          if (upload_rate_limit_ == limitBase::LIMIT_DISABLED)
             {
                // resources = std::numeric_limits<int>::max();
-               resources = libtorrent::resource_request::inf;
+               resources = limitValue::inf;
             }
          else
             {
@@ -494,15 +260,15 @@ namespace btg
 
          BTG_MNOTICE("distributing resources (ul): " << resources);
 
-         libtorrent::allocate_resources(resources,
-                                        sessions,
-                                        &libtorrent::session::m_ul_bandwidth_quota);
+         allocate_resources(resources,
+                            sessions_,
+                            &sessionData::val_ul_rate);
 
          // Download rate.
          if (download_rate_limit_ == limitBase::LIMIT_DISABLED)
             {
                // resources = std::numeric_limits<int>::max();
-               resources = libtorrent::resource_request::inf;
+               resources = limitValue::inf;
             }
          else
             {
@@ -511,14 +277,14 @@ namespace btg
 
          BTG_MNOTICE("distributing resources (dl): " << resources);
 
-         libtorrent::allocate_resources(resources,
-                                        sessions,
-                                        &libtorrent::session::m_dl_bandwidth_quota);
+         allocate_resources(resources,
+                            sessions_,
+                            &sessionData::val_dl_rate);
 
          // Max uploads.
          if (max_uploads_ == limitBase::LIMIT_DISABLED)
             {
-               resources = libtorrent::resource_request::inf;
+               resources = limitValue::inf;
             }
          else
             {
@@ -527,15 +293,15 @@ namespace btg
 
          BTG_MNOTICE("distributing resources (max ul): " << resources);
          
-         libtorrent::allocate_resources(resources,
-                                        sessions,
-                                        &libtorrent::session::m_uploads_quota);
+         allocate_resources(resources,
+                            sessions_,
+                            &sessionData::val_uploads);
 
          // Max connections.
 
          if (max_connections_ == limitBase::LIMIT_DISABLED)
             {
-               resources = libtorrent::resource_request::inf;
+               resources = limitValue::inf;
             }
          else
             {
@@ -544,9 +310,9 @@ namespace btg
 
          BTG_MNOTICE("distributing resources (max conn): " << resources);
 
-         libtorrent::allocate_resources(resources,
-                                        sessions,
-                                        &libtorrent::session::m_connections_quota);
+         allocate_resources(resources,
+                            sessions_,
+                            &sessionData::val_connections);
 
          // The limits were distributed above, now set them.
 

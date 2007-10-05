@@ -69,6 +69,7 @@ noinst_PROGRAMS     = testrunner
 
 testrunner_LDADD   = $(top_builddir)/bcore/libbtgcore.la $(BCORE_CLIENT_TEST_LIB) \
                      $(top_builddir)/daemon/libdaemon.la \
+                     $(top_builddir)/daemon/resource/libresource.la \
                      $(top_builddir)/external/ini/libini.la
 
 testrunner_LDFLAGS  = @LIBS@ $(CPPUNIT_LIBS) @LIBTORRENT_LIBS@ -l@BOOST_IOSTREAMS_LIB@ -l@BOOST_FILESYSTEM_LIB@ @LIBGNUTLS_LIBS@
