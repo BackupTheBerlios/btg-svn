@@ -88,7 +88,7 @@ class contextCreateWithDataCommand extends Command
 		parent::deserialize($data);
 		$this->bytesToString($this->filename, $data);
 		$this->torrent_file = new sBuffer();
-		$this->torrent_file->deserialize($a);
+		$this->torrent_file->deserialize($data);
 		$this->bytesToBool($this->start, $data);
 	}
 }
