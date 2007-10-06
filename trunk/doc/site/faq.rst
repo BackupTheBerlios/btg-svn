@@ -24,6 +24,7 @@ Its all the following things:
 - WWW bittorrent client (wwwBTG).
 - GUI bittorrent client (btgui).
 - Ncurses bittorrent client (btgcli).
+- SDL viewer application (btgvs).
 
 BTG consists of a number of different applications. The clients
 communicate with the daemon.
@@ -76,7 +77,7 @@ Feature X does not work, what now?
 ----------------------------------
 
 - Read the howto/man pages. Maybe its described in the documentation.
-- File a bug rapport.
+- File a bug rapport (or send a patch against trunk in SVN).
 
 Libtorrent asserts
 ------------------

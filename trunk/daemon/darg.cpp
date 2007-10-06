@@ -56,12 +56,7 @@ namespace btg
            saveSessionsFile_present_(false),
            noReloadSessions_present_(false),
 #endif // BTG_OPTION_SAVESESSIONS
-           doNotDetach_present(false),
-#if BTG_DEBUG
-           debugMode(false),
-#endif // BTG_DEBUG
-           verboseMode(false),
-           listSyntax(false)
+           doNotDetach_present(false)
       {
       }
 

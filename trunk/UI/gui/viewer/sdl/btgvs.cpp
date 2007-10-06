@@ -149,13 +149,13 @@ int main(int argc, char **argv)
    clientdata.config = new clientConfiguration(config_filename);
 
    bool const gotConfig = clientdata.config->read();
-
+   /*
    std::string lastfile_filename = GPD->sGUI_LASTFILES();
    if (!btg::core::os::fileOperation::check(lastfile_filename, errorString, false))
       {
          BTG_NOTICE("Could not open file '" << lastfile_filename << "'.");
       }
-
+   */
    clientDynConfig cliDynConf(GPD->sCLI_DYNCONFIG());
    clientdata.lastfiles = new lastFiles(cliDynConf);
 

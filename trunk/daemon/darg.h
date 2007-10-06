@@ -93,19 +93,6 @@ namespace btg
 
                /// Switch which indicates that the daemon should detach and deamonize.
                bool                    doNotDetach_present;
-
-#if BTG_DEBUG
-               /// Switch that indicates that the daemon should write
-               /// extensive debug info to the log.
-               bool                    debugMode;
-#endif // BTG_DEBUG
-
-               /// Verbose mode - write verbose messages about what
-               /// the daemon is doing.
-               bool                    verboseMode;
-
-               /// List syntax of the configuration file.
-               bool                    listSyntax;
             };
 
          /** @} */

@@ -44,7 +44,8 @@ namespace btg
                /// Constructor.
                /// @param [in] _applicationName Name of the application using this interface.
                /// @param [in] _syntaxEnabled   Indicates if showing syntax is enabled.
-               argumentInterface(std::string const& _applicationName, bool const _syntaxEnabled = true);
+               argumentInterface(std::string const& _applicationName, 
+                                 bool const _syntaxEnabled = true);
 
                /// Setup the interface. Must be called before parsing.
                virtual void setup();

@@ -20,6 +20,7 @@ html: man-pages index.rst packages.rst howto.rst howto-0.3.rst howto-0.4.rst how
 	$(RST2HTML) howto-0.5.rst > howto-0.5.html
 	$(RST2HTML) howto-0.6.rst > howto-0.6.html
 	$(RST2HTML) howto-0.7.rst > howto-0.7.html
+	$(RST2HTML) howto-0.9.6.rst > howto-0.9.6.html
 
 # Target used to generate a pdf version of the howto.
 # Assumes that rst2latex and latex is installed.
