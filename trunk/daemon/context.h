@@ -586,6 +586,9 @@ namespace btg
                bool entryToInfo(libtorrent::entry const& _input,
                                 libtorrent::torrent_info & _output) const;
 
+               bool entryToFiles(libtorrent::entry const& _input,
+                                 std::vector<std::string> _output) const;
+
                /// Find out if data of a torrent is present in the seed dir.
                /// @param [in] _torrent_info Torrent info.
                /// @return True - data is present, false otherwise.

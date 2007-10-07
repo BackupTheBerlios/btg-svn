@@ -33,53 +33,59 @@
 namespace btg
 {
    namespace daemon
+   {
+
+      /**
+       * \addtogroup daemon Daemon
+       */
+      /** @{ */
+
+      /// Keep track of files added and removed. Used to prohibit
+      /// adding the same torrent more than once.
+      class fileTrack
       {
+      public:
+         /// Constructor.
+         fileTrack();
 
-         /**
-          * \addtogroup daemon Daemon
-          */
-         /** @{ */
+         /// Add a filename. Return true if it can be added,
+         /// false otherwise.
+         bool add(std::string const& _userdir,
+                  std::string const& _filename);
 
-         /// Keep track of files added and removed. Used to prohibit
-         /// adding the same torrent more than once.
-         class fileTrack
-            {
-            public:
-               /// Constructor.
-               fileTrack();
+         /// Set the contents of a torrent.
+         /// @return True - contents are unique and was set. False otherwise.
+         bool setFiles(std::string const& _userdir,
+                       std::string const& _filename, 
+                       std::vector<std::string> const& _files);
 
-               /// Add a filename. Return true if it can be added,
-               /// false otherwise.
-               bool add(std::string const& _filename);
+         /// Remove a filename.
+         void remove(std::string const& _userdir,
+                     std::string const& _filename);
 
-	       /// Set the contents of a torrent.
-	       /// @return True - contents are unique and was set. False otherwise.
-	       bool setFiles(std::string const& _filename, 
-			     libtorrent::entry const& _torrent_entry);
+         /// Check if the specified file is added or not.
+         /// @param [in] _filename Filename to check.
+         /// @return True - file exists. False otherwise.
+         bool exists(std::string const& _userdir,
+                     std::string const& _filename);
 
-               /// Remove a filename.
-               void remove(std::string const& _filename);
+         /// Destructor.
+         ~fileTrack();
+      private:
+         /// Return an iterator or files_.end() if the filename
+         /// in argument is not present in the list of
+         /// filenames.
+         bool check(std::string const& _userdir,
+                    std::string const& _filename,
+                    std::vector<fileTrackData>::iterator & _iter);
 
-	       /// Check if the specified file is added or not.
-	       /// @param [in] _filename Filename to check.
-	       /// @return True - file exists. False otherwise.
-               bool exists(std::string const& _filename);
+         /// List of files.
+         std::map<std::string, std::vector<fileTrackData> > files_;
+      };
 
-               /// Destructor.
-               ~fileTrack();
-            private:
-               /// Return an iterator or files_.end() if the filename
-               /// in argument is not present in the list of
-               /// filenames.
-               std::vector<fileTrackData>::iterator check(std::string const& _filename);
+      /** @} */
 
-               /// List of files.
-               std::vector<fileTrackData> files_;
-            };
-
-         /** @} */
-
-      } // namespace daemon
+   } // namespace daemon
 } // namespace btg
 
 #endif // FILETRACK_H

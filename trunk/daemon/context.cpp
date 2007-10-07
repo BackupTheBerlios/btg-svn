@@ -434,10 +434,11 @@ namespace btg
          Context::addResult status = Context::ERR_UNDEFINED;
 
          // Filename used as key for the file tracker.
-         std::string fileTrackFilename = tempDir_ + GPD->sPATH_SEPARATOR() + _torrent_filename;
+         // tempDir_ + GPD->sPATH_SEPARATOR() + 
+         std::string fileTrackFilename = _torrent_filename;
 
          // Add torrent name to filetracker
-         if (!filetrack_->add(fileTrackFilename))
+         if (!filetrack_->add(tempDir_, fileTrackFilename))
             {
                status = Context::ERR_EXISTS;
                BTG_MNOTICE("add, file '" << fileTrackFilename << 
@@ -471,7 +472,7 @@ namespace btg
          if (status != Context::ERR_OK)
             {
                // remove it from filetrack
-               filetrack_->remove(fileTrackFilename);
+               filetrack_->remove(tempDir_, fileTrackFilename);
                BTG_MEXIT("add", status);
                return status;
             }
@@ -482,7 +483,16 @@ namespace btg
                // Unable to convert the entry to a torrent info.
                // Adding files cannot continue.
 
-               filetrack_->remove(fileTrackFilename);
+               filetrack_->remove(tempDir_, fileTrackFilename);
+               status = Context::ERR_LIBTORRENT;
+               BTG_MEXIT("add", status);
+               return status;
+            }
+
+         std::vector<std::string> contained_files;
+         if (!entryToFiles(torrent_entry, contained_files))
+            {
+               filetrack_->remove(tempDir_, fileTrackFilename);
                status = Context::ERR_LIBTORRENT;
                BTG_MEXIT("add", status);
                return status;
@@ -490,12 +500,12 @@ namespace btg
 
          // A torrent was read without failing, now add the files to
          // the file tracker.
-         if (!filetrack_->setFiles(fileTrackFilename, torrent_entry))
+         if (!filetrack_->setFiles(tempDir_, fileTrackFilename, contained_files))
             {
                // The torrent file is unique, but some of the contents
                // is not.
                BTG_MNOTICE("add, file '" << fileTrackFilename << "': file collision");
-               filetrack_->remove(fileTrackFilename);
+               filetrack_->remove(tempDir_, fileTrackFilename);
                status = Context::ERR_EXISTS;
                BTG_MEXIT("add", status);
                return status;
@@ -599,7 +609,7 @@ namespace btg
          else
             {
                // Failed to add the file? Remove it from tracker.
-               filetrack_->remove(fileTrackFilename);
+               filetrack_->remove(tempDir_, fileTrackFilename);
             }
 
          BTG_MEXIT("add", "");
@@ -615,7 +625,7 @@ namespace btg
 
          std::string fileTrackFilename = tempDir_ + GPD->sPATH_SEPARATOR() + _torrent_filename;
          // Check torrent does not exist before we overwrite it...
-         if (filetrack_->exists(fileTrackFilename))
+         if (filetrack_->exists(tempDir_, fileTrackFilename))
             {
                status = Context::ERR_EXISTS;
                BTG_MNOTICE("add, file '" << fileTrackFilename << "' already exists in filetrack");
@@ -695,7 +705,7 @@ namespace btg
                std::string fileTrackFilename = tempDir_ + 
                   GPD->sPATH_SEPARATOR() + filename;
 
-               filetrack_->remove(fileTrackFilename);
+               filetrack_->remove(tempDir_, fileTrackFilename);
             }
 
 #if BTG_OPTION_EVENTCALLBACK

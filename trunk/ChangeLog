@@ -2,6 +2,9 @@ BTG version 0.9.7
 -----------------
 The following bugs were fixed:
 
+012125 Update SDL viewer, after refactoring of last files
+012124 Add command line interface(s) unittest
+012120 Update to libtorrent 0.13 aka SVN.
 012055 File checking fails on torrents that contain directories.
 
 BTG version 0.9.6

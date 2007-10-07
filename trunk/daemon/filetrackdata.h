@@ -31,64 +31,64 @@
 namespace btg
 {
    namespace daemon
+   {
+
+      /**
+       * \addtogroup daemon Daemon
+       */
+      /** @{ */
+
+      /// Represents data kept for each torrent.
+      class fileTrackData
       {
+      public:
+         /// Default constructor.
+         fileTrackData();
 
-         /**
-          * \addtogroup daemon Daemon
-          */
-         /** @{ */
+         /// Constructor.
+         fileTrackData(std::string const& _filename);
 
-	/// Represents data kept for each torrent.
-	class fileTrackData
-	  {
-	  public:
-	    /// Default constructor.
-	    fileTrackData();
+         /// Copy constructor.
+         fileTrackData(fileTrackData const& _ftd);
 
-	    /// Constructor.
-	    fileTrackData(std::string const& _filename);
+         /// The assignment operator.
+         fileTrackData& operator= (fileTrackData const& _ftd);
 
-	    /// Copy constructor.
-	    fileTrackData(fileTrackData const& _ftd);
+         /// The equality operator.
+         bool operator== (fileTrackData const& _ftd) const;
 
-	    /// The assignment operator.
-	    fileTrackData& operator= (fileTrackData const& _ftd);
+         /// The equality operator.
+         /// Used to compare against filename only.
+         bool operator== (std::string const& _filename) const;
 
-	    /// The equality operator.
-	    bool operator== (fileTrackData const& _ftd) const;
+         /// The equality operator.
+         bool operator!= (fileTrackData const& _ftd) const;
 
-	    /// The equality operator.
-	    /// Used to compare against filename only.
-	    bool operator== (std::string const& _filename) const;
+         /// Set the files belonging to a torrent being tracked.
+         void setFiles(std::vector<std::string> const& _files);
 
-	    /// The equality operator.
-	    bool operator!= (fileTrackData const& _ftd) const;
-
-	    /// Set the files belonging to a torrent being tracked.
-	    bool setFiles(libtorrent::entry const& _torrent_entry);
-
-	    /// Compare a list of files agains the list of files
-	    /// contained in this class.
-	    /// 
-	    /// @return True - unique. False - not unique.
-	    bool isUnique(std::vector<std::string> const& _entries) const;
+         /// Compare a list of files against the list of files
+         /// contained in this class.
+         /// 
+         /// @return True - unique. False - not unique.
+         bool isUnique(std::vector<std::string> const& _entries) const;
 	    
-	    /// Get a reference to the entries contained in this
-	    /// class.
-	    std::vector<std::string> const& entries() const;
+         /// Get a reference to the entries contained in this
+         /// class.
+         std::vector<std::string> const& entries() const;
 
-	    /// Destructor.
-	    ~fileTrackData();
-	  private:
-	    /// The filename of the torrent.
-	    std::string              torrent_filename_;
-	    /// List of files contained in the torrent.
-	    std::vector<std::string> entries_;
-	  };
+         /// Destructor.
+         ~fileTrackData();
+      private:
+         /// The filename of the torrent.
+         std::string              torrent_filename_;
+         /// List of files contained in the torrent.
+         std::vector<std::string> entries_;
+      };
 
-         /** @} */
+      /** @} */
 
-      } // namespace daemon
+   } // namespace daemon
 } // namespace btg
 
 #endif // FILETRACKDATA_H

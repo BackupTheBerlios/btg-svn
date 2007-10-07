@@ -32,116 +32,152 @@ namespace btg
       const std::string moduleName("fit");
 
       fileTrack::fileTrack()
-         : files_(0)
+         : files_()
       {
       }
 
-      bool fileTrack::add(std::string const& _filename)
+      bool fileTrack::add(std::string const& _userdir,
+                          std::string const& _filename)
       {
          BTG_MNOTICE("adding filename '" << _filename << "'.");
 
          bool status = false;
 
-         std::vector<fileTrackData>::iterator iter = check(_filename);
+         std::map<std::string, std::vector<fileTrackData> >::iterator mapiter = 
+            files_.find(_userdir);
 
-         if (iter == files_.end())
+         if (mapiter == files_.end())
             {
+               std::vector<fileTrackData> v;
+               std::pair<std::string, std::vector<fileTrackData> > p;
+               p.first  = _userdir;
+               p.second = v;
+               files_.insert(p);
+
+               mapiter = files_.find(_userdir);
+            }
+
+         std::vector<fileTrackData>::iterator iter;
+         if (!check(_userdir, _filename, iter))
+            {
+               // Add.
                status = true;
-               files_.push_back(_filename);
+               mapiter->second.push_back(_filename);
             }
 
          return status;
       }
 
-     bool fileTrack::setFiles(std::string const& _filename, 
-			      libtorrent::entry const& _torrent_entry)
-     {
-         std::vector<fileTrackData>::iterator iter = check(_filename);
+      bool fileTrack::setFiles(std::string const& _userdir,
+                               std::string const& _filename,
+                               std::vector<std::string> const& _files)
+      {
+         std::vector<fileTrackData>::iterator iter;
+         if (!check(_userdir, _filename, iter))
+            {
+               return false;
+            }
 
-         if (iter == files_.end())
-	   {
-	     return false;
-	   }
+         iter->setFiles(_files);
 
-	 if (!iter->setFiles(_torrent_entry))
-	   {
-	     // Unable to set the files, probably because the torrent
-	     // entry cannot be converted into a torrent_info used by
-	     // libtorrent.
-	     return false;
-	   }
-
-	 // Find out if the files which were set are unique.
+         std::map<std::string, std::vector<fileTrackData> >::iterator mapiter = 
+            files_.find(_userdir);
+         
+         // Find out if the files which were set are unique.
 	 
-	 std::vector<fileTrackData>::iterator uiter;
+         std::vector<fileTrackData>::iterator uiter;
 
-	 t_uint matches = 0;
+         t_uint matches = 0;
 
-	 for (uiter = files_.begin();
-	      uiter != files_.end();
-	      uiter++)
-	   {
-	     // If a single file matches another torrent, we got a match.
-	     if (!uiter->isUnique(iter->entries()))
-	       {
-		 matches++;
-	       }
-	   }
+         for (uiter = mapiter->second.begin();
+              uiter != mapiter->second.end();
+              uiter++)
+            {
+               // If a single file matches another torrent, we got a match.
+               if (!uiter->isUnique(iter->entries()))
+                  {
+                     matches++;
+                  }
+            }
 	 
-	 if (matches > 1)
-	   {
-	     // More than one torrent contains one or more file
-	     // contained in the torrent which is used for compartion.
-	     return false;
-	   }
+         if (matches > 1)
+            {
+               // More than one torrent contains one or more file
+               // contained in the torrent which is used for compartion.
+               return false;
+            }
 
-	 // The files added are unique.
-	 return true;
-     }
+         // The files added are unique.
+         return true;
+      }
 
-      void fileTrack::remove(std::string const& _filename)
+      void fileTrack::remove(std::string const& _userdir,
+                             std::string const& _filename)
       {
          BTG_MNOTICE("removing filename '" << _filename << "'.");
 
-         std::vector<fileTrackData>::iterator iter = check(_filename);
-
-         if (iter == files_.end())
+         std::vector<fileTrackData>::iterator iter;
+         if (!check(_userdir, _filename, iter))
             {
                BTG_MNOTICE("filename '" << _filename << "' was not found.");
                return;
             }
 
-         files_.erase(iter);
+         // files_[_userdir].erase(iter);
+
+         std::map<std::string, std::vector<fileTrackData> >::iterator mapiter = 
+            files_.find(_userdir);
+
+         mapiter->second.erase(iter);
+
+         if (mapiter->second.size() == 0)
+            {
+               files_.erase(mapiter);
+            }
       }
 
-      bool fileTrack::exists(std::string const& _filename)
+      bool fileTrack::exists(std::string const& _userdir,
+                             std::string const& _filename)
       {
-         if (check(_filename) == files_.end())
-	   {
-	     return false;
-	   }
+         std::vector<fileTrackData>::iterator iter;
+         if (!check(_userdir, _filename, iter))
+            {
+               return false;
+            }
          return true;
       }
 
-      std::vector<fileTrackData>::iterator fileTrack::check(std::string const& _filename)
+      bool fileTrack::check(std::string const& _userdir,
+                            std::string const& _filename,
+                            std::vector<fileTrackData>::iterator & _iter)
       {
+         std::map<std::string, std::vector<fileTrackData> >::iterator mapiter = 
+            files_.find(_userdir);
+
+         if (mapiter == files_.end())
+            {
+               return false;
+            }
+         
          std::vector<fileTrackData>::iterator iter;
 
-         for (iter = files_.begin();
-              iter != files_.end();
+         for (iter = mapiter->second.begin();
+              iter != mapiter->second.end();
               iter++)
             {
                if (*iter == _filename)
                   {
-                     return iter;
+                     _iter = iter;
+                     return true;
                   }
             }
-         return iter;
+
+         return false;
       }
 
       fileTrack::~fileTrack()
       {
-	files_.clear();
+         files_.clear();
       }
 
    } // namespace daemon

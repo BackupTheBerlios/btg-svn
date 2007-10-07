@@ -29,126 +29,107 @@
 namespace btg
 {
    namespace daemon
+   {
+
+      fileTrackData::fileTrackData()
+         : torrent_filename_(),
+           entries_()
       {
 
-	fileTrackData::fileTrackData()
-	  : torrent_filename_(),
-	    entries_()
-	{
+      }
 
-	}
+      fileTrackData::fileTrackData(std::string const& _filename)
+         : torrent_filename_(_filename),
+           entries_()
+      {
 
-	fileTrackData::fileTrackData(std::string const& _filename)
-	  : torrent_filename_(_filename),
-	    entries_()
-	{
+      }
 
-	}
+      fileTrackData::fileTrackData(fileTrackData const& _ftd)
+         : torrent_filename_(_ftd.torrent_filename_),
+           entries_(_ftd.entries_)
+      {
 
-	fileTrackData::fileTrackData(fileTrackData const& _ftd)
-	  : torrent_filename_(_ftd.torrent_filename_),
-	    entries_(_ftd.entries_)
-	{
+      }
 
-	}
+      fileTrackData& fileTrackData::operator= (fileTrackData const& _ftd)
+      {
+         if (*this != _ftd)
+            {
+               torrent_filename_ = _ftd.torrent_filename_;
+               entries_          = _ftd.entries_;
+            }
 
-	fileTrackData& fileTrackData::operator= (fileTrackData const& _ftd)
-	{
-	  if (*this != _ftd)
-	    {
-	      torrent_filename_ = _ftd.torrent_filename_;
-	      entries_          = _ftd.entries_;
-	    }
+         return *this;
+      }
 
-	  return *this;
-	}
+      bool fileTrackData::operator== (fileTrackData const& _ftd) const
+      {
+         bool status = false;
+         if (
+             (_ftd.torrent_filename_ == this->torrent_filename_) &&
+             (_ftd.entries_          == this->entries_)
+             )
+            {
+               status = true;
+            }
+         return status;
+      }
 
-	bool fileTrackData::operator== (fileTrackData const& _ftd) const
-	{
-	  bool status = false;
-	  if (
-	      (_ftd.torrent_filename_ == this->torrent_filename_) &&
-	      (_ftd.entries_          == this->entries_)
-	      )
-	    {
-	      status = true;
-	    }
-	  return status;
-	}
+      bool fileTrackData::operator== (std::string const& _filename) const
+      {
+         bool status = false;
+         if (_filename == torrent_filename_)
+            {
+               status = true;
+            }
 
-	bool fileTrackData::operator== (std::string const& _filename) const
-	{
-	  bool status = false;
-	  if (_filename == torrent_filename_)
-	    {
-	      status = true;
-	    }
+         return status;
+      }
 
-	  return status;
-	}
+      bool fileTrackData::operator!= (fileTrackData const& _ftd) const
+      {
+         return !(_ftd == *this);
+      }
 
-	bool fileTrackData::operator!= (fileTrackData const& _ftd) const
-	{
-	  return !(_ftd == *this);
-	}
-
-	bool fileTrackData::isUnique(std::vector<std::string> const& _entries) const
-	{
-	  std::vector<std::string>::const_iterator arg_iter;
-	  std::vector<std::string>::const_iterator entries_iter;
-	  for (arg_iter = _entries.begin();
-	       arg_iter != _entries.end();
-	       arg_iter++)
-	    {
-	      entries_iter = std::find(entries_.begin(),
-				       entries_.end(),
-				       *arg_iter);
-	      if (entries_iter != entries_.end())
-		{
-		  // Not unique.
-		  return false;
-		}
-	    }
+      bool fileTrackData::isUnique(std::vector<std::string> const& _entries) const
+      {
+         std::vector<std::string>::const_iterator arg_iter;
+         std::vector<std::string>::const_iterator entries_iter;
+         for (arg_iter = _entries.begin();
+              arg_iter != _entries.end();
+              arg_iter++)
+            {
+               entries_iter = std::find(entries_.begin(),
+                                        entries_.end(),
+                                        *arg_iter);
+               if (entries_iter != entries_.end())
+                  {
+                     // Not unique.
+                     return false;
+                  }
+            }
 	  
-	  return true;
-	}
+         return true;
+      }
 
-	bool fileTrackData::setFiles(libtorrent::entry const& _torrent_entry)
-	{
-	  try
-	    {
-              libtorrent::torrent_info tinfo(_torrent_entry);
-	      libtorrent::torrent_info::file_iterator iter;
+      void fileTrackData::setFiles(std::vector<std::string> const& _files)
+      {
+         entries_ = _files;
+      }
 
- 	      for (iter = tinfo.begin_files();
-	           iter != tinfo.end_files();
-	           iter++)
-                {
-	          libtorrent::file_entry const& fe = *iter;
-	          entries_.push_back(fe.path.string());
-	        }
-	    }
-	  catch (std::exception& e)
-	    {
-	      BTG_ERROR_LOG("libtorrent exception: " << e.what() );
-	      return false;
-	    }
+      std::vector<std::string> const& fileTrackData::entries() const
+      {
+         return entries_;
+      }
 
-	  return true;
-	}
+      fileTrackData::~fileTrackData()
+      {
+         entries_.clear();
+      }
 
-	std::vector<std::string> const& fileTrackData::entries() const
-	{
-	  return entries_;
-	}
+      /** @} */
 
-	fileTrackData::~fileTrackData()
-	{
-	  entries_.clear();
-	}
-
-	/** @} */
-
-      } // namespace daemon
+   } // namespace daemon
 } // namespace btg
 

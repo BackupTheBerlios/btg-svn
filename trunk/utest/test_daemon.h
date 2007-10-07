@@ -36,10 +36,12 @@ class testDaemon : public CppUnit::TestFixture
    CPPUNIT_TEST( testConfiguration );
 
 #if BTG_OPTION_SAVESESSIONS
-   CPPUNIT_TEST( testSessionSaver );
+   // CPPUNIT_TEST( testSessionSaver );
 #endif // BTG_OPTION_SAVESESSIONS
 
    CPPUNIT_TEST( testPortManager );
+
+   CPPUNIT_TEST( testFileTracker );
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -57,4 +59,7 @@ class testDaemon : public CppUnit::TestFixture
 #endif // BTG_OPTION_SAVESESSIONS
 
    void testPortManager();
+
+   void testFileTracker();
+
 };

@@ -42,6 +42,8 @@ extern "C"
 #include <daemon/portmgr.h>
 #include <daemon/limitmgr.h>
 
+#include <daemon/filetrack.h>
+
 #if BTG_UTEST_DAEMON
 CPPUNIT_TEST_SUITE_REGISTRATION( testDaemon );
 #endif // BTG_UTEST_DAEMON
@@ -239,4 +241,60 @@ void testDaemon::testPortManager()
 
    delete portman;
    portman = 0;
+}
+
+void testDaemon::testFileTracker()
+{
+   using namespace btg::daemon;
+
+   fileTrack* ft = new fileTrack;
+
+   std::string file0("file0.torrent");
+   std::string user0("user0");
+   std::vector<std::string> files0;
+   files0.push_back("dir0/a1");
+   files0.push_back("dir1/b2");
+   files0.push_back("dir2/c3");
+
+   std::string file1("file1.torrent");
+   std::string user1("user1");
+   std::vector<std::string> files1;
+   files1.push_back("dir3/d1");
+   files1.push_back("dir4/e2");
+   files1.push_back("dir5/f3");
+
+   std::string file2("file2.torrent");
+   std::string user2("user2");
+   std::vector<std::string> files2;
+   files2.push_back("dir6/g1");
+   files2.push_back("dir7/h2");
+   files2.push_back("dir8/i3");
+
+   // Adding files.
+   CPPUNIT_ASSERT(ft->add(user0, file0));
+   CPPUNIT_ASSERT(ft->setFiles(user0, file0, files0));
+   CPPUNIT_ASSERT(ft->add(user0, file1));
+   CPPUNIT_ASSERT(ft->setFiles(user0, file1, files1));
+   CPPUNIT_ASSERT(ft->add(user0, file2));
+   CPPUNIT_ASSERT(ft->setFiles(user0, file2, files2));
+
+   // Adding the same file for the same user fails.
+   CPPUNIT_ASSERT(!ft->add(user0, file0));
+   // Adding the same files fails.
+   CPPUNIT_ASSERT(!ft->setFiles(user0, file1, files0));
+
+   CPPUNIT_ASSERT(ft->add(user1, file0));
+   CPPUNIT_ASSERT(ft->setFiles(user1, file0, files0));
+   CPPUNIT_ASSERT(ft->add(user1, file1));
+   CPPUNIT_ASSERT(ft->add(user1, file2));
+
+   CPPUNIT_ASSERT(ft->add(user2, file0));
+   CPPUNIT_ASSERT(ft->setFiles(user2, file0, files0));
+   CPPUNIT_ASSERT(ft->add(user2, file1));
+   CPPUNIT_ASSERT(ft->add(user2, file2));
+
+   delete ft;
+   ft = 0;
+
+   // Adding entries to files.
 }

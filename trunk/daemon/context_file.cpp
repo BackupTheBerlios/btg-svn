@@ -256,7 +256,7 @@ namespace btg
                catch(std::exception& e)
                   {
                      BTG_ERROR_LOG("Got exception from boost::filesystem, is_directory: " << 
-                                 e.what());
+                                   e.what());
                      status = false;
                   }
 
@@ -521,6 +521,35 @@ namespace btg
                   }
             }
 
+         return status;
+      }
+
+      bool Context::entryToFiles(libtorrent::entry const& _input,
+                                 std::vector<std::string> _output) const
+      {
+         BTG_MENTER("entryToFiles", "");
+
+         bool status = true;
+         try
+            {
+               libtorrent::torrent_info tinfo(_input);
+               libtorrent::torrent_info::file_iterator iter;
+
+               for (iter = tinfo.begin_files();
+                    iter != tinfo.end_files();
+                    iter++)
+                  {
+                     libtorrent::file_entry const& fe = *iter;
+                     _output.push_back(fe.path.string());
+                  }
+            }
+         catch (std::exception& e)
+            {
+               BTG_ERROR_LOG("libtorrent exception: " << e.what() );
+               status = false;
+            }
+
+         BTG_MEXIT("entryToFiles", status);
          return status;
       }
 
