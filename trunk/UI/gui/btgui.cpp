@@ -41,7 +41,6 @@
 #include "errordialog.h"
 
 #include "guihandler.h"
-#include "sessionselection.h"
 #include "sessiondialog.h"
 
 #include <bcore/logger/logger.h>
@@ -524,12 +523,12 @@ int main(int argc, char **argv)
          // select which session to use or to create a new one.
 
          // Get a list of sessions.
-         t_longList sessionlist;
          guihandler->reqGetActiveSessions();
          
-         sessionlist = guihandler->getSessionList();
+         t_longList sessionlist = guihandler->getSessionList();
+         t_strList sessionsIDs = guihandler->getSessionNames();
 
-         sessionDialog* sd = new sessionDialog(sessionlist);
+         sessionDialog* sd = new sessionDialog(sessionlist, sessionsIDs);
          sd->run();
 
          switch (sd->getResult())

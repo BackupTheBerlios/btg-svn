@@ -67,6 +67,7 @@ namespace btg
               last_limit_seed_timeout(0),
               cmd_failture(0),
               sessionList(0),
+              sessionNames(0),
               config(_config),
               lastfiles(_lastfiles),
               setupFailtureMessage(),
@@ -359,6 +360,11 @@ namespace btg
          t_longList clientHandler::getSessionList() const
          {
             return sessionList;
+         }
+
+         t_strList clientHandler::getSessionNames() const
+         {
+            return sessionNames;
          }
 
          btg::core::client::clientConfiguration* clientHandler::getConfig() const

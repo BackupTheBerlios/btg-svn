@@ -72,6 +72,8 @@
 
 #include <bcore/command/limit.h>
 
+#include <bcore/btg_assert.h>
+
 namespace btg
 {
    namespace core
@@ -1742,8 +1744,18 @@ namespace btg
                         // Reset the counter.
                         counter_session_list = 0;
                         // Call the list sessions callback.
-                        clientcallback->onListSessions(
-                                                       dynamic_cast<listSessionResponseCommand*>(c)->getSessions());
+
+                        // TODO: add assert which makes sure that the
+                        // number of IDs and names is equal.
+
+                        t_longList sessions = 
+                           dynamic_cast<listSessionResponseCommand*>(c)->getSessions();
+                        t_strList sessionIds = 
+                           dynamic_cast<listSessionResponseCommand*>(c)->getNames();
+                        btg_assert(sessions.size() == sessionIds.size(), 
+                                   "Session list and Id mush have same size.");
+                        clientcallback->onListSessions(sessions, sessionIds);
+
                         // Change state, ready to accept commands.
                         changeState(SM_TRANSPORT_READY);
                         _status = true;

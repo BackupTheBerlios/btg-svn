@@ -155,7 +155,8 @@ namespace btg
 
                      /// The daemon sent a list of sessions.
                      /// @param [out] _sessions List of sessions.
-                     virtual void onListSessions(t_longList const& _sessions) = 0;
+                     virtual void onListSessions(t_longList const& _sessions,
+                                                 t_strList const& _sessionNames) = 0;
 
                      /// The daemon informed the client that its
                      /// session is wrong. The client should shut

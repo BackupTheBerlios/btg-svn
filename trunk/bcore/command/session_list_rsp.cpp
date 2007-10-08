@@ -31,14 +31,17 @@ namespace btg
    {
       listSessionResponseCommand::listSessionResponseCommand()
          : Command(Command::CN_SLISTRSP),
-           sessions()
+           sessions(),
+           names()
       {
 
       }
 
-      listSessionResponseCommand::listSessionResponseCommand(t_longList _sessions)
+      listSessionResponseCommand::listSessionResponseCommand(t_longList _sessions,
+                                                             t_strList _names)
          : Command(Command::CN_SLISTRSP),
-           sessions(_sessions)
+           sessions(_sessions),
+           names(_names)
       {
 
       }
@@ -48,7 +51,10 @@ namespace btg
          BTG_RCHECK( Command::serialize(_e) );
 
          _e->setParamInfo("list of sessions.", true);
-         BTG_RCHECK( _e->longListToBytes(&this->sessions) );
+         BTG_RCHECK( _e->longListToBytes(&sessions) );
+
+         _e->setParamInfo("list of session names.", true);
+         BTG_RCHECK( _e->stringListToBytes(&names) );
 
          return true;
       }
@@ -56,17 +62,24 @@ namespace btg
       bool listSessionResponseCommand::deserialize(btg::core::externalization::Externalization* _e)
       {
          BTG_RCHECK( Command::deserialize(_e) );
-         t_longList temp_v;
+
          _e->setParamInfo("list of sessions.", true);
-         BTG_RCHECK( _e->bytesToLongList(&temp_v) );
-         this->sessions = temp_v;
+         BTG_RCHECK( _e->bytesToLongList(&sessions) );
+
+         _e->setParamInfo("list of session names.", true);
+         BTG_RCHECK( _e->bytesToStringList(&names) );
 
          return true;
       }
 
       t_longList listSessionResponseCommand::getSessions() const
       {
-         return this->sessions;
+         return sessions;
+      }
+
+      t_strList listSessionResponseCommand::getNames() const
+      {
+         return names;
       }
 
       listSessionResponseCommand::~listSessionResponseCommand()

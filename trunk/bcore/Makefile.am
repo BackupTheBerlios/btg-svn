@@ -102,6 +102,7 @@ crashlog.cpp \
 addrport.cpp \
 configuration.cpp \
 argif.cpp \
+btg_assert.cpp \
 $(OS_SOURCES) \
 $(TRANSPORT_SOURCES) \
 $(COMMAND_SOURCES) \
@@ -202,6 +203,7 @@ command_factory.h crashlog.h \
 serializable.h printable.h addrport.h \
 helpermacro.h configuration.h \
 argif.h \
+btg_assert.h \
 verbose.h \
 copts.h \
 $(OS_HEADER) \

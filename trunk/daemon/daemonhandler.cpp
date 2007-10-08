@@ -485,6 +485,7 @@ namespace btg
          MVERBOSE_LOG(moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
 
          std::vector<t_long> sessions;
+         std::vector<std::string> session_names;
 
          bool controlFlag = false;
          if (!dd_->auth->getControlFlag(connection_->getUsername(), controlFlag))
@@ -498,10 +499,12 @@ namespace btg
                // the user can see other user's sessions and attach to
                // them.
                sessionlist_.getIds(sessions);
+               sessionlist_.getNames(session_names);
             }
          else
             {
                sessionlist_.getIds(connection_->getUsername(), sessions);
+               sessionlist_.getNames(connection_->getUsername(), session_names);
             }
 
          if (sessions.size() > 0)
@@ -509,7 +512,7 @@ namespace btg
                sendCommand(dd_->externalization,
                            dd_->transport,
                            connectionID_,
-                           new listSessionResponseCommand(sessions));
+                           new listSessionResponseCommand(sessions, session_names));
             }
          else
             {

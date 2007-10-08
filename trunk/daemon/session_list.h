@@ -75,6 +75,11 @@ namespace btg
                /// Get all contained session IDs.
                void getIds(std::vector<t_long> & _sessions) const;
 
+               void getNames(std::string const& _username, 
+                             std::vector<std::string> & _names) const;
+
+               void getNames(std::vector<std::string> & _names) const;
+
                /// For each event handler contained in an instance of
                /// this class, check their limits and check for
                /// alerts.

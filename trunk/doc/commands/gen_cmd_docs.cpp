@@ -239,8 +239,10 @@ int main(int argc, char* argv[])
    e->setDirection(FROM_SERVER);
    t_longList sessions;
    sessions.push_back(50000);
+   t_strList sessionNames;
+   sessionNames.push_back("session 0");
 
-   printCommand(e, new listSessionResponseCommand(sessions));
+   printCommand(e, new listSessionResponseCommand(sessions, sessionNames));
 
    // Command::CN_MOREAD
    // Above is not implemented.

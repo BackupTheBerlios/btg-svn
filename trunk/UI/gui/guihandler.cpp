@@ -272,9 +272,11 @@ namespace btg
             attachDone            = false;
          }
 
-         void guiHandler::onListSessions(t_longList const& _sessions)
+         void guiHandler::onListSessions(t_longList const& _sessions, 
+                                         t_strList const& _sessionNames)
          {
-            this->sessionList = _sessions;
+            sessionList  = _sessions;
+            sessionNames = _sessionNames;
          }
 
          void guiHandler::onListSessionsError(string const& _errorDescription)
@@ -432,12 +434,13 @@ namespace btg
 
          }
 
-         t_long guiStartupHelper::queryUserAboutSession(t_longList const& _sessions) const
+         t_long guiStartupHelper::queryUserAboutSession(t_longList const& _sessions,
+                                                        t_strList const& _sessionIds) const
          {
             // Assumption: An instance of Gtk::Main was constructed before the call to
             // sessionSelectionDialog::run().
 
-            sessionSelectionDialog* ssd = new sessionSelectionDialog(_sessions);
+            sessionSelectionDialog* ssd = new sessionSelectionDialog(_sessions, _sessionIds);
             ssd->run();
 
             t_long selected_session;
@@ -480,9 +483,12 @@ namespace btg
             return status;
          }
 
-         void guiStartupHelper::showSessions(t_longList const& _sessions) const
+         void guiStartupHelper::showSessions(t_longList const& _sessions,
+                                             t_strList const& _sessionIds) const
          {
-            sessionSelectionDialog* ssd = new sessionSelectionDialog(_sessions, true /* no selection. */);
+            sessionSelectionDialog* ssd = new sessionSelectionDialog(_sessions, 
+                                                                     _sessionIds, 
+                                                                     true /* no selection. */);
             ssd->run();
 
             delete ssd;

@@ -159,7 +159,8 @@ namespace btg
                      /// user cancels this operation.
                      /// @param [in] _sessions List of sessions to choose from.
                      /// @return Valid session ID or Command::INVALID_SESSION.
-                     virtual t_long queryUserAboutSession(t_longList const& _sessions) const = 0;
+                     virtual t_long queryUserAboutSession(t_longList const& _sessions,
+                                                          t_strList const& _sessionsIDs) const = 0;
 
                      /// Implement his function, so it asks the user
                      /// about which username and password he wishes
@@ -179,7 +180,8 @@ namespace btg
 
                      /// Implement this function, so it shows a list of sessions.
                      /// @param [in] _sessions List of sessions.
-                     virtual void showSessions(t_longList const& _sessions) const = 0;
+                     virtual void showSessions(t_longList const& _sessions,
+                                               t_strList const& _sessionIds) const = 0;
 
                      /// Get the username, set by setAuth.
                      virtual std::string user() const;

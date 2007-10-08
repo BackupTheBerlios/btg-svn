@@ -31,88 +31,91 @@
 namespace btg
 {
    namespace UI
+   {
+      namespace gui
       {
-         namespace gui
+         /**
+          * \addtogroup gui
+          */
+         /** @{ */
+
+         /// Implements a dialog which is used to either create
+         /// a new session or to attach to an existing one.
+         class sessionDialog: public Gtk::Dialog
             {
-               /**
-                * \addtogroup gui
-                */
-               /** @{ */
+            public:
+               /// The state when this dialog quits.
+               enum QUIT_STATE
+               {
+                  QUIT         = 1, //!< Quit, nothing selected.
+                  NEW_SESSION,      //!< Create a new session.
+                  SELECTED          //!< A session was selected - attach to it.
+               };
 
-               /// Implements a dialog which is used to either create
-               /// a new session or to attach to an existing one.
-               class sessionDialog: public Gtk::Dialog
-                  {
-                  public:
-		    /// The state when this dialog quits.
-                     enum QUIT_STATE
-                        {
-			  QUIT         = 1, //!< Quit, nothing selected.
-			  NEW_SESSION,      //!< Create a new session.
-			  SELECTED          //!< A session was selected - attach to it.
-                        };
+               /// Constructor.
+               /// @param [in] _sessionlist      List of sessions.
+               sessionDialog(t_longList const& _sessionlist,
+                             t_strList const& _sessionsIDs);
 
-                     /// Constructor.
-                     /// @param [in] _sessionlist      List of sessions.
-                     sessionDialog(t_longList const& _sessionlist);
+               /// Use this function to get the result of the
+               /// dialog, after it was terminated.
+               /// @return State.
+               sessionDialog::QUIT_STATE getResult();
 
-                     /// Use this function to get the result of the
-                     /// dialog, after it was terminated.
-		     /// @return State.
-                     sessionDialog::QUIT_STATE getResult();
+               /// Returns true if the user selected a session -
+               /// also stores the session id in _session.
+               /// @return True - got session ID. False - otherwise.
+               bool getSelectedSession(t_long & _session);
 
-                     /// Returns true if the user selected a session -
-                     /// also stores the session id in _session.
-		     /// @return True - got session ID. False - otherwise.
-                     bool getSelectedSession(t_long & _session);
+               /// Destructor.
+               virtual ~sessionDialog();
+            private:
+               /// Callback: user clicked ok.
+               void on_ok_clicked();
 
-                     /// Destructor.
-                     virtual ~sessionDialog();
-                  private:
-                     /// Callback: user clicked ok.
-                     void on_ok_clicked();
+               /// Callback: user clicked create session.
+               void on_create_session_clicked();
 
-                     /// Callback: user clicked create session.
-                     void on_create_session_clicked();
+               /// Callback: user clicked quit.
+               void on_quit_clicked();
 
-                     /// Callback: user clicked quit.
-                     void on_quit_clicked();
+               /// Callback: user changed the combo box.
+               void on_combo_changed();
 
-		     /// Callback: user changed the combo box.
-                     void on_combo_changed();
+               /// The state of this dialog after it terminated.
+               QUIT_STATE         quitstate;
 
-		     /// The state of this dialog after it terminated.
-                     QUIT_STATE         quitstate;
+               /// List of sessions.
+               t_longList         sessionlist;
 
-                     /// List of sessions.
-                     t_longList         sessionlist;
+               t_strList          sessionsIDs;
 
-                     /// True, if a session was selected.
-                     bool               selected;
+               /// True, if a session was selected.
+               bool               selected;
 
-                     /// The selected session.
-                     t_long             session;
+               /// The selected session.
+               t_long             session;
 
-                     /// Truem if user requested new session.
-                     bool               create_session;
+               /// Truem if user requested new session.
+               bool               create_session;
 
-                     /// Pointer to the combo used to display
-                     /// sessions.
-                     Gtk::ComboBoxText* cbt;
+               /// Pointer to the combo used to display
+               /// sessions.
+               Gtk::ComboBoxText* cbt;
 
-		     /// Button used to attach to a session.
-                     Gtk::Button*       attachbutton;
-                  private:
-                     /// Copy constructor.
-                     sessionDialog(sessionDialog const& _ssd);
-                     /// Assignment operator.
-                     sessionDialog& operator=(sessionDialog const& _ssd);
-                  };
+               /// Button used to attach to a session.
+               Gtk::Button*       attachbutton;
+            private:
+               /// Copy constructor.
+               sessionDialog(sessionDialog const& _ssd);
+               /// Assignment operator.
+               sessionDialog& operator=(sessionDialog const& _ssd);
+            };
 
-               /** @} */
+         /** @} */
 
-            } // namespace gui
-      } // namespace UI
+      } // namespace gui
+   } // namespace UI
 } // namespace btg
 
 #endif // SESSION_DIALOG_H

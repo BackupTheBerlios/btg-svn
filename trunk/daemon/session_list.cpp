@@ -113,6 +113,32 @@ namespace btg
             }
       }
 
+      void sessionList::getNames(std::string const& _username, 
+                                 std::vector<std::string> & _names) const
+      {
+         std::map<t_long, eventHandler*>::const_iterator iter;
+         for (iter = eventhandlers_.begin();
+              iter != eventhandlers_.end();
+              iter++)
+            {
+               if (iter->second->getUsername() == _username)
+                  {
+                     _names.push_back(iter->second->getName());
+                  }
+            }
+      }
+
+      void sessionList::getNames(std::vector<std::string> & _names) const
+      {
+         std::map<t_long, eventHandler*>::const_iterator iter;
+         for (iter = eventhandlers_.begin();
+              iter != eventhandlers_.end();
+              iter++)
+            {
+               _names.push_back(iter->second->getName());
+            }
+      }
+
       void sessionList::checkLimitsAndAlerts()
       {
          std::map<t_long, eventHandler*>::iterator iter;

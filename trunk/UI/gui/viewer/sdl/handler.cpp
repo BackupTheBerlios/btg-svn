@@ -267,9 +267,11 @@ namespace btg
                attachDone            = false;
             }
 
-            void viewerHandler::onListSessions(t_longList const& _sessions)
+            void viewerHandler::onListSessions(t_longList const& _sessions,
+                                               t_strList const& _sessionNames)
             {
-               this->sessionList = _sessions;
+               sessionList  = _sessions;
+               sessionNames = _sessionNames;
             }
 
             void viewerHandler::onListSessionsError(string const& _errorDescription)
@@ -424,7 +426,8 @@ namespace btg
 
             }
 
-            t_long viewerStartupHelper::queryUserAboutSession(t_longList const& _sessions) const
+            t_long viewerStartupHelper::queryUserAboutSession(t_longList const& _sessions,
+                                                              t_strList const& _sessionIds) const
             {
                return Command::INVALID_SESSION;
             }
@@ -436,7 +439,8 @@ namespace btg
                return status;
             }
 
-            void viewerStartupHelper::showSessions(t_longList const& _sessions) const
+            void viewerStartupHelper::showSessions(t_longList const& _sessions,
+                                                   t_strList const& _sessionIds) const
             {
             }
 

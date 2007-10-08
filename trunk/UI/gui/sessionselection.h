@@ -47,7 +47,9 @@ namespace btg
                      /// Constructor.
                      /// @param [in] _sessionlist      List of sessions.
                      /// @param [in] _disableSelection False, selection of a session disabled. True, selection of a session is enabled.
-                     sessionSelectionDialog(t_longList const& _sessionlist, bool const _disableSelection = false);
+                     sessionSelectionDialog(t_longList const& _sessionlist, 
+                                            t_strList const& _sessionsIDs,
+                                            bool const _disableSelection = false);
 
                      /// Returns true if the user selected a session - also stores the session id in _session.
                      bool getSelectedSession(t_long & _session);

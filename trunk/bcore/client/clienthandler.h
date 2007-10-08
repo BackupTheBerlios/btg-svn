@@ -217,6 +217,10 @@ namespace btg
                      /// onListSessions.
                      virtual t_longList getSessionList() const;
 
+                     /// Get a list of sessions, as returned by
+                     /// onListSessions.
+                     virtual t_strList getSessionNames() const;
+
                      /// Get a pointer to the contained client
                      /// configuration object.
                      virtual btg::core::client::clientConfiguration* getConfig() const;
@@ -317,6 +321,9 @@ namespace btg
 
                      /// List of sessions, as returned by onListSessions.
                      t_longList                        sessionList;
+
+                     /// List of sessions, as returned by onListSessions.
+                     t_strList                         sessionNames;
 
                      /// Pointer to the object holding the client configuration.
                      btg::core::client::clientConfiguration* config;

@@ -19,9 +19,11 @@ namespace btg
          using namespace std;
          using namespace btg::core;
 
-         sessionDialog::sessionDialog(t_longList const& _sessionlist)
+         sessionDialog::sessionDialog(t_longList const& _sessionlist,
+                                      t_strList const& _sessionsIDs)
             : quitstate(sessionDialog::QUIT),
               sessionlist(_sessionlist),
+              sessionsIDs(_sessionsIDs),
               selected(false),
               session(Command::INVALID_SESSION),
               create_session(false),
@@ -74,13 +76,18 @@ namespace btg
             add_action_widget(*attachbutton, -5);
 
             /// Fill the combobox with session ids.
-            t_longListCI sessionIter;
-
-            for (sessionIter = _sessionlist.begin();
-                 sessionIter != _sessionlist.end();
+            t_strListCI sessionNameIter = sessionsIDs.begin();
+            for (t_longListCI sessionIter = sessionlist.begin();
+                 sessionIter != sessionlist.end();
                  sessionIter++)
                {
-                  cbt->append_text(convertToString<t_long>(*sessionIter));
+                  std::string session_descr = convertToString<t_long>(*sessionIter);
+                  session_descr += " (";
+                  session_descr += *sessionNameIter;
+                  session_descr += ")";
+
+                  cbt->append_text(session_descr);
+                  sessionNameIter++;
                }
 
             // Select the first session id.
@@ -127,8 +134,13 @@ namespace btg
             string active = cbt->get_active_text();
             if (active != "")
                {
-                  this->selected = true;
-                  this->session  = convertStringTo<t_long>(active);
+                  std::string::size_type pos = active.find_first_of("(");
+                  if (pos != std::string::npos)
+                     {
+                        std::string session_descr = active.substr(0, pos);
+                        this->session  = convertStringTo<t_long>(session_descr);
+                        this->selected = true;
+                     }
                }
             else
                {

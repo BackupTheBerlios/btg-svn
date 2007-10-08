@@ -154,7 +154,10 @@ namespace btg
                   void onClean(t_strList const& _filenames, t_intList const& _contextIDs);
                   void onAttach();
                   void onAttachError(std::string const& _message);
-                  void onListSessions(t_longList const& _sessions);
+
+                  void onListSessions(t_longList const& _sessions,
+                                      t_strList const& _sessionNames);
+
                   void onListSessionsError(std::string const& _errorDescription);
 
                   void onSessionError();
@@ -224,9 +227,11 @@ namespace btg
                                       btg::core::client::clientHandler*              _handler);
 
                   /// Query the user about which session to attach to.
-                  virtual t_long queryUserAboutSession(t_longList const& _sessions) const;
+                  virtual t_long queryUserAboutSession(t_longList const& _sessions,
+                                                       t_strList const& _sessionIds) const;
                   virtual bool authUserQuery();
-                  virtual void showSessions(t_longList const& _sessions) const;
+                  virtual void showSessions(t_longList const& _sessions,
+                                            t_strList const& _sessionIds) const;
                   /// Destructor.
                   virtual ~viewerStartupHelper();
                };

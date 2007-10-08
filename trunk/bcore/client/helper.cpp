@@ -234,10 +234,10 @@ namespace btg
                      else
                         {
                            // Ask user which session he wants to attach to.
-                           t_longList sessions;
                            handler->reqGetActiveSessions();
 
-                           sessions = handler->getSessionList();
+                           t_longList sessions   = handler->getSessionList();
+                           t_strList sessionsIDs = handler->getSessionNames();
 
                            // Make sure that sessions are available.
                            if (sessions.size() <= 0)
@@ -248,7 +248,8 @@ namespace btg
                                  break;
                               }
 
-                           t_long temp_session =  this->queryUserAboutSession(sessions);
+                           t_long temp_session =  this->queryUserAboutSession(sessions, 
+                                                                              sessionsIDs);
 
                            if (temp_session != Command::INVALID_SESSION)
                               {
@@ -290,12 +291,10 @@ namespace btg
                   {
                      // Attach to the first available session.
 
-                     t_longList sessions;
                      handler->reqGetActiveSessions();
 
-                     sessions = handler->getSessionList();
-
-                     t_longListCI vlci = sessions.begin();
+                     t_longList sessions = handler->getSessionList();
+                     t_longListCI vlci   = sessions.begin();
 
                      if (vlci != sessions.end())
                         {
@@ -326,15 +325,15 @@ namespace btg
                   }
                case startupHelper::op_list:
                   {
-                     t_longList sessions;
                      handler->reqGetActiveSessions();
 
-                     sessions = handler->getSessionList();
+                     t_longList sessions   = handler->getSessionList();
+                     t_strList sessionsIDs = handler->getSessionNames();
 
                      if (sessions.size() > 0)
                         {
                            result = startupHelper::or_list_success;
-                           showSessions(sessions);
+                           showSessions(sessions, sessionsIDs);
                         }
                      else
                         {

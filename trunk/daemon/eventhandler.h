@@ -151,6 +151,8 @@ namespace btg
                /// belongs to.
                std::string getUsername() const;
 
+               std::string getName() const;
+
                /// Destructor.
                ~eventHandler();
             private:
@@ -186,8 +188,9 @@ namespace btg
                connectionHandler*           connHandler;
 
                /// Number of clients currently attached.
-               t_uint numClients;
+               t_uint                       numClients;
 
+               std::string                  name_;
 #if BTG_OPTION_EVENTCALLBACK
                /// Pointer to the callback manager used.
                callbackManager* cbm_;
@@ -223,7 +226,9 @@ namespace btg
                /// @param [in] _connectionID The ID of the connection used.
                /// @param [in] _type         The command for which to send an error message.
                /// @param [in] _error        The error message text.
-               void sendError(t_int _connectionID, btg::core::Command::commandType _type, std::string const& _error);
+               void sendError(t_int _connectionID, 
+                              btg::core::Command::commandType _type, 
+                              std::string const& _error);
 
                /// Handle list contexts.
                void handle_CN_GLIST(t_int _connectionID);

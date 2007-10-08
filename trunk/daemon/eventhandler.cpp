@@ -106,6 +106,7 @@ namespace btg
            daemoncontext(0),
            connHandler(_connectionHandler),
            numClients(1),
+           name_("Unamed session"),
 #if BTG_OPTION_EVENTCALLBACK
            cbm_(_cbm),
 #endif // BTG_OPTION_EVENTCALLBACK
@@ -944,6 +945,11 @@ namespace btg
       std::string eventHandler::getUsername() const
       { 
          return username_;
+      }
+
+      std::string eventHandler::getName() const
+      {
+         return name_;
       }
 
    } // namespace daemon

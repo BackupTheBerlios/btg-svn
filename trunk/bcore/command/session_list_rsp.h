@@ -42,17 +42,27 @@ namespace btg
                /// Default constructor.
                listSessionResponseCommand();
                /// Constructor.
-               /// @param [in] _sessions       List of sessions.
-               listSessionResponseCommand(t_longList _sessions);
+               /// @param [in] _sessions List of sessions.
+               /// @param [in] _names    List of session names.
+               listSessionResponseCommand(t_longList _sessions,
+                                          t_strList _names);
+
                bool serialize(btg::core::externalization::Externalization* _e) const;
                bool deserialize(btg::core::externalization::Externalization* _e);
+
                /// Get the list of sessions.
                t_longList getSessions() const;
+               
+               /// Get list of session names.
+               t_strList getNames() const;
+
                /// Destructor.
                virtual ~listSessionResponseCommand();
             private:
                /// List of sessions.
                t_longList sessions;
+               /// List of session names.
+               t_strList  names;
             };
 
          /** @} */

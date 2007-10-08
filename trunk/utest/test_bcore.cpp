@@ -258,13 +258,15 @@ void testBcore::testListContextCommand()
 
 void testBcore::testListSessionResponseCommand()
 {
-   vector<t_long> vl;
+   std::vector<t_long> vl;
+   std::vector<std::string> sn;
    for (t_long i=0; i<50; i++)
       {
          vl.push_back(i);
+         sn.push_back("name");
       }
 
-   listSessionResponseCommand *lsrc = new listSessionResponseCommand(vl);
+   listSessionResponseCommand *lsrc = new listSessionResponseCommand(vl, sn);
 
    lsrc->serialize(externalization);
    commandFactory::decodeStatus error;
@@ -1762,8 +1764,15 @@ void testBcore::createCommands(std::vector<btg::core::Command*> & commands)
    sessions.push_back(104);
    sessions.push_back(150);
 
+   t_strList sessionNames;
+   sessionNames.push_back("1");
+   sessionNames.push_back("5");
+   sessionNames.push_back("14");
+   sessionNames.push_back("104");
+   sessionNames.push_back("150");
+
    commands.push_back(
-                      new listSessionResponseCommand(sessions)
+                      new listSessionResponseCommand(sessions, sessionNames)
                       );
    
    std::string buildId("testbuild");

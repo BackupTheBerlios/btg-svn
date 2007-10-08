@@ -10,6 +10,8 @@
 #include <bcore/command/command.h>
 #include <gtkmm/main.h>
 
+#include <string>
+
 namespace btg
 {
    namespace UI
@@ -19,7 +21,9 @@ namespace btg
          using namespace std;
          using namespace btg::core;
 
-         sessionSelectionDialog::sessionSelectionDialog(t_longList const& _sessionlist, bool const _disableSelection)
+         sessionSelectionDialog::sessionSelectionDialog(t_longList const& _sessionlist, 
+                                                        t_strList const& _sessionsIDs,
+                                                        bool const _disableSelection)
             : sessionlist(_sessionlist),
               disableSelection_(_disableSelection),
               selected(false),
@@ -77,13 +81,18 @@ namespace btg
             add_action_widget(*okbutton, -5);
 
             /// Fill the combobox with session ids.
-            t_longListCI sessionIter;
-
-            for (sessionIter = _sessionlist.begin();
+            t_strListCI sessionNameIter = _sessionsIDs.begin();
+            for (t_longListCI sessionIter = _sessionlist.begin();
                  sessionIter != _sessionlist.end();
                  sessionIter++)
                {
-                  cbt->append_text(convertToString<t_long>(*sessionIter));
+                  std::string session_descr = convertToString<t_long>(*sessionIter);
+                  session_descr += " (";
+                  session_descr += *sessionNameIter;
+                  session_descr += ")";
+
+                  cbt->append_text(session_descr);
+                  sessionNameIter++;
                }
 
             // Select the first session id.
@@ -113,8 +122,13 @@ namespace btg
             string active = cbt->get_active_text();
             if (active != "")
                {
-                  this->selected = true;
-                  this->session  = convertStringTo<t_long>(active);
+                  std::string::size_type pos = active.find_first_of("(");
+                  if (pos != std::string::npos)
+                     {
+                        std::string session_descr = active.substr(0, pos);
+                        this->session  = convertStringTo<t_long>(session_descr);
+                        this->selected = true;
+                     }
                }
             else
                {

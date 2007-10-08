@@ -264,10 +264,12 @@ namespace btg
             lastCommandSuccess_ = true;
          }
 
-         void Handler::onListSessions(t_longList const& _sessions)
+         void Handler::onListSessions(t_longList const& _sessions,
+                                      t_strList const& _sessionNames)
          {
             lastCommandSuccess_ = true;
             sessionList         = _sessions;
+            sessionNames        = _sessionNames;
          }
 
          void Handler::onSessionError()
@@ -388,16 +390,19 @@ namespace btg
          {
          }
 
-         t_long ncliStartupHelper::queryUserAboutSession(t_longList const& _sessions) const
+         t_long ncliStartupHelper::queryUserAboutSession(t_longList const& _sessions,
+                                                         t_strList const& _sessionsIDs) const
          {
             std::cout << "Session(s):" << std::endl;
 
-            t_int session_no = 0;
+            t_strListCI sessionIdIter = _sessionsIDs.begin();
+            t_int session_no          = 0;
             for (t_longListCI vlci = _sessions.begin();
                  vlci != _sessions.end();
                  vlci++)
                {
-                  std::cout << session_no << ": " << *vlci << std::endl;
+                  std::cout << session_no << ": " << *vlci << " (" << *sessionIdIter << ")" << std::endl;
+                  sessionIdIter++;
                   session_no++;
                }
 
@@ -459,8 +464,11 @@ namespace btg
             return status;
          }
 
-         void ncliStartupHelper::showSessions(t_longList const& _sessions) const
+         void ncliStartupHelper::showSessions(t_longList const& _sessions,
+                                              t_strList const& _sessionIds) const
          {
+            t_strListCI sessionIdIter = _sessionIds.begin();
+
             if (_sessions.size() > 0)
                {
                   std::cout << "Session(s):" << std::endl;
@@ -469,7 +477,8 @@ namespace btg
                        vlci != _sessions.end();
                        vlci++)
                      {
-                        std::cout << *vlci << std::endl;
+                        std::cout << *vlci << " (" << *sessionIdIter << ")" << std::endl;
+                        sessionIdIter++;
                      }
                }
             else
