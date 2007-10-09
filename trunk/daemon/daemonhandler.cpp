@@ -30,6 +30,8 @@
 #include <bcore/command/initconnection.h>
 #include <bcore/command/session_attach.h>
 #include <bcore/command/session_list_rsp.h>
+#include <bcore/command/session_name.h>
+#include <bcore/command/session_rw.h>
 #include <bcore/command/uptime.h>
 #include <bcore/command/limit.h>
 
@@ -228,6 +230,24 @@ namespace btg
                               handleUptime();
                               break;
                            }
+                        case Command::CN_SNAME:
+                           {
+                              handleSessionName(eventhandler);
+                              break;
+                           }
+                        case Command::CN_SSETNAME:
+                           {
+                              handleSessionSetName(eventhandler, command_);
+                              break;
+                           }
+                        case Command::CN_MOREAD:
+                           {
+                              break;
+                           }
+                        case Command::CN_MOWRITE:
+                           {
+                              break;
+                           }
                         default:
                            {
                               handleOther(eventhandler, command_);
@@ -266,17 +286,33 @@ namespace btg
                            // No session yet.
                            // ***************
 
-                           if (command_->getType() == Command::CN_SATTACH)
+                           switch(command_->getType())
                               {
-                                 handleAttach(command_);
-                              }
-                           else if (command_->getType() == Command::CN_SLIST)
-                              {
-                                 handleSessionList();
-                              }
-                           else if (command_->getType() == Command::CN_GSETUP)
-                              {
-                                 handleSetup(command_);
+                              case Command::CN_SATTACH:
+                                 {
+                                    handleAttach(command_);
+                                    break;
+                                 }
+                              case Command::CN_SLIST:
+                                 {
+                                    handleSessionList();
+                                    break;
+                                 }
+                              case Command::CN_GSETUP:
+                                 {
+                                    handleSetup(command_);
+                                    break;
+                                 }
+                              case Command::CN_SNAME:
+                              case Command::CN_SNAMERSP:
+                              case Command::CN_SSETNAME:
+                                 {
+                                    // These commands are not supported here.
+                                    // Send an nice error back.
+                                    // !!!
+                                    handleSessionInInvalidState(command_->getType());
+                                    break;
+                                 }
                               }
                         } // End if !authed...
                   }
@@ -434,7 +470,50 @@ namespace btg
 
          t_ulong timeDiff = now - dd_->daemonStartTime;
 
-         sendCommand(dd_->externalization, dd_->transport, connectionID_, new uptimeResponseCommand(timeDiff));
+         sendCommand(dd_->externalization, 
+                     dd_->transport, 
+                     connectionID_, 
+                     new uptimeResponseCommand(timeDiff));
+      }
+
+      void daemonHandler::handleSessionName(eventHandler* _eventhandler)
+      {
+         sendCommand(dd_->externalization, 
+                     dd_->transport,
+                     connectionID_, 
+                     new sessionNameResponseCommand(_eventhandler->getName()));
+      }
+
+      void daemonHandler::handleSessionSetName(eventHandler* _eventhandler, 
+                                               Command* _command)
+      {
+         setSessionNameCommand* ssnc = dynamic_cast<setSessionNameCommand*>(_command);
+
+         std::string sname = ssnc->getName();
+
+         t_uint const maxNameSize = 255;
+
+         if (sname.size() > maxNameSize)
+            {
+               sname = sname.substr(0, maxNameSize);
+            }
+
+         if (sname.size() >= 1)
+            {
+               _eventhandler->setName(sname);
+               sendAck(Command::CN_SSETNAME);
+            }
+         else
+            {
+               sendError(command_->getType(), "Session name too short.");
+            }
+      }
+
+      void daemonHandler::handleSessionInInvalidState(t_int const _id)
+      {
+         MVERBOSE_LOG(moduleName, verboseFlag_, "client (" << connectionID_ << "): Message not supported.");
+
+         sendError(_id, "Not supported in this state.");
       }
 
       void daemonHandler::handleInitConnection(Command* _command)
@@ -713,7 +792,8 @@ namespace btg
                                                    dd_->filetrack,
                                                    dd_->filter,
                                                    dd_->config->getUseTorrentName(),
-                                                   dd_->connHandler
+                                                   dd_->connHandler,
+                                                   "no name"
 #if BTG_OPTION_EVENTCALLBACK
                                                    , dd_->callbackmgr
 #endif // BTG_OPTION_EVENTCALLBACK

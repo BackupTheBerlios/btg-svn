@@ -94,7 +94,8 @@ namespace btg
                             fileTrack* _filetrack,
                             IpFilterIf* _filter,
                             bool const _useTorrentName,
-                            connectionHandler* _connectionHandler
+                            connectionHandler* _connectionHandler,
+                            std::string const& _sessionName
 #if BTG_OPTION_EVENTCALLBACK
                             , callbackManager* _cbm
 #endif // BTG_OPTION_EVENTCALLBACK
@@ -150,6 +151,8 @@ namespace btg
                /// Get the username of the user this eventhandler
                /// belongs to.
                std::string getUsername() const;
+
+               void setName(std::string const& _name);
 
                std::string getName() const;
 

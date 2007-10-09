@@ -94,6 +94,9 @@ namespace btg
                      CN_SQUIT,             //!< Quit the current session.
                      CN_SLIST,             //!< Get a list of sessions.
                      CN_SLISTRSP,          //!< Response that lists sessions.
+                     CN_SNAME,             //!< Get current session name.
+                     CN_SNAMERSP,          //!< Current session name.
+                     CN_SSETNAME,          //!< Set current session name.
                      CN_MOREAD,            //!< Only read only access. Usefull for writing monitor applets.
                      CN_MOWRITE,           //!< Default write mode.
                      CN_UNDEFINED          //!< Undefined command.

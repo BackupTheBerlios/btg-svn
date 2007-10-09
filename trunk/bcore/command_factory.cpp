@@ -56,6 +56,8 @@
 #include <bcore/command/session_list_rsp.h>
 #include <bcore/command/session_quit.h>
 #include <bcore/command/session_error.h>
+#include <bcore/command/session_name.h>
+#include <bcore/command/session_rw.h>
 #include <bcore/command/setup.h>
 
 #include <bcore/command/initconnection.h>

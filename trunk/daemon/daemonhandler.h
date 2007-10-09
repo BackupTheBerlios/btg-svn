@@ -98,6 +98,16 @@ namespace btg
                /// Handle uptime request.
                void handleUptime();
 
+               /// Handle session name request.
+               void handleSessionName(eventHandler* _eventhandler);
+
+               /// Handle setting session name.
+               void handleSessionSetName(eventHandler* _eventhandler, 
+                                         btg::core::Command* _command);
+
+               /// Handle session messages in invalid state.
+               void handleSessionInInvalidState(t_int const _id);
+
                /// Handle initialization of a connection from a client.
                void handleInitConnection(btg::core::Command* _command);
 

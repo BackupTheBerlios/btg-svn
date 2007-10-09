@@ -89,8 +89,9 @@ namespace btg
                                  messageTransport *_transport,
                                  fileTrack* _filetrack,
                                  IpFilterIf* _filter,
-				 bool const _useTorrentName,
-                                 connectionHandler* _connectionHandler
+                                 bool const _useTorrentName,
+                                 connectionHandler* _connectionHandler,
+                                 std::string const& _sessionName
 #if BTG_OPTION_EVENTCALLBACK
                                  , callbackManager* _cbm
 #endif // BTG_OPTION_EVENTCALLBACK
@@ -106,7 +107,7 @@ namespace btg
            daemoncontext(0),
            connHandler(_connectionHandler),
            numClients(1),
-           name_("Unamed session"),
+           name_(_sessionName),
 #if BTG_OPTION_EVENTCALLBACK
            cbm_(_cbm),
 #endif // BTG_OPTION_EVENTCALLBACK
@@ -389,6 +390,7 @@ namespace btg
                                    bool const _dumpFastResume)
       {
          _e->longToBytes(&session);
+         _e->stringToBytes(&name_);
          _e->stringToBytes(&username_);
          _e->intToBytes(&seedLimit_);
          _e->longToBytes(&seedTimeout_);
@@ -931,6 +933,21 @@ namespace btg
          daemoncontext->shutdown();
       }
 
+      std::string eventHandler::getUsername() const
+      { 
+         return username_;
+      }
+
+      std::string eventHandler::getName() const
+      {
+         return name_;
+      }
+
+      void eventHandler::setName(std::string const& _name)
+      {
+         name_ = _name;
+      }
+
       eventHandler::~eventHandler()
       {
          BTG_MENTER("destructor", "");
@@ -940,16 +957,6 @@ namespace btg
          cbm_->remove(username_);
 #endif // BTG_OPTION_EVENTCALLBACK
          BTG_MEXIT("destructor", "");
-      }
-
-      std::string eventHandler::getUsername() const
-      { 
-         return username_;
-      }
-
-      std::string eventHandler::getName() const
-      {
-         return name_;
       }
 
    } // namespace daemon

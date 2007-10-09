@@ -86,6 +86,7 @@ namespace btg
                /// @return Pointer to an event handler or 0 on failture.
                btg::daemon::eventHandler* createSession(std::string const & _username,
                                                         t_long const _session_id,
+                                                        std::string const & _session_name,
                                                         t_int const _seed_limit,
                                                         t_int const _seed_timeout);
 

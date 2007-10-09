@@ -93,7 +93,9 @@ namespace btg
             t_IdToNameElem(Command::CN_SERROR,          "(s) Error"),
             t_IdToNameElem(Command::CN_SLIST,           "(s) List"),
             t_IdToNameElem(Command::CN_SLISTRSP,        "(s) List response"),
-            // Mode, yet to be implemented.
+            t_IdToNameElem(Command::CN_SNAME,           "(s) Session name"),
+            t_IdToNameElem(Command::CN_SNAMERSP,        "(s) Session name response"),
+            t_IdToNameElem(Command::CN_SSETNAME,        "(s) Set session name"),
             t_IdToNameElem(Command::CN_MOREAD,          "(m) RO mode"),
             t_IdToNameElem(Command::CN_MOWRITE,         "(m) RW mode"),
             // Undefined.

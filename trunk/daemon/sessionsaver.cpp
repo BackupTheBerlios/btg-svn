@@ -206,18 +206,24 @@ namespace btg
               x++)
             {
                t_long      session;
+               std::string sessionName;
                std::string username;
                t_int       seedLimit;
                t_long      seedTimeout;
 
                DESERIALIZE_CHECK(!_e->bytesToLong(&session), "SessionSaver::loadSessions(), failed to parse " << _filename << ". Missing session id for session no " << handler_count, handler_count);
+               DESERIALIZE_CHECK(!_e->bytesToString(&sessionName), "SessionSaver::loadSessions(), failed to parse " << _filename << ". Missing session name for session no " << handler_count, handler_count);
                DESERIALIZE_CHECK(!_e->bytesToString(&username), "SessionSaver::loadSessions(), failed to parse " << _filename << ". Missing username for session no " << handler_count, handler_count);
                DESERIALIZE_CHECK(!_e->bytesToInt(&seedLimit), "SessionSaver::loadSessions(), failed to parse " << _filename << ". Missing seed limit for session " << session, handler_count);
                DESERIALIZE_CHECK(!_e->bytesToLong(&seedTimeout), "SessionSaver::loadSessions(), failed to parse " << _filename << ". Missing seed timeout for session " << session, handler_count);
 
                std::vector<btg::core::addressPort> nodes;
 
-               eventHandler *eh = createSession(username, session, seedLimit, seedTimeout);
+               eventHandler *eh = createSession(username, 
+                                                session, 
+                                                sessionName, 
+                                                seedLimit, 
+                                                seedTimeout);
                if (!eh)
                   {
                      BTG_ERROR_LOG("SessionSaver::loadSessions(), failed to create session with id " << session);
@@ -294,6 +300,7 @@ namespace btg
 
       eventHandler* SessionSaver::createSession(std::string const & _username,
                                                 t_long const _session_id,
+                                                std::string const & _session_name,
                                                 t_int const _seed_limit,
                                                 t_int const _seed_timeout)
       {
@@ -380,7 +387,8 @@ namespace btg
                                              dd.filetrack,
                                              dd.filter,
                                              dd.config->getUseTorrentName(),
-                                             dd.connHandler
+                                             dd.connHandler,
+                                             _session_name
 #if BTG_OPTION_EVENTCALLBACK
                                              , dd.callbackmgr
 #endif // BTG_OPTION_EVENTCALLBACK
