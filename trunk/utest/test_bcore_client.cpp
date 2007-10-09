@@ -30,6 +30,7 @@
 #include "files.h"
 
 #include <bcore/client/lastfiles.h>
+#include <bcore/client/clientdynconfig.h>
 
 #if BTG_UTEST_CLIENT
 CPPUNIT_TEST_SUITE_REGISTRATION( testBcoreClient );
@@ -128,10 +129,7 @@ void testBcoreClient::testConfigurationLastOpenFiles()
    using namespace btg::core;
    using namespace btg::core::logger;
 
-   // need to rewrite
-#if 0
-   string config_filename        = TESTFILE_CONFIG;
-   string lastfiles_filename     = std::string(TESTFILE_CONFIG)+".last";
+   string dynconfig_filename        = std::string(TESTFILE_CONFIG) + ".dynconfig";
    vector<string> last_files;
 
    last_files.push_back(TESTFILE_LAST_0);
@@ -147,25 +145,26 @@ void testBcoreClient::testConfigurationLastOpenFiles()
    last_files.push_back(TESTFILE_LAST_10);
    last_files.push_back(TESTFILE_LAST_11);
 
-   lastFiles *config = new lastFiles(lastfiles_filename);
+   clientDynConfig *cliDynConf = new clientDynConfig(dynconfig_filename);
+   lastFiles *config = new lastFiles(*cliDynConf);
 
    config->setLastFiles(last_files);
 
-   // Write to a file:
-   CPPUNIT_ASSERT(config->save());
-
    delete config;
    config = 0;
+   delete cliDynConf;
+   cliDynConf = 0;
 
-   config = new lastFiles(lastfiles_filename);
-   CPPUNIT_ASSERT(config->load());
+   cliDynConf = new clientDynConfig(dynconfig_filename);
+   config = new lastFiles(*cliDynConf);
 
    CPPUNIT_ASSERT(config->getLastFiles() == last_files);
    CPPUNIT_ASSERT(config->getLastFiles().size() == last_files.size());
 
    delete config;
    config = 0;
-#endif
+   delete cliDynConf;
+   cliDynConf = 0;
 }
 
 void testBcoreClient::setConfigDefaults(btg::core::client::clientConfiguration* _config,
