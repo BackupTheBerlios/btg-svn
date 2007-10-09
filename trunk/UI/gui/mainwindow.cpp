@@ -372,8 +372,11 @@ namespace btg
                   }
                case buttonMenuIds::BTN_PREFERENCES:
                   {
-                     handle_btn_prefs();
-                     non_context = true;
+                     if ( !mtw->gotSelection() )
+                     {
+                        Gtk::MessageDialog d(*this, "Please, select a torrent.", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK, true);
+                        d.run();
+                     }
                      break;
                   }
                case buttonMenuIds::BTN_DETACH:
@@ -402,6 +405,7 @@ namespace btg
                   }
                case buttonMenuIds::BTN_GLIMIT:
                   {
+                     handle_btn_glimit();
                      non_context = true;
                      break;
                   }
@@ -457,6 +461,11 @@ namespace btg
                            case buttonMenuIds::BTN_LIMIT:
                               {
                                  handle_btn_limit(id);
+                                 break;
+                              }
+                           case buttonMenuIds::BTN_PREFERENCES:
+                              {
+                                 handle_btn_prefs(id);
                                  break;
                               }
                            default:
@@ -757,17 +766,6 @@ namespace btg
                }
          }
 
-         void mainWindow::handle_btn_prefs()
-         {
-            // Disable updating contexts while this dialog is running.
-            this->updateContexts = false;
-            
-            BTG_NOTICE("(global) mainToolbar::BTN_PREFERENCES");
-            
-            // Enable updating contexts.
-            this->updateContexts = true;
-         }
-
          void mainWindow::handle_btn_detach()
          {
             GET_HANDLER_INST;
@@ -869,6 +867,12 @@ namespace btg
             logVerboseMessage(USERMESSAGE_UPTIME);
             msb->set(USERMESSAGE_UPTIME);
             handler->reqUptime();
+         }
+
+         void mainWindow::handle_btn_glimit()
+         {
+            Gtk::MessageDialog d(*this, "Global limits setting not available yet.", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+            d.run();
          }
 
          void mainWindow::handle_btn_start(t_int const _id)
@@ -1048,6 +1052,12 @@ namespace btg
                }
          }
          
+         void mainWindow::handle_btn_prefs(t_int const _id)
+         {
+            Gtk::MessageDialog d(*this, "Torrent preferences not available yet.", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+            d.run();
+         }
+
          mainWindow::~mainWindow()
          {
             timeout_connection.disconnect();

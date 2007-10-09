@@ -143,9 +143,6 @@ namespace btg
                      /// daemon that it should be created.
                      void handle_btn_load();
 
-                     /// Handle preferences.
-                     void handle_btn_prefs();
-
                      /// Handle detach.
                      void handle_btn_detach();
 
@@ -160,6 +157,9 @@ namespace btg
 
                      /// Handle uptime.
                      void handle_btn_uptime();
+
+                     /// Handle limit.
+                     void handle_btn_glimit();
 
                      /// Handle start.
                      void handle_btn_start(t_int const _id);
@@ -178,6 +178,9 @@ namespace btg
 
                      /// Handle limit.
                      void handle_btn_limit(t_int const _id);
+
+                     /// Handle preferences.
+                     void handle_btn_prefs(t_int const _id);
 
                      /// Indicates that the client does verbose logging.
                      bool                      verboseFlag;

@@ -248,7 +248,7 @@ namespace btg
                                                      sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LIMIT )
                                                      );
 
-            killMenuitem->signal_activate().connect(
+            globallimitMenuitem->signal_activate().connect(
                                                     sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_GLIMIT )
                                                     );
 
