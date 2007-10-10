@@ -73,6 +73,8 @@ namespace btg
          bool clientDynConfig::load()
          {
             BTG_NOTICE("load(): Loading dynconfig from file " << m_file_name);
+            
+            set_modified(false);
 
             ifstream file;
 #if HAVE_IOS_BASE
@@ -200,7 +202,7 @@ namespace btg
             delete [] buffer;
             buffer = 0;
 
-            // file closes when goes out of scope
+            set_modified(false);
             
             return true;
          }
@@ -209,20 +211,25 @@ namespace btg
          {
             m_gui_window_width = width;
             m_gui_window_height = height;
-            m_data_modified = true;
+            set_modified(true);
          }
          
          void clientDynConfig::set_gui_window_position(int x, int y)
          {
             m_gui_window_xpos = x;
             m_gui_window_ypos = y;
-            m_data_modified = true;
+            set_modified(true);
          }
          
          void clientDynConfig::set_gui_window_maximized(bool maxmin)
          {
             m_gui_window_maximized = maxmin;
-            m_data_modified = true;
+            set_modified(true);
+         }
+
+         void clientDynConfig::set_modified(bool const bMod)
+         {
+            m_data_modified = bMod;
          }
 
       } // namespace client

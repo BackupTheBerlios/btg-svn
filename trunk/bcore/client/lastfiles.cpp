@@ -74,7 +74,7 @@ namespace btg
          void lastFiles::set_modified(bool const bMod)
          {
             data_modified_ = bMod;
-            m_cc.m_data_modified = bMod;
+            m_cc.set_modified(bMod);
          }
 
       } // namespace client

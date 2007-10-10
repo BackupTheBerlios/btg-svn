@@ -89,6 +89,11 @@ namespace btg
                      /// Set GUI Client window maximized state
                      void set_gui_window_maximized(bool const maxmin);
                   
+                  protected:
+                     /// Sets data modification flag
+                     /// @param [in] bMod true if data modified
+                     void set_modified(bool const bMod);
+                  
                   // Internal data
                   private:
                      /// destination file name
