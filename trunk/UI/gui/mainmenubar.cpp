@@ -78,7 +78,7 @@ namespace btg
             Gtk::MenuItem *globallimitMenuitem = 0;
             Gtk::MenuItem *killMenuitem        = 0;
             Gtk::MenuItem *uptimeMenuitem      = 0;
-
+            Gtk::MenuItem *sessionNameMenuitem = 0;
             Gtk::MenuItem *aboutMenuitem       = 0;
             Gtk::Menu *helpMenu                = Gtk::manage(new class Gtk::Menu());
             Gtk::MenuItem *helpMenuitem        = 0;
@@ -180,6 +180,9 @@ namespace btg
             daemonMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Uptime"));
             uptimeMenuitem = reinterpret_cast<Gtk::MenuItem *>(&daemonMenu->items().back());
 
+            daemonMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Session Name"));
+            sessionNameMenuitem = reinterpret_cast<Gtk::MenuItem *>(&daemonMenu->items().back());
+
             /* */
             /* */
 
@@ -195,6 +198,7 @@ namespace btg
 
             killMenuitem->show();
             uptimeMenuitem->show();
+            sessionNameMenuitem->show();
 
             fileMenuitem->show();
             RecentMenuitem->show();
@@ -258,6 +262,10 @@ namespace btg
 
             uptimeMenuitem->signal_activate().connect(
                                                       sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_UPTIME )
+                                                      );
+
+            sessionNameMenuitem->signal_activate().connect(
+                                                      sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_SESNAME )
                                                       );
 
             aboutMenuitem->signal_activate().connect(

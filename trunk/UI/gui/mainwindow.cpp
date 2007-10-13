@@ -49,6 +49,7 @@
 #include "prefdialog.h"
 #include "limitdialog.h"
 #include "errordialog.h"
+#include "sndialog.h"
 
 #include "logtextview.h"
 
@@ -415,6 +416,13 @@ namespace btg
                      non_context = true;
                      break;
                   }
+               case buttonMenuIds::BTN_SESNAME:
+                  {
+                     handle_btn_sesname();
+                     non_context = true;
+                     break;
+                  }
+
                default:
                   {
                      // Ignore the rest of buttons, handled elsewhere.
@@ -858,6 +866,56 @@ namespace btg
                   logVerboseMessage(USERMESSAGE_KILL_ABORTED);
                   msb->set(USERMESSAGE_KILL_ABORTED);
                }
+         }
+
+         void mainWindow::handle_btn_sesname()
+         {
+            GET_HANDLER_INST;
+
+            std::string session_name;
+
+            handler->reqSessionName();
+            session_name = handler->getCurrentSessionName();
+
+            sessionNameDialog snd(session_name);
+            
+            int result = snd.run();
+
+            switch(result)
+               {
+               case(Gtk::RESPONSE_OK):
+                  {
+                     std::string newname = snd.getName();
+                     if (session_name != newname)
+                        {
+                           handler->reqSetSessionName(newname);
+                           if (handler->commandSuccess())
+                              {
+                                 msb->set(USERMESSAGE_SNAMESET);
+                              }
+                           else
+                              {
+                                 msb->set(USERMESSAGE_NOT_SNAMESET);
+                              }
+                        }
+                     else
+                        {
+                           msb->set(USERMESSAGE_NOT_SNAMESET);
+                        }
+
+                     break;
+                  }
+               case(Gtk::RESPONSE_CANCEL):
+                  {
+                     msb->set(USERMESSAGE_NOT_SNAMESET);
+                     break;
+                  }
+               default:
+                  {
+                     BTG_NOTICE("Unexpected button clicked.");
+                     break;
+                  }
+               } // switch
          }
 
          void mainWindow::handle_btn_uptime()

@@ -56,6 +56,7 @@ namespace btg
                            BTN_KILL        = 111,  //!< Kill the daemon.
                            BTN_GLIMIT      = 112,  //!< Set globa limits.
                            BTN_UPTIME      = 113,  //!< Ask the daemon for uptime.
+                           BTN_SESNAME     = 114,  //!< Change the name of the current session.
 
                            BTN_LASTFILE0 = 0,   //!< Last opened file #0.
                            BTN_LASTFILE1 = 1,   //!< Last opened file #1.

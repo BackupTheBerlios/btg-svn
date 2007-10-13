@@ -242,14 +242,14 @@ namespace btg
                                 clientConfiguration* _config,
                                 btg::core::client::lastFiles* _lastfiles,
                                 bool const _verboseFlag,
-				bool const _autoStartFlag)
+                                bool const _autoStartFlag)
             : clientHandler(_e,
                             this,
                             _transport,
                             _config,
                             _lastfiles,
                             _verboseFlag,
-			    _autoStartFlag),
+                            _autoStartFlag),
               history(0),
               isOutputAvailable(false),
               output(""),
@@ -999,14 +999,14 @@ namespace btg
 
          void cliHandler::onSetup(t_long const _session)
          {
- 	   setSession(_session);
+            setSession(_session);
             setOutput("New session successfully created.");
             this->setupDone = true;
          }
 
          void cliHandler::onSetupError(std::string const& _message)
          {
-	   setSession(ILLEGAL_ID);
+            setSession(ILLEGAL_ID);
             setupFailtureMessage = _message;
             setupDone            = false;
          }
@@ -1019,7 +1019,7 @@ namespace btg
          void cliHandler::onAttachError(std::string const& _message)
          {
             std::cout << _message << std::endl;
-	    setSession(ILLEGAL_ID);
+            setSession(ILLEGAL_ID);
             attachFailtureMessage = _message;
             attachDone            = false;
          }
@@ -1294,13 +1294,13 @@ namespace btg
                   _output += GPD->sNEWLINE();
 
                   // Progress:
-		  std::string timespec("Time left: ");
+                  std::string timespec("Time left: ");
 
-		  if (_status.validTimeLeft())
+                  if (_status.validTimeLeft())
                      {
-		       _status.timeLeftToString(timespec, _shortFormat);
-		      _output += timespec;
-		      _output += GPD->sNEWLINE();
+                        _status.timeLeftToString(timespec, _shortFormat);
+                        _output += timespec;
+                        _output += GPD->sNEWLINE();
                      }
 
                   humanReadableUnit hru = humanReadableUnit::convert(_status.downloadTotal());
@@ -1379,14 +1379,14 @@ namespace btg
                      }
                   _output += convertToString<t_ulong>(_status.done()) + " %, ";
 
-		  // Progress:
-		  if (_status.validTimeLeft())
+                  // Progress:
+                  if (_status.validTimeLeft())
                      {
-		       std::string timespec;
-		       _status.timeLeftToString(timespec, _shortFormat);
+                        std::string timespec;
+                        _status.timeLeftToString(timespec, _shortFormat);
 
-		      timespec += ", ";
-		      _output  += timespec;
+                        timespec += ", ";
+                        _output  += timespec;
                      }
 
                   humanReadableRate hrr = humanReadableRate::convert(_status.downloadRate());

@@ -321,12 +321,13 @@ namespace btg
 
          void guiHandler::onSessionName(std::string const& _name)
          {
-            
+            commandStatus = true;
+            currentSessionName = _name;
          }
 
          void guiHandler::onSetSessionName()
          {
-            
+            commandStatus = true;
          }
 
          void guiHandler::onGlobalLimit()

@@ -122,11 +122,6 @@ namespace btg
             this->add_action_widget(*cancelbutton, -10);
 
             // Create buttons and connect their signals.
-
-            //this->add_button("Cancel", button_cancel);
-            //this->add_button("OK",     button_ok);
-            //signal_response().connect(sigc::mem_fun(*this, &authDialog::on_button_pressed));
-
             userNameEntry->signal_changed().connect(sigc::mem_fun(*this, &authDialog::username_changed));
             passwordEntry->signal_changed().connect(sigc::mem_fun(*this, &authDialog::password_changed));
 

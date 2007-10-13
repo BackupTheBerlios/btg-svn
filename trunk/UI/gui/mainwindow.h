@@ -158,6 +158,9 @@ namespace btg
                      /// Handle uptime.
                      void handle_btn_uptime();
 
+                     /// Handle setting session name.
+                     void handle_btn_sesname();
+
                      /// Handle limit.
                      void handle_btn_glimit();
 
