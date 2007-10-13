@@ -73,7 +73,6 @@ namespace btg
                               _lastfiles,
                               _verboseFlag,
                               _autoStartFlag),
-              lastCommandSuccess_(false),
               last_uploadRate(limitBase::LIMIT_DISABLED),
               last_downloadRate(limitBase::LIMIT_DISABLED),
               last_seedLimit(limitBase::LIMIT_DISABLED),
@@ -120,18 +119,18 @@ namespace btg
 
          void Handler::onList(t_intList const& _contextIDs, t_strList const& _filenames)
          {
-            lastCommandSuccess_ = true;
+            commandStatus = true;
          }
 
          void Handler::onListError()
          {
-            lastCommandSuccess_ = false;
+            commandStatus = false;
             this->cmd_failture++;
          }
 
          void Handler::onError(std::string const& _errorDescription)
          {
-            lastCommandSuccess_ = false;
+            commandStatus = false;
 
             this->cmd_failture++;
 
@@ -140,37 +139,48 @@ namespace btg
 
          void Handler::onFatalError(std::string const& _errorDescription)
          {
-            lastCommandSuccess_ = false;
+            commandStatus = false;
          }
 
          void Handler::onQuit()
          {
-            lastCommandSuccess_ = true;
+            commandStatus = true;
          }
 
          void Handler::onKill()
          {
-            lastCommandSuccess_ = true;
+            commandStatus = true;
          }
 
          void Handler::onKillError(std::string _ErrorDescription)
          {
-            lastCommandSuccess_ = false;
+            commandStatus = false;
          }
 
          void Handler::onUptime(t_ulong const _uptime)
          {
-            lastCommandSuccess_ = true;
+            commandStatus = true;
+         }
+
+         void Handler::onSessionName(std::string const& _name)
+         {
+            commandStatus = true;
+            currentSessionName = _name;
+         }
+
+         void Handler::onSetSessionName()
+         {
+            commandStatus = true;
          }
 
          void Handler::onGlobalLimit()
          {
-            lastCommandSuccess_ = true;
+            commandStatus = true;
          }
 
          void Handler::onGlobalLimitError(std::string _ErrorDescription)
          {
-            lastCommandSuccess_ = false;
+            commandStatus = false;
          }
 
          void Handler::onGlobalLimitResponse(t_int const  _limitBytesUpld,
@@ -183,18 +193,18 @@ namespace btg
             last_gl_maxUplds        = _maxUplds;
             last_gl_maxConnections  = _maxConnections;
 
-            lastCommandSuccess_ = true;
+            commandStatus = true;
          }
 
          void Handler::onGlobalLimitResponseError(std::string _ErrorDescription)
          {
-            lastCommandSuccess_ = false;
+            commandStatus = false;
          }
 
 
          void Handler::onCreateWithData()
          {
-            lastCommandSuccess_ = true;
+            commandStatus = true;
 
             lastfiles->addLastFile(last_filename);
             last_filename.clear();
@@ -202,22 +212,22 @@ namespace btg
 
          void Handler::onAbort()
          {
-            lastCommandSuccess_ = true;
+            commandStatus = true;
          }
 
          void Handler::onStart()
          {
-            lastCommandSuccess_ = true;
+            commandStatus = true;
          }
 
          void Handler::onStop()
          {
-            lastCommandSuccess_ = true;
+            commandStatus = true;
          }
 
          void Handler::onStatus(btg::core::Status const& _status)
          {
-            lastCommandSuccess_ = true;
+            commandStatus = true;
             statusSize_         = 1;
          }
 
@@ -230,7 +240,7 @@ namespace btg
 
                   void Handler::onStatusError(std::string const& _errorDescription)
          {
-            lastCommandSuccess_ = false;
+            commandStatus = false;
             statusSize_         = 0;
             this->cmd_failture++;
          }
@@ -238,54 +248,54 @@ namespace btg
          void Handler::onFileInfo(t_fileInfoList const& _fileinfolist)
          {
             lastFileinfolist_   = _fileinfolist;
-            lastCommandSuccess_ = true;
+            commandStatus = true;
          }
 
          void Handler::onFileInfoError(std::string const& _errorDescription)
          {
-            lastCommandSuccess_ = false;
+            commandStatus = false;
          }
 
          void Handler::onPeers(t_peerList const& _peerlist)
          {
-            lastCommandSuccess_ = true;
+            commandStatus = true;
             lastPeerlist_.clear();
             lastPeerlist_       = _peerlist;
          }
 
          void Handler::onPeersError(std::string const& _errorDescription)
          {
-            lastCommandSuccess_ = false;
+            commandStatus = false;
             this->cmd_failture++;
          }
 
          void Handler::onLimit()
          {
-            lastCommandSuccess_ = true;
+            commandStatus = true;
          }
 
          void Handler::onListSessions(t_longList const& _sessions,
                                       t_strList const& _sessionNames)
          {
-            lastCommandSuccess_ = true;
+            commandStatus = true;
             sessionList         = _sessions;
             sessionNames        = _sessionNames;
          }
 
          void Handler::onSessionError()
          {
-            lastCommandSuccess_ = false;
+            commandStatus = false;
             this->cmd_failture++;
          }
 
          void Handler::onClean(t_strList const& _filenames, t_intList const& _contextIDs)
          {
-            lastCommandSuccess_ = true;
+            commandStatus = true;
          }
 
          void Handler::onListSessionsError(std::string const& _errorDescription)
          {
-            lastCommandSuccess_ = false;
+            commandStatus = false;
             this->cmd_failture++;
 
             // std::cout << _errorDescription << std::endl;
@@ -293,7 +303,7 @@ namespace btg
 
          void Handler::onLimitStatus(t_int const _uploadRate, t_int const _downloadRate, t_int const _seedLimit, t_long const _seedTimeout)
          {
-            lastCommandSuccess_ = true;
+            commandStatus = true;
             last_uploadRate     = _uploadRate;
             last_downloadRate   = _downloadRate;
             last_seedLimit      = _seedLimit;
@@ -302,13 +312,8 @@ namespace btg
 
          void Handler::onLimitStatusError(std::string const& _errorDescription)
          {
-            lastCommandSuccess_ = false;
+            commandStatus = false;
             this->cmd_failture++;
-         }
-
-         bool Handler::lastCommandSuccess() const
-         {
-            return lastCommandSuccess_;
          }
 
          void Handler::getLastLimitStatus(t_int & _uploadRate, 
@@ -350,7 +355,7 @@ namespace btg
 
          void Handler::onSetFilesError(std::string const& _errorDescription)
          {
-            lastCommandSuccess_ = false;
+            commandStatus = false;
             this->cmd_failture++;
          }
          
@@ -361,7 +366,7 @@ namespace btg
          
          void Handler::onSelectedFilesError(std::string const& _errorDescription)
          {
-            lastCommandSuccess_ = false;
+            commandStatus = false;
             this->cmd_failture++;
          }
 

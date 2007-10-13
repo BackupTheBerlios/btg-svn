@@ -248,64 +248,106 @@ namespace btg
                   c = new listSessionCommand();
                   break;
                }
+
             case Command::CN_SLISTRSP:
                {
                   c = new listSessionResponseCommand();
                   break;
                }
+
             case Command::CN_SATTACH:
                {
                   c = new attachSessionCommand();
                   break;
                }
+
             case Command::CN_SQUIT:
                {
                   c = new quitSessionCommand();
                   break;
                }
+
             case Command::CN_SERROR:
                {
                   c = new sessionErrorCommand();
                   break;
                }
+
             case Command::CN_SDETACH:
                {
                   c = new detachSessionCommand();
                   break;
                }
+
+            case Command::CN_SNAME:
+               {
+                  c = new sessionNameCommand();
+                  break;
+               }
+
+            case Command::CN_SNAMERSP:
+               {
+                  c = new sessionNameResponseCommand();
+                  break;
+               }
+
+            case Command::CN_SSETNAME:
+               {
+                  c = new setSessionNameCommand();
+                  break;
+               }
+
             case Command::CN_GKILL:
                {
                   c = new killCommand();
                   break;
                }
+
             case Command::CN_GLIMIT:
                {
                   c = new limitCommand();
                   break;
                }
+
             case Command::CN_GLIMITSTAT:
                {
                   c = new limitStatusCommand();
                   break;
                }
+
             case Command::CN_GLIMITSTATRSP:
                {
                   c = new limitStatusResponseCommand();
                   break;
                }
+
             case Command::CN_GUPTIME:
                {
                   c = new uptimeCommand();
                   break;
                }
+
             case Command::CN_GUPTIMERSP:
                {
                   c = new uptimeResponseCommand();
                   break;
                }
+
             case Command::CN_GINITCONNECTION:
                {
                   c = new initConnectionCommand();
+                  break;
+               }
+
+            case Command::CN_MOREAD:
+               {
+                  c = new sessionROCommand();
+                  break;
+               }
+
+            case Command::CN_MOWRITE:
+               {
+                  c = new sessionRWCommand();
                   break;
                }
             default:
@@ -379,6 +421,9 @@ namespace btg
             case Command::CN_SQUIT:
             case Command::CN_SERROR:
             case Command::CN_SDETACH:
+            case Command::CN_SNAME:
+            case Command::CN_SNAMERSP:
+            case Command::CN_SSETNAME:
             case Command::CN_GKILL:
             case Command::CN_GLIMIT:
             case Command::CN_GLIMITSTAT:
@@ -386,6 +431,8 @@ namespace btg
             case Command::CN_GUPTIME:
             case Command::CN_GUPTIMERSP:
             case Command::CN_GINITCONNECTION:
+            case Command::CN_MOREAD:
+            case Command::CN_MOWRITE:
                {
                   status = _command->serialize(_e);
                   break;

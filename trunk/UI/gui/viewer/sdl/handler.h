@@ -169,6 +169,9 @@ namespace btg
 
                   void onUptime(t_ulong const _uptime);
 
+                  void onSessionName(std::string const& _name);
+                  void onSetSessionName();
+
                   void onGlobalLimit();
                   void onGlobalLimitError(std::string _ErrorDescription);
                   void onGlobalLimitResponse(t_int const  _limitBytesUpld,

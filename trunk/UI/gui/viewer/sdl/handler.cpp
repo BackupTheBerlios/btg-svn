@@ -316,6 +316,16 @@ namespace btg
                */
             }
 
+            void viewerHandler::onSessionName(std::string const& _name)
+            {
+               
+            }
+
+            void viewerHandler::onSetSessionName()
+            {
+               
+            }
+            
             void viewerHandler::onGlobalLimit()
             {
 

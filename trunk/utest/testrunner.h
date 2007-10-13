@@ -25,7 +25,7 @@
 // Enable printing of status of each test.
 #define BTG_UTEST_VERBOSE 1
 // Run bcore tests.
-#define BTG_UTEST_BCORE   0
+#define BTG_UTEST_BCORE   1
 // Run bcore/client tests.
 #define BTG_UTEST_CLIENT  0
 // Run TCP/IP transport tests.

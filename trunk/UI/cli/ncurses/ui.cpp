@@ -222,7 +222,7 @@ namespace btg
                                  _seedPercent,
                                  _seedTimeout);
 
-               if (handler->lastCommandSuccess())
+               if (handler->commandSuccess())
                   {
                      status = true;
                      actionSuccess("Limit", _filename);
@@ -260,7 +260,7 @@ namespace btg
 
                handler->reqLimitStatus(_context_id);
 
-               if (handler->lastCommandSuccess())
+               if (handler->commandSuccess())
                   {
                      handler->getLastLimitStatus(upload, download, seedTimeout, seedPercent);
 

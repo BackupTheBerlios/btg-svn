@@ -65,7 +65,7 @@ namespace btg
 
                         handler->reqStart(_context_id);
 
-                        if (handler->lastCommandSuccess())
+                        if (handler->commandSuccess())
                            {
                               actionSuccess("Start", _filename);
                            }
@@ -83,7 +83,7 @@ namespace btg
 
                         handler->reqStop(_context_id);
 
-                        if (handler->lastCommandSuccess())
+                        if (handler->commandSuccess())
                            {
                               actionSuccess("Stop", _filename);
                            }
@@ -102,7 +102,7 @@ namespace btg
 
                         handler->reqAbort(_context_id, false);
 
-                        if (handler->lastCommandSuccess())
+                        if (handler->commandSuccess())
                            {
                               handler->resetStatusList();
 
@@ -127,7 +127,7 @@ namespace btg
 
                         handler->reqAbort(_context_id, true /* erase */);
 
-                        if (handler->lastCommandSuccess())
+                        if (handler->commandSuccess())
                            {
                               handler->resetStatusList();
 
@@ -181,7 +181,7 @@ namespace btg
 
                         handler->reqClean(_context_id);
 
-                        if (handler->lastCommandSuccess())
+                        if (handler->commandSuccess())
                            {
                               handler->resetStatusList();
 
@@ -206,7 +206,7 @@ namespace btg
 
                         handler->reqFileInfo(_context_id);
 
-                        if (handler->lastCommandSuccess())
+                        if (handler->commandSuccess())
                            {
                               actionSuccess("Show files", _filename);
                               std::vector<btg::core::fileInformation> fi_lst;
@@ -227,7 +227,7 @@ namespace btg
 
                         handler->reqGetFiles(_context_id);
                               
-                        if (handler->lastCommandSuccess())
+                        if (handler->commandSuccess())
                            {
                               btg::core::selectedFileEntryList files;
                               handler->getLastSelectedFiles(files);
@@ -270,7 +270,7 @@ namespace btg
 
                         handler->reqPeers(_context_id);
 
-                        if (handler->lastCommandSuccess())
+                        if (handler->commandSuccess())
                            {
                               actionSuccess("Show peers", _filename);
                               t_peerList peerlist;
@@ -318,6 +318,7 @@ namespace btg
                                          "Select files to download"));
             contents.push_back(menuEntry(UI::M_SHOWPEERS, "Show peers", 
                                          "Show the peers for a torrent"));
+            
             windowSize menudimensions;
             mainwindow_.getSize(menudimensions);
 

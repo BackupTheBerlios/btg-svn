@@ -423,6 +423,23 @@ namespace btg
                                                   0)
                                    );
 
+            commandlist.addCommand(
+                                   new CLICommand(CLICommand::cmd_sname,
+                                                  "sessionname",
+                                                  "sn",
+                                                  "Print session name.",
+                                                  "",
+                                                  0)
+                                   );
+
+            commandlist.addCommand(
+                                   new CLICommand(CLICommand::cmd_ssname,
+                                                  "setsessionname",
+                                                  "sa",
+                                                  "Set session name.",
+                                                  "<name> - session name.",
+                                                  1)
+                                   );
          }
 
          cliHandler::cliResponse cliHandler::handleInput(std::string const& _input, bool const _useSavedId)
@@ -498,6 +515,44 @@ namespace btg
                   {
                      result = INPUT_OK;
                      this->reqUptime();
+                     break;
+                  }
+               case CLICommand::cmd_sname:
+                  {
+                     result = INPUT_OK;
+                     this->reqSessionName();
+                     break;
+                  }
+               case CLICommand::cmd_ssname:
+                  {
+                     std::string sname;
+
+                     t_strList parts = Util::splitLine(_input, " ");
+                     if (parts.size() > 1)
+                        {
+                           result = INPUT_OK;
+                           t_strListCI iter = parts.begin();
+                           iter++;
+                           
+                           t_uint size    = parts.size()-1;
+                           t_uint counter = 1;
+                           for (; iter != parts.end(); iter++)
+                              {
+                                 sname += *iter;
+                                 if (counter < size)
+                                    {
+                                       sname += " ";
+                                    }
+                                 counter++;
+                              }
+
+                           this->reqSetSessionName(sname);
+                        }
+                     else
+                        {
+                           setError("Missing parameter.");
+                           result = INPUT_ERROR;
+                        }
                      break;
                   }
                case CLICommand::cmd_help:
@@ -1038,6 +1093,16 @@ namespace btg
          void cliHandler::onUptime(t_ulong const _uptime)
          {
             setOutput("Daemon uptime: " + convertToString<t_ulong>(_uptime) + " sec..");
+         }
+
+         void cliHandler::onSessionName(std::string const& _name)
+         {
+            setOutput("Session name: '" + _name + "'.");
+         }
+
+         void cliHandler::onSetSessionName()
+         {
+            setOutput("Session name set.");
          }
 
          void cliHandler::onGlobalLimit()

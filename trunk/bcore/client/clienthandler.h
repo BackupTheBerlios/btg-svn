@@ -39,328 +39,336 @@
 namespace btg
 {
    namespace core
+   {
+      namespace client
       {
-         namespace client
+
+         /**
+          * \addtogroup gencli Generic client
+          */
+         /** @{ */
+
+         /// Handler interface implemented by clients.
+         /// Uses a statemachine and a transport channel.
+         /// The req* functions make the statemachine send commands.
+         /// The _callback argument to the constructor is used
+         /// for calling callbacks with the result from the statemachine.
+         /// A number of members is avaible to hold information
+         /// obtained as the result from executed commands.
+         class clientHandler
+         {
+         public:
+            /// Constructor.
+            ///
+            /// @param [in] _e         Pointer to the externalization which is used.
+            /// @param [in] _callback  Pointer to an
+            /// implementation of the client callback
+            /// interface.
+            ///
+            /// @param [in] _transport Pointer to an
+            /// implementation of the transport interface.
+            ///
+            /// @param [in] _config Pointer to the class
+            /// holding the client configuration.
+            ///
+            /// \note This class owns this pointer and
+            /// deletes it in the destructor.
+            /// @param [in] _lastfiles Pointer to the class
+            /// holding a list of last accessed files.
+            /// @param [in] _verboseFlag Instructs this class to do verbose logging.
+            /// @param [in] _autoStartFlag Indicates that the handler should start torrents automatically after loading them.
+            clientHandler(btg::core::externalization::Externalization* _e,
+                          btg::core::client::clientCallback* _callback,
+                          btg::core::messageTransport*       _transport,
+                          btg::core::client::clientConfiguration*  _config,
+                          btg::core::client::lastFiles*            _lastfiles,
+                          bool const _verboseFlag,
+                          bool const _autoStartFlag);
+
+            enum
             {
+               NO_SEEDLIMIT   = -1, //!< Seed limit disabled.
+               NO_SEEDTIMEOUT = -1 //!< Seed timeout disabled.
+            };
 
-               /**
-                * \addtogroup gencli Generic client
-                */
-               /** @{ */
-
-               /// Handler interface implemented by clients.
-               /// Uses a statemachine and a transport channel.
-               /// The req* functions make the statemachine send commands.
-               /// The _callback argument to the constructor is used
-               /// for calling callbacks with the result from the statemachine.
-               /// A number of members is avaible to hold information
-               /// obtained as the result from executed commands.
-               class clientHandler
-                  {
-                  public:
-                     /// Constructor.
-                     ///
-                     /// @param [in] _e         Pointer to the externalization which is used.
-                     /// @param [in] _callback  Pointer to an
-                     /// implementation of the client callback
-                     /// interface.
-                     ///
-                     /// @param [in] _transport Pointer to an
-                     /// implementation of the transport interface.
-                     ///
-                     /// @param [in] _config Pointer to the class
-                     /// holding the client configuration.
-                     ///
-                     /// \note This class owns this pointer and
-                     /// deletes it in the destructor.
-                     /// @param [in] _lastfiles Pointer to the class
-                     /// holding a list of last accessed files.
-                     /// @param [in] _verboseFlag Instructs this class to do verbose logging.
-                     /// @param [in] _autoStartFlag Indicates that the handler should start torrents automatically after loading them.
-                     clientHandler(btg::core::externalization::Externalization* _e,
-                                   btg::core::client::clientCallback* _callback,
-                                   btg::core::messageTransport*       _transport,
-                                   btg::core::client::clientConfiguration*  _config,
-                                   btg::core::client::lastFiles*            _lastfiles,
-                                   bool const _verboseFlag,
-                                   bool const _autoStartFlag);
-
-                     enum
-                        {
-                           NO_SEEDLIMIT   = -1, //!< Seed limit disabled.
-                           NO_SEEDTIMEOUT = -1 //!< Seed timeout disabled.
-                        };
-
-                     /// Initialize the connection.
-                     /// This sends a message to the daemon providing
-                     /// username and password for the user.
-                     virtual void reqInit(std::string const _username, 
-                                          btg::core::Hash const _password);
-
-                     /// Setup the client and the connection to the daemon.
-                     virtual void reqSetup(t_int const _seedLimit,
-                                           t_long const _seedTimeout,
-                                           bool const _useDHT,
-                                           bool const _useEncryption);
-
-                     /// Setup the client - connect to a running session.
-                     virtual void reqSetupAttach(t_long const _old_session);
-
-                     /// Get a list of active sessions, return true
-                     /// and modify the argument.
-                     virtual void reqGetActiveSessions();
-
-                     /// Do a list of contexts.
-                     virtual void reqList();
-
-                     /// Used to open a filename, when its given as a
-                     /// command line argument.
-                     virtual void reqCreate(std::string const& _filename);
-
-                     /// Used to open a number of filenames.
-                     virtual void reqCreate(t_strList const& _filenames);
-
-                     /// Get status from the daemon.
-                     virtual void reqStatus(t_int const _id, bool const _allContexts = false);
-
-                     /// Start a context.
-                     virtual void reqStart(t_int const _id, bool const _allContexts = false);
-
-                     /// Stop a context.
-                     virtual void reqStop(t_int const _id, bool const _allContexts = false);
-
-                     /// Abort a context.
-                     virtual void reqAbort(t_int const _id, bool const _eraseData, bool const _allContexts = false);
-
-                     /// Get file info about context.
-                     virtual void reqFileInfo(t_int const _id, bool const _allContexts = false);
-
-                     /// Request a list of peers.
-                     virtual void reqPeers(t_int const _id, bool const _allContexts = false);
-
-                     /// Limit a context.
-                     virtual void reqLimit(t_int const _id,
-                                           t_int const _uploadRate,
-                                           t_int const _downloadRate,
-                                           t_int const _seedLimit,
-                                           t_long const _seedTimeout,
-                                           bool const _allContexts = false);
+            /// Initialize the connection.
+            /// This sends a message to the daemon providing
+            /// username and password for the user.
+            virtual void reqInit(std::string const _username, 
+                                 btg::core::Hash const _password);
 
-                     /// Get status of limiting for a context.
-                     virtual void reqLimitStatus(t_int const _id, bool const _allContexts = false);
+            /// Setup the client and the connection to the daemon.
+            virtual void reqSetup(t_int const _seedLimit,
+                                  t_long const _seedTimeout,
+                                  bool const _useDHT,
+                                  bool const _useEncryption);
 
-                     /// Set the files to download.
-                     virtual void reqSetFiles(t_int const _id, 
-                                              selectedFileEntryList const& _files);
+            /// Setup the client - connect to a running session.
+            virtual void reqSetupAttach(t_long const _old_session);
 
-                     /// Get the files previously set to download.
-                     virtual void reqGetFiles(t_int const _id);
+            /// Get a list of active sessions, return true
+            /// and modify the argument.
+            virtual void reqGetActiveSessions();
 
-                     /// Set global limit.
-                     virtual void reqGlobalLimit(t_int const  _limitBytesUpld,
-                                                 t_int const  _limitBytesDwnld,
-                                                 t_int const  _maxUplds,
-                                                 t_long const _maxConnections);
+            /// Do a list of contexts.
+            virtual void reqList();
 
-                     /// Get status of global limit.
-                     virtual void reqGlobalLimitStatus();
+            /// Used to open a filename, when its given as a
+            /// command line argument.
+            virtual void reqCreate(std::string const& _filename);
 
-                     /// Clean contexts.
-                     virtual void reqClean(t_int const _id, bool const _allContexts = false);
+            /// Used to open a number of filenames.
+            virtual void reqCreate(t_strList const& _filenames);
 
-                     /// Detach from the session.
-                     virtual void reqDetach();
+            /// Get status from the daemon.
+            virtual void reqStatus(t_int const _id, bool const _allContexts = false);
 
-                     /// Quit the session.
-                     virtual void reqQuit();
+            /// Start a context.
+            virtual void reqStart(t_int const _id, bool const _allContexts = false);
 
-                     /// Kill the daemon.
-                     virtual void reqKill();
+            /// Stop a context.
+            virtual void reqStop(t_int const _id, bool const _allContexts = false);
 
-                     /// Request uptime from the daemon.
-                     virtual void reqUptime();
+            /// Abort a context.
+            virtual void reqAbort(t_int const _id, bool const _eraseData, bool const _allContexts = false);
 
-                     /// Returns true if the statemachine thinks that
-                     /// it completed the setup of the client.
-                     virtual bool isSetupDone() const;
+            /// Get file info about context.
+            virtual void reqFileInfo(t_int const _id, bool const _allContexts = false);
 
-                     /// Returns true if the statemachine thinks that
-                     /// its attached.
-                     virtual bool isAttachDone() const;
+            /// Request a list of peers.
+            virtual void reqPeers(t_int const _id, bool const _allContexts = false);
 
-                     /// Report status of the last command.
-                     /// @return True - the last operation was
-                     /// successful. False - failture.
-                     virtual bool commandSuccess() const;
+            /// Limit a context.
+            virtual void reqLimit(t_int const _id,
+                                  t_int const _uploadRate,
+                                  t_int const _downloadRate,
+                                  t_int const _seedLimit,
+                                  t_long const _seedTimeout,
+                                  bool const _allContexts = false);
 
-                     /// Returns the list of contexts from the daemon.
-                     virtual t_intList getListResult() const;
+            /// Get status of limiting for a context.
+            virtual void reqLimitStatus(t_int const _id, bool const _allContexts = false);
 
-                     /// Get the last status received.
-                     virtual btg::core::Status getStatus() const;
+            /// Set the files to download.
+            virtual void reqSetFiles(t_int const _id, 
+                                     selectedFileEntryList const& _files);
 
-                     /// Get the list of status objects - for all
-                     /// contexts.
-                     t_statusList getStatusList() const;
+            /// Get the files previously set to download.
+            virtual void reqGetFiles(t_int const _id);
 
-                     /// Get the list of files a torrent contains.
-                     virtual t_fileInfoList getFileInfoList() const;
+            /// Set global limit.
+            virtual void reqGlobalLimit(t_int const  _limitBytesUpld,
+                                        t_int const  _limitBytesDwnld,
+                                        t_int const  _maxUplds,
+                                        t_long const _maxConnections);
 
-                     /// Get the bandwidth limits.
-                     virtual void getLimitStatus(t_int & _limitBytesUpld, t_int & _limitBytesDwnld);
+            /// Get status of global limit.
+            virtual void reqGlobalLimitStatus();
 
-                     /// Get the seed limits.
-                     virtual void getSeedLimitStatus(t_int & _limitSeedPercent,
-                                                     t_long & _limitSeedTime);
+            /// Clean contexts.
+            virtual void reqClean(t_int const _id, bool const _allContexts = false);
 
-                     /// Get a list of sessions, as returned by
-                     /// onListSessions.
-                     virtual t_longList getSessionList() const;
+            /// Detach from the session.
+            virtual void reqDetach();
 
-                     /// Get a list of sessions, as returned by
-                     /// onListSessions.
-                     virtual t_strList getSessionNames() const;
+            /// Quit the session.
+            virtual void reqQuit();
 
-                     /// Get a pointer to the contained client
-                     /// configuration object.
-                     virtual btg::core::client::clientConfiguration* getConfig() const;
+            /// Kill the daemon.
+            virtual void reqKill();
 
-                     /// If setup fails, this function will return a
-                     /// textual description of why it failed.
-                     virtual std::string getSetupFailtureMessage();
+            /// Request uptime from the daemon.
+            virtual void reqUptime();
 
-                     /// If setup fails, this function will return a
-                     /// textual description of why it failed.
-                     virtual std::string getAttachFailtureMessage();
+            virtual void reqSessionName();
 
-                     /// Returns true if a fatal error was discovered.
-                     virtual bool fatalError() const { return fatalerror; };
+            virtual void reqSetSessionName(std::string const& _name);
 
-                     /// Call to make the client discover a fatal error.
-                     virtual void setFatalError() { fatalerror = true; };
+            /// Returns true if the statemachine thinks that
+            /// it completed the setup of the client.
+            virtual bool isSetupDone() const;
 
-                     /// Returns true if the daemon sent any session
-                     /// error messages.
-                     virtual bool sessionError() const { return sessionerror; };
+            /// Returns true if the statemachine thinks that
+            /// its attached.
+            virtual bool isAttachDone() const;
 
-                     /// Call to make the client discover a session error.
-                     virtual void setSessionError() { sessionerror = true; };
+            /// Report status of the last command.
+            /// @return True - the last operation was
+            /// successful. False - failture.
+            virtual bool commandSuccess() const;
 
-                     /// Get the session ID used by this handler.
-                     virtual t_long session() const;
+            /// Returns the list of contexts from the daemon.
+            virtual t_intList getListResult() const;
 
-                     /// Set the session ID used by this handler.
-                     virtual void setSession(t_long const _session);
+            /// Get the last status received.
+            virtual btg::core::Status getStatus() const;
 
-                     /// Destructor.
-                     virtual ~clientHandler();
-                  protected:
-                     enum
-                        {
-                           ILLEGAL_ID = -1 //!< Ilegal context ID.
-                        };
+            /// Get the list of status objects - for all
+            /// contexts.
+            t_statusList getStatusList() const;
 
-                     /// The transport used to communicate with the daemon.
-                     btg::core::messageTransport*      transport;
+            /// Get the list of files a torrent contains.
+            virtual t_fileInfoList getFileInfoList() const;
 
-                     /// The state machine used by this client.
-                     btg::core::client::stateMachine   statemachine;
+            /// Get the bandwidth limits.
+            virtual void getLimitStatus(t_int & _limitBytesUpld, t_int & _limitBytesDwnld);
 
-                     /// Indicates that setup was done.
-                     /// This should be set by the onSetup callback.
-                     bool                              setupDone;
+            /// Get the seed limits.
+            virtual void getSeedLimitStatus(t_int & _limitSeedPercent,
+                                            t_long & _limitSeedTime);
 
-                     /// Indicates that attach is done.
-                     /// This should be set by the onAttach callback.
-                     bool                              attachDone;
+            /// Get a list of sessions, as returned by
+            /// onListSessions.
+            virtual t_longList getSessionList() const;
 
-                     /// Indicates that a command was successful.
-                     /// This should be set by the on$Command callbacks.
-                     bool                              commandStatus;
+            /// Get a list of sessions, as returned by
+            /// onListSessions.
+            virtual t_strList getSessionNames() const;
 
-                     /// Flag set when erasing a context - as erasing
-                     /// a context is done by first creating an abort
-                     /// message with the erase flag set.
-                     bool                              eraseFlag;
+            std::string getCurrentSessionName() const;
 
-                     /// The id which was used by the last command
-                     /// sent, if the command used a context ID.
-                     t_int                             last_id;
+            /// Get a pointer to the contained client
+            /// configuration object.
+            virtual btg::core::client::clientConfiguration* getConfig() const;
 
-                     /// The last filename opened.
-                     std::string                       last_filename;
+            /// If setup fails, this function will return a
+            /// textual description of why it failed.
+            virtual std::string getSetupFailtureMessage();
 
-                     /// The last status returned from the daemon.
-                     btg::core::Status                 last_status;
+            /// If setup fails, this function will return a
+            /// textual description of why it failed.
+            virtual std::string getAttachFailtureMessage();
 
-                     /// List of status objects.
-                     t_statusList                      last_statuslist;
+            /// Returns true if a fatal error was discovered.
+            virtual bool fatalError() const { return fatalerror; };
 
-                     /// The last list of contexts from the daemon.
-                     t_intList                         last_list;
+            /// Call to make the client discover a fatal error.
+            virtual void setFatalError() { fatalerror = true; };
 
-                     /// Map context IDs to filenames.
-                     std::map<t_int, std::string>      idToFilenameMap;
+            /// Returns true if the daemon sent any session
+            /// error messages.
+            virtual bool sessionError() const { return sessionerror; };
 
-                     /// The last file info list.
-                     t_fileInfoList                    last_fileinfolist;
+            /// Call to make the client discover a session error.
+            virtual void setSessionError() { sessionerror = true; };
 
-                     /// The last set upload limit.
-                     t_int                             last_limit_upload;
-                     /// The last set download limit.
-                     t_int                             last_limit_download;
+            /// Get the session ID used by this handler.
+            virtual t_long session() const;
 
-                     /// The last set seed limit.
-                     t_int                             last_limit_seed_percent;
+            /// Set the session ID used by this handler.
+            virtual void setSession(t_long const _session);
 
-                     /// The last set seed timeout.
-                     t_long                            last_limit_seed_timeout;
+            /// Destructor.
+            virtual ~clientHandler();
+         protected:
+            enum
+            {
+               ILLEGAL_ID = -1 //!< Ilegal context ID.
+            };
 
-                     /// Counter: the number of failed requests.
-                     t_uint                            cmd_failture;
+            /// The transport used to communicate with the daemon.
+            btg::core::messageTransport*      transport;
 
-                     /// List of sessions, as returned by onListSessions.
-                     t_longList                        sessionList;
+            /// The state machine used by this client.
+            btg::core::client::stateMachine   statemachine;
 
-                     /// List of sessions, as returned by onListSessions.
-                     t_strList                         sessionNames;
+            /// Indicates that setup was done.
+            /// This should be set by the onSetup callback.
+            bool                              setupDone;
 
-                     /// Pointer to the object holding the client configuration.
-                     btg::core::client::clientConfiguration* config;
+            /// Indicates that attach is done.
+            /// This should be set by the onAttach callback.
+            bool                              attachDone;
 
-                     /// List of last accessed files.
-                     btg::core::client::lastFiles*     lastfiles;
+            /// Indicates that a command was successful.
+            /// This should be set by the on$Command callbacks.
+            bool                              commandStatus;
 
-                     /// If setup fails, this member will contain a
-                     /// textual description of why it failed.
-                     std::string                       setupFailtureMessage;
+            /// Flag set when erasing a context - as erasing
+            /// a context is done by first creating an abort
+            /// message with the erase flag set.
+            bool                              eraseFlag;
 
-                     /// If attach fails, this member will contain a
-                     /// textual description of why it failed.
-                     std::string                       attachFailtureMessage;
+            /// The id which was used by the last command
+            /// sent, if the command used a context ID.
+            t_int                             last_id;
 
-                     /// If true, a fatal error was discovered.
-                     bool                              fatalerror;
+            /// The last filename opened.
+            std::string                       last_filename;
 
-                     /// True, if a session error was detected by the
-                     /// daemon.
-                     bool                              sessionerror;
+            /// The last status returned from the daemon.
+            btg::core::Status                 last_status;
 
-                     /// The session ID used by this handler.
-                     t_long                            session_;
+            /// List of status objects.
+            t_statusList                      last_statuslist;
 
-                     /// Indicates that the handler should start
-                     /// torrents automatically after loading them.
-                     bool const                        autoStartFlag_;
-                  private:
-                     /// Copy constructor.
-                     clientHandler(clientHandler const& _ch);
-                     /// Assignment operator.
-                     clientHandler& operator=(clientHandler const& _ch);
-                  };
+            /// The last list of contexts from the daemon.
+            t_intList                         last_list;
 
-            } // namespace client
-      } // namespace core
+            /// Map context IDs to filenames.
+            std::map<t_int, std::string>      idToFilenameMap;
+
+            /// The last file info list.
+            t_fileInfoList                    last_fileinfolist;
+
+            /// The last set upload limit.
+            t_int                             last_limit_upload;
+            /// The last set download limit.
+            t_int                             last_limit_download;
+
+            /// The last set seed limit.
+            t_int                             last_limit_seed_percent;
+
+            /// The last set seed timeout.
+            t_long                            last_limit_seed_timeout;
+
+            /// Counter: the number of failed requests.
+            t_uint                            cmd_failture;
+
+            /// List of sessions, as returned by onListSessions.
+            t_longList                        sessionList;
+
+            /// List of sessions, as returned by onListSessions.
+            t_strList                         sessionNames;
+
+            std::string                       currentSessionName;
+
+            /// Pointer to the object holding the client configuration.
+            btg::core::client::clientConfiguration* config;
+
+            /// List of last accessed files.
+            btg::core::client::lastFiles*     lastfiles;
+
+            /// If setup fails, this member will contain a
+            /// textual description of why it failed.
+            std::string                       setupFailtureMessage;
+
+            /// If attach fails, this member will contain a
+            /// textual description of why it failed.
+            std::string                       attachFailtureMessage;
+
+            /// If true, a fatal error was discovered.
+            bool                              fatalerror;
+
+            /// True, if a session error was detected by the
+            /// daemon.
+            bool                              sessionerror;
+
+            /// The session ID used by this handler.
+            t_long                            session_;
+
+            /// Indicates that the handler should start
+            /// torrents automatically after loading them.
+            bool const                        autoStartFlag_;
+         private:
+            /// Copy constructor.
+            clientHandler(clientHandler const& _ch);
+            /// Assignment operator.
+            clientHandler& operator=(clientHandler const& _ch);
+         };
+
+      } // namespace client
+   } // namespace core
 } // namespace btg
 
 #endif

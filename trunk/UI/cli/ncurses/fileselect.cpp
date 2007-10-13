@@ -85,7 +85,7 @@ namespace btg
                               }
                            break;
                         }
-                     case keyMapping::K_QUIT:
+                     case keyMapping::K_QUITSCREEN:
                         {
                            cont = false;
                            break;
@@ -478,7 +478,7 @@ namespace btg
                }
 
             if (helpWindow::generateHelpForKey(kmap_,
-                                               keyMapping::K_QUIT,
+                                               keyMapping::K_QUITSCREEN,
                                                "",
                                                keyDescr,
                                                false))

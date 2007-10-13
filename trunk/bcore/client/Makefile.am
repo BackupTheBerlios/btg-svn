@@ -2,6 +2,7 @@ lib_LTLIBRARIES = libbtgclient.la
 
 libbtgclient_la_SOURCES = carg.cpp \
 configuration.cpp lastfiles.cpp\
+statemachine_cb.cpp \
 statemachine.cpp \
 clienthandler.cpp \
 clientcallback.cpp \

@@ -123,6 +123,8 @@ namespace btg
                      /// Key.
                      t_int quitKey;
                      /// Key.
+                     t_int quitscreenKey;
+                     /// Key.
                      t_int loadKey;
                      /// Key.
                      t_int menuKey;
@@ -146,6 +148,8 @@ namespace btg
                      t_int nextKey;
                      /// Key.
                      t_int prevKey;
+                     /// Key.
+                     t_int deleteKey;
 
                      /// Color.
                      colorDef c_normal;

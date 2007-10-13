@@ -86,10 +86,6 @@ namespace btg
                      /// Get the last saved list of peers.
                      void getLastPeers(t_peerList & _peerlist) const;
 
-                     /// Return true if the last command was
-                     /// successful, false otherwise.
-                     bool lastCommandSuccess() const;
-
                      /// Destructor.
                      virtual ~Handler();
                   private:
@@ -156,6 +152,9 @@ namespace btg
 
                      void onUptime(t_ulong const _uptime);
 
+                     void onSessionName(std::string const& _name);
+                     void onSetSessionName();
+
                      void onGlobalLimit();
                      void onGlobalLimitError(std::string _ErrorDescription);
                      void onGlobalLimitResponse(t_int const  _limitBytesUpld,
@@ -163,10 +162,6 @@ namespace btg
                                                 t_int const  _maxUplds,
                                                 t_long const _maxConnections);
                      void onGlobalLimitResponseError(std::string _ErrorDescription);
-
-                     /// Indicates that the last performed command was
-                     /// successful.
-                     bool           lastCommandSuccess_;
 
                      /// Limit.
                      t_int          last_uploadRate;

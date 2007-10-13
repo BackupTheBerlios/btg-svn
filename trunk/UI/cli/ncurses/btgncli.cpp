@@ -126,15 +126,15 @@ int main(int argc, char* argv[])
    std::string errorString;
    if (!btg::core::os::fileOperation::check(config_filename, errorString, false))
       {
-	// BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Could not open file '" << config_filename << "'.");
+         // BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Could not open file '" << config_filename << "'.");
 
          delete cla;
          cla = 0;
 
-	 iw->showError("Could not open file '" + config_filename + "'.");
+         iw->showError("Could not open file '" + config_filename + "'.");
 
-	 delete iw;
-	 iw = 0;
+         delete iw;
+         iw = 0;
 
          projectDefaults::killInstance();
          logWrapper::killInstance();
@@ -153,7 +153,7 @@ int main(int argc, char* argv[])
 
    if (!gotConfig)
       {
-	// BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Could not read the config file, '" << GPD->sCLI_CONFIG() << "'. Create one.");
+         // BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Could not read the config file, '" << GPD->sCLI_CONFIG() << "'. Create one.");
 
          delete config;
          config = 0;
@@ -164,9 +164,9 @@ int main(int argc, char* argv[])
          delete cla;
          cla    = 0;
 
-	 iw->showError("Could not read config file, '" + GPD->sCLI_CONFIG() + "'.");
-	 delete iw;
-	 iw = 0;
+         iw->showError("Could not read config file, '" + GPD->sCLI_CONFIG() + "'.");
+         delete iw;
+         iw = 0;
 
          projectDefaults::killInstance();
          logWrapper::killInstance();
@@ -178,17 +178,17 @@ int main(int argc, char* argv[])
    iw->updateProgress(initWindow::IEV_RCONF_KEYS);
 
    for (t_uint keylabel = keyMapping::K_HELP;
-	keylabel < keyMapping::K_RESIZE;
-	keylabel++)
-     {
-       keyMapping::KEYLABEL kl = static_cast<keyMapping::KEYLABEL>(keylabel);
-       t_int value             = keyMapping::K_UNDEF;
+        keylabel < keyMapping::K_RESIZE;
+        keylabel++)
+      {
+         keyMapping::KEYLABEL kl = static_cast<keyMapping::KEYLABEL>(keylabel);
+         t_int value             = keyMapping::K_UNDEF;
 
-       if (config->getKey(kl, value))
-	 {
-	   kmap.add(kl, value);
-	 }
-     }
+         if (config->getKey(kl, value))
+            {
+               kmap.add(kl, value);
+            }
+      }
 
    // Handle loading colors.
    std::vector<colorDef> colorLst;
@@ -202,25 +202,25 @@ int main(int argc, char* argv[])
 
    std::string keyError;
    if (!kmap.check(keyError))
-     {
-       delete config;
-       config = 0;
+      {
+         delete config;
+         config = 0;
        
-       delete lastfiles;
-       lastfiles = 0;
+         delete lastfiles;
+         lastfiles = 0;
        
-       delete cla;
-       cla    = 0;
+         delete cla;
+         cla    = 0;
        
-       iw->showError(keyError);
-       delete iw;
-       iw = 0;
+         iw->showError(keyError);
+         delete iw;
+         iw = 0;
        
-       projectDefaults::killInstance();
-       logWrapper::killInstance();
+         projectDefaults::killInstance();
+         logWrapper::killInstance();
        
-       return BTG_ERROR_EXIT;
-     }
+         return BTG_ERROR_EXIT;
+      }
 
    bool neverAskFlag = config->getNeverAskQuestions();
 
@@ -255,9 +255,9 @@ int main(int argc, char* argv[])
          delete externalization;
          externalization = 0;
 
-	 iw->showError("Failed to initialize transport.");
-	 delete iw;
-	 iw = 0;
+         iw->showError("Failed to initialize transport.");
+         delete iw;
+         iw = 0;
 
          projectDefaults::killInstance();
          logWrapper::killInstance();
@@ -272,12 +272,12 @@ int main(int argc, char* argv[])
    iw->updateProgress(initWindow::IEV_TRANSP_DONE);
 
    Handler* handler = new Handler(externalization, 
-				  transport, 
-				  config, 
-				  lastfiles, 
-				  verboseFlag,
-				  cla->automaticStart()
-				  );
+                                  transport, 
+                                  config, 
+                                  lastfiles, 
+                                  verboseFlag,
+                                  cla->automaticStart()
+                                  );
 
    // Update init dialog.
    iw->updateProgress(initWindow::IEV_SETUP);
@@ -290,7 +290,7 @@ int main(int argc, char* argv[])
 
    if (!starthelper->init())
       {
-	// BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Internal error: start up helper not initialized.");
+         // BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Internal error: start up helper not initialized.");
 
          delete starthelper;
          starthelper = 0;
@@ -310,10 +310,10 @@ int main(int argc, char* argv[])
          delete lastfiles;
          lastfiles = 0;
 
-	 iw->showError("Internal error: startup helper not initialized.");
+         iw->showError("Internal error: startup helper not initialized.");
 
-	 delete iw;
-	 iw = 0;
+         delete iw;
+         iw = 0;
 
          projectDefaults::killInstance();
          logWrapper::killInstance();
@@ -352,7 +352,7 @@ int main(int argc, char* argv[])
    // Initialize logging.
    if (starthelper->execute(startupHelper::op_log) != startupHelper::or_log_success)
       {
-	// BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to initialize logging");
+         // BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to initialize logging");
          delete starthelper;
          starthelper = 0;
 
@@ -371,9 +371,9 @@ int main(int argc, char* argv[])
          delete lastfiles;
          lastfiles = 0;
 
-	 iw->showError("Unable to initialize logging.");
-	 delete iw;
-	 iw = 0;
+         iw->showError("Unable to initialize logging.");
+         delete iw;
+         iw = 0;
 
          projectDefaults::killInstance();
          logWrapper::killInstance();
@@ -399,7 +399,7 @@ int main(int argc, char* argv[])
          // Ask the user about which username and password to use.
          if (starthelper->execute(startupHelper::op_auth) != startupHelper::or_auth_success)
             {
-	      // BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to initialize auth");
+               // BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to initialize auth");
 
                delete starthelper;
                starthelper = 0;
@@ -419,12 +419,12 @@ int main(int argc, char* argv[])
                delete lastfiles;
                lastfiles = 0;
 
-	       // Show the init window to display the error.
-	       iw = new initWindow(kmap);
-	       iw->show();
-	       iw->showError("Authorization failed.");
-	       delete iw;
-	       iw = 0;
+               // Show the init window to display the error.
+               iw = new initWindow(kmap);
+               iw->show();
+               iw->showError("Authorization failed.");
+               delete iw;
+               iw = 0;
 
                projectDefaults::killInstance();
                logWrapper::killInstance();
@@ -444,9 +444,9 @@ int main(int argc, char* argv[])
    // Handle command line options:
    if (cla->doList())
       {
-	 // iw->showError("Unable to list sessions.");
-	 delete iw;
-	 iw = 0;
+         // iw->showError("Unable to list sessions.");
+         delete iw;
+         iw = 0;
 
          starthelper->execute(startupHelper::op_list);
 
@@ -480,7 +480,7 @@ int main(int argc, char* argv[])
 
          if (starthelper->execute(startupHelper::op_attach_first) == startupHelper::or_attach_first_failture)
             {
-	      // BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to attach to session");
+               // BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to attach to session");
 
                // Clean up, before quitting.
                delete starthelper;
@@ -501,9 +501,9 @@ int main(int argc, char* argv[])
                delete lastfiles;
                lastfiles = 0;
 
-	       iw->showError("Unable to attach to session.");
-	       delete iw;
-	       iw = 0;
+               iw->showError("Unable to attach to session.");
+               delete iw;
+               iw = 0;
 
                projectDefaults::killInstance();
                logWrapper::killInstance();
@@ -516,13 +516,13 @@ int main(int argc, char* argv[])
          // Attach to a certain session, either specified on the
          // command line or chosen by the user from a list.
 
-	iw->hide();
-	delete iw;
-	iw = 0;
+         iw->hide();
+         delete iw;
+         iw = 0;
 
          if (starthelper->execute(startupHelper::op_attach) == startupHelper::or_attach_failture)
             {
-	      // BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to attach to session");
+               // BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to attach to session");
 
                // Clean up, before quitting.
                delete starthelper;
@@ -543,11 +543,11 @@ int main(int argc, char* argv[])
                delete lastfiles;
                lastfiles = 0;
 
-	       iw = new initWindow(kmap);
-	       iw->show();
-	       iw->showError("Unable to attach to session.");
-	       delete iw;
-	       iw = 0;
+               iw = new initWindow(kmap);
+               iw->show();
+               iw->showError("Unable to attach to session.");
+               delete iw;
+               iw = 0;
 	       
                projectDefaults::killInstance();
                logWrapper::killInstance();
@@ -555,9 +555,9 @@ int main(int argc, char* argv[])
                return BTG_ERROR_EXIT;
             }
 
-	iw = new initWindow(kmap);
-	iw->show();
-	iw->updateProgress(initWindow::IEV_SETUP);
+         iw = new initWindow(kmap);
+         iw->show();
+         iw->updateProgress(initWindow::IEV_SETUP);
       }
 
    // Only execute setup if we are not attaching to an existing session.
@@ -565,7 +565,7 @@ int main(int argc, char* argv[])
       {
          if (starthelper->execute(startupHelper::op_setup) == startupHelper::or_setup_failture)
             {
-	      // BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to connect to daemon.");
+               // BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to connect to daemon.");
 
                // Clean up, before quitting.
                delete starthelper;
@@ -586,9 +586,9 @@ int main(int argc, char* argv[])
                delete lastfiles;
                lastfiles = 0;
 
-	       iw->showError("Unable to connect to daemon.");
-	       delete iw;
-	       iw = 0;
+               iw->showError("Unable to connect to daemon.");
+               delete iw;
+               iw = 0;
 
                projectDefaults::killInstance();
                logWrapper::killInstance();
@@ -640,8 +640,8 @@ int main(int argc, char* argv[])
    // If the user requested to open any files, do it.
    if (cla->inputFilenamesPresent())
       {
-	t_strList filelist = cla->getInputFilenames();
-	ui.handleLoad(filelist);
+         t_strList filelist = cla->getInputFilenames();
+         ui.handleLoad(filelist);
       }
 
    ui.refresh();

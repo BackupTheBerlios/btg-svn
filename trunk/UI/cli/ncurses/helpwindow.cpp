@@ -63,20 +63,20 @@ namespace btg
             wrefresh(window_);
          }
 
-	dialog::RESULT helpWindow::run()
-	{
-	  windowSize display_ws;
-	  display_ws.topX = 0;
-	  display_ws.topY = 0;
+         dialog::RESULT helpWindow::run()
+         {
+            windowSize display_ws;
+            display_ws.topX = 0;
+            display_ws.topY = 0;
 	  
             baseWindow::getScreenSize(display_ws.width, display_ws.height);
 	    
             windowSize ws = calculateDimenstions(display_ws);
 	    
             if (!baseWindow::init(ws))
-	      {
-		return dialog::R_NCREAT;
-	      }
+               {
+                  return dialog::R_NCREAT;
+               }
 
             refresh();
 
@@ -126,7 +126,7 @@ namespace btg
 
          void helpWindow::draw()
          {
-	   setColor(Colors::C_NORMAL);
+            setColor(Colors::C_NORMAL);
 
             ::wattron(window_, A_REVERSE);
             for (t_uint y = 0; y < height_; y++)
@@ -149,7 +149,7 @@ namespace btg
                }
 
             ::wattroff(window_, A_REVERSE);
-	    unSetColor(Colors::C_NORMAL);
+            unSetColor(Colors::C_NORMAL);
          }
 
          windowSize helpWindow::calculateDimenstions(windowSize const& _ws) const

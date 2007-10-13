@@ -67,6 +67,7 @@ command/session_list_rsp.cpp \
 command/session_quit.cpp \
 command/session_error.cpp \
 command/session_name.cpp \
+command/session_rw.cpp \
 command/setup.cpp \
 command/kill.cpp \
 command/limit.cpp \
@@ -172,6 +173,7 @@ command/session_list_rsp.h \
 command/session_quit.h \
 command/session_error.h \
 command/session_name.h \
+command/session_rw.h \
 command/setup.h \
 command/kill.h \
 command/limit.h \

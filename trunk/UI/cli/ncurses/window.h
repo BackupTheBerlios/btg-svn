@@ -43,140 +43,140 @@ extern "C"
 namespace btg
 {
    namespace UI
+   {
+      namespace cli
       {
-         namespace cli
-            {
 	      /**
 	       * \addtogroup ncli
 	       */
 	      /** @{ */
 
-               /// Describes a window's dimensions.
-               class windowSize
-                  {
-                  public:
-                     /// Offset, X.
-                     t_uint topX;
-                     /// Offset, Y.
-                     t_uint topY;
-                     /// The width.
-                     t_uint width;
-                     /// The height.
-                     t_uint height;
-                  };
+         /// Describes a window's dimensions.
+         class windowSize
+         {
+         public:
+            /// Offset, X.
+            t_uint topX;
+            /// Offset, Y.
+            t_uint topY;
+            /// The width.
+            t_uint width;
+            /// The height.
+            t_uint height;
+         };
 
-               /// Base class used for creating ncurses windows.
-               class baseWindow
-                  {
-                  public:
-                     /// Constructor.
-                     baseWindow(keyMapping const& _kmap);
+         /// Base class used for creating ncurses windows.
+         class baseWindow
+         {
+         public:
+            /// Constructor.
+            baseWindow(keyMapping const& _kmap);
 
-                     /// Initialize the window.
-                     virtual bool init(windowSize const& _ws);
+            /// Initialize the window.
+            virtual bool init(windowSize const& _ws);
 
-                     /// Resize the window.
-                     virtual void resize(windowSize const& _ws) = 0;
+            /// Resize the window.
+            virtual void resize(windowSize const& _ws) = 0;
 
-                     /// Given the possible width and height, 
-                     /// get the window's dimensions.
-                     virtual windowSize calculateDimenstions(windowSize const& _ws) const = 0;
-                     /// Destroy the window.
-                     virtual bool destroy();
+            /// Given the possible width and height, 
+            /// get the window's dimensions.
+            virtual windowSize calculateDimenstions(windowSize const& _ws) const = 0;
+            /// Destroy the window.
+            virtual bool destroy();
 
-                     /// Refresh the window. Whatever is done to draw
-                     /// the contents, it should be called from here.
-                     virtual void refresh() = 0;
+            /// Refresh the window. Whatever is done to draw
+            /// the contents, it should be called from here.
+            virtual void refresh() = 0;
 
-                     /// Clear the contents of the window.
-                     virtual void clear();
+            /// Clear the contents of the window.
+            virtual void clear();
 
-                     /// Get the physical screen resolution (in
-                     /// characters).
-                     static void getScreenSize(t_uint & _width,
-                                               t_uint & _height);
+            /// Get the physical screen resolution (in
+            /// characters).
+            static void getScreenSize(t_uint & _width,
+                                      t_uint & _height);
 
-                     /// Init ncurses.
-                     static void ncursesInit();
+            /// Init ncurses.
+            static void ncursesInit();
 
-                     /// Deinit ncurses.
-                     static void ncursesDestroy();
+            /// Deinit ncurses.
+            static void ncursesDestroy();
 
-                     /// Get the window resolution (in characters).
-                     void getSize(windowSize & _ws);
+            /// Get the window resolution (in characters).
+            void getSize(windowSize & _ws);
 
-                     /// Read from keyboard.
-                     /// Uses the stored key map.
-                     virtual keyMapping::KEYLABEL handleKeyboard();
+            /// Read from keyboard.
+            /// Uses the stored key map.
+            virtual keyMapping::KEYLABEL handleKeyboard();
 
-                     /// As above, but use the argument instead of calling wgetch.
-                     /// @return True - found a label for the key. False otherwise.
-                     virtual bool handleKeyboard(t_int const _key, 
-                                                 keyMapping::KEYLABEL & _label) const;
+            /// As above, but use the argument instead of calling wgetch.
+            /// @return True - found a label for the key. False otherwise.
+            virtual bool handleKeyboard(t_int const _key, 
+                                        keyMapping::KEYLABEL & _label) const;
 
-                     /// Return true, when the user presses any key.
-                     virtual t_int readAnyKey();
+            /// Return true, when the user presses any key.
+            virtual t_int readAnyKey();
 
-                     /// Set the current color.
-                     void setColor(Colors::COLORLABEL _label);
+            /// Set the current color.
+            void setColor(Colors::COLORLABEL _label);
 
-                     /// Disable the use of a certain color.
-                     void unSetColor(Colors::COLORLABEL _label);
+            /// Disable the use of a certain color.
+            void unSetColor(Colors::COLORLABEL _label);
 
-                     /// Destructor.
-                     virtual ~baseWindow();
-                  protected:
-                     /// Pointer to the ncurses window.
-                     WINDOW* window_;
+            /// Destructor.
+            virtual ~baseWindow();
+         protected:
+            /// Pointer to the ncurses window.
+            WINDOW* window_;
 
-                     /// Top X position.
-                     t_uint  topX_;
+            /// Top X position.
+            t_uint  topX_;
 
-                     /// Top Y position.
-                     t_uint  topY_;
+            /// Top Y position.
+            t_uint  topY_;
 
-                     /// The width of the window.
-                     t_uint  width_;
+            /// The width of the window.
+            t_uint  width_;
 
-                     /// The height of the window.
-                     t_uint  height_;
+            /// The height of the window.
+            t_uint  height_;
 
-                     /// Keys used by this window.
-                     keyMapping kmap_;
+            /// Keys used by this window.
+            keyMapping kmap_;
 
-		     /// Given a sting of certain length, generate
-                     /// spaces so that the string + spaces will fill
-                     /// width_.
-                     void genSpaces(std::string const& _input, std::string & _spaces) const;
-                  };
+            /// Given a sting of certain length, generate
+            /// spaces so that the string + spaces will fill
+            /// width_.
+            void genSpaces(std::string const& _input, std::string & _spaces) const;
+         };
 
-               /// Interface for dialogs.
-               class dialog
-                  {
-                  public:
-                     /// Result of running a dialog.
-                     enum RESULT
-                        {
-                           R_NCREAT = -2, // Unable to create a dialog.
-                           R_RESIZE = -1, // Resized, take action.
-                           R_QUIT   =  0  // Normal quit.
-                        };
-                  public:
-                     /// Constructor.
-                     dialog();
+         /// Interface for dialogs.
+         class dialog
+         {
+         public:
+            /// Result of running a dialog.
+            enum RESULT
+            {
+               R_NCREAT = -2, // Unable to create a dialog.
+               R_RESIZE = -1, // Resized, take action.
+               R_QUIT   =  0  // Normal quit.
+            };
+         public:
+            /// Constructor.
+            dialog();
 
-                     /// Function used to initialize and show the
-                     /// dialog.
-                     virtual dialog::RESULT run() = 0;
+            /// Function used to initialize and show the
+            /// dialog.
+            virtual dialog::RESULT run() = 0;
 
-                     /// Destructor.
-                     virtual ~dialog();
-                  };
+            /// Destructor.
+            virtual ~dialog();
+         };
 
-	       /** @} */
+         /** @} */
 
-            } // namespace cli
-      } // namespace UI
+      } // namespace cli
+   } // namespace UI
 } // namespace btg
 
 #endif // WINDOW_H

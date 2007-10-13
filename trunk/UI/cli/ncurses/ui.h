@@ -87,6 +87,8 @@ namespace btg
                      /// Show a menu.
                      void handleMenu();
 
+                     void handleSessionName();
+
                      /// Show help.
                      dialog::RESULT handleHelp();
 

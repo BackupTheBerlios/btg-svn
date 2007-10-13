@@ -47,7 +47,7 @@ namespace btg
                                       btg::core::client::clientConfiguration*  _config,
                                       btg::core::client::lastFiles*            _lastfiles,
                                       bool const _verboseFlag,
-				      bool const _autoStartFlag)
+                                      bool const _autoStartFlag)
             : transport(_transport),
               statemachine(_e, transport, _callback, _verboseFlag),
               setupDone(false),
@@ -68,14 +68,15 @@ namespace btg
               cmd_failture(0),
               sessionList(0),
               sessionNames(0),
+              currentSessionName(),
               config(_config),
               lastfiles(_lastfiles),
               setupFailtureMessage(),
               attachFailtureMessage(),
               fatalerror(false),
               sessionerror(false),
-	      session_(clientHandler::ILLEGAL_ID),
-	      autoStartFlag_(_autoStartFlag)
+              session_(clientHandler::ILLEGAL_ID),
+              autoStartFlag_(_autoStartFlag)
          {
          }
 
@@ -98,7 +99,7 @@ namespace btg
 
          void clientHandler::reqSetupAttach(t_long const _old_session)
          {
-	   setSession(_old_session);
+            setSession(_old_session);
             statemachine.doAttach(new attachSessionCommand(GPD->sBUILD(), _old_session));
             statemachine.work();
          }
@@ -135,8 +136,8 @@ namespace btg
          {
             t_strListCI iter;
             for (iter = _filenames.begin(); 
-		 iter != _filenames.end(); 
-		 iter++)
+                 iter != _filenames.end(); 
+                 iter++)
                {
                   this->reqCreate(*iter);
                }
@@ -309,6 +310,22 @@ namespace btg
             statemachine.work();
          }
 
+         void clientHandler::reqSessionName()
+         {
+            commandStatus = false;
+
+            statemachine.doSessionName();
+            statemachine.work();
+         }
+
+         void clientHandler::reqSetSessionName(std::string const& _name)
+         {
+            commandStatus = false;
+
+            statemachine.doSetSessionName(_name);
+            statemachine.work();
+         }
+
          bool clientHandler::isSetupDone() const
          {
             return setupDone;
@@ -367,6 +384,11 @@ namespace btg
             return sessionNames;
          }
 
+         std::string clientHandler::getCurrentSessionName() const
+         {
+            return currentSessionName;
+         }
+
          btg::core::client::clientConfiguration* clientHandler::getConfig() const
          {
             return config;
@@ -382,15 +404,15 @@ namespace btg
             return attachFailtureMessage;
          }
 
-	t_long clientHandler::session() const
-	{
-	  return session_;
-	}
+         t_long clientHandler::session() const
+         {
+            return session_;
+         }
 
-	void clientHandler::setSession(t_long const _session)
-	{
-	  session_ = _session;
-	}
+         void clientHandler::setSession(t_long const _session)
+         {
+            session_ = _session;
+         }
 
          clientHandler::~clientHandler()
          {

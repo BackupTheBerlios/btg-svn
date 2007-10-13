@@ -319,6 +319,16 @@ namespace btg
                }
          }
 
+         void guiHandler::onSessionName(std::string const& _name)
+         {
+            
+         }
+
+         void guiHandler::onSetSessionName()
+         {
+            
+         }
+
          void guiHandler::onGlobalLimit()
          {
 

@@ -52,8 +52,9 @@
 #include <bcore/command/session_detach.h>
 #include <bcore/command/session_list_rsp.h>
 #include <bcore/command/session_quit.h>
-#include <bcore/command/uptime.h>
 #include <bcore/command/session_list.h>
+#include <bcore/command/session_name.h>
+#include <bcore/command/uptime.h>
 #include <bcore/command/list.h>
 
 #include <bcore/command/context_last.h>
@@ -86,11 +87,11 @@ namespace btg
          /// The default action to take when the state machine decides to
          /// change to a illegal state as according to the changeState
          /// function.
-#define DEFAULT_ERROR_ACTION \
-{ \
- BTG_ERROR_LOG("Dying: attempt to change to an illegal state. From=" << stateToString(currentState) << ", to=" << stateToString(_to) << "."); \
- currentState = SM_ERROR; \
-}
+#define DEFAULT_ERROR_ACTION                                            \
+         {                                                              \
+            BTG_ERROR_LOG("Dying: attempt to change to an illegal state. From=" << stateToString(currentState) << ", to=" << stateToString(_to) << "."); \
+            currentState = SM_ERROR;                                    \
+         }
          using namespace btg::core;
          using namespace std;
 
@@ -771,6 +772,22 @@ namespace btg
                }
          }
 
+         void stateMachine::doSessionName()
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(new sessionNameCommand());
+               }
+         }
+
+         void stateMachine::doSetSessionName(std::string const& _name)
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(new setSessionNameCommand(_name));
+               }
+         }
+
          void stateMachine::doAttach(attachSessionCommand* _command)
          {
             if (checkState(SM_TRANSPORT_READY))
@@ -811,7 +828,7 @@ namespace btg
          }
 
          void stateMachine::doCreate(std::string const& _pathToTorrent,
-				     bool const _start)
+                                     bool const _start)
          {
             if (checkState(SM_COMMAND))
                {
@@ -826,15 +843,15 @@ namespace btg
                         if (Util::getFileFromPath(_pathToTorrent, filename))
                            {
                               commands.push_back(
-						 new contextCreateWithDataCommand(filename,
-										  tf,
-										  _start));
+                                                 new contextCreateWithDataCommand(filename,
+                                                                                  tf,
+                                                                                  _start));
                            }
                         else
                            {
                               commands.push_back(new contextCreateWithDataCommand(_pathToTorrent,
-										  tf,
-										  _start));
+                                                                                  tf,
+                                                                                  _start));
                            }
                      }
                   else
@@ -847,9 +864,9 @@ namespace btg
          void stateMachine::doLast()
          {
             if (checkState(SM_COMMAND))
-            {
-               commands.push_back(new lastCIDCommand());
-            }
+               {
+                  commands.push_back(new lastCIDCommand());
+               }
          }
 
          void stateMachine::doAbort(t_int const _contextID, bool const _eraseData, bool const _allContexts)
@@ -1057,7 +1074,19 @@ namespace btg
                      expectedReply[1] = Command::CN_UNDEFINED;
                      break;
                   }
-
+               case Command::CN_SNAME:
+                  {
+                     expectedReply[0] = Command::CN_SNAMERSP;
+                     expectedReply[1] = Command::CN_UNDEFINED;
+                     break;
+                  }
+               case Command::CN_SSETNAME:
+                  {
+                     ackForCommand = static_cast<Command::commandType>(_type);
+                     expectedReply[0] = Command::CN_ACK;
+                     expectedReply[1] = Command::CN_UNDEFINED;
+                     break;
+                  }
                default:
                   {
                      expectedReply[0] = Command::CN_UNDEFINED;
@@ -1113,6 +1142,11 @@ namespace btg
                      clientcallback->onSetFiles();
                      break;
                   }
+               case Command::CN_SSETNAME:
+                  {
+                     clientcallback->onSetSessionName();
+                     break;
+                  }
                default:
                   {
                      BTG_ERROR_LOG("No callback defined.");
@@ -1136,107 +1170,69 @@ namespace btg
                {
                case Command::CN_GLIST:
                   {
-                     clientcallback->onList(
-                                            dynamic_cast<listCommandResponse*>(_command)->getIDs(),
-                                            dynamic_cast<listCommandResponse*>(_command)->getFilanames()
-                                            );
+                     cb_CN_GLIST(_command);
                      break;
                   }
                case Command::CN_GSETUP:
                   {
-                     /* Is this needed here?? */
-#if BTG_STATEMACHINE_DEBUG
-                     BTG_NOTICE("CN_GSETUP called in expectedReply");
-#endif // BTG_STATEMACHINE_DEBUG
-                     clientcallback->onSetup(
-                                             dynamic_cast<setupResponseCommand*>(_command)->getSession()
-                                             );
+                     cb_CN_GSETUP(_command);
                      break;
                   }
-
                case Command::CN_GLIMITSTAT:
                   {
-                     limitStatusResponseCommand* lsrc = dynamic_cast<limitStatusResponseCommand*>(_command);
-
-                     clientcallback->onGlobalLimitResponse(lsrc->getUploadLimit(),
-                                                           lsrc->getDownloadLimit(),
-                                                           lsrc->getMaxUplds(),
-                                                           lsrc->getMaxConnections()
-                                                           );
+                     cb_CN_GLIMITSTAT(_command);
                      break;
                   }
-
                case Command::CN_CCLEAN:
                   {
-                     clientcallback->onClean(
-                                             dynamic_cast<contextCleanResponseCommand*>(_command)->getFilenames(),
-                                             dynamic_cast<contextCleanResponseCommand*>(_command)->getContextIDs()
-                                             );
+                     cb_CN_CCLEAN(_command);
                      break;
                   }
-
                case Command::CN_GUPTIME:
                   {
-                     clientcallback->onUptime(dynamic_cast<uptimeResponseCommand*>(_command)->getUptime());
+                     cb_CN_GUPTIME(_command);
                      break;
                   }
-                  // Special case, because of the fact that status request
-                  // can return two different responses.
                case Command::CN_CSTATUS:
                   {
-                     switch (_command->getType())
-                        {
-                        case Command::CN_CSTATUSRSP:
-                           {
-                              clientcallback->onStatus(dynamic_cast<contextStatusResponseCommand*>(_command)->getStatus());
-                              break;
-                           }
-                        case Command::CN_CALLSTATUSRSP:
-                           {
-                              clientcallback->onStatusAll(dynamic_cast<contextAllStatusResponseCommand*>(_command)->getStatus());
-                           }
-                        }
+                     cb_CN_CSTATUS(_command);
                      break;
                   }
                case Command::CN_CALLSTATUSRSP:
                   {
-                     clientcallback->onStatusAll(dynamic_cast<contextAllStatusResponseCommand*>(_command)->getStatus());
+                     cb_CN_CALLSTATUSRSP(_command);
                      break;
                   }
-
                case Command::CN_CLASTRSP:
                   {
-                     clientcallback->onLast(dynamic_cast<lastCIDResponseCommand*>(_command)->getContextId());
+                     cb_CN_CLASTRSP(_command);
                      break;
                   }
                case Command::CN_CFILEINFO:
                   {
-                     clientcallback->onFileInfo(dynamic_cast<contextFileInfoResponseCommand*>(_command)->getFileInfoList());
+                     cb_CN_CFILEINFO(_command);
                      break;
                   }
                case Command::CN_CPEERS:
                   {
-                     clientcallback->onPeers(dynamic_cast<contextPeersResponseCommand*>(_command)->getList());
+                     cb_CN_CPEERS(_command);
                      break;
                   }
                case Command::CN_CLIMITSTATUS:
                   {
-                     clientcallback->onLimitStatus(
-                                                   dynamic_cast<contextLimitStatusResponseCommand*>(_command)->getUploadLimit(),
-                                                   dynamic_cast<contextLimitStatusResponseCommand*>(_command)->getDownloadLimit(),
-                                                   dynamic_cast<contextLimitStatusResponseCommand*>(_command)->getSeedLimit(),
-                                                   dynamic_cast<contextLimitStatusResponseCommand*>(_command)->getSeedTimeout()
-                                                   );
+                     cb_CN_CLIMITSTATUS(_command);
                      break;
                   }
                case Command::CN_CGETFILES:
                   {
-                     clientcallback->onSelectedFiles(
-                                                     dynamic_cast<contextGetFilesResponseCommand*>(_command)->getFiles()
-                                                     );
+                     cb_CN_CGETFILES(_command);
                      break;
                   }
-
+               case Command::CN_SNAME:
+                  {
+                     cb_CN_SNAME(_command);
+                     break;
+                  }
                default:
                   {
                      BTG_ERROR_LOG("callCallback(), unexpected command, " << Command::getName(currentCommand) << ".");
@@ -1744,10 +1740,6 @@ namespace btg
                         // Reset the counter.
                         counter_session_list = 0;
                         // Call the list sessions callback.
-
-                        // TODO: add assert which makes sure that the
-                        // number of IDs and names is equal.
-
                         t_longList sessions = 
                            dynamic_cast<listSessionResponseCommand*>(c)->getSessions();
                         t_strList sessionIds = 

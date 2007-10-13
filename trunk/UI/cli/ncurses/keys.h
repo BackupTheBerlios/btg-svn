@@ -34,81 +34,84 @@
 namespace btg
 {
    namespace UI
+   {
+      namespace cli
       {
-         namespace cli
-            {
 	      /**
-                * \addtogroup ncli
-                */
-               /** @{ */
+          * \addtogroup ncli
+          */
+         /** @{ */
 
-               /// Maps keys, so that the user can choose his/hers own
-               /// keys instead of the default ones.
-               class keyMapping
-                  {
-                  public:
-                     /// Used labels.
-                     enum KEYLABEL
-                        {
-                           K_UNDEF = 0,  //!< Other key or no keypress.
-                           // Acessible from main window:
-                           K_HELP,       //!< Get help.
-                           K_DETACH,     //!< Detach from the daemon.
-                           K_QUIT,       //!< Quit the application or entry display.
-                           K_LOAD,       //!< Load a torrent.
-                           K_MENU,       //!< Show a menu.
-                           K_GLIMIT,     //!< Show a dialog allowing one to set global limits.
-                           // Generic:
-                           K_DOWN,       //!< Move down the list.
-                           K_UP,         //!< Move up the list.
-                           K_LIST_START, //!< Start of the list.
-                           K_LIST_END,   //!< End of the list.
-                           K_SELECT,     //!< Select something.
-                           K_MARK,       //!< Mark something.
-			   K_MARK_ALL,   //!< Mark everything.
-                           K_NEXT,       //!< Next entry.
-                           K_PREV,       //!< Previous entry.
-                           // Other:
-                           K_RESIZE      //!< Display was resized.
-                        };
+         /// Maps keys, so that the user can choose his/hers own
+         /// keys instead of the default ones.
+         class keyMapping
+         {
+         public:
+            /// Used labels.
+            enum KEYLABEL
+            {
+               K_UNDEF = 0,  //!< Other key or no keypress.
+               // Acessible from main window:
+               K_HELP,       //!< Get help.
+               K_DETACH,     //!< Detach from the daemon.
+               K_QUIT,       //!< Quit the application.
+               K_QUITSCREEN, //!< Quit an entry display.
+               K_LOAD,       //!< Load a torrent.
+               K_MENU,       //!< Show a menu.
+               K_GLIMIT,     //!< Show a dialog allowing one to set global limits.
+               K_SESNAME,    //!< Name the current session.
+               // Generic:
+               K_DOWN,       //!< Move down the list.
+               K_UP,         //!< Move up the list.
+               K_LIST_START, //!< Start of the list.
+               K_LIST_END,   //!< End of the list.
+               K_SELECT,     //!< Select something.
+               K_MARK,       //!< Mark something.
+               K_MARK_ALL,   //!< Mark everything.
+               K_NEXT,       //!< Next entry.
+               K_PREV,       //!< Previous entry.
+               K_DELETE,     //!< Delete.
+               // Other:
+               K_RESIZE      //!< Display was resized.
+            };
 
-		     /// Constructor.
-		     keyMapping();
+            /// Constructor.
+            keyMapping();
 
-		     /// Set the default key mapping.
-		     void setDefaults();
+            /// Set the default key mapping.
+            void setDefaults();
 
-                     /// Map a label to a value.
-                     void add(KEYLABEL const _keyl, int const _value);
+            /// Map a label to a value.
+            void add(KEYLABEL const _keyl, int const _value);
 
-                     /// Get a textual representation of a key.
-                     bool getValue(KEYLABEL const _keyl, std::string & _value) const;
+            /// Get a textual representation of a key.
+            bool getValue(KEYLABEL const _keyl, std::string & _value) const;
 
-                     /// Given a list of labels, remove the labels
-                     /// that are not contained in this list from
-                     /// keys.
-                     void setUsed(std::vector<KEYLABEL> _labels);
+            /// Given a list of labels, remove the labels
+            /// that are not contained in this list from
+            /// keys.
+            void setUsed(std::vector<KEYLABEL> const& _labels);
 
-                     /// Given a value, get a key.
-                     bool get(t_int const _value, KEYLABEL & _keyl) const;
+            /// Given a value, get a key.
+            bool get(t_int const _value, KEYLABEL & _keyl) const;
 
-		     /// @return True - key label is defined. False - otherwise.
-		     bool exists(KEYLABEL const _keyl) const;
+            /// @return True - key label is defined. False - otherwise.
+            bool exists(KEYLABEL const _keyl) const;
 
-		     /// Check that the contained keys are valid.
-		     /// Each ascii value must be used exacly once.
-		     /// @return True - good config, false otherwise.
-		     bool check(std::string & _error) const;
+            /// Check that the contained keys are valid.
+            /// Each ascii value must be used exacly once.
+            /// @return True - good config, false otherwise.
+            bool check(std::string & _error) const;
 
-		     /// Destructor.
-		     ~keyMapping();
-		  private:
-                     /// Maps label to key value.
-                     std::map<KEYLABEL, int> keys;
-                  };
+            /// Destructor.
+            ~keyMapping();
+         private:
+            /// Maps label to key value.
+            std::map<KEYLABEL, int> keys;
+         };
 
-            } // namespace cli
-      } // namespace UI
+      } // namespace cli
+   } // namespace UI
 } // namespace btg
 
 #endif // KEYS_H

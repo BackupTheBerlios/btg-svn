@@ -72,6 +72,8 @@ namespace btg
                            cmd_last,          //!< Last.
                            cmd_syntax,        //!< Syntax.
                            cmd_detach,        //!< Detach.
+                           cmd_sname,         //!< Session name.
+                           cmd_ssname,        //!< Set session name.
                            cmd_undefined = -1 //!< Undefined.
                         };
                   public:
@@ -354,6 +356,9 @@ namespace btg
                      void onKillError(std::string _ErrorDescription);
 
                      void onUptime(t_ulong const _uptime);
+
+                     void onSessionName(std::string const& _name);
+                     void onSetSessionName();
 
                      void onGlobalLimit();
                      void onGlobalLimitError(std::string _ErrorDescription);

@@ -37,97 +37,112 @@ namespace btg
    {
       namespace cli
       {
-	keyMapping::keyMapping()
-	  : keys()
-	{
-	}
+         keyMapping::keyMapping()
+            : keys()
+         {
+         }
 
-	void keyMapping::setDefaults()
-	{
-	  // Map the enums used by this client to ncurses key macros or
-	  // values.
-	  if (!exists(keyMapping::K_HELP))
-	    {
-	      add(keyMapping::K_HELP, 'h');
-	    }
+         void keyMapping::setDefaults()
+         {
+            // Map the enums used by this client to ncurses key macros or
+            // values.
+            if (!exists(keyMapping::K_HELP))
+               {
+                  add(keyMapping::K_HELP, KEY_F(1));
+               }
 
-	  if (!exists(keyMapping::K_DETACH))
-	    {
-	      add(keyMapping::K_DETACH, 'd');
-	    }
+            if (!exists(keyMapping::K_DETACH))
+               {
+                  add(keyMapping::K_DETACH, KEY_F(10));
+               }
 
-	  if (!exists(keyMapping::K_QUIT))
-	    {
-	      add(keyMapping::K_QUIT, 'q');
-	    }
+            if (!exists(keyMapping::K_QUIT))
+               {
+                  add(keyMapping::K_QUIT, KEY_F(9));
+               }
 
-	  if (!exists(keyMapping::K_LOAD))
-	    {
-	      add(keyMapping::K_LOAD, 'l');
-	    }
+            if (!exists(keyMapping::K_QUITSCREEN))
+               {
+                  add(keyMapping::K_QUITSCREEN, 'q');
+               }
 
-	  if (!exists(keyMapping::K_GLIMIT))
-	    {
-	      add(keyMapping::K_GLIMIT, 'g');
-	    }
+            if (!exists(keyMapping::K_LOAD))
+               {
+                  add(keyMapping::K_LOAD, 'l');
+               }
 
-	  if (!exists(keyMapping::K_DOWN))
-	    {
-	      add(keyMapping::K_DOWN, KEY_DOWN);
-	    }
+            if (!exists(keyMapping::K_GLIMIT))
+               {
+                  add(keyMapping::K_GLIMIT, 'g');
+               }
 
-	  if (!exists(keyMapping::K_UP))
-	    {
-	      add(keyMapping::K_UP, KEY_UP);
-	    }
+            if (!exists(keyMapping::K_DOWN))
+               {
+                  add(keyMapping::K_DOWN, KEY_DOWN);
+               }
 
-	  if (!exists(keyMapping::K_LIST_START))
-	    {
-	      add(keyMapping::K_LIST_START, KEY_HOME);
-	    }
+            if (!exists(keyMapping::K_UP))
+               {
+                  add(keyMapping::K_UP, KEY_UP);
+               }
 
-	  if (!exists(keyMapping::K_LIST_END))
-	    {
-	      add(keyMapping::K_LIST_END, KEY_END);
-	    }
+            if (!exists(keyMapping::K_LIST_START))
+               {
+                  add(keyMapping::K_LIST_START, KEY_HOME);
+               }
 
-	  if (!exists(keyMapping::K_NEXT))
-	    {
-	      add(keyMapping::K_NEXT, KEY_RIGHT);
-	    }
+            if (!exists(keyMapping::K_LIST_END))
+               {
+                  add(keyMapping::K_LIST_END, KEY_END);
+               }
 
-	  if (!exists(keyMapping::K_PREV))
-	    {
-	      add(keyMapping::K_PREV, KEY_LEFT);
-	    }
+            if (!exists(keyMapping::K_NEXT))
+               {
+                  add(keyMapping::K_NEXT, KEY_RIGHT);
+               }
 
-	  if (!exists(keyMapping::K_MARK))
-	    {
-	      add(keyMapping::K_MARK, 'w');
-	    }
+            if (!exists(keyMapping::K_PREV))
+               {
+                  add(keyMapping::K_PREV, KEY_LEFT);
+               }
 
-	  if (!exists(keyMapping::K_MARK_ALL))
-	    {
-	      add(keyMapping::K_MARK_ALL, 'a');
-	    }
+            if (!exists(keyMapping::K_MARK))
+               {
+                  add(keyMapping::K_MARK, 'w');
+               }
 
-	  if (!exists(keyMapping::K_SELECT))
-	    {
-	      add(keyMapping::K_SELECT, '\n');
-	    }
+            if (!exists(keyMapping::K_MARK_ALL))
+               {
+                  add(keyMapping::K_MARK_ALL, 'a');
+               }
 
-	  if (!exists(keyMapping::K_MENU))
-	    {
-	      add(keyMapping::K_MENU, 'm');
-	    }
+            if (!exists(keyMapping::K_SELECT))
+               {
+                  add(keyMapping::K_SELECT, '\n');
+               }
 
-	  if (!exists(keyMapping::K_RESIZE))
-	    {
-	      add(keyMapping::K_RESIZE, KEY_RESIZE);
-	    }
-	}
+            if (!exists(keyMapping::K_MENU))
+               {
+                  add(keyMapping::K_MENU, 'm');
+               }
 
-	void keyMapping::add(KEYLABEL const _keyl, int const _value)
+            if (!exists(keyMapping::K_SESNAME))
+               {
+                  add(keyMapping::K_SESNAME, 'n');
+               }
+
+            if (!exists(keyMapping::K_RESIZE))
+               {
+                  add(keyMapping::K_RESIZE, KEY_RESIZE);
+               }
+
+            if (!exists(keyMapping::K_DELETE))
+               {
+                  add(keyMapping::K_DELETE, KEY_DC);
+               }
+         }
+
+         void keyMapping::add(KEYLABEL const _keyl, int const _value)
          {
             std::pair<KEYLABEL,int> p(_keyl, _value);
 
@@ -305,9 +320,31 @@ namespace btg
             return status;
          }
 
-         void keyMapping::setUsed(std::vector<KEYLABEL> _labels)
+         void keyMapping::setUsed(std::vector<KEYLABEL> const& _labels)
          {
-            // TODO: implement this.
+            std::vector<KEYLABEL> toErase;
+
+            std::map<KEYLABEL, int>::iterator keyIter;
+            for (keyIter = keys.begin();
+                 keyIter != keys.end();
+                 keyIter++)
+               {
+                  std::vector<KEYLABEL>::const_iterator fIter = std::find(_labels.begin(), 
+                                                                          _labels.end(), 
+                                                                          keyIter->first);
+                  if (fIter == _labels.end())
+                     {
+                        toErase.push_back(keyIter->first);
+                     }
+               }
+
+            std::vector<KEYLABEL>::const_iterator iter;
+            for (iter = toErase.begin();
+                 iter != toErase.end();
+                 iter++)
+               {
+                  keys.erase(*iter);
+               }
          }
 
          bool keyMapping::get(t_int const _value, KEYLABEL & _keyl) const
@@ -330,55 +367,55 @@ namespace btg
             return status;
          }
 
-	bool keyMapping::exists(KEYLABEL const _keyl) const
-	{
-	  bool status = false;
+         bool keyMapping::exists(KEYLABEL const _keyl) const
+         {
+            bool status = false;
 
-	  std::map<KEYLABEL,int>::const_iterator iter = keys.find(_keyl);
+            std::map<KEYLABEL,int>::const_iterator iter = keys.find(_keyl);
 
-	  if (iter != keys.end())
-	    {
-	      status = true;
-	    }
+            if (iter != keys.end())
+               {
+                  status = true;
+               }
 
-	  return status;
-	}
+            return status;
+         }
 
-	bool keyMapping::check(std::string & _error) const
-	{
-	  bool status = true;
+         bool keyMapping::check(std::string & _error) const
+         {
+            bool status = true;
 
-	  std::map<KEYLABEL,int>::const_iterator iter;
-	  for (iter = keys.begin();
-	       iter != keys.end();
-	       iter++)
-	    {
-	      t_int value         = iter->second;
-	      t_int value_counter = 0;
-	      std::map<KEYLABEL,int>::const_iterator viter;
-	      for (viter = keys.begin();
-		   viter != keys.end();
-		   viter++)
-		{
-		  if (viter->second == value)
-		    {
-		      value_counter++;
-		    }
-		}
-	      if (value_counter != 1)
-		{
-		  _error = "Keyboard: value " + 
-		    btg::core::convertToString<t_int>(value) 
-		    + " used more  than once.";
-		  return false;
-		}
-	    }
-	  return status;
-	}
+            std::map<KEYLABEL,int>::const_iterator iter;
+            for (iter = keys.begin();
+                 iter != keys.end();
+                 iter++)
+               {
+                  t_int value         = iter->second;
+                  t_int value_counter = 0;
+                  std::map<KEYLABEL,int>::const_iterator viter;
+                  for (viter = keys.begin();
+                       viter != keys.end();
+                       viter++)
+                     {
+                        if (viter->second == value)
+                           {
+                              value_counter++;
+                           }
+                     }
+                  if (value_counter != 1)
+                     {
+                        _error = "Keyboard: value " + 
+                           btg::core::convertToString<t_int>(value) 
+                           + " used more  than once.";
+                        return false;
+                     }
+               }
+            return status;
+         }
 
-	keyMapping::~keyMapping()
-	{
-	}
+         keyMapping::~keyMapping()
+         {
+         }
 
       } // namespace cli
    } // namespace UI

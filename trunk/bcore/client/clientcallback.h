@@ -201,6 +201,13 @@ namespace btg
                      /// The client received the uptime from the daemon.
                      virtual void onUptime(t_ulong const _uptime) = 0;
 
+                     /// Response to a request to get a session name
+                     /// of the current session.
+                     virtual void onSessionName(std::string const& _name) = 0;
+
+                     /// A session name was set.
+                     virtual void onSetSessionName() = 0;
+
                      /// Destructor.
                      virtual ~clientCallback();
                   };

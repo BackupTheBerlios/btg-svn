@@ -33,6 +33,7 @@
 
 #include "basemenu.h"
 #include "limitwindow.h"
+#include "snwindow.h"
 
 #include <bcore/client/handlerthr.h>
 #include "handler.h"
@@ -156,6 +157,12 @@ namespace btg
                case keyMapping::K_MENU:
                   {
                      handleMenu();
+                     refresh();
+                     break;
+                  }
+               case keyMapping::K_SESNAME:
+                  {
+                     handleSessionName();
                      refresh();
                      break;
                   }
@@ -345,6 +352,61 @@ namespace btg
          {
             mainwindow_.markAll();
             refresh();
+         }
+
+         void UI::handleSessionName()
+         {
+            GET_HANDLER_INST;
+            statuswindow_.setStatus("Setting session name.");
+
+            std::string session_name;
+
+            handler->reqSessionName();
+            session_name = handler->getCurrentSessionName();
+
+            windowSize sndimensions;
+            mainwindow_.getSize(sndimensions);
+
+            sessionNameWindow snw(keymap_,
+                                  sndimensions,
+                                  session_name);
+
+            switch (snw.run())
+               {
+               case dialog::R_NCREAT:
+                  {
+                     statuswindow_.setStatus("Unable to set session name.");
+                     break;
+                  }
+               case dialog::R_RESIZE:
+                  {
+                     // the window was resized.
+                     handleResizeMainWindow();
+                     statuswindow_.setStatus("Setting session name aborted.");
+                     break;
+                  }
+               case dialog::R_QUIT:
+                  {
+                     std::string newname = snw.getName();
+                     if (session_name != newname)
+                        {
+                           handler->reqSetSessionName(newname);
+                           if (handler->commandSuccess())
+                              {
+                                 statuswindow_.setStatus("Session name set.");
+                              }
+                           else
+                              {
+                                 statuswindow_.setStatus("Session name not set.");
+                              }
+                        }
+                     else
+                        {
+                           statuswindow_.setStatus("Session name not changed.");
+                        }
+                     break;
+                  }
+               }
          }
 
          void UI::handleManyLimits(std::vector<t_int> const& _context_ids)
@@ -545,6 +607,16 @@ namespace btg
                }
 
             if (helpWindow::generateHelpForKey(keymap_,
+                                               keyMapping::K_SESNAME,
+                                               "",
+                                               keyDescr,
+                                               false))
+               {
+                  helpText.push_back(keyDescr);
+                  helpText.push_back("  to set the name of the session");
+               }
+
+            if (helpWindow::generateHelpForKey(keymap_,
                                                keyMapping::K_QUIT,
                                                "",
                                                keyDescr,
@@ -594,7 +666,7 @@ namespace btg
 
                      handler->reqCreate(filenameToLoad);
 
-                     if (handler->lastCommandSuccess())
+                     if (handler->commandSuccess())
                         {
                            actionSuccess("Load", filenameToLoad);
                         }
@@ -627,7 +699,7 @@ namespace btg
 	    
                      handler->reqCreate(*iter);
 	    
-                     if (handler->lastCommandSuccess())
+                     if (handler->commandSuccess())
                         {
                            actionSuccess("Load", *iter);
                         }
@@ -658,7 +730,7 @@ namespace btg
 
                handler->reqGlobalLimitStatus();
 
-               if (handler->lastCommandSuccess())
+               if (handler->commandSuccess())
                   {
                      handler->getLastGlobalLimitStatus(upload,
                                                        download,
@@ -732,7 +804,7 @@ namespace btg
                                              download,
                                              max_uploads,
                                              max_connections);
-                     if (handler->lastCommandSuccess())
+                     if (handler->commandSuccess())
                         {
                            statuswindow_.setStatus("Global limits set.");
                         }
@@ -947,7 +1019,7 @@ namespace btg
                      fs.getFiles(filesToSet);
                      handler->reqSetFiles(_context_id, filesToSet);
 
-                     if (handler->lastCommandSuccess())
+                     if (handler->commandSuccess())
                         {
                            return UI::sS_SELECT_SUCCESS;
                         }
