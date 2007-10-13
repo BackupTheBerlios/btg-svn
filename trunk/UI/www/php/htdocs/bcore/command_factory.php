@@ -52,6 +52,7 @@ require_once(BTG_BCORE_PATH."/command/session_attach.php");
 require_once(BTG_BCORE_PATH."/command/session_quit.php");
 require_once(BTG_BCORE_PATH."/command/session_error.php");
 require_once(BTG_BCORE_PATH."/command/session_detach.php");
+require_once(BTG_BCORE_PATH."/command/session_name.php");
 require_once(BTG_BCORE_PATH."/command/kill.php");
 require_once(BTG_BCORE_PATH."/command/limit.php");
 require_once(BTG_BCORE_PATH."/command/uptime.php");
@@ -180,6 +181,15 @@ class commandFactory
 			break;
 		case Command::CN_GINITCONNECTION:
 			$c = new initConnectionCommand();
+			break;
+		case Command::CN_SNAME:
+			$c = new sessionNameCommand();
+			break;
+		case Command::CN_SNAMERSP:
+			$c = sessionNameResponseCommand();
+			break;
+		case Command::CN_SSETNAME:
+			$c = setSessionNameCommand();
 			break;
 		default:
 			throw new BTGException("Wrong command type: " . $cmdid ."\n");

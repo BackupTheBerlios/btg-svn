@@ -19,45 +19,45 @@
  */
 
 /*
- * $Id: session_list_rsp.php,v 1.1.2.1 2006/03/27 07:17:08 jstrom Exp $
+ * $Id: session_list.php,v 1.1.2.1 2006/03/27 07:17:08 jstrom Exp $
  */
 if(!defined("BTG_BCORE_PATH"))
 	define("BTG_BCORE_PATH", "bcore");
 
 require_once(BTG_BCORE_PATH."/command/command.php");
 
-class listSessionResponseCommand extends Command
+class sessionNameCommand extends Command
 {
-	private $sessions;
-	public function listSessionResponseCommand($sessions=array(), $names=array())
+	public function sessionNameCommand()
 	{
-		parent::__construct(Command::CN_SLISTRSP);
-		$sessions = $sessions;
-		$names    = $names;
+		parent::__construct(Command::CN_SNAME);
+	}
+}
+
+class sessionNameResponseCommand extends Command
+{
+	private $name;
+	public function sessionNameResponseCommand($name="")
+	{
+		parent::__construct(Command::CN_SNAMERSP);
+		$name    = $name;
 	}
 
 	public function toString()
 	{
-		return parent::toString() . 
-			" Available sesions: ".join(" ", $this->sessions).".";
+		return parent::toString();
 	}
 
-	public function getSessions()
+	public function getName()
 	{
-		return $this->sessions;
-	}
-
-	public function getNames()
-	{
-		return $this->names;
+		return $this->name;
 	}
 
 	public function serialize(&$a = array())
 	{
 		$a = parent::serialize();
 
-		$this->intListToBytes($a, $this->sessions);
-		$this->stringListToBytes($a, $this->names);
+		$this->stringToBytes($a, $this->name);
 
 		return $a;
 	}
@@ -66,9 +66,43 @@ class listSessionResponseCommand extends Command
 	{
 		parent::deserialize($data);
 
-		$this->bytesToIntList($this->sessions, $data);
-		$this->bytesToStringList($this->names, $data);
+		$this->bytesToString($this->name, $data);
+	}
+}
 
+class setSessionNameCommand extends Command
+{
+	private $name;
+	public function setSessionNameCommand($name="")
+	{
+		parent::__construct(Command::CN_SSETNAME);
+		$name    = $name;
+	}
+
+	public function toString()
+	{
+		return parent::toString();
+	}
+
+	public function getName()
+	{
+		return $this->name;
+	}
+
+	public function serialize(&$a = array())
+	{
+		$a = parent::serialize();
+
+		$this->stringToBytes($a, $this->name);
+
+		return $a;
+	}
+
+	public function deserialize(&$data)
+	{
+		parent::deserialize($data);
+
+		$this->bytesToString($this->name, $data);
 	}
 }
 

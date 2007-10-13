@@ -211,8 +211,14 @@ class BTG
 
 		if($r instanceof listSessionResponseCommand)
 		{
+			$name_counter = 0;
+			$names = $r->getNames();
 			foreach($r->getSessions() as $session)
+			{
 				$output.="<session>$session</session>";
+				$output.="<name>$names[$name_counter]</name>";
+				$name_counter++;
+			}
 		}
 
 		$output.= "</sessions>";
@@ -399,6 +405,21 @@ class BTG
 			{
 				$output .= "<ack/>\n";
 			}
+		}
+		return $this->addExtraOutput($output);
+	}
+
+	function sessionName()
+	{
+		$this->attachLast();
+		if(!$this->sessionAttached)
+			return $this->addExtraOutput("");
+
+		$output = "";
+		$r = $this->executeCommand(new sessionNameCommand(), false);
+		if($r instanceof sessionNameResponseCommand)
+		{
+			$output .= "<sessionname>".$r->getName()."</sessionname>\n";
 		}
 		return $this->addExtraOutput($output);
 	}
@@ -853,6 +874,8 @@ try
 	$ajax->register('btg_deauth', array($btg, 'deauth'));
 	$ajax->register('btg_globallimit', array($btg, 'globalLimit'));
 	$ajax->register('btg_globallimitstatus', array($btg, 'globalLimitStatus'));
+	$ajax->register('btg_sessionName', array($btg, 'sessionName'));
+
 
 	// Handle any requests
 	if($ajax->handle_client_request())

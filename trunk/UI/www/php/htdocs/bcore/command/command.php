@@ -82,9 +82,13 @@ class Command extends BTGSerializable
 	const CN_SQUIT = 39;            //!< Quit the current session.
 	const CN_SLIST = 40;            //!< Get a list of sessions.
 	const CN_SLISTRSP = 41;         //!< Response that lists sessions.
-	const CN_MOREAD = 42;           //!< Only read only access. Usefull for writing monitor applets.
-	const CN_MOWRITE = 43;          //!< Default write mode.
-	const CN_UNDEFINED = 44;        //!< Undefined command.
+	const CN_SNAME = 42;            //!< Get current session name.
+        const CN_SNAMERSP = 43;         //!< Current session name.
+        const CN_SSETNAME = 44;         //!< Set current session name.
+        const CN_MOREAD   = 45;         //!< Only read only access. Usefull for writing monitor applets.
+        const CN_MOWRITE  = 46;         //!< Default write mode.
+
+	const CN_UNDEFINED = 47;        //!< Undefined command.
 
 
 	/* Map differnt commands to descriptive names */
@@ -134,7 +138,9 @@ class Command extends BTGSerializable
          Command::CN_SERROR          => "(s) Error",
          Command::CN_SLIST           => "(s) List",
          Command::CN_SLISTRSP        => "(s) List response",
-         // Mode, yet to be implemented.
+	 Command::CN_SNAME           => "(s) Session name",
+	 Command::CN_SNAMERSP        => "(s) Session name response",
+         Command::CN_SSETNAME        => "(s) Set session name",
          Command::CN_MOREAD          => "(m) RO mode",
          Command::CN_MOWRITE         => "(m) RW mode",
          // Undefined.
@@ -190,9 +196,11 @@ class Command extends BTGSerializable
             Command::CN_SERROR          => "session.error",
             Command::CN_SLIST           => "session.list",
             Command::CN_SLISTRSP        => "session.listrsp",
-            // Mode, yet to be implemented.
-            Command::CN_MOREAD          => "mode.ro",
-            Command::CN_MOWRITE         => "mode.rw",
+	    Command::CN_SNAME           => "session.name",
+	    Command::CN_SNAMERSP        => "session.namersp",
+            Command::CN_SSETNAME        => "session.setname",
+            Command::CN_MOREAD          => "session.romode",
+            Command::CN_MOWRITE         => "session.rwmode",
             // Undefined.
             Command::CN_UNDEFINED       => "Undefined"
 		);

@@ -71,7 +71,6 @@ function sessionList()
 /* auth, authorize  */
 function auth()
 {
-    // !!!
     var username = encodeURIComponent(document.frm_auth.username.value);
     var password = encodeURIComponent(document.frm_auth.password.value);
     document.frm_auth.username.value = "";
@@ -93,6 +92,7 @@ function sessionAttach()
 	var id = document.frm_sessionlist.sessionlist.options[document.frm_sessionlist.sessionlist.selectedIndex].value;
 	setStatus("Attaching to session " + id + "...");
 	btg_sessionAttach(cb_sessionAttach, cb_sessionAttach_err, id);
+       	updateSessionName();
 }
 
 /* sessionSetup, setup a new session */
@@ -455,7 +455,6 @@ function setUIState(state)
 	else if(state == 4)
 	// Authorized, Set global limits.
 	{
-		// !!!
 		document.getElementById('layer_sessions').style.display='none';
 		document.getElementById('attach_button').style.display='none';
 		document.getElementById('setup_button').style.display='none';
@@ -645,13 +644,15 @@ function cb_deauth(response)
 function cb_sessionList(response)
 {
 	var sessions = response.getElementsByTagName('sessions')[0].getElementsByTagName('session');
+	var names    = response.getElementsByTagName('sessions')[0].getElementsByTagName('name');
 	var list = document.getElementById('sessionlist');
 	while(list.hasChildNodes())
 		list.removeChild(list.childNodes[0]);
 	for(var i=0; i < sessions.length; i++)
 	{
 		var session = sessions[i].childNodes[0].nodeValue;
-		list.options[i] = new Option(session, session);
+		var name    = names[i].childNodes[0].nodeValue;
+		list.options[i] = new Option(session + ":" + name, session);
 	}
 	setStatus("");
 }
@@ -809,6 +810,15 @@ function cb_contextStatus_err(error, errStr)
 	canGetContexts = 0;
 }
 
+function cb_sessionName(response)
+{
+    document.title = "BLAH";
+}
+
+function cb_sessionName_err(error, errStr)
+{
+    document.title = "BLAH2";
+}
 /**
  * Callback for btg_contextLimitStatus.
  * Called when a successfull limit status query was executed.
@@ -1093,6 +1103,12 @@ function refreshContextList()
 {
 	setStatus("Updating torrent list...");
 	btg_contextStatus(cb_contextStatus, cb_contextStatus_err, -1, true);
+}
+
+/* Refresh the context list */
+function updateSessionName()
+{
+    btg_sessionName(cb_sessionName, cb_sessionName_err);
 }
 
 /** Handles updating of the visuals.
