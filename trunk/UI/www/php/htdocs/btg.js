@@ -812,12 +812,11 @@ function cb_contextStatus_err(error, errStr)
 
 function cb_sessionName(response)
 {
-    document.title = "BLAH";
+	document.title = getFirstChildValue(response, 'sessionname');
 }
 
 function cb_sessionName_err(error, errStr)
 {
-    document.title = "BLAH2";
 }
 /**
  * Callback for btg_contextLimitStatus.
