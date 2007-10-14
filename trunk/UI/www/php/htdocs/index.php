@@ -58,6 +58,7 @@ for(var i=0;i<t.length;i++) {
 	<input id="collapse_button" class="control_buttons" type="button" onClick="hideAllContextDetails();" value="Hide all details"/>
 	<input id="cleanall_button" class="control_buttons" type="button" onClick="cleanAllContexts();" value="Clean all"/>
 	<input id="glimit_button" class="control_buttons" type="button" onClick="showGlobalLimits();" value="Global limit"/>
+	<input id="sesname_button" class="control_buttons" type="button" onClick="showSessionName();" value="Session name"/>
 	<div id="layer_fatal">
 	Fatal error.
 	</div>
@@ -121,6 +122,23 @@ for(var i=0;i<t.length;i++) {
 		<tr>
 			<td><input type="submit" id="glimit_cancel_button" onClick="cancelGlobalLimits(); return false;" value="Cancel"/></td>
 			<td><input type="submit" id="glimit_set_button" onClick="setGlobalLimits(); return false;" value="Set"/></td>
+		</tr>
+		</form>
+		</table>
+	</div>
+
+	<div id="layer_sesname">
+		<form action="" name="frm_sesname">
+		<table id="sesname_table" cellspacing=0>
+
+		<tr>
+			<td>Session name</td>
+			<td><input type="text" id="session_name" name="sname" value="session name" style="width:130px;"/></td>
+		</tr>
+
+		<tr>
+			<td><input type="submit" id="sesname_cancel_button" onClick="cancelSessionName(); return false;" value="Cancel"/></td>
+			<td><input type="submit" id="sesname_set_button" onClick="setSessionName(); return false;" value="Set"/></td>
 		</tr>
 		</form>
 		</table>

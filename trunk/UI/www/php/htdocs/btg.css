@@ -267,7 +267,7 @@ td.ctx_control
 	margin: 0 10px 0 0;
 	font-family: arial; 
 }
-#upload_button, #glimit_cancel_button, #glimit_set_button 
+#upload_button, #glimit_cancel_button, #glimit_set_button, #sesname_cancel_button, #sesname_set_button
 {
 	background: url("images/btn2.gif");
 	border: 0;
@@ -278,7 +278,7 @@ td.ctx_control
 	padding: 0 0 2px 0;
 }
 
-#detach_button, #logout_button, #collapse_button, #cleanall_button, #attach_button, #setup_button, #quit_button, #glimit_button
+#detach_button, #logout_button, #collapse_button, #cleanall_button, #attach_button, #setup_button, #quit_button, #glimit_button, #sesname_button
 {
 	display:none;
 	background: url("images/btn1.gif");

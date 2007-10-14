@@ -40,7 +40,7 @@ class sessionNameResponseCommand extends Command
 	public function sessionNameResponseCommand()
 	{
 		parent::__construct(Command::CN_SNAMERSP);
-		$name    = "";
+		$this->name    = "";
 	}
 
 	public function toString()
@@ -74,10 +74,10 @@ class sessionNameResponseCommand extends Command
 class setSessionNameCommand extends Command
 {
 	private $name;
-	public function setSessionNameCommand($name="")
+	public function setSessionNameCommand($sessionname)
 	{
 		parent::__construct(Command::CN_SSETNAME);
-		$name    = $name;
+		$this->name = $sessionname;
 	}
 
 	public function toString()

@@ -419,8 +419,26 @@ class BTG
 		$r = $this->executeCommand(new sessionNameCommand(), false);
 		if($r instanceof sessionNameResponseCommand)
 		{
-			$output .= "<sessionname>".$this->getSessionID().":".$r->getName()."</sessionname>\n";
+			$output .= "<sessionid>".$this->getSessionID()."</sessionid>\n";
+			$output .= "<sessionname>".$r->getName()."</sessionname>\n";
 		}
+		return $this->addExtraOutput($output);
+	}
+
+	function setSessionName($sessionname)
+	{
+		$this->attachLast();
+		if(!$this->sessionAttached)
+			return $this->addExtraOutput("");
+
+		$output = "";
+		$r = $this->executeCommand(new setSessionNameCommand($sessionname), false);
+
+		if($r instanceof ackCommand)
+		{
+		  $output .= "<ack/>\n";
+		}
+
 		return $this->addExtraOutput($output);
 	}
 
@@ -877,7 +895,7 @@ try
 	$ajax->register('btg_globallimit', array($btg, 'globalLimit'));
 	$ajax->register('btg_globallimitstatus', array($btg, 'globalLimitStatus'));
 	$ajax->register('btg_sessionName', array($btg, 'sessionName'));
-
+	$ajax->register('btg_setSessionName', array($btg, 'setSessionName'));
 
 	// Handle any requests
 	if($ajax->handle_client_request())

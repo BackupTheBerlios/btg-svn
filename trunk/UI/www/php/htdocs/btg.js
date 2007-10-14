@@ -198,6 +198,31 @@ function setGlobalLimits()
 	btg_globallimit(cb_globallimit, cb_globallimit_err, ul, dl, mu, mc);
 }
 
+function showSessionName()
+{
+	btg_sessionName(cb_updateSessionNameField, cb_updateSessionNameField_err);
+
+	setUIState(5);
+	setStatus("Setting session name.");
+}
+
+function cancelSessionName()
+{
+	setUIState(3);
+	setStatus("Setting session name cancelled.");
+}
+
+function setSessionName()
+{
+	var sessionname = document.getElementById('session_name');
+
+	btg_setSessionName(cb_setSessionName, cb_setSessionName_err, sessionname.value);
+
+	setUIState(3);
+
+	updateSessionName();
+}
+
 /* contextStart, start a specific torrent */
 function contextStop(id)
 {
@@ -372,6 +397,8 @@ function setUIState(state)
 		document.getElementById('cleanall_button').style.display='none';
 		document.getElementById('layer_glimit').style.display='none';
 		document.getElementById('glimit_button').style.display='none';
+		document.getElementById('sesname_button').style.display='none';
+
 		document.getElementById('glimit_cancel_button').style.display='none';
 		document.getElementById('glimit_set_button').style.display='none';
 		document.getElementById('detach_button').style.display='none';
@@ -380,6 +407,7 @@ function setUIState(state)
 		document.getElementById('layer_contexts').style.display='none';
 		document.getElementById('status_download').style.display='none';
 		document.getElementById('status_upload').style.display='none';
+		document.getElementById('layer_sesname').style.display='none';
 		doAutoRefresh = 0;
 	}
 	else if(state == 1)
@@ -395,6 +423,7 @@ function setUIState(state)
 		document.getElementById('cleanall_button').style.display='none';
 		document.getElementById('layer_glimit').style.display='none';
 		document.getElementById('glimit_button').style.display='none';
+		document.getElementById('sesname_button').style.display='none';
 		document.getElementById('glimit_cancel_button').style.display='none';
 		document.getElementById('glimit_set_button').style.display='none';
 		document.getElementById('detach_button').style.display='none';
@@ -403,6 +432,7 @@ function setUIState(state)
 		document.getElementById('layer_contexts').style.display='none';
 		document.getElementById('status_download').style.display='none';
 		document.getElementById('status_upload').style.display='none';
+		document.getElementById('layer_sesname').style.display='none';
 		doAutoRefresh = 0;
 	}
 	else if(state == 2)
@@ -415,6 +445,7 @@ function setUIState(state)
 		document.getElementById('cleanall_button').style.display='none';
 		document.getElementById('layer_glimit').style.display='none';
 		document.getElementById('glimit_button').style.display='none';
+		document.getElementById('sesname_button').style.display='none';
 		document.getElementById('glimit_cancel_button').style.display='none';
 		document.getElementById('glimit_set_button').style.display='none';
 		document.getElementById('detach_button').style.display='none';
@@ -427,6 +458,7 @@ function setUIState(state)
 		document.getElementById('attach_button').style.display='inline';
 		document.getElementById('setup_button').style.display='inline';
 		document.getElementById('logout_button').style.display='inline';
+		document.getElementById('layer_sesname').style.display='none';
 		doAutoRefresh = 0;
 	}
 	else if(state == 3)
@@ -441,6 +473,7 @@ function setUIState(state)
 		document.getElementById('cleanall_button').style.display='inline';
 		document.getElementById('layer_glimit').style.display='none';
 		document.getElementById('glimit_button').style.display='inline';
+		document.getElementById('sesname_button').style.display='inline';
 		document.getElementById('glimit_cancel_button').style.display='none';
 		document.getElementById('glimit_set_button').style.display='none';
 		document.getElementById('detach_button').style.display='inline';
@@ -449,6 +482,7 @@ function setUIState(state)
 		document.getElementById('layer_contexts').style.display='block';
 		document.getElementById('status_download').style.display='inline';
 		document.getElementById('status_upload').style.display='inline';
+		document.getElementById('layer_sesname').style.display='none';
 		doAutoRefresh = 1;
 	}
 	else if(state == 4)
@@ -463,6 +497,7 @@ function setUIState(state)
 		document.getElementById('cleanall_button').style.display='none';
 		document.getElementById('layer_glimit').style.display='block';
 		document.getElementById('glimit_button').style.display='none';
+		document.getElementById('sesname_button').style.display='none';
 		document.getElementById('glimit_cancel_button').style.display='inline';
 		document.getElementById('glimit_set_button').style.display='inline';
 		document.getElementById('detach_button').style.display='inline';
@@ -471,8 +506,32 @@ function setUIState(state)
 		document.getElementById('layer_contexts').style.display='none';
 		document.getElementById('status_download').style.display='none';
 		document.getElementById('status_upload').style.display='none';
+		document.getElementById('layer_sesname').style.display='none';
 		doAutoRefresh = 0;
 	}
+	else if(state == 5)
+	    {
+		document.getElementById('layer_sessions').style.display='none';
+		document.getElementById('attach_button').style.display='none';
+		document.getElementById('setup_button').style.display='none';
+		document.getElementById('refresh_button').style.display='none';
+		document.getElementById('quit_button').style.display='inline';
+		document.getElementById('collapse_button').style.display='none';
+		document.getElementById('cleanall_button').style.display='none';
+		document.getElementById('layer_glimit').style.display='none';
+		document.getElementById('glimit_button').style.display='none';
+		document.getElementById('sesname_button').style.display='none';
+		document.getElementById('glimit_cancel_button').style.display='none';
+		document.getElementById('glimit_set_button').style.display='none';
+		document.getElementById('detach_button').style.display='inline';
+		document.getElementById('logout_button').style.display='inline';
+		document.getElementById('upload').style.display='none';
+		document.getElementById('layer_contexts').style.display='none';
+		document.getElementById('status_download').style.display='none';
+		document.getElementById('status_upload').style.display='none';
+		document.getElementById('layer_sesname').style.display='inline';
+		doAutoRefresh = 0;
+	    }
 }
 
 /* Called when the upload iframe has been loaded, either on first page load
@@ -550,6 +609,16 @@ function timer()
 /**************************************************
  * Callback functions for the remote calls.
  **************************************************/
+
+function cb_setSessionName(response)
+{
+    setStatus("Session name set.");
+}
+
+function cb_setSessionName_err(error, errStr)
+{
+	 setStatus("Session name not set: " + errStr);
+}
 
 function cb_globallimit(response)
 {
@@ -812,12 +881,24 @@ function cb_contextStatus_err(error, errStr)
 
 function cb_sessionName(response)
 {
-    document.title = "BTG (session " + getFirstChildValue(response, 'sessionname') + ")";
+	 var sesnam = getFirstChildValue(response, 'sessionname');
+	 var sesid  = getFirstChildValue(response, 'sessionid');
+    document.title = "BTG (session " + sesid + ": " + sesnam + ")";
 }
 
 function cb_sessionName_err(error, errStr)
 {
     document.title = "BTG";
+}
+
+function cb_updateSessionNameField(response)
+{
+	 document.getElementById('session_name').value = getFirstChildValue(response, 'sessionname');
+}
+
+function cb_updateSessionNameField_err(error, errStr)
+{
+	 document.getElementById('session_name').value = "Unknown";
 }
 
 /**
@@ -1106,7 +1187,7 @@ function refreshContextList()
 	btg_contextStatus(cb_contextStatus, cb_contextStatus_err, -1, true);
 }
 
-/* Refresh the context list */
+/* Update the name of the current session. */
 function updateSessionName()
 {
     btg_sessionName(cb_sessionName, cb_sessionName_err);
