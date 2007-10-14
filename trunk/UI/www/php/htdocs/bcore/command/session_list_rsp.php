@@ -29,6 +29,7 @@ require_once(BTG_BCORE_PATH."/command/command.php");
 class listSessionResponseCommand extends Command
 {
 	private $sessions;
+	private $names;
 	public function listSessionResponseCommand($sessions=array(), $names=array())
 	{
 		parent::__construct(Command::CN_SLISTRSP);

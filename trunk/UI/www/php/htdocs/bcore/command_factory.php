@@ -186,10 +186,10 @@ class commandFactory
 			$c = new sessionNameCommand();
 			break;
 		case Command::CN_SNAMERSP:
-			$c = sessionNameResponseCommand();
+			$c = new sessionNameResponseCommand();
 			break;
 		case Command::CN_SSETNAME:
-			$c = setSessionNameCommand();
+			$c = new setSessionNameCommand();
 			break;
 		default:
 			throw new BTGException("Wrong command type: " . $cmdid ."\n");

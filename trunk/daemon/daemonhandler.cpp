@@ -478,6 +478,8 @@ namespace btg
 
       void daemonHandler::handleSessionName(eventHandler* _eventhandler)
       {
+         MVERBOSE_LOG(moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+
          sendCommand(dd_->externalization, 
                      dd_->transport,
                      connectionID_, 
@@ -487,6 +489,8 @@ namespace btg
       void daemonHandler::handleSessionSetName(eventHandler* _eventhandler, 
                                                Command* _command)
       {
+         MVERBOSE_LOG(moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+
          setSessionNameCommand* ssnc = dynamic_cast<setSessionNameCommand*>(_command);
 
          std::string sname = ssnc->getName();
@@ -544,7 +548,7 @@ namespace btg
                MVERBOSE_LOG(moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << " failed.");
 
                MVERBOSE_LOG(moduleName, verboseFlag_, "Client (" << connectionID_ << "): Rejecting connection from user '" <<
-                           icc->getUsername() << "'.");
+                            icc->getUsername() << "'.");
 
                if (!sendCommand(dd_->externalization,
                                 dd_->transport,
