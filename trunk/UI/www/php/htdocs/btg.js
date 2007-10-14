@@ -92,7 +92,6 @@ function sessionAttach()
 	var id = document.frm_sessionlist.sessionlist.options[document.frm_sessionlist.sessionlist.selectedIndex].value;
 	setStatus("Attaching to session " + id + "...");
 	btg_sessionAttach(cb_sessionAttach, cb_sessionAttach_err, id);
-       	updateSessionName();
 }
 
 /* sessionSetup, setup a new session */
@@ -677,6 +676,7 @@ function cb_sessionList_err(error, errStr)
 function cb_sessionAttach(response)
 {
 	setUIState(3);
+	updateSessionName();
 	refreshContextList();
 }
 
