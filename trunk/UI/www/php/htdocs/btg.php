@@ -419,7 +419,7 @@ class BTG
 		$r = $this->executeCommand(new sessionNameCommand(), false);
 		if($r instanceof sessionNameResponseCommand)
 		{
-			$output .= "<sessionname>".$r->getName()."</sessionname>\n";
+			$output .= "<sessionname>".$this->getSessionID().":".$r->getName()."</sessionname>\n";
 		}
 		return $this->addExtraOutput($output);
 	}
