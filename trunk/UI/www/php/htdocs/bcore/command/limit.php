@@ -33,7 +33,7 @@ class limitCommand extends Command
 	private $limitDwnld;
 	private $maxUploads;
 	private $maxConnections;
-	public function limitCommand($limitBytesUpld = limitBase::LIMIT_DISABLED, $limitBytesDwnld = limitBase::LIMIT_DISABLE, $maxUploads= limitBase::LIMIT_DISABLE, $maxConnections = limitBase::LIMIT_DISABLED)
+	public function limitCommand($limitBytesUpld = limitBase::LIMIT_DISABLED, $limitBytesDwnld = limitBase::LIMIT_DISABLED, $maxUploads= limitBase::LIMIT_DISABLED, $maxConnections = limitBase::LIMIT_DISABLED)
 	{
 		parent::__construct(Command::CN_GLIMIT);
 		$this->limitUpld = $limitBytesUpld;
@@ -97,7 +97,7 @@ class limitStatusResponseCommand extends Command
 	private $maxUploads;
 	private $maxConnections;
 
-	public function limitStatusResponseCommand($limitBytesUpld = limitBase::LIMIT_DISABLED, $limitBytesDwnld = limitBase::LIMIT_DISABLE, $maxUploads= limitBase::LIMIT_DISABLE, $maxConnections = limitBase::LIMIT_DISABLED)
+	public function limitStatusResponseCommand($limitBytesUpld = limitBase::LIMIT_DISABLED, $limitBytesDwnld = limitBase::LIMIT_DISABLED, $maxUploads= limitBase::LIMIT_DISABLED, $maxConnections = limitBase::LIMIT_DISABLED)
 	{
 		parent::__construct(Command::CN_GLIMITSTATRSP);
 		$this->limitUpld = $limitBytesUpld;

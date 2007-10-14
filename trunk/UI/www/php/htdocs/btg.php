@@ -427,6 +427,7 @@ class BTG
 	/// Get global limit
 	function globalLimitStatus()
 	{
+
 		$this->attachLast();
 		if(!$this->sessionAttached)
 			return $this->addExtraOutput("");
@@ -448,6 +449,7 @@ class BTG
 			}
 		}
 		return $this->addExtraOutput($output);
+
 	}
 
 	/// Create a new context (torrent)
