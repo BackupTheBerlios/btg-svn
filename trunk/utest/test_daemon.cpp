@@ -270,31 +270,84 @@ void testDaemon::testFileTracker()
    files2.push_back("dir7/h2");
    files2.push_back("dir8/i3");
 
-   // Adding files.
-   CPPUNIT_ASSERT(ft->add(user0, file0));
-   CPPUNIT_ASSERT(ft->setFiles(user0, file0, files0));
-   CPPUNIT_ASSERT(ft->add(user0, file1));
-   CPPUNIT_ASSERT(ft->setFiles(user0, file1, files1));
-   CPPUNIT_ASSERT(ft->add(user0, file2));
-   CPPUNIT_ASSERT(ft->setFiles(user0, file2, files2));
+   
+   addFiles(ft,
+            file0, user0, files0,
+            file1, user1, files1,
+            file2, user2, files2);
 
-   // Adding the same file for the same user fails.
-   CPPUNIT_ASSERT(!ft->add(user0, file0));
-   // Adding the same files fails.
-   CPPUNIT_ASSERT(!ft->setFiles(user0, file1, files0));
+   removeFiles(ft,
+               file0, user0, files0,
+               file1, user1, files1,
+               file2, user2, files2);
 
-   CPPUNIT_ASSERT(ft->add(user1, file0));
-   CPPUNIT_ASSERT(ft->setFiles(user1, file0, files0));
-   CPPUNIT_ASSERT(ft->add(user1, file1));
-   CPPUNIT_ASSERT(ft->add(user1, file2));
+   addFiles(ft,
+            file0, user0, files0,
+            file1, user1, files1,
+            file2, user2, files2);
 
-   CPPUNIT_ASSERT(ft->add(user2, file0));
-   CPPUNIT_ASSERT(ft->setFiles(user2, file0, files0));
-   CPPUNIT_ASSERT(ft->add(user2, file1));
-   CPPUNIT_ASSERT(ft->add(user2, file2));
-
+   // Adding again.
    delete ft;
    ft = 0;
 
    // Adding entries to files.
+}
+
+void testDaemon::addFiles(btg::daemon::fileTrack* _ft,
+                          std::string const& _file0,
+                          std::string const& _user0,
+                          std::vector<std::string> const& _files0,
+                          std::string const& _file1,
+                          std::string const& _user1,
+                          std::vector<std::string> const& _files1,
+                          std::string const& _file2,
+                          std::string const& _user2,
+                          std::vector<std::string> const& _files2)
+{
+   // Adding files.
+   CPPUNIT_ASSERT(_ft->add(_user0, _file0));
+   CPPUNIT_ASSERT(_ft->setFiles(_user0, _file0, _files0));
+   CPPUNIT_ASSERT(_ft->add(_user0, _file1));
+   CPPUNIT_ASSERT(_ft->setFiles(_user0, _file1, _files1));
+   CPPUNIT_ASSERT(_ft->add(_user0, _file2));
+   CPPUNIT_ASSERT(_ft->setFiles(_user0, _file2, _files2));
+
+   // Adding the same file for the same user fails.
+   CPPUNIT_ASSERT(!_ft->add(_user0, _file0));
+   // Adding the same files fails.
+   CPPUNIT_ASSERT(!_ft->setFiles(_user0, _file1, _files0));
+
+   CPPUNIT_ASSERT(_ft->add(_user1, _file0));
+   CPPUNIT_ASSERT(_ft->setFiles(_user1, _file0, _files0));
+   CPPUNIT_ASSERT(_ft->add(_user1, _file1));
+   CPPUNIT_ASSERT(_ft->add(_user1, _file2));
+
+   CPPUNIT_ASSERT(_ft->add(_user2, _file0));
+   CPPUNIT_ASSERT(_ft->setFiles(_user2, _file0, _files0));
+   CPPUNIT_ASSERT(_ft->add(_user2, _file1));
+   CPPUNIT_ASSERT(_ft->add(_user2, _file2));
+}
+
+void testDaemon::removeFiles(class btg::daemon::fileTrack* _ft,
+                             std::string const& _file0,
+                             std::string const& _user0,
+                             std::vector<std::string> const& _files0,
+                             std::string const& _file1,
+                             std::string const& _user1,
+                             std::vector<std::string> const& _files1,
+                             std::string const& _file2,
+                             std::string const& _user2,
+                             std::vector<std::string> const& _files2)
+{
+   _ft->remove(_user0, _file0);
+   _ft->remove(_user0, _file1);
+   _ft->remove(_user0, _file2);
+
+   _ft->remove(_user1, _file0);
+   _ft->remove(_user1, _file1);
+   _ft->remove(_user1, _file2);
+
+   _ft->remove(_user2, _file0);
+   _ft->remove(_user2, _file1);
+   _ft->remove(_user2, _file2);
 }

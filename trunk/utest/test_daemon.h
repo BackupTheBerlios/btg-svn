@@ -27,6 +27,14 @@
 #include <bcore/util.h>
 #include <bcore/dbuf.h>
 
+namespace btg
+{
+   namespace daemon
+   {
+      class fileTrack;
+   }
+}
+
 class testDaemon : public CppUnit::TestFixture
 {
    CPPUNIT_TEST_SUITE( testDaemon );
@@ -62,4 +70,26 @@ class testDaemon : public CppUnit::TestFixture
 
    void testFileTracker();
 
+   // Helper functions for testFileTracker.
+   void addFiles(class btg::daemon::fileTrack* _ft,
+                 std::string const& _file0,
+                 std::string const& _user0,
+                 std::vector<std::string> const& _files0,
+                 std::string const& _file1,
+                 std::string const& _user1,
+                 std::vector<std::string> const& _files1,
+                 std::string const& _file2,
+                 std::string const& _user2,
+                 std::vector<std::string> const& _files2);
+                 
+   void removeFiles(class btg::daemon::fileTrack* _ft,
+                    std::string const& _file0,
+                    std::string const& _user0,
+                    std::vector<std::string> const& _files0,
+                    std::string const& _file1,
+                    std::string const& _user1,
+                    std::vector<std::string> const& _files1,
+                    std::string const& _file2,
+                    std::string const& _user2,
+                    std::vector<std::string> const& _files2);
 };
