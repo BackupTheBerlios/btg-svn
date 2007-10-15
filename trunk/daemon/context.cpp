@@ -623,8 +623,8 @@ namespace btg
          BTG_MENTER("add", "_torrent_filename=" << _torrent_filename << ", size=" << _buffer.size());
          Context::addResult status = Context::ERR_UNDEFINED;
 
-         std::string fileTrackFilename = tempDir_ + GPD->sPATH_SEPARATOR() + _torrent_filename;
          // Check torrent does not exist before we overwrite it...
+         std::string fileTrackFilename = _torrent_filename;
          if (filetrack_->exists(tempDir_, fileTrackFilename))
             {
                status = Context::ERR_EXISTS;
@@ -702,9 +702,7 @@ namespace btg
 
          if (getFilename(_torrent_id, filename))
             {
-               std::string fileTrackFilename = tempDir_ + 
-                  GPD->sPATH_SEPARATOR() + filename;
-
+               std::string fileTrackFilename = filename;
                filetrack_->remove(tempDir_, fileTrackFilename);
             }
 
