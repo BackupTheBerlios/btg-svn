@@ -55,7 +55,7 @@ using namespace btg::daemon;
 
 // New file format. Incompatible with the old format..
 // Increase with 1 for every change here or deeper down in the save struct
-const t_byte ss_version = 0x98;
+const t_byte ss_version = 0x99;
 
 #define DESERIALIZE_CHECK(i, m, r) { \
   if((i)) \

@@ -26,6 +26,7 @@
 
 #if BTG_OPTION_SAVESESSIONS
 #  include <sstream>
+#  include <bcore/t_string.h>
 #endif // BTG_OPTION_SAVESESSIONS
 
 #include "modulelog.h"
@@ -136,6 +137,13 @@ namespace btg
 
                // Save selected files.
                ti->selected_files.serialize(_e);
+
+               // Peer ID.
+               libtorrent::peer_id pid = torrent_session->id();
+               std::string peerid = btg::core::convertToString<libtorrent::peer_id>(pid);
+
+               MVERBOSE_LOG(moduleName, verboseFlag_, "Peer ID used: '" << peerid << "'.");
+               _e->stringToBytes(&peerid);
             }
          return true;
       }
@@ -262,6 +270,19 @@ namespace btg
 						// Selected files.
 						BTG_CDC(!selectedfileentryList.deserialize(_e), "list of selected files");
 					}
+
+               if (_version >= 0x99)
+                  {
+                     // Peer ID.
+                     std::string peerid;
+
+                     BTG_CDC(!_e->bytesToString(&peerid), "Peer ID");
+
+                     MVERBOSE_LOG(moduleName, verboseFlag_, "Using peer ID: '" << peerid << "'.");
+
+                     libtorrent::peer_id pid = btg::core::convertStringTo<libtorrent::peer_id>(peerid);
+                     torrent_session->set_peer_id(pid);
+                  }
 
                BTG_MNOTICE("deserialize() adding torrent " << filename);
                // If we got this far we're OK.
