@@ -51,6 +51,8 @@ class testDaemon : public CppUnit::TestFixture
 
    CPPUNIT_TEST( testFileTracker );
 
+   CPPUNIT_TEST( testCommandLineHandler );
+
    CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -92,4 +94,6 @@ class testDaemon : public CppUnit::TestFixture
                     std::string const& _file2,
                     std::string const& _user2,
                     std::vector<std::string> const& _files2);
+
+   void testCommandLineHandler();
 };

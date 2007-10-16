@@ -31,6 +31,7 @@
 
 #include <bcore/client/lastfiles.h>
 #include <bcore/client/clientdynconfig.h>
+#include <bcore/client/carg.h>
 
 #if BTG_UTEST_CLIENT
 CPPUNIT_TEST_SUITE_REGISTRATION( testBcoreClient );
@@ -188,4 +189,49 @@ void testBcoreClient::setConfigDefaults(btg::core::client::clientConfiguration* 
    _config->setDaemonAddressPort(_ap);
 
    _config->setLeechMode(_leech_mode);
+}
+
+void testBcoreClient::testCommandLineHandler()
+{
+   btg::core::client::commandLineArgumentHandler* clah = new btg::core::client::commandLineArgumentHandler("client.ini", false);
+
+   clah->setup();
+#if BTG_DEBUG
+   int argc = 6;
+   char* args[argc];
+   args[0] = "test_client";
+   args[1] = "-A";
+   args[2] = "-d 127.0.0.1:16001";
+   args[3] = "-o test.torrent";
+   args[4] = "--nostart";
+   args[5] = "-D";
+#else
+   int argc = 5;
+   char* args[argc];
+   args[0] = "test_client";
+   args[1] = "-A";
+   args[2] = "-d 127.0.0.1:16001";
+   args[3] = "-o test.torrent";
+   args[4] = "--nostart";
+#endif
+
+   char** argv = &args[0];
+
+   CPPUNIT_ASSERT(clah->parse(argc, argv));
+   
+   CPPUNIT_ASSERT(!clah->configFileSet());
+
+   CPPUNIT_ASSERT(!clah->doList());
+   CPPUNIT_ASSERT(!clah->doAttach());
+   CPPUNIT_ASSERT(clah->doAttachFirst());
+   CPPUNIT_ASSERT(clah->daemonSet());
+   CPPUNIT_ASSERT(clah->inputFilenamesPresent());
+   CPPUNIT_ASSERT(!clah->automaticStart());
+
+#if BTG_DEBUG
+   CPPUNIT_ASSERT(clah->doDebug());
+#endif
+
+   delete clah;
+   clah = 0;
 }

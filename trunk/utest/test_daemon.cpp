@@ -44,6 +44,8 @@ extern "C"
 
 #include <daemon/filetrack.h>
 
+#include <daemon/darg.h>
+
 #if BTG_UTEST_DAEMON
 CPPUNIT_TEST_SUITE_REGISTRATION( testDaemon );
 #endif // BTG_UTEST_DAEMON
@@ -350,4 +352,40 @@ void testDaemon::removeFiles(class btg::daemon::fileTrack* _ft,
    _ft->remove(_user2, _file0);
    _ft->remove(_user2, _file1);
    _ft->remove(_user2, _file2);
+}
+
+void testDaemon::testCommandLineHandler()
+{
+   btg::daemon::commandLineArgumentHandler* clah = new btg::daemon::commandLineArgumentHandler("daemon.ini");
+
+   clah->setup();
+#if BTG_DEBUG
+   int argc = 4;
+   char* args[argc];
+   args[0] = "test_daemon";
+   args[1] = "-v";
+   args[2] = "-n";
+   args[3] = "-D";
+#else
+   int argc = 3;
+   char* args[argc];
+   args[0] = "test_daemon";
+   args[1] = "-v";
+   args[2] = "-n";
+#endif
+
+   char** argv = &args[0];
+
+   CPPUNIT_ASSERT(clah->parse(argc, argv));
+   
+   CPPUNIT_ASSERT(!clah->configFileSet());
+   CPPUNIT_ASSERT(clah->doNotDetach());
+   CPPUNIT_ASSERT(clah->beVerbose());
+
+#if BTG_DEBUG
+   CPPUNIT_ASSERT(clah->doDebug());
+#endif
+
+   delete clah;
+   clah = 0;
 }
