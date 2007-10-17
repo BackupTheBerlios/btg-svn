@@ -73,22 +73,24 @@ class Command extends BTGSerializable
 	const CN_CSETFILES = 31;
 	const CN_CGETFILES = 32;
 	const CN_CGETFILESRSP = 33;
+	const CN_CGETTRACKERS = 34;
+	const CN_CGETTRACKERSRSP = 35;
 
-	const CN_ERROR = 34;            //!< General error.
-	const CN_ACK = 35;              //!< General acknowlegment.
-	const CN_SATTACH = 36;          //!< Attach to a running session.
-	const CN_SDETACH = 37;          //!< Detach from a running session.
-	const CN_SERROR = 38;           //!< Daemon uses this command to tell clients that their session is invalid.
-	const CN_SQUIT = 39;            //!< Quit the current session.
-	const CN_SLIST = 40;            //!< Get a list of sessions.
-	const CN_SLISTRSP = 41;         //!< Response that lists sessions.
-	const CN_SNAME = 42;            //!< Get current session name.
-        const CN_SNAMERSP = 43;         //!< Current session name.
-        const CN_SSETNAME = 44;         //!< Set current session name.
-        const CN_MOREAD   = 45;         //!< Only read only access. Usefull for writing monitor applets.
-        const CN_MOWRITE  = 46;         //!< Default write mode.
+	const CN_ERROR = 36;            //!< General error.
+	const CN_ACK = 37;              //!< General acknowlegment.
+	const CN_SATTACH = 38;          //!< Attach to a running session.
+	const CN_SDETACH = 39;          //!< Detach from a running session.
+	const CN_SERROR = 40;           //!< Daemon uses this command to tell clients that their session is invalid.
+	const CN_SQUIT = 41;            //!< Quit the current session.
+	const CN_SLIST = 42;            //!< Get a list of sessions.
+	const CN_SLISTRSP = 43;         //!< Response that lists sessions.
+	const CN_SNAME = 44;            //!< Get current session name.
+   const CN_SNAMERSP = 45;         //!< Current session name.
+   const CN_SSETNAME = 46;         //!< Set current session name.
+   const CN_MOREAD   = 47;         //!< Only read only access. Usefull for writing monitor applets.
+   const CN_MOWRITE  = 48;         //!< Default write mode.
 
-	const CN_UNDEFINED = 47;        //!< Undefined command.
+	const CN_UNDEFINED = 49;        //!< Undefined command.
 
 
 	/* Map differnt commands to descriptive names */
@@ -128,6 +130,9 @@ class Command extends BTGSerializable
          Command::CN_CSETFILES       => "(c) Set files",
 	      Command::CN_CGETFILES       => "(c) Get selected files",
          Command::CN_CGETFILESRSP    => "(c) Get selected files response",
+			Command::CN_CGETTRACKERS    => "(c) Get used trackers",
+			Command::CN_CGETTRACKERSRSP => "(c) Get used trackers response",
+
          // General:
          Command::CN_ERROR           => "(g) Error",
          Command::CN_ACK             => "(g) Ack",
@@ -138,8 +143,8 @@ class Command extends BTGSerializable
          Command::CN_SERROR          => "(s) Error",
          Command::CN_SLIST           => "(s) List",
          Command::CN_SLISTRSP        => "(s) List response",
-	 Command::CN_SNAME           => "(s) Session name",
-	 Command::CN_SNAMERSP        => "(s) Session name response",
+			Command::CN_SNAME           => "(s) Session name",
+			Command::CN_SNAMERSP        => "(s) Session name response",
          Command::CN_SSETNAME        => "(s) Set session name",
          Command::CN_MOREAD          => "(m) RO mode",
          Command::CN_MOWRITE         => "(m) RW mode",
@@ -186,6 +191,8 @@ class Command extends BTGSerializable
             Command::CN_CSETFILES       => "context.setfiles",
             Command::CN_CGETFILES       => "context.getfiles",
             Command::CN_CGETFILESRSP    => "context.getfilesrsp",
+				Command::CN_CGETTRACKERS    => "context.gettrackers",
+				Command::CN_CGETTRACKERSRSP => "context.gettrackersrsp",
             // General:
             Command::CN_ERROR           => "general.error",
             Command::CN_ACK             => "general.ack",

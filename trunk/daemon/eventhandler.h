@@ -274,6 +274,10 @@ namespace btg
 
                /// Get a list of peers for a context.
                void handle_CN_CPEERS(btg::core::Command* _command, t_int _connectionID);
+
+               /// Get a list of trackers which are used.
+               void handle_CN_CGETTRACKERS(btg::core::Command* _command, t_int _connectionID);
+
             private:
                /// Copy constructor.
                eventHandler(eventHandler const& _eh);

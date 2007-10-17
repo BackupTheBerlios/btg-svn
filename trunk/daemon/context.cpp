@@ -1423,6 +1423,49 @@ namespace btg
          return status;
       }
 
+      bool Context::getTrackers(t_int const _torrent_id, t_strList & _trackers)
+      {
+         BTG_MENTER("getTrackers", "id = " << _torrent_id);
+
+         torrentInfo *ti;
+         if ((ti = getTorrentInfo(_torrent_id)) == 0)
+            {
+               return false;
+            }
+
+         bool status = true;
+
+         std::vector<libtorrent::announce_entry> trackers;
+
+         try
+            {
+               trackers = ti->handle.trackers();
+            }
+         catch(libtorrent::invalid_handle)
+            {
+               status = false;
+            }
+
+         if (status)
+            {
+               for (std::vector<libtorrent::announce_entry>::const_iterator iter = trackers.begin();
+                    iter != trackers.end();
+                    iter++)
+                  {
+                     _trackers.push_back(iter->url);
+                  }
+
+               if (_trackers.size() == 0)
+                  {
+                     // Do not return an empty peer list.
+                     status = false;
+                  }
+            }
+
+         BTG_MEXIT("getTrackers", status);
+         return status;
+      }
+
       bool Context::getSelectedFiles(t_int const _torrent_id,
                                      selectedFileEntryList & _file_list)
       {

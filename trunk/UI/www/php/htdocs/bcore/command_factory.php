@@ -46,6 +46,7 @@ require_once(BTG_BCORE_PATH."/command/context_li_status.php");
 require_once(BTG_BCORE_PATH."/command/context_li_status_rsp.php");
 require_once(BTG_BCORE_PATH."/command/context_peers.php");
 require_once(BTG_BCORE_PATH."/command/context_peers_rsp.php");
+require_once(BTG_BCORE_PATH."/command/context_tracker.php");
 require_once(BTG_BCORE_PATH."/command/session_list.php");
 require_once(BTG_BCORE_PATH."/command/session_list_rsp.php");
 require_once(BTG_BCORE_PATH."/command/session_attach.php");
@@ -142,6 +143,12 @@ class commandFactory
 			break;
 		case Command::CN_CPEERSRSP:
 			$c = new contextPeersResponseCommand();
+			break;
+		case Command::CN_CGETTRACKERS:
+		   $c = new contextGetTrackersCommand();
+		   break;
+      case Command::CN_CGETTRACKERSRSP:
+			$c = new contextGetTrackersResponseCommand();
 			break;
 		case Command::CN_SLIST: // Context list.
 			$c = new listSessionCommand();

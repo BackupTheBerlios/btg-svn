@@ -321,6 +321,8 @@ namespace btg
                /// Get a list of peers.
                bool getPeers(t_int const _torrent_id, t_peerList & _peerlist);
 
+               bool getTrackers(t_int const _torrent_id, t_strList & _trackers);
+
                /// Get the list of selected files.
                bool getSelectedFiles(t_int const _torrent_id,
                                      btg::core::selectedFileEntryList & _file_list);

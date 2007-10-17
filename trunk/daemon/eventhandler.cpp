@@ -47,6 +47,7 @@
 #include <bcore/command/context_status.h>
 #include <bcore/command/context_stop.h>
 #include <bcore/command/context_file.h>
+#include <bcore/command/context_tracker.h>
 #include <bcore/command/error.h>
 
 #include <bcore/command/ack.h>
@@ -218,9 +219,16 @@ namespace btg
                   handle_CN_CFILEINFO(_command, _connectionID);
                   break;
                }
+
             case Command::CN_CPEERS:
                {
                   handle_CN_CPEERS(_command, _connectionID);
+                  break;
+               }
+
+            case Command::CN_CGETTRACKERS:
+               {
+                  handle_CN_CGETTRACKERS(_command, _connectionID);
                   break;
                }
             default:
@@ -262,6 +270,7 @@ namespace btg
             case Command::CN_CPEERSRSP:
             case Command::CN_CLASTRSP:
             case Command::CN_CGETFILESRSP:
+            case Command::CN_CGETTRACKERSRSP:
                {
                   externalization_->reset();
                   status = _command->serialize(externalization_);
@@ -923,6 +932,41 @@ namespace btg
                      break;
                   case false:
                      sendError(_connectionID, Command::CN_CPEERS, "Failed to obtain peer information.");
+                     break;
+                  }
+            }
+      }
+
+      void eventHandler::handle_CN_CGETTRACKERS(btg::core::Command* _command, t_int _connectionID)
+      {
+         bool op_status                  = false;
+         contextGetTrackersCommand* cgtc = dynamic_cast<contextGetTrackersCommand*>(_command);
+
+         t_strList trackers;
+
+         // Get a list of peers.
+         if (cgtc->isAllContextsFlagSet())
+            {
+               // Client wants tracker lists for all contexts.
+               // This will generate large amount of data, so not
+               // supported for now.
+               op_status = false;
+               sendError(_connectionID, Command::CN_CGETTRACKERS, "The all context flag is not supported.");
+               return;
+            }
+         else
+            {
+               op_status = daemoncontext->getTrackers(cgtc->getContextId(), trackers);
+
+               switch(op_status)
+                  {
+                  case true:
+                     sendCommand(_connectionID, new contextGetTrackersResponseCommand(
+                                                                                cgtc->getContextId(),
+                                                                                trackers));
+                     break;
+                  case false:
+                     sendError(_connectionID, Command::CN_CGETTRACKERS, "Failed to obtain tracker information.");
                      break;
                   }
             }

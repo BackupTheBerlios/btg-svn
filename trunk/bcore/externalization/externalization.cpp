@@ -76,6 +76,8 @@ namespace btg
                t_IdToNameElem(Command::CN_CSETFILES,       "context.setfiles"),
                t_IdToNameElem(Command::CN_CGETFILES,       "context.getfiles"),
                t_IdToNameElem(Command::CN_CGETFILESRSP,    "context.getfilesrsp"),
+               t_IdToNameElem(Command::CN_CGETTRACKERS,    "context.gettrackers"),
+               t_IdToNameElem(Command::CN_CGETTRACKERSRSP, "context.gettrackersrsp"),
                // General:
                t_IdToNameElem(Command::CN_ERROR,           "general.error"),
                t_IdToNameElem(Command::CN_ACK,             "general.ack"),

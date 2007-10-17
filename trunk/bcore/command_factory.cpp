@@ -46,6 +46,7 @@
 #include <bcore/command/context_peers_rsp.h>
 
 #include <bcore/command/context_file.h>
+#include <bcore/command/context_tracker.h>
 
 #include <bcore/command/error.h>
 #include <bcore/command/list.h>
@@ -243,6 +244,18 @@ namespace btg
                   break;
                }
 
+            case Command::CN_CGETTRACKERS:
+               {
+                  c = new contextGetTrackersCommand();
+                  break;
+               }
+
+            case Command::CN_CGETTRACKERSRSP:
+               {
+                  c = new contextGetTrackersResponseCommand();
+                  break;
+               }
+
             case Command::CN_SLIST:
                {
                   c = new listSessionCommand();
@@ -415,6 +428,8 @@ namespace btg
             case Command::CN_CSETFILES:
             case Command::CN_CGETFILES:
             case Command::CN_CGETFILESRSP:
+            case Command::CN_CGETTRACKERS:
+            case Command::CN_CGETTRACKERSRSP:
             case Command::CN_SLIST:
             case Command::CN_SLISTRSP:
             case Command::CN_SATTACH:

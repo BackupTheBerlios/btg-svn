@@ -53,6 +53,7 @@ command/context_stop.cpp \
 command/context_peers.cpp \
 command/context_peers_rsp.cpp \
 command/context_file.cpp \
+command/context_tracker.cpp \
 command/error.cpp \
 command/list.cpp \
 command/list_rsp.cpp \
@@ -159,6 +160,7 @@ command/context_stop.h \
 command/context_peers.h \
 command/context_peers_rsp.h \
 command/context_file.h \
+command/context_tracker.h \
 command/error.h \
 command/list.h \
 command/list_rsp.h \

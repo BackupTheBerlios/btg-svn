@@ -442,6 +442,29 @@ class BTG
 		return $this->addExtraOutput($output);
 	}
 
+	function contextTrackers($contextId)
+	{
+		$this->attachLast();
+		if(!$this->sessionAttached)
+			return $this->addExtraOutput("");
+
+		$output = "";
+		$r = $this->executeCommand(new contextGetTrackersCommand($contextId, false), false);
+
+		if($r instanceof contextGetTrackersResponseCommand)
+		{
+			$arr = $r->getTrackers();
+
+			$output .= "<tracker><id>";
+			$output .= $r->getContextId();
+			$output .= "</id><name>";
+			$output .= $arr[0];
+			$output .= "</name></tracker>\n";
+		}
+
+		return $this->addExtraOutput($output);
+	}
+
 	/// Get global limit
 	function globalLimitStatus()
 	{
@@ -896,6 +919,7 @@ try
 	$ajax->register('btg_globallimitstatus', array($btg, 'globalLimitStatus'));
 	$ajax->register('btg_sessionName', array($btg, 'sessionName'));
 	$ajax->register('btg_setSessionName', array($btg, 'setSessionName'));
+	$ajax->register('btg_contextTrackers', array($btg, 'contextTrackers'));
 
 	// Handle any requests
 	if($ajax->handle_client_request())

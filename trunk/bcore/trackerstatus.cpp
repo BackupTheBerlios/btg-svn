@@ -40,8 +40,8 @@ namespace btg
          : Printable(),
            status_(undefined),
            serial_(-1),
-	   message_(),
-	   message_set_(false)
+           message_(),
+           message_set_(false)
       {
          setStatus(trackerStatus::undefined);
       }
@@ -50,8 +50,8 @@ namespace btg
          : Printable(),
            status_(undefined),
            serial_(_serial),
-	   message_(),
-	   message_set_(false)
+           message_(),
+           message_set_(false)
       {
          setStatus(_httpStatus);
       }
@@ -61,8 +61,8 @@ namespace btg
            Printable(),
            status_(_status.status_),
            serial_(_status.serial_),
-	   message_(_status.message_),
-	   message_set_(_status.message_set_)
+           message_(_status.message_),
+           message_set_(_status.message_set_)
       {
       }
 
@@ -90,8 +90,8 @@ namespace btg
          switch(_httpStatus)
             {
             case undefined:
-	    case time_out:
-	    case warning:
+            case time_out:
+            case warning:
             case info_continue:
             case info_switching_protocols:
             case succeeded_ok:
@@ -159,8 +159,8 @@ namespace btg
          // int, serial;
          BTG_RCHECK( _e->intToBytes(&serial_) );
 
-	 // Optional message.
-	 BTG_RCHECK( _e->boolToBytes(message_set_) );
+         // Optional message.
+         BTG_RCHECK( _e->boolToBytes(message_set_) );
          if (message_set_)
             {
                BTG_RCHECK( _e->stringToBytes(&message_) );
@@ -210,12 +210,12 @@ namespace btg
 
          switch(status_)
             {
-	    case time_out:
-	      output = "Time out";
-	      break;
-	    case warning:
-	      output = "Warning";
-	      break;
+            case time_out:
+               output = "Time out";
+               break;
+            case warning:
+               output = "Warning";
+               break;
             case info_continue:
                output = "Continue";
                break;
@@ -361,11 +361,11 @@ namespace btg
 
          output += " (" + convertToString<t_int>(status_) + ")";
 
-	 // If a message was set, append it here.
-	 if (message_set_)
-	   {
-	     output += ": " + message_;
-	   }
+         // If a message was set, append it here.
+         if (message_set_)
+            {
+               output += ": " + message_;
+            }
 
          return output;
       }
@@ -375,9 +375,9 @@ namespace btg
          bool op_status = true;
 
          if ((this->status_ != _status.status_) || 
-	     (this->serial_ != _status.serial_) || 
-	     (this->message_set_ != _status.message_set_) || 
-	     (this->message_ != _status.message_))
+             (this->serial_ != _status.serial_) || 
+             (this->message_set_ != _status.message_set_) || 
+             (this->message_ != _status.message_))
             {
                op_status = false;
             }
@@ -385,10 +385,10 @@ namespace btg
          return op_status;
       }
 
-     bool trackerStatus::operator!= (trackerStatus const& _trackerstatus) const
-     {
-       return !(*this == _trackerstatus);
-     }
+      bool trackerStatus::operator!= (trackerStatus const& _trackerstatus) const
+      {
+         return !(*this == _trackerstatus);
+      }
 
       trackerStatus& trackerStatus::operator= (trackerStatus const& _status)
       {
@@ -398,8 +398,8 @@ namespace btg
             {
                status_      = _status.status_;
                serial_      = _status.serial_;
-	       message_set_ = _status.message_set_;
-	       message_     = _status.message_;
+               message_set_ = _status.message_set_;
+               message_     = _status.message_;
             }
 
          return *this;
@@ -409,25 +409,25 @@ namespace btg
       {
          setStatus(trackerStatus::undefined);
          setSerial(-1);
-	 message_set_ = false;
-	 message_.clear();
+         message_set_ = false;
+         message_.clear();
       }
 
-     void trackerStatus::setMessage(std::string const& _message)
-     {
-       message_set_ = true;
-       message_     = _message;
-     }
+      void trackerStatus::setMessage(std::string const& _message)
+      {
+         message_set_ = true;
+         message_     = _message;
+      }
 
-     bool trackerStatus::getMessage(std::string & _message)
-     {
-       if (message_set_)
-	 {
-	   _message = message_;
-	 }
+      bool trackerStatus::getMessage(std::string & _message)
+      {
+         if (message_set_)
+            {
+               _message = message_;
+            }
 
-       return message_set_;
-     }
+         return message_set_;
+      }
 
       trackerStatus::~trackerStatus()
       {}

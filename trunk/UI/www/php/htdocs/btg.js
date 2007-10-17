@@ -55,6 +55,10 @@ var noLimit     = -1;
 // Constant.
 var bytesPerKiB = 1024;
 
+// Id list used for showing which trackers are being usd for which
+// contexts.
+var contextTrackerIdList = new Array();
+
 /**************************************************
  * Functions called from user interface in some 
  * way or another (either via user action or other
@@ -858,8 +862,16 @@ function cb_contextStatus(response)
 			strContexts += ","+s.contextID;
 	}
 
-	updateContextTable(newContextList)
+	updateContextTable(newContextList);
 	contextsAge = 0;
+
+	contextTrackerIdList = new Array();
+	for(var i=0; i < newContextList.length; i++)
+	{
+		var status = newContextList[i];
+		contextTrackerIdList.push(status.contextID);
+	// !!!
+	}
 
 	// Refresh limits
 	if(strContexts != "")
@@ -877,6 +889,16 @@ function cb_contextStatus_err(error, errStr)
 {
 	setError(error, 'Failed to list contexts: '+errStr);
 	canGetContexts = 0;
+}
+
+function cb_contextTrackers(response)
+{
+	 setStatus("Got tracker info.");
+}
+
+function cb_contextTrackers_err(error, errStr)
+{
+	 setStatus("Failed to get trackers for context: "+errStr);
 }
 
 function cb_sessionName(response)
@@ -1185,6 +1207,19 @@ function refreshContextList()
 {
 	setStatus("Updating torrent list...");
 	btg_contextStatus(cb_contextStatus, cb_contextStatus_err, -1, true);
+
+	// !!!
+	for(var i=0; i < contextTrackerIdList.length; i++)
+	{
+		var cid = contextTrackerIdList[i];
+
+		setStatus("Updating context: " + cid);
+
+		btg_contextTrackers(cb_contextTrackers, cb_contextTrackers_err, cid);
+		var itemname = 'trackerfield_' + cid;
+		var item = document.getElementById(itemname);
+		item.innerHTML = "Tracker URL for " + cid;
+	}
 }
 
 /* Update the name of the current session. */
@@ -1310,7 +1345,7 @@ function updateContextTable(newList)
 			detailsCell.colSpan = 3;
 			detailsCell.className = "ctx_details";
 			
-			details = createTorrentDetails();
+			details = createTorrentDetails(s.contextID);
 			details.id = 'context_'+s.contextID+'_details';
 			detailsCell.appendChild(details);
 
@@ -1572,7 +1607,7 @@ function createTorrentControls(s, d)
  * Create a table for details.
  * @return A HTMLTableElement.
  */
-function createTorrentDetails()
+function createTorrentDetails(contextId)
 {
 	var tbl = document.createElement('table');
 	tbl.className='extrainfo';
@@ -1677,6 +1712,25 @@ function createTorrentDetails()
 
 	c = r.insertCell(-1);
 	c.className = 'extrainfo_value';
+
+	/* */
+
+	r = tbl.insertRow(-1);
+	r.className='extra_even_row';
+
+	c = r.insertCell(-1);
+
+	c.className = 'extrainfo_type';
+	c.innerHTML='Tracker:';
+
+	c           = r.insertCell(-1);
+	c.className = 'extrainfo_type';
+	c.innerHTML ='www.tracker.net';
+	c.id        = 'trackerfield_' + contextId;
+	// !!!
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_type extrainfo_divider';
+	c.innerHTML='';
 
 	return tbl;
 }
