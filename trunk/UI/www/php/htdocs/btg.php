@@ -442,26 +442,6 @@ class BTG
 		return $this->addExtraOutput($output);
 	}
 
-	function contextTrackers($contextId)
-	{
-		$this->attachLast();
-		if(!$this->sessionAttached)
-			return $this->addExtraOutput("");
-
-		$output = "";
-		$r = $this->executeCommand(new contextGetTrackersCommand((int)$contextId, false), false);
-
-		if($r instanceof contextGetTrackersResponseCommand)
-		{
-			$arr = $r->getTrackers();
-
-			$output .= "<cid>".$r->getContextId()."</cid>\n";
-			$output .= "<tracker>".$arr[0]."</tracker>\n";
-		}
-
-		return $this->addExtraOutput($output);
-	}
-
 	/// Get global limit
 	function globalLimitStatus()
 	{
@@ -553,7 +533,7 @@ class BTG
 
 		return $this->addExtraOutput($output);
 	}
-	
+
 	/// Get status of one or more contexts
 	function contextStatus($contextID=contextCommand::UNDEFINED_CONTEXT, $showAll=true)
 	{
@@ -605,6 +585,15 @@ class BTG
 					$output .= "<trackerstatustext>".htmlspecialchars($trackerStatus->getDescription())."</trackerstatustext>\n";
 					$output .= "<trackerstatusmessage>".htmlspecialchars($trackerStatus->getMessage())."</trackerstatusmessage>\n";
 					$output .= "<activitycounter>".$contextStatus->getActivityCounter()."</activitycounter>\n";
+
+					$r2 = $this->executeCommand(new contextGetTrackersCommand((int)$contextStatus->getContextID(), false), false);
+					if($r2 instanceof contextGetTrackersResponseCommand)
+					{
+						$arr = $r2->getTrackers();
+						$output .= "<tracker>".$arr[0]."</tracker>\n";
+					}
+
+					// $output .= contextTrackers($contextStatus->getContextID());
 					$output .= "</context>\n";
 				}
 			}else
@@ -639,6 +628,13 @@ class BTG
 				$output .= "<trackerstatus>".$trackerStatus->getStatus()."</trackerstatus>\n";
 				$output .= "<trackerstatustext>".htmlspecialchars($trackerStatus->getDescription())."</trackerstatustext>\n";
 				$output .= "<trackerstatusmessage>".htmlspecialchars($trackerStatus->getMessage())."</trackerstatusmessage>\n";
+				$r2 = $this->executeCommand(new contextGetTrackersCommand((int)$status->getContextID(), false), false);
+				if($r2 instanceof contextGetTrackersResponseCommand)
+				{
+					$arr = $r2->getTrackers();
+					$output .= "<tracker>".$arr[0]."</tracker>\n";
+				}
+
 				$output .= "</context>\n";
 			}
 			$output .="</contexts>\n";
@@ -916,7 +912,6 @@ try
 	$ajax->register('btg_globallimitstatus', array($btg, 'globalLimitStatus'));
 	$ajax->register('btg_sessionName', array($btg, 'sessionName'));
 	$ajax->register('btg_setSessionName', array($btg, 'setSessionName'));
-	$ajax->register('btg_contextTrackers', array($btg, 'contextTrackers'));
 
 	// Handle any requests
 	if($ajax->handle_client_request())

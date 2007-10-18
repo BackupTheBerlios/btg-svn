@@ -55,10 +55,6 @@ var noLimit     = -1;
 // Constant.
 var bytesPerKiB = 1024;
 
-// Id list used for showing which trackers are being usd for which
-// contexts.
-var contextTrackerIdList = new Array();
-
 /**************************************************
  * Functions called from user interface in some 
  * way or another (either via user action or other
@@ -599,7 +595,9 @@ function timer()
 			refreshContextList();
 		}
 		else if(diff > 0)
+		    {
 			document.getElementById('statusMessage').innerHTML = 'Update in ' + (refreshTimeout - contextsAge)  + ' seconds.';
+		    }
 	}
 	else
 	{
@@ -749,8 +747,10 @@ function cb_sessionList_err(error, errStr)
 function cb_sessionAttach(response)
 {
 	setUIState(3);
-	updateSessionName();
 	refreshContextList();
+	// Fix: calling this function right after or before updating
+	// the contexts does not work. Hence the 1 second delay.
+	setTimeout('updateSessionName();', 1000);
 }
 
 /**
@@ -865,13 +865,6 @@ function cb_contextStatus(response)
 	updateContextTable(newContextList);
 	contextsAge = 0;
 
-	contextTrackerIdList = new Array();
-	for(var i=0; i < newContextList.length; i++)
-	{
-		var status = newContextList[i];
-		contextTrackerIdList.push(status.contextID);
-	}
-
 	// Refresh limits
 	if(strContexts != "")
 		contextLimitStatus(strContexts);
@@ -890,6 +883,7 @@ function cb_contextStatus_err(error, errStr)
 	canGetContexts = 0;
 }
 
+/*
 function cb_contextTrackers(response)
 {
 	 var cid = getFirstChildValue(response, 'cid');
@@ -906,6 +900,7 @@ function cb_contextTrackers_err(error, errStr)
 {
 	 setStatus("Failed to get trackers for context: "+errStr);
 }
+*/
 
 function cb_sessionName(response)
 {
@@ -1213,15 +1208,6 @@ function refreshContextList()
 {
 	setStatus("Updating torrent list...");
 	btg_contextStatus(cb_contextStatus, cb_contextStatus_err, -1, true);
-
-	for(var i=0; i < contextTrackerIdList.length; i++)
-	{
-	    var cid = contextTrackerIdList[i];
-
-	    setStatus("Updating context: " + cid);
-	    
-	    btg_contextTrackers(cb_contextTrackers, cb_contextTrackers_err, cid);
-	}
 }
 
 /* Update the name of the current session. */
@@ -1347,7 +1333,7 @@ function updateContextTable(newList)
 			detailsCell.colSpan = 3;
 			detailsCell.className = "ctx_details";
 			
-			details = createTorrentDetails(s.contextID);
+			details = createTorrentDetails();
 			details.id = 'context_'+s.contextID+'_details';
 			detailsCell.appendChild(details);
 
@@ -1609,7 +1595,7 @@ function createTorrentControls(s, d)
  * Create a table for details.
  * @return A HTMLTableElement.
  */
-function createTorrentDetails(contextId)
+function createTorrentDetails()
 {
 	var tbl = document.createElement('table');
 	tbl.className='extrainfo';
@@ -1722,13 +1708,14 @@ function createTorrentDetails(contextId)
 
 	c = r.insertCell(-1);
 
+	// Add a tracker URL.
+	// !!!
 	c.className = 'extrainfo_type';
 	c.innerHTML='Tracker:';
 
 	c           = r.insertCell(-1);
 	c.className = 'extrainfo_type';
-	c.innerHTML ='test';
-	c.id        = 'trackerfield_' + contextId;
+	c.innerHTML ='';
 
 	c = r.insertCell(-1);
 	c.className = 'extrainfo_type extrainfo_divider';
@@ -1841,7 +1828,12 @@ function updateTorrentDetails(t, s)
 
 	t.rows[4].cells[1].innerHTML = humanizeSpeed(s.downloadrate ,1);
 	t.rows[4].cells[3].innerHTML = humanizeSize(s.downloadtotal ,2);
+
 	t.rows[4].cells[5].innerHTML = RoundToNdp(s.done,1)+'%';
+	// Tracker url.
+	// !!!
+	t.rows[5].cells[1].innerHTML = s.tracker;
+
 }
 
 /**************************************************
@@ -1879,30 +1871,31 @@ function Status(dom)
 	this.trackerstatustext = "";
 	this.trackerstatusmessage = "";
 	this.activitycounter = 0;
-
+	this.tracker = "";
 	if(dom)
 	{
-		<!-- Defaults set, try to parse dom -->
-		this.contextID = parseInt(getFirstChildValue(dom, 'id'))
-		this.filename = getFirstChildValue(dom, 'filename')
-		this.status = parseInt(getFirstChildValue(dom, 'status'))
-		this.statustext = parseInt(getFirstChildValue(dom, 'statustext'))
-		this.downloadtotal = parseInt(getFirstChildValue(dom, 'downloadtotal'))
-		this.uploadtotal = parseInt(getFirstChildValue(dom, 'uploadtotal'))
-		this.failedbytes = parseInt(getFirstChildValue(dom, 'failedbytes'))
-		this.uploadrate = parseInt(getFirstChildValue(dom, 'uploadrate'))
-		this.downloadrate = parseInt(getFirstChildValue(dom, 'downloadrate'))
-		this.done = parseInt(getFirstChildValue(dom, 'done'))
+	    <!-- Defaults set, try to parse dom -->
+	    this.contextID = parseInt(getFirstChildValue(dom, 'id'));
+	    this.filename = getFirstChildValue(dom, 'filename');
+	    this.status = parseInt(getFirstChildValue(dom, 'status'));
+	    this.statustext = parseInt(getFirstChildValue(dom, 'statustext'));
+	    this.downloadtotal = parseInt(getFirstChildValue(dom, 'downloadtotal'));
+	    this.uploadtotal = parseInt(getFirstChildValue(dom, 'uploadtotal'));
+	    this.failedbytes = parseInt(getFirstChildValue(dom, 'failedbytes'));
+	    this.uploadrate = parseInt(getFirstChildValue(dom, 'uploadrate'));
+	    this.downloadrate = parseInt(getFirstChildValue(dom, 'downloadrate'));
+	    this.done = parseInt(getFirstChildValue(dom, 'done'));
 
-		this.filesize = parseInt(getFirstChildValue(dom, 'filesize'))
-		this.leechers = parseInt(getFirstChildValue(dom, 'leechers'))
-		this.seeders = parseInt(getFirstChildValue(dom, 'seeders'))
-		this.timeleft = getFirstChildValue(dom, 'timeleft')
+	    this.filesize = parseInt(getFirstChildValue(dom, 'filesize'));
+	    this.leechers = parseInt(getFirstChildValue(dom, 'leechers'));
+	    this.seeders = parseInt(getFirstChildValue(dom, 'seeders'));
+	    this.timeleft = getFirstChildValue(dom, 'timeleft');
 
-		this.trackerstatus = getFirstChildValue(dom, 'trackerstatus')
-		this.trackerstatustext = getFirstChildValue(dom, 'trackerstatustext')
-		this.trackerstatusmessage = getFirstChildValue(dom, 'trackerstatusmessage')
-		this.activitycounter = parseInt(getFirstChildValue(dom, 'activitycounter'))
+	    this.trackerstatus = getFirstChildValue(dom, 'trackerstatus');
+	    this.trackerstatustext = getFirstChildValue(dom, 'trackerstatustext');
+	    this.trackerstatusmessage = getFirstChildValue(dom, 'trackerstatusmessage');
+	    this.activitycounter = parseInt(getFirstChildValue(dom, 'activitycounter'));
+	    this.tracker = getFirstChildValue(dom, 'tracker');
 
 		/* Recalculate done */
 		if(this.status == ts_seeding || this.status == ts_finished)
@@ -1936,6 +1929,7 @@ function Status(dom)
 		ret+= "trackerstatustext: "+ this.trackerstatustext+ "\n";
 		ret+= "trackerstatusmessage: "+ this.trackerstatusmessage+ "\n";
 		ret+= "activitycounter: "+ this.activitycounter+ "\n";
+		ret+= "activitycounter: "+ this.tracker+ "\n";
 
 		return ret;
 	}
@@ -1967,7 +1961,8 @@ function Status(dom)
 		if(this.trackerstatus != s.trackerstatus)	return true;
 		if(this.trackerstatustext != s.trackerstatustext)	return true;
 		if(this.trackerstatusmessage != s.trackerstatusmessage)	return true;
-      if(this.activitycounter != s.activitycounter) return true;
+		if(this.activitycounter != s.activitycounter) return true;
+		if(this.tracker != s.tracker) return true;
 		return false;
 	}
 }
