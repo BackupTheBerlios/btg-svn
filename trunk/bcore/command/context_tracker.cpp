@@ -59,7 +59,7 @@ namespace btg
 
       bool contextGetTrackersResponseCommand::serialize(btg::core::externalization::Externalization* _e) const
       {
-         Command::serialize(_e);
+         contextCommand::serialize(_e);
          BTG_RCHECK(_e->status());
 
          _e->setParamInfo("list of trackers", true);
@@ -71,7 +71,7 @@ namespace btg
 
       bool contextGetTrackersResponseCommand::deserialize(btg::core::externalization::Externalization* _e)
       {
-         Command::deserialize(_e);
+         contextCommand::deserialize(_e);
          BTG_RCHECK(_e->status());
 
          _e->setParamInfo("list of trackers", true);

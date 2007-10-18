@@ -870,7 +870,6 @@ function cb_contextStatus(response)
 	{
 		var status = newContextList[i];
 		contextTrackerIdList.push(status.contextID);
-	// !!!
 	}
 
 	// Refresh limits
@@ -893,7 +892,14 @@ function cb_contextStatus_err(error, errStr)
 
 function cb_contextTrackers(response)
 {
-	 setStatus("Got tracker info.");
+	 var cid = getFirstChildValue(response, 'cid');
+	 var trackername = getFirstChildValue(response, 'tracker');
+
+	 var itemname = 'trackerfield_' + cid;
+	 var item = document.getElementById(itemname);
+	 item.innerHTML = "Tracker URL for " + cid;
+	 item.innerHTML = trackername;
+
 }
 
 function cb_contextTrackers_err(error, errStr)
@@ -1208,17 +1214,13 @@ function refreshContextList()
 	setStatus("Updating torrent list...");
 	btg_contextStatus(cb_contextStatus, cb_contextStatus_err, -1, true);
 
-	// !!!
 	for(var i=0; i < contextTrackerIdList.length; i++)
 	{
-		var cid = contextTrackerIdList[i];
+	    var cid = contextTrackerIdList[i];
 
-		setStatus("Updating context: " + cid);
-
-		btg_contextTrackers(cb_contextTrackers, cb_contextTrackers_err, cid);
-		var itemname = 'trackerfield_' + cid;
-		var item = document.getElementById(itemname);
-		item.innerHTML = "Tracker URL for " + cid;
+	    setStatus("Updating context: " + cid);
+	    
+	    btg_contextTrackers(cb_contextTrackers, cb_contextTrackers_err, cid);
 	}
 }
 
@@ -1725,9 +1727,9 @@ function createTorrentDetails(contextId)
 
 	c           = r.insertCell(-1);
 	c.className = 'extrainfo_type';
-	c.innerHTML ='www.tracker.net';
+	c.innerHTML ='test';
 	c.id        = 'trackerfield_' + contextId;
-	// !!!
+
 	c = r.insertCell(-1);
 	c.className = 'extrainfo_type extrainfo_divider';
 	c.innerHTML='';

@@ -449,17 +449,14 @@ class BTG
 			return $this->addExtraOutput("");
 
 		$output = "";
-		$r = $this->executeCommand(new contextGetTrackersCommand($contextId, false), false);
+		$r = $this->executeCommand(new contextGetTrackersCommand((int)$contextId, false), false);
 
 		if($r instanceof contextGetTrackersResponseCommand)
 		{
 			$arr = $r->getTrackers();
 
-			$output .= "<tracker><id>";
-			$output .= $r->getContextId();
-			$output .= "</id><name>";
-			$output .= $arr[0];
-			$output .= "</name></tracker>\n";
+			$output .= "<cid>".$r->getContextId()."</cid>\n";
+			$output .= "<tracker>".$arr[0]."</tracker>\n";
 		}
 
 		return $this->addExtraOutput($output);
