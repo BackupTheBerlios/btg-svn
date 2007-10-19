@@ -31,17 +31,17 @@ namespace btg
          statusWindow::statusWindow(keyMapping const& _kmap)
             : baseWindow(_kmap),
               status_(),
-	      currentColor_(Colors::C_NORMAL)
+              currentColor_(Colors::C_NORMAL)
          {
          }
 
          void statusWindow::resize(windowSize const& _ws)
          {
-	   destroy();
+            destroy();
 
-	   init(_ws);
+            init(_ws);
 
-	   refresh();
+            refresh();
          }
 
          bool statusWindow::destroy()
@@ -69,23 +69,23 @@ namespace btg
 
          void statusWindow::setStatus(std::string const _text)
          {
-	   currentColor_ = Colors::C_NORMAL;
-	   clear();
-	   status_ = _text;
-	   refresh();
+            currentColor_ = Colors::C_NORMAL;
+            clear();
+            status_ = _text;
+            refresh();
          }
 
-	void statusWindow::setError(std::string const _text)
-	{
-	  currentColor_ = Colors::C_ERROR;
-	  clear();
-	  status_ = _text;
-	  refresh();
-	}
+         void statusWindow::setError(std::string const _text)
+         {
+            currentColor_ = Colors::C_ERROR;
+            clear();
+            status_ = _text;
+            refresh();
+         }
 
          void statusWindow::draw()
          {
-	   setColor(currentColor_);
+            setColor(currentColor_);
             std::string spaces;
 
             // t_int spacecount = width_ - status_.size();
@@ -100,9 +100,14 @@ namespace btg
             // First fill with spaces.
             mvwprintw(window_, 0, 0, "%s", spaces.c_str());
 
+            if (status_.size() > width_)
+               {
+                  status_ = status_.substr(0, width_);
+               }
+
             mvwprintw(window_, 0, 0, "%s", status_.c_str());
             ::wattroff(window_, A_REVERSE);
-	    unSetColor(currentColor_);
+            unSetColor(currentColor_);
          }
 
          windowSize statusWindow::calculateDimenstions(windowSize const& _ws) const
@@ -111,7 +116,7 @@ namespace btg
             ws.topX   = 0;
             ws.topY   = _ws.height - 1;
             ws.width  = _ws.width;
-            ws.height = 2;
+            ws.height = 1;
 
             return ws;
          }
