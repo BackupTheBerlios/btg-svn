@@ -350,7 +350,7 @@ namespace btg
 
          void Handler::onSetFiles()
          {
-
+            commandStatus = true;
          }
 
          void Handler::onSetFilesError(std::string const& _errorDescription)
@@ -361,6 +361,7 @@ namespace btg
          
          void Handler::onSelectedFiles(btg::core::selectedFileEntryList const& _files)
          {
+            commandStatus = true;
             lastSelected_files_ = _files;
          }
          
