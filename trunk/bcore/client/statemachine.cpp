@@ -1745,7 +1745,7 @@ namespace btg
                         t_strList sessionIds = 
                            dynamic_cast<listSessionResponseCommand*>(c)->getNames();
                         btg_assert(sessions.size() == sessionIds.size(), 
-                                   "Session list and Id mush have same size.");
+                                   "Session list and Id list must have same size.");
                         clientcallback->onListSessions(sessions, sessionIds);
 
                         // Change state, ready to accept commands.

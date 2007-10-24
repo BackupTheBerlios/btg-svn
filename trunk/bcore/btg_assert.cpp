@@ -26,10 +26,12 @@
 
 void btg_assert(bool _a, std::string const& _message)
 {
+   if (!_a)
+      {
 #ifndef NDEBUG
-   // Debug.
-   BTG_FATAL_ERROR("assert", _message);
-#else
-   // Release.
+         // Debug.
+         BTG_FATAL_ERROR("assert", _message);
+         exit(-1);
 #endif
+      }
 }
