@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = libplotmm.la
+pkglib_LTLIBRARIES = libplotmm.la
 
 libplotmm_la_SOURCES = \
 	paint.h paint.cc \

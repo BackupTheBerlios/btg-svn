@@ -9,7 +9,7 @@ endif
 # os transport command logger externalization auth
 SUBDIRS            = $(BCORE_CLIENT)
 
-lib_LTLIBRARIES    = libbtgcore.la
+pkglib_LTLIBRARIES    = libbtgcore.la
 
 OS_SOURCES=os/sleep.cpp \
 os/fileop.cpp \
@@ -218,10 +218,6 @@ $(COMMAND_HEADER) \
 $(LOGGER_HEADER) \
 $(EXTERNALIZATION_HEADER) \
 $(AUTH_HEADER)
-
-# AM_LDFLAGS        = -lboost_iostreams -lz
-
-AM_LDFLAGS          = -release @VERSION@
 
 AM_CFLAGS           = @CFLAGS@   @DEBUG_CFLAGS@ \
                     -DBTG_DEBUG=@BTG_DEBUG@ \

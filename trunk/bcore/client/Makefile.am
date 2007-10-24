@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = libbtgclient.la
+pkglib_LTLIBRARIES = libbtgclient.la
 
 libbtgclient_la_SOURCES = carg.cpp \
 configuration.cpp lastfiles.cpp\
@@ -23,6 +23,6 @@ clientdynconfig.h
 
 libbtgclient_la_CFLAGS   = @DEBUG_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@
 libbtgclient_la_CXXFLAGS = @DEBUG_CXXFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@
-libbtgclient_la_LDFLAGS  = -l@BOOST_PROGRAM_OPTIONS_LIB@ -release @VERSION@
+libbtgclient_la_LDFLAGS  = -l@BOOST_PROGRAM_OPTIONS_LIB@
 
 INCLUDES             = -I$(top_srcdir)
