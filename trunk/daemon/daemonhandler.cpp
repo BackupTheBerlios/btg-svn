@@ -38,6 +38,8 @@
 #include <bcore/verbose.h>
 #include "modulelog.h"
 
+#include <bcore/btg_assert.h>
+
 extern int global_btg_run;
 
 namespace btg
@@ -592,6 +594,7 @@ namespace btg
 
          if (sessions.size() > 0)
             {
+               btg_assert(sessions.size() == session_names.size(), "Session list and Id list must have same size.");
                sendCommand(dd_->externalization,
                            dd_->transport,
                            connectionID_,
