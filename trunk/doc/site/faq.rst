@@ -70,7 +70,7 @@ Because its pointless to create the required functionality from scratch.
 Link Check: error: libtorrent/session.hpp: No such file or directory
 --------------------------------------------------------------------
 
-Make sure the the `Rasterbar Libtorrent`_ library is installed.
+Make sure the `Rasterbar Libtorrent`_ library is installed.
 Using `Rakshasa Libtorrent`_ is NOT supported.
 
 Feature X does not work, what now?
