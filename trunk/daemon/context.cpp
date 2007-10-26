@@ -477,8 +477,9 @@ namespace btg
                return status;
             }
 
-         libtorrent::torrent_info tinfo;
-         if (!entryToInfo(torrent_entry, tinfo))
+         boost::intrusive_ptr<libtorrent::torrent_info> tinfo(new libtorrent::torrent_info);
+         // libtorrent::torrent_info tinfo;
+         if (!entryToInfo(torrent_entry, *tinfo))
             {
                // Unable to convert the entry to a torrent info.
                // Adding files cannot continue.
@@ -516,7 +517,7 @@ namespace btg
          // Check the torrent file against the seed dir. Attempt to
          // find out if the data resides in the seed directory.
 
-         if (dataPresentInSeedDir(tinfo))
+         if (dataPresentInSeedDir(*tinfo))
             {
                dataPath =  boost::filesystem::path(seedDir_, boost::filesystem::native);
             }
@@ -552,12 +553,12 @@ namespace btg
                      if (status == Context::ERR_OK)
                         {
                            BTG_MNOTICE("using fast resume for '" << _torrent_filename << "'");
-                           handle = torrent_session->add_torrent(torrent_entry, dataPath, fastResumeEntry);
+                           handle = torrent_session->add_torrent(tinfo, dataPath, fastResumeEntry);
                         }
                   }
                else
                   {
-                     handle = torrent_session->add_torrent(torrent_entry, dataPath);
+                     handle = torrent_session->add_torrent(tinfo, dataPath);
                   }
             }
          catch (std::exception& e)
