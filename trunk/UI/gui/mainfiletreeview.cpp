@@ -100,6 +100,8 @@ namespace btg
 
                         row[filerecord.filename]      = fi_iter->getFilename();
 
+                        //fileInfoPixbox(*fi_iter, row[filerecord.filepieces]);
+                        
                         // Create a pixbox showing a file's bits.
                         fileInfoPixbox fileinfopixbox(pixmap_bits_per_sample, 
                                                       pixmap_size_x, 

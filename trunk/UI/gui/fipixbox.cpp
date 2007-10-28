@@ -81,8 +81,13 @@ namespace btg
               max_pixel_offset((this->sizeY * this->rowstride) + (this->sizeX * 3)),
               bits(_fileinfo.getBits()),
               fileinfoSize(_fileinfo.size()),
-              bitsize(2)
+              bitsize(2),
+              full(false)
          {
+            if (_fileinfo.isFull())
+               {
+                  full = true;
+               }
             draw();
          }
 
