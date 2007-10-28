@@ -53,15 +53,27 @@ $btg_ca_cert = "stromnetCA.crt";
 $btg_client_cert = "btgclient.pem";
 
 /* Autostart
- * Default for a new torrent is to start directly. Setting autostart to false will change this so the user has to start the torrent manually.
+ * Default for a new torrent is to start automatically. 
+ * Setting autostart to false will change this so 
+ * the user has to start the torrent manually.
  */
 $btg_config_autostart = true;
 
 /* Debug Mode.
  * Valid values:
- * 	0 	No debugging
- * 	1	Debugging output is generated on server, but not showed on client side unless activated in UI
- *		2	Debugging output is generated on server, and is showed to the client by default.
+ * 
+ * 0:
+ * No debugging.
+ * 
+ * 1:
+ * Debugging output is generated on server, 
+ * but not shown on client side unless activated in UI.
+ * The syslog messages produced are also written to syslog.
+ * 
+ * 2:
+ * Debugging output is generated on server, 
+ * and is shown to the client by default.
+ * The syslog messages produced are also written to syslog.
  */
-$btg_config_debug = 0;
+$btg_config_debug = 1;
 ?>

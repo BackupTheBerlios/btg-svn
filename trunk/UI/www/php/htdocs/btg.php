@@ -68,17 +68,37 @@ class BTG
 
 	public function __construct($url="http://127.0.0.1:16000/", $buildID, $autostart)
 	{
+		// Open syslog.
+		openlog("BTG_wwwui", LOG_ODELAY, LOG_LOCAL0);
+
 		$this->xmlrpc = new XMLRPC_Client($url);
 		$this->xmlrpc->enableGZIP(true);
 
 		$this->buildID = $buildID;
 		$this->initTime = microtime(true);
 		$this->autostart = $autostart;
+
+		$this->logMessage("BTG constructed");
 	}
 
 	public function __destruct()
 	{
 		$this->teardown();
+
+		$this->logMessage("BTG destructed");
+
+		// Close syslog.
+		closelog();
+	}
+
+	// Log a message to syslog.
+	public function logMessage($m)
+	{
+		// Only log if logging to syslog is enabled in config
+		if ($this->debug)
+		{
+			syslog(LOG_DEBUG, $m.".");
+		}
 	}
 
 	/**
@@ -142,16 +162,28 @@ class BTG
 	private function log_debug($str)
 	{
 		if($this->debug)
+		{
 			$this->extraOutput.="<debug>".htmlspecialchars($str)."</debug>\n";
+		
+			
+		}
+
+		$this->logMessage("debug: ".$str);
 	}
 
 	/// Log an error message
 	private function log_error($str, $errorCode = -1)
 	{
 		if($errorCode != -1)
+		{
 			$this->extraOutput.="<error code=\"$errorCode\">$str</error>\n";
+		}
 		else
+		{
 			$this->extraOutput.="<error>$str</error>\n";
+		}
+
+		$this->logMessage("error: ".$str.", code=".$errorCode);
 	}
 
 	/// Get the extra output produced by log_debug/log_error
