@@ -53,17 +53,19 @@ namespace btg
 
             if (!exists(keyMapping::K_DETACH))
                {
-                  add(keyMapping::K_DETACH, KEY_F(10));
+                  add(keyMapping::K_DETACH, 'd');
                }
 
             if (!exists(keyMapping::K_QUIT))
                {
-                  add(keyMapping::K_QUIT, KEY_F(9));
+                  add(keyMapping::K_QUIT, 'q');
                }
 
+            // Used for dialogs where one cannot press for example
+            // 'q', since the dialog accepts this key.
             if (!exists(keyMapping::K_QUITSCREEN))
                {
-                  add(keyMapping::K_QUITSCREEN, 'q');
+                  add(keyMapping::K_QUITSCREEN, KEY_F(10));
                }
 
             if (!exists(keyMapping::K_LOAD))

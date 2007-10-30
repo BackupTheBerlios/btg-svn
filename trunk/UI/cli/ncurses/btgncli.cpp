@@ -603,12 +603,6 @@ int main(int argc, char* argv[])
 
    sigh_add(SIGINT, (void*)&global_signal_handler);
    sigh_add(SIGTERM, (void*)&global_signal_handler);
-   /*
-     Not working...
-     sigh_add(SIGINT,   reinterpret_cast<void*>(&global_signal_handler));
-     sigh_add(SIGTERM,  reinterpret_cast<void*>(&global_signal_handler));
-   */
-   //sigh_add(SIGWINCH, (void*)&global_signal_handler);
 #endif
 
    // Done using the start up helper.
