@@ -45,10 +45,11 @@ namespace btg
                   {
                   public:
                      /// Constructor.
-                     /// @param [in] _sessionlist      List of sessions.
+                     /// @param [in] _sessionIDs       List of sessions.
+                     /// @param [in] _sessionsNames    List of session names.
                      /// @param [in] _disableSelection False, selection of a session disabled. True, selection of a session is enabled.
-                     sessionSelectionDialog(t_longList const& _sessionlist, 
-                                            t_strList const& _sessionsIDs,
+                     sessionSelectionDialog(t_longList const& _sessionIDs, 
+                                            t_strList const& _sessionsNames,
                                             bool const _disableSelection = false);
 
                      /// Returns true if the user selected a session - also stores the session id in _session.
@@ -62,9 +63,6 @@ namespace btg
 
                      /// Callback: user clicked cancel.
                      void on_cancel_clicked();
-
-                     /// List of sessions.
-                     t_longList         sessionlist;
 
                      /// False, selection of a session disabled.
                      /// True, selection of a session is enabled.

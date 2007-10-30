@@ -86,8 +86,9 @@ namespace btg
             void doGlobalLimitStatus();
             /// Action.
             void doUptime();
-
+            /// Action.
             void doSessionName();
+            /// Action.
             void doSetSessionName(std::string const& _name);
 
             /// Action.
@@ -334,18 +335,40 @@ namespace btg
             void step_SM_FINISHED(bool & _status);
 
             // Callback functions, used in a switch statement.
+
+            /// Call a callback. Received response to request to list
+            /// contexts.
             void cb_CN_GLIST(btg::core::Command* _command);
+            /// Call a callback. Received a response to a setup.
             void cb_CN_GSETUP(btg::core::Command* _command);
+            /// Call a callback. Received global limit status
+            /// response.
             void cb_CN_GLIMITSTAT(btg::core::Command* _command);
+            /// Call a callback. Received clean response.
             void cb_CN_CCLEAN(btg::core::Command* _command);
+            /// Call a callback. Received uptime response.
             void cb_CN_GUPTIME(btg::core::Command* _command);
+            /// Call a callback. Received status response.
             void cb_CN_CSTATUS(btg::core::Command* _command);
+            /// Call a callback. Received status response for all
+            /// contexts.
             void cb_CN_CALLSTATUSRSP(btg::core::Command* _command);
+            /// Call a callback. Received the context ID of the last
+            /// added torrent.
             void cb_CN_CLASTRSP(btg::core::Command* _command);
+            /// Call a callback. Received a file info for a context.
             void cb_CN_CFILEINFO(btg::core::Command* _command);
+            /// Call a callback. Received a list of peers for a
+            /// context.
             void cb_CN_CPEERS(btg::core::Command* _command);
+            /// Call a callback. Received the limit status for a
+            /// context.
             void cb_CN_CLIMITSTATUS(btg::core::Command* _command);
+            /// Call a callback. Received the response to setting
+            /// files to download for a context.
             void cb_CN_CGETFILES(btg::core::Command* _command);
+            /// Call a callback. Received the name of the current
+            /// session.
             void cb_CN_SNAME(btg::core::Command* _command);
 
          private:

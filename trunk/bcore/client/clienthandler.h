@@ -180,8 +180,10 @@ namespace btg
             /// Request uptime from the daemon.
             virtual void reqUptime();
 
+            /// Request the name of the current session.
             virtual void reqSessionName();
 
+            /// Set the name of the current session.
             virtual void reqSetSessionName(std::string const& _name);
 
             /// Returns true if the statemachine thinks that
@@ -225,6 +227,7 @@ namespace btg
             /// onListSessions.
             virtual t_strList getSessionNames() const;
 
+            /// Get the name of the current session.
             std::string getCurrentSessionName() const;
 
             /// Get a pointer to the contained client
@@ -331,6 +334,7 @@ namespace btg
             /// List of sessions, as returned by onListSessions.
             t_strList                         sessionNames;
 
+            /// The name of the current session.
             std::string                       currentSessionName;
 
             /// Pointer to the object holding the client configuration.

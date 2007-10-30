@@ -37,13 +37,15 @@ namespace btg
       {
          namespace gui
             {
-
+               /// Dialog which allows the user to set the name of the
+               /// session.
                class sessionNameDialog: public Gtk::Dialog
                   {
                   public:
                      /// Constructor.
                      sessionNameDialog(std::string const& _name);
 
+                     /// Get the name of the session.
                      std::string getName() const;
 
                      /// Destructor.
@@ -56,6 +58,7 @@ namespace btg
                      /// Label.
                      Gtk::Label*  nameLabel;
 
+                     /// Name entry.
                      Gtk::Entry*  nameEntry;
                      /// Table used for layout.
                      Gtk::Table*  table;
