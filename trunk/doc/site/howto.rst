@@ -738,6 +738,9 @@ the one used by a bash script used to run `btlaunchmany.py`_.
  CLIENT=btgcli
  # The directory containing the torrent files.
  INCOMING_DIR=~/btg/incomming
+ # The directory to which .torrent files are moved 
+ # to after loading them into BTG. 
+ DONE_DIR=~/btg/incomming/done
 
  GOT_SESSION=0
  $CLIENT -A -n -c "detach" &> /dev/null && GOT_SESSION=1
@@ -760,7 +763,7 @@ the one used by a bash script used to run `btlaunchmany.py`_.
    echo "Loading file: $f" && \
    $CLIENT -A -n -c "detach" -o $f &> /dev/null && \
    TORRENT_ADDED=`expr $TORRENT_ADDED + 1` && \
-   rm $f
+   mv $f $DONE_DIR
  done
 
  if [ $TORRENT_ADDED -gt 0 ]
@@ -772,7 +775,7 @@ The above script attempts to:
 
 - Create a new BTG session or attach to an existing BTG session.
 - Load all present torrent files into BTG.
-- Delete any torrent files after loading.
+- Move any loaded torrent files to another directory.
 - Write the filename of the torrent file which is being loaded into BTG.
 - Write the total number of files loaded.
 
@@ -783,9 +786,11 @@ Call the script from Vixie Cron, using an entry like this:
 
 ::
 
- */1 * * * *   /path/to/script
+ */1 * * * *   /path/to/script 
 
-The above entry calls the script each minute.
+The above entry calls the script each minute. Notice that cron will
+e-mail the output of the script to you, so add "&> /dev/null" to avoid
+any e-mail.
 
 Credits
 =======
