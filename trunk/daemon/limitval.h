@@ -41,12 +41,16 @@ namespace btg
           */
          /** @{ */
 
+         /// Resource counter.
          struct limitValue
          {
+            /// Constructor.
             limitValue();
 
+            /// Resources left.
             t_int left() const;
 		
+            /// Reset the number of resources.
             void reset();
 
             /// The equality operator.
@@ -55,15 +59,23 @@ namespace btg
             /// The not equal operator.
             bool operator!= (limitValue const& _lv) const;
 
+            /// Min resources.
             t_int min;
+            /// Max resources.
             t_int max;
+            /// Used resources.
             t_int used;
+            /// Given resources.
             t_int given;
+            /// Resources left.
             t_int leftovers;
 
+            /// Used to indicate infinite number of resources.
             static const int inf = boost::integer_traits<int>::const_max;
          };
 
+         /// Each session used an instance of this class for
+         /// controlling its limits.
          class limitIf
          {
          public:
@@ -85,9 +97,13 @@ namespace btg
             /// Destructor.
             ~limitIf();
          public:
+            /// Download rate in bytes per second.
             limitValue val_dl_rate;
+            /// Upload rate in bytes per second.
             limitValue val_ul_rate;
+            /// Number of connections.
             limitValue val_connections;
+            /// Number of uploads.
             limitValue val_uploads;
          };
 
@@ -137,6 +153,7 @@ namespace btg
                /// Get the contained session.
                libtorrent::session* session() const;
 
+               /// Infinite limit.
                static const t_uint inf;
 
                /// Destructor.

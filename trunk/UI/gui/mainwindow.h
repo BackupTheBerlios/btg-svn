@@ -43,206 +43,208 @@
 namespace btg
 {
    namespace UI
+   {
+      namespace gui
       {
-         namespace gui
+         /**
+          * \addtogroup gui
+          */
+         /** @{ */
+
+         class mainTreeview;
+         class mainFileTreeview;
+         class mainNotebook;
+         class aboutDialog;
+         class limitDialog;
+         class preferencesDialog;
+
+         /// The main window of the gui client.
+         class mainWindow : public Gtk::Window
             {
-               /**
-                * \addtogroup gui
-                */
-               /** @{ */
+            public:
+               /// Constructor.
+               mainWindow(std::string const& _session,
+                          bool const _verboseFlag, 
+                          bool const _neverAskFlag,
+                          btg::core::client::handlerThread* _handlerthread,
+                          btg::core::client::clientDynConfig & dc);
 
-               class mainTreeview;
-               class mainFileTreeview;
-               class mainNotebook;
-               class aboutDialog;
-               class limitDialog;
-               class preferencesDialog;
+               /// Used when a menu item is selected.
+               void on_menu_item_selected(buttonMenuIds::MENUID _which_item);
 
-               /// The main window of the gui client.
-               class mainWindow : public Gtk::Window
-                  {
-                  public:
-                     /// Constructor.
-                     mainWindow(std::string const& _session,
-                                bool const _verboseFlag, 
-                                bool const _neverAskFlag,
-                                btg::core::client::handlerThread* _handlerthread,
-                                btg::core::client::clientDynConfig & dc);
+               /// Destructor.
+               virtual ~mainWindow();
+            private:
+               /// Used for refreshing the list of contexts.
+               bool on_refresh_timeout(int);
 
-                     /// Used when a menu item is selected.
-                     void on_menu_item_selected(buttonMenuIds::MENUID _which_item);
+               /// Called when the user closes this window.
+               bool onWindowClose(GdkEventAny *);
 
-                     /// Destructor.
-                     virtual ~mainWindow();
-                  private:
-                     /// Used for refreshing the list of contexts.
-                     bool on_refresh_timeout(int);
+               /// Update the plot.
+               void updatePlot();
 
-                     /// Called when the user closes this window.
-                     bool onWindowClose(GdkEventAny *);
+               /// Update the files shown in the UI.
+               void updateFiles(t_int const _id);
 
-                     /// Update the plot.
-                     void updatePlot();
+               /// Update the peers shown in the UI.
+               void updatePeers(t_int const _id);
 
-                     /// Update the files shown in the UI.
-                     void updateFiles(t_int const _id);
+               /// Clear selected files.
+               void clearSelection();
 
-                     /// Update the peers shown in the UI.
-                     void updatePeers(t_int const _id);
+               /// Update information about the selected file.
+               void updateSelectedFiles(t_int const _id);
 
-                     /// Clear selected files.
-                     void clearSelection();
+               /// Update the status information shown about a
+               /// selected file.
+               void updateDetails(t_int const _id,
+                                  t_statusList const& _statuslist);
 
-                     /// Update information about the selected file.
-                     void updateSelectedFiles(t_int const _id);
+               /// Tell the daemon that _filename should be
+               /// created.
+               void openFile(std::string const& _filename);
 
-                     /// Update the status information shown about a
-                     /// selected file.
-                     void updateDetails(t_int const _id,
-                                        t_statusList const& _statuslist);
+               /// Log a message to internal application log and
+               /// the normal log.
+               void logMessage(std::string const& _msg);
 
-                     /// Tell the daemon that _filename should be
-                     /// created.
-                     void openFile(std::string const& _filename);
+               /// Write a message if verbose mode of operation
+               /// is enabled.
+               void logVerboseMessage(std::string const& _msg);
 
-                     /// Log a message to internal application log and
-                     /// the normal log.
-                     void logMessage(std::string const& _msg);
+               /// Return true if a tracker status should be
+               /// shown to the user. Return false if the status
+               /// was shown before.
+               bool showTrackerStatus(t_int _contextId, btg::core::trackerStatus const& _ts);
 
-                     /// Write a message if verbose mode of operation
-                     /// is enabled.
-                     void logVerboseMessage(std::string const& _msg);
+               /// Called when its no longer needed to receive
+               /// tracker status for a certain context id.
+               void removeTrackerStatus(t_int const _contextId);
 
-                     /// Return true if a tracker status should be
-                     /// shown to the user. Return false if the status
-                     /// was shown before.
-                     bool showTrackerStatus(t_int _contextId, btg::core::trackerStatus const& _ts);
+               /// When the client receives status of a torrent,
+               /// the can contain a tracker status which should
+               /// be shown to the user if its serial number is unique.
+               void updateTrackerStatus(btg::core::Status const& _status);
 
-                     /// Called when its no longer needed to receive
-                     /// tracker status for a certain context id.
-                     void removeTrackerStatus(t_int const _contextId);
+               /// Get the list of selected files from UI, if
+               /// any changed, tell the daemon.
+               void checkSelectedFiles();
 
-                     /// When the client receives status of a torrent,
-                     /// the can contain a tracker status which should
-                     /// be shown to the user if its serial number is unique.
-                     void updateTrackerStatus(btg::core::Status const& _status);
+               /// Handle opening a last file.
+               void handle_btn_lastfile(buttonMenuIds::MENUID _which_item);
 
-                     /// Get the list of selected files from UI, if
-                     /// any changed, tell the daemon.
-                     void checkSelectedFiles();
+               /// Handle opening all last files.
+               void handle_btn_lastfile_all(buttonMenuIds::MENUID _which_item);
 
-                     /// Handle opening a last file.
-                     void handle_btn_lastfile(buttonMenuIds::MENUID _which_item);
+               /// Create and show a dialog to open a torrent
+               /// file.
+               /// If the user selects a torrent file, tell the
+               /// daemon that it should be created.
+               void handle_btn_load();
 
-                     /// Handle opening all last files.
-                     void handle_btn_lastfile_all(buttonMenuIds::MENUID _which_item);
+               /// Handle detach.
+               void handle_btn_detach();
 
-                     /// Create and show a dialog to open a torrent
-                     /// file.
-                     /// If the user selects a torrent file, tell the
-                     /// daemon that it should be created.
-                     void handle_btn_load();
+               /// Handle about.
+               void handle_btn_about();
 
-                     /// Handle detach.
-                     void handle_btn_detach();
+               /// Handle quit.
+               void handle_btn_quit();
 
-                     /// Handle about.
-                     void handle_btn_about();
+               /// Handle daemon kill.
+               void handle_btn_kill();
 
-                     /// Handle quit.
-                     void handle_btn_quit();
+               /// Handle uptime.
+               void handle_btn_uptime();
 
-                     /// Handle daemon kill.
-                     void handle_btn_kill();
+               /// Handle setting session name.
+               void handle_btn_sesname();
 
-                     /// Handle uptime.
-                     void handle_btn_uptime();
+               /// Handle limit.
+               void handle_btn_glimit();
 
-                     /// Handle setting session name.
-                     void handle_btn_sesname();
+               /// Handle start.
+               void handle_btn_start(t_int const _id);
 
-                     /// Handle limit.
-                     void handle_btn_glimit();
+               /// Handle stop.
+               void handle_btn_stop(t_int const _id);
 
-                     /// Handle start.
-                     void handle_btn_start(t_int const _id);
+               /// Handle erase.
+               void handle_btn_erase(t_int const _id);
 
-                     /// Handle stop.
-                     void handle_btn_stop(t_int const _id);
+               /// Handle abort.
+               void handle_btn_abort(t_int const _id);
 
-                     /// Handle erase.
-                     void handle_btn_erase(t_int const _id);
+               /// Handle clean.
+               void handle_btn_clean(t_int const _id);
 
-                     /// Handle abort.
-                     void handle_btn_abort(t_int const _id);
+               /// Handle limit.
+               void handle_btn_limit(t_int const _id);
 
-                     /// Handle clean.
-                     void handle_btn_clean(t_int const _id);
+               /// Handle preferences.
+               void handle_btn_prefs(t_int const _id);
 
-                     /// Handle limit.
-                     void handle_btn_limit(t_int const _id);
+               /// Indicates that the client does verbose logging.
+               bool                      verboseFlag;
+               /// Indicates that the client should never ask
+               /// user questions.
+               bool                      neverAskFlag;
 
-                     /// Handle preferences.
-                     void handle_btn_prefs(t_int const _id);
-
-                     /// Indicates that the client does verbose logging.
-                     bool                      verboseFlag;
-                     /// Indicates that the client should never ask
-                     /// user questions.
-                     bool                      neverAskFlag;
-
-                     /// Used for a one second timeout.
-                     sigc::connection          timeout_connection;
-                     /// Pointer to the table used to show contexts.
-                     class mainTreeview*       mtw;
-                     /// Pointer to the status bar.
-                     class mainStatusbar*      msb;
-                     /// Pointer to the menu bar.
-                     class mainMenubar*        mmb;
-                     /// Pointer to the notebook used to show file
-                     /// table, traffic graph and log output.
-                     mainNotebook*             mnb;
-                     /// Pointer to the class implementing the client
-                     /// callback interface and using a statemachine
-                     /// to talk to the daemon on the other side of a
-                     /// transport interface.
-                     btg::core::client::handlerThread* handlerthread;
+               /// Used for a one second timeout.
+               sigc::connection          timeout_connection;
+               /// Pointer to the table used to show contexts.
+               class mainTreeview*       mtw;
+               /// Pointer to the status bar.
+               class mainStatusbar*      msb;
+               /// Pointer to the menu bar.
+               class mainMenubar*        mmb;
+               /// Pointer to the notebook used to show file
+               /// table, traffic graph and log output.
+               mainNotebook*             mnb;
+               /// Pointer to the class implementing the client
+               /// callback interface and using a statemachine
+               /// to talk to the daemon on the other side of a
+               /// transport interface.
+               btg::core::client::handlerThread* handlerthread;
                      
-                     /// Pointer to the about dialog.
-                     aboutDialog*              aboutdialog;
-                     /// Pointer to the preferences dialog.
-                     preferencesDialog*        preferencesdialog;
-                     /// Pointer to the limit dialog.
-                     limitDialog*              limitdialog;
-                     /// Used to store the last directory used for
-                     /// opening files.
-                     std::string               lastOpenDirectory;
-                     /// Flag which indicates that updating of contexts is allowed.
-                     bool                      updateContexts;
-                     /// Counter, used to decide when progress should be updated.
-                     t_uint                    progressCounter;
-                     /// Max, decides when progress should be updated.
-                     t_uint const              progressMax;
-                     /// Map context id to serial.
-                     std::map<t_int, t_int>    trackerstatSerial;
-                     /// Client dynamic configuration store
-                     btg::core::client::clientDynConfig & m_clientDynConfig;
-                  private:
-                     /// Copy constructor.
-                     mainWindow(mainWindow const& _mw);
-                     /// Assignment operator.
-                     mainWindow& operator=(mainWindow const& _mw);
+               /// Pointer to the about dialog.
+               aboutDialog*              aboutdialog;
+               /// Pointer to the preferences dialog.
+               preferencesDialog*        preferencesdialog;
+               /// Pointer to the limit dialog.
+               limitDialog*              limitdialog;
+               /// Used to store the last directory used for
+               /// opening files.
+               std::string               lastOpenDirectory;
+               /// Flag which indicates that updating of contexts is allowed.
+               bool                      updateContexts;
+               /// Counter, used to decide when progress should be updated.
+               t_uint                    progressCounter;
+               /// Max, decides when progress should be updated.
+               t_uint const              progressMax;
+               /// Map context id to serial.
+               std::map<t_int, t_int>    trackerstatSerial;
+               /// Client dynamic configuration store
+               btg::core::client::clientDynConfig & m_clientDynConfig;
+            private:
+               /// Copy constructor.
+               mainWindow(mainWindow const& _mw);
+               /// Assignment operator.
+               mainWindow& operator=(mainWindow const& _mw);
                   
-                  // Other signal handlers (override)
-                  protected:
-                     virtual bool on_window_state_event (GdkEventWindowState* event);
-                     virtual bool on_configure_event (GdkEventConfigure* event);
-                  };
+               // Other signal handlers (override)
+            protected:
+               /// Callback: window changes state. For example mini->max.
+               virtual bool on_window_state_event (GdkEventWindowState* event);
+               /// Callback: resize.
+               virtual bool on_configure_event (GdkEventConfigure* event);
+            };
 
-               /** @} */
+         /** @} */
 
-            } // namespace gui
-      } // namespace UI
+      } // namespace gui
+   } // namespace UI
 } // namespace btg
 
 #endif

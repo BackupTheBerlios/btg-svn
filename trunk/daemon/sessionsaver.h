@@ -81,6 +81,7 @@ namespace btg
                /// Create a session.
                /// @param [in] _username     The username.
                /// @param [in] _session_id   The session ID.
+               /// @param [in] _session_name The name of this session.
                /// @param [in] _seed_limit   Seed limit.
                /// @param [in] _seed_timeout Seed timeout.
                /// @return Pointer to an event handler or 0 on failture.

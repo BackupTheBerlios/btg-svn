@@ -53,9 +53,10 @@ namespace btg
                };
 
                /// Constructor.
-               /// @param [in] _sessionlist      List of sessions.
-               sessionDialog(t_longList const& _sessionlist,
-                             t_strList const& _sessionsIDs);
+               /// @param [in] _sessionIDs       List of sessions.
+               /// @param [in] _sessionsNames    List of session names.
+               sessionDialog(t_longList const& _sessionIDs, 
+                             t_strList const& _sessionsNames);
 
                /// Use this function to get the result of the
                /// dialog, after it was terminated.
@@ -84,11 +85,6 @@ namespace btg
 
                /// The state of this dialog after it terminated.
                QUIT_STATE         quitstate;
-
-               /// List of sessions.
-               t_longList         sessionlist;
-
-               t_strList          sessionsIDs;
 
                /// True, if a session was selected.
                bool               selected;

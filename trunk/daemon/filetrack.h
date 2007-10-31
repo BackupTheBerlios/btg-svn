@@ -42,6 +42,11 @@ namespace btg
 
       /// Keep track of files added and removed. Used to prohibit
       /// adding the same torrent more than once.
+      /// 
+      /// Notice that an userdir is used as argument to most
+      /// functions. This is done to differentiate between the same
+      /// torrent(same torrent name or same torrent contents) added by different
+      /// users - since each user has a unique directory.
       class fileTrack
       {
       public:
@@ -64,6 +69,7 @@ namespace btg
                      std::string const& _filename);
 
          /// Check if the specified file is added or not.
+         /// @param [in] _userdir  The directory of the current user.
          /// @param [in] _filename Filename to check.
          /// @return True - file exists. False otherwise.
          bool exists(std::string const& _userdir,

@@ -157,7 +157,8 @@ namespace btg
                      /// list of sessions to the user to choose from.
                      /// Should return Command::INVALID_SESSION if the
                      /// user cancels this operation.
-                     /// @param [in] _sessions List of sessions to choose from.
+                     /// @param [in] _sessions    List of sessions to choose from.
+                     /// @param [in] _sessionsIDs List of session names.
                      /// @return Valid session ID or Command::INVALID_SESSION.
                      virtual t_long queryUserAboutSession(t_longList const& _sessions,
                                                           t_strList const& _sessionsIDs) const = 0;
@@ -179,9 +180,10 @@ namespace btg
                      virtual bool authSet() const;
 
                      /// Implement this function, so it shows a list of sessions.
-                     /// @param [in] _sessions List of sessions.
+                     /// @param [in] _sessions     List of sessions.
+                     /// @param [in] _sessionNames List of session names.
                      virtual void showSessions(t_longList const& _sessions,
-                                               t_strList const& _sessionIds) const = 0;
+                                               t_strList const& _sessionNames) const = 0;
 
                      /// Get the username, set by setAuth.
                      virtual std::string user() const;

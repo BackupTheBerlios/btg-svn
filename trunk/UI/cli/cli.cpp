@@ -2023,9 +2023,9 @@ namespace btg
          }
 
          void cliStartupHelper::showSessions(t_longList const& _sessions,
-                                             t_strList const& _sessionIds) const
+                                             t_strList const& _sessionNames) const
          {
-            t_strListCI sessionIdIter = _sessionIds.begin();
+            t_strListCI sessionNameIter = _sessionNames.begin();
 
             if (_sessions.size() > 0)
                {
@@ -2035,8 +2035,8 @@ namespace btg
                        vlci != _sessions.end();
                        vlci++)
                      {
-                        std::cout << *vlci << " (" << *sessionIdIter << ")" << std::endl;
-                        sessionIdIter++;
+                        std::cout << *vlci << " (" << *sessionNameIter << ")" << std::endl;
+                        sessionNameIter++;
                      }
                }
             else

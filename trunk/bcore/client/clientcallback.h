@@ -154,7 +154,8 @@ namespace btg
                      virtual void onAttachError(std::string const& _message) = 0;
 
                      /// The daemon sent a list of sessions.
-                     /// @param [out] _sessions List of sessions.
+                     /// @param [out] _sessions     List of sessions.
+                     /// @param [out] _sessionNames List of session names.
                      virtual void onListSessions(t_longList const& _sessions,
                                                  t_strList const& _sessionNames) = 0;
 

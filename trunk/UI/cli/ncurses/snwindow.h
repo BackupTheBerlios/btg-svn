@@ -51,8 +51,8 @@ namespace btg
 
                class mainWindow;
 
-               /// Limit dialog, used for per torrent limit and for
-               /// global limits. Both types of limit use 4 counters.
+               /// Dialog used to set the session name of the current
+               /// session.
                class sessionNameWindow: public baseWindow, public dialog
                   {
                   public:
@@ -65,6 +65,7 @@ namespace btg
 
                      dialog::RESULT run();
 
+                     /// Get the entered session name.
                      std::string getName() const;
 
                      /// Destructor.
@@ -73,10 +74,13 @@ namespace btg
                      /// Size of this window.
                      windowSize  size_;
 
+                     /// The name of the current session.
                      std::string name_;
 
+                     /// Line number.
                      t_uint      counter_;
 
+                     /// Indicates if the session name was changed.
                      bool        changed_;
 
                      void refresh();
@@ -92,8 +96,10 @@ namespace btg
 
                      windowSize calculateDimenstions(windowSize const& _ws) const;
 
+                     /// Enter a key.
                      void enterKey(t_uint const _key);
 
+                     /// Delete the last entered key.
                      void deleteCurrent();
 
                      /// Show help.

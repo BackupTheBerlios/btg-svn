@@ -19,11 +19,9 @@ namespace btg
          using namespace std;
          using namespace btg::core;
 
-         sessionDialog::sessionDialog(t_longList const& _sessionlist,
-                                      t_strList const& _sessionsIDs)
+         sessionDialog::sessionDialog(t_longList const& _sessionIDs, 
+                                      t_strList const& _sessionsNames)
             : quitstate(sessionDialog::QUIT),
-              sessionlist(_sessionlist),
-              sessionsIDs(_sessionsIDs),
               selected(false),
               session(Command::INVALID_SESSION),
               create_session(false),
@@ -76,9 +74,9 @@ namespace btg
             add_action_widget(*attachbutton, -5);
 
             /// Fill the combobox with session ids.
-            t_strListCI sessionNameIter = sessionsIDs.begin();
-            for (t_longListCI sessionIter = sessionlist.begin();
-                 sessionIter != sessionlist.end();
+            t_strListCI sessionNameIter = _sessionsNames.begin();
+            for (t_longListCI sessionIter = _sessionIDs.begin();
+                 sessionIter != _sessionIDs.end();
                  sessionIter++)
                {
                   std::string session_descr = convertToString<t_long>(*sessionIter);

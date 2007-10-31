@@ -75,9 +75,12 @@ namespace btg
                /// Get all contained session IDs.
                void getIds(std::vector<t_long> & _sessions) const;
 
+               /// Get the names of the contained sessions belonging
+               /// to an user.
                void getNames(std::string const& _username, 
                              std::vector<std::string> & _names) const;
 
+               /// Get the names of the contained sessions. 
                void getNames(std::vector<std::string> & _names) const;
 
                /// For each event handler contained in an instance of

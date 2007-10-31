@@ -495,10 +495,10 @@ namespace btg
          }
 
          void guiStartupHelper::showSessions(t_longList const& _sessions,
-                                             t_strList const& _sessionIds) const
+                                             t_strList const& _sessionNames) const
          {
             sessionSelectionDialog* ssd = new sessionSelectionDialog(_sessions, 
-                                                                     _sessionIds, 
+                                                                     _sessionNames, 
                                                                      true /* no selection. */);
             ssd->run();
 

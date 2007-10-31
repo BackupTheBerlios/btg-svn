@@ -87,6 +87,7 @@ namespace btg
                      /// Show a menu.
                      void handleMenu();
 
+                     /// Handle setting the name of the current session.
                      void handleSessionName();
 
                      /// Show help.

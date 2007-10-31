@@ -321,6 +321,7 @@ namespace btg
                /// Get a list of peers.
                bool getPeers(t_int const _torrent_id, t_peerList & _peerlist);
 
+               /// Get a list of trackers belonging to a certain torrent.
                bool getTrackers(t_int const _torrent_id, t_strList & _trackers);
 
                /// Get the list of selected files.
@@ -588,6 +589,8 @@ namespace btg
                bool entryToInfo(libtorrent::entry const& _input,
                                 libtorrent::torrent_info & _output) const;
 
+               /// Convert an entry to a list of contained files.
+               /// @return True - converted. False - conversion failed.
                bool entryToFiles(libtorrent::entry const& _input,
                                  std::vector<std::string> _output) const;
 

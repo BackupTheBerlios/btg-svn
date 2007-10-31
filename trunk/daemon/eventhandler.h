@@ -76,6 +76,7 @@ namespace btg
                /// @param [in] _filter        Pointer to a filter, used to ban peers.
                /// @param [in] _useTorrentName Enable/disable using the torrent name from the tracker.
                /// @param [in] _connectionHandler Connection handler used by the eventhandler to store per-connection data.
+               /// @param [in] _sessionName       Name of the session.
                /// @param [in] _cbm           Pointer to the callback manager used.
                eventHandler(bool const _verboseFlag,
                             std::string const& _username,
@@ -152,8 +153,10 @@ namespace btg
                /// belongs to.
                std::string getUsername() const;
 
+               /// Set the name of the session.
                void setName(std::string const& _name);
 
+               /// Get the name of the session.
                std::string getName() const;
 
                /// Destructor.
@@ -193,6 +196,8 @@ namespace btg
                /// Number of clients currently attached.
                t_uint                       numClients;
 
+               /// The name of the session this event handler belongs
+               /// to.
                std::string                  name_;
 #if BTG_OPTION_EVENTCALLBACK
                /// Pointer to the callback manager used.
