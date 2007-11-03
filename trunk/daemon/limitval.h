@@ -153,9 +153,6 @@ namespace btg
                /// Get the contained session.
                libtorrent::session* session() const;
 
-               /// Infinite limit.
-               static const t_uint inf;
-
                /// Destructor.
                ~sessionData();
             private:

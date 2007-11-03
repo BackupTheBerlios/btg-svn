@@ -137,8 +137,6 @@ namespace btg
 
       }
 
-      const t_uint sessionData::inf = -1;
-
       sessionData::sessionData()
          : limitIf(),
            session_(0),
@@ -283,7 +281,7 @@ namespace btg
          if (_upload_rate_limit == limitBase::LIMIT_DISABLED)
             {
                // session_->m_ul_bandwidth_quota.max  = libtorrent::resource_request::inf;
-               val_ul_rate.max = sessionData::inf;
+               val_ul_rate.max = limitValue::inf;
             }
          else
             {
@@ -299,7 +297,7 @@ namespace btg
          if (_download_rate_limit == limitBase::LIMIT_DISABLED)
             {
                // session_->m_dl_bandwidth_quota.max  = libtorrent::resource_request::inf;
-               val_dl_rate.max = sessionData::inf;
+               val_dl_rate.max = limitValue::inf;
             }
          else
             {
@@ -321,7 +319,7 @@ namespace btg
          if (_max_connections == limitBase::LIMIT_DISABLED)
             {
                //session_->m_connections_quota.max  = libtorrent::resource_request::inf;
-               val_connections.max = sessionData::inf;
+               val_connections.max = limitValue::inf;
             }
          else
             {
@@ -344,7 +342,7 @@ namespace btg
          if (_max_uploads == limitBase::LIMIT_DISABLED)
             {
                // session_->m_uploads_quota.max  = libtorrent::resource_request::inf;
-               val_uploads.max = sessionData::inf;
+               val_uploads.max = limitValue::inf;
             }
          else
             {

@@ -44,6 +44,8 @@ namespace btg
    namespace daemon
    {
       
+      /// Addition, used by the algorithm used for allocating
+      /// resources.
       int saturated_add(int a, int b);
 
       // Function to allocate a limited resource fairly among many consumers.
@@ -53,7 +55,7 @@ namespace btg
       // If resources = std::numeric_limits<int>::max() it means there is an infinite
       // supply of resources (so everyone can get what they want).
 
-      // Used for global limits.
+      /// Allocate resources, used for global limits.
       void allocate_resources(
                               int resources
                               , std::vector<sessionData>& _sessions

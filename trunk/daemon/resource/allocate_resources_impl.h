@@ -62,8 +62,8 @@ namespace btg
       
       int saturated_add(int a, int b);
       
-		// give num_resources to r,
-		// return how how many were actually accepted.
+		/// Give num_resources to r.
+		/// @return How how many were actually accepted.
 		inline int give(limitValue& r, int num_resources)
 		{
 			assert(num_resources >= 0);
@@ -78,11 +78,13 @@ namespace btg
 			return accepted;
 		}
 
+      /// Divide, rounding up.
 		inline int div_round_up(int numerator, int denominator)
 		{
 			return (numerator + denominator - 1) / denominator;
 		}
 
+      /// Allocate resources (used for global limits).
 		template<class It, class T>
 		void allocate_resources_impl(
 			int resources

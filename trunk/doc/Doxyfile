@@ -92,7 +92,8 @@ INPUT                  = \
 ../daemon \
 ../daemon/auth \
 ../daemon/ipfilter \
-../daemon/upnp
+../daemon/upnp \
+../daemon/resource
 
 FILE_PATTERNS          = *.c *.ccp *.h
 RECURSIVE              = NO
