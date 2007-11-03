@@ -37,9 +37,10 @@ namespace btg
          namespace viewer
          {
 
-
+            /// Struct holding all required data used by this client.
             struct clientData
             {
+               /// Constructor.
             clientData()
             : handlerthr(0),
                   handler(0),
@@ -49,19 +50,22 @@ namespace btg
                {
                }
 
+               /// Handler thread resposible for communicating with
+               /// the daemon.
                btg::core::client::handlerThread*             handlerthr;
 
+               /// Handler.
                btg::UI::gui::viewer::viewerHandler*          handler;
 
+               /// Externalization interface implementation.
                btg::core::externalization::Externalization*  externalization;
 
+               /// Configuration.
                btg::core::client::clientConfiguration*       config;
 
+               /// Last opened files. Unused.
                btg::core::client::lastFiles*                 lastfiles;
             };
-
-            bool initClient();
-            void deinitClient();
 
          }
       }

@@ -42,9 +42,10 @@ namespace btg
                /// Default constructor.
                contextFileInfoCommand();
                /// Constructor.
-               /// @param [in] _context_id     The context ID of the context of which a status is required.
+               /// @param [in] _context_id     The context ID.
                /// @param [in] _allContexts    If set to True, return file info of all contexts.
-               contextFileInfoCommand(t_int const _context_id, bool const _allContexts = false);
+               contextFileInfoCommand(t_int const _context_id, 
+                                      bool const _allContexts = false);
                /// Destructor.
                virtual ~contextFileInfoCommand();
             };

@@ -45,7 +45,7 @@ namespace btg
                contextFileInfoResponseCommand();
 
                /// Constructor.
-               /// @param [in] _context_id     The context ID which this status is for.
+               /// @param [in] _context_id     The context ID.
                /// @param [in] _fileinfolist   List of file info objects.
                contextFileInfoResponseCommand(t_int const _context_id,
                                               t_fileInfoList const& _fileinfolist);

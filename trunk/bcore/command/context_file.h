@@ -47,6 +47,8 @@ namespace btg
                contextSetFilesCommand();
 
                /// Constructor.
+               /// @param [in] _context_id The context ID.
+               /// @param [in] _files      Files to set/unset.
                contextSetFilesCommand(t_int const _context_id, 
                                       selectedFileEntryList const& _files);
                
@@ -71,6 +73,7 @@ namespace btg
                contextGetFilesCommand();
 
                /// Constructor.
+               /// @param [in] _context_id The context ID.
                contextGetFilesCommand(t_int const _context_id);
 
                /// Destructor.
@@ -85,6 +88,8 @@ namespace btg
                contextGetFilesResponseCommand();
 
                /// Constructor.
+               /// @param [in] _context_id The context ID.
+               /// @param [in] _files      Information about which files are set/unset.
                contextGetFilesResponseCommand(t_int const _context_id, 
                                               selectedFileEntryList const& _files);
                

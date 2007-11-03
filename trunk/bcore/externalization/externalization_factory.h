@@ -36,25 +36,26 @@ namespace btg
              */
             /** @{ */
 
-            /// Externalization types
+            /// Externalization types.
             enum eExternalizationType
             {
-               etSimple = 0, //< for Simple serializator
-               etXml = 1, //< for XMLRPC serializarot
-               etMax
+               etSimple = 0, //< For Simple serializator.
+               etXml    = 1, //< For XMLRPC serializator.
+               etMax         //< Max.
             };
             
-            /// Serializator class factory
+            /// Serializator class factory.
             class Factory
             {
             public:
-               /// Creates serializator instance
-               /// @param [in] et Serializator type
-               static Externalization * createExternalization(eExternalizationType et = etXml);
+               /// Creates serializator instance.
+               /// @param [in] _et Serializator type.
+               /// @return Pointer to externalization implementation or 0.
+               static Externalization* createExternalization(eExternalizationType _et = etXml);
 
-               /// Destroyes serializator instance
-               /// @param [in/out] pext Pointer to instance
-               static void destroyExternalization(Externalization * & pext);
+               /// Destroyes serializator instance.
+               /// @param [in] _ext Pointer to instance.
+               static void destroyExternalization(Externalization* & _ext);
             };
 
             /** @} */

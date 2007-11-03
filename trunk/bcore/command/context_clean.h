@@ -43,8 +43,8 @@ namespace btg
                contextCleanCommand();
 
                /// Constructor.
-               /// @param [in] _context_id     The context ID of the context which is to be started.
-               /// @param [in] _allContexts    If set to true, return status of all contexts.
+               /// @param [in] _context_id     The context ID of the context which is to be cleaned.
+               /// @param [in] _allContexts    If true, this command is valid for all contexts.
                contextCleanCommand(t_int const _context_id,
                                    bool const _allContexts = false);
                /// Destructor.

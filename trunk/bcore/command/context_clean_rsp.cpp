@@ -37,7 +37,8 @@ namespace btg
            contextIDs()
       {}
 
-      contextCleanResponseCommand::contextCleanResponseCommand(t_strList const& _filenames, t_intList const& _contextIDs)
+      contextCleanResponseCommand::contextCleanResponseCommand(t_strList const& _filenames, 
+                                                               t_intList const& _contextIDs)
          : Command(Command::CN_CCLEANRSP),
            filenames(_filenames),
            contextIDs(_contextIDs)

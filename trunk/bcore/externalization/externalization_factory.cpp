@@ -32,24 +32,24 @@ namespace btg
       namespace externalization
       {
          
-         Externalization * Factory::createExternalization(eExternalizationType et)
+         Externalization * Factory::createExternalization(eExternalizationType _et)
          {
-            switch (et)
+            switch (_et)
             {
             case etSimple:
                return new Simple();
             case etXml:
                return new XMLRPC();
             default:
-               BTG_NOTICE("Unknown serializator: " << et)
-               return NULL;
+               BTG_NOTICE("Unknown serializator: " << _et)
+               return 0;
             }
          }
          
-         void Factory::destroyExternalization(Externalization * & pext)
+         void Factory::destroyExternalization(Externalization* & _ext)
          {
-            delete pext;
-            pext = NULL;
+            delete _ext;
+            _ext = 0;
          }
 
       } // namespace externalization

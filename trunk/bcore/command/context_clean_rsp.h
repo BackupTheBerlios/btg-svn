@@ -47,7 +47,9 @@ namespace btg
                /// Constructor.
                /// @param [in] _filenames      List of filenames.
                /// @param [in] _contextIDs     List of contexts.
-               contextCleanResponseCommand(t_strList const& _filenames, t_intList const& _contextIDs);
+               contextCleanResponseCommand(t_strList const& _filenames, 
+                                           t_intList const& _contextIDs);
+
                bool serialize(btg::core::externalization::Externalization* _e) const;
                bool deserialize(btg::core::externalization::Externalization* _e);
 

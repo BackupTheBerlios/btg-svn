@@ -38,7 +38,7 @@ namespace btg
           */
          /** @{ */
 
-         /// Clean up contexts that finished downloading.
+         /// Get tracker for a context.
          class contextGetTrackersCommand: public contextCommand
             {
             public:
@@ -46,36 +46,37 @@ namespace btg
                contextGetTrackersCommand();
 
                /// Constructor.
-               /// @param [in] _context_id     The context ID of the context which is to be started.
-               /// @param [in] _allContexts    If set to true, return status of all contexts.
+               /// @param [in] _context_id     The context ID.
+               /// @param [in] _allContexts    If true, this command is valid for all contexts.
                contextGetTrackersCommand(t_int const _context_id,
                                          bool const _allContexts = false);
                /// Destructor.
                virtual ~contextGetTrackersCommand();
             };
 
-         /// A List of contexts that got cleaned up.
+         /// List of trackers which belong to a certain context.
          class contextGetTrackersResponseCommand: public contextCommand
             {
             public:
                /// Default constructor.
                contextGetTrackersResponseCommand();
+
                /// Constructor.
-               /// @param [in] _filenames      List of filenames.
-               /// @param [in] _contextIDs     List of contexts.
+               /// @param [in] _context_id   Context ID.
+               /// @param [in] _trackers     List of trackers.
                contextGetTrackersResponseCommand(t_int const _context_id,
                                                  t_strList const& _trackers);
 
                bool serialize(btg::core::externalization::Externalization* _e) const;
                bool deserialize(btg::core::externalization::Externalization* _e);
 
-               /// Get the contained list of filenames.
+               /// Get the contained list of trackers.
                t_strList getTrackers() const;
 
                /// Destructor.
                virtual ~contextGetTrackersResponseCommand();
             private:
-               /// List of filenames.
+               /// List of trackers.
                t_strList trackers;
             };
 

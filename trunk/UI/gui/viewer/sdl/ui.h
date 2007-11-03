@@ -45,10 +45,14 @@ namespace btg
       {
          namespace viewer
          {
+            /// Struct containing information about one table row.
             struct tableData
             {
+               /// The filename.
                std::string filename;
+               /// Current status.
                std::string status;
+               /// Progress.
                std::string progress;
 
                /// Download rate in bytes per second.
@@ -58,9 +62,15 @@ namespace btg
                /// readable format.
                std::string dlul;
 
+               /// Number of bytes downloaded.
                t_uint      dlCount;
+               /// Number of bytes uploaded.
                t_uint      ulCount;
+
+               /// Size of the torrent.
                std::string size;
+
+               /// Number of peers.
                std::string peers;
 
                /// Operator, used to sort by download rate.
@@ -71,8 +81,10 @@ namespace btg
 
             };
 
+            /// Struct containing the information used by the GUI.
             struct btgvsGui
             {
+               /// Constructor.
                btgvsGui()
                : window(0),
                   contents_box(0),
@@ -95,22 +107,38 @@ namespace btg
                   tabs[2] = 0;
                }
 
+               /// Timer.
                AG_Timeout      timer;
+               /// Main window.
                AG_Window*      window;
+               /// Vertical box.
                AG_VBox*        contents_box;
+               /// Notebook.
                AG_Notebook*    notebook;
+               /// Statusbar.
                AG_Statusbar*   statusbar;
+               /// Label used for showing text on the statusbar.
                AG_Label*       statusbarlabel;
+               /// Notebook tabs.
                AG_NotebookTab* tabs[3];
+               /// Torrent table.
                AG_Table*       table;
+               /// UL/DL plot.
                AG_Graph*       plot;
+               /// DL plot.
                AG_GraphItem*   plotDlItem;
+               /// Zero plot.
                AG_GraphItem*   plotZeroItem;
+               /// UL plot.
                AG_GraphItem*   plotUlItem;
 
+               /// Observed max UL.
                t_uint          ul_max;
+               /// Observed min UL.
                t_uint          ul_min;
+               /// Observed max DL.
                t_uint          dl_max;
+               /// Observed min DL.
                t_uint          dl_min;
 
                /// How often the UI shall be updated.
@@ -119,8 +147,11 @@ namespace btg
 
             class viewerHandler;
 
+            /// Struct containing required data used for updating the
+            /// table showing torrents and their properties.
             struct timerData
             {
+               /// Constructor.
             timerData(btgvsGui &                           _gui,
                       btg::core::client::handlerThread*    _handlerthr,
                       viewerHandler* _handler)
@@ -128,23 +159,33 @@ namespace btg
                {
                }
 
+               /// Reference to the gui.
                btgvsGui &                           gui;
+               /// Thread used for updating torrents.
                btg::core::client::handlerThread*    handlerthr;
-               viewerHandler* handler;
+               /// Pointer to handler.
+               viewerHandler*                       handler;
             };
 
+            /// Create the GUI.
             void createGui(btgvsGui & _gui);
 
+            /// Create the timer used for updating tables.
             void createTimer(btgvsGui & _gui, timerData* _timerdata);
 
+            /// Run the GUI.
             void run();
 
+            /// Close the GUI.
             void destroyGui(btgvsGui & _gui);
 
+            /// Update the table showing torrents.
             void updateTable(btgvsGui & _gui, std::vector<tableData> const& _data);
 
+            /// Update the dl/ul graph.
             void updateGraph(btgvsGui & _gui, std::vector<tableData> const& _data);
             
+            /// Update the whole GUI.
             void update_ui(timerData* _timerdata);
 
          } // namespace viewer

@@ -67,17 +67,15 @@ namespace btg
                public:
                   /// Constructor.
                   ///
-                  /// @param [in] _e         The externalization used.
+                  /// @param [in] _e             The externalization used.
                   ///
-                  /// @param [in] _transport Message transport to
-                  /// be used for communicating with the daemon.
+                  /// @param [in] _transport     Message transport to be used for communicating with the daemon.
                   ///
-                  /// @param [in] _config Pointer to the class
-                  /// holding the client configuration.
-                  /// @param [in] _lastfiles Pointer to the class
-                  /// holding the list of last accessed files.
-                  /// @param [in] _verboseFlag Be verbose.
+                  /// @param [in] _config        Pointer to the class holding the client configuration.
+                  /// @param [in] _lastfiles     Pointer to the class holding the list of last accessed files.
+                  /// @param [in] _verboseFlag   Be verbose.
                   /// @param [in] _autoStartFlag Auto start loaded torrents.
+                  /// @param [in] _gui           Reference to the GUI instance used.
 
                   viewerHandler(btg::core::externalization::Externalization* _e,
                                 btg::core::messageTransport*            _transport,
@@ -200,6 +198,7 @@ namespace btg
                   /// operation.
                   t_strList      cleanedFilenames;
 
+                  /// Reference to the GUI instance used.
                   btgvsGui & gui;
 
                   /// List of peers, got from the last request to

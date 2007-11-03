@@ -99,13 +99,22 @@ namespace btg
                bool useDHTSet() const;
                bool useDHT() const;
 
+               /// Should the GUI use full screen mode.
                bool fullscreen() const;
 
+               /// Resolution.
                bool res1440x900() const;
+               /// Resolution.
                bool res1024x768() const;
 
+               /// Change tabs automatically.
                bool autoChangeTabs() const;
+
+               /// Auto delay between changing tabs.
                t_uint getAutoDelay() const;
+
+               /// The frequency of updates - set low to limit
+               /// communication with the daemon.
                t_uint getUpdateFreq() const;
 
                /// Destructor.
@@ -137,14 +146,23 @@ namespace btg
                /// set.
                bool                         config_file_present;
 
+               /// Should the GUI use full screen mode.
                bool                         fullscreen_set;
 
+               /// Resolution.
                bool                         res1440x900_set;
+
+               /// Resolution.
                bool                         res1024x768_set;
 
+               /// Change tabs automatically.
                bool                         autoTab_set;
+
+               /// Auto delay between changing tabs.
                t_uint                       autoDelay;
 
+               /// The frequency of updates - set low to limit
+               /// communication with the daemon.
                t_uint                       updateFreq;
             };
 

@@ -32,68 +32,68 @@
 namespace btg
 {
    namespace core
+   {
+      /**
+       * \addtogroup commands
+       */
+      /** @{ */
+
+      /// Create a context - tell the daemon to read the included
+      /// filename and create it as a context.
+      class contextCreateWithDataCommand: public Command
       {
-         /**
-          * \addtogroup commands
-          */
-         /** @{ */
+      public:
+         /// Constructor.
+         contextCreateWithDataCommand();
 
-         /// Create a context - tell the daemon to read the included
-         /// filename and create it as a context.
-         class contextCreateWithDataCommand: public Command
+         /// Constructor.
+         /// @param [in] _filename     The filename of the torrent file to create.
+         /// @param [in] _torrent_file The contents (raw bytes) of the file to create.
+         /// @param [in] _start        Indicates if the torrent will be started after creation.
+         contextCreateWithDataCommand(std::string const& _filename,
+                                      sBuffer const& _torrent_file,
+                                      bool const _start);
+
+         std::string toString() const;
+         bool serialize(btg::core::externalization::Externalization* _e) const;
+         bool deserialize(btg::core::externalization::Externalization* _e);
+
+         /// Get the contained filename.
+         sBuffer getFile() const
+         {
+            return torrent_file;
+         }
+
+         /// Get the contained filename.
+         std::string getFilename() const
             {
-            public:
-               /// Constructor.
-               contextCreateWithDataCommand();
+               return filename;
+            }
 
-               /// Constructor.
-               /// @param [in] _filename     The filename of the torrent file to create.
-               /// @param [in] _torrent_file The contents (raw bytes) of the file to create.
-               /// @param [in] _start        Indicates if the torrent will be started after creation.
-               contextCreateWithDataCommand(std::string const& _filename,
-                                            sBuffer const& _torrent_file,
-					    bool const _start);
+         /// Indicates if the torrent should be started after
+         /// loading.
+         bool getStart() const
+         {
+            return start;
+         }
 
-               std::string toString() const;
-               bool serialize(btg::core::externalization::Externalization* _e) const;
-               bool deserialize(btg::core::externalization::Externalization* _e);
+         /// Destructor.
+         virtual ~contextCreateWithDataCommand();
+      private:
+         /// The filename of the torrent file to create.
+         std::string filename;
 
-               /// Get the contained filename.
-               sBuffer getFile() const
-                  {
-                     return torrent_file;
-                  }
+         /// The contents of the file.
+         sBuffer torrent_file;
 
-               /// Get the contained filename.
-               std::string getFilename() const
-                  {
-                     return filename;
-                  }
+         /// Indicates if the torrent should be started after
+         /// creation.
+         bool start;
+      };
 
-	       /// Indicates if the torrent should be started after
-	       /// loading.
-	       bool getStart() const
-		 {
-		   return start;
-		 }
+      /** @} */
 
-               /// Destructor.
-               virtual ~contextCreateWithDataCommand();
-            private:
-               /// The filename of the torrent file to create.
-               std::string filename;
-
-               /// The contents of the file.
-               sBuffer torrent_file;
-
-	       /// Indicates if the torrent should be started after
-	       /// creation.
-	       bool start;
-            };
-
-         /** @} */
-
-      } // namespace core
+   } // namespace core
 } // namespace btg
 
 #endif
