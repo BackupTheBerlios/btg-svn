@@ -42,15 +42,21 @@ namespace btg
          {
             using namespace btg::core;
 
-            void scaleBW(t_uint & _max, 
-                         t_uint &_min, 
-                         t_uint _bw, 
-                         t_uint & _scaled);
-
             static Uint32 update_event(void *obj, Uint32 ival, void *arg)
             {
-               timerData* timerdata = (timerData*)arg;
-               update_ui(timerdata);
+               timerData* timerdata = (timerData*)arg;               
+
+               timerdata->count++;
+
+               if (timerdata->count < timerdata->gui.updateDelay)
+                  {
+                     update_statusbar(timerdata);
+                  }
+               else
+                  {
+                     update_ui(timerdata);
+                     //update_statusbar(timerdata);
+                  }
 
                return ival;
             }
@@ -116,6 +122,7 @@ namespace btg
                               }
 
                            td.dlRate = iter->downloadRate();
+                           td.ulRate = iter->uploadRate();
 
                            humanReadableRate hrr = humanReadableRate::convert(iter->downloadRate());
                            td.dlul = hrr.toString();
@@ -126,8 +133,11 @@ namespace btg
                            td.dlul += hrr.toString();
                            
                            // Rates in KiB/sec.
-                           td.dlCount = iter->downloadRate() / 1024;
-                           td.ulCount = iter->uploadRate() / 1024;
+                           td.dlCount   = iter->downloadRate() / 1024;
+                           td.ulCount   = iter->uploadRate() / 1024;
+
+                           td.peerCount = iter->leechers();
+                           td.seedCount = iter->seeders();
 
                            std::string progress;
 
@@ -172,7 +182,13 @@ namespace btg
                std::sort(data.begin(), data.end());
 
                updateTable(_timerdata->gui, data);
-               updateGraph(_timerdata->gui, data);
+               updateGlobalStats(_timerdata->gui, data);
+
+               // Reset the counter used for detecting if its time to
+               // update.
+               _timerdata->count = 0;
+
+               AG_LabelPrintf(_timerdata->gui.statusbarlabel, "Updated.");
             }
 
 
@@ -180,7 +196,7 @@ namespace btg
             {
                // Create a new timer.
                AG_SetTimeout(&_gui.timer, update_event, _timerdata, 0);
-               AG_AddTimeout(_gui.table, &_gui.timer, _gui.updateDelay * 1000);
+               AG_AddTimeout(_gui.table, &_gui.timer, 1000 /* 1 sec */);
             }
 
             void createGui(btgvsGui & _gui)
@@ -194,37 +210,36 @@ namespace btg
                AG_WindowSetCaption(_gui.window, "%s", "TEST");
 
                _gui.contents_box = AG_VBoxNew(_gui.window, AG_VBOX_EXPAND);
-               _gui.notebook     = AG_NotebookNew(_gui.contents_box, AG_NOTEBOOK_EXPAND);
-               AG_NotebookSetTabAlignment(_gui.notebook, AG_NOTEBOOK_TABS_BOTTOM);
+
+               // Create a new table that expands to fill the window.
+               _gui.table = AG_TableNew(_gui.contents_box, AG_TABLE_EXPAND);
+ 
+               // Insert the columns.
+               std::string sizeSpecifier("<01234567890123456789>");
+               AG_TableAddCol(_gui.table, "Filename", sizeSpecifier.c_str(), 0);
+               AG_TableAddCol(_gui.table, "Status", sizeSpecifier.c_str(), 0);
+               AG_TableAddCol(_gui.table, "Progress", sizeSpecifier.c_str(), 0);
+               AG_TableAddCol(_gui.table, "Dl/Ul", sizeSpecifier.c_str(), 0);
+               AG_TableAddCol(_gui.table, "Size", sizeSpecifier.c_str(), 0);
+               AG_TableAddCol(_gui.table, "Peer/Seed", sizeSpecifier.c_str(), 0);
+
+               AG_LabelNew(_gui.contents_box, AG_LABEL_STATIC, "Totals:");
+
+               _gui.bwLabel = AG_LabelNew(_gui.contents_box, AG_LABEL_STATIC,
+                                          "Upload %s. Download %s.",
+                                          _gui.uploadStr.c_str(), 
+                                          _gui.downloadStr.c_str());
+                           
+               _gui.peLabel = AG_LabelNew(_gui.contents_box, AG_LABEL_STATIC,
+                                          "Peers %s. Seeds %s.",
+                                          _gui.peersStr.c_str(), 
+                                          _gui.seedsStr.c_str());
+
+               AG_SeparatorNew(_gui.contents_box, AG_SEPARATOR_HORIZ);
 
                // Status bar.
                _gui.statusbar      = AG_StatusbarNew(_gui.contents_box, 1);
                _gui.statusbarlabel = AG_StatusbarAddLabel(_gui.statusbar, AG_LABEL_STATIC, "Ready.");
-
-               _gui.tabs[0] = AG_NotebookAddTab(_gui.notebook, "Torrents", AG_BOX_HORIZ);
-               _gui.tabs[1] = AG_NotebookAddTab(_gui.notebook, "Graph",    AG_BOX_HORIZ);
-               _gui.tabs[2] = AG_NotebookAddTab(_gui.notebook, "Info",     AG_BOX_HORIZ);
-
-               AG_NotebookSelectTab(_gui.notebook, _gui.tabs[0]);
-
-               // Create a new table that expands to fill the window.
-               _gui.table = AG_TableNew(_gui.tabs[0], AG_TABLE_EXPAND);
- 
-               // Insert the columns.
-               char* sizeSpecifier = "<01234567890123456789>";
-               AG_TableAddCol(_gui.table, "Filename", sizeSpecifier, 0);
-               AG_TableAddCol(_gui.table, "Status", sizeSpecifier, 0);
-               AG_TableAddCol(_gui.table, "Progress", sizeSpecifier, 0);
-               AG_TableAddCol(_gui.table, "Dl/Ul", sizeSpecifier, 0);
-               AG_TableAddCol(_gui.table, "Size", sizeSpecifier, 0);
-               AG_TableAddCol(_gui.table, "Peer/Seed", sizeSpecifier, 0);
-
-               // Plot.
-               _gui.plot     = AG_GraphNew(_gui.tabs[1], AG_GRAPH_LINES, AG_GRAPH_SCROLL | AG_GRAPH_EXPAND);
-
-               _gui.plotDlItem   = AG_GraphAddItem(_gui.plot, "Download", 255, 255, 0,   512);
-               _gui.plotZeroItem = AG_GraphAddItem(_gui.plot, "Zero",     127, 127, 127, 512);
-               _gui.plotUlItem   = AG_GraphAddItem(_gui.plot, "Upload",   255, 0,   0,   512);
 
                // Show the window and enter event loop.
                AG_WindowShow(_gui.window);
@@ -264,59 +279,56 @@ namespace btg
                AG_TableRedrawCells(_gui.table);
             }
 
-            void scaleBW(t_uint & _max, 
-                         t_uint &_min, 
-                         t_uint _bw, 
-                         t_uint & _scaled)
+            void updateGlobalStats(btgvsGui & _gui, std::vector<tableData> const& _data)
             {
-               if (_bw > _max)
-                  {
-                     _max = _bw;
-                  }
+               t_ulong ulRate = 0;
+               t_ulong dlRate = 0;
+               t_ulong seeds = 0;
+               t_ulong peers = 0;
 
-               if (_bw < _min )
-                  {
-                     _min = _bw;
-                  }
-
-               t_int delta = _max-_min;
-
-               if (delta <= 0)
-                  {
-                     delta = 1;
-                  }
-               
-               _scaled = (_bw - _min) * 40 / delta;
-            }
-
-            void updateGraph(btgvsGui & _gui, std::vector<tableData> const& _data)
-            {
-               t_uint ul = 0;
-               t_uint dl = 0;
                for (std::vector<tableData>::const_iterator iter = _data.begin();
                     iter != _data.end();
                     iter++)
                   {
-                     ul += iter->ulCount;
-                     dl += iter->dlCount;
+                     const tableData & td = *iter;
+                     
+                     ulRate += td.ulRate;
+                     dlRate += td.dlRate;
+
+                     seeds  += td.peerCount;
+                     peers  += td.seedCount;
                   }
 
-               t_uint ul_scaled = 0;
-               scaleBW(_gui.ul_max, _gui.ul_min, ul, ul_scaled);
-               t_uint dl_scaled = 0;
-               scaleBW(_gui.ul_max, _gui.ul_min, dl, dl_scaled);
+               // Rates.
+               humanReadableRate hrr = humanReadableRate::convert(ulRate);
+               _gui.uploadStr = hrr.toString();
 
-               // std::cout << ul_scaled << ":" << ul << std::endl;
-               // std::cout << dl_scaled << ":" << dl << std::endl;
+               hrr = humanReadableRate::convert(dlRate);
+               _gui.downloadStr = hrr.toString();
 
-               //AG_GraphScale(_gui.plotDlItem, 512, dl);
-               //AG_GraphScale(_gui.plotUlItem, 512, ul);
+               // Peers and seeds.
+               _gui.peersStr = convertToString<t_uint>(peers);
+               _gui.seedsStr = convertToString<t_uint>(seeds);
 
-               // dl_scaled = 50;
+               // Print on screen.
+               AG_LabelPrintf(_gui.bwLabel, "Upload: %s. Download: %s.",
+                              _gui.uploadStr.c_str(), 
+                              _gui.downloadStr.c_str());
 
-               AG_GraphPlot(_gui.plotDlItem, dl_scaled);
-               AG_GraphPlot(_gui.plotZeroItem, 0);
-               AG_GraphPlot(_gui.plotUlItem, -1*ul_scaled);
+               AG_LabelPrintf(_gui.peLabel, "Peers: %s. Seeds: %s",
+                              _gui.peersStr.c_str(),
+                              _gui.seedsStr.c_str());
+
+                
+            }
+
+            void update_statusbar(timerData* _timerdata)
+            {
+               t_int diff = _timerdata->gui.updateDelay - _timerdata->count;
+
+               AG_LabelPrintf(_timerdata->gui.statusbarlabel, 
+                              "Next update in %d second(s).", 
+                              diff);
             }
 
          } // namespace viewer

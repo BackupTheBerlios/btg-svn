@@ -55,6 +55,8 @@ namespace btg
                /// Progress.
                std::string progress;
 
+               t_uint      ulRate;
+
                /// Download rate in bytes per second.
                t_uint      dlRate;
 
@@ -66,6 +68,11 @@ namespace btg
                t_uint      dlCount;
                /// Number of bytes uploaded.
                t_uint      ulCount;
+
+               /// Number of peers.
+               t_uint      peerCount;
+               /// Number of seeds.
+               t_uint      seedCount;
 
                /// Size of the torrent.
                std::string size;
@@ -88,7 +95,6 @@ namespace btg
                btgvsGui()
                : window(0),
                   contents_box(0),
-                  notebook(0),
                   statusbar(0),
                   statusbarlabel(0),
                   table(0),
@@ -100,11 +106,14 @@ namespace btg
                   ul_min(0),
                   dl_max(100),
                   dl_min(0),
-                  updateDelay(1000)
+                  updateDelay(1000),
+                  bwLabel(0),
+                  uploadStr("0 K/s"),
+                  downloadStr("0 K/s"),
+                  peLabel(0),
+                  peersStr("0"),
+                  seedsStr("0")
                {
-                  tabs[0] = 0;
-                  tabs[1] = 0;
-                  tabs[2] = 0;
                }
 
                /// Timer.
@@ -113,14 +122,10 @@ namespace btg
                AG_Window*      window;
                /// Vertical box.
                AG_VBox*        contents_box;
-               /// Notebook.
-               AG_Notebook*    notebook;
                /// Statusbar.
                AG_Statusbar*   statusbar;
                /// Label used for showing text on the statusbar.
                AG_Label*       statusbarlabel;
-               /// Notebook tabs.
-               AG_NotebookTab* tabs[3];
                /// Torrent table.
                AG_Table*       table;
                /// UL/DL plot.
@@ -143,6 +148,14 @@ namespace btg
 
                /// How often the UI shall be updated.
                t_uint          updateDelay;
+
+               AG_Label*       bwLabel;
+               std::string     uploadStr;
+               std::string     downloadStr;
+
+               AG_Label*       peLabel;
+               std::string     peersStr;
+               std::string     seedsStr;
             };
 
             class viewerHandler;
@@ -155,10 +168,14 @@ namespace btg
             timerData(btgvsGui &                           _gui,
                       btg::core::client::handlerThread*    _handlerthr,
                       viewerHandler* _handler)
-            : gui(_gui), handlerthr(_handlerthr), handler(_handler)
+            : count(0),
+                  gui(_gui), 
+                  handlerthr(_handlerthr), 
+                  handler(_handler)
                {
                }
 
+               t_uint                               count;
                /// Reference to the gui.
                btgvsGui &                           gui;
                /// Thread used for updating torrents.
@@ -182,11 +199,12 @@ namespace btg
             /// Update the table showing torrents.
             void updateTable(btgvsGui & _gui, std::vector<tableData> const& _data);
 
-            /// Update the dl/ul graph.
-            void updateGraph(btgvsGui & _gui, std::vector<tableData> const& _data);
-            
+            void updateGlobalStats(btgvsGui & _gui, std::vector<tableData> const& _data);
+
             /// Update the whole GUI.
             void update_ui(timerData* _timerdata);
+
+            void update_statusbar(timerData* _timerdata);
 
          } // namespace viewer
       } // namespace gui

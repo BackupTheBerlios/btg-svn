@@ -155,12 +155,6 @@ namespace btg
                /// Resolution.
                bool                         res1024x768_set;
 
-               /// Change tabs automatically.
-               bool                         autoTab_set;
-
-               /// Auto delay between changing tabs.
-               t_uint                       autoDelay;
-
                /// The frequency of updates - set low to limit
                /// communication with the daemon.
                t_uint                       updateFreq;

@@ -60,11 +60,6 @@ namespace btg
 #define res1024x768Label           "large,l"
 #define res1024x768LabelKey        "l"
 
-#define autoTabChangeLabel         "auto"
-#define autoTabChangeLabelKey      "auto"
-#define autoTabChangeDelayLabel    "autodelay"
-#define autoTabChangeDelayLabelKey "autodelay"
-
 #define updateFreqLabel            "freq,u"
 #define updateFreqLabelKey         "freq"
 
@@ -80,9 +75,7 @@ namespace btg
                  fullscreen_set(false),
                  res1440x900_set(false),
                  res1024x768_set(false),
-                 autoTab_set(false),
-                 autoDelay(5),
-                 updateFreq(1)
+                 updateFreq(10)
             {
 
             }
@@ -99,8 +92,6 @@ namespace btg
                   (fullscreenLabel, "Fullscreen.")
                   (res1440x900Label, "Use 1440x900 as the resolution.")
                   (res1024x768Label, "Use 1024x768 as the resolution.")
-                  (autoTabChangeLabel, "Change between tabs automatically.")
-                  (autoTabChangeDelayLabel, boost::program_options::value<t_uint>(), "Delay between changes of tabs.")
                   (updateFreqLabel, boost::program_options::value<t_uint>(), "Update frequency in seconds.")
                   ;
                desc.add_options()
@@ -211,16 +202,6 @@ namespace btg
                if (vm.count(res1024x768LabelKey))
                   {
                      res1024x768_set = true;
-                  }
-
-               if (vm.count(autoTabChangeLabel))
-                  {
-                     autoTab_set = true;
-                  }
-
-               if (vm.count(autoTabChangeDelayLabelKey))
-                  {
-                     autoDelay = vm[autoTabChangeDelayLabelKey].as<t_uint>();
                   }
 
                if (vm.count(updateFreqLabelKey))
@@ -336,16 +317,6 @@ namespace btg
             bool vsCommandLineArgumentHandler::res1024x768() const
             {
                return res1024x768_set;               
-            }
-
-            bool vsCommandLineArgumentHandler::autoChangeTabs() const
-            {
-               return autoTab_set;
-            }
-
-            t_uint vsCommandLineArgumentHandler::getAutoDelay() const
-            {
-               return autoDelay;
             }
 
             t_uint vsCommandLineArgumentHandler::getUpdateFreq() const
