@@ -10,7 +10,13 @@ if BUILDWWW
 
 install-data-local:
 	$(mkinstalldirs) $(WWW_UI_DEST)
-	$(INSTALL_DATA) $(WWW_UI_FILES) $(WWW_UI_DEST)
+	for file in $(WWW_UI_FILES) ; do \
+		if [ -e $$file ] ; then \
+			$(INSTALL_DATA) $$file $(WWW_UI_DEST) ; \
+		else \
+			$(INSTALL_DATA) $(srcdir)/$$file $(WWW_UI_DEST) ; \
+		fi ; \
+	done
 
 endif
 
