@@ -525,7 +525,7 @@ namespace btg
       }
 
       bool Context::entryToFiles(libtorrent::entry const& _input,
-                                 std::vector<std::string> _output) const
+                                 std::vector<std::string> & _output) const
       {
          BTG_MENTER("entryToFiles", "");
 
@@ -540,6 +540,8 @@ namespace btg
                     iter++)
                   {
                      libtorrent::file_entry const& fe = *iter;
+                     BTG_MNOTICE(fe.path.string());
+
                      _output.push_back(fe.path.string());
                   }
             }

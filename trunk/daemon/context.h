@@ -592,7 +592,7 @@ namespace btg
                /// Convert an entry to a list of contained files.
                /// @return True - converted. False - conversion failed.
                bool entryToFiles(libtorrent::entry const& _input,
-                                 std::vector<std::string> _output) const;
+                                 std::vector<std::string> & _output) const;
 
                /// Find out if data of a torrent is present in the seed dir.
                /// @param [in] _torrent_info Torrent info.
