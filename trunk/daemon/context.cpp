@@ -501,7 +501,7 @@ namespace btg
                return status;
             }
 
-         // btg_assert(contained_files.size() >= 1, "entryToFiles must return at least one file");
+         btg_assert(contained_files.size() >= 1, "entryToFiles must return at least one file");
 
          // A torrent was read without failing, now add the files to
          // the file tracker.
