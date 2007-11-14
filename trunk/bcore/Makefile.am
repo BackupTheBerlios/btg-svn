@@ -6,8 +6,9 @@ if BUILDCLI
   BCORE_CLIENT = client
 endif
 
-# os transport command logger externalization auth
-SUBDIRS            = $(BCORE_CLIENT)
+# Build the current directory first, since the client stuff depends on
+# commands etc.
+SUBDIRS            = . $(BCORE_CLIENT)
 
 pkglib_LTLIBRARIES    = libbtgcore.la
 
@@ -100,7 +101,6 @@ peer.cpp \
 file_info.cpp \
 dbuf.cpp \
 sbuf.cpp \
-command_factory.cpp \
 crashlog.cpp \
 addrport.cpp \
 configuration.cpp \
@@ -109,6 +109,7 @@ btg_assert.cpp \
 $(OS_SOURCES) \
 $(TRANSPORT_SOURCES) \
 $(COMMAND_SOURCES) \
+command_factory.cpp \
 $(LOGGER_SOURCES) \
 $(EXTERNALIZATION_SOURCES) \
 $(AUTH_SOURCES)
@@ -205,7 +206,7 @@ transport/http.h \
 hru.h hrr.h hrt.h \
 sigh.h \
 logmacro.h util.h status.h trackerstatus.h peer.h file_info.h dbuf.h sbuf.h \
-command_factory.h crashlog.h \
+crashlog.h \
 serializable.h printable.h addrport.h \
 helpermacro.h configuration.h \
 argif.h \
@@ -215,6 +216,7 @@ copts.h \
 $(OS_HEADER) \
 $(TRANSPORT_HEADER) \
 $(COMMAND_HEADER) \
+command_factory.h \
 $(LOGGER_HEADER) \
 $(EXTERNALIZATION_HEADER) \
 $(AUTH_HEADER)

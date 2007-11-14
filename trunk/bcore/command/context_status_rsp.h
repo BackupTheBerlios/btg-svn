@@ -80,7 +80,32 @@ namespace btg
                /// Return a list of Status objects.
                t_statusList getStatus() const;
                /// Destructor.
-               ~contextAllStatusResponseCommand();
+               virtual ~contextAllStatusResponseCommand();
+            private:
+               /// List of Status objects.
+               t_statusList status;
+            };
+
+         /// Command sent by the daemon to inform the client about the status
+         /// of multiple contexts.
+         class contextMultipleStatusResponseCommand: public contextCommand
+            {
+            public:
+               /// Default constructor.
+               contextMultipleStatusResponseCommand();
+
+               /// Constructor.
+               /// @param [in] _status         List of Status objects.
+               contextMultipleStatusResponseCommand(t_statusList const& _status);
+
+               bool serialize(btg::core::externalization::Externalization* _e) const;
+               bool deserialize(btg::core::externalization::Externalization* _e);
+
+               /// Return a list of Status objects.
+               t_statusList getStatus() const;
+
+               /// Destructor.
+               virtual ~contextMultipleStatusResponseCommand();
             private:
                /// List of Status objects.
                t_statusList status;

@@ -74,13 +74,7 @@ namespace btg
 
       }
 
-      /* *************************************************************** */
-      /* *************************************************************** */
-      /* *************************************************************** */
-      /* *************************************************************** */
-      /* *************************************************************** */
-      /* *************************************************************** */
-      /* *************************************************************** */
+      /* */
 
       contextAllStatusResponseCommand::contextAllStatusResponseCommand()
          : contextCommand(Command::CN_CALLSTATUSRSP, contextCommand::UNDEFINED_CONTEXT),
@@ -143,6 +137,74 @@ namespace btg
       }
 
       contextAllStatusResponseCommand::~contextAllStatusResponseCommand()
+      {
+
+      }
+
+      /* */
+
+      contextMultipleStatusResponseCommand::contextMultipleStatusResponseCommand()
+         : contextCommand(Command::CN_CMSTATUSRSP, contextCommand::UNDEFINED_CONTEXT),
+           status(0)
+      {
+         // status is left undefined.
+      }
+
+      contextMultipleStatusResponseCommand::contextMultipleStatusResponseCommand(t_statusList const& _status)
+         : contextCommand(Command::CN_CMSTATUSRSP, 
+                          contextCommand::UNDEFINED_CONTEXT), 
+           status(_status)
+      {}
+
+      bool contextMultipleStatusResponseCommand::serialize(btg::core::externalization::Externalization* _e) const
+      {
+         BTG_RCHECK( contextCommand::serialize(_e) );
+
+         // Serialize the list.
+
+         // First write the size of the list.
+         t_int list_size = status.size();
+         _e->setParamInfo("size of the list of status", true);
+         BTG_RCHECK( _e->intToBytes(&list_size) );
+
+         _e->setParamInfo("list of status", true);
+         // Then serialize the contents of the list.
+         t_statusListCI csci;
+         for (csci=status.begin(); csci != status.end(); csci++)
+            {
+               BTG_RCHECK( csci->serialize(_e) );
+            }
+
+         return true;
+      }
+
+      bool contextMultipleStatusResponseCommand::deserialize(btg::core::externalization::Externalization* _e)
+      {
+         BTG_RCHECK( contextCommand::deserialize(_e) );
+
+         // The size of the list.
+         t_int list_size = 0;
+         _e->setParamInfo("size of the list of status", true);
+         BTG_RCHECK( _e->bytesToInt(&list_size) );
+
+         _e->setParamInfo("list of status", true);
+         // The contents.
+         for (t_int list_counter = 0; list_counter < list_size; list_counter++)
+            {
+               Status s;
+               BTG_RCHECK( s.deserialize(_e) );
+               status.push_back(s);
+            }
+
+         return true;
+      }
+
+      t_statusList contextMultipleStatusResponseCommand::getStatus() const
+      {
+         return status;
+      }
+
+      contextMultipleStatusResponseCommand::~contextMultipleStatusResponseCommand()
       {
 
       }

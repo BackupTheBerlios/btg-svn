@@ -73,6 +73,8 @@ namespace btg
                      CN_CSTATUS,           //!< Request status information about a context.
                      CN_CSTATUSRSP,        //!< Status information about one context.
                      CN_CALLSTATUSRSP,     //!< Status information about all contexts.
+                     CN_CMSTATUS,          //!< Status information, a number of contexts.
+                     CN_CMSTATUSRSP,       //!< Status information, a number of contexts - response.
                      CN_CFILEINFO,         //!< Request file info information about a context.
                      CN_CFILEINFORSP,      //!< File info information about a context.
                      CN_CALLFILEINFORSP,   //!< File info information about all contexts.

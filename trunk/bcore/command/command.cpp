@@ -70,6 +70,8 @@ namespace btg
             t_IdToNameElem(Command::CN_CSTATUS,         "(c) Status"),
             t_IdToNameElem(Command::CN_CSTATUSRSP,      "(c) Status response"),
             t_IdToNameElem(Command::CN_CALLSTATUSRSP,   "(c) Status all response"),
+            t_IdToNameElem(Command::CN_CMSTATUS,        "(c) Status, multiple"),
+            t_IdToNameElem(Command::CN_CMSTATUSRSP,     "(c) Status, multiple response"),
             t_IdToNameElem(Command::CN_CFILEINFO,       "(c) File info"),
             t_IdToNameElem(Command::CN_CFILEINFORSP,    "(c) File info response"),
             t_IdToNameElem(Command::CN_CALLFILEINFORSP, "(c) File info all response"),

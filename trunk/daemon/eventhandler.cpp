@@ -87,7 +87,7 @@ namespace btg
                                  limitManager* _limitMgr,
                                  btg::core::externalization::Externalization* _e,
                                  t_long const _session,
-                                 messageTransport *_transport,
+                                 messageTransport* _transport,
                                  fileTrack* _filetrack,
                                  IpFilterIf* _filter,
                                  bool const _useTorrentName,
@@ -141,7 +141,7 @@ namespace btg
          BTG_MNOTICE("created");
       }
 
-      void eventHandler::event(Command *_command, t_int _connectionID)
+      void eventHandler::event(Command* _command, t_int _connectionID)
       {
          if ((_command == 0))
             {
@@ -188,6 +188,11 @@ namespace btg
             case Command::CN_CSTATUS:
                {
                   handle_CN_CSTATUS(_command, _connectionID);
+                  break;
+               }
+            case Command::CN_CMSTATUS:
+               {
+                  handle_CN_CMSTATUS(_command, _connectionID);
                   break;
                }
             case Command::CN_CLIMIT:
@@ -240,7 +245,7 @@ namespace btg
       }
 
       bool eventHandler::setup(const daemonConfiguration* _config,
-                               setupCommand *_setupcommand)
+                               setupCommand* _setupcommand)
       {
          BTG_MNOTICE("setup, using:" << _setupcommand->toString());
 
@@ -252,7 +257,7 @@ namespace btg
                                      _setupcommand->getRequiredData());
       }
 
-      void eventHandler::sendCommand(t_int _connectionID, Command *_command)
+      void eventHandler::sendCommand(t_int _connectionID, Command* _command)
       {
          buffer.erase();
 
@@ -445,7 +450,7 @@ namespace btg
             }
       }
 
-      void eventHandler::handle_CN_CCREATEWITHDATA(btg::core::Command *_command, t_int _connectionID)
+      void eventHandler::handle_CN_CCREATEWITHDATA(btg::core::Command* _command, t_int _connectionID)
       {
          contextCreateWithDataCommand* ccwdc = dynamic_cast<contextCreateWithDataCommand*>(_command);
 	 t_int handle_id = -1;
@@ -494,16 +499,16 @@ namespace btg
             }
       }
 
-      void eventHandler::handle_CN_CLAST(btg::core::Command *_command, t_int _connectionID)
+      void eventHandler::handle_CN_CLAST(btg::core::Command* _command, t_int _connectionID)
       {
          ConnectionExtraState& extraState = this->connHandler->getConnection(_connectionID)->ExtraState();
          t_int last_context_id = extraState.getLastCreatedContextId();
          sendCommand(_connectionID, new btg::core::lastCIDResponseCommand(last_context_id));
       }
 
-      void eventHandler::handle_CN_CSTART(btg::core::Command *_command, t_int _connectionID)
+      void eventHandler::handle_CN_CSTART(btg::core::Command* _command, t_int _connectionID)
       {
-         contextStartCommand *cstac = dynamic_cast<contextStartCommand*>(_command);
+         contextStartCommand* cstac = dynamic_cast<contextStartCommand*>(_command);
          bool op_status = false;
 
          if (cstac->isAllContextsFlagSet())
@@ -532,9 +537,9 @@ namespace btg
             }
       }
 
-      void eventHandler::handle_CN_CSTOP(btg::core::Command *_command, t_int _connectionID)
+      void eventHandler::handle_CN_CSTOP(btg::core::Command* _command, t_int _connectionID)
       {
-         contextStopCommand *cstoc = dynamic_cast<contextStopCommand*>(_command);
+         contextStopCommand* cstoc = dynamic_cast<contextStopCommand*>(_command);
          bool op_status            = false;
 
          if (cstoc->isAllContextsFlagSet())
@@ -556,9 +561,9 @@ namespace btg
             }
       }
 
-      void eventHandler::handle_CN_CABORT(btg::core::Command *_command, t_int _connectionID)
+      void eventHandler::handle_CN_CABORT(btg::core::Command* _command, t_int _connectionID)
       {
-         contextAbortCommand *cac = dynamic_cast<contextAbortCommand*>(_command);
+         contextAbortCommand* cac = dynamic_cast<contextAbortCommand*>(_command);
          bool op_status           = false;
 
          if (cac->isAllContextsFlagSet())
@@ -580,12 +585,12 @@ namespace btg
             }
       }
 
-      void eventHandler::handle_CN_CCLEAN(btg::core::Command *_command, t_int _connectionID)
+      void eventHandler::handle_CN_CCLEAN(btg::core::Command* _command, t_int _connectionID)
       {
          t_strList files;
          t_intList contextIDs;
 
-         contextCleanCommand *ccc = dynamic_cast<contextCleanCommand*>(_command);
+         contextCleanCommand* ccc = dynamic_cast<contextCleanCommand*>(_command);
          bool op_status           = false;
 
          if (ccc->isAllContextsFlagSet())
@@ -607,12 +612,12 @@ namespace btg
             }
       }
 
-      void eventHandler::handle_CN_CSTATUS(btg::core::Command *_command, t_int _connectionID)
+      void eventHandler::handle_CN_CSTATUS(btg::core::Command* _command, t_int _connectionID)
       {
-         contextStatusCommand *csc = dynamic_cast<contextStatusCommand*>(_command);
+         contextStatusCommand* csc = dynamic_cast<contextStatusCommand*>(_command);
          bool op_status            = false;
          Status status;
-         std::vector<Status> v_status;
+         t_statusList v_status;
 
          if (csc->isAllContextsFlagSet())
             {
@@ -654,9 +659,25 @@ namespace btg
             }
       }
 
-      void eventHandler::handle_CN_CLIMIT(btg::core::Command *_command, t_int _connectionID)
+      void eventHandler::handle_CN_CMSTATUS(btg::core::Command* _command, t_int _connectionID)
       {
-         contextLimitCommand *clc = dynamic_cast<contextLimitCommand*>(_command);
+         contextMultipleStatusCommand* cmsc = dynamic_cast<contextMultipleStatusCommand*>(_command);
+         t_statusList status;
+
+         bool op_status = daemoncontext->getStatus(cmsc->getIds(), status);
+         if (op_status)
+            {
+               sendCommand(_connectionID, new contextMultipleStatusResponseCommand(status));
+            }
+         else
+            {
+               sendError(_connectionID, Command::CN_CMSTATUS, "Unable to get status of contexts.");
+            }
+      }
+
+      void eventHandler::handle_CN_CLIMIT(btg::core::Command* _command, t_int _connectionID)
+      {
+         contextLimitCommand* clc = dynamic_cast<contextLimitCommand*>(_command);
          if (clc->isAllContextsFlagSet())
             {
                // Remove limit from all contexts.
@@ -776,11 +797,11 @@ namespace btg
 
       }
 
-      void eventHandler::handle_CN_CLIMITSTATUS(btg::core::Command *_command, t_int _connectionID)
+      void eventHandler::handle_CN_CLIMITSTATUS(btg::core::Command* _command, t_int _connectionID)
       {
          // Attempt to get the limits, set by the client, for a context.
 
-         contextLimitStatusCommand *cls = dynamic_cast<contextLimitStatusCommand*>(_command);
+         contextLimitStatusCommand* cls = dynamic_cast<contextLimitStatusCommand*>(_command);
 
          if (cls->isAllContextsFlagSet())
             {
@@ -816,10 +837,10 @@ namespace btg
 
       }
 
-      void eventHandler::handle_CN_CFILEINFO(btg::core::Command *_command, t_int _connectionID)
+      void eventHandler::handle_CN_CFILEINFO(btg::core::Command* _command, t_int _connectionID)
       {
          bool op_status                = false;
-         contextFileInfoCommand *cfic  = dynamic_cast<contextFileInfoCommand*>(_command);
+         contextFileInfoCommand* cfic  = dynamic_cast<contextFileInfoCommand*>(_command);
 
          t_fileInfoList  fileinfolist;
 
@@ -902,7 +923,7 @@ namespace btg
             }
       }
 
-      void eventHandler::handle_CN_CPEERS(btg::core::Command *_command, t_int _connectionID)
+      void eventHandler::handle_CN_CPEERS(btg::core::Command* _command, t_int _connectionID)
       {
          bool op_status            = false;
          contextPeersCommand* cpc  = dynamic_cast<contextPeersCommand*>(_command);

@@ -299,12 +299,17 @@ namespace btg
                              t_int &_seedLimit, 
                              t_long &_seedTimeout);
 
-               /// Get status of a torrent download.
+               /// Get status of a torrent.
                /// @param [in]  _torrent_id  Context ID of the torrent to get status of.
                /// @param [out] _destination Pointer to the object which stores the status information.
                /// @return True if operation was successful, false if not.
                bool getStatus(t_int const _torrent_id, 
                               btg::core::Status & _destination);
+
+               /// Get status of list of torrents.
+               /// @return True if operation was successful, false if not.
+               bool getStatus(t_intList const& _contexts, 
+                              t_statusList & _status);
 
                /// Get status of all torrents.
                /// @return True if operation was successful, false if not.

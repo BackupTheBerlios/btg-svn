@@ -59,38 +59,40 @@ class Command extends BTGSerializable
 	const CN_CSTATUS = 18;          //!< Request status information about a context.
 	const CN_CSTATUSRSP = 19;       //!< Status information about one context.
 	const CN_CALLSTATUSRSP = 20;    //!< Status information about all contexts.
-	const CN_CFILEINFO = 21;        //!< Request file info information about a context.
-	const CN_CFILEINFORSP = 22;     //!< File info information about a context.
-	const CN_CALLFILEINFORSP = 23;  //!< File info information about all contexts.
-	const CN_CCLEAN = 24;           //!< Request to clean finished contexts.
-	const CN_CCLEANRSP = 25;        //!> Response that informs the client that some contexts have been cleaned.
-	const CN_CLIMIT = 26;           //!< Limit a context.
-	const CN_CLIMITSTATUS = 27;     //!< Limit status.
-	const CN_CLIMITSTATUSRSP = 28;  //!< Limit status response.
-	const CN_CPEERS = 29;           //!< Request a list of peers.
-	const CN_CPEERSRSP = 30;        //!< Response containing a list of peers.
+   const CN_CMSTATUS = 21;
+	const CN_CMSTATUSRSP = 22;
+	const CN_CFILEINFO = 23;        //!< Request file info information about a context.
+	const CN_CFILEINFORSP = 24;     //!< File info information about a context.
+	const CN_CALLFILEINFORSP = 25;  //!< File info information about all contexts.
+	const CN_CCLEAN = 26;           //!< Request to clean finished contexts.
+	const CN_CCLEANRSP = 27;        //!> Response that informs the client that some contexts have been cleaned.
+	const CN_CLIMIT = 28;           //!< Limit a context.
+	const CN_CLIMITSTATUS = 29;     //!< Limit status.
+	const CN_CLIMITSTATUSRSP = 30;  //!< Limit status response.
+	const CN_CPEERS = 31;           //!< Request a list of peers.
+	const CN_CPEERSRSP = 32;        //!< Response containing a list of peers.
 
-	const CN_CSETFILES = 31;
-	const CN_CGETFILES = 32;
-	const CN_CGETFILESRSP = 33;
-	const CN_CGETTRACKERS = 34;
-	const CN_CGETTRACKERSRSP = 35;
+	const CN_CSETFILES = 33;
+	const CN_CGETFILES = 34;
+	const CN_CGETFILESRSP = 35;
+	const CN_CGETTRACKERS = 36;
+	const CN_CGETTRACKERSRSP = 37;
 
-	const CN_ERROR = 36;            //!< General error.
-	const CN_ACK = 37;              //!< General acknowlegment.
-	const CN_SATTACH = 38;          //!< Attach to a running session.
-	const CN_SDETACH = 39;          //!< Detach from a running session.
-	const CN_SERROR = 40;           //!< Daemon uses this command to tell clients that their session is invalid.
-	const CN_SQUIT = 41;            //!< Quit the current session.
-	const CN_SLIST = 42;            //!< Get a list of sessions.
-	const CN_SLISTRSP = 43;         //!< Response that lists sessions.
-	const CN_SNAME = 44;            //!< Get current session name.
-   const CN_SNAMERSP = 45;         //!< Current session name.
-   const CN_SSETNAME = 46;         //!< Set current session name.
-   const CN_MOREAD   = 47;         //!< Only read only access. Usefull for writing monitor applets.
-   const CN_MOWRITE  = 48;         //!< Default write mode.
+	const CN_ERROR = 38;            //!< General error.
+	const CN_ACK = 39;              //!< General acknowlegment.
+	const CN_SATTACH = 40;          //!< Attach to a running session.
+	const CN_SDETACH = 41;          //!< Detach from a running session.
+	const CN_SERROR = 42;           //!< Daemon uses this command to tell clients that their session is invalid.
+	const CN_SQUIT = 43;            //!< Quit the current session.
+	const CN_SLIST = 44;            //!< Get a list of sessions.
+	const CN_SLISTRSP = 45;         //!< Response that lists sessions.
+	const CN_SNAME = 46;            //!< Get current session name.
+   const CN_SNAMERSP = 47;         //!< Current session name.
+   const CN_SSETNAME = 48;         //!< Set current session name.
+   const CN_MOREAD   = 49;         //!< Only read only access. Usefull for writing monitor applets.
+   const CN_MOWRITE  = 50;         //!< Default write mode.
 
-	const CN_UNDEFINED = 49;        //!< Undefined command.
+	const CN_UNDEFINED = 51;        //!< Undefined command.
 
 
 	/* Map differnt commands to descriptive names */
@@ -117,6 +119,8 @@ class Command extends BTGSerializable
          Command::CN_CSTATUS         => "(c) Status",
          Command::CN_CSTATUSRSP      => "(c) Status response",
          Command::CN_CALLSTATUSRSP   => "(c) Status all response",
+			Command::CN_CMSTATUS        => "(c) Status, multiple",
+         Command::CN_CMSTATUSRSP     => "(c) Status, multiple response",
          Command::CN_CFILEINFO       => "(c) File info",
          Command::CN_CFILEINFORSP    => "(c) File info response",
          Command::CN_CALLFILEINFORSP => "(c) File info all response",
@@ -128,8 +132,8 @@ class Command extends BTGSerializable
          Command::CN_CPEERS          => "(c) List peers",
          Command::CN_CPEERSRSP       => "(c) List peers response",
          Command::CN_CSETFILES       => "(c) Set files",
-	 Command::CN_CGETFILES       => "(c) Get selected files",
-       	 Command::CN_CGETFILESRSP    => "(c) Get selected files response",
+	      Command::CN_CGETFILES       => "(c) Get selected files",
+       	Command::CN_CGETFILESRSP    => "(c) Get selected files response",
          Command::CN_CGETTRACKERS    => "(c) Get used trackers",
          Command::CN_CGETTRACKERSRSP => "(c) Get used trackers response",
 
@@ -178,6 +182,8 @@ class Command extends BTGSerializable
             Command::CN_CSTATUS         => "context.status",
             Command::CN_CSTATUSRSP      => "context.statusrsp",
             Command::CN_CALLSTATUSRSP   => "context.statusallrsp",
+				Command::CN_CMSTATUS        => "context.statusm",
+				Command::CN_CMSTATUSRSP     => "context.statusmrsp",
             Command::CN_CFILEINFO       => "context.fileinfo",
             Command::CN_CFILEINFORSP    => "context.fileinforsp",
             Command::CN_CALLFILEINFORSP => "context.fileinfoallrsp",

@@ -63,6 +63,8 @@ namespace btg
                t_IdToNameElem(Command::CN_CSTATUS,         "context.status"),
                t_IdToNameElem(Command::CN_CSTATUSRSP,      "context.statusrsp"),
                t_IdToNameElem(Command::CN_CALLSTATUSRSP,   "context.statusallrsp"),
+               t_IdToNameElem(Command::CN_CMSTATUS,        "context.statusm"),
+               t_IdToNameElem(Command::CN_CMSTATUSRSP,     "context.statusmrsp"),
                t_IdToNameElem(Command::CN_CFILEINFO,       "context.fileinfo"),
                t_IdToNameElem(Command::CN_CFILEINFORSP,    "context.fileinforsp"),
                t_IdToNameElem(Command::CN_CALLFILEINFORSP, "context.fileinfoallrsp"),

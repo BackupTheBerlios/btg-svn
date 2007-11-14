@@ -1203,6 +1203,39 @@ namespace btg
          return true;
       }
 
+      bool Context::getStatus(t_intList const& _contexts, 
+                              t_statusList & _status)
+      {
+         BTG_MENTER("getStatus(list)", "");
+
+         bool   result   = true;
+         Status status;
+
+         if (_contexts.size() == 0)
+            {
+               result = false;
+               BTG_MEXIT("getStatus(list)", result);
+               return result;
+            }
+
+         for (t_intListCI i=_contexts.begin(); 
+              i!= _contexts.end();
+              i++)
+            {
+               if (this->getStatus(*i, status))
+                  {
+                     _status.push_back(status);
+                  }
+               else
+                  {
+                     result = false;
+                  }
+            }
+
+         BTG_MEXIT("getStatus(list)", result);
+         return result;
+      }
+
       bool Context::getStatusAll(t_statusList & _vstatus)
       {
          BTG_MENTER("getStatusAll", "");

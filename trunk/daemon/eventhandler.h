@@ -91,7 +91,7 @@ namespace btg
                             limitManager* _limitMgr,
                             btg::core::externalization::Externalization* _e,
                             t_long const _session,
-                            btg::core::messageTransport *_transport,
+                            btg::core::messageTransport* _transport,
                             fileTrack* _filetrack,
                             IpFilterIf* _filter,
                             bool const _useTorrentName,
@@ -110,7 +110,7 @@ namespace btg
                /// @param [in] _command Pointer to an instance of command,
                /// @param [in] _connectionID Connection ID of the client
                /// which causes this handler to act.
-               void event(btg::core::Command *_command, t_int _connectionID);
+               void event(btg::core::Command* _command, t_int _connectionID);
 
                /// Increase the number of connected clients
                void incClients();
@@ -212,7 +212,7 @@ namespace btg
                /// @param [in] _connectionID The ID of the connection used.
                /// @param [in] _command      The command to send.
                /// \note Warning: This _deletes_ the argument after sending the command.
-               void sendCommand(t_int _connectionID, btg::core::Command *_command);
+               void sendCommand(t_int _connectionID, btg::core::Command* _command);
 
                /// Send either an ack or an error message, based on
                /// the value of _opStatus.
@@ -261,6 +261,9 @@ namespace btg
 
                /// Status of a context.
                void handle_CN_CSTATUS(btg::core::Command* _command, t_int _connectionID);
+
+               /// Status of a number of contexts.
+               void handle_CN_CMSTATUS(btg::core::Command* _command, t_int _connectionID);
 
                /// Limit a context.
                void handle_CN_CLIMIT(btg::core::Command* _command, t_int _connectionID);

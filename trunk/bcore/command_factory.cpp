@@ -175,6 +175,19 @@ namespace btg
                   c = new contextAllStatusResponseCommand();
                   break;
                }
+
+            case Command::CN_CMSTATUS:
+               {
+                  c = new contextMultipleStatusCommand();
+                  break;
+               }
+
+            case Command::CN_CMSTATUSRSP:
+               {
+                  c = new contextMultipleStatusResponseCommand();
+                  break;
+               }
+
             case Command::CN_CFILEINFO:
                {
                   c = new contextFileInfoCommand();
@@ -414,12 +427,14 @@ namespace btg
             case Command::CN_CABORT:
             case Command::CN_CSTATUS:
             case Command::CN_CSTATUSRSP:
+            case Command::CN_CALLSTATUSRSP:
+            case Command::CN_CMSTATUS:
+            case Command::CN_CMSTATUSRSP:
             case Command::CN_CFILEINFO:
             case Command::CN_CFILEINFORSP:
             //case Command::CN_CALLFILEINFORSP:
             case Command::CN_CCLEAN:
             case Command::CN_CCLEANRSP:
-            case Command::CN_CALLSTATUSRSP:
             case Command::CN_CLIMIT:
             case Command::CN_CLIMITSTATUS:
             case Command::CN_CLIMITSTATUSRSP:

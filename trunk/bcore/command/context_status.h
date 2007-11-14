@@ -25,6 +25,7 @@
 
 #include "context.h"
 #include <bcore/dbuf.h>
+#include <bcore/type.h>
 
 namespace btg
 {
@@ -49,6 +50,30 @@ namespace btg
                /// Destructor.
                virtual ~contextStatusCommand();
             };
+
+         /// Get the status for a list of contexts.
+         class contextMultipleStatusCommand: public contextCommand
+         {
+         public:
+            /// Default constructor.
+            contextMultipleStatusCommand();
+
+            /// Constructor.
+            /// @param [in] _context_ids List of context IDs.
+            contextMultipleStatusCommand(t_intList const& _context_ids);
+
+            bool serialize(btg::core::externalization::Externalization* _e) const;
+            bool deserialize(btg::core::externalization::Externalization* _e);
+
+            /// Get the list of context IDs.
+            t_intList getIds() const;
+
+            /// Destructor.
+            virtual ~contextMultipleStatusCommand();
+         protected:
+            /// Contained context IDs.
+            t_intList context_ids;
+         };
 
          /** @} */
 
