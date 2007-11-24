@@ -413,6 +413,9 @@ namespace btg
 
             // Find the max length of the contained file names;
             t_uint max_filename_size = 0;
+            t_uint max_progress_size = 0;
+            t_uint max_stat_size     = 4; // Constant.
+            t_uint max_perc_size     = 0;
 
             std::vector<statusEntry>::const_iterator iter;
             for (iter = iterBeg;
@@ -426,11 +429,40 @@ namespace btg
                      {
                         max_filename_size = size;
                      }
+
+                  std::string progress;
+                  if (statusToProgress(s, progress))
+                     {
+                        if (progress.size() > max_progress_size)
+                           {
+                              max_progress_size = progress.size();
+                           }
+                     }
+
+                  t_int done = s.done();
+
+                  std::string st_done(" ");
+                  if (done < 10)
+                     {
+                        st_done += " ";
+                     }
+                  if (done < 100)
+                     {
+                        st_done += " ";
+                     }
+                  st_done += btg::core::convertToString<t_int>(done);
+                  st_done += "%";
+
+                  if (st_done.size() > max_perc_size)
+                     {
+                        max_perc_size = st_done.size();
+                     }
                }
 
-            if (max_filename_size > 40)
+            if ((max_filename_size + max_progress_size + max_stat_size + max_perc_size)
+                > width_)
                {
-                  max_filename_size = 40;
+                  max_filename_size = width_ - (max_progress_size + max_stat_size + max_perc_size);
                }
 
             // Display the window.
@@ -460,10 +492,6 @@ namespace btg
                            }
                      }
 
-                  // Indicates that progress should be shown,
-                  // which is not always the case.
-                  bool show_progress = false;
-
                   std::string st_status(" ");
                   switch (s.status())
                      {
@@ -489,8 +517,7 @@ namespace btg
                         }
                      case btg::core::Status::ts_downloading:
                         {
-                           st_status    += "down";
-                           show_progress = true;
+                           st_status += "down";
                            break;
                         }
                      case btg::core::Status::ts_seeding:
@@ -527,49 +554,25 @@ namespace btg
                   st_done += btg::core::convertToString<t_int>(done);
                   st_done += "%";
 
+                  st_done += " ";
+
                   // Add progress:
 
-                  std::string st_progress(" ");
+                  std::string st_progress("");
 
-                  if (show_progress)
-                     {
-                        if (s.time_left_d() != 0)
-                           {
-                              // Only show days.
-                              st_progress += btg::core::convertToString<t_ulong>(s.time_left_d());
-                              st_progress += " days";
-                           }
-                        else
-                           {
-                              if ((s.time_left_h() != 0) ||
-                                  (s.time_left_m() != 0) ||
-                                  (s.time_left_s() != 0)
-                                  )
-                                 {
-                                    if (s.time_left_h() < 10)
-                                       {
-                                          st_progress += "0";
-                                       }
-                                    st_progress += btg::core::convertToString<t_ulong>(s.time_left_h()) + ":";
+                  statusToProgress(s, st_progress);
 
-                                    if (s.time_left_m() < 10)
-                                       {
-                                          st_progress += "0";
-                                       }
-                                    st_progress += btg::core::convertToString<t_int>(s.time_left_m()) + ":";
-			      
-                                    if (s.time_left_s() < 10)
-                                       {
-                                          st_progress += "0";
-                                       }
-                                    st_progress += btg::core::convertToString<t_int>(s.time_left_s());
-                                 }
-                           }
-                     }
-                  else
+                  t_int diff = max_progress_size - st_progress.size();
+                  if (diff > 0)
                      {
-                        st_progress += " ";
+                        addSpace(diff, st_progress);
                      }
+
+                  std::string st_peers = " ";
+                  st_peers += btg::core::convertToString<t_int>(s.leechers());
+                  st_peers += "/";
+                  st_peers += btg::core::convertToString<t_int>(s.seeders());
+
                   // Display marked torrents with different color.
                   if (iter->marked)
                      {
@@ -583,9 +586,9 @@ namespace btg
                         std::string spacestr;
                         t_int spaces = width_ - filename.size() - 
                            st_status.size() - st_done.size() - 
-                           st_progress.size() - 1;
+                           st_progress.size() - st_peers.size() - 1;
                         /* extra space is inserted at
-                         * the beginning of the line.
+                         * the end of the line.
                          */
 
                         if (spaces > 0)
@@ -599,21 +602,23 @@ namespace btg
                            }
 
                         ::wattron(window_, A_REVERSE);
-                        mvwprintw(window_, counter, 0, " %s%s%s%s%s", 
+                        mvwprintw(window_, counter, 0, " %s%s%s%s%s%s", 
                                   filename.c_str(), 
                                   st_status.c_str(),
                                   st_done.c_str(),
                                   st_progress.c_str(),
+                                  st_peers.c_str(),
                                   spacestr.c_str());
                         ::wattroff(window_, A_REVERSE);
                      }
                   else
                      {
-                        mvwprintw(window_, counter, 0, " %s%s%s%s", 
+                        mvwprintw(window_, counter, 0, " %s%s%s%s%s", 
                                   filename.c_str(),
                                   st_status.c_str(),
                                   st_done.c_str(),
-                                  st_progress.c_str());
+                                  st_progress.c_str(),
+                                  st_peers.c_str());
 
                      }
 
@@ -626,6 +631,60 @@ namespace btg
                   counter++;
                }
             unSetColor(Colors::C_NORMAL);
+         }
+
+         void mainWindow::addSpace(t_uint const _number,
+                                   std::string & _output) const
+         {
+            for (t_uint counter = 0;
+                 counter < _number;
+                 counter++)
+               {
+                  _output += " ";
+               }
+         }
+
+         bool mainWindow::statusToProgress(btg::core::Status const& _s, 
+                                           std::string & _output) const
+         {
+            if (_s.status() == btg::core::Status::ts_downloading)
+               {
+                  if (_s.time_left_d() != 0)
+                     {
+                        // Only show days.
+                        _output += btg::core::convertToString<t_ulong>(_s.time_left_d());
+                        _output += " days";
+                     }
+                  else
+                     {
+                        if ((_s.time_left_h() != 0) ||
+                            (_s.time_left_m() != 0) ||
+                            (_s.time_left_s() != 0)
+                            )
+                           {
+                              if (_s.time_left_h() < 10)
+                                 {
+                                    _output += "0";
+                                 }
+                              _output += btg::core::convertToString<t_ulong>(_s.time_left_h()) + ":";
+                              
+                              if (_s.time_left_m() < 10)
+                                 {
+                                    _output += "0";
+                                 }
+                              _output += btg::core::convertToString<t_int>(_s.time_left_m()) + ":";
+                              
+                              if (_s.time_left_s() < 10)
+                                 {
+                                    _output += "0";
+                                 }
+                              _output += btg::core::convertToString<t_int>(_s.time_left_s());
+                           }
+                     }
+                  return true;
+               }
+         
+            return false;
          }
 
          void mainWindow::update(std::vector<btg::core::Status> const& _list)

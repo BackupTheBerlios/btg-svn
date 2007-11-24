@@ -212,10 +212,6 @@ namespace btg
 
             {
                GET_HANDLER_INST;
-               //boost::shared_ptr<boost::mutex> ptr = handlerthread_->mutex();
-               //boost::mutex::scoped_lock interface_lock(*ptr);
-               //Handler & handler = handlerthread_->handler();
-
                handler->reqLimit(_context_id,
                                  _upload,
                                  _download,
@@ -254,10 +250,6 @@ namespace btg
             // Get the current limit.
             {
                GET_HANDLER_INST;
-               //boost::shared_ptr<boost::mutex> ptr = handlerthread_->mutex();
-               //boost::mutex::scoped_lock interface_lock(*ptr);
-               //Handler & handler = handlerthread_->handler();
-
                handler->reqLimitStatus(_context_id);
 
                if (handler->commandSuccess())
