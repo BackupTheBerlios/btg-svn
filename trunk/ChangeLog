@@ -2,6 +2,15 @@ BTG version 0.9.7
 -----------------
 The following bugs were fixed:
 
+012535 btgncli: show peers/seeds in the list of torrents.
+012330 Add another version of contextStatusCommand.
+012308 Clean up daemon/limitval.cpp.
+012301 Update doxygen.
+012241 Please use pkglib_LTLIBRARIES instead of lib_LTLIBRARIES.
+012226 btgui, files showing as 100%.
+012208 Add logging using syslog to wwwui.
+012205 torrent files which contain same files but different tracker.
+012190 Fix "warning: 'add_torrent' is deprecated"
 012125 Update SDL viewer, after refactoring of last files
 012124 Add command line interface(s) unittest
 012120 Update to libtorrent 0.13 aka SVN.
