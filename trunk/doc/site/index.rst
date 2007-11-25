@@ -11,7 +11,7 @@ What is BTG?
 Bittorrent client implemented in C++ and using the `Rasterbar Libtorrent`_
 library.
 
-Provides a Ncurses_, SDL, Gtkmm_ and WWW GUI, which communicate with a
+Provides a Ncurses_, SDL_, Gtkmm_ and WWW GUI, which communicate with a
 common backend running the actual bittorrent operation.
 
 Features
@@ -29,11 +29,11 @@ Features
 
 Clients
 -------
-- wwwBTG (web based client written in PHP).
-- btgncli (Ncurses client, menu driven).
-- btgcli (Ncurses client, command line).
-- btgui (Gtkmm GUI).
-- btgvs (SDL viewer GUI).
+- wwwBTG (web based client written in PHP_).
+- btgncli (Ncurses_ client, menu driven).
+- btgcli (Ncurses_ client, command line).
+- btgui (Gtkmm_ GUI).
+- btgvs (SDL_ viewer GUI using AGAR_).
 
 Platforms
 ---------
@@ -149,7 +149,10 @@ Links
 .. _BTG howto (0.9.6): howto-0.9.6.html
 .. _Rasterbar Libtorrent: http://www.rasterbar.com/products/libtorrent.html
 .. _Gtkmm: http://www.gtkmm.org/
+.. _SDL: http://libsdl.org/
+.. _AGAR: http://libagar.org/
 .. _Ncurses: http://www.gnu.org/software/ncurses/ncurses.html
+.. _PHP: http://php.net/
 .. _XML-RPC: http://www.xmlrpc.com/
 .. _BTG Release Procedure: release-proc.html
 

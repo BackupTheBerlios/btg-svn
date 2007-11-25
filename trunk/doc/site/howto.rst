@@ -49,12 +49,13 @@ UI
 ~~
 - Ncurses.
 - Gtkmm 2.4.
+- AGAR 1.2.
 
 WWW Frontend
 ~~~~~~~~~~~~
 - Apache, for example Apache 2.2.
 - PHP5.
-- PHP5-extensions (where XML and ZLIB is needed for BTG. ZLIB is not a requirement but speeds up the traffic between php and btgdaemon).
+- PHP5-extensions (where XML and ZLIB is needed for BTG. ZLIB is not a requirement but speeds up the traffic between PHP and btgdaemon).
 
 Support Scripts
 ~~~~~~~~~~~~~~~

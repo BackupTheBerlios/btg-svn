@@ -10,9 +10,9 @@ The following bugs were fixed:
 012226 btgui, files showing as 100%.
 012208 Add logging using syslog to wwwui.
 012205 torrent files which contain same files but different tracker.
-012190 Fix "warning: 'add_torrent' is deprecated"
-012125 Update SDL viewer, after refactoring of last files
-012124 Add command line interface(s) unittest
+012190 Fix "warning: 'add_torrent' is deprecated".
+012125 Update SDL viewer, after refactoring of last files.
+012124 Add command line interface(s) unittest.
 012120 Update to libtorrent 0.13 aka SVN.
 012118 Add session naming.
 012108 btgui: buttons OK and Cancel are equivalent when logging-in.
