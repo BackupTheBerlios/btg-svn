@@ -414,8 +414,10 @@ namespace btg
             // Find the max length of the contained file names;
             t_uint max_filename_size = 0;
             t_uint max_progress_size = 0;
-            t_uint max_stat_size     = 4; // Constant.
+            t_uint max_stat_size     = 5; // Constant.
             t_uint max_perc_size     = 0;
+            t_uint max_peers_size    = 0;
+            t_uint extra_space       = 2;
 
             std::vector<statusEntry>::const_iterator iter;
             for (iter = iterBeg;
@@ -457,12 +459,22 @@ namespace btg
                      {
                         max_perc_size = st_done.size();
                      }
+
+                  std::string st_peers = " ";
+                  st_peers += btg::core::convertToString<t_int>(s.leechers());
+                  st_peers += "/";
+                  st_peers += btg::core::convertToString<t_int>(s.seeders());
+
+                  if (st_peers.size() > max_peers_size)
+                     {
+                        max_peers_size = st_peers.size();
+                     }
                }
 
-            if ((max_filename_size + max_progress_size + max_stat_size + max_perc_size)
+            if ((max_filename_size + max_progress_size + max_stat_size + max_perc_size + max_peers_size + extra_space)
                 > width_)
                {
-                  max_filename_size = width_ - (max_progress_size + max_stat_size + max_perc_size);
+                  max_filename_size = width_ - (max_progress_size + max_stat_size + max_perc_size + max_peers_size + extra_space);
                }
 
             // Display the window.
@@ -483,12 +495,7 @@ namespace btg
                         t_int diff = max_filename_size - filename.size();
                         if (diff > 0)
                            {
-                              for (t_int counter = 0;
-                                   counter < diff;
-                                   counter++)
-                                 {
-                                    filename += " ";
-                                 }
+                              addSpace(diff, filename);
                            }
                      }
 
