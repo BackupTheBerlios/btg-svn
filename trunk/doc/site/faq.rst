@@ -29,6 +29,15 @@ Its all the following things:
 BTG consists of a number of different applications. The clients
 communicate with the daemon.
 
+Why do I have to read the documentation?
+----------------------------------------
+
+Some people expect software to just work, without any
+configuration. If you expect this, BTG is _not_ for you. Give up now.
+
+Building and setting up BTG requires you to read the howto and
+possibly the man pages.
+
 What is a BTG session?
 ----------------------
 
@@ -92,12 +101,14 @@ BTG bugs.
 How about adding feature X?
 ---------------------------
 
-BTG accepts patches. Make sure that its against the devel-branch.
+BTG accepts patches. Make sure that its against the trunk of the SVN repository.
 
 How can I help?
 ---------------
 
-Great. 
+The WWW frontend seems to require a lot of attention. If you know
+PHP/javascript and have time to spare, consider implementing one of
+the requested features.
 
 As always, more/better documentation is needed.
 

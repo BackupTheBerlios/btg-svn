@@ -76,12 +76,12 @@ namespace btg
          size_t act_size = backtrace (array, array_size);
          strings         = backtrace_symbols (array, act_size);
 
-         std::cout << "Stacktrace:" << std::endl;
-         std::cout << "Got " << (act_size-1) << " stack frames." << std::endl;
+         std::cerr << "Stacktrace:" << std::endl;
+         std::cerr << "Got " << (act_size-1) << " stack frames." << std::endl;
 
          for (size_t i = 0; i < act_size; i++)
             {
-               std::cout << "Frame " << i << ": " << strings[i] << std::endl;
+               std::cerr << "Frame " << i << ": " << strings[i] << std::endl;
             }
          free (strings);
 #endif // HAVE_EXECINFO_H

@@ -564,8 +564,22 @@ installed from ports and is as far as I know is called "gmake".
 
 Most of the build process appears to work using the native FreeBSD
 make with the exception of running unittests. One of the steps leading
-up to executing the test is not executed (creating files and
+up to executing the tests is not executed (creating files and
 directories) and makes two of the unittests to fail.
+
+If make fails on FreeBSD (observed on 6.2) with
+
+::
+
+ "libbtgcore.so: undefined reference to `backtrace_symbols'"
+
+and the libexecinfo (provides the execinfo.h header) package is
+installed, use the following linker flags before running the configure
+script:
+
+::
+
+  LDFLAGS="-L/usr/local/lib -lexecinfo"
 
 .. _Tcsh: http://www.tcsh.org
 .. _Bash: http://www.gnu.org/software/bash/
@@ -574,15 +588,10 @@ directories) and makes two of the unittests to fail.
 Rasterbar Libtorrent Versions
 =============================
 
-One can use one of the following `Rasterbar Libtorrent`_ versions: 
+One can use one of the following `Rasterbar Libtorrent`_ versions with
+the trunk the BTG SVN repository:
 
-- 0.9.
-- 0.10.
-- 0.11 - adds DHT support.
-- 0.12 - daemon wide download/upload/connection limits work.
-- SVN (future 0.13) - only with BTG SVN.
-
-Setting global limits is no longer supported using other than libtorrent SVN.
+- SVN (future 0.13).
 
 Supported Directory Structure
 =============================
