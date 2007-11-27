@@ -43,25 +43,38 @@ namespace btg
          /* */
 
          baseMenu::baseMenu(keyMapping const& _kmap,
-			    windowSize const& _ws,
+                            windowSize const& _ws,
                             std::string const& _title,
                             std::vector<menuEntry> const& _contents)
             : baseWindow(_kmap),
-	      size_(_ws),
+              size_(_ws),
               title_(_title),
               contents_(_contents),
               selection_(0),
               selected_(false)
          {
+            // Keys used by this window.
+            std::vector<keyMapping::KEYLABEL> labels;
+            labels.push_back(keyMapping::K_QUIT);
+            labels.push_back(keyMapping::K_MENU);
+            labels.push_back(keyMapping::K_DOWN);
+            labels.push_back(keyMapping::K_UP);
+            labels.push_back(keyMapping::K_LIST_START);
+            labels.push_back(keyMapping::K_LIST_END);
+            labels.push_back(keyMapping::K_SELECT);
+            labels.push_back(keyMapping::K_RESIZE);
+            labels.push_back(keyMapping::K_HELP);
+
+            kmap_.setUsed(labels);
          }
 
-	dialog::RESULT baseMenu::run()
+         dialog::RESULT baseMenu::run()
          {
             windowSize ws = calculateDimenstions(size_);
             if (!baseWindow::init(ws))
-	      {
-		return dialog::R_NCREAT;
-	      }
+               {
+                  return dialog::R_NCREAT;
+               }
 
             refresh();
 
@@ -122,26 +135,26 @@ namespace btg
                            quit      = true;
                            break;
                         }
-		     case keyMapping::K_RESIZE:
-		       {
-			 return dialog::R_RESIZE;
-			 break;
-		       }
+                     case keyMapping::K_RESIZE:
+                        {
+                           return dialog::R_RESIZE;
+                           break;
+                        }
                      default:
                         {
- 			   refresh();
+                           refresh();
                            selected_ = false;
                            break;
                         }
                      }
                }
 
-	    return dialog::R_QUIT;
+            return dialog::R_QUIT;
          }
 
          void baseMenu::draw()
          {
-	   setColor(Colors::C_NORMAL);
+            setColor(Colors::C_NORMAL);
             // Write a title and a separator.
 
             t_uint ypos    = 1;
@@ -163,7 +176,7 @@ namespace btg
 
                   if (selection_ == counter)
                      {
-		        unSetColor(Colors::C_NORMAL);
+                        unSetColor(Colors::C_NORMAL);
                         setColor(Colors::C_MARK);
                         ::wattron(window_, A_REVERSE);
 
@@ -182,7 +195,7 @@ namespace btg
 
                         mvwprintw(window_, ypos, 1, "%s%s", iter->label.c_str(), spacestr.c_str());
                         unSetColor(Colors::C_MARK);
-			setColor(Colors::C_NORMAL);
+                        setColor(Colors::C_NORMAL);
                         ::wattroff(window_, A_REVERSE);
                      }
                   else
@@ -193,7 +206,7 @@ namespace btg
                   counter++;
                   ypos++;
                }
-	   unSetColor(Colors::C_NORMAL);
+            unSetColor(Colors::C_NORMAL);
          }
 
          void baseMenu::resize(windowSize const& _ws)

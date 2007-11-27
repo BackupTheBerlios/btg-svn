@@ -33,6 +33,15 @@ namespace btg
             : baseWindow(_kmap),
               text_(_text)
          {
+            // Keys used by this window.
+            std::vector<keyMapping::KEYLABEL> labels;
+            // labels.push_back(keyMapping::K_UNDEF);
+            labels.push_back(keyMapping::K_HELP);
+            labels.push_back(keyMapping::K_QUIT);
+            labels.push_back(keyMapping::K_QUITSCREEN);
+            labels.push_back(keyMapping::K_SELECT);
+            labels.push_back(keyMapping::K_RESIZE);
+            kmap_.setUsed(labels);
          }
 
          void helpWindow::resize(windowSize const& _ws)

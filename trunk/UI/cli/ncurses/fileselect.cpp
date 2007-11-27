@@ -52,7 +52,19 @@ namespace btg
               currentId_(0),
               pressed_select_key_(false)       
          {
-
+            // Keys used by this window.
+            std::vector<keyMapping::KEYLABEL> labels;
+            labels.push_back(keyMapping::K_HELP);
+            labels.push_back(keyMapping::K_QUIT);
+            labels.push_back(keyMapping::K_DOWN);
+            labels.push_back(keyMapping::K_UP);
+            labels.push_back(keyMapping::K_LIST_START);
+            labels.push_back(keyMapping::K_LIST_END);
+            labels.push_back(keyMapping::K_MARK);
+            labels.push_back(keyMapping::K_SELECT);
+            labels.push_back(keyMapping::K_MARK_ALL);
+            labels.push_back(keyMapping::K_RESIZE);
+            kmap_.setUsed(labels);
          }
 
          dialog::RESULT fileSelect::run()

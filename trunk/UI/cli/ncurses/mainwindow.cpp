@@ -333,7 +333,6 @@ namespace btg
               positionWindowEnd_(0),
               currentPosition_(0)
          {
-
          }
 
          bool mainWindow::init(windowSize const& _ws)

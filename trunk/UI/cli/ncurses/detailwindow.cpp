@@ -39,7 +39,14 @@ namespace btg
               mainwindow_(_mainwindow),
               counter_(0)
          {
+            // Keys used by this window.
+            std::vector<keyMapping::KEYLABEL> labels;
 
+            labels.push_back(keyMapping::K_QUIT);
+            labels.push_back(keyMapping::K_HELP);
+            labels.push_back(keyMapping::K_RESIZE);
+
+            kmap_.setUsed(labels);
          }
 
          void detailWindow::resize(windowSize const& _ws)

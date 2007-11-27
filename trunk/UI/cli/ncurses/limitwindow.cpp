@@ -79,6 +79,22 @@ namespace btg
             counters_[limitWindow::COUNTER2].label = _counter2label;
             counters_[limitWindow::COUNTER3].label = _counter3label;
             counters_[limitWindow::COUNTER4].label = _counter4label;
+
+            // Keys used by this window.
+            std::vector<keyMapping::KEYLABEL> labels;
+
+            labels.push_back(keyMapping::K_QUIT);
+            labels.push_back(keyMapping::K_NEXT);
+            labels.push_back(keyMapping::K_PREV);
+            labels.push_back(keyMapping::K_DOWN);
+            labels.push_back(keyMapping::K_UP);
+            labels.push_back(keyMapping::K_LIST_START);
+            labels.push_back(keyMapping::K_LIST_END);
+            labels.push_back(keyMapping::K_HELP);
+            labels.push_back(keyMapping::K_SELECT);
+            labels.push_back(keyMapping::K_RESIZE);
+
+            kmap_.setUsed(labels);
          }
 
          dialog::RESULT limitWindow::run()

@@ -33,6 +33,9 @@ namespace btg
               status_(),
               currentColor_(Colors::C_NORMAL)
          {
+            // Keys used by this window.
+            std::vector<keyMapping::KEYLABEL> labels;
+            kmap_.setUsed(labels);
          }
 
          void statusWindow::resize(windowSize const& _ws)

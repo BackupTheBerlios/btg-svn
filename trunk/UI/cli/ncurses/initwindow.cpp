@@ -33,200 +33,200 @@ namespace btg
       {
 
          initWindow::initWindow(keyMapping const& _kmap)
-	   : baseWindow(_kmap),
-	     hidden(false),
-	     middle_x(0),
-	     middle_y(0)
+            : baseWindow(_kmap),
+              hidden(false),
+              middle_x(0),
+              middle_y(0)
          {
          }
 
-	void initWindow::show()
-	{
-	  baseWindow::ncursesInit();
+         void initWindow::show()
+         {
+            baseWindow::ncursesInit();
 
-	  windowSize ws;
-	  ws.topX = 0;
-	  ws.topY = 0;
+            windowSize ws;
+            ws.topX = 0;
+            ws.topY = 0;
 
-	  baseWindow::getScreenSize(ws.width, ws.height);
+            baseWindow::getScreenSize(ws.width, ws.height);
 
-	  middle_x = ws.width / 2;
-	  middle_y = ws.height / 2;
+            middle_x = ws.width / 2;
+            middle_y = ws.height / 2;
 
-	  init(ws);
-	}
+            init(ws);
+         }
 
-	void initWindow::hide()
-	{
-	  hidden = true;
-	  baseWindow::ncursesDestroy();
-	}
+         void initWindow::hide()
+         {
+            hidden = true;
+            baseWindow::ncursesDestroy();
+         }
 
          void initWindow::setText(std::string const& _text)
          {
-	   t_int loc = middle_x - (_text.size() / 2);
+            t_int loc = middle_x - (_text.size() / 2);
 
-	   mvwprintw(window_, middle_y, loc, "%s", _text.c_str());
+            mvwprintw(window_, middle_y, loc, "%s", _text.c_str());
          }
 
-	void initWindow::setPercent(t_uint const _percent)
-	{
-	  std::string perc_str;
-
-	  t_int width  = (width_ - 2);
-          t_int size_x = _percent * width / 100;
-
-	  // Add percent.
-	  for (t_int counter = 0;
-	       counter < size_x;
-	       counter++)
-	    {
-	      perc_str += "#";
-	    }
-
-	  // Add spaces.
-	  t_int spaces = width - size_x;
-	  for (t_int counter = 0;
-	       counter < spaces;
-	       counter++)
-	    {
-	      perc_str += ".";
-	    }
-
-	  mvwprintw(window_, middle_y + 1, 0, "[%s]", perc_str.c_str());
-
-	}
-
-	void initWindow::updateProgress(INITEVENT _event)
+         void initWindow::setPercent(t_uint const _percent)
          {
-	   clear();
+            std::string perc_str;
+
+            t_int width  = (width_ - 2);
+            t_int size_x = _percent * width / 100;
+
+            // Add percent.
+            for (t_int counter = 0;
+                 counter < size_x;
+                 counter++)
+               {
+                  perc_str += "#";
+               }
+
+            // Add spaces.
+            t_int spaces = width - size_x;
+            for (t_int counter = 0;
+                 counter < spaces;
+                 counter++)
+               {
+                  perc_str += ".";
+               }
+
+            mvwprintw(window_, middle_y + 1, 0, "[%s]", perc_str.c_str());
+
+         }
+
+         void initWindow::updateProgress(INITEVENT _event)
+         {
+            clear();
 
             switch(_event)
                {
                case IEV_START:
-		 {
-		   setPercent(0);
-		   setText("Started initialization");
-		   refresh();
-		   break;
-		 }
+                  {
+                     setPercent(0);
+                     setText("Started initialization");
+                     refresh();
+                     break;
+                  }
                case IEV_RCONF:
-		 {
-		   setPercent(15);
-		   setText("Reading config");
-		   refresh();
-		   break;
-		 }
-	       case IEV_RCONF_KEYS:
-		 {
-		   setPercent(20);
-		   setText("Reading config");
-		   refresh();
-		   break;
-		 }
+                  {
+                     setPercent(15);
+                     setText("Reading config");
+                     refresh();
+                     break;
+                  }
+               case IEV_RCONF_KEYS:
+                  {
+                     setPercent(20);
+                     setText("Reading config");
+                     refresh();
+                     break;
+                  }
                case IEV_RCONF_DONE:
-		 {
-		   setPercent(30);
-		   setText("Config read");
-		   refresh();
-		   break;
-		 }
+                  {
+                     setPercent(30);
+                     setText("Config read");
+                     refresh();
+                     break;
+                  }
                case IEV_CLA:
-		 {
-		   setPercent(45);
-		   setText("Parsing arguments");
-		   refresh();
-		   break;
-		 }
+                  {
+                     setPercent(45);
+                     setText("Parsing arguments");
+                     refresh();
+                     break;
+                  }
                case IEV_CLA_DONE:
-		 {
-		   setPercent(50);
-		   setText("Arguments parsed");
-		   refresh();
-		   break;
-		 }
+                  {
+                     setPercent(50);
+                     setText("Arguments parsed");
+                     refresh();
+                     break;
+                  }
                case IEV_TRANSP:
-		 {
-		   setPercent(65);
-		   setText("Creating transport");
-		   refresh();
-		   break;
-		 }
-	       case IEV_TRANSP_DONE:
-		 {
-		   setPercent(75);
-		   setText("Transport created");
-		   refresh();
-		   break;
-		 }
+                  {
+                     setPercent(65);
+                     setText("Creating transport");
+                     refresh();
+                     break;
+                  }
+               case IEV_TRANSP_DONE:
+                  {
+                     setPercent(75);
+                     setText("Transport created");
+                     refresh();
+                     break;
+                  }
                case IEV_SETUP:
-		 {
-		   setPercent(85);
-		   setText("Registering");
-		   refresh();
-		   break;
-		 }
+                  {
+                     setPercent(85);
+                     setText("Registering");
+                     refresh();
+                     break;
+                  }
                case IEV_SETUP_DONE:
-		 {
-		   setPercent(95);
-		   setText("Registered");
-		   refresh();
-		   break;
-		 }
+                  {
+                     setPercent(95);
+                     setText("Registered");
+                     refresh();
+                     break;
+                  }
                case IEV_END:
-		 {
-		   setPercent(100);
-		   setText("Initialization done");
-		   refresh();
-		   break;
-		 }
+                  {
+                     setPercent(100);
+                     setText("Initialization done");
+                     refresh();
+                     break;
+                  }
                }
          }
 
-	void initWindow::showError(std::string const& _error)
-	{
-	  clear();
+         void initWindow::showError(std::string const& _error)
+         {
+            clear();
 
-	  std::string error = "Error: " + _error;
+            std::string error = "Error: " + _error;
 
-	  t_int loc = middle_x - (error.size() / 2);
+            t_int loc = middle_x - (error.size() / 2);
 	  
-	  mvwprintw(window_, middle_y, loc, "%s", error.c_str());
+            mvwprintw(window_, middle_y, loc, "%s", error.c_str());
 
-	  refresh();
+            refresh();
 
-	  readAnyKey();
-	}
+            readAnyKey();
+         }
 
-	void initWindow::resize(windowSize const& _ws)
-	{
+         void initWindow::resize(windowSize const& _ws)
+         {
 
-	}
+         }
 	
-	windowSize initWindow::calculateDimenstions(windowSize const& _ws) const
-	{
-	  // Use the screen size given.
-	  return _ws;
-	}
+         windowSize initWindow::calculateDimenstions(windowSize const& _ws) const
+         {
+            // Use the screen size given.
+            return _ws;
+         }
 	
-	void initWindow::refresh()
-	{
-	  if (window_ == 0)
+         void initWindow::refresh()
+         {
+            if (window_ == 0)
                {
                   return;
                }
 
             wrefresh(window_);
-	}
+         }
 
-	initWindow::~initWindow()
-	{
-	  if (!hidden)
-	    {
-	      hidden = true;
-	      hide();
-	    }
-	}
+         initWindow::~initWindow()
+         {
+            if (!hidden)
+               {
+                  hidden = true;
+                  hide();
+               }
+         }
 
          /** @} */
 
