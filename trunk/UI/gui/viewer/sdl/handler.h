@@ -41,8 +41,6 @@
 
 #include "arg.h"
 
-#include "ui.h"
-
 namespace btg
 {
    namespace UI
@@ -51,6 +49,8 @@ namespace btg
       {
          namespace viewer
          {
+
+            class btgvsGui;
 
             /**
              * \addtogroup viewer
@@ -83,7 +83,7 @@ namespace btg
                                 btg::core::client::lastFiles*           _lastfiles,
                                 bool const                              _verboseFlag,
                                 bool const                              _autoStartFlag,
-                                btgvsGui &                              _gui
+                                btgvsGui *                              _gui
                                 );
 
                   /// Returns the list of contexts from the daemon.
@@ -199,7 +199,7 @@ namespace btg
                   t_strList      cleanedFilenames;
 
                   /// Reference to the GUI instance used.
-                  btgvsGui & gui;
+                  btgvsGui*      gui;
 
                   /// List of peers, got from the last request to
                   /// get peers.

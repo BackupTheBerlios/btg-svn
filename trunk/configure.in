@@ -328,6 +328,12 @@ fi
 AC_MSG_CHECKING([whether the AGAR viewer should be built])
 if test "$buildviewer" == "true"; then
         AC_MSG_RESULT([yes])
+
+        AM_PATH_AGAR(1.2.0)
+
+        if test -z "$AGAR_LIBS"; then
+          AC_MSG_ERROR([unable to find the AGAR library, currently this is required.])
+        fi
 else
         AC_MSG_RESULT([no])
 fi

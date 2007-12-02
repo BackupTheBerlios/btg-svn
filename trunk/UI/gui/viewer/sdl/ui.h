@@ -23,19 +23,12 @@
 #ifndef UI_H
 #define UI_H
 
-// Define this so that NLS headers will not be included.
-#define _LIBINTL_H
-
-extern "C"
-{
-#include <agar/core/core.h>
-#include <agar/gui/gui.h>
-}
-
 #include <string>
 #include <vector>
 
 #include <bcore/client/handlerthr.h>
+
+#include "agar-if.h"
 
 namespace btg
 {
@@ -89,35 +82,17 @@ namespace btg
             };
 
             /// Struct containing the information used by the GUI.
-            struct btgvsGui
+            class btgvsGui
             {
+            public:
                /// Constructor.
-               btgvsGui()
-               : window(0),
-                  contents_box(0),
-                  statusbar(0),
-                  statusbarlabel(0),
-                  table(0),
-                  plot(0),
-                  plotDlItem(0),
-                  plotZeroItem(0),
-                  plotUlItem(0),
-                  ul_max(100),
-                  ul_min(0),
-                  dl_max(100),
-                  dl_min(0),
-                  updateDelay(1000),
-                  bwLabel(0),
-                  uploadStr("0 K/s"),
-                  downloadStr("0 K/s"),
-                  peLabel(0),
-                  peersStr("0"),
-                  seedsStr("0")
-               {
-               }
+               btgvsGui();
+
+               /// Destructor.
+               ~btgvsGui();
 
                /// Timer.
-               AG_Timeout      timer;
+               AG_Timeout*     timer;
                /// Main window.
                AG_Window*      window;
                /// Vertical box.
@@ -128,15 +103,6 @@ namespace btg
                AG_Label*       statusbarlabel;
                /// Torrent table.
                AG_Table*       table;
-               /// UL/DL plot.
-               AG_Graph*       plot;
-               /// DL plot.
-               AG_GraphItem*   plotDlItem;
-               /// Zero plot.
-               AG_GraphItem*   plotZeroItem;
-               /// UL plot.
-               AG_GraphItem*   plotUlItem;
-
                /// Observed max UL.
                t_uint          ul_max;
                /// Observed min UL.
@@ -149,12 +115,18 @@ namespace btg
                /// How often the UI shall be updated.
                t_uint          updateDelay;
 
+               /// Bandwidth label.
                AG_Label*       bwLabel;
+               /// Global upload.
                std::string     uploadStr;
+               /// Global download.
                std::string     downloadStr;
 
+               /// Peer count label.
                AG_Label*       peLabel;
+               /// Global number of peers.
                std::string     peersStr;
+               /// Global number of seeds.
                std::string     seedsStr;
             };
 
@@ -164,20 +136,9 @@ namespace btg
             /// table showing torrents and their properties.
             struct timerData
             {
-               /// Constructor.
-            timerData(btgvsGui &                           _gui,
-                      btg::core::client::handlerThread*    _handlerthr,
-                      viewerHandler* _handler)
-            : count(0),
-                  gui(_gui), 
-                  handlerthr(_handlerthr), 
-                  handler(_handler)
-               {
-               }
-
                t_uint                               count;
                /// Reference to the gui.
-               btgvsGui &                           gui;
+               btgvsGui*                            gui;
                /// Thread used for updating torrents.
                btg::core::client::handlerThread*    handlerthr;
                /// Pointer to handler.

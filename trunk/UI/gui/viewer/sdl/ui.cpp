@@ -48,17 +48,44 @@ namespace btg
 
                timerdata->count++;
 
-               if (timerdata->count < timerdata->gui.updateDelay)
+               if (timerdata->count < timerdata->gui->updateDelay)
                   {
                      update_statusbar(timerdata);
                   }
                else
                   {
                      update_ui(timerdata);
-                     //update_statusbar(timerdata);
                   }
 
                return ival;
+            }
+
+            btgvsGui::btgvsGui()
+               : timer(0),
+                 window(0),
+                 contents_box(0),
+                 statusbar(0),
+                 statusbarlabel(0),
+                 table(0),
+                 ul_max(100),
+                 ul_min(0),
+                 dl_max(100),
+                 dl_min(0),
+                 updateDelay(1000),
+                 bwLabel(0),
+                 uploadStr("0 K/s"),
+                 downloadStr("0 K/s"),
+                 peLabel(0),
+                 peersStr("0"),
+                 seedsStr("0")
+            {
+               timer = new AG_Timeout;
+            }
+
+            btgvsGui::~btgvsGui()
+            {
+               delete timer;
+               timer = 0;
             }
 
             void update_ui(timerData* _timerdata)
@@ -181,29 +208,29 @@ namespace btg
                // Sort the array by download bandwidth.
                std::sort(data.begin(), data.end());
 
-               updateTable(_timerdata->gui, data);
-               updateGlobalStats(_timerdata->gui, data);
+               updateTable(*_timerdata->gui, data);
+               updateGlobalStats(*_timerdata->gui, data);
 
                // Reset the counter used for detecting if its time to
                // update.
                _timerdata->count = 0;
 
-               AG_LabelPrintf(_timerdata->gui.statusbarlabel, "Updated.");
+               AG_LabelPrintf(_timerdata->gui->statusbarlabel, "Updated.");
             }
 
 
             void createTimer(btgvsGui & _gui, timerData* _timerdata)
             {
                // Create a new timer.
-               AG_SetTimeout(&_gui.timer, update_event, _timerdata, 0);
-               AG_AddTimeout(_gui.table, &_gui.timer, 1000 /* 1 sec */);
+               AG_SetTimeout(_gui.timer, update_event, _timerdata, 0);
+               AG_AddTimeout(_gui.table, _gui.timer, 1000 /* 1 sec */);
             }
 
             void createGui(btgvsGui & _gui)
             { 
                AG_SetRefreshRate(25);
 
-               AG_InitConfigWin(0);
+               // AG_InitConfigWin(0);
 
                // Create a new window.
                _gui.window = AG_WindowNewNamed(AG_WINDOW_NOTITLE | AG_WINDOW_NOBORDERS, "%s", "BTGVS");
@@ -222,18 +249,27 @@ namespace btg
                AG_TableAddCol(_gui.table, "Dl/Ul", sizeSpecifier.c_str(), 0);
                AG_TableAddCol(_gui.table, "Size", sizeSpecifier.c_str(), 0);
                AG_TableAddCol(_gui.table, "Peer/Seed", sizeSpecifier.c_str(), 0);
-
+#if AGAR_1_2
                AG_LabelNew(_gui.contents_box, AG_LABEL_STATIC, "Totals:");
-
                _gui.bwLabel = AG_LabelNew(_gui.contents_box, AG_LABEL_STATIC,
                                           "Upload %s. Download %s.",
                                           _gui.uploadStr.c_str(), 
                                           _gui.downloadStr.c_str());
-                           
                _gui.peLabel = AG_LabelNew(_gui.contents_box, AG_LABEL_STATIC,
                                           "Peers %s. Seeds %s.",
                                           _gui.peersStr.c_str(), 
                                           _gui.seedsStr.c_str());
+#elsif AGAR_1_3
+               AG_LabelNewStatic(_gui.contents_box, AG_LABEL_STATIC, "Totals:");
+               _gui.bwLabel = AG_LabelNewStatic(_gui.contents_box, AG_LABEL_STATIC,
+                                                "Upload %s. Download %s.",
+                                                _gui.uploadStr.c_str(), 
+                                                _gui.downloadStr.c_str());
+               _gui.peLabel = AG_LabelNewStatic(_gui.contents_box, AG_LABEL_STATIC,
+                                                "Peers %s. Seeds %s.",
+                                                _gui.peersStr.c_str(), 
+                                                _gui.seedsStr.c_str());
+#endif
 
                AG_SeparatorNew(_gui.contents_box, AG_SEPARATOR_HORIZ);
 
@@ -324,9 +360,9 @@ namespace btg
 
             void update_statusbar(timerData* _timerdata)
             {
-               t_int diff = _timerdata->gui.updateDelay - _timerdata->count;
+               t_int diff = _timerdata->gui->updateDelay - _timerdata->count;
 
-               AG_LabelPrintf(_timerdata->gui.statusbarlabel, 
+               AG_LabelPrintf(_timerdata->gui->statusbarlabel, 
                               "Next update in %d second(s).", 
                               diff);
             }

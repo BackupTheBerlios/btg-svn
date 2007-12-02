@@ -25,6 +25,8 @@
 #include <bcore/util.h>
 #include <bcore/t_string.h>
 
+#include "ui.h"
+
 namespace btg
 {
    namespace UI
@@ -39,13 +41,13 @@ namespace btg
             using namespace std;
 
             viewerHandler::viewerHandler(btg::core::externalization::Externalization* _e,
-                                   messageTransport*             _transport,
-                                   clientConfiguration*          _config,
-                                   btg::core::client::lastFiles* _lastfiles,
-                                   bool const                    _verboseFlag,
-                                   bool const                    _autoStartFlag,
-                                   btgvsGui &                    _gui
-                                   )
+                                         messageTransport*             _transport,
+                                         clientConfiguration*          _config,
+                                         btg::core::client::lastFiles* _lastfiles,
+                                         bool const                    _verboseFlag,
+                                         bool const                    _autoStartFlag,
+                                         btgvsGui *                    _gui
+                                         )
                : handlerThreadIf(_e,
                                  _transport,
                                  _config,
@@ -212,7 +214,7 @@ namespace btg
             }
 
             void viewerHandler::onLimitStatus(t_int const _uploadRate, t_int const _downloadRate,
-                                           t_int const _seedLimit, t_long const _seedTimeout)
+                                              t_int const _seedLimit, t_long const _seedTimeout)
             {
                commandStatus       = true;
                last_limit_upload   = _uploadRate;
@@ -309,10 +311,10 @@ namespace btg
             {
                commandStatus = true;
                /*
-               if (status_bar != 0)
-                  {
-                     status_bar->set("Daemon uptime: " + convertToString<t_ulong>(_uptime) + " sec.");
-                  }
+                 if (status_bar != 0)
+                 {
+                 status_bar->set("Daemon uptime: " + convertToString<t_ulong>(_uptime) + " sec.");
+                 }
                */
             }
 
@@ -337,9 +339,9 @@ namespace btg
             }
 
             void viewerHandler::onGlobalLimitResponse(t_int const  _limitBytesUpld,
-                                                   t_int const  _limitBytesDwnld,
-                                                   t_int const  _maxUplds,
-                                                   t_long const _maxConnections)
+                                                      t_int const  _limitBytesDwnld,
+                                                      t_int const  _maxUplds,
+                                                      t_long const _maxConnections)
             {
 
             }
@@ -424,9 +426,9 @@ namespace btg
             }
 
             viewerStartupHelper::viewerStartupHelper(btg::core::client::clientConfiguration*        _config,
-                                               vsCommandLineArgumentHandler* _clah,
-                                               btg::core::messageTransport*                   _messageTransport,
-                                               btg::core::client::clientHandler*              _handler)
+                                                     vsCommandLineArgumentHandler* _clah,
+                                                     btg::core::messageTransport*                   _messageTransport,
+                                                     btg::core::client::clientHandler*              _handler)
                : btg::core::client::startupHelper("btgvs",
                                                   _config,
                                                   _clah,

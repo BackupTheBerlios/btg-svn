@@ -216,7 +216,7 @@ int main(int argc, char **argv)
                                           clientdata.lastfiles,
                                           verboseFlag,
                                           cla->automaticStart(),
-                                          gui);
+                                          &gui);
 
    string initialStatusMessage("");
 
@@ -529,7 +529,12 @@ int main(int argc, char **argv)
    createGui(gui);
 
    // Create a timer which will refresh the UI.
-   timerData timerdata(gui, clientdata.handlerthr, clientdata.handler);
+   timerData timerdata;
+   timerdata.count      = 0;
+   timerdata.gui        = &gui;
+   timerdata.handlerthr = clientdata.handlerthr;
+   timerdata.handler    = clientdata.handler;
+
    gui.updateDelay = updateFreq;
 
    // Run an update the first time.
