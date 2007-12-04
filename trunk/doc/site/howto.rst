@@ -47,9 +47,13 @@ Daemon
 
 UI
 ~~
-- Ncurses.
-- Gtkmm 2.4.
-- AGAR 1.2.
+- `Ncurses`_ 5.
+- `Gtkmm`_ 2.4.
+- `AGAR`_ 1.2 or 1.3.1.
+
+.. _Gtkmm: http://www.gtkmm.org/
+.. _AGAR: http://libagar.org/
+.. _Ncurses: http://www.gnu.org/software/ncurses/ncurses.html
 
 WWW Frontend
 ~~~~~~~~~~~~
@@ -143,16 +147,16 @@ The configure script is verbose and writes the CXXFLAGS and LDFLAGS
 that will be used for the check before performing it.
 
 This could look like this (debian unstable, everything but Rasterbar
-Libtorrent 0.11 installed using apt-get):
+Libtorrent (from SVN) installed using apt-get):
 
 :: 
 
-  checking whether the a command list should be generated... no
-  configure: Link test, compiler flags: -I/pack/libtorrent/0.11/include -I/pack/libtorrent/0.11/include/libtorrent -I/usr/include -I/usr/include
+  checking whether the a command list should be generated... yes
+  configure: Link test, compiler flags: -Wall -W -g -I/pack/libtorrent/svn/include -I/pack/libtorrent/svn/include/libtorrent -I/usr/include -I/usr/include
   configure: Link test, linker flags  :  
-             -lboost_iostreams -lboost_filesystem -lboost_date_time
-             -lboost_thread -lboost_program_options
-             -L/pack/libtorrent/0.11/lib -ltorrent -lgnutls -lgnutls-extra
+            -lboost_iostreams -lboost_filesystem -lboost_date_time
+            -lboost_thread -lboost_program_options
+            -L/pack/libtorrent/svn/lib -ltorrent -lgnutls
   checking if BTG can link with the provided/found libraries... yes
 
 If the link check fails, it does so before compiling any part of BTG.
@@ -164,7 +168,9 @@ running configure.
 
 A common problem can be that the boost.thread library uses pthreads,
 but its not detected by the configure script. This is one of the
-problems with the Gentoo Linux distribution.
+problems with the `Gentoo`_ Linux distribution.
+
+.. _Gentoo: http://gentoo.org/
 
 Using Boost Installed from Source
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
