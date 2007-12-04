@@ -15,5 +15,5 @@ btgvs_CXXFLAGS = @CXXFLAGS@ @LIBGNUTLS_CFLAGS@ @AGAR_CFLAGS@ -DBTG_DEBUG=@BTG_DE
 btgvs_CFLAGS   = @CFLAGS@ @LIBGNUTLS_CFLAGS@ @AGAR_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@
 
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/external
-#man1_MANS  = btgui.man
-#EXTRA_DIST = btgui.man
+man1_MANS  = btgvs.man
+EXTRA_DIST = btgvs.man

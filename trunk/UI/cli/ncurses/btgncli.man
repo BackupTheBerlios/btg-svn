@@ -224,7 +224,7 @@ COLOR_BORDER=142,229,238:0,0,0
 Written by Michael Wojciechowski.
 
 .SH "SEE ALSO"
-btg(5), btg_config(5), btgcli(1), btgui(1), btgdaemon(1), btgd(1)
+btg(5), btg_config(5), btgcli(1), btgui(1), btgdaemon(1)
 
 .SH BUGS
 No known bugs.

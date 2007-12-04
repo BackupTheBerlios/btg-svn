@@ -66,7 +66,7 @@ namespace btg
 #if BTG_DEBUG
             (debugLabel, "Write extensive debug info.")
 #endif // BTG_DEBUG
-            (verboseLabel, "Write verbose messages about what the daemon is doing.")
+            (verboseLabel, "Write verbose messages about what the application is doing.")
             ;
 
          if (syntaxEnabled)

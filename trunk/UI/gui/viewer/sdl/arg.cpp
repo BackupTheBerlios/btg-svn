@@ -93,8 +93,6 @@ namespace btg
                   (res1440x900Label, "Use 1440x900 as the resolution.")
                   (res1024x768Label, "Use 1024x768 as the resolution.")
                   (updateFreqLabel, boost::program_options::value<t_uint>(), "Update frequency in seconds.")
-                  ;
-               desc.add_options()
                   (configLabel, boost::program_options::value<std::string>(), "Configuration file.");
             }
 

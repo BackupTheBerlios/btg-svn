@@ -115,7 +115,7 @@ See btg_config(1).
 Written by Michael Wojciechowski.
 
 .SH "SEE ALSO"
-btg(5), btg_config(5), btgui(1), btgdaemon(1), btgd(1)
+btg(5), btg_config(5), btgui(1), btgdaemon(1)
 
 .SH BUGS
 No known bugs.
