@@ -23,6 +23,6 @@ if test "$ax_cv_boost_iostreams" = yes; then
   for ax_lib in $ax_iostreams_lib $ax_boost_iostreams_lib boost_iostreams; do
     AC_CHECK_LIB($ax_lib, main, [BOOST_IOSTREAMS_LIB=$ax_lib break])
   done
-  AC_SUBST(BOOST_IOSTREAM_LIB)
+  AC_SUBST(BOOST_IOSTREAMS_LIB)
 fi
 ])dnl
