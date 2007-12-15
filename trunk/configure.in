@@ -149,7 +149,7 @@ RBLIBTORRENT
 
 dnl Use the settings from the libtorrent pkg-config configuration
 dnl file.
-PKG_CHECK_MODULES(LIBTORRENT, libtorrent >= 0.9)
+PKG_CHECK_MODULES(LIBTORRENT, libtorrent >= 0.13)
 AC_SUBST(LIBTORRENT_CFLAGS)
 AC_SUBST(LIBTORRENT_LIBS)
 
