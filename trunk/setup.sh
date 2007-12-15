@@ -88,7 +88,7 @@ echo "Using CFLAGS: $CFLAGS"
 # 
 
 # Tell the configure script which versions of the boost libs to use.
-BOOST_SUFFIX="gcc41-mt-1_34"
+BOOST_SUFFIX="gcc41-mt-1_34_1"
 
 # Use a certain boost suffix. Hopefully it will stay the same on GNU/Debian.
 CONFIGURE_BOOST="--with-boost-date-time=$BOOST_SUFFIX --with-boost-filesystem=$BOOST_SUFFIX --with-boost-thread=$BOOST_SUFFIX --with-boost-regex=$BOOST_SUFFIX --with-boost-program_options=$BOOST_SUFFIX --with-boost-iostreams=$BOOST_SUFFIX"
@@ -107,7 +107,7 @@ case "$1" in
     export LIBTORRENT_CFLAGS="-I$ROOT/svn/include -I$ROOT/svn/include/libtorrent" && \
     export LIBTORRENT_LIBS="-L$ROOT/svn/lib -ltorrent" && \
     echo "Using $CONFIGURE";
-    $CONFIGURE
+    $CONFIGURE --with-rblibtorrent=$ROOT/svn
     ;;
   system)
     # Use libtorrent installed system wide.

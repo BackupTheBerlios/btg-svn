@@ -43,7 +43,8 @@ case "${target}" in
                 # FreeBSD
                 CPPFLAGS="$CPPFLAGS -pthread -I/usr/local/include"
                 CFLAGS="$CPPFLAGS -I/usr/local/include"
-                LDFLAGS="$LDFLAGS -L/usr/local/lib -lc_r -lpthread"
+                # removed -lc_r, fix of bug 12688.
+                LDFLAGS="$LDFLAGS -L/usr/local/lib -lpthread"
                 export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
                 ;;
         *)
@@ -141,6 +142,13 @@ fi
 AC_CACHE_SAVE
 
 dnl Check for Libtorrent.
+
+dnl Find the libtorrent headers and try to compile and link a simple
+dnl program.
+RBLIBTORRENT
+
+dnl Use the settings from the libtorrent pkg-config configuration
+dnl file.
 PKG_CHECK_MODULES(LIBTORRENT, libtorrent >= 0.9)
 AC_SUBST(LIBTORRENT_CFLAGS)
 AC_SUBST(LIBTORRENT_LIBS)
