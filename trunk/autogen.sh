@@ -4,27 +4,21 @@
 # autotools.
 # 
 
-system=`uname`
-
 echo "Deleting temp files."
 
 rm -f config.cache
 rm -fr autom4te.cache
 
-# The uncommented lines below should be used on some versions on FBSD.
-#if [ "$system" = "FreeBSD" ]
-#then
-#	autoheader259 &&
-#	aclocal19 -I m4 -I /usr/local/share/aclocal &&
-#	libtoolize -c -f &&
-#	automake19 --add-missing --copy --gnu &&
-#	autoconf259 &&
-#	autoheader259 &&
-#	rm -f config.cache
-#	echo "Done"
-#	exit
-#fi
-
+if test "`uname`" = "FreeBSD"  && test "`uname -r|cut -f1 -d'.'`" != "7"
+then
+	autoheader259 &&
+	aclocal19 -I m4 -I /usr/local/share/aclocal &&
+	libtoolize -c -f &&
+	automake19 --add-missing --copy --gnu &&
+	autoconf259 &&
+	autoheader259 &&
+	rm -f config.cache
+else 
 	echo "Running autoheader."
 	autoheader
 	echo "Running aclocal."
@@ -37,5 +31,6 @@ rm -fr autom4te.cache
 	autoconf
 	echo "Running autoheader."
 	autoheader
+fi
 	
-	echo "Done"
+echo "Done"

@@ -38,13 +38,20 @@ dnl AM_PROG_LIBTOOL
 
 dnl FBsd wants special paths
 case "${target}" in
-        *-*-freebsd*)
-                AC_MSG_NOTICE([Enabling FreeBSD-specific settings])
+        *-*-freebsd7*)
+                AC_MSG_NOTICE([Enabling FreeBSD 7 specific settings])
                 # FreeBSD
                 CPPFLAGS="$CPPFLAGS -pthread -I/usr/local/include"
                 CFLAGS="$CPPFLAGS -I/usr/local/include"
-                # removed -lc_r, fix of bug 12688.
-                LDFLAGS="$LDFLAGS -L/usr/local/lib -lpthread"
+                LDFLAGS="$LDFLAGS -L/usr/local/lib -lpthread -lexecinfo"
+                export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
+                ;;
+        *-*-freebsd*)
+                AC_MSG_NOTICE([Enabling FreeBSD non-7 specific settings])
+                # FreeBSD
+                CPPFLAGS="$CPPFLAGS -pthread -I/usr/local/include"
+                CFLAGS="$CPPFLAGS -I/usr/local/include"
+                LDFLAGS="$LDFLAGS -L/usr/local/lib -lc_r -lpthread"
                 export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
                 ;;
         *)
