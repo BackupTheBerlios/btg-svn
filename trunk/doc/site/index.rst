@@ -40,8 +40,8 @@ Platforms
 BTG is being used or was tested on:
 
 - OSX (PowerPC).
-- FreeBSD (PowerPC).
-- GNU Linux - Debian (PowerPC, amd64, i686) / Gentoo (i686) / Slackware (i586).
+- FreeBSD (PowerPC, amd64).
+- GNU Linux - Debian (PowerPC-32, amd64, i686) / Gentoo (PowerPC-64, i686) / Slackware (i586).
 
 Screenshots
 -----------

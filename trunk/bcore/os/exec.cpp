@@ -46,8 +46,10 @@ namespace btg
                  iter != _arguments.end();
                  iter++)
                {
-                  command += " ";
+                  // Fix of bug 12725.
+                  command += " '";
                   command += *iter;
+                  command += "'";
                }
 
             // Lets not wait for the callback to complete.
