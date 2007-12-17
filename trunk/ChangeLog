@@ -2,6 +2,13 @@ BTG version 0.9.7
 -----------------
 The following bugs were fixed:
 
+012685 btgdaemon/btgpassswd segfaulting upon start.
+012676 Fix boost iostreams detection.
+012616 Remove btgq and btgd.
+012598 Write man page for btgvs.
+012557 Make fails on FreeBSD 6.2.
+012545 Update SDL viewer to AGAR 1.3.1.
+012544 BTGWWW, add missing files in bcore/command.
 012535 btgncli: show peers/seeds in the list of torrents.
 012330 Add another version of contextStatusCommand.
 012308 Clean up daemon/limitval.cpp.
