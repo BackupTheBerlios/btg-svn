@@ -29,6 +29,10 @@
 #include <map>
 #include <vector>
 
+#include <boost/thread/thread.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/condition.hpp>
+
 namespace btg
 {
    namespace daemon
@@ -54,7 +58,7 @@ namespace btg
                   };
 
                /// Constructor.
-               callbackManager();
+               callbackManager(bool const _verboseFlag);
 
                /// Add an user with a callback.
                bool add(std::string const& _username,
@@ -74,11 +78,41 @@ namespace btg
                /// Destructor.
                ~callbackManager();
             private:
+               bool                                verboseFlag;
                /// Maps user to callback.
                std::map<std::string, std::string > userCallbackMap;
 
                /// Maps event ID to event name.
                std::map<t_int, std::string>        eventNameMap;
+
+               /// Mutex used to control access to the members
+               /// of this class from the outside.
+               boost::mutex                        interfaceMutex_;
+
+               /// Condition variable used for communication of
+               /// results from an action executed by the
+               /// thread.
+               boost::condition                    interfaceCondition_;
+
+               /// True if the thread should terminate itself.
+               bool                                die;
+
+               struct threadData
+               {
+                  std::string username;
+                  EVENT event;
+                  std::vector<std::string> arguments;
+               };
+
+               std::vector<threadData> threaddata;
+
+               /// The thread used by this class.
+               boost::thread                       thread;
+
+               /// Function used for the thread.
+               void work();
+
+               void work_pop();
             };
 
          /** @} */

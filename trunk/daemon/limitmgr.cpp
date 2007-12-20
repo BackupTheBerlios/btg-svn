@@ -195,26 +195,6 @@ namespace btg
       {
          // A session was just added.
          // It does not use any ressources yet.
-         /*
-         param_session->m_ul_bandwidth_quota.used = 0;
-         param_session->m_ul_bandwidth_quota.min  = 1;
-         param_session->m_ul_bandwidth_quota.max  = 0;
-
-         param_session->m_dl_bandwidth_quota.used = 0;
-         param_session->m_dl_bandwidth_quota.min  = 1;
-         param_session->m_dl_bandwidth_quota.max  = 0;
-
-         param_session->m_uploads_quota.used      = 0;
-         param_session->m_uploads_quota.min       = 1;
-         param_session->m_uploads_quota.max       = 0;
-
-         param_session->m_connections_quota.used  = 0;
-         param_session->m_connections_quota.min   = 1;
-         param_session->m_connections_quota.max   = 0;
-
-         sessions_.push_back(sessionData(param_session));
-         */
-
          sessions_.push_back(sessionData(param_session));
 
          param_session = 0;

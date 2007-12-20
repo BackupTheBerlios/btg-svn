@@ -202,7 +202,7 @@ int main(int argc, char* argv[])
 #endif // BTG_OPTION_SAVESESSIONS
 
 #if BTG_OPTION_EVENTCALLBACK
-   dd.callbackmgr      = new callbackManager();
+   dd.callbackmgr      = new callbackManager(verboseFlag);
 #endif // BTG_OPTION_EVENTCALLBACK
 
    // Daemonize.

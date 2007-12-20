@@ -23,8 +23,13 @@
 #include "callbackmgr.h"
 #include <bcore/os/exec.h>
 #include <bcore/logmacro.h>
+#include <bcore/os/sleep.h>
 
 #include "modulelog.h"
+
+#include <boost/bind.hpp>
+
+#include <bcore/verbose.h>
 
 namespace btg
 {
@@ -33,7 +38,14 @@ namespace btg
 
       const std::string moduleName("cbk");
 
-      callbackManager::callbackManager()
+      callbackManager::callbackManager(bool const _verboseFlag)
+         : verboseFlag(_verboseFlag),
+           interfaceMutex_(),
+           interfaceCondition_(),
+           die(false),
+           thread(
+                  boost::bind(&callbackManager::work, boost::ref(*this))
+                  )
       {
          eventNameMap[CBM_UNDEF]    = "ERROR";
          eventNameMap[CBM_ADD]      = "ADD";
@@ -46,6 +58,8 @@ namespace btg
       bool callbackManager::add(std::string const& _username,
                                 std::string const& _callback)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          bool status = false;
 
          std::pair<std::string, std::string> p;
@@ -79,6 +93,8 @@ namespace btg
 
       bool callbackManager::remove(std::string const& _username)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          bool status = false;
 
          std::map<std::string, std::string>::iterator iter;
@@ -98,69 +114,124 @@ namespace btg
                                   EVENT const _event,
                                   std::vector<std::string> const& _arguments)
       {
-         std::map<std::string, std::string>::const_iterator iter;
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
 
-         iter = userCallbackMap.find(_username);
+         threadData td;
+         td.username = _username;
+         td.event    = _event;
+         td.arguments = _arguments;
 
-         if (iter != userCallbackMap.end())
+         threaddata.push_back(td);
+
+         //interfaceCondition_.notify_one();
+      }
+
+      void callbackManager::work()
+      {
+         while (!die)
             {
-               std::string callback = iter->second;
-               BTG_MNOTICE("executing '" << callback << "':");
+               {
+                  boost::mutex::scoped_lock interface_lock(interfaceMutex_);
 
-               std::vector<std::string> arguments;
+                  // interfaceCondition_.wait(interface_lock);
 
-               // arguments.push_back(callback);
-
-               std::string eventname;
-
-               switch (_event)
-                  {
-                  case CBM_ADD:
-                  case CBM_REM:
-                  case CBM_FINISHED:
-                  case CBM_SEED:
-                  case CBM_CLEAN:
-                     eventname = eventNameMap[_event];
-                     break;
-                  default:
-                     {
-                        BTG_MNOTICE("unknown event");
-                        return;
-                     }
-                  }
-
-               BTG_MNOTICE("eventname '" << eventname << "'");
-
-               arguments.push_back(eventname);
-
-               std::vector<std::string>::const_iterator argIter;
-
-               for (argIter = _arguments.begin();
-                    argIter != _arguments.end();
-                    argIter++)
-                  {
-                     BTG_MNOTICE("arg: '" << *argIter << "'");
-
-                     arguments.push_back(*argIter);
-                  }
-
-               if (!btg::core::os::Exec::execFile(callback, arguments))
-                  {
-                     BTG_MNOTICE("execution of callback '" << callback << "' failed");
-                     return;
-                  }
-
-               BTG_MNOTICE("execution of callback '" << callback << "' succeded");
+                  work_pop();
+               }
+               
+               // btg::core::os::Sleep::sleepMiliSeconds(64);
+               btg::core::os::Sleep::sleepSecond(1);
             }
-         else
+      }
+
+      void callbackManager::work_pop()
+      {
+         for (std::vector<threadData>::const_iterator tdIter = threaddata.begin();
+              tdIter != threaddata.end();
+              tdIter++)
             {
-               BTG_MNOTICE("unable to execute callback for user '" << _username << "'");
+               threadData const td = *tdIter;
+
+                BTG_MNOTICE("user '" << td.username << "'.");
+
+               std::map<std::string, std::string>::const_iterator iter = 
+                  userCallbackMap.find(td.username);
+
+               if (iter != userCallbackMap.end())
+                  {
+                     std::string callback = iter->second;
+                     BTG_MNOTICE("executing '" << callback << "':");
+
+                     std::vector<std::string> arguments;
+
+                     std::string eventname;
+
+                     switch (td.event)
+                        {
+                        case CBM_ADD:
+                        case CBM_REM:
+                        case CBM_FINISHED:
+                        case CBM_SEED:
+                        case CBM_CLEAN:
+                           eventname = eventNameMap[td.event];
+                           break;
+                        default:
+                           {
+                              BTG_MNOTICE("unknown event");
+                              continue;
+                           }
+                        }
+
+                     BTG_MNOTICE("eventname '" << eventname << "'");
+
+                     arguments.push_back(eventname);
+
+                     std::vector<std::string>::const_iterator argIter;
+
+                     for (argIter = td.arguments.begin();
+                          argIter != td.arguments.end();
+                          argIter++)
+                        {
+                           BTG_MNOTICE("arg: '" << *argIter << "'");
+                           
+                           arguments.push_back(*argIter);
+                        }
+
+                     if (btg::core::os::Exec::execFile(callback, arguments))
+                        {
+                           MVERBOSE_LOG(moduleName, verboseFlag, "Executed " << 
+                                        eventname << " for user " << td.username << ".");
+                        }
+                     else
+                        {
+                           BTG_MNOTICE("execution of callback '" << callback << "' failed");
+                        }
+                     
+                     BTG_MNOTICE("execution of callback '" << callback << "' succeded");
+                  }
+               else
+                  {
+                     BTG_MNOTICE("unable to execute callback for user '" << td.username << "'");
+                  }
             }
+         // Clear data used by the thread.
+         threaddata.clear();
       }
 
       callbackManager::~callbackManager()
       {
+         {
+            boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+            die = true;
+            BTG_MNOTICE("stopped");
+         }
+         //interfaceCondition_.notify_one();
 
+         thread.join();
+
+         // Execute any callbacks left.
+         work_pop();
+
+         BTG_MNOTICE("destroyed");
       }
 
    } // namespace daemon

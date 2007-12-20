@@ -297,12 +297,12 @@ namespace btg
                                                                             dynamic_cast<errorCommand*>(_command)->getErrorCommand()
                                                                             );
 
-                                    VERBOSE_LOG(verboseFlag_, "daemon (" << _connectionID << "): " <<
+                                    MVERBOSE_LOG(moduleName, verboseFlag_, "daemon (" << _connectionID << "): " <<
                                                 _command->getName() << " (caused by " << causedBy << ").");
                                  }
                               else
                                  {
-                                    VERBOSE_LOG(verboseFlag_, "daemon (" << _connectionID << "): " <<
+                                    MVERBOSE_LOG(moduleName, verboseFlag_, "daemon (" << _connectionID << "): " <<
                                                 _command->getName() << ".");
                                  }
                            }
