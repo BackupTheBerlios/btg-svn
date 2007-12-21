@@ -41,7 +41,7 @@ namespace btg
               vbox(0)
          {
             title_label = Gtk::manage(new class Gtk::Label(
-                                                           GPD->sGUI_CLIENT() + " " + GPD->sVERSION() +
+                                                           GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() +
                                                            ", build " + GPD->sBUILD()
                                                            )
                                       );
@@ -80,7 +80,7 @@ namespace btg
 
             set_border_width(20);
             set_title(
-                      GPD->sGUI_CLIENT() + " " + GPD->sVERSION() +
+                      GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() +
                       ", build " + GPD->sBUILD() + " - initializing .."
                       );
             set_modal(true);

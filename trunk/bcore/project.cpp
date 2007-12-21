@@ -62,6 +62,7 @@ namespace btg
            gui_client_name("btgui"),
            daemon_name("btgdaemon"),
            version(BTG_EXPAND(BTG_VERSION)),
+           revision(BTG_EXPAND(BTG_SVNREV)),
            majorVersion(0),
            minorVersion(0),
            revisionVersion(0),
@@ -171,6 +172,23 @@ namespace btg
       string projectDefaults::sVERSION() const
       {
          return version;
+      }
+
+      std::string projectDefaults::sREVISION() const
+      {
+         return revision;
+      }
+      
+      std::string projectDefaults::sFULLVERSION() const
+      {
+         std::string temp(version);
+         if (revision.size() > 0)
+            {
+               temp += ", ";
+               temp += revision;
+            }
+
+         return temp;
       }
 
       t_int projectDefaults::iMAJORVERSION() const

@@ -224,11 +224,13 @@ $(AUTH_HEADER)
 AM_CFLAGS           = @CFLAGS@   @DEBUG_CFLAGS@ \
                     -DBTG_DEBUG=@BTG_DEBUG@ \
                     -DBTG_VERSION="@VERSION@" \
-                    -DBTG_BUILD="@BTG_BUILD@"
+                    -DBTG_BUILD="@BTG_BUILD@" \
+                    -DBTG_SVNREV="@BTG_SVNREV@"
 
 AM_CXXFLAGS         = @CXXFLAGS@ @DEBUG_CXXFLAGS@ \
                     -DBTG_DEBUG=@BTG_DEBUG@ \
                     -DBTG_VERSION="@VERSION@" \
-                    -DBTG_BUILD="@BTG_BUILD@"
+                    -DBTG_BUILD="@BTG_BUILD@" \
+                    -DBTG_SVNREV="@BTG_SVNREV@"
 
 INCLUDES            = -I$(top_srcdir) 

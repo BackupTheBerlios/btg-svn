@@ -152,7 +152,7 @@ namespace btg
 
             limitVbox->pack_start(*settingsTable, Gtk::PACK_SHRINK, 0);
 
-            set_title( GPD->sGUI_CLIENT() + " " + GPD->sVERSION() + " / Limit" );
+            set_title( GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() + " / Limit" );
             set_modal(true);
             property_window_position().set_value(Gtk::WIN_POS_CENTER);
             set_resizable(true);
@@ -194,7 +194,7 @@ namespace btg
                                   t_long const _currentSeedTime)
          {
 
-            set_title( GPD->sGUI_CLIENT() + " " + GPD->sVERSION() + " / Limit: " + _filename );
+            set_title( GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() + " / Limit: " + _filename );
 
             limit_selected = false;
 

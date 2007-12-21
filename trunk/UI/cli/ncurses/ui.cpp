@@ -126,7 +126,7 @@ namespace btg
                   return false;
                }
 
-            topwindow_.setTitle(GPD->sCLI_CLIENT() +" version " + GPD->sVERSION() + 
+            topwindow_.setTitle(GPD->sCLI_CLIENT() +" version " + GPD->sFULLVERSION() + 
                                 " (session #" + session_ + ")");
 
             // Init the status window.

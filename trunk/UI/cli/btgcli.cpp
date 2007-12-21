@@ -516,7 +516,7 @@ int main(int argc, char* argv[])
    nscr->setOutput(" :: : ::     :     :: :: :   :: :: : : ::.: : :   ");
    nscr->setOutput("                                                  ");
 
-   nscr->setOutput(GPD->sCLI_CLIENT() +" version " + GPD->sVERSION() + ", build " + GPD->sBUILD() + " initializing ..");
+   nscr->setOutput(GPD->sCLI_CLIENT() +" version " + GPD->sFULLVERSION() + ", build " + GPD->sBUILD() + " initializing ..");
    nscr->setOutput(initialStatusMessage);
 
    // If the user requested to open any files, do it.

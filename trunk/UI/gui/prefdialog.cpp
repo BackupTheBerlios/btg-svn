@@ -227,7 +227,7 @@ namespace btg
 
             preferencesVbox->pack_start(*settingsTable, Gtk::PACK_SHRINK, 0);
 
-            set_title( GPD->sGUI_CLIENT() + " " + GPD->sVERSION() + " / Preferences" );
+            set_title( GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() + " / Preferences" );
             set_modal(true);
             property_window_position().set_value(Gtk::WIN_POS_CENTER);
             set_resizable(true);

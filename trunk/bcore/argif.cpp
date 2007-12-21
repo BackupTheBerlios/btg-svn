@@ -53,7 +53,7 @@ namespace btg
 #endif // BTG_DEBUG
            verboseMode(false),
            listSyntax(false),
-           desc(_applicationName + " (version " + GPD->sVERSION() + ") options"),
+           desc(_applicationName + " (version " + GPD->sFULLVERSION() + ") options"),
            vm()
       {
 

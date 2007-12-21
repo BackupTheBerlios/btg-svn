@@ -24,7 +24,7 @@ namespace btg
             Gtk::Dialog *ad = this;
 
             Gtk::Button *okbutton    = Gtk::manage(new class Gtk::Button("ok"));
-            Gtk::Label *aboutLabel   = Gtk::manage(new class Gtk::Label( "About " + GPD->sGUI_CLIENT() + " " + GPD->sVERSION() + ", build " + GPD->sBUILD() ));
+            Gtk::Label *aboutLabel   = Gtk::manage(new class Gtk::Label( "About " + GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() + ", build " + GPD->sBUILD() ));
             Gtk::TextView *textview  = Gtk::manage(new class Gtk::TextView());
             Gtk::ScrolledWindow *scrolledwindow = Gtk::manage(new class Gtk::ScrolledWindow());
             Gtk::VBox *vbox                     = Gtk::manage(new class Gtk::VBox(false, 0));
@@ -93,8 +93,7 @@ namespace btg
             ad->get_vbox()->set_homogeneous(false);
             ad->get_vbox()->set_spacing(0);
             ad->get_vbox()->pack_start(*vbox);
-            //ad->set_title( "About " + GPD->sGUI_CLIENT() + " " + GPD->sVERSION() );
-            ad->set_title( GPD->sGUI_CLIENT() + " " + GPD->sVERSION() + " / About" );
+            ad->set_title( GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() + " / About" );
             ad->set_modal(true);
             ad->property_window_position().set_value(Gtk::WIN_POS_CENTER);
             ad->set_resizable(true);

@@ -75,6 +75,10 @@ namespace btg
                std::string sDAEMON()         const;
                /// The version of this software.
                std::string sVERSION()        const;
+               /// The SVN revision of this software.
+               std::string sREVISION()       const;
+               /// Get both version and revision (if present);
+               std::string sFULLVERSION()    const;
                /// Identification: Major version.
                t_int iMAJORVERSION()          const;
                /// Identification: Minor version.
@@ -157,7 +161,8 @@ namespace btg
                std::string const daemon_name;
                /// Version of this software.
                std::string const version;
-
+               /// SVN revision of this software.
+               std::string const revision;
                /// Identification: Major version.
                t_int majorVersion;
                /// Identification: Minor version.

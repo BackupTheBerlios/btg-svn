@@ -679,7 +679,7 @@ int main(int argc, char* argv[])
 
    daemonHandler* dh = new daemonHandler(&dd, verboseFlag);
 
-   VERBOSE_LOG(verboseFlag, GPD->sDAEMON() << " version " << GPD->sVERSION() << ".");
+   VERBOSE_LOG(verboseFlag, GPD->sDAEMON() << " version " << GPD->sFULLVERSION() << ".");
    VERBOSE_LOG(verboseFlag, "Ready to accept clients.");
 
    while (global_btg_run == 1)
