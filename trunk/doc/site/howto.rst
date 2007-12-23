@@ -179,7 +179,7 @@ The configure script may need some help when boost was installed from
 source.
 
 In the following I installed boost 1.33.1 from source in my home
-directory (I used the prefix "/home/wojci/boost-1.33.1".).
+directory (I used the prefix "~/boost-1.33.1".).
 
 The configure script reads a number of enviroment variables. In the
 following, CPPFLAGS and LDFLAGS will be used to tell the script where
@@ -187,8 +187,8 @@ to find the boost headers and libraries.
 
 ::
 
- export CPPFLAGS="-I/home/wojci/boost-1.33.1/include/boost-1_33_1"
- export LDFLAGS="-L/home/wojci/boost-1.33.1/lib"
+ export CPPFLAGS="-I~/boost-1.33.1/include/boost-1_33_1"
+ export LDFLAGS="-L~/boost-1.33.1/lib"
 
 The above commands should be executed before running the configure script.
 
@@ -204,7 +204,7 @@ The above options are used to tell the scripts that detects boost
 libraries which libs should be used for linking.
 
 For example to use boost iostreams installed in
-/home/wojci/boost-1.33.1/lib use:
+~/boost-1.33.1/lib use:
 
 ::
 
@@ -807,6 +807,70 @@ Call the script from Vixie Cron, using an entry like this:
 The above entry calls the script each minute. Notice that cron will
 e-mail the output of the script to you, so add "&> /dev/null" to avoid
 any e-mail.
+
+OpenWrt
+=======
+
+This section describes how to build BTG for use with `OpenWrt`_. Note
+that this procedure is highly experimental.
+
+Check out the required software:
+
+ - BTG SVN in ~/remote-svn/btg.
+ - OpenWrt SVN into ~/remote-svn/openwrt (buildroot).
+ - OpenWrt package SVN in ~/remote-svn/openwrt-packages.
+
+The method of building a working OpenWrt is described `elsewhere`_.
+
+Make sure that Bjam is installed and working. It is used for building
+boost.
+
+Create symbolic links between the contents of
+~/remote-svn/openwrt-packages and
+~/remote-svn/openwrt/packages. Finally, link the directories in
+~/remote-svn/btg/openwrt to ~/remote-svn/openwrt/packages.
+
+The results in ~/remote-svn/openwrt/packages should look like:
+
+::
+
+  bmon -> ../../openwrt-packages/net/bmon
+  boost -> ~/remote-svn/btg/openwrt/boost
+  ..
+  btg -> ~/remote-svn/btg/openwrt/btg
+  rarpd -> ../../openwrt-packages/net/rarpd
+  ..
+  rblibtorrent -> ~/remote-svn/btg/openwrt/rblibtorrent
+  ..
+  zlib
+
+Note that PKG_SOURCE and PKG_SOURCE_URL in
+~/remote-svn/openwrt/packages/btg/Makefile and
+~/remote-svn/openwrt/packages/rblibtorrent/Makefile should be
+corrected, as the provided ones point to Rasterbar Libtorrent and BTG
+versions used strictly for testing.
+
+Now, configure OpenWrt by executing:
+
+:: 
+
+  make menuconfig
+
+Select Network/Bittorrent/BTG. This selects the packages BTG depends
+on, like Boost and Rasterbar libtorrent.
+
+Save the config and build packages using:
+
+::
+
+  make V=99
+
+The compiled packages will be in ~/remote-svn/openwrt/bin/packages, if
+the build is successful. Copy the Boost, Rasterbar Libtorrent and BTG
+packages to the device running OpenWrt and install them using ipkg.
+
+.. _OpenWrt: http://openwrt.org/
+.. _elsewhere: http://downloads.openwrt.org/kamikaze/docs/openwrt.html#x1-310002
 
 Credits
 =======
