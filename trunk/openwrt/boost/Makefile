@@ -35,14 +35,17 @@ endef
 
 define Build/Configure
 	echo "import toolset.using ;" > ~/user-config.jam
-	echo "using gcc : : g++-uc+std ;" >> ~/user-config.jam
+	# echo "using gcc : : g++-uc+std ;" >> ~/user-config.jam
+	echo "using gcc : : g++-uc+std : <cxxflags>\"-I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/usr/include/uClibc++ -I$(STAGING_DIR)/include -fno-builtin -nostdinc++ -nodefaultlibs -DBOOST_NO_STD_LOCALE=1\" <linkflags>\"-luClibc++ -lc -gcc\" ; " >> ~/user-config.jam
+
 endef
 
 define Build/Compile
-	CPPFLAGS="-I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/include"
-	LDFLAGS="-L$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/lib"
+	export CPPFLAGS="-I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/include"
+	export LDFLAGS="-L$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/lib"
 	cd $(PKG_BUILD_DIR) && \
-	bjam --toolset=gcc --sBUILD=release \
+	bjam \
+	-d+2 --toolset=gcc --sBUILD=release \
 	link=shared \
 	-sZLIB_INCLUDE=$(STAGING_DIR)/usr/include \
 	-sZLIB_LIBPATH=$(STAGING_DIR)/usr/lib \
@@ -59,9 +62,8 @@ define Build/InstallDev
 endef
 
 define Build/UninstallDev
-#	rm -rf	$(STAGING_DIR)/usr/include/torrent \
-#		$(STAGING_DIR)/usr/lib/libtorrent.{a,so*} \
-#		$(STAGING_DIR)/usr/lib/pkgconfig/libtorrent.pc
+	rm -rf	$(STAGING_DIR)/usr/include/boost \
+		$(STAGING_DIR)/usr/lib/libboost*
 endef
 
 define Package/boost/install

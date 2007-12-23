@@ -47,6 +47,7 @@ CONFIGURE_ARGS+= \
 	--with-rblibtorrent=$(STAGING_DIR)/usr \
 
 CONFIGURE_VARS += \
+	CC="gcc-uclibc" \
 	CXX="g++-uc+std" \
 	CXXFLAGS="$$$$CXXFLAGS -I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/include" \
 	CFLAGS="$$$$CFLAGS -I$(STAGING_DIR)/usr/lib/libiconv/include -I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/include" \
