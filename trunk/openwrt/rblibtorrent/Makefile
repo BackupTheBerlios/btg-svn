@@ -45,9 +45,10 @@ CONFIGURE_ARGS+= \
 	--with-boost-iostreams=gcc41-mt-1_34_1 \
 
 CONFIGURE_VARS += \
-	CXX="g++-uc+std" \
+	CC="$(GNU_TARGET_NAME)-gcc" \
+	CXX="$(GNU_TARGET_NAME)-g++" \
 	CXXFLAGS="$$$$CXXFLAGS -I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/include" \
-	LDFLAGS="$$$$LDFLAGS -Wl,-rpath=$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/lib -lz -lbz2 -luClibc++ -lpthread" \
+	LDFLAGS="$$$$LDFLAGS -Wl,-rpath=$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/lib -lz -lbz2 -lpthread" \
 
 define Build/Configure
 	cd $(PKG_BUILD_DIR) && \

@@ -26,7 +26,7 @@ define Package/boost
   CATEGORY:=Libraries
   TITLE:=Boost
   URL:=http://boost.org/
-  DEPENDS:=+uclibcxx +zlib +libpthread
+  DEPENDS:=+zlib +libpthread
 endef
 
 define Package/boost/description
@@ -36,7 +36,7 @@ endef
 define Build/Configure
 	echo "import toolset.using ;" > ~/user-config.jam
 	# echo "using gcc : : g++-uc+std ;" >> ~/user-config.jam
-	echo "using gcc : : g++-uc+std : <cxxflags>\"-I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/usr/include/uClibc++ -I$(STAGING_DIR)/include -fno-builtin -nostdinc++ -nodefaultlibs -DBOOST_NO_STD_LOCALE=1\" <linkflags>\"-luClibc++ -lc -gcc\" ; " >> ~/user-config.jam
+	echo "using gcc : : $(GNU_TARGET_NAME)-g++ : <cxxflags>\"-I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/include\" <linkflags>\"-lc -gcc\" ; " >> ~/user-config.jam
 
 endef
 

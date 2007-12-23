@@ -47,11 +47,11 @@ CONFIGURE_ARGS+= \
 	--with-rblibtorrent=$(STAGING_DIR)/usr \
 
 CONFIGURE_VARS += \
-	CC="gcc-uclibc" \
-	CXX="g++-uc+std" \
+	CC="$(GNU_TARGET_NAME)-gcc" \
+	CXX="$(GNU_TARGET_NAME)-g++" \
 	CXXFLAGS="$$$$CXXFLAGS -I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/include" \
 	CFLAGS="$$$$CFLAGS -I$(STAGING_DIR)/usr/lib/libiconv/include -I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/include" \
-	LDFLAGS="$$$$LDFLAGS -Wl,-rpath=$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/usr/lib/libiconv/lib -L$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/lib -lz -lbz2 -luClibc++ -lpthread -lboost_iostreams-gcc41-mt-1_34_1 -lboost_filesystem-gcc41-mt-1_34_1 -lboost_date_time-gcc41-mt-1_34_1 -lboost_thread-gcc41-mt-1_34_1 -lboost_program_options-gcc41-mt-1_34_1 -lssl -lcrypto -liconv" \
+	LDFLAGS="$$$$LDFLAGS -Wl,-rpath=$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/usr/lib/libiconv/lib -L$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/lib -lz -lbz2 -lpthread -lboost_iostreams-gcc41-mt-1_34_1 -lboost_filesystem-gcc41-mt-1_34_1 -lboost_date_time-gcc41-mt-1_34_1 -lboost_thread-gcc41-mt-1_34_1 -lboost_program_options-gcc41-mt-1_34_1 -lssl -lcrypto -liconv" \
 
 define Build/Configure
 #	cd $(PKG_BUILD_DIR) && \
