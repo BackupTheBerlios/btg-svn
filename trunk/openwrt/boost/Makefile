@@ -26,7 +26,7 @@ define Package/boost
   CATEGORY:=Libraries
   TITLE:=Boost
   URL:=http://boost.org/
-  DEPENDS:=+zlib +libpthread
+  DEPENDS:=+zlib +libpthread +libstdcpp
 endef
 
 define Package/boost/description
