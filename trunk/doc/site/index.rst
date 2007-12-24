@@ -26,6 +26,7 @@ Features
 - IPv4 filter (level1.txt and Emule lists).
 - Port forwarding using UPnP.
 - Periodic session saving.
+- DHT and encryption (since libtorrent supports both).
 
 Clients
 -------

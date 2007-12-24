@@ -50,8 +50,13 @@ It can detach from this session, and it will keep on working
 The client can attach to the session again, and continue using it.
 
 Its possible to attach different clients to a BTG session. Its even
-possible to use the three different clients at the same time with a
+possible to use all the provided clients at the same time with a
 BTG session.
+
+A session belongs to an user - the user is not able to see other users
+sessions, unless it has an control flag set (see description in the `howto`_).
+
+.. _howto: howto.html
 
 Why is BTG so feature bloated?
 ------------------------------

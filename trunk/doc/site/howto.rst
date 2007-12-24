@@ -532,7 +532,8 @@ Control
 0 - disabled.
 
 If enabled, user is capable of shutting down the daemon and setting
-global limits.
+global limits. This flag also makes it possible for the user to
+manipulate sessions belonging to other users.
 
 Callback
 ~~~~~~~~
