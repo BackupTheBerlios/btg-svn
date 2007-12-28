@@ -452,7 +452,7 @@ namespace btg
             }
 
             void viewerStartupHelper::showSessions(t_longList const& _sessions,
-                                                   t_strList const& _sessionIds) const
+                                                   t_strList const& _sessionNames) const
             {
             }
 

@@ -48,6 +48,7 @@ namespace btg
                /// Progress.
                std::string progress;
 
+               /// Upload rate in bytes per second.
                t_uint      ulRate;
 
                /// Download rate in bytes per second.
@@ -136,6 +137,8 @@ namespace btg
             /// table showing torrents and their properties.
             struct timerData
             {
+               /// Current count, used to determine if the function 
+               /// used to update the UI shall be executed.
                t_uint                               count;
                /// Reference to the gui.
                btgvsGui*                            gui;
@@ -160,11 +163,13 @@ namespace btg
             /// Update the table showing torrents.
             void updateTable(btgvsGui & _gui, std::vector<tableData> const& _data);
 
+            /// Update global dl/ul/peer/seed counters.
             void updateGlobalStats(btgvsGui & _gui, std::vector<tableData> const& _data);
 
             /// Update the whole GUI.
             void update_ui(timerData* _timerdata);
 
+            /// Update the statusbar.
             void update_statusbar(timerData* _timerdata);
 
          } // namespace viewer

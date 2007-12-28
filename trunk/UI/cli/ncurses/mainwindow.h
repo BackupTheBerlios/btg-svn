@@ -214,9 +214,13 @@ namespace btg
             /// Draw the contained list.
             void drawList();
 
+            /// Given a torrent's status, convert it into a string 
+            /// describing the torrent's progress.
             bool statusToProgress(btg::core::Status const& _s, 
                                   std::string & _output) const;
 
+            /// Convenience function used to add a number of spaces 
+            /// to a string.
             void addSpace(t_uint const _number,
                           std::string & _output) const;
 

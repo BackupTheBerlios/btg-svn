@@ -35,7 +35,6 @@ session_error.php \
 session_list.php \
 session_list_rsp.php \
 session_name.php \
-session_name_rsp.php \
 session_quit.php \
 setup.php \
 uptime.php

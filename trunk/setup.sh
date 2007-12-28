@@ -97,11 +97,11 @@ CONFIGURE_BOOST="--with-boost-date-time=$BOOST_SUFFIX --with-boost-filesystem=$B
 CONFIGURE="./configure --disable-static $DEBUG --enable-cli $GUI_CLIENT $GUI_VIEWER --enable-unittest --enable-session-saving --enable-command-list --enable-event-callback --enable-upnp --enable-www --prefix=/pack/btg-cvs $CONFIGURE_BOOST"
 
 case "$1" in
-  0.12)
+  0.13)
     export LIBTORRENT_CFLAGS="-I$ROOT/$1/include -I$ROOT/$1/include/libtorrent" && \
     export LIBTORRENT_LIBS="-L$ROOT/$1/lib -ltorrent" && \
     echo "Using $CONFIGURE";
-    $CONFIGURE
+    $CONFIGURE --with-rblibtorrent=$ROOT/$1
     ;;
   svn)
     export LIBTORRENT_CFLAGS="-I$ROOT/svn/include -I$ROOT/svn/include/libtorrent" && \

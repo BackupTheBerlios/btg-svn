@@ -78,6 +78,7 @@ namespace btg
                /// Destructor.
                ~callbackManager();
             private:
+               /// Enables verbose logging.
                bool                                verboseFlag;
                /// Maps user to callback.
                std::map<std::string, std::string > userCallbackMap;
@@ -97,13 +98,19 @@ namespace btg
                /// True if the thread should terminate itself.
                bool                                die;
 
+               /// Struct used to describe the data used by the worker 
+               /// thread used for executing callbacks.
                struct threadData
                {
+                  /// Username.
                   std::string username;
+                  /// Event id.
                   EVENT event;
+                  /// Aruments.
                   std::vector<std::string> arguments;
                };
 
+               /// List of pending callbacks to execute.
                std::vector<threadData> threaddata;
 
                /// The thread used by this class.
@@ -112,6 +119,7 @@ namespace btg
                /// Function used for the thread.
                void work();
 
+               /// Execute pending callbacks.
                void work_pop();
             };
 
