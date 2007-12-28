@@ -1713,13 +1713,10 @@ function createTorrentDetails()
 	c.className = 'extrainfo_type';
 	c.innerHTML='Tracker:';
 
-	c           = r.insertCell(-1);
-	c.className = 'extrainfo_type';
-	c.innerHTML ='';
-
 	c = r.insertCell(-1);
-	c.className = 'extrainfo_type extrainfo_divider';
+	c.className = 'extrainfo_value';
 	c.innerHTML='';
+	c.colSpan = 3;
 
 	return tbl;
 }
