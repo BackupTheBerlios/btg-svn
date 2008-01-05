@@ -549,6 +549,8 @@ class XMLRPC_Client
 		$request = new XMLRPC_Request($method, $args);
 		$xml = $request->getXml();
 
+
+		$this->use_gzip = 0;
 		if($this->use_gzip)
 		{
 			$xml = (pack("C1C1C1C1VC1C1", 0x1f, 0x8b, 8, 0, 0, 2, 0xFF) .
@@ -573,7 +575,10 @@ class XMLRPC_Client
 			$request.= "Content-Encoding: gzip$r"; 	// Send content gziped 
 		
 		$request.= "Content-Length: {$length}$r$r";
+		$reqlen = strlen($request) + $length; 
+
 		$request.= $xml;
+
 
 		//Now send the request
 		if($this->debug)
@@ -622,6 +627,30 @@ class XMLRPC_Client
 			return false;
 		}
 
+		stream_set_blocking ( $this->fp, true);
+/*
+		$piecelen = 80000000;
+		if($reqlen > $piecelen)
+		{
+			$piece = null;
+			$offset = 0;
+			while($offset < $reqlen)
+			{
+				if($reqlen - $offset > $piecelen)
+				{
+					$piece = substr($request, $offset, $piecelen);
+					$offset+=$piecelen;
+				}else
+				{
+					$piece = substr($request, $offset);
+					$offset += $reqlen-$offset;
+				}
+				print "Wriing $offset -+ $piecelen..\n";
+				fputs($this->fp, $piece);
+			}
+		}
+		else
+ */
 		fputs($this->fp, $request);
 
 		$contents = '';
