@@ -549,8 +549,7 @@ class XMLRPC_Client
 		$request = new XMLRPC_Request($method, $args);
 		$xml = $request->getXml();
 
-
-		$this->use_gzip = 0;
+//		$this->use_gzip = 0;
 		if($this->use_gzip)
 		{
 			$xml = (pack("C1C1C1C1VC1C1", 0x1f, 0x8b, 8, 0, 0, 2, 0xFF) .
