@@ -2,6 +2,11 @@ BTG version 0.9.7
 -----------------
 The following bugs were fixed:
 
+012814 Daemon segfaults when starting client with DHT (0.9.6).
+012784 Remove singleton object used for logging.
+012771 Add openwrt packages to SVN.
+012762 Embed svn version into release information.
+012761 Callback manager: execute calls from a thread.
 012685 btgdaemon/btgpassswd segfaulting upon start.
 012676 Fix boost iostreams detection.
 012616 Remove btgq and btgd.
