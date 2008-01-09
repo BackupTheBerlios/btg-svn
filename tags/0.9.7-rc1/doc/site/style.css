@@ -1,0 +1,26 @@
+@import url(html4css1.css);
+
+body {
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+h1 {
+    font-family:  Arial, Helvetica;
+    margin-bottom: 0px;
+    padding-left: 16px;
+}
+
+h2 {
+    font-family:  Arial, Helvetica;
+    margin-bottom: 0px;
+    padding-left: 32px;
+}
+
+p, li, table {
+    padding-left: 16px
+}
+
+.section {
+    padding-bottom: 5px;
+}

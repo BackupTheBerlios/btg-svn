@@ -1,0 +1,20 @@
+This directory contains other software or scripts needed to build btg.
+
+The following software resides in this directory and is copyrighted by
+their respective authors:
+
+xmlrpc-epi
+----------
+
+A C library to parse XMLRPC, http://xmlrpc-epi.sourceforge.net/
+
+CDataFile
+---------
+
+Ini file handling.
+Written by Gary McNickle.
+
+plotmm
+------
+
+Plot Widget Library, written by Andy Thaller.
