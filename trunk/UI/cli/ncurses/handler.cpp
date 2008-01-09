@@ -61,13 +61,15 @@ namespace btg
          using namespace btg::core;
          using namespace btg::core::client;
 
-         Handler::Handler(btg::core::externalization::Externalization* _e,
+         Handler::Handler(btg::core::LogWrapperType _logwrapper,
+                          btg::core::externalization::Externalization* _e,
                           messageTransport*                       _transport,
                           clientConfiguration*                    _config,
                           btg::core::client::lastFiles*           _lastfiles,
                           bool const _verboseFlag,
                           bool const _autoStartFlag)
-            : handlerThreadIf(_e,
+            : handlerThreadIf(_logwrapper,
+                              _e,
                               _transport,
                               _config,
                               _lastfiles,
@@ -134,7 +136,8 @@ namespace btg
 
             this->cmd_failture++;
 
-            BTG_NOTICE("On error: " << _errorDescription);
+            BTG_NOTICE(logWrapper(), 
+                       "On error: " << _errorDescription);
          }
 
          void Handler::onFatalError(std::string const& _errorDescription)
@@ -384,11 +387,13 @@ namespace btg
          /* */
          /* */
 
-         ncliStartupHelper::ncliStartupHelper(btg::core::client::clientConfiguration*        _config,
+         ncliStartupHelper::ncliStartupHelper(btg::core::LogWrapperType _logwrapper,
+                                              btg::core::client::clientConfiguration*        _config,
                                               btg::core::client::commandLineArgumentHandler* _clah,
                                               btg::core::messageTransport*                   _messageTransport,
                                               btg::core::client::clientHandler*              _handler)
-            : btg::core::client::startupHelper(GPD->sCLI_CLIENT(),
+            : btg::core::client::startupHelper(_logwrapper,
+                                               GPD->sCLI_CLIENT(),
                                                _config,
                                                _clah,
                                                _messageTransport,

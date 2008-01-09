@@ -99,7 +99,7 @@ namespace btg
 
          if (this->limitUpld < 0 && this->limitUpld != limitBase::LIMIT_DISABLED)
             {
-               BTG_NOTICE("Deserialize of limitCommand failed, limitUpld is negative but not limitBase::LIMIT_DISABLED");
+               // BTG_NOTICE("Deserialize of limitCommand failed, limitUpld is negative but not limitBase::LIMIT_DISABLED");
                return false;
             }
 
@@ -108,7 +108,7 @@ namespace btg
 
          if (this->limitDwnld < 0 && this->limitDwnld != LIMIT_DISABLED)
             {
-               BTG_NOTICE("Deserialize of limitCommand failed, limitUpld is negative but not limitBase::LIMIT_DISABLED");
+               // BTG_NOTICE("Deserialize of limitCommand failed, limitUpld is negative but not limitBase::LIMIT_DISABLED");
                return false;
             }
 
@@ -117,7 +117,7 @@ namespace btg
 
          if (this->maxUplds < 0 && this->maxUplds != limitBase::LIMIT_DISABLED)
             {
-               BTG_NOTICE("Deserialize of limitCommand failed, maxUplds is negative but not limitBase::LIMIT_DISABLED");
+               // BTG_NOTICE("Deserialize of limitCommand failed, maxUplds is negative but not limitBase::LIMIT_DISABLED");
                return false;
             }
 
@@ -126,7 +126,7 @@ namespace btg
 
          if (this->maxConnections < 0 && this->maxConnections != limitBase::LIMIT_DISABLED)
             {
-               BTG_NOTICE("Deserialize of limitCommand failed, maxConnections is negative but not limitBase::LIMIT_DISABLED");
+               // BTG_NOTICE("Deserialize of limitCommand failed, maxConnections is negative but not limitBase::LIMIT_DISABLED");
                return false;
             }
 
@@ -232,7 +232,7 @@ namespace btg
 
          if (this->limitUpld < 0 && this->limitUpld != limitBase::LIMIT_DISABLED)
             {
-               BTG_NOTICE("Deserialize of limitStatusResponseCommand failed, limitUpld is negative but not limitBase::LIMIT_DISABLED");
+               // BTG_NOTICE("Deserialize of limitStatusResponseCommand failed, limitUpld is negative but not limitBase::LIMIT_DISABLED");
                return false;
             }
 
@@ -241,7 +241,7 @@ namespace btg
 
          if (this->limitDwnld < 0 && this->limitDwnld != LIMIT_DISABLED)
             {
-               BTG_NOTICE("Deserialize of limitStatusResponseCommand failed, limitUpld is negative but not limitBase::LIMIT_DISABLED");
+               // BTG_NOTICE("Deserialize of limitStatusResponseCommand failed, limitUpld is negative but not limitBase::LIMIT_DISABLED");
                return false;
             }
 
@@ -250,7 +250,7 @@ namespace btg
 
          if (this->maxUplds < 0 && this->maxUplds != limitBase::LIMIT_DISABLED)
             {
-               BTG_NOTICE("Deserialize of limitStatusResponseCommand failed, maxUplds is negative but not limitBase::LIMIT_DISABLED");
+               // BTG_NOTICE("Deserialize of limitStatusResponseCommand failed, maxUplds is negative but not limitBase::LIMIT_DISABLED");
                return false;
             }
 
@@ -259,7 +259,7 @@ namespace btg
 
          if (this->maxConnections < 0 && this->maxConnections != limitBase::LIMIT_DISABLED)
             {
-               BTG_NOTICE("Deserialize of limitStatusResponseCommand failed, maxConnections is negative but not limitBase::LIMIT_DISABLED");
+               // BTG_NOTICE("Deserialize of limitStatusResponseCommand failed, maxConnections is negative but not limitBase::LIMIT_DISABLED");
                return false;
             }
 

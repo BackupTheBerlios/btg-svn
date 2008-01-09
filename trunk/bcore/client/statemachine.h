@@ -32,6 +32,8 @@
 #include <bcore/command/session_attach.h>
 
 #include <bcore/auth/hash.h>
+#include <bcore/logable.h>
+#include <bcore/command_factory.h>
 
 namespace btg
 {
@@ -47,7 +49,7 @@ namespace btg
          class clientCallback;
 
          /// A statemachine for the generic client.
-         class stateMachine
+         class stateMachine: public Logable
          {
          public:
             /// Constructor.
@@ -55,7 +57,8 @@ namespace btg
             /// @param [in] _transport      Pointer to the message que used to communicate with the daemon.
             /// @param [in] _clientcallback Pointer to an instance which are used for callbacks.
             /// @param [in] _verboseFlag    Instructs the statemachine to do verbose logging.
-            stateMachine(btg::core::externalization::Externalization* _e,
+            stateMachine(LogWrapperType _logwrapper,
+                         btg::core::externalization::Externalization* _e,
                          btg::core::messageTransport *_transport,
                          clientCallback *_clientcallback,
                          bool const _verboseFlag);
@@ -145,6 +148,8 @@ namespace btg
 
             /// Pointer to the externalization which is used.
             btg::core::externalization::Externalization* externalization_;
+
+            btg::core::commandFactory cf;
 
             /// The states this machine can be in.
             enum State

@@ -30,9 +30,6 @@ namespace btg
       namespace logger
       {
 
-         logWrapper* logWrapper::instancePointer = false;
-         bool logWrapper::instance               = 0;
-
          using namespace std;
 
          logBuffer::logBuffer(logInterface* _target, t_int _bufferSize):
@@ -104,46 +101,30 @@ namespace btg
          /* *** */
 
          logWrapper::logWrapper()
-            : logstream(0),
-              minMessagePriority(logWrapper::PRIO_DEBUG)
+            : logstream(),
+              minMessagePriority(logWrapper::PRIO_DEBUG),
+              logstreamset(false)
          {
          }
 
          logWrapper::~logWrapper()
          {
-            delete logstream;
-            logstream = 0;
          }
 
-         logWrapper* logWrapper::getInstance()
+         void logWrapper::setLogStream(boost::shared_ptr<logStream> _logstream)
          {
-            if (instance == false)
-               {
-                  instance        = true;
-                  instancePointer = new logWrapper();
-               }
-
-            return instancePointer;
+            logstream    = _logstream;
+            logstreamset = true;
          }
 
-         void logWrapper::killInstance()
+         bool logWrapper::logStreamSet() const
          {
-            if (logWrapper::instance)
-               {
-                  logWrapper::instance = false;
-                  delete logWrapper::instancePointer;
-                  logWrapper::instancePointer = 0;
-               }
+            return logstreamset;
          }
 
-         void logWrapper::setLogStream(logStream *_logstream)
+         boost::shared_ptr<logStream> logWrapper::getLogStream() const
          {
-            this->logstream = _logstream;
-         }
-
-         logStream* logWrapper::getLogStream() const
-         {
-            return this->logstream;
+            return logstream;
          }
 
          bool logWrapper::logInput(logWrapper::MESSAGEPRIORITY _messagePriority) const

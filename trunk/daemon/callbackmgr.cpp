@@ -38,8 +38,10 @@ namespace btg
 
       const std::string moduleName("cbk");
 
-      callbackManager::callbackManager(bool const _verboseFlag)
-         : verboseFlag(_verboseFlag),
+      callbackManager::callbackManager(btg::core::LogWrapperType _logwrapper,
+                                       bool const _verboseFlag)
+         : btg::core::Logable(_logwrapper),
+           verboseFlag(_verboseFlag),
            interfaceMutex_(),
            interfaceCondition_(),
            die(false),
@@ -66,7 +68,7 @@ namespace btg
 
          if (!btg::core::os::Exec::isExecutable(_callback))
             {
-               BTG_MNOTICE("callback is not executable");
+               BTG_MNOTICE(logWrapper(), "callback is not executable");
                return status;
             }
 
@@ -79,13 +81,13 @@ namespace btg
 
          if (iter == userCallbackMap.end())
             {
-               BTG_MNOTICE("added callback '" << _callback << "' for user '" << _username << "'");
+               BTG_MNOTICE(logWrapper(), "added callback '" << _callback << "' for user '" << _username << "'");
                userCallbackMap.insert(p);
                status = true;
             }
          else
             {
-               BTG_MNOTICE("unable to add callback '" << _callback << "' for user '" << _username << "'");
+               BTG_MNOTICE(logWrapper(), "unable to add callback '" << _callback << "' for user '" << _username << "'");
             }
 
          return status;
@@ -151,7 +153,7 @@ namespace btg
             {
                threadData const td = *tdIter;
 
-                BTG_MNOTICE("user '" << td.username << "'.");
+                BTG_MNOTICE(logWrapper(), "user '" << td.username << "'.");
 
                std::map<std::string, std::string>::const_iterator iter = 
                   userCallbackMap.find(td.username);
@@ -159,7 +161,7 @@ namespace btg
                if (iter != userCallbackMap.end())
                   {
                      std::string callback = iter->second;
-                     BTG_MNOTICE("executing '" << callback << "':");
+                     BTG_MNOTICE(logWrapper(), "executing '" << callback << "':");
 
                      std::vector<std::string> arguments;
 
@@ -176,12 +178,12 @@ namespace btg
                            break;
                         default:
                            {
-                              BTG_MNOTICE("unknown event");
+                              BTG_MNOTICE(logWrapper(), "unknown event");
                               continue;
                            }
                         }
 
-                     BTG_MNOTICE("eventname '" << eventname << "'");
+                     BTG_MNOTICE(logWrapper(), "eventname '" << eventname << "'");
 
                      arguments.push_back(eventname);
 
@@ -191,26 +193,27 @@ namespace btg
                           argIter != td.arguments.end();
                           argIter++)
                         {
-                           BTG_MNOTICE("arg: '" << *argIter << "'");
+                           BTG_MNOTICE(logWrapper(), "arg: '" << *argIter << "'");
                            
                            arguments.push_back(*argIter);
                         }
 
                      if (btg::core::os::Exec::execFile(callback, arguments))
                         {
-                           MVERBOSE_LOG(moduleName, verboseFlag, "Executed " << 
+                           MVERBOSE_LOG(logWrapper(), 
+                                        moduleName, verboseFlag, "Executed " << 
                                         eventname << " for user " << td.username << ".");
                         }
                      else
                         {
-                           BTG_MNOTICE("execution of callback '" << callback << "' failed");
+                           BTG_MNOTICE(logWrapper(), "execution of callback '" << callback << "' failed");
                         }
                      
-                     BTG_MNOTICE("execution of callback '" << callback << "' succeded");
+                     BTG_MNOTICE(logWrapper(), "execution of callback '" << callback << "' succeded");
                   }
                else
                   {
-                     BTG_MNOTICE("unable to execute callback for user '" << td.username << "'");
+                     BTG_MNOTICE(logWrapper(), "unable to execute callback for user '" << td.username << "'");
                   }
             }
          // Clear data used by the thread.
@@ -222,7 +225,7 @@ namespace btg
          {
             boost::mutex::scoped_lock interface_lock(interfaceMutex_);
             die = true;
-            BTG_MNOTICE("stopped");
+            BTG_MNOTICE(logWrapper(), "stopped");
          }
          //interfaceCondition_.notify_one();
 
@@ -231,7 +234,7 @@ namespace btg
          // Execute any callbacks left.
          work_pop();
 
-         BTG_MNOTICE("destroyed");
+         BTG_MNOTICE(logWrapper(), "destroyed");
       }
 
    } // namespace daemon

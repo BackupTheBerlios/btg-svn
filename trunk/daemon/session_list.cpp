@@ -9,9 +9,11 @@ namespace btg
    {
       const std::string moduleName("lst");
 
-      sessionList::sessionList(bool const _verboseFlag,
+      sessionList::sessionList(btg::core::LogWrapperType _logwrapper,
+                               bool const _verboseFlag,
                                t_uint const _maxSessions)
-         : verboseFlag_(_verboseFlag),
+         : btg::core::Logable(_logwrapper),
+           verboseFlag_(_verboseFlag),
            maxSessions_(_maxSessions),
            current_id_(1),
            eventhandlers_()
@@ -195,9 +197,9 @@ namespace btg
             {
                eventHandler* eh = iter->second;
 
-               BTG_MNOTICE("Deleting session no. " << eh->getSession());
+               BTG_MNOTICE(logWrapper(), "Deleting session no. " << eh->getSession());
 
-               VERBOSE_LOG(verboseFlag_, "Terminating session " << 
+               VERBOSE_LOG(logWrapper(), verboseFlag_, "Terminating session " << 
                            iter->first << "/" << numberOfSessions << ".");
 
                delete eh;
@@ -231,7 +233,7 @@ namespace btg
          for (iter = eventhandlers_.begin(); iter != eventhandlers_.end(); iter++)
             {
                eventHandler* eh = iter->second;
-               BTG_MNOTICE("Serializing session " << iter->first);
+               BTG_MNOTICE(logWrapper(), "Serializing session " << iter->first);
                eh->serialize(_e, _dumpFastResume);
             }
       }

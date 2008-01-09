@@ -21,9 +21,9 @@
  */
 
 #include <cppunit/extensions/HelperMacros.h>
-
 #include <bcore/transport/tcpip.h>
 #include <bcore/externalization/externalization.h>
+#include <bcore/logable.h>
 
 class testTcpIp: public CppUnit::TestFixture
 {
@@ -64,4 +64,5 @@ class testTcpIp: public CppUnit::TestFixture
    btg::core::tcpTransport* mq_server;
    btg::core::tcpTransport* mq_client;
    btg::core::addressPort   addressport;
+   btg::core::LogWrapperType logwrapper;
 };

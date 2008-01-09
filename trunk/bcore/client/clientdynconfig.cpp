@@ -27,6 +27,7 @@
 
 #include <bcore/externalization/externalization_factory.h>
 #include <bcore/os/fileop.h>
+#include <bcore/logmacro.h>
 
 const t_uint cfg_format_version = 0xFF88FF22; // some magic number, mean nothing
 
@@ -41,8 +42,10 @@ namespace btg
          using namespace btg::core;
          using namespace std;
          
-         clientDynConfig::clientDynConfig(string const& _file_name)
-            : m_file_name(_file_name),
+         clientDynConfig::clientDynConfig(LogWrapperType _logwrapper,
+                                          string const& _file_name)
+            : Logable(_logwrapper),
+              m_file_name(_file_name),
               m_data_modified(false),
               m_gui_window_width(600),
               m_gui_window_height(450),
@@ -55,12 +58,12 @@ namespace btg
             {
                if (!load())
                {
-                  BTG_NOTICE("Can't load dynconfig.");
+                  BTG_NOTICE(logWrapper(), "Can't load dynconfig.");
                }
             }
             else
             {
-               BTG_NOTICE("Cauldn't find file " << m_file_name);
+               BTG_NOTICE(logWrapper(), "Cauldn't find file " << m_file_name);
             }
          }
          
@@ -72,7 +75,7 @@ namespace btg
          
          bool clientDynConfig::load()
          {
-            BTG_NOTICE("load(): Loading dynconfig from file " << m_file_name);
+            BTG_NOTICE(logWrapper(), "load(): Loading dynconfig from file " << m_file_name);
             
             set_modified(false);
 
@@ -84,7 +87,7 @@ namespace btg
 #endif
             if (!file.is_open())
             {
-               BTG_ERROR_LOG("load(), Failed to open " << m_file_name);
+               BTG_ERROR_LOG(logWrapper(), "load(), Failed to open " << m_file_name);
                return false;
             }
 
@@ -102,7 +105,7 @@ namespace btg
 
             if (size <= 0)
             {
-               BTG_ERROR_LOG("load(), " << m_file_name << " is empty or absent.");
+               BTG_ERROR_LOG(logWrapper(), "load(), " << m_file_name << " is empty or absent.");
                return false;
             }
             
@@ -110,7 +113,7 @@ namespace btg
             memset(buffer, size, 0);
             file.read(reinterpret_cast<char*>(buffer), size);
             
-            auto_ptr<Externalization> ext(Factory::createExternalization());
+            auto_ptr<Externalization> ext(Factory::createExternalization(logWrapper()));
             
             dBuffer dbuf(buffer, size);
             ext->setBuffer(dbuf);
@@ -123,13 +126,13 @@ namespace btg
             t_uint sig1=0;
             if ((!ext->bytesToUint(&sig0)) || (!ext->bytesToUint(&sig1)))
             {
-               BTG_ERROR_LOG("load(), failed to parse " << m_file_name
+               BTG_ERROR_LOG(logWrapper(), "load(), failed to parse " << m_file_name
                   << ", unable to read signature byte(s).");
                return false;
             }
             if ((sig0 != ~((t_uint)sig1)))
             {
-               BTG_ERROR_LOG("load(), bad signature bytes");
+               BTG_ERROR_LOG(logWrapper(), "load(), bad signature bytes");
                // Unknown signature.
                return false;
             }
@@ -143,7 +146,7 @@ namespace btg
                !ext->bytesToStringList(&lastFiles_)
                )
             {
-               BTG_ERROR_LOG("load(), parsing error.");
+               BTG_ERROR_LOG(logWrapper(), "load(), parsing error.");
                return false;
             }
 
@@ -152,10 +155,10 @@ namespace btg
          
          bool clientDynConfig::save()
          {
-            BTG_NOTICE("save(), Writing dynconfig file " << m_file_name);
+            BTG_NOTICE(logWrapper(), "save(), Writing dynconfig file " << m_file_name);
             
             // Create serializator
-            auto_ptr<Externalization> ext(Factory::createExternalization());
+            auto_ptr<Externalization> ext(Factory::createExternalization(logWrapper()));
 
             // store signature
             t_uint sig = cfg_format_version;
@@ -173,7 +176,7 @@ namespace btg
                !ext->stringListToBytes(&lastFiles_)
                )
             {
-               BTG_ERROR_LOG("save(), parsing error.");
+               BTG_ERROR_LOG(logWrapper(), "save(), parsing error.");
                return false;
             }
             
@@ -189,7 +192,7 @@ namespace btg
 #endif
             if (!file.is_open())
             {
-               BTG_ERROR_LOG("save(), Failed to open " << m_file_name << " to write dynamic configuration.");
+               BTG_ERROR_LOG(logWrapper(), "save(), Failed to open " << m_file_name << " to write dynamic configuration.");
                return false;
             }
 

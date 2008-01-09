@@ -38,6 +38,8 @@ extern "C"
 
 #include <string>
 
+#include <bcore/logable.h>
+
 namespace btg
 {
    namespace core
@@ -102,10 +104,12 @@ namespace btg
                      static bool verifyCertificate(gnutls_session_t & _session);
 
                      /// Log information about the current session.
-                     static void logSessionInfo(gnutls_session_t _session);
+                     static void logSessionInfo(LogWrapperType _logwrapper,
+                                                gnutls_session_t _session);
 
                      /// Log information about the currently used x509 certificate.
-                     static void logX509CertificateInfo(gnutls_session_t session);
+                     static void logX509CertificateInfo(LogWrapperType _logwrapper,
+                                                        gnutls_session_t _session);
                   };
 
                /// Global data used by a server.

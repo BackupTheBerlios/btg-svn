@@ -9,7 +9,8 @@ clientcallback.cpp \
 helper_argif.cpp \
 helper.cpp \
 handlerthr.cpp \
-clientdynconfig.cpp
+clientdynconfig.cpp \
+loglevel.cpp
 
 noinst_HEADERS = carg.h \
 configuration.h lastfiles.h \
@@ -19,7 +20,8 @@ clientcallback.h \
 helper_argif.h \
 helper.h \
 handlerthr.h \
-clientdynconfig.h
+clientdynconfig.h \
+loglevel.h
 
 libbtgclient_la_CFLAGS   = @DEBUG_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@
 libbtgclient_la_CXXFLAGS = @DEBUG_CXXFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@

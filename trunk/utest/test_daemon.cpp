@@ -45,6 +45,7 @@ extern "C"
 #include <daemon/filetrack.h>
 
 #include <daemon/darg.h>
+#include <bcore/logable.h>
 
 #if BTG_UTEST_DAEMON
 CPPUNIT_TEST_SUITE_REGISTRATION( testDaemon );
@@ -58,6 +59,8 @@ void testDaemon::setUp()
          /* Is this the correct way to bail? */
          CPPUNIT_ASSERT(mkdir(TESTFILE_BASE_DIR, 0777) != -1);
       }
+
+   logwrapper = btg::core::LogWrapperType(new btg::core::logger::logWrapper);
 }
 
 void testDaemon::tearDown()
@@ -95,7 +98,8 @@ void testDaemon::testConfiguration()
    addressPort ap_listen(192,168,0,1,15000);
    addressPort ap_proxy(192,168,0,2,25000);
 
-   daemonConfiguration* config = new daemonConfiguration(TESTFILE_DAEMON_CONFIG);
+   daemonConfiguration* config = new daemonConfiguration(logwrapper, 
+                                                         TESTFILE_DAEMON_CONFIG);
 
    config->setTransport(messageTransport::TCP);
    config->setLog(logBuffer::LOGFILE);
@@ -124,7 +128,8 @@ void testDaemon::testConfiguration()
    delete config;
    config = 0;
 
-   config = new daemonConfiguration(TESTFILE_DAEMON_CONFIG);
+   config = new daemonConfiguration(logwrapper,
+                                    TESTFILE_DAEMON_CONFIG);
    CPPUNIT_ASSERT(config->read());
 
    CPPUNIT_ASSERT(config->getTransport() == messageTransport::TCP);
@@ -152,10 +157,10 @@ void testDaemon::testSessionSaver()
    using namespace btg::core::logger;
 
    std::pair<t_int, t_int> port_range(1024, 1024 + 20);
-   portManager* portMgr = new portManager(false, port_range);
-   limitManager* limitMgr = new limitManager(false, 10, -1, -1, -1, -1);
+   portManager* portMgr = new portManager(logwrapper, false, port_range);
+   limitManager* limitMgr = new limitManager(logwrapper, false, 10, -1, -1, -1, -1);
 
-   sessionList sessionlist(false, 10);
+   sessionList sessionlist(logwrapper, false, 10);
 
    daemonData dd;
    /* Setting up a full environment is much... Too much?
@@ -176,13 +181,13 @@ void testDaemon::testSessionSaver()
       dd.filter = ;
    */
 
-   SessionSaver *ss = new SessionSaver(false, *portMgr, *limitMgr, sessionlist, dd);
+   SessionSaver *ss = new SessionSaver(logwrapper, false, *portMgr, *limitMgr, sessionlist, dd);
    CPPUNIT_ASSERT(ss->saveSessions(TESTFILE_DAEMON_SESSIONSAVE, false) == 1);
 
    delete ss;
    ss=0;
 
-   ss = new SessionSaver(false, *portMgr, *limitMgr, sessionlist, dd);
+   ss = new SessionSaver(logwrapper, false, *portMgr, *limitMgr, sessionlist, dd);
    CPPUNIT_ASSERT(ss->loadSessions(TESTFILE_DAEMON_SESSIONSAVE) == 0);
 
    std::vector<t_long> sessions;
@@ -211,7 +216,7 @@ void testDaemon::testPortManager()
 
    std::pair<t_uint, t_uint> port_range(portBase, portBase+portNumber);
 
-   portManager* portman = new portManager(false, port_range);
+   portManager* portman = new portManager(logwrapper, false, port_range);
 
    for (t_uint counter = 0;
         counter < portNumber;
@@ -249,7 +254,7 @@ void testDaemon::testFileTracker()
 {
    using namespace btg::daemon;
 
-   fileTrack* ft = new fileTrack;
+   fileTrack* ft = new fileTrack(logwrapper);
 
    std::string file0("file0.torrent");
    std::string user0("user0");

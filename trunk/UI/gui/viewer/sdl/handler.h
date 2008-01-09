@@ -77,7 +77,8 @@ namespace btg
                   /// @param [in] _autoStartFlag Auto start loaded torrents.
                   /// @param [in] _gui           Reference to the GUI instance used.
 
-                  viewerHandler(btg::core::externalization::Externalization* _e,
+                  viewerHandler(btg::core::LogWrapperType _logwrapper,
+                                btg::core::externalization::Externalization* _e,
                                 btg::core::messageTransport*            _transport,
                                 btg::core::client::clientConfiguration* _config,
                                 btg::core::client::lastFiles*           _lastfiles,
@@ -223,7 +224,8 @@ namespace btg
                {
                public:
                   /// Constructor.
-                  viewerStartupHelper(btg::core::client::clientConfiguration*        _config,
+                  viewerStartupHelper(btg::core::LogWrapperType _logwrapper,
+                                      btg::core::client::clientConfiguration*        _config,
                                       vsCommandLineArgumentHandler* _clah,
                                       btg::core::messageTransport*                   _messageTransport,
                                       btg::core::client::clientHandler*              _handler);

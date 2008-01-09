@@ -58,47 +58,54 @@
 
 #include "ext_printer.h"
 
+#include <iostream>
+
 using namespace btg::core;
 using namespace btg::core::externalization;
 using namespace std;
 
-void printCommand(btg::core::externalization::Externalization* _e, Command* _command);
+void printCommand(btg::core::commandFactory & cf,
+                  btg::core::externalization::Externalization* _e, Command* _command);
 
 int main(int argc, char* argv[])
 {
+   LogWrapperType logwrapper(new btg::core::logger::logWrapper);
+
    t_int context_id            = 1;
    std::string filename("filename");
 
-   btg::core::externalization::Externalization* e = new externalizationPrinter();
+   btg::core::externalization::Externalization* e = new externalizationPrinter(logwrapper);
+
+   btg::core::commandFactory cf(logwrapper, e);
 
    // Create a number of commands and serialize/print them.
 
    // Command::CN_GINITCONNECTION
    e->setDirection(TO_SERVER);
-   printCommand(e, new initConnectionCommand());
+   printCommand(cf, e, new initConnectionCommand());
 
    // Command::CN_GSETUP
    requiredSetupData rsd("build id", -1, -1, false, false);
    e->setDirection(TO_SERVER);
-   printCommand(e, new setupCommand(rsd));
+   printCommand(cf, e, new setupCommand(rsd));
 
    // Command::CN_GSETUPRSP
    e->setDirection(FROM_SERVER);
-   printCommand(e, new setupResponseCommand(50000));
+   printCommand(cf, e, new setupResponseCommand(50000));
 
    // Command::CN_GKILL
-   printCommand(e, new killCommand());
+   printCommand(cf, e, new killCommand());
 
    // Command::CN_GUPTIME
-   printCommand(e, new uptimeCommand());
+   printCommand(cf, e, new uptimeCommand());
 
    // Command::CN_GUPTIMERSP
    e->setDirection(FROM_SERVER);
-   printCommand(e, new uptimeResponseCommand(5));
+   printCommand(cf, e, new uptimeResponseCommand(5));
 
    // Command::CN_GLIST
    e->setDirection(TO_SERVER);
-   printCommand(e, new listCommand());
+   printCommand(cf, e, new listCommand());
 
    // Command::CN_GLISTRSP
    t_intList context_ids;
@@ -106,7 +113,7 @@ int main(int argc, char* argv[])
    t_strList filenames;
    filenames.push_back(filename);
    e->setDirection(FROM_SERVER);
-   printCommand(e, new listCommandResponse(context_ids, filenames));
+   printCommand(cf, e, new listCommandResponse(context_ids, filenames));
 
    // Command::CN_CCREATEWITHDATA.
    dBuffer db;
@@ -117,41 +124,41 @@ int main(int argc, char* argv[])
    sBuffer torrentbuffer(db);
 
    e->setDirection(TO_SERVER);
-   printCommand(e, new contextCreateWithDataCommand("filename", torrentbuffer, true));
+   printCommand(cf, e, new contextCreateWithDataCommand("filename", torrentbuffer, true));
 
    // Command::CN_CLAST
-   printCommand(e, new lastCIDCommand());
+   printCommand(cf, e, new lastCIDCommand());
 
    // Command::CN_CLASTRSP
-   printCommand(e, new lastCIDResponseCommand(12345));
+   printCommand(cf, e, new lastCIDResponseCommand(12345));
 
    // Command::CN_CSTART
-   printCommand(e, new contextStartCommand(context_id, false));
+   printCommand(cf, e, new contextStartCommand(context_id, false));
 
    // Command::CN_CSTOP
-   printCommand(e, new contextStopCommand(context_id, false));
+   printCommand(cf, e, new contextStopCommand(context_id, false));
 
    // Command::CN_CABORT
-   printCommand(e, new contextAbortCommand(context_id, false));
+   printCommand(cf, e, new contextAbortCommand(context_id, false));
 
    // Command::CN_CSTATUS
-   printCommand(e, new contextStatusCommand(context_id, false));
+   printCommand(cf, e, new contextStatusCommand(context_id, false));
 
    // Command::CN_CSTATUSRSP
    trackerStatus ts(-1, 0);
    Status status(context_id, filename, Status::ts_finished, 0, 0, 0, 0, 0, 100, 1024, 500, 200, 0, 0, 0, 0, ts, 0);
    e->setDirection(FROM_SERVER);
-   printCommand(e, new contextStatusResponseCommand(context_id, status));
+   printCommand(cf, e, new contextStatusResponseCommand(context_id, status));
 
    // Command::CN_CALLSTATUSRSP
    t_statusList statuslst;
    statuslst.push_back(status);
    e->setDirection(FROM_SERVER);
-   printCommand(e, new contextAllStatusResponseCommand(context_id, statuslst));
+   printCommand(cf, e, new contextAllStatusResponseCommand(context_id, statuslst));
 
    // Command::CN_CFILEINFO
    e->setDirection(TO_SERVER);
-   printCommand(e, new contextFileInfoCommand(context_id, false));
+   printCommand(cf, e, new contextFileInfoCommand(context_id, false));
 
    // Command::CN_CFILEINFORSP
 
@@ -168,36 +175,36 @@ int main(int argc, char* argv[])
    fileinfolist.push_back(fi);
 
    e->setDirection(FROM_SERVER);
-   printCommand(e, new contextFileInfoResponseCommand(context_id, fileinfolist));
+   printCommand(cf, e, new contextFileInfoResponseCommand(context_id, fileinfolist));
 
    // Command::CN_CALLFILEINFORSP
    // Above is not implemented.
 
    // Command::CN_CCLEAN
    e->setDirection(TO_SERVER);
-   printCommand(e, new contextCleanCommand());
+   printCommand(cf, e, new contextCleanCommand());
 
    // Command::CN_CCLEANRSP
    t_intList contextIDs;
    contextIDs.push_back(context_id);
    e->setDirection(FROM_SERVER);
-   printCommand(e, new contextCleanResponseCommand(filenames, contextIDs));
+   printCommand(cf, e, new contextCleanResponseCommand(filenames, contextIDs));
 
    // Command::CN_CLIMIT
    e->setDirection(TO_SERVER);
-   printCommand(e, new contextLimitCommand(context_id, 10, 10, false));
+   printCommand(cf, e, new contextLimitCommand(context_id, 10, 10, false));
 
    // Command::CN_CLIMITSTATUS
    e->setDirection(TO_SERVER);
-   printCommand(e, new contextLimitStatusCommand(context_id, false));
+   printCommand(cf, e, new contextLimitStatusCommand(context_id, false));
 
    // Command::CN_CLIMITSTATUSRSP
    e->setDirection(FROM_SERVER);
-   printCommand(e, new contextLimitStatusResponseCommand(context_id, 10, 5));
+   printCommand(cf, e, new contextLimitStatusResponseCommand(context_id, 10, 5));
 
    // Command::CN_CPEERS
    e->setDirection(TO_SERVER);
-   printCommand(e, new contextPeersCommand(context_id, false));
+   printCommand(cf, e, new contextPeersCommand(context_id, false));
 
    // Command::CN_CPEERSRSP
    peerAddress peeraddress(127,0,0,1);
@@ -205,35 +212,35 @@ int main(int argc, char* argv[])
    t_peerList peerlist;
    peerlist.push_back(peer);
    e->setDirection(FROM_SERVER);
-   printCommand(e, new contextPeersResponseCommand(context_id, peerlist));
+   printCommand(cf, e, new contextPeersResponseCommand(context_id, peerlist));
 
    // Command::CN_ERROR
    e->setDirection(FROM_SERVER);
-   printCommand(e, new errorCommand(Command::CN_ERROR, "error text"));
+   printCommand(cf, e, new errorCommand(Command::CN_ERROR, "error text"));
 
    // Command::CN_ACK
    e->setDirection(FROM_SERVER);
-   printCommand(e, new ackCommand(Command::CN_GINITCONNECTION));
+   printCommand(cf, e, new ackCommand(Command::CN_GINITCONNECTION));
 
    // Command::CN_SATTACH
    e->setDirection(TO_SERVER);
-   printCommand(e, new attachSessionCommand("build id", 1000 /* session */));
+   printCommand(cf, e, new attachSessionCommand("build id", 1000 /* session */));
 
    // Command::CN_SDETACH
    e->setDirection(TO_SERVER);
-   printCommand(e, new detachSessionCommand());
+   printCommand(cf, e, new detachSessionCommand());
 
    // Command::CN_SQUIT
    e->setDirection(TO_SERVER);
-   printCommand(e, new quitSessionCommand());
+   printCommand(cf, e, new quitSessionCommand());
 
    // Command::CN_SERROR
    e->setDirection(FROM_SERVER);
-   printCommand(e, new sessionErrorCommand(Command::CN_GINITCONNECTION));
+   printCommand(cf, e, new sessionErrorCommand(Command::CN_GINITCONNECTION));
 
    // Command::CN_SLIST
    e->setDirection(TO_SERVER);
-   printCommand(e, new listSessionCommand());
+   printCommand(cf, e, new listSessionCommand());
 
    // Command::CN_SLISTRSP
    e->setDirection(FROM_SERVER);
@@ -242,7 +249,7 @@ int main(int argc, char* argv[])
    t_strList sessionNames;
    sessionNames.push_back("session 0");
 
-   printCommand(e, new listSessionResponseCommand(sessions, sessionNames));
+   printCommand(cf, e, new listSessionResponseCommand(sessions, sessionNames));
 
    // Command::CN_MOREAD
    // Above is not implemented.
@@ -256,9 +263,11 @@ int main(int argc, char* argv[])
    return 0;
 }
 
-void printCommand(btg::core::externalization::Externalization* _e, Command* _command)
+void printCommand(btg::core::commandFactory & cf,
+                  btg::core::externalization::Externalization* _e, 
+                  Command* _command)
 {
-   if (!commandFactory::convertToBytes(_e, _command))
+   if (!cf.convertToBytes(_command))
       {
          std::cout << "Error" << std::endl;
       }

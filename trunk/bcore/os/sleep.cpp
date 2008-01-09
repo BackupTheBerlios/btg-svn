@@ -22,8 +22,6 @@
 
 #include "sleep.h"
 
-#include <bcore/logmacro.h>
-
 extern "C"
 {
 #include <time.h>
@@ -56,11 +54,7 @@ namespace btg
             req.tv_sec  = 0;
             req.tv_nsec = 0;
 
-            int result = nanosleep(&req, &rem);
-            if (result == -1)
-	      {
-		BTG_NOTICE("nanosleep, result = " << result);
-	      }
+            nanosleep(&req, &rem);
          }
 
 

@@ -42,10 +42,12 @@ namespace btg
       namespace os
       {
 
-         SecureClientSocket::SecureClientSocket(gtlsClientData* _gcd,
+         SecureClientSocket::SecureClientSocket(LogWrapperType _logwrapper,
+                                                gtlsClientData* _gcd,
                                                 std::string const& _host,
                                                 t_uint const _port)
-            : gcd_(_gcd)
+            : Socket(_logwrapper),
+              gcd_(_gcd)
          {
             if (!Socket::create())
                {

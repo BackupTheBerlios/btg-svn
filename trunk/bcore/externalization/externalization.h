@@ -30,7 +30,7 @@
 
 #include <string>
 
-#include <bcore/logmacro.h>
+#include <bcore/logable.h>
 
 namespace btg
 {
@@ -54,11 +54,11 @@ namespace btg
             /// call success or fauilture to indicate the status of
             /// the operation.
 
-            class Externalization
+            class Externalization: public btg::core::Logable
             {
             public:
                /// Default constructor.
-               Externalization();
+               Externalization(LogWrapperType _logwrapper);
 
                /// Destructor.
                virtual ~Externalization();

@@ -272,7 +272,7 @@ namespace btg
          upload_bytes_        = upl - upload_bytes_last_;
          upload_bytes_last_   = upl;
 
-         BTG_MNOTICE("setting counters, dnl " << download_bytes_ << ", upl " << upload_bytes_);
+         // BTG_MNOTICE("setting counters, dnl " << download_bytes_ << ", upl " << upload_bytes_);
 
          val_ul_rate.min  = 1;
          val_ul_rate.used = upload_bytes_;
@@ -386,9 +386,9 @@ namespace btg
                uploads++;
             }
 
-         BTG_MNOTICE("Setting limit:");
-         BTG_MNOTICE("ul = " << ul << " bytes/sec, dl = " << dl << " bytes/sec.");
-         BTG_MNOTICE("connections = " << connections << ", uploads = " << uploads << ".");
+         //BTG_MNOTICE("Setting limit:");
+         //BTG_MNOTICE("ul = " << ul << " bytes/sec, dl = " << dl << " bytes/sec.");
+         //BTG_MNOTICE("connections = " << connections << ", uploads = " << uploads << ".");
 
          session_->set_upload_rate_limit(ul);
          session_->set_download_rate_limit(dl);

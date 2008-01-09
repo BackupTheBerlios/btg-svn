@@ -50,13 +50,15 @@ namespace btg
       /* */
       /* */
 
-      limitManager::limitManager(bool const _verboseFlag,
+      limitManager::limitManager(btg::core::LogWrapperType _logwrapper,
+                                 bool const _verboseFlag,
                                  t_uint const _interval,
                                  t_int const _upload_rate_limit,
                                  t_int const _download_rate_limit,
                                  t_int const _max_uploads,
                                  t_long const _max_connections)
-         : verboseFlag_(_verboseFlag),
+         : btg::core::Logable(_logwrapper),
+           verboseFlag_(_verboseFlag),
            interval_(_interval),
            sessions_(),
            upload_rate_limit_(_upload_rate_limit),
@@ -76,8 +78,9 @@ namespace btg
                    boost::bind(&limitManager::work, boost::ref(*this))
                    )
       {
-         BTG_MNOTICE("constructed");
-         BTG_MNOTICE("limits: " << upload_rate_limit_ << ", " <<
+         BTG_MNOTICE(logWrapper(), "constructed");
+         BTG_MNOTICE(logWrapper(), 
+                     "limits: " << upload_rate_limit_ << ", " <<
                      download_rate_limit_ << ", " << max_uploads_ << ", " <<
                      max_connections_);
       }
@@ -133,7 +136,7 @@ namespace btg
 
       void limitManager::work()
       {
-         BTG_MNOTICE("thread started");
+         BTG_MNOTICE(logWrapper(), "thread started");
 
          while (!die_)
             {
@@ -168,7 +171,8 @@ namespace btg
 
       void limitManager::work_set()
       {
-         VERBOSE_LOG(verboseFlag_, moduleName << ":"
+         VERBOSE_LOG(logWrapper(), 
+                     verboseFlag_, moduleName << ":"
                      " setting limits, upload = " << param_upload_rate_limit << ", " <<
                      " download = " << param_download_rate_limit << ", " <<
                      " max upload = " << param_max_uploads << ", " <<
@@ -238,7 +242,7 @@ namespace btg
                resources = upload_rate_limit_ * tick_interval;
             }
 
-         BTG_MNOTICE("distributing resources (ul): " << resources);
+         BTG_MNOTICE(logWrapper(), "distributing resources (ul): " << resources);
 
          allocate_resources(resources,
                             sessions_,
@@ -255,7 +259,7 @@ namespace btg
                resources = download_rate_limit_ * tick_interval;
             }
 
-         BTG_MNOTICE("distributing resources (dl): " << resources);
+         BTG_MNOTICE(logWrapper(), "distributing resources (dl): " << resources);
 
          allocate_resources(resources,
                             sessions_,
@@ -271,7 +275,7 @@ namespace btg
                resources = max_uploads_ * tick_interval;
             }
 
-         BTG_MNOTICE("distributing resources (max ul): " << resources);
+         BTG_MNOTICE(logWrapper(), "distributing resources (max ul): " << resources);
          
          allocate_resources(resources,
                             sessions_,
@@ -288,7 +292,7 @@ namespace btg
                resources = max_connections_ * tick_interval;
             }
 
-         BTG_MNOTICE("distributing resources (max conn): " << resources);
+         BTG_MNOTICE(logWrapper(), "distributing resources (max conn): " << resources);
 
          allocate_resources(resources,
                             sessions_,
@@ -314,7 +318,7 @@ namespace btg
             {
                sessionData & sessiondata = *sessionIter;
 
-               // BTG_MNOTICE("rates: " << upload_rate_limit_ << ", " << download_rate_limit_ << ", " << max_uploads_ << ", " << max_connections_);
+               // BTG_MNOTICE(logWrapper(), "rates: " << upload_rate_limit_ << ", " << download_rate_limit_ << ", " << max_uploads_ << ", " << max_connections_);
 
                sessiondata.update(upload_rate_limit_,
                                   download_rate_limit_,
@@ -346,7 +350,7 @@ namespace btg
 
          thread_.join();
 
-         BTG_MNOTICE("stopped");
+         BTG_MNOTICE(logWrapper(), "stopped");
       }
 
       limitManager::~limitManager()
@@ -355,7 +359,7 @@ namespace btg
             {
                stop();
             }
-         BTG_MNOTICE("destroyed");
+         BTG_MNOTICE(logWrapper(), "destroyed");
       }
 
    } // namespace daemon

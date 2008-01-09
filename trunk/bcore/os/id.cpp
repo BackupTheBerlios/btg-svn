@@ -29,8 +29,6 @@ extern "C"
 #  include <grp.h>
 }
 
-#include <bcore/logmacro.h>
-
 namespace btg
 {
    namespace core
@@ -83,13 +81,13 @@ namespace btg
 
             if (setgid(gid) != 0)
                {
-                  BTG_NOTICE("setgid failed.");
+                  // BTG_NOTICE("setgid failed.");
                   result = false;
                }
 
             if (setuid(uid) != 0)
                {
-                  BTG_NOTICE("setuid failed.");
+                  // BTG_NOTICE("setuid failed.");
                   result = false;
                }
 

@@ -24,6 +24,7 @@
 #define LIMIT_MGR_H
 
 #include <bcore/type.h>
+#include <bcore/logable.h>
 #include <vector>
 
 #include <boost/thread/thread.hpp>
@@ -54,7 +55,7 @@ namespace btg
          /// \note The scenario where an update is running, and a
          /// torrent is removed is handled, because the add/remove
          /// operations block on the same interface mutex.
-         class limitManager
+         class limitManager: public btg::core::Logable
             {
             public:
                /// Actions performed by the thread.
@@ -71,7 +72,8 @@ namespace btg
                /// @param [in] _download_rate_limit    Initial max upload rate for this session.
                /// @param [in] _max_uploads            Initial max number of uploads for this session.
                /// @param [in] _max_connections        Initial max number of connections for this session.
-               limitManager(bool const _verboseFlag,
+               limitManager(btg::core::LogWrapperType _logwrapper,
+                            bool const _verboseFlag,
                             t_uint const _interval,
                             t_int const _upload_rate_limit,
                             t_int const _download_rate_limit,

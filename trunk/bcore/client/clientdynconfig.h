@@ -26,6 +26,7 @@
 #include <string>
 
 #include <bcore/type.h>
+#include <bcore/logable.h>
 
 namespace btg
 {
@@ -42,7 +43,7 @@ namespace btg
                
                /// Save and retrive various client dinamically-generated
                /// configuretion data (like client window position and dimensions, etc.)
-               class clientDynConfig
+               class clientDynConfig: public Logable
                   {
                      // Allow to handle some data to lastFiles
                      friend class lastFiles;
@@ -51,7 +52,8 @@ namespace btg
                      /// Constructor.
                      /// @param [in] _file_name Dynamic client config data file name
                      /// for store/load config data
-                     clientDynConfig(std::string const& _file_name);
+                     clientDynConfig(LogWrapperType _logwrapper,
+                                     std::string const& _file_name);
 
                      /// Destructor.
                      virtual ~clientDynConfig();

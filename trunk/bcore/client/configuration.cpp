@@ -66,8 +66,10 @@ namespace btg
          using namespace btg::core;
          using namespace btg::core::logger;
 
-         clientConfiguration::clientConfiguration(std::string const& _filename)
-            : Configuration(_filename),
+         clientConfiguration::clientConfiguration(LogWrapperType _logwrapper,
+                                                  std::string const& _filename)
+            : Configuration(_logwrapper,
+                            _filename),
               def_transport(messageTransport::UNDEFINED),
               def_daemonaddress(0,0,0,0,0),
               def_TLS_CA_cert(),
@@ -234,14 +236,14 @@ namespace btg
                   if (gotUser && gotPasswordHash)
                      {
 #if BTG_AUTH_DEBUG
-		       BTG_NOTICE("Got auth info from configuration file.");
+		       BTG_NOTICE(logWrapper(), "Got auth info from configuration file.");
 #endif // BTG_AUTH_DEBUG
                         def_auth_set = true;
                      }
 #if BTG_AUTH_DEBUG
                   else
                      {
-                        BTG_NOTICE("No auth info in configuration file, gotUser = " << gotUser << ", gotPasswordHash = " << gotPasswordHash);
+                        BTG_NOTICE(logWrapper(), "No auth info in configuration file, gotUser = " << gotUser << ", gotPasswordHash = " << gotPasswordHash);
                      }
 #endif // BTG_AUTH_DEBUG
                } // status ok
@@ -271,7 +273,7 @@ namespace btg
                   transportStr = VALUE_TRANSPORT_SXMLRPC;
                   break;
                default:
-                  BTG_NOTICE("No default transport set");
+                  BTG_NOTICE(logWrapper(), "No default transport set");
                }
 
             if (transportStr.size() > 0)
@@ -352,7 +354,7 @@ namespace btg
                   loggerStr     = VALUE_LOGGING_SYSLOG;
                   break;
                default:
-                  BTG_NOTICE("No default log method set");
+                  BTG_NOTICE(logWrapper(), "No default log method set");
                }
 
             if (def_logFilename.size() > 0)

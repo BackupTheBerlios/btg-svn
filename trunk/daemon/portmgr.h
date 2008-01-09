@@ -24,6 +24,7 @@
 #define PORTMGR_H
 
 #include <bcore/type.h>
+#include <bcore/logable.h>
 
 #include <list>
 
@@ -38,14 +39,16 @@ namespace btg
          /** @{ */
 
          /// Keep track of which ports are used.
-         class portManager
+         class portManager: public btg::core::Logable
             {
             public:
                /// Constructor.
                /// Set up this instance with a port range.
                /// @param [in] _verboseFlag Indicates if this class should do verbose logging.
                /// @param [in] _port_range  The port range to use.
-               portManager(bool const _verboseFlag, std::pair<t_uint, t_uint> const& _port_range);
+               portManager(btg::core::LogWrapperType _logwrapper,
+                           bool const _verboseFlag, 
+                           std::pair<t_uint, t_uint> const& _port_range);
 
                /// Indicate of a number of ports is available.
                /// @param [in] numberOfPorts The number of ports that will be checked for availability.

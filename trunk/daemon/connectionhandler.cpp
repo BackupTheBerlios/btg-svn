@@ -76,7 +76,7 @@ namespace btg
 
       void Connection::setSession(t_long const _session)
       {
-         BTG_MNOTICE("connection " << connectionID_ << " changed session to " << _session);
+         // BTG_MNOTICE("connection " << connectionID_ << " changed session to " << _session);
          sessionID_ = _session;
       }
 
@@ -87,7 +87,7 @@ namespace btg
 
       void Connection::setUsername(std::string const _username)
       {
-         BTG_MNOTICE("connection " << connectionID_ << " is now authed as user " << _username);
+         // BTG_MNOTICE("connection " << connectionID_ << " is now authed as user " << _username);
          username_ = _username;
          isAuthed_ = true;
       }
@@ -116,11 +116,11 @@ namespace btg
          // Make sure _connectionID is not already in use before we add it.
          if (getConnection(_connectionID) != 0)
             {
-               BTG_ERROR_LOG("connetionHandler::addConnection(), Tried to add connection " << _connectionID << ", but it already exists!");
+               // BTG_ERROR_LOG("connetionHandler::addConnection(), Tried to add connection " << _connectionID << ", but it already exists!");
                return false;
             }
 
-         BTG_MNOTICE("adding connection " << _connectionID);
+         // BTG_MNOTICE("adding connection " << _connectionID);
          Connection * c = new Connection(_connectionID);
          connections_[_connectionID] = c;
          return true;
@@ -132,11 +132,11 @@ namespace btg
 
          if (iter == connections_.end())
             {
-               BTG_ERROR_LOG("connetionHandler::removeConnection(), Tried to remove connection " << _connectionID << ", which we dont know anything about!");
+               // BTG_ERROR_LOG("connetionHandler::removeConnection(), Tried to remove connection " << _connectionID << ", which we dont know anything about!");
                return false;
             }
 
-         BTG_MNOTICE("removing connection " << _connectionID);
+         // BTG_MNOTICE("removing connection " << _connectionID);
          delete iter->second;
          iter->second = 0;
 

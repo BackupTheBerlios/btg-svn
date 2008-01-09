@@ -48,17 +48,21 @@
 #include "portmgr.h"
 #include "limitmgr.h"
 
+#include <bcore/logable.h>
+
 namespace btg
 {
    namespace daemon
       {
 
-         class daemonHandler
+         class daemonHandler: public btg::core::Logable
             {
             public:
                /// Construct the daemon handler.
                /// The pointer _must_ point at initialized daemon data.
-               daemonHandler(daemonData* _dd, bool const _verboseFlag);
+               daemonHandler(btg::core::LogWrapperType _logwrapper,
+                             daemonData* _dd, 
+                             bool const _verboseFlag);
 
                /// Read data from the transport used.
                void readFromTransport();
@@ -241,6 +245,8 @@ namespace btg
                /// The buffer used to send commands back to the
                /// clients.
                btg::core::dBuffer              sendBuffer_;
+
+               btg::core::commandFactory       cf_;
             private:
                /// Copy constructor.
                daemonHandler(daemonHandler const& _dh);

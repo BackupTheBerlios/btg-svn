@@ -57,7 +57,8 @@ namespace btg
                   {
                   public:
                      /// Constructor.
-                     Handler(btg::core::externalization::Externalization* _e,
+                     Handler(btg::core::LogWrapperType _logwrapper,
+                             btg::core::externalization::Externalization* _e,
                              btg::core::messageTransport*            _transport,
                              btg::core::client::clientConfiguration* _config,
                              btg::core::client::lastFiles*           _lastfiles,
@@ -204,7 +205,8 @@ namespace btg
                   {
                   public:
                      /// Constructor.
-                     ncliStartupHelper(btg::core::client::clientConfiguration*        _config,
+                     ncliStartupHelper(btg::core::LogWrapperType _logwrapper,
+                                       btg::core::client::clientConfiguration*        _config,
                                        btg::core::client::commandLineArgumentHandler* _clah,
                                        btg::core::messageTransport*                   _messageTransport,
                                        btg::core::client::clientHandler*              _handler);

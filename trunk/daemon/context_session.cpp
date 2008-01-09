@@ -107,7 +107,7 @@ namespace btg
                fullFilename = tempDir_ + GPD->sPATH_SEPARATOR() + ti->filename;
                if (!sbuf.read(fullFilename))
                   {
-                     BTG_MNOTICE("failed to read .torrent file from '" << fullFilename << "' (serializing)");
+                     BTG_MNOTICE(logWrapper(), "failed to read .torrent file from '" << fullFilename << "' (serializing)");
                      return false;
                   }
 
@@ -117,7 +117,7 @@ namespace btg
                fullFilename = fullFilename + fastResumeFileNameEnd;
                if (!sbuf.read(fullFilename))
                   {
-                     BTG_MNOTICE("failed to read .torrent file from '" << fullFilename << "' (serializing)");
+                     BTG_MNOTICE(logWrapper(), "failed to read .torrent file from '" << fullFilename << "' (serializing)");
                   }
 
                sbuf.serialize(_e);
@@ -142,17 +142,17 @@ namespace btg
                libtorrent::peer_id pid = torrent_session->id();
                std::string peerid = btg::core::convertToString<libtorrent::peer_id>(pid);
 
-               MVERBOSE_LOG(moduleName, verboseFlag_, "Peer ID used: '" << peerid << "'.");
+               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Peer ID used: '" << peerid << "'.");
                _e->stringToBytes(&peerid);
             }
          return true;
       }
 
-#define BTG_CDC(i, m) { if ((i)) { BTG_ERROR_LOG("Context::deserialize(), failed to deserialize context, " << m); return false; } }
+#define BTG_CDC(i, m) { if ((i)) { BTG_ERROR_LOG(logWrapper(), "Context::deserialize(), failed to deserialize context, " << m); return false; } }
 
       bool Context::deserialize(btg::core::externalization::Externalization* _e, t_uint _version)
       {
-         BTG_MENTER("deserialize", "");
+         BTG_MENTER(logWrapper(), "deserialize", "");
          bool status = true;
          std::string filename;
          bool paused;
@@ -186,17 +186,18 @@ namespace btg
             }
          catch(...)
             {
-               BTG_MNOTICE("dumped timestamp is not a valid timestamp: '" <<
+               BTG_MNOTICE(logWrapper(), 
+                           "dumped timestamp is not a valid timestamp: '" <<
                            isoTimestamp << "'");
                return false;
             }
 
          t_int count = 0;
          BTG_CDC(!_e->bytesToInt(&count), "number of sessions");
-         BTG_MNOTICE("deserialize(), Found " << count << " contexts in session");
+         BTG_MNOTICE(logWrapper(), "deserialize(), Found " << count << " contexts in session");
          for (t_int x = 0; x < count; x++)
             {
-               BTG_MNOTICE("deserizlize() context no " << x);
+               BTG_MNOTICE(logWrapper(), "deserizlize() context no " << x);
                BTG_CDC(!_e->bytesToString(&filename), "filename");
                BTG_CDC(!_e->bytesToBool(paused), "paused flag");
                BTG_CDC(!_e->bytesToULong(&total_download), "total download");
@@ -225,7 +226,7 @@ namespace btg
                fullFilename = tempDir_ + GPD->sPATH_SEPARATOR() + filename;
                if (!sbuf.write(fullFilename))
                   {
-                     BTG_MNOTICE("failed to write .torrent file '" << fullFilename << "' after deserialization");
+                     BTG_MNOTICE(logWrapper(), "failed to write .torrent file '" << fullFilename << "' after deserialization");
                      return false;
                   }
 
@@ -234,21 +235,21 @@ namespace btg
                fullFilename = tempDir_ + GPD->sPATH_SEPARATOR() + filename + fastResumeFileNameEnd;
                if (!sbuf.write(fullFilename))
                   {
-                     BTG_MNOTICE("failed to write .fast file '" << fullFilename << "' after deserialization");
+                     BTG_MNOTICE(logWrapper(), "failed to write .fast file '" << fullFilename << "' after deserialization");
                      return false;
                   }
 
 					if(_version >= 0x97)
 					{
 						// Deserialize DHT flag and list of nodes.
-						BTG_MNOTICE("deserialize, reading DHT information");
+						BTG_MNOTICE(logWrapper(), "deserialize, reading DHT information");
 
 						BTG_CDC(!_e->bytesToBool(useDHT_), "DHT flag");
 
 						if (useDHT_)
 							{
 
-								BTG_MNOTICE("deserialize, session is using DHT");
+								BTG_MNOTICE(logWrapper(), "deserialize, session is using DHT");
 
 								t_uint dhtStatusLength;
 								t_byteP buf;
@@ -278,13 +279,13 @@ namespace btg
 
                      BTG_CDC(!_e->bytesToString(&peerid), "Peer ID");
 
-                     MVERBOSE_LOG(moduleName, verboseFlag_, "Using peer ID: '" << peerid << "'.");
+                     MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Using peer ID: '" << peerid << "'.");
 
                      libtorrent::peer_id pid = btg::core::convertStringTo<libtorrent::peer_id>(peerid);
                      torrent_session->set_peer_id(pid);
                   }
 
-               BTG_MNOTICE("deserialize() adding torrent " << filename);
+               BTG_MNOTICE(logWrapper(), "deserialize() adding torrent " << filename);
                // If we got this far we're OK.
                t_int handle_id;
                if (add(filename, handle_id) == Context::ERR_OK)
@@ -329,10 +330,10 @@ namespace btg
                   } // if add()
                else
                   {
-                     BTG_ERROR_LOG("Falied to add " << filename << ".");
+                     BTG_ERROR_LOG(logWrapper(), "Falied to add " << filename << ".");
                   }
             } // for
-         BTG_MEXIT("deserialize", status);
+         BTG_MEXIT(logWrapper(), "deserialize", status);
          return status;
       }
 #endif // BTG_OPTION_SAVESESSIONS

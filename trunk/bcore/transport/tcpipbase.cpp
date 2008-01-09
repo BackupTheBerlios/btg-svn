@@ -30,8 +30,9 @@ namespace btg
 {
    namespace core
    {
-      tcpClient::tcpClient()
-         : socket(0),
+      tcpClient::tcpClient(LogWrapperType _logwrapper)
+         : btg::core::Logable(_logwrapper),
+           socket(0),
            connectionID(0)
       {
       }
@@ -39,7 +40,7 @@ namespace btg
       tcpClient::~tcpClient()
       {
 #if BTG_TRANSPORT_DEBUG
-         BTG_NOTICE("tcpClient::~tcpClient, deleting socket " << socket);
+         BTG_NOTICE(logWrapper(), "tcpClient::~tcpClient, deleting socket " << socket);
 #endif // BTG_TRANSPORT_DEBUG
          delete socket;
          socket=0;
@@ -61,16 +62,18 @@ namespace btg
       /* */
       /* */
 
-      tcpTransportBase::tcpTransportBase(btg::core::externalization::Externalization* _e,
+      tcpTransportBase::tcpTransportBase(LogWrapperType _logwrapper,
+                                         btg::core::externalization::Externalization* _e,
                                          t_int const _bufferSize,
                                          DIRECTION const _direction,
                                          t_uint const _timeout)
-         : messageTransport(_e, _bufferSize, _direction, _timeout),
+         : btg::core::Logable(_logwrapper),
+           messageTransport(_e, _bufferSize, _direction, _timeout),
            sndrec_buffer(new t_byte[_bufferSize]),
            server(0),
            client(0),
            clients(),
-           socketGroup(timeout)
+           socketGroup(_logwrapper, timeout)
       {
       }
 
@@ -119,7 +122,7 @@ namespace btg
       t_int tcpTransportBase::write(dBuffer & _msg)
       {
 #if BTG_TRANSPORT_DEBUG
-         BTG_NOTICE("tcpipTransport::write/0");
+         BTG_NOTICE(logWrapper(), "tcpipTransport::write/0");
 #endif // BTG_TRANSPORT_DEBUG
 
          // No connection id
@@ -129,7 +132,7 @@ namespace btg
       t_int tcpTransportBase::write(dBuffer & _msg, t_int const _connectionID)
       {
 #if BTG_TRANSPORT_DEBUG
-         BTG_NOTICE("tcpipTransport::write/1");
+         BTG_NOTICE(logWrapper(), "tcpipTransport::write/1");
 #endif // BTG_TRANSPORT_DEBUG
          t_int const message_size = _msg.size();
 
@@ -157,7 +160,7 @@ namespace btg
       t_int tcpTransportBase::write(t_byteCP _msg, t_int const _size, t_int const _connectionID)
       {
 #if BTG_TRANSPORT_DEBUG
-         BTG_NOTICE("tcpipTransport::write/2");
+         BTG_NOTICE(logWrapper(), "tcpipTransport::write/2");
 #endif // BTG_TRANSPORT_DEBUG
          t_int status = _size;
 
@@ -178,7 +181,7 @@ namespace btg
                   if (!c)
                      {
 #if BTG_TRANSPORT_DEBUG
-                        BTG_NOTICE("tcpipTransport::write() Tried to write to unknown connection " << _connectionID << "!");
+                        BTG_NOTICE(logWrapper(), "tcpipTransport::write() Tried to write to unknown connection " << _connectionID << "!");
 #endif // BTG_TRANSPORT_DEBUG
                         status = tcpTransportBase::OPERATION_FAILED;
                         break;
@@ -199,7 +202,7 @@ namespace btg
       {
          if(this->direction != TO_SERVER)
             {
-               BTG_ERROR_LOG("tcpTransportBase::read(dBuffer) can only be used on client side!! Not on server side!");
+               BTG_ERROR_LOG(logWrapper(), "tcpTransportBase::read(dBuffer) can only be used on client side!! Not on server side!");
                return 0;
             }
 
@@ -215,7 +218,7 @@ namespace btg
          _connectionID = NO_CONNECTION_ID;
 
 #if BTG_TRANSPORT_DEBUG
-         BTG_NOTICE("tcpTransportBase::read/0");
+         BTG_NOTICE(logWrapper(), "tcpTransportBase::read/0");
 #endif // BTG_TRANSPORT_DEBUG
          
          socketGroup.doSelect();
@@ -243,7 +246,7 @@ namespace btg
                         if (rsize > 0)
                            {
 #if BTG_TRANSPORT_DEBUG
-                              BTG_NOTICE("tcpTransportBase::read, got " << rsize << " bytes from connection.");
+                              BTG_NOTICE(logWrapper(), "tcpTransportBase::read, got " << rsize << " bytes from connection.");
 #endif // BTG_TRANSPORT_DEBUG
                               _buffer.addBytes(sndrec_buffer, rsize);
                            }
@@ -263,7 +266,7 @@ namespace btg
             case FROM_SERVER:
                {
 #if BTG_TRANSPORT_DEBUG
-                  BTG_NOTICE("tcpTransportBase::read, FROM_SERVER");
+                  BTG_NOTICE(logWrapper(), "tcpTransportBase::read, FROM_SERVER");
 #endif // BTG_TRANSPORT_DEBUG
 
                   // Read from all clients.
@@ -285,7 +288,7 @@ namespace btg
                             client->socket->getSockId() == btg::core::os::Socket::UNINITIALIZED)
                            {
 #if BTG_TRANSPORT_DEBUG
-                              BTG_NOTICE("tcpTransportBase::read: deleting dead client " << client);
+                              BTG_NOTICE(logWrapper(), "tcpTransportBase::read: deleting dead client " << client);
 #endif // BTG_TRANSPORT_DEBUG
                               // Terminate the conneciotn
                               endConnection(client->connectionID);
@@ -307,7 +310,7 @@ namespace btg
                               if (rsize > 0)
                                  {
 #if BTG_TRANSPORT_DEBUG
-                                    BTG_NOTICE("tcpTransportBase::read, got " << rsize << " bytes from connection  "<< client->connectionID);
+                                    BTG_NOTICE(logWrapper(), "tcpTransportBase::read, got " << rsize << " bytes from connection  "<< client->connectionID);
 #endif // BTG_TRANSPORT_DEBUG
                                     _buffer.addBytes(sndrec_buffer, rsize);
                                  }
@@ -348,7 +351,7 @@ namespace btg
          socketGroup.setTimeout(oldTimeout);
 
 #if BTG_TRANSPORT_DEBUG
-         BTG_NOTICE("tcpTransportBase::continueReading, socket id = " << _socket->getSockId() << ", result = " << result);
+         BTG_NOTICE(logWrapper(), "tcpTransportBase::continueReading, socket id = " << _socket->getSockId() << ", result = " << result);
 #endif // BTG_TRANSPORT_DEBUG
 
          return result;
@@ -363,7 +366,7 @@ namespace btg
                   return iter->second;
             }
 #if BTG_TRANSPORT_DEBUG
-         BTG_NOTICE("resolve failed to lookup socket #" << _socket->getSockId());
+         BTG_NOTICE(logWrapper(), "resolve failed to lookup socket #" << _socket->getSockId());
 #endif // BTG_TRANSPORT_DEBUG
          return NULL;
       }
@@ -377,7 +380,7 @@ namespace btg
                return iter->second;
             }
 #if BTG_TRANSPORT_DEBUG
-         BTG_NOTICE("resolve failed to lookup connection " << _connectionID);
+         BTG_NOTICE(logWrapper(), "resolve failed to lookup connection " << _connectionID);
 #endif // BTG_TRANSPORT_DEBUG
          return NULL;
       }
@@ -395,21 +398,21 @@ namespace btg
       void tcpTransportBase::endConnection(t_int _connectionID)
       {
 #if BTG_TRANSPORT_DEBUG
-         BTG_NOTICE("tcpTransportBase::endConnection, Ending connection " << _connectionID);
+         BTG_NOTICE(logWrapper(), "tcpTransportBase::endConnection, Ending connection " << _connectionID);
 #endif // BTG_TRANSPORT_DEBUG
          std::map<t_int, tcpClient*>::iterator iter = clients.find(_connectionID);
 
          if(iter == clients.end())
             {
 #if BTG_TRANSPORT_DEBUG
-               BTG_NOTICE("tcpTransportBase::endConnection, Connection " << _connectionID << " not found in clients map");
+               BTG_NOTICE(logWrapper(), "tcpTransportBase::endConnection, Connection " << _connectionID << " not found in clients map");
 #endif // BTG_TRANSPORT_DEBUG
                return;
             }
 
          // Mark connection ID as dead
 #if BTG_TRANSPORT_DEBUG
-         BTG_NOTICE("Marking connection ID " <<  _connectionID << " as dead.");
+         BTG_NOTICE(logWrapper(), "Marking connection ID " <<  _connectionID << " as dead.");
 #endif // BTG_TRANSPORT_DEBUG
          dead_connections.push_back(_connectionID);
 
@@ -422,7 +425,7 @@ namespace btg
       tcpTransportBase::~tcpTransportBase()
       {
 #if BTG_TRANSPORT_DEBUG
-         BTG_NOTICE("tcpTransportBase::~tcpTransportBase, cleaning");
+         BTG_NOTICE(logWrapper(), "tcpTransportBase::~tcpTransportBase, cleaning");
 #endif // BTG_TRANSPORT_DEBUG
          std::map<t_int, tcpClient*>::iterator iter;
          for (iter = clients.begin(); iter != clients.end(); iter++)

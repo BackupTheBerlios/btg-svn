@@ -24,6 +24,8 @@
 #define TCPIPBASE_H
 
 #include "transport.h"
+
+#include <bcore/logable.h>
 #include <bcore/dbuf.h>
 
 #include <bcore/os/socket.h>
@@ -43,11 +45,11 @@ namespace btg
 
          /// Reperesents a clients which uses TCP/IP to connect the
          /// the daemon.
-         class tcpClient
+         class tcpClient: public btg::core::Logable
             {
             public:
                /// Constructor.
-               tcpClient();
+               tcpClient(LogWrapperType _logwrapper);
 
                /// Destructor.
                virtual ~tcpClient();
@@ -68,7 +70,7 @@ namespace btg
             };
 
          /// A TCP/IP transport.
-         class tcpTransportBase: public messageTransport
+         class tcpTransportBase: public btg::core::Logable, public messageTransport
             {
             public:
                /// Constructor.
@@ -76,7 +78,8 @@ namespace btg
                /// @param [in] _bufferSize     Buffer size.
                /// @param [in] _direction      Direction.
                /// @param [in] _timeout        Max time in milliseconds to block in a read(), 0 for no block.
-               tcpTransportBase(btg::core::externalization::Externalization* _e,
+               tcpTransportBase(LogWrapperType _logwrapper,
+                                btg::core::externalization::Externalization* _e,
                                 t_int const _bufferSize,
                                 DIRECTION const _direction,
                                 t_uint const _timeout);

@@ -24,6 +24,7 @@
 
 #include <bcore/transport/http.h>
 #include <bcore/externalization/externalization.h>
+#include <bcore/logable.h>
 
 class testHttp: public CppUnit::TestFixture
 {
@@ -64,4 +65,5 @@ class testHttp: public CppUnit::TestFixture
    btg::core::httpTransport* mq_server;
    btg::core::httpTransport* mq_client;
    btg::core::addressPort   addressport;
+   btg::core::LogWrapperType logwrapper;
 };

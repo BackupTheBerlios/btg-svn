@@ -46,7 +46,6 @@ namespace btg
 
       void crashLog::init()
       {
-         BTG_NOTICE("Installing crash handler");
 #ifdef HAVE_VERBOSE_TERMINATE_HANDLER
          std::set_terminate(handler);
 #endif // HAVE_VERBOSE_TERMINATE_HANDLER

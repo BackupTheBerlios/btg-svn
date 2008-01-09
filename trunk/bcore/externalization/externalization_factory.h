@@ -24,6 +24,7 @@
 #define EXTERNALIZATION_FACTORY_H
 
 #include "externalization.h"
+#include <bcore/logger/logger.h>
 
 namespace btg
 {
@@ -51,7 +52,8 @@ namespace btg
                /// Creates serializator instance.
                /// @param [in] _et Serializator type.
                /// @return Pointer to externalization implementation or 0.
-               static Externalization* createExternalization(eExternalizationType _et = etXml);
+               static Externalization* createExternalization(LogWrapperType _logwrapper,
+                                                             eExternalizationType _et = etXml);
 
                /// Destroyes serializator instance.
                /// @param [in] _ext Pointer to instance.

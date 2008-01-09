@@ -29,6 +29,7 @@
 #include <libtorrent/entry.hpp>
 
 #include "filetrackdata.h"
+#include <bcore/logable.h>
 
 namespace btg
 {
@@ -47,11 +48,11 @@ namespace btg
       /// functions. This is done to differentiate between the same
       /// torrent(same torrent name or same torrent contents) added by different
       /// users - since each user has a unique directory.
-      class fileTrack
+      class fileTrack: public btg::core::Logable
       {
       public:
          /// Constructor.
-         fileTrack();
+         fileTrack(btg::core::LogWrapperType _logwrapper);
 
          /// Add a filename. Return true if it can be added,
          /// false otherwise.

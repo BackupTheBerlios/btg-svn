@@ -81,13 +81,13 @@ namespace btg
          total_payload_download(0),
          total_payload_upload(0)
 #endif // BTG_OPTION_SAVESESSIONS
-      {
-         BTG_MNOTICE("using libtorrent version: " << LIBTORRENT_VERSION);
-      };
+      {  
+      }
 
       bool Context::set_boost_native_paths = true;
 
-      Context::Context(bool const _verboseFlag,
+      Context::Context(btg::core::LogWrapperType _logwrapper,
+                       bool const _verboseFlag,
                        std::string const& _username,
                        std::string const& _tempDir,
                        std::string const& _workDir,
@@ -103,7 +103,8 @@ namespace btg
 #endif // BTG_OPTION_EVENTCALLBACK
                        bool _clientAttached
                        )
-         : verboseFlag_(_verboseFlag),
+         : btg::core::Logable(_logwrapper),
+           verboseFlag_(_verboseFlag),
            username_(_username),
            tempDir_(_tempDir),
            workDir_(_workDir),
@@ -137,7 +138,11 @@ namespace btg
          , progress_(),
            useTorrentName_(_useTorrentName)
       {
-         BTG_MENTER("Constructor", "_clientAttached = " << _clientAttached);
+         BTG_MNOTICE(logWrapper(),
+                     "using libtorrent version: " << LIBTORRENT_VERSION);
+
+         BTG_MENTER(logWrapper(),
+                    "Constructor", "_clientAttached = " << _clientAttached);
 
          portMgr->get(listen_port_range_);
 
@@ -190,7 +195,7 @@ namespace btg
                      catch (std::exception& e)
                         {
                            Context::set_boost_native_paths = true;
-                           BTG_ERROR_LOG("libtorrent exception: " << e.what() );
+                           BTG_ERROR_LOG(logWrapper(), "libtorrent exception: " << e.what() );
                         }
                   }
 
@@ -243,7 +248,7 @@ namespace btg
       bool Context::setup(const daemonConfiguration* _config,
                           btg::core::requiredSetupData const& _rsd)
       {
-         BTG_MENTER("setup", "workDir=" << workDir_ << ", outputDir=" << outputDir_);
+         BTG_MENTER(logWrapper(), "setup", "workDir=" << workDir_ << ", outputDir=" << outputDir_);
 
          if (torrent_session == 0)
             {
@@ -268,7 +273,7 @@ namespace btg
             }
          catch (std::exception& e)
             {
-               BTG_ERROR_LOG(": context setup failed to create '" << workDir_ << "':" << e.what() );
+               BTG_ERROR_LOG(logWrapper(), ": context setup failed to create '" << workDir_ << "':" << e.what() );
                configured = false;
             }
 
@@ -283,7 +288,7 @@ namespace btg
             }
          catch (std::exception& e)
             {
-               BTG_ERROR_LOG(": context setup failed to create '" << seedDir_ << "':" << e.what() );
+               BTG_ERROR_LOG(logWrapper(), ": context setup failed to create '" << seedDir_ << "':" << e.what() );
                configured = false;
             }
 
@@ -298,7 +303,7 @@ namespace btg
             }
          catch (std::exception& e)
             {
-               BTG_ERROR_LOG(": context setup failed to create '" << outputDir_ << "':" << e.what() );
+               BTG_ERROR_LOG(logWrapper(), ": context setup failed to create '" << outputDir_ << "':" << e.what() );
                configured = false;
             }
 
@@ -321,7 +326,7 @@ namespace btg
                   }
                catch (std::exception& e)
                   {
-                     BTG_ERROR_LOG("libtorrent exception: " << e.what() );
+                     BTG_ERROR_LOG(logWrapper(), "libtorrent exception: " << e.what() );
                      configured = false;
                   }
             }
@@ -401,15 +406,15 @@ namespace btg
                            verboseEncryption += " prefer: off";
                         }
 
-                     VERBOSE_LOG(verboseFlag_, "Encryption settings:");
-                     VERBOSE_LOG(verboseFlag_, verboseEncryption << ".");
+                     VERBOSE_LOG(logWrapper(), verboseFlag_, "Encryption settings:");
+                     VERBOSE_LOG(logWrapper(), verboseFlag_, verboseEncryption << ".");
 
                      torrent_session->set_pe_settings(enc_settings);
-                     BTG_MNOTICE("Encryption settings set");
+                     BTG_MNOTICE(logWrapper(), "Encryption settings set");
                   }
                catch (std::exception& e)
                   {
-                     BTG_ERROR_LOG("libtorrent exception: " << e.what() );
+                     BTG_ERROR_LOG(logWrapper(), "libtorrent exception: " << e.what() );
                   }
             }
 #endif // BTG_LT_0_13
@@ -419,14 +424,14 @@ namespace btg
          //
          limitMgr_->add(torrent_session);
 
-         BTG_MEXIT("setup", configured);
+         BTG_MEXIT(logWrapper(), "setup", configured);
          return configured;
       }
 
       Context::addResult Context::add(std::string const& _torrent_filename,
                                       t_int & _handle_id)
       {
-         BTG_MENTER("add", "_torrent_filename=" << _torrent_filename);
+         BTG_MENTER(logWrapper(), "add", "_torrent_filename=" << _torrent_filename);
 
          if (!configured)
             {
@@ -443,9 +448,10 @@ namespace btg
          if (!filetrack_->add(tempDir_, fileTrackFilename))
             {
                status = Context::ERR_EXISTS;
-               BTG_MNOTICE("add, file '" << fileTrackFilename << 
+               BTG_MNOTICE(logWrapper(),
+                           "add, file '" << fileTrackFilename << 
                            "' already exists in filetrack");
-               BTG_MEXIT("add", status);
+               BTG_MEXIT(logWrapper(), "add", status);
                return status;
             }
 
@@ -467,7 +473,7 @@ namespace btg
             }
          catch (std::exception& e)
             {
-               BTG_MNOTICE("libtorrent exception: " << e.what());
+               BTG_MNOTICE(logWrapper(), "libtorrent exception: " << e.what());
                status = Context::ERR_LIBTORRENT;
             }
 
@@ -475,7 +481,7 @@ namespace btg
             {
                // remove it from filetrack
                filetrack_->remove(tempDir_, fileTrackFilename);
-               BTG_MEXIT("add", status);
+               BTG_MEXIT(logWrapper(), "add", status);
                return status;
             }
 
@@ -488,7 +494,7 @@ namespace btg
 
                filetrack_->remove(tempDir_, fileTrackFilename);
                status = Context::ERR_LIBTORRENT;
-               BTG_MEXIT("add", status);
+               BTG_MEXIT(logWrapper(), "add", status);
                return status;
             }
 
@@ -497,11 +503,13 @@ namespace btg
             {
                filetrack_->remove(tempDir_, fileTrackFilename);
                status = Context::ERR_LIBTORRENT;
-               BTG_MEXIT("add", status);
+               BTG_MEXIT(logWrapper(), "add", status);
                return status;
             }
 
-         btg_assert(contained_files.size() >= 1, "entryToFiles must return at least one file");
+         btg_assert(contained_files.size() >= 1, 
+                    logWrapper(),
+                    "entryToFiles must return at least one file");
 
          // A torrent was read without failing, now add the files to
          // the file tracker.
@@ -509,10 +517,10 @@ namespace btg
             {
                // The torrent file is unique, but some of the contents
                // is not.
-               BTG_MNOTICE("add, file '" << fileTrackFilename << "': file collision");
+               BTG_MNOTICE(logWrapper(), "add, file '" << fileTrackFilename << "': file collision");
                filetrack_->remove(tempDir_, fileTrackFilename);
                status = Context::ERR_EXISTS;
-               BTG_MEXIT("add", status);
+               BTG_MEXIT(logWrapper(), "add", status);
                return status;
             }
 
@@ -551,12 +559,12 @@ namespace btg
                         }
                      catch (std::exception& e)
                         {
-                           BTG_MNOTICE("libtorrent exception: " << e.what());
+                           BTG_MNOTICE(logWrapper(), "libtorrent exception: " << e.what());
                            status = Context::ERR_LIBTORRENT;
                         }
                      if (status == Context::ERR_OK)
                         {
-                           BTG_MNOTICE("using fast resume for '" << _torrent_filename << "'");
+                           BTG_MNOTICE(logWrapper(), "using fast resume for '" << _torrent_filename << "'");
                            handle = torrent_session->add_torrent(tinfo, dataPath, fastResumeEntry);
                         }
                   }
@@ -567,7 +575,7 @@ namespace btg
             }
          catch (std::exception& e)
             {
-               BTG_ERROR_LOG("libtorrent exception: " << e.what() );
+               BTG_ERROR_LOG(logWrapper(), "libtorrent exception: " << e.what() );
                status = Context::ERR_LIBTORRENT;
             }
 
@@ -617,7 +625,7 @@ namespace btg
                filetrack_->remove(tempDir_, fileTrackFilename);
             }
 
-         BTG_MEXIT("add", "");
+         BTG_MEXIT(logWrapper(), "add", "");
          return status;
       }
 
@@ -625,7 +633,7 @@ namespace btg
                                       btg::core::sBuffer const& _buffer,
                                       t_int & _handle_id)
       {
-         BTG_MENTER("add", "_torrent_filename=" << _torrent_filename << ", size=" << _buffer.size());
+         BTG_MENTER(logWrapper(), "add", "_torrent_filename=" << _torrent_filename << ", size=" << _buffer.size());
          Context::addResult status = Context::ERR_UNDEFINED;
 
          // Check torrent does not exist before we overwrite it...
@@ -633,8 +641,8 @@ namespace btg
          if (filetrack_->exists(tempDir_, fileTrackFilename))
             {
                status = Context::ERR_EXISTS;
-               BTG_MNOTICE("add, file '" << fileTrackFilename << "' already exists in filetrack");
-               BTG_MEXIT("add", status);
+               BTG_MNOTICE(logWrapper(), "add, file '" << fileTrackFilename << "' already exists in filetrack");
+               BTG_MEXIT(logWrapper(), "add", status);
                return status;
             }
 
@@ -646,10 +654,10 @@ namespace btg
             }
          else
             {
-               BTG_ERROR_LOG("Attempt to write '" << targetPath << "' failed");
+               BTG_ERROR_LOG(logWrapper(), "Attempt to write '" << targetPath << "' failed");
             }
 
-         BTG_MEXIT("add", status);
+         BTG_MEXIT(logWrapper(), "add", status);
          return status;
       }
 
@@ -660,7 +668,7 @@ namespace btg
 #endif // BTG_OPTION_EVENTCALLBACK
                            )
       {
-         BTG_MENTER("remove", "id = " << _torrent_id << ", _eraseData = " << _eraseData);
+         BTG_MENTER(logWrapper(), "remove", "id = " << _torrent_id << ", _eraseData = " << _eraseData);
 
          if (!configured)
             {
@@ -699,7 +707,7 @@ namespace btg
                      foundEntities = this->getListOfEntities(_torrent_id, seedDir_, entitiesToErase);
                   }
 
-               BTG_MNOTICE("remove, foundEntities = " << foundEntities);
+               BTG_MNOTICE(logWrapper(), "remove, foundEntities = " << foundEntities);
             }
 
          // Stop keeping track of this filename;
@@ -746,29 +754,29 @@ namespace btg
             {
                if (foundEntities)
                   {
-                     BTG_MNOTICE("remove, removing data");
+                     BTG_MNOTICE(logWrapper(), "remove, removing data");
                      std::vector<std::string>::const_iterator iter;
                      for (iter = entitiesToErase.begin();
                           iter != entitiesToErase.end();
                           iter++)
                         {
-                           BTG_MNOTICE("remove, erasing '" << *iter << "'");
+                           BTG_MNOTICE(logWrapper(), "remove, erasing '" << *iter << "'");
 
                            if (!btg::core::os::fileOperation::remove(*iter))
                               {
-                                 BTG_MNOTICE("remove, failed to erase '" << *iter << "'");
+                                 BTG_MNOTICE(logWrapper(), "remove, failed to erase '" << *iter << "'");
                               }
                         }
                   }
             }
 
-         BTG_MEXIT("remove", true);
+         BTG_MEXIT(logWrapper(), "remove", true);
          return true;
       }
 
       bool Context::removeAll(bool const _eraseData)
       {
-         BTG_MENTER("removeAll", "");
+         BTG_MENTER(logWrapper(), "removeAll", "");
 
          bool result = true;
          t_intList contexts = this->getContexts();
@@ -785,13 +793,13 @@ namespace btg
                   }
             }
 
-         BTG_MEXIT("removeAll", result);
+         BTG_MEXIT(logWrapper(), "removeAll", result);
          return result;
       }
 
       bool Context::start(t_int const _torrent_id)
       {
-         BTG_MENTER("start", "id = " << _torrent_id);
+         BTG_MENTER(logWrapper(), "start", "id = " << _torrent_id);
 
          torrentInfo *ti;
          if ((ti = getTorrentInfo(_torrent_id)) == 0)
@@ -802,20 +810,20 @@ namespace btg
          // Allready running.
          if (!ti->handle.is_paused())
             {
-               BTG_MNOTICE("start - already started");
+               BTG_MNOTICE(logWrapper(), "start - already started");
                return true;
             }
 
          ti->handle.resume();
 
-         BTG_MEXIT("start", true);
+         BTG_MEXIT(logWrapper(), "start", true);
 
          return true;
       }
 
       bool Context::startAll()
       {
-         BTG_MENTER("startAll", "");
+         BTG_MENTER(logWrapper(), "startAll", "");
 
          bool result = true;
          t_intList contexts = this->getContexts();
@@ -832,13 +840,13 @@ namespace btg
                   }
             }
 
-         BTG_MEXIT("startAll", result);
+         BTG_MEXIT(logWrapper(), "startAll", result);
          return result;
       }
 
       bool Context::stop(t_int const _torrent_id)
       {
-         BTG_MENTER("stop", "id = " << _torrent_id);
+         BTG_MENTER(logWrapper(), "stop", "id = " << _torrent_id);
 
          torrentInfo *ti;
          if ((ti = getTorrentInfo(_torrent_id)) == 0)
@@ -855,13 +863,13 @@ namespace btg
          // Not allready paused, so pause it.
          ti->handle.pause();
 
-         BTG_MEXIT("stop", true);
+         BTG_MEXIT(logWrapper(), "stop", true);
          return true;
       }
 
       bool Context::stopAll()
       {
-         BTG_MENTER("stopAll", "");
+         BTG_MENTER(logWrapper(), "stopAll", "");
 
          bool result          = true;
          t_intList contexts = this->getContexts();
@@ -878,7 +886,7 @@ namespace btg
                   }
             }
 
-         BTG_MEXIT("stopAll", result);
+         BTG_MEXIT(logWrapper(), "stopAll", result);
          return result;
       }
 
@@ -888,7 +896,7 @@ namespace btg
                           const t_int _seedLimit, 
                           const t_long _seedTimeout)
       {
-         BTG_MENTER("limit", "id = " << _torrent_id << ", _limitUpld = " << 
+         BTG_MENTER(logWrapper(), "limit", "id = " << _torrent_id << ", _limitUpld = " << 
                     _limitUpld << ", _limitDwnld = " << 
                     _limitDwnld << ", seedLimit = " << 
                     _seedLimit << ", seedTimeout = " << 
@@ -908,7 +916,7 @@ namespace btg
          ti->seedLimit   = _seedLimit;
          ti->seedTimeout = _seedTimeout;
 
-         BTG_MEXIT("limit", true);
+         BTG_MEXIT(logWrapper(), "limit", true);
          return true;
       }
 
@@ -917,7 +925,7 @@ namespace btg
                              const t_int _seedLimit, 
                              const t_long _seedTimeout)
       {
-         BTG_MENTER("limitAll", "");
+         BTG_MENTER(logWrapper(), "limitAll", "");
 
          bool result          = true;
          t_intList contexts   = this->getContexts();
@@ -934,7 +942,7 @@ namespace btg
                   }
             }
 
-         BTG_MEXIT("limitAll", result);
+         BTG_MEXIT(logWrapper(), "limitAll", result);
          return result;
       }
 
@@ -944,7 +952,7 @@ namespace btg
                                 bool const _seedLimit, 
                                 bool const _seedTimeout)
       {
-         BTG_MENTER("removeLimit", "id = " << _torrent_id << ", _upld = " << 
+         BTG_MENTER(logWrapper(), "removeLimit", "id = " << _torrent_id << ", _upld = " << 
                     _upld<< ", _dwnld = " << _dwnld << ", seedLimit = " <<
                     _seedLimit << ", seedTimeout = " << _seedTimeout);
 
@@ -976,7 +984,7 @@ namespace btg
                ti->seedTimeout = btg::core::limitBase::LIMIT_DISABLED;
             }
 
-         BTG_MEXIT("removeLimit", true);
+         BTG_MEXIT(logWrapper(), "removeLimit", true);
          return true;
       }
 
@@ -985,7 +993,7 @@ namespace btg
                                    bool const _seedLimit, 
                                    bool const _seedTimeout)
       {
-         BTG_MENTER("removeLimitAll", "");
+         BTG_MENTER(logWrapper(), "removeLimitAll", "");
 
          bool result          = true;
          t_intList contexts   = this->getContexts();
@@ -1003,7 +1011,7 @@ namespace btg
                   }
             }
 
-         BTG_MEXIT("removeLimitAll", result);
+         BTG_MEXIT(logWrapper(), "removeLimitAll", result);
          return result;
       }
 
@@ -1013,7 +1021,7 @@ namespace btg
                              t_int & _seedLimit, 
                              t_long & _seedTimeout)
       {
-         BTG_MENTER("getLimit", "id = " << _torrent_id);
+         BTG_MENTER(logWrapper(), "getLimit", "id = " << _torrent_id);
 
          torrentInfo *ti;
          if ((ti = getTorrentInfo(_torrent_id)) == 0)
@@ -1026,7 +1034,7 @@ namespace btg
          _seedLimit   = ti->seedLimit;
          _seedTimeout = ti->seedTimeout;
 
-         BTG_MENTER("getLimit", "_limitUpld = " << 
+         BTG_MENTER(logWrapper(), "getLimit", "_limitUpld = " << 
                     _limitUpld << ", _limitDwnld = " << 
                     _limitDwnld << ", _seedLimit = " << 
                     _seedLimit << ", _seedTimeout = " << 
@@ -1037,7 +1045,7 @@ namespace btg
       bool Context::getStatus(t_int const _torrent_id, 
                               Status & _destination)
       {
-         BTG_MENTER("getStatus", "");
+         BTG_MENTER(logWrapper(), "getStatus", "");
 
          torrentInfo *ti;
          if ((ti = getTorrentInfo(_torrent_id)) == 0)
@@ -1175,7 +1183,8 @@ namespace btg
                counter = ti->seed_counter;
             }
 
-         BTG_MNOTICE("sending progress info: " <<
+         BTG_MNOTICE(logWrapper(), 
+                     "sending progress info: " <<
                      hour << ":" << minute << ":" << second <<
                      ". Trackerstatus is " << ti->trackerStatus.toString());
 
@@ -1199,14 +1208,14 @@ namespace btg
                           counter
                           );
 
-         BTG_MEXIT("getStatus", true);
+         BTG_MEXIT(logWrapper(), "getStatus", true);
          return true;
       }
 
       bool Context::getStatus(t_intList const& _contexts, 
                               t_statusList & _status)
       {
-         BTG_MENTER("getStatus(list)", "");
+         BTG_MENTER(logWrapper(), "getStatus(list)", "");
 
          bool   result   = true;
          Status status;
@@ -1214,7 +1223,7 @@ namespace btg
          if (_contexts.size() == 0)
             {
                result = false;
-               BTG_MEXIT("getStatus(list)", result);
+               BTG_MEXIT(logWrapper(), "getStatus(list)", result);
                return result;
             }
 
@@ -1232,13 +1241,13 @@ namespace btg
                   }
             }
 
-         BTG_MEXIT("getStatus(list)", result);
+         BTG_MEXIT(logWrapper(), "getStatus(list)", result);
          return result;
       }
 
       bool Context::getStatusAll(t_statusList & _vstatus)
       {
-         BTG_MENTER("getStatusAll", "");
+         BTG_MENTER(logWrapper(), "getStatusAll", "");
 
          bool           result   = true;
          t_intList      contexts = this->getContexts();
@@ -1261,21 +1270,21 @@ namespace btg
                   }
             }
 
-         BTG_MEXIT("getStatusAll", result);
+         BTG_MEXIT(logWrapper(), "getStatusAll", result);
          return result;
       }
 
       bool Context::getFileInfo(t_int const _torrent_id, 
                                 t_fileInfoList & _vfileinfo)
       {
-         BTG_MENTER("getFileInfo", "id = " << _torrent_id);
+         BTG_MENTER(logWrapper(), "getFileInfo", "id = " << _torrent_id);
 
          bool result = true;
 
          torrentInfo* ti = getTorrentInfo(_torrent_id);
          if (ti == 0)
             {
-               BTG_MEXIT("getFileInfo", false);
+               BTG_MEXIT(logWrapper(), "getFileInfo", false);
                return false;
             }
 
@@ -1283,7 +1292,7 @@ namespace btg
             {
                // The torrent is in a state where fetching file info
                // is not possible.
-               BTG_MEXIT("getFileInfo", false);
+               BTG_MEXIT(logWrapper(), "getFileInfo", false);
                return false;
             }
 
@@ -1316,7 +1325,7 @@ namespace btg
                      _vfileinfo.push_back(file_info);
                   }
 
-               BTG_MEXIT("getFileInfo", true);
+               BTG_MEXIT(logWrapper(), "getFileInfo", true);
                return true;
             }
          
@@ -1384,7 +1393,8 @@ namespace btg
                            piece_counter--;
                            piece_iter--;
                         }
-                     BTG_MNOTICE("creating a fileInformation object (filename = " <<
+                     BTG_MNOTICE(logWrapper(), 
+                                 "creating a fileInformation object (filename = " <<
                                  filename << ", number of pieces = " << filepieces.size() <<
                                  ", piece size = " << piece_len << ")");
 
@@ -1398,14 +1408,14 @@ namespace btg
                result = false;
             }
 
-         BTG_MEXIT("getFileInfo", result);
+         BTG_MEXIT(logWrapper(), "getFileInfo", result);
          return result;
       }
 
       bool Context::getPeers(t_int const _torrent_id, 
                              t_peerList & _peerlist)
       {
-         BTG_MENTER("getPeers", "id = " << _torrent_id);
+         BTG_MENTER(logWrapper(), "getPeers", "id = " << _torrent_id);
 
          torrentInfo *ti;
          if ((ti = getTorrentInfo(_torrent_id)) == 0)
@@ -1457,13 +1467,13 @@ namespace btg
                   }
             }
 
-         BTG_MEXIT("getPeers", status);
+         BTG_MEXIT(logWrapper(), "getPeers", status);
          return status;
       }
 
       bool Context::getTrackers(t_int const _torrent_id, t_strList & _trackers)
       {
-         BTG_MENTER("getTrackers", "id = " << _torrent_id);
+         BTG_MENTER(logWrapper(), "getTrackers", "id = " << _torrent_id);
 
          torrentInfo *ti;
          if ((ti = getTorrentInfo(_torrent_id)) == 0)
@@ -1500,14 +1510,14 @@ namespace btg
                   }
             }
 
-         BTG_MEXIT("getTrackers", status);
+         BTG_MEXIT(logWrapper(), "getTrackers", status);
          return status;
       }
 
       bool Context::getSelectedFiles(t_int const _torrent_id,
                                      selectedFileEntryList & _file_list)
       {
-         BTG_MENTER("getSelectedFiles", "id = " << _torrent_id);
+         BTG_MENTER(logWrapper(), "getSelectedFiles", "id = " << _torrent_id);
 
          torrentInfo *ti;
          if ((ti = getTorrentInfo(_torrent_id)) == 0)
@@ -1517,14 +1527,14 @@ namespace btg
          
          _file_list = ti->selected_files;
 
-         BTG_MEXIT("getSelectedFiles", true);
+         BTG_MEXIT(logWrapper(), "getSelectedFiles", true);
          return true;
       }
 
       bool Context::setSelectedFiles(t_int const _torrent_id,
                                      btg::core::selectedFileEntryList const& _file_list)
       {
-         BTG_MENTER("setSelectedFiles", "id = " << _torrent_id);
+         BTG_MENTER(logWrapper(), "setSelectedFiles", "id = " << _torrent_id);
 
          torrentInfo* ti = getTorrentInfo(_torrent_id);
          if (ti == 0)
@@ -1532,11 +1542,11 @@ namespace btg
                return false;
             }
          
-         BTG_MNOTICE("Setting files to download");
+         BTG_MNOTICE(logWrapper(), "Setting files to download");
          std::vector<selectedFileEntry> const& files = _file_list.files();
          if (files.size() == 0)
             {
-               BTG_MEXIT("setSelectedFiles", false);
+               BTG_MEXIT(logWrapper(), "setSelectedFiles", false);
                return false;
             }
 
@@ -1545,29 +1555,29 @@ namespace btg
               iter != files.end();
               iter++)
             {
-               BTG_MNOTICE("fn:" + iter->filename());
+               BTG_MNOTICE(logWrapper(), "fn:" + iter->filename());
             }
 
          if (!checkSelectedFiles(ti->selected_files, _file_list))
             {
-               BTG_MEXIT("setSelectedFiles", false);
+               BTG_MEXIT(logWrapper(), "setSelectedFiles", false);
                return false;
             }
          
          applySelectedFiles(ti, _file_list);
          
-         BTG_MEXIT("setSelectedFiles", true);
+         BTG_MEXIT(logWrapper(), "setSelectedFiles", true);
          return true;
       }
       
       bool Context::checkSelectedFiles(btg::core::selectedFileEntryList const& _l1,
                                        btg::core::selectedFileEntryList const& _l2) const
       {
-         BTG_MENTER("checkSelectedFiles", "file list");
+         BTG_MENTER(logWrapper(), "checkSelectedFiles", "file list");
 
          if (_l1.size() != _l2.size())
             {
-               BTG_MEXIT("checkSelectedFiles", false);
+               BTG_MEXIT(logWrapper(), "checkSelectedFiles", false);
                return false;
             }
 
@@ -1582,7 +1592,7 @@ namespace btg
             {
                if (l1_iter->filename() != l2_iter->filename())
                   {
-                     BTG_MEXIT("checkSelectedFiles", false);
+                     BTG_MEXIT(logWrapper(), "checkSelectedFiles", false);
                      return false;
                   }
                
@@ -1590,14 +1600,14 @@ namespace btg
                l2_iter++;
             } while (l1_iter != l1_end);
 
-         BTG_MEXIT("checkSelectedFiles", true);
+         BTG_MEXIT(logWrapper(), "checkSelectedFiles", true);
          return true;
       }
       
       bool Context::applySelectedFiles(torrentInfo* ti,
                                        btg::core::selectedFileEntryList const& _input)
       {
-         BTG_MENTER("applySelectedFiles", "torrent info");
+         BTG_MENTER(logWrapper(), "applySelectedFiles", "torrent info");
 #if BTG_LT_0_13
          enum lt_file_priority
             {
@@ -1609,7 +1619,7 @@ namespace btg
 
          if (ti->handle.get_torrent_info().num_files() != static_cast<t_int>(files.size()))
             {
-               BTG_MEXIT("applySelectedFiles", false);
+               BTG_MEXIT(logWrapper(), "applySelectedFiles", false);
                return false;
             }
 
@@ -1647,17 +1657,17 @@ namespace btg
                   }
             }
          
-         BTG_MNOTICE("Setting file priorities: " + debugPriorityString);
+         BTG_MNOTICE(logWrapper(), "Setting file priorities: " + debugPriorityString);
 #endif // BTG_DEBUG
 
          ti->handle.prioritize_files(prio_files);
 
          ti->selected_files = _input;
 
-         BTG_MEXIT("applySelectedFiles", true);
+         BTG_MEXIT(logWrapper(), "applySelectedFiles", true);
          return true;
 #else
-         BTG_MEXIT("applySelectedFiles", false);
+         BTG_MEXIT(logWrapper(), "applySelectedFiles", false);
          return false;
 #endif // BTG_LT_0_13
       }
@@ -1668,7 +1678,7 @@ namespace btg
 
          if (tii == torrents.end())
             {
-               BTG_MEXIT("getTorrentInfo", false);
+               BTG_MEXIT(logWrapper(), "getTorrentInfo", false);
                return 0;
             }
 
@@ -1701,7 +1711,7 @@ namespace btg
 
          if (!result)
             {
-               VERBOSE_LOG(verboseFlag_, "Encryption settings:");
+               VERBOSE_LOG(logWrapper(), verboseFlag_, "Encryption settings:");
             }
          return result;
       }
@@ -1767,7 +1777,7 @@ namespace btg
 
                            if (percent >= ti->seedLimit)
                               {
-                                 BTG_MNOTICE("stopIfSeeding(), stopping torrent '" << tii->first << "', has seeded " << percent << "%");
+                                 BTG_MNOTICE(logWrapper(), "stopIfSeeding(), stopping torrent '" << tii->first << "', has seeded " << percent << "%");
                                  ti->handle.pause();
                                  ti->seedingAutoStopped   = true;
 #if BTG_OPTION_EVENTCALLBACK
@@ -1786,7 +1796,7 @@ namespace btg
                            boost::posix_time::time_duration timeout(boost::posix_time::seconds(ti->seedTimeout));
                            if(time_seeded > timeout)
                               {
-                                 BTG_MNOTICE("stopIfSeeding(), stopping torrent " <<
+                                 BTG_MNOTICE(logWrapper(), "stopIfSeeding(), stopping torrent " <<
                                              tii->first << ", has seeded " <<
                                              boost::posix_time::to_simple_string(time_seeded));
 
@@ -1818,7 +1828,7 @@ namespace btg
 
       void Context::updateElapsedOrSeedCounter()
       {
-         BTG_MNOTICE("Updating elapsed/seed counter.");
+         BTG_MNOTICE(logWrapper(), "Updating elapsed/seed counter.");
 
          std::map<t_int, torrentInfo*>::iterator tii;
 
@@ -1844,7 +1854,7 @@ namespace btg
                           t_strList & _files, 
                           t_intList & _contextIDs)
       {
-         BTG_MENTER("clean", "Cleaning contextID=" << _contextID);
+         BTG_MENTER(logWrapper(), "clean", "Cleaning contextID=" << _contextID);
 
          bool op_status = false;
 
@@ -1865,15 +1875,16 @@ namespace btg
                _files.push_back(filename);
                _contextIDs.push_back(_contextID);
 
-               BTG_MNOTICE("removing torrent with ID " << _contextID);
+               BTG_MNOTICE(logWrapper(), "removing torrent with ID " << _contextID);
                op_status = true;
 
                // Attempt to move data to the destination directory.
-               BTG_MNOTICE("moving ID " << _contextID << " from '" <<
+               BTG_MNOTICE(logWrapper(), 
+                           "moving ID " << _contextID << " from '" <<
                            workDir_ << "' to '" << outputDir_ << "'");
                this->moveToDestinationDir(_contextID);
 
-               BTG_MNOTICE("removing torrent with ID = " << _contextID);
+               BTG_MNOTICE(logWrapper(), "removing torrent with ID = " << _contextID);
                this->remove(_contextID, false
 #if BTG_OPTION_EVENTCALLBACK
                             , false
@@ -1882,13 +1893,13 @@ namespace btg
                ti = 0;
             }
 
-         BTG_MEXIT("clean", op_status);
+         BTG_MEXIT(logWrapper(), "clean", op_status);
          return op_status;
       }
 
       bool Context::clean(t_strList & _files, t_intList & _contextIDs)
       {
-         BTG_MENTER("clean", "");
+         BTG_MENTER(logWrapper(), "clean", "");
 
          bool op_status = false;
          std::map<t_int, torrentInfo*>::const_iterator tii;
@@ -1904,7 +1915,8 @@ namespace btg
                      _files.push_back(ti->filename);
                      _contextIDs.push_back(torrent_id);
 
-                     BTG_MNOTICE("marking torrent with ID = " << torrent_id << " for removal");
+                     BTG_MNOTICE(logWrapper(), 
+                                 "marking torrent with ID = " << torrent_id << " for removal");
                      op_status = true;
                   }
             }
@@ -1928,11 +1940,12 @@ namespace btg
 #endif // BTG_OPTION_EVENTCALLBACK
 
                      // Attempt to move this file to the destination directory.
-                     BTG_MNOTICE("moving '" << *iter << "' from '" <<
+                     BTG_MNOTICE(logWrapper(), 
+                                 "moving '" << *iter << "' from '" <<
                                  workDir_ << "' to '" << outputDir_ << "'");
                      this->moveToDestinationDir(*iter);
 
-                     BTG_MNOTICE("removing torrent with ID " << *iter);
+                     BTG_MNOTICE(logWrapper(), "removing torrent with ID " << *iter);
                      this->remove(*iter, false
 #if BTG_OPTION_EVENTCALLBACK
                                   , false
@@ -1943,7 +1956,7 @@ namespace btg
                      // Call the callback for each file cleaned.
                      std::vector<std::string> cbm_arguments;
 
-                     BTG_MNOTICE("adding '" << *filename_iter << "'");
+                     BTG_MNOTICE(logWrapper(), "adding '" << *filename_iter << "'");
 
                      // Add the torrent file name.
                      cbm_arguments.push_back(*filename_iter);
@@ -1966,13 +1979,13 @@ namespace btg
                   }
             }
 
-         BTG_MEXIT("clean", op_status);
+         BTG_MEXIT(logWrapper(), "clean", op_status);
          return op_status;
       }
 
       void Context::setNormalHttpSettings()
       {
-         BTG_MNOTICE("setting session settings: normal");
+         BTG_MNOTICE(logWrapper(), "setting session settings: normal");
          session_settings_.tracker_completion_timeout      = 512;
          session_settings_.tracker_receive_timeout         = 512;
          session_settings_.stop_tracker_timeout            = 512;
@@ -1981,14 +1994,14 @@ namespace btg
          session_settings_.tracker_maximum_response_length = 1024 * 1024 * 1024;
          session_settings_.user_agent                      = GPD->sDAEMON() + GPD->sSPACE() + GPD->sVERSION();
 
-         BTG_MNOTICE("user agent string: " << session_settings_.user_agent);
+         BTG_MNOTICE(logWrapper(), "user agent string: " << session_settings_.user_agent);
 
          torrent_session->set_settings(session_settings_);
       }
 
       void Context::setProxyHttpSettings(btg::core::addressPort const& _proxy)
       {
-         BTG_MNOTICE("setting session settings: proxy");
+         BTG_MNOTICE(logWrapper(), "setting session settings: proxy");
 
          libtorrent::proxy_settings ps;
          ps.hostname = _proxy.getIp();
@@ -2000,7 +2013,7 @@ namespace btg
 
       void Context::setDestructionlHttpSettings()
       {
-         BTG_MNOTICE("setting session settings: destruction");
+         BTG_MNOTICE(logWrapper(), "setting session settings: destruction");
 
          session_settings_.tracker_completion_timeout = 1;
          session_settings_.tracker_receive_timeout    = 1;
@@ -2038,7 +2051,7 @@ namespace btg
 
       void Context::shutdown()
       {
-         BTG_MENTER("shutdown", "");
+         BTG_MENTER(logWrapper(), "shutdown", "");
          this->setDestructionlHttpSettings();
 
          this->stopAll();
@@ -2056,14 +2069,14 @@ namespace btg
          delete torrent_session;
          torrent_session = 0;
 
-         BTG_MEXIT("shutdown", "");
+         BTG_MEXIT(logWrapper(), "shutdown", "");
       }
 
       void Context::enableDHT(libtorrent::entry const& _dht_state)
       {
          if ((useDHT_) && (!enabledDHT_))
             {
-               BTG_MNOTICE("enableDHT, DHT configuration");
+               BTG_MNOTICE(logWrapper(), "enableDHT, DHT configuration");
 
                std::pair<t_uint, t_uint> dht_port_range;
                portMgr->get(dht_port_range);
@@ -2074,7 +2087,7 @@ namespace btg
                dht_settings.service_port = DHTport_;
                torrent_session->set_dht_settings(dht_settings);
 
-               BTG_MNOTICE("enableDHT, Enabling DHT");
+               BTG_MNOTICE(logWrapper(), "enableDHT, Enabling DHT");
                torrent_session->start_dht(_dht_state);
 
                // DHT nodes for bootstrapping.
@@ -2093,7 +2106,7 @@ namespace btg
       {
          if (useDHT_ && enabledDHT_)
             {
-               BTG_MNOTICE("disableDHT, disabling DHT");
+               BTG_MNOTICE(logWrapper(), "disableDHT, disabling DHT");
                torrent_session->stop_dht();
 
                std::pair<t_uint, t_uint> dht_port_range(DHTport_, DHTport_);

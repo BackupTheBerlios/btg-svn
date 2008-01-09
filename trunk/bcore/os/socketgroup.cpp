@@ -35,8 +35,9 @@ namespace btg
 
          t_uint const MAX_READS = 16;
 
-         SocketGroup::SocketGroup()
-            : max_reads(MAX_READS),
+         SocketGroup::SocketGroup(LogWrapperType _logwrapper)
+            : Logable(_logwrapper),
+              max_reads(MAX_READS),
               current_reads(0),
               sockets(),
               socket_freq(),
@@ -45,14 +46,16 @@ namespace btg
               select_done(false)
          {
 #if BTG_TRANSPORT_DEBUG
-            BTG_NOTICE("Created SocketGroup: max_reads = " <<
+            BTG_NOTICE(logWrapper(), "Created SocketGroup: max_reads = " <<
                        max_reads << ", timeout = " << timeout << ".");
 #endif // BTG_TRANSPORT_DEBUG
             FD_ZERO(&fd_base);
          }
 
-         SocketGroup::SocketGroup(const t_uint _timeout)
-            : max_reads(MAX_READS),
+         SocketGroup::SocketGroup(LogWrapperType _logwrapper,
+                                  const t_uint _timeout)
+            : Logable(_logwrapper),
+              max_reads(MAX_READS),
               current_reads(0),
               sockets(),
               socket_freq(),
@@ -61,7 +64,7 @@ namespace btg
               select_done(false)
          {
 #if BTG_TRANSPORT_DEBUG
-            BTG_NOTICE("Created SocketGroup: max_reads = " <<
+            BTG_NOTICE(logWrapper(), "Created SocketGroup: max_reads = " <<
                        max_reads << ", timeout = " << timeout << ".");
 #endif // BTG_TRANSPORT_DEBUG
             FD_ZERO(&fd_base);
@@ -70,7 +73,7 @@ namespace btg
          void SocketGroup::setTimeout(const t_uint _timeout)
          {
 #if BTG_TRANSPORT_DEBUG
-            BTG_NOTICE("tcpTransport::setTimeout = " <<_timeout);
+            BTG_NOTICE(logWrapper(), "tcpTransport::setTimeout = " <<_timeout);
 #endif // BTG_TRANSPORT_DEBUG
             timeout = _timeout;
          }
@@ -92,7 +95,7 @@ namespace btg
                   return result;
                }
 #if BTG_TRANSPORT_DEBUG
-            BTG_NOTICE("Calling select(), with socket.");
+            BTG_NOTICE(logWrapper(), "Calling select(), with socket.");
 #endif // BTG_TRANSPORT_DEBUG
             fd_set fd_read;
             struct timeval tv;
@@ -120,7 +123,7 @@ namespace btg
             if (FD_ISSET(sockId, &fd_read))
                {
 #if BTG_TRANSPORT_DEBUG
-                  BTG_NOTICE("SocketGroup::doSelect, got data on #" << _socket->getSockId());
+                  BTG_NOTICE(logWrapper(), "SocketGroup::doSelect, got data on #" << _socket->getSockId());
 #endif // BTG_TRANSPORT_DEBUG
                   result = true;
                }
@@ -142,13 +145,13 @@ namespace btg
             if (select_done && (result_size > 0))
                {
 #if BTG_TRANSPORT_DEBUG
-                  BTG_NOTICE("Not calling select().");
+                  BTG_NOTICE(logWrapper(), "Not calling select().");
 #endif // BTG_TRANSPORT_DEBUG
                   return;
                }
 
 #if BTG_TRANSPORT_DEBUG
-            BTG_NOTICE("Calling select().");
+            BTG_NOTICE(logWrapper(), "Calling select().");
 #endif //BTG_TRANSPORT_DEBUG
 
             fd_set fd_read;
@@ -181,7 +184,7 @@ namespace btg
                      {
 
 #if BTG_TRANSPORT_DEBUG
-                        BTG_NOTICE("SocketGroup::doSelect, got data on #" << iter->first);
+                        BTG_NOTICE(logWrapper(), "SocketGroup::doSelect, got data on #" << iter->first);
 #endif // BTG_TRANSPORT_DEBUG
                         socket_freq[iter->first] ++;
 
@@ -217,7 +220,7 @@ namespace btg
             // Convert the above to a vector, sorted by frequency.
 
 #if BTG_TRANSPORT_DEBUG
-            BTG_NOTICE("SocketGroup::doSelect, results:");
+            BTG_NOTICE(logWrapper(), "SocketGroup::doSelect, results:");
 #endif // BTG_TRANSPORT_DEBUG
 
             std::multimap<t_uint, t_int>::iterator sortedFreqIter;
@@ -231,14 +234,14 @@ namespace btg
                                           );
 
 #if BTG_TRANSPORT_DEBUG
-                  BTG_NOTICE("Socket #" << sortedFreqIter->second << 
+                  BTG_NOTICE(logWrapper(), "Socket #" << sortedFreqIter->second << 
                              ", freq = " << sortedFreqIter->first << ".");
 #endif // BTG_TRANSPORT_DEBUG
 
                }
 
 #if BTG_TRANSPORT_DEBUG
-            BTG_NOTICE("SocketGroup::doSelect, end of results.");
+            BTG_NOTICE(logWrapper(), "SocketGroup::doSelect, end of results.");
 #endif // BTG_TRANSPORT_DEBUG
 
             // select() will not be called again before all the
@@ -255,7 +258,7 @@ namespace btg
          bool SocketGroup::addSocket(Socket *_s)
          {
 #if BTG_TRANSPORT_DEBUG
-            BTG_NOTICE("SocketGroup::addSocket, adding socket #" << _s->getSockId());
+            BTG_NOTICE(logWrapper(), "SocketGroup::addSocket, adding socket #" << _s->getSockId());
 #endif // BTG_TRANSPORT_DEBUG
             sockets[_s->getSockId()]     = _s;
             socket_freq[_s->getSockId()] = 0;
@@ -266,7 +269,7 @@ namespace btg
          bool SocketGroup::removeSocket(const Socket *_s)
          {
 #if BTG_TRANSPORT_DEBUG
-            BTG_NOTICE("SocketGroup::removeSocket, removing socket #" << _s->getSockId());
+            BTG_NOTICE(logWrapper(), "SocketGroup::removeSocket, removing socket #" << _s->getSockId());
 #endif // BTG_TRANSPORT_DEBUG
             std::map<t_int, Socket*>::iterator iter;
             for (iter = sockets.begin(); 
@@ -276,7 +279,7 @@ namespace btg
                   if (iter->second == _s)
                      {
 #if BTG_TRANSPORT_DEBUG
-                        BTG_NOTICE("SocketGroup::removeSocket, found " << (void*)iter->second << ", erasing it.");
+                        BTG_NOTICE(logWrapper(), "SocketGroup::removeSocket, found " << (void*)iter->second << ", erasing it.");
 #endif // BTG_TRANSPORT_DEBUG
 
                         // Erase the frequency.
@@ -299,7 +302,7 @@ namespace btg
                      }
                }
 #if BTG_TRANSPORT_DEBUG
-            BTG_NOTICE("SocketGroup::removeSocket, failed to remove socket #" << _s->getSockId());
+            BTG_NOTICE(logWrapper(), "SocketGroup::removeSocket, failed to remove socket #" << _s->getSockId());
 #endif // BTG_TRANSPORT_DEBUG
             return false;
          }
@@ -339,7 +342,7 @@ namespace btg
                   select_result.clear();
                   select_done = false;
 #if BTG_TRANSPORT_DEBUG
-                  BTG_NOTICE("Max reads reached.");
+                  BTG_NOTICE(logWrapper(), "Max reads reached.");
 #endif // BTG_TRANSPORT_DEBUG
                   return status;
                }

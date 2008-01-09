@@ -45,10 +45,21 @@ using namespace btg::core;
 
 void testHttp::setUp()
 {
+   logwrapper      = btg::core::LogWrapperType(new btg::core::logger::logWrapper);
    addressport     = btg::core::addressPort(127,0,0,1,15000);
-   externalization = new btg::core::externalization::XMLRPC();
-   mq_server       = new httpTransport(externalization, 1024*10, FROM_SERVER, addressport, 1000);
-   mq_client       = new httpTransport(externalization, 1024*10, TO_SERVER, addressport, 1000);
+   externalization = new btg::core::externalization::XMLRPC(logwrapper);
+   mq_server       = new httpTransport(logwrapper,
+                                       externalization, 
+                                       1024*10, 
+                                       FROM_SERVER, 
+                                       addressport, 
+                                       1000);
+   mq_client       = new httpTransport(logwrapper,
+                                       externalization, 
+                                       1024*10, 
+                                       TO_SERVER, 
+                                       addressport, 
+                                       1000);
 }
 
 void testHttp::tearDown()

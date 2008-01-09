@@ -45,14 +45,12 @@
 
 #include <bcore/logger/logger.h>
 #include <bcore/logger/file_log.h>
-
 #include <bcore/t_string.h>
-
 #include <bcore/crashlog.h>
-
+#include <bcore/logable.h>
 #include <bcore/client/handlerthr.h>
-
 #include <bcore/client/clientdynconfig.h>
+#include <bcore/client/loglevel.h>
 
 using namespace btg::core;
 using namespace btg::core::logger;
@@ -62,6 +60,8 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
+   LogWrapperType logwrapper(new btg::core::logger::logWrapper);
+ 
    btg::core::crashLog::init();
 
    commandLineArgumentHandler* cla = new commandLineArgumentHandler(GPD->sGUI_CONFIG());
@@ -75,7 +75,6 @@ int main(int argc, char **argv)
          cla    = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_ERROR_EXIT;
       }
@@ -84,7 +83,7 @@ int main(int argc, char **argv)
    // syntax of the configuration file.
    if (cla->listConfigFileSyntax())
       {
-         clientConfiguration non_existing("non_existing");
+         clientConfiguration non_existing(logwrapper, "non_existing");
 
          std::cout << non_existing.getSyntax() << std::endl;
 
@@ -92,7 +91,6 @@ int main(int argc, char **argv)
          cla = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_NORMAL_EXIT;
       }
@@ -101,7 +99,7 @@ int main(int argc, char **argv)
 
    Gtk::Main* initMain = new Gtk::Main(&argc, &argv);
 
-   BTG_NOTICE("Creating the init window.");
+   BTG_NOTICE(logwrapper, "Creating the init window.");
    initWindow* iw = new initWindow();
    iw->show();
 
@@ -121,20 +119,21 @@ int main(int argc, char **argv)
    string errorString;
    if (!btg::core::os::fileOperation::check(config_filename, errorString, false))
       {
-         BTG_FATAL_ERROR(GPD->sGUI_CLIENT(), "Could not open file '" << config_filename << "'");
+         BTG_FATAL_ERROR(logwrapper,
+                         GPD->sGUI_CLIENT(), "Could not open file '" << config_filename << "'");
 
          return BTG_ERROR_EXIT;
       }
 
    // Open the configuration file:
-   clientConfiguration* config = new clientConfiguration(config_filename);
+   clientConfiguration* config = new clientConfiguration(logwrapper, config_filename);
 
    bool const gotConfig = config->read();
 
    bool neverAskFlag = config->getNeverAskQuestions();
 
-   clientDynConfig cliDynConf(GPD->sCLI_DYNCONFIG());
-   lastFiles* lastfiles = new lastFiles(cliDynConf);
+   clientDynConfig cliDynConf(logwrapper, GPD->sCLI_DYNCONFIG());
+   lastFiles* lastfiles = new lastFiles(logwrapper, cliDynConf);
 
    // Update init dialog.
    iw->updateProgress(initWindow::IEV_RCONF_DONE);
@@ -144,7 +143,8 @@ int main(int argc, char **argv)
 
    if (!gotConfig)
       {
-         BTG_FATAL_ERROR(GPD->sGUI_CLIENT(), "Could not read the config file, '" << GPD->sGUI_CONFIG() << "'. Create one.");
+         BTG_FATAL_ERROR(logwrapper,
+                         GPD->sGUI_CLIENT(), "Could not read the config file, '" << GPD->sGUI_CONFIG() << "'. Create one.");
          delete config;
          config = 0;
 
@@ -161,7 +161,6 @@ int main(int argc, char **argv)
          initMain = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_ERROR_EXIT;
       }
@@ -176,7 +175,8 @@ int main(int argc, char **argv)
    btg::core::externalization::Externalization* externalization = 0;
    messageTransport* transport                                  = 0;
 
-   transportHelper* transporthelper = new transportHelper(GPD->sGUI_CLIENT(),
+   transportHelper* transporthelper = new transportHelper(logwrapper,
+                                                          GPD->sGUI_CLIENT(),
                                                           config,
                                                           cla);
 
@@ -209,7 +209,6 @@ int main(int argc, char **argv)
          transporthelper = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_ERROR_EXIT;
       }
@@ -220,7 +219,8 @@ int main(int argc, char **argv)
    // Update init dialog.
    iw->updateProgress(initWindow::IEV_TRANSP_DONE);
 
-   guiHandler* guihandler = new guiHandler(externalization,
+   guiHandler* guihandler = new guiHandler(logwrapper,
+                                           externalization,
                                            transport,
                                            config,
                                            lastfiles,
@@ -234,7 +234,8 @@ int main(int argc, char **argv)
    iw->updateProgress(initWindow::IEV_SETUP);
 
    // Create a helper to do the initial setup of this client.
-   startupHelper* starthelper = new guiStartupHelper(config,
+   startupHelper* starthelper = new guiStartupHelper(logwrapper,
+                                                     config,
                                                      cla,
                                                      transport,
                                                      guihandler);
@@ -242,7 +243,8 @@ int main(int argc, char **argv)
    if (!starthelper->init())
       {
          errorDialog::showAndDie(starthelper->getMessages());
-         BTG_FATAL_ERROR(GPD->sGUI_CLIENT(), "Internal error: start up helper not initialized.");
+         BTG_FATAL_ERROR(logwrapper,
+                         GPD->sGUI_CLIENT(), "Internal error: start up helper not initialized.");
 
          delete starthelper;
          starthelper = 0;
@@ -269,43 +271,18 @@ int main(int argc, char **argv)
          lastfiles = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_ERROR_EXIT;
       }
 
-#if BTG_DEBUG
-   // Set debug logging, if requested.
-   if (cla->doDebug())
-      {
-         logWrapper::getInstance()->setMinMessagePriority(logWrapper::PRIO_DEBUG);
-      }
-   else if (verboseFlag)
-      {
-         logWrapper::getInstance()->setMinMessagePriority(logWrapper::PRIO_VERBOSE);
-      }
-   else
-      {
-         // Default: only report errors.
-         logWrapper::getInstance()->setMinMessagePriority(logWrapper::PRIO_ERROR);
-      }
-#else
-   // No debug enabled, check for verbose flag.
-   if (verboseFlag)
-      {
-         logWrapper::getInstance()->setMinMessagePriority(logWrapper::PRIO_VERBOSE);
-      }
-   else
-      {
-         // Default: only report errors.
-         logWrapper::getInstance()->setMinMessagePriority(logWrapper::PRIO_ERROR);
-      }
-#endif // BTG_DEBUG
+   setDefaultLogLevel(logwrapper, cla->doDebug(), verboseFlag);
 
    // Initialize logging.
    if (starthelper->execute(startupHelper::op_log) != startupHelper::or_log_success)
       {
-         BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to initialize logging");
+         BTG_FATAL_ERROR(logwrapper,
+                         GPD->sCLI_CLIENT(), "Unable to initialize logging");
+
          delete starthelper;
          starthelper = 0;
 
@@ -331,7 +308,6 @@ int main(int argc, char **argv)
          lastfiles = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_ERROR_EXIT;
       }
@@ -347,7 +323,8 @@ int main(int argc, char **argv)
          // Ask the user about which username and password to use.
          if (starthelper->execute(startupHelper::op_auth) != startupHelper::or_auth_success)
             {
-               BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to initialize logging");
+               BTG_FATAL_ERROR(logwrapper,
+                               GPD->sCLI_CLIENT(), "Unable to initialize logging");
                delete starthelper;
                starthelper = 0;
 
@@ -373,7 +350,6 @@ int main(int argc, char **argv)
                lastfiles = 0;
 
                projectDefaults::killInstance();
-               logWrapper::killInstance();
 
                return BTG_ERROR_EXIT;
             }
@@ -416,7 +392,6 @@ int main(int argc, char **argv)
          lastfiles = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_NORMAL_EXIT;
       }
@@ -427,7 +402,8 @@ int main(int argc, char **argv)
          if (starthelper->execute(startupHelper::op_attach_first) == startupHelper::or_attach_first_failture)
             {
                errorDialog::showAndDie(starthelper->getMessages());
-               BTG_FATAL_ERROR(GPD->sGUI_CLIENT(), "Unable to attach to session");
+               BTG_FATAL_ERROR(logwrapper,
+                               GPD->sGUI_CLIENT(), "Unable to attach to session");
 
                // Clean up, before quitting.
                delete starthelper;
@@ -455,7 +431,6 @@ int main(int argc, char **argv)
                lastfiles = 0;
 
                projectDefaults::killInstance();
-               logWrapper::killInstance();
 
                return BTG_ERROR_EXIT;
             }
@@ -472,7 +447,8 @@ int main(int argc, char **argv)
          if (result == startupHelper::or_attach_failture)
             {
                errorDialog::showAndDie(starthelper->getMessages());
-               BTG_FATAL_ERROR(GPD->sGUI_CLIENT(), "Unable to attach to session");
+               BTG_FATAL_ERROR(logwrapper,
+                               GPD->sGUI_CLIENT(), "Unable to attach to session");
             }
          
          if ((result == startupHelper::or_attach_failture) || 
@@ -504,7 +480,6 @@ int main(int argc, char **argv)
                lastfiles = 0;
 	     
                projectDefaults::killInstance();
-               logWrapper::killInstance();
 
                return BTG_ERROR_EXIT;
             }
@@ -564,7 +539,6 @@ int main(int argc, char **argv)
                   lastfiles = 0;
                   
                   projectDefaults::killInstance();
-                  logWrapper::killInstance();
 
                   return BTG_ERROR_EXIT;
                   break;
@@ -623,7 +597,6 @@ int main(int argc, char **argv)
                lastfiles = 0;
 
                projectDefaults::killInstance();
-               logWrapper::killInstance();
 
                return BTG_ERROR_EXIT;
             }
@@ -639,7 +612,8 @@ int main(int argc, char **argv)
          if (!guihandler->isAttachDone())
             {
                errorDialog::showAndDie("Unable to attach to session");
-               BTG_FATAL_ERROR(GPD->sGUI_CLIENT(), "Unable to attach to session");
+               BTG_FATAL_ERROR(logwrapper,
+                               GPD->sGUI_CLIENT(), "Unable to attach to session");
 
                // Clean up, before quitting.
                delete starthelper;
@@ -667,7 +641,6 @@ int main(int argc, char **argv)
                lastfiles = 0;
 
                projectDefaults::killInstance();
-               logWrapper::killInstance();
 
                return BTG_ERROR_EXIT;
             }
@@ -702,18 +675,20 @@ int main(int argc, char **argv)
    std::string str_session = btg::core::convertToString<t_long>(session);
 
    // Start a thread that takes care of communicating with the daemon.
-   handlerThread* handlerthr = new handlerThread(verboseFlag, guihandler);
+   handlerThread* handlerthr = new handlerThread(logwrapper,
+                                                 verboseFlag, 
+                                                 guihandler);
 
-   mainWindow *mainWindow = new class mainWindow(str_session, 
+   mainWindow* mainWindow = new class mainWindow(str_session, 
                                                  verboseFlag, 
                                                  neverAskFlag,
                                                  handlerthr,
                                                  cliDynConf
                                                  );
 
-   BTG_NOTICE(initialStatusMessage);
+   BTG_NOTICE(logwrapper, initialStatusMessage);
 
-   BTG_NOTICE("Deleting the init window.");
+   BTG_NOTICE(logwrapper, "Deleting the init window.");
 
    iw->hide();
    delete iw;
@@ -749,7 +724,6 @@ int main(int argc, char **argv)
    lastfiles = 0;
 
    projectDefaults::killInstance();
-   logWrapper::killInstance();
 
    return BTG_NORMAL_EXIT;
 }

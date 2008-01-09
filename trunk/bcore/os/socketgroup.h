@@ -24,6 +24,7 @@
 #define SOCKETGROUP_H
 
 #include "socket.h"
+#include <bcore/logable.h>
 
 namespace btg
 {
@@ -38,15 +39,16 @@ namespace btg
 
                /// A class to group sockets together for doing
                /// select() on them.
-               class SocketGroup
+               class SocketGroup: public btg::core::Logable
                   {
                   public:
                      /// Default constructor.
-                     SocketGroup();
+                     SocketGroup(LogWrapperType _logwrapper);
 
                      /// Constructor.
                      /// @param [in] _timeout Max time in milliseconds to block on doSelect().
-                     SocketGroup(const t_uint _timeout);
+                     SocketGroup(LogWrapperType _logwrapper,
+                                 const t_uint _timeout);
 
                      /// Set timeout
                      /// @param [in] _timeout Max time in milliseconds to block on doSelect()

@@ -43,6 +43,7 @@
 #endif
 
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 namespace btg
 {
@@ -135,8 +136,6 @@ namespace btg
                      logStream& operator=(logStream const& _ls);
                   };
 
-               /// Wraps aroud an instance of debugStream.
-               /// This is a singleton.
                /// \note This class logs everthing per default. Use
                /// debugWrapper::setMinMessagePriority to change this
                /// behaviour.
@@ -151,19 +150,16 @@ namespace btg
                            PRIO_NOTICE  = 1,     //!< Notices, which can be ignored.
                            PRIO_DEBUG   = 0      //!< Debug output, which can be ignored.
                         };
-                     /// Get an instance of the contained class.
-                     /// Initially the pointer to the instance of debugStream
-                     /// class is set to 0.
-                     static logWrapper* getInstance();
+                  public:
+                     /// Constructor.
+                     logWrapper();
 
-                     /// Kill the singleton.
-                     static void killInstance();
+                     bool logStreamSet() const;
 
-                     /// Set the debugStream instance used for logging.
-                     void setLogStream(logStream *_logstream);
+                     void setLogStream(boost::shared_ptr<logStream> _logstream);
 
                      /// Get a pointer to the debugStream instance used for logging.
-                     logStream* getLogStream() const;
+                     boost::shared_ptr<logStream> getLogStream() const;
 
                      /// Sets the message min priority, which will be logged.
                      /// @param [in] _minMessagePriority The min. priority.
@@ -175,26 +171,19 @@ namespace btg
                      /// The destructor.
                      ~logWrapper();
                   private:
-                     /// Constructor.
-                     logWrapper();
-
                      /// Copy constructor.
                      logWrapper(logWrapper const& _lw);
 
                      /// Assignment operator.
                      logWrapper& operator=(logWrapper const& _lw);
 
-                     /// State variable.
-                     static bool                   instance;
-
-                     /// Pointer to the instance.
-                     static logWrapper*            instancePointer;
-
                      /// Pointer to an instance of debugStream.
-                     logStream*                    logstream;
+                     boost::shared_ptr<logStream>  logstream;
 
                      /// Logging priority.
                      logWrapper::MESSAGEPRIORITY   minMessagePriority;
+
+                     bool logstreamset;
                   };
 
                /** @} */

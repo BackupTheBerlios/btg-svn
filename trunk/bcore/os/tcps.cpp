@@ -37,7 +37,10 @@ namespace btg
    {
       namespace os
       {
-         ServerSocket::ServerSocket(std::string const& _host, t_uint const _port)
+         ServerSocket::ServerSocket(LogWrapperType _logwrapper,
+                                    std::string const& _host,
+                                    t_uint const _port)
+            : Socket::Socket(_logwrapper)
          {
             if (!Socket::create())
                {
@@ -45,7 +48,7 @@ namespace btg
                }
 
 #if BTG_TRANSPORT_DEBUG
-            BTG_NOTICE("Attempt to bind to port " << _port);
+            BTG_NOTICE(logWrapper(), "Attempt to bind to port " << _port);
 #endif // BTG_TRANSPORT_DEBUG
 
             if (!Socket::bind(_host, _port))
@@ -64,8 +67,8 @@ namespace btg
          {
          }
 
-         ServerSocket::ServerSocket()
-            : Socket::Socket()
+         ServerSocket::ServerSocket(LogWrapperType _logwrapper)
+            : Socket::Socket(_logwrapper)
          {
 
          }
@@ -75,7 +78,7 @@ namespace btg
             if (!Socket::is_valid())
                {
 #if BTG_TRANSPORT_DEBUG
-                  BTG_NOTICE("(write) Marking socket with id=" << getSockId() << " as deleted");
+                  BTG_NOTICE(logWrapper(), "(write) Marking socket with id=" << getSockId() << " as deleted");
 #endif // BTG_TRANSPORT_DEBUG
                   this->markAsDeleted();
                }
@@ -94,7 +97,7 @@ namespace btg
             if (!Socket::is_valid())
                {
 #if BTG_TRANSPORT_DEBUG
-                  BTG_NOTICE("(read) Marking socket with id=" << getSockId() << " as deleted");
+                  BTG_NOTICE(logWrapper(), "(read) Marking socket with id=" << getSockId() << " as deleted");
 #endif // BTG_TRANSPORT_DEBUG
                   this->markAsDeleted();
                }

@@ -79,7 +79,7 @@ namespace btg
          {
             /* Is this needed here?? */
 #if BTG_STATEMACHINE_DEBUG
-            BTG_NOTICE("CN_GSETUP called in expectedReply");
+            BTG_NOTICE(logWrapper(), "CN_GSETUP called in expectedReply");
 #endif // BTG_STATEMACHINE_DEBUG
             clientcallback->onSetup(
                                     dynamic_cast<setupResponseCommand*>(_command)->getSession()

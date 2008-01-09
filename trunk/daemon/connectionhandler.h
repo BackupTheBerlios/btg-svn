@@ -74,7 +74,7 @@ namespace btg
                /// been called...), false otherwise.
                bool isAuthed() const;
 
-               /// Return some extra protocol related per-connection state
+               /// Return some extra protocol related per-connection state.
                ConnectionExtraState& ExtraState();
             private:
                /// Connection ID for this connection.
@@ -104,7 +104,7 @@ namespace btg
                ~connectionHandler();
 
                /// Add a connection ID to keep track of.
-	       ///
+               ///
                /// Returns true if connection was added successfully,
                /// or false if it failed for some reason.
                bool addConnection(t_int const _connectionID);

@@ -45,7 +45,7 @@ namespace btg
             {
             public:
                /// Default constructor.
-               Simple();
+               Simple(LogWrapperType _logwrapper);
 
                /// Destructor.
                virtual ~Simple();

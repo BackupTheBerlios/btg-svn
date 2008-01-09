@@ -24,14 +24,25 @@
 
 #include "logmacro.h"
 
-void btg_assert(bool _a, std::string const& _message)
+namespace btg
 {
-   if (!_a)
+   namespace core
+   {
+
+      void btg_assert(bool _a,
+                      LogWrapperType _logwrapper,
+                      std::string const& _message)
       {
+         if (!_a)
+            {
 #ifndef NDEBUG
-         // Debug.
-         BTG_FATAL_ERROR("assert", _message);
-         exit(-1);
+               // Debug.
+               BTG_FATAL_ERROR(_logwrapper, "assert", _message);
+               exit(-1);
 #endif
+            }
       }
-}
+
+   } // namespace core
+} // namespace btg
+

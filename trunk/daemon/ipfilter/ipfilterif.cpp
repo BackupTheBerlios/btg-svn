@@ -26,10 +26,12 @@ namespace btg
 {
    namespace daemon
    {
-      IpFilterIf::IpFilterIf(bool const _verboseFlag, 
+      IpFilterIf::IpFilterIf(btg::core::LogWrapperType _logwrapper,
+                             bool const _verboseFlag, 
                              TYPE const _type, 
                              std::string const& _filename)
-         : verboseFlag_(_verboseFlag),
+         : btg::core::Logable(_logwrapper),
+           verboseFlag_(_verboseFlag),
            type_(_type),
            filename_(_filename),
            initialized_(false),

@@ -34,14 +34,14 @@
 namespace btg
 {
    namespace core
+   {
+      namespace externalization
       {
-         namespace externalization
-         {
 
-            class externalizationPrinter: public btg::core::externalization::Externalization
+         class externalizationPrinter: public btg::core::externalization::Externalization
             {
-               public:
-externalizationPrinter();
+            public:
+               externalizationPrinter(btg::core::LogWrapperType _logwrapper);
 
                virtual ~externalizationPrinter();
 
@@ -83,7 +83,7 @@ externalizationPrinter();
 
                std::string dumpData() const;
 
-               private:
+            private:
                std::string command_name;
                std::string command_method_name;
                t_int command_id;
@@ -96,8 +96,8 @@ externalizationPrinter();
                std::vector<std::pair<std::string, std::string> > parameters;
             };
 
-         } // namespace externalization
-      } // namespace core
+      } // namespace externalization
+   } // namespace core
 } // namespace btg
 
 #endif

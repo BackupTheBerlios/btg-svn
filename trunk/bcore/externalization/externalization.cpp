@@ -134,8 +134,9 @@ namespace btg
             return result;
          }
 
-         Externalization::Externalization()
-            : status_(false)
+         Externalization::Externalization(LogWrapperType _logwrapper)
+            : btg::core::Logable(_logwrapper),
+              status_(false)
          {
          }
 

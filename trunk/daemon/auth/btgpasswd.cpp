@@ -42,15 +42,18 @@ using namespace btg::core;
 using namespace btg::core::logger;
 using namespace btg::daemon::auth;
 
-bool createDirectory(bool _verboseFlag, std::string const& _label, std::string const& _path);
+bool createDirectory(LogWrapperType _logwrapper, bool _verboseFlag, std::string const& _label, std::string const& _path);
 
-bool uniqueDirectories(std::string const& _temp_dir,
+bool uniqueDirectories(LogWrapperType _logwrapper,
+                       std::string const& _temp_dir,
                        std::string const& _work_dir,
                        std::string const& _seed_dir,
                        std::string const& _dest_dir);
 
 int main(int argc, char* argv[])
 {
+   LogWrapperType logwrapper(new btg::core::logger::logWrapper);
+
    commandLineArgumentHandler* cla = new commandLineArgumentHandler(GPD->sDEFAULT_DAEMON_CONFIG());
    cla->setup();
    if (!cla->parse(argc, argv))
@@ -69,13 +72,13 @@ int main(int argc, char* argv[])
          configFile = cla->configFile();
       }
 #if BTG_AUTH_DEBUG
-   BTG_NOTICE("Config: '" << configFile << "'");
+   BTG_NOTICE(logwrapper, "Config: '" << configFile << "'");
 #endif //BTG_AUTH_DEBUG
 
    std::string errorString;
    if (!btg::core::os::fileOperation::check(configFile, errorString, false))
       {
-         BTG_FATAL_ERROR("btgpasswd", "Unable to open config file '" << configFile << "': " << errorString);
+         BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Unable to open config file '" << configFile << "': " << errorString);
 
          delete cla;
          cla = 0;
@@ -83,11 +86,12 @@ int main(int argc, char* argv[])
          return BTG_ERROR_EXIT;
       }
 
-   btg::daemon::daemonConfiguration* config  = new btg::daemon::daemonConfiguration(configFile);
+   btg::daemon::daemonConfiguration* config  = new btg::daemon::daemonConfiguration(logwrapper,
+                                                                                    configFile);
 
    if (!config->read())
       {
-         BTG_FATAL_ERROR("btgpasswd", "Could not open configuration file '" << configFile << "'");
+         BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Could not open configuration file '" << configFile << "'");
 
          delete config;
          config = 0;
@@ -98,7 +102,7 @@ int main(int argc, char* argv[])
       }
 
 #if BTG_AUTH_DEBUG
-   BTG_NOTICE("Config read from '" << configFile << "'.");
+   BTG_NOTICE(logwrapper, "Config read from '" << configFile << "'.");
 #endif // BTG_AUTH_DEBUG
 
    // Open the passwd file, filename from the config file.
@@ -119,14 +123,14 @@ int main(int argc, char* argv[])
    // resolve relative paths etc.
    if (!btg::core::os::fileOperation::resolvePath(auth_file))
       {
-         BTG_NOTICE("Unable to resolve path '" << auth_file << "'");
+         BTG_NOTICE(logwrapper, "Unable to resolve path '" << auth_file << "'");
       }
 
    if (!newfile)
       {
          if (!btg::core::os::fileOperation::check(auth_file, errorString, false))
             {
-               BTG_FATAL_ERROR("btgpasswd", "Could not open passwd file '" << auth_file << "': " << errorString);
+               BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Could not open passwd file '" << auth_file << "': " << errorString);
 
                delete config;
                config = 0;
@@ -137,11 +141,11 @@ int main(int argc, char* argv[])
             }
       }
 
-   passwordAuth* auth = new passwordAuth(auth_file, newfile);
+   passwordAuth* auth = new passwordAuth(logwrapper, auth_file, newfile);
 
    if (!auth->initialized())
       {
-         BTG_FATAL_ERROR("btgpasswd", "Unable to load passwd file '" << auth_file << "'.");
+         BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Unable to load passwd file '" << auth_file << "'.");
 
          delete auth;
          auth = 0;
@@ -159,7 +163,7 @@ int main(int argc, char* argv[])
       {
       case commandLineArgumentHandler::OP_ADD:
          {
-            VERBOSE_LOG(verboseFlag, "Adding user.");
+            VERBOSE_LOG(logwrapper, verboseFlag, "Adding user.");
 
             std::string user;
             std::string password;
@@ -173,39 +177,41 @@ int main(int argc, char* argv[])
 
             if (!cla->getUsername(user))
                {
-                  BTG_FATAL_ERROR("btgpasswd", "Missing user name.");
+                  BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Missing user name.");
                   break;
                }
 
             if (!cla->getTempDir(temp_dir))
                {
-                  BTG_FATAL_ERROR("btgpasswd", "Missing temporary directory.");
+                  BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Missing temporary directory.");
                   break;
                }
 
             if (!cla->getWorkDir(work_dir))
                {
-                  BTG_FATAL_ERROR("btgpasswd", "Missing working directory.");
+                  BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Missing working directory.");
                   break;
                }
 
             if (!cla->getSeedDir(seed_dir))
                {
-                  BTG_FATAL_ERROR("btgpasswd", "Missing seed directory.");
+                  BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Missing seed directory.");
                   break;
                }
 
             if (!cla->getDestDir(dest_dir))
                {
-                  BTG_FATAL_ERROR("btgpasswd", "Missing destination directory.");
+                  BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Missing destination directory.");
                   break;
                }
 
             // Make sure that the directories are unique.
-            if (!uniqueDirectories(temp_dir, work_dir,
+            if (!uniqueDirectories(logwrapper,
+                                   temp_dir, work_dir,
                                    seed_dir, dest_dir))
                {
-                  BTG_FATAL_ERROR("btgpasswd", "Provided directories are not unique. " << 
+                  BTG_FATAL_ERROR(logwrapper,
+                                  "btgpasswd", "Provided directories are not unique. " << 
                                   "Make sure temporary/working/seed/destination directory is unique.");
                   break;
                }
@@ -225,7 +231,7 @@ int main(int argc, char* argv[])
             // Ask for a password.
             if (!btg::core::os::stdIn::getPassword(password))
                {
-                  BTG_FATAL_ERROR("btgpasswd", "Reading password failed.");
+                  BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Reading password failed.");
                   break;
                }
 
@@ -234,14 +240,14 @@ int main(int argc, char* argv[])
             // Ask for a password.
             if (!btg::core::os::stdIn::getPassword(password_confirm))
                {
-                  BTG_FATAL_ERROR("btgpasswd", "Reading password failed.");
+                  BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Reading password failed.");
                   break;
                }
 
             // Make sure passwords are equal
             if (password != password_confirm)
                {
-                  BTG_FATAL_ERROR("btgpasswd", "Password missmatch.");
+                  BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Password missmatch.");
                   break;
                }
 
@@ -251,7 +257,8 @@ int main(int argc, char* argv[])
             std::string hashed;
             h.get(hashed);
 
-            VERBOSE_LOG(verboseFlag, "Adding user '" << user << "' with:" << GPD->sNEWLINE() <<
+            VERBOSE_LOG(logwrapper,
+                        verboseFlag, "Adding user '" << user << "' with:" << GPD->sNEWLINE() <<
                         "hash '" << hashed << "'" << GPD->sNEWLINE() <<
                         "temp directory '" << temp_dir << "'" << GPD->sNEWLINE() <<
                         "work directory '" << work_dir << "'" << GPD->sNEWLINE() <<
@@ -263,26 +270,26 @@ int main(int argc, char* argv[])
 
             // Create the directories used.
 
-            if ((!createDirectory(verboseFlag, "temp", temp_dir)) ||
-                (!createDirectory(verboseFlag, "work", work_dir)) ||
-                (!createDirectory(verboseFlag, "seed", seed_dir)) ||
-                (!createDirectory(verboseFlag, "dest", dest_dir))
+            if ((!createDirectory(logwrapper, verboseFlag, "temp", temp_dir)) ||
+                (!createDirectory(logwrapper, verboseFlag, "work", work_dir)) ||
+                (!createDirectory(logwrapper, verboseFlag, "seed", seed_dir)) ||
+                (!createDirectory(logwrapper, verboseFlag, "dest", dest_dir))
                 )
                {
                   // Abort, as some directories failed.
-                  BTG_FATAL_ERROR("btgpasswd", "Failed to create user directorys.");
+                  BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Failed to create user directorys.");
                   break;
                }
 
             if (!auth->addUser(user, hashed, temp_dir, work_dir, seed_dir, dest_dir, control_flag, callback))
                {
-                  BTG_FATAL_ERROR("btgpasswd", "Unable to add user.");
+                  BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Unable to add user.");
                   break;
                }
 
             if (!auth->write())
                {
-                  BTG_FATAL_ERROR("btgpasswd", "Unable to save password file.");
+                  BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Unable to save password file.");
                   break;
                }
 
@@ -291,7 +298,7 @@ int main(int argc, char* argv[])
          }
       case commandLineArgumentHandler::OP_MOD:
          {
-            VERBOSE_LOG(verboseFlag, "Modifying user.");
+            VERBOSE_LOG(logwrapper, verboseFlag, "Modifying user.");
 
             std::string user;
             std::string password;
@@ -307,13 +314,13 @@ int main(int argc, char* argv[])
 
             if (!cla->getUsername(user))
                {
-                  BTG_FATAL_ERROR("btgpasswd", "Missing user name.");
+                  BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Missing user name.");
                   break;
                }
 
             if (!auth->getControlFlag(user, control_flag))
                {
-                  BTG_FATAL_ERROR("btgpasswd", "Missing control flag.");
+                  BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Missing control flag.");
                   break;
                }
 
@@ -355,11 +362,12 @@ int main(int argc, char* argv[])
 
             if (!any_argument)
                {
-                  BTG_FATAL_ERROR("btgpasswd", "Nothing changed.");
+                  BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Nothing changed.");
                   break;
                }
 
-            BTG_NOTICE("Mod user '" << user << "', using directories:" << GPD->sNEWLINE() <<
+            BTG_NOTICE(logwrapper,
+                       "Mod user '" << user << "', using directories:" << GPD->sNEWLINE() <<
                        "temp directory '" << temp_dir << "'" << GPD->sNEWLINE() <<
                        "work directory '" << work_dir << "'" << GPD->sNEWLINE() <<
                        "seed directory '" << seed_dir << "'" << GPD->sNEWLINE() <<
@@ -373,7 +381,7 @@ int main(int argc, char* argv[])
                   // Ask for a password.
                   if (!btg::core::os::stdIn::getPassword(password))
                      {
-                        BTG_FATAL_ERROR("btgpasswd", "Reading password failed.");
+                        BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Reading password failed.");
                         break;
                      }
 
@@ -382,14 +390,14 @@ int main(int argc, char* argv[])
                   // Ask for a password.
                   if (!btg::core::os::stdIn::getPassword(password_confirm))
                      {
-                        BTG_FATAL_ERROR("btgpasswd", "Reading password failed.");
+                        BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Reading password failed.");
                         break;
                      }
 
                   // Make sure passwords are equal
                   if (password != password_confirm)
                      {
-                        BTG_FATAL_ERROR("btgpasswd", "Password missmatch.");
+                        BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Password missmatch.");
                         break;
                      }
 
@@ -443,18 +451,18 @@ int main(int argc, char* argv[])
                         output += "callback '" + callback + "'" + GPD->sNEWLINE();
                      }
 
-                  VERBOSE_LOG(verboseFlag, output);
+                  VERBOSE_LOG(logwrapper, verboseFlag, output);
                } // verbose
 
             if (!auth->modUser(user, hashedPassword, temp_dir, work_dir, seed_dir, dest_dir, control_flag, callback))
                {
-                  BTG_FATAL_ERROR("btgpasswd", "Unable to modify user.");
+                  BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Unable to modify user.");
                   break;
                }
 
             if (!auth->write())
                {
-                  BTG_FATAL_ERROR("btgpasswd", "Unable to save password file.");
+                  BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Unable to save password file.");
                   break;
                }
 
@@ -463,25 +471,25 @@ int main(int argc, char* argv[])
          }
       case commandLineArgumentHandler::OP_DEL:
          {
-            VERBOSE_LOG(verboseFlag, "Deleting user.");
+            VERBOSE_LOG(logwrapper, verboseFlag, "Deleting user.");
 
             std::string user;
 
             if (!cla->getUsername(user))
                {
-                  BTG_FATAL_ERROR("btgpasswd", "Missing user name.");
+                  BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Missing user name.");
                   break;
                }
 
             if (!auth->delUser(user))
                {
-                  BTG_FATAL_ERROR("btgpasswd", "Unable to delete user.");
+                  BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Unable to delete user.");
                   break;
                }
 
             if (!auth->write())
                {
-                  BTG_FATAL_ERROR("btgpasswd", "Unable to save password file.");
+                  BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Unable to save password file.");
                   break;
                }
 
@@ -496,7 +504,7 @@ int main(int argc, char* argv[])
          }
       default:
          {
-            BTG_FATAL_ERROR("btgpasswd", "Unknown operation.");
+            BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Unknown operation.");
          }
       }
 
@@ -512,24 +520,26 @@ int main(int argc, char* argv[])
    return 0;
 }
 
-bool createDirectory(bool _verboseFlag, std::string const& _label, std::string const& _path)
+bool createDirectory(LogWrapperType _logwrapper,
+                     bool _verboseFlag, std::string const& _label, std::string const& _path)
 {
    bool result = btg::core::os::fileOperation::createDirectory(_path);
 
    switch(result)
       {
       case true:
-         VERBOSE_LOG(_verboseFlag, "Created " << _label << " directory.");
+         VERBOSE_LOG(_logwrapper, _verboseFlag, "Created " << _label << " directory.");
          break;
       case false:
-         VERBOSE_LOG(_verboseFlag, "Unable to create " << _label << " directory, path .");
+         VERBOSE_LOG(_logwrapper, _verboseFlag, "Unable to create " << _label << " directory, path .");
          break;
       }
 
    return result;
 }
 
-bool uniqueDirectories(std::string const& _temp_dir,
+bool uniqueDirectories(LogWrapperType _logwrapper,
+                       std::string const& _temp_dir,
                        std::string const& _work_dir,
                        std::string const& _seed_dir,
                        std::string const& _dest_dir)

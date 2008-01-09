@@ -26,6 +26,7 @@
 #include <bcore/type.h>
 #include <bcore/configuration.h>
 #include <bcore/client/clientdynconfig.h>
+#include <bcore/logable.h>
 
 #include <string>
 
@@ -37,12 +38,13 @@ namespace btg
             {
 
                /// Client configuration.
-               class lastFiles
+               class lastFiles: public Logable
                   {
                   public:
                      /// Constructor.
                      /// @param [in] cc The dynamic client configuration data object
-                     lastFiles(clientDynConfig & cc);
+                     lastFiles(LogWrapperType _logwrapper,
+                               clientDynConfig & cc);
 
                      /// Return true if the list was modified.
                      bool modified() const { return data_modified_; };

@@ -28,6 +28,17 @@ namespace btg
    {
       namespace auth
       {
+         Auth::Auth(btg::core::LogWrapperType _logwrapper)
+            : btg::core::Logable(_logwrapper)
+         {
+
+         }
+
+         Auth::~Auth()
+         {
+
+         }
+         
          std::string const Auth::callbackDisabled = "!";
       } // namespace auth
    } // namespace daemon

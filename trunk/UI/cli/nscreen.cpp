@@ -150,7 +150,7 @@ namespace btg
                            {
                            case KEY_RESIZE:
                               {
-                                 BTG_NOTICE("Resize event received (1).");
+                                 //BTG_NOTICE("Resize event received (1).");
                                  return ncursesScreen::EVENT_RESIZE;
                               }
                            case KEY_LEFT:
@@ -411,7 +411,7 @@ namespace btg
 
                         if (found_alpha == false)
                            {
-                              BTG_NOTICE("Input is an empty string..");
+                              // BTG_NOTICE("Input is an empty string..");
 
                               // Move cursor to its current position.
                               wmove(main_window, sav_my, sav_mx);
@@ -443,7 +443,7 @@ namespace btg
 
                   status = true;
 
-                  BTG_NOTICE("Got " << culm_size << " chars.");
+                  // BTG_NOTICE("Got " << culm_size << " chars.");
                }
 
             // Move cursor to its current position.

@@ -32,6 +32,7 @@
 #include <bcore/addrport.h>
 #include <bcore/logger/logger.h>
 #include <bcore/client/configuration.h>
+#include <bcore/logable.h>
 
 #include <string>
 
@@ -60,7 +61,9 @@ class testBcoreClient : public CppUnit::TestFixture
    void testCommandLineHandler();
 
  private:
-   int contextId;
+   int                       contextId;
+
+   btg::core::LogWrapperType logwrapper;
 
    void setConfigDefaults(btg::core::client::clientConfiguration* _config,
                           btg::core::messageTransport::TRANSPORT const _transport,
@@ -68,4 +71,5 @@ class testBcoreClient : public CppUnit::TestFixture
                           bool const _leech_mode,
                           std::string const& _logfile,
                           btg::core::addressPort const& _ap);
+
 };

@@ -20,33 +20,27 @@
  * $Id$
  */
 
-#include <cppunit/extensions/HelperMacros.h>
-#include <UI/cli/nscreen.h>
+#ifndef LOGLEVEL_H
+#define LOGLEVEL_H
+
 #include <bcore/logable.h>
 
-class testNScreen : public CppUnit::TestFixture
+namespace btg
 {
-   CPPUNIT_TEST_SUITE( testNScreen );
+   namespace core
+      {
+         namespace client
+            {
+               class commandLineArgumentHandler;
 
-   CPPUNIT_TEST( creation );
+               void setDefaultLogLevel(btg::core::LogWrapperType _logwrapper, 
+                                       const bool _debugFlag,
+                                       const bool _verboseFlag);
 
-   CPPUNIT_TEST_SUITE_END();
+            } // namespace client
+      } // namespace core
+} // namespace btg
 
- public:
-   // Used by the test system.
-   void setUp();
-   // Used by the test system.
-   void tearDown();
-   // Tests.
+#endif // LOGLEVEL_H
 
-   // Creation.
-   void creation();
-
-   // Text output.
-   void test_output();
-
- private:
-
-   btg::UI::cli::ncursesScreen* nscreen;
-};
 

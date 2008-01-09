@@ -29,12 +29,14 @@ namespace btg
    {
       const std::string portMgrName("pmr:");
 
-      portManager::portManager(bool const _verboseFlag,
+      portManager::portManager(btg::core::LogWrapperType _logwrapper,
+                               bool const _verboseFlag,
                                std::pair<t_uint, t_uint> const& _port_range)
-         : verboseFlag_(_verboseFlag),
+         : btg::core::Logable(_logwrapper),
+           verboseFlag_(_verboseFlag),
            ports_()
       {
-         VERBOSE_LOG(verboseFlag_, portMgrName << " using ports " << _port_range.first << ":" << _port_range.second << ".");
+         VERBOSE_LOG(logWrapper(), verboseFlag_, portMgrName << " using ports " << _port_range.first << ":" << _port_range.second << ".");
 
          for (t_uint counter = _port_range.first;
               counter <= _port_range.second;
@@ -43,7 +45,7 @@ namespace btg
                ports_.push_back(counter);
             }
 
-         VERBOSE_LOG(verboseFlag_, portMgrName << " available ports: " << ports_.size() << ".");
+         VERBOSE_LOG(logWrapper(), verboseFlag_, portMgrName << " available ports: " << ports_.size() << ".");
       }
 
       bool portManager::available(t_uint const _numberOfPorts) const
@@ -53,7 +55,7 @@ namespace btg
                return true;
             }
 
-         VERBOSE_LOG(verboseFlag_, portMgrName << " unable to get " << _numberOfPorts << " port(s).");
+         VERBOSE_LOG(logWrapper(), verboseFlag_, portMgrName << " unable to get " << _numberOfPorts << " port(s).");
          return false;
       }
 
@@ -61,7 +63,7 @@ namespace btg
       {
          if (ports_.size() == 0)
             {
-               VERBOSE_LOG(verboseFlag_, portMgrName << " unable to get port.");
+               VERBOSE_LOG(logWrapper(), verboseFlag_, portMgrName << " unable to get port.");
                return false;
             }
 
@@ -69,14 +71,14 @@ namespace btg
          _port.second = *(ports_.begin());
          ports_.pop_front();
 
-         VERBOSE_LOG(verboseFlag_, portMgrName << " got port: " << _port.first << ".");
+         VERBOSE_LOG(logWrapper(), verboseFlag_, portMgrName << " got port: " << _port.first << ".");
 
          return true;
       }
 
       void portManager::giveBack(std::pair<t_uint, t_uint> const& _port)
       {
-         VERBOSE_LOG(verboseFlag_, portMgrName << " returned port: " << _port.first << ".");
+         VERBOSE_LOG(logWrapper(), verboseFlag_, portMgrName << " returned port: " << _port.first << ".");
 
          ports_.push_back(_port.first);
       }

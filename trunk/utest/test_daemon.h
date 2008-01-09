@@ -26,6 +26,8 @@
 #include <bcore/command_factory.h>
 #include <bcore/util.h>
 #include <bcore/dbuf.h>
+#include <bcore/logable.h>
+#include <bcore/logable.h>
 
 namespace btg
 {
@@ -96,4 +98,7 @@ class testDaemon : public CppUnit::TestFixture
                     std::vector<std::string> const& _files2);
 
    void testCommandLineHandler();
+
+ private:
+   btg::core::LogWrapperType logwrapper;
 };

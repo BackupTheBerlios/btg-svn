@@ -23,9 +23,9 @@
 #include <bcore/logmacro.h>
 
 /// Macro to do verbose logging.
-#define VERBOSE_LOG(_flag, _text) { \
+#define VERBOSE_LOG(_LOGW, _flag, _text) {       \
 if (_flag) \
 { \
-   BTG_VERBOSE(_text); \
+   BTG_VERBOSE(_LOGW, _text);                    \
 } \
 }

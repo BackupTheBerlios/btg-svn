@@ -89,17 +89,20 @@ namespace btg
          /// function.
 #define DEFAULT_ERROR_ACTION                                            \
          {                                                              \
-            BTG_ERROR_LOG("Dying: attempt to change to an illegal state. From=" << stateToString(currentState) << ", to=" << stateToString(_to) << "."); \
+            BTG_ERROR_LOG(logWrapper(), "Dying: attempt to change to an illegal state. From=" << stateToString(currentState) << ", to=" << stateToString(_to) << "."); \
             currentState = SM_ERROR;                                    \
          }
          using namespace btg::core;
          using namespace std;
 
-         stateMachine::stateMachine(btg::core::externalization::Externalization* _e,
+         stateMachine::stateMachine(LogWrapperType _logwrapper,
+                                    btg::core::externalization::Externalization* _e,
                                     messageTransport *_transport,
                                     clientCallback *_clientcallback,
                                     bool const _verboseFlag)
-            : externalization_(_e),
+            : Logable(_logwrapper),
+              externalization_(_e),
+              cf(_logwrapper, _e),
               counter_transinit(0), counter_transinit_max(15),
               counter_setup(0), counter_setup_max(15),
               counter_command(0), counter_command_max(15),
@@ -124,14 +127,14 @@ namespace btg
          void stateMachine::work()
          {
 #if BTG_STATEMACHINE_DEBUG
-            BTG_NOTICE("stateMachine::work()");
+            BTG_NOTICE(logWrapper(), "stateMachine::work()");
 #endif // BTG_STATEMACHINE_DEBUG
             bool status = false;
 
             while (!status)
                {
 #if BTG_STATEMACHINE_DEBUG
-                  BTG_NOTICE("Current state = " << stateToString(currentState) << "(" << currentState << ").");
+                  BTG_NOTICE(logWrapper(), "Current state = " << stateToString(currentState) << "(" << currentState << ").");
 #endif // BTG_STATEMACHINE_DEBUG
                   switch(currentState)
                      {
@@ -267,20 +270,18 @@ namespace btg
          bool stateMachine::sendCommand(btg::core::Command *_command)
          {
 #if BTG_STATEMACHINE_DEBUG
-            BTG_NOTICE("Sending command: " << _command->toString());
+            BTG_NOTICE(logWrapper(), "Sending command: " << _command->toString());
 #endif // BTG_STATEMACHINE_DEBUG
 
-            VERBOSE_LOG(verboseFlag_, "Snd: " << _command->getName() << ".");
+            VERBOSE_LOG(logWrapper(), verboseFlag_, "Snd: " << _command->getName() << ".");
 
-            if (!commandFactory::convertToBytes(this->externalization_, _command))
+            if (!cf.convertToBytes(_command))
                {
                   return false;
                }
 
-            this->externalization_->setDirection(TO_SERVER);
-
             dBuffer dbuffer;
-            this->externalization_->getBuffer(dbuffer);
+            cf.getBytes(TO_SERVER, dbuffer);
 
             if (transport->write(dbuffer) == messageTransport::OPERATION_FAILED)
                {
@@ -296,12 +297,12 @@ namespace btg
             Command *c  = 0;
             dBuffer dbuffer;
 #if BTG_STATEMACHINE_DEBUG
-            BTG_NOTICE("receiveCommand()");
+            BTG_NOTICE(logWrapper(), "receiveCommand()");
 #endif // BTG_STATEMACHINE_DEBUG
             bool read_status = false;
 
 #if BTG_STATEMACHINE_DEBUG
-            BTG_NOTICE("Reading from transport ..");
+            BTG_NOTICE(logWrapper(), "Reading from transport ..");
 #endif // BTG_STATEMACHINE_DEBUG
             read_counter = 0;
             while (
@@ -319,7 +320,7 @@ namespace btg
                      {
                         read_status = true;
 #if BTG_STATEMACHINE_DEBUG
-                        BTG_NOTICE("Got data after " << read_counter << " read attempts");
+                        BTG_NOTICE(logWrapper(), "Got data after " << read_counter << " read attempts");
 #endif // BTG_STATEMACHINE_DEBUG
                      }
 
@@ -334,13 +335,13 @@ namespace btg
             if (externalization_->setBuffer(dbuffer))
                {
                   commandFactory::decodeStatus dstatus;
-                  c = commandFactory::createFromBytes(this->externalization_, dstatus);
+                  c = cf.createFromBytes(dstatus);
                }
 
 #if BTG_STATEMACHINE_DEBUG
             if (c != 0)
                {
-                  BTG_NOTICE("actual reply is " << c->getName() << ".");
+                  BTG_NOTICE(logWrapper(), "actual reply is " << c->getName() << ".");
                }
 #endif // BTG_STATEMACHINE_DEBUG
 
@@ -349,7 +350,7 @@ namespace btg
                   _target = c;
                   status  = true;
 
-                  VERBOSE_LOG(verboseFlag_, "Rec: " << _target->getName() << ".");
+                  VERBOSE_LOG(logWrapper(), verboseFlag_, "Rec: " << _target->getName() << ".");
                }
             else
                {
@@ -371,7 +372,7 @@ namespace btg
          void stateMachine::changeState(State _to)
          {
 #if BTG_STATEMACHINE_DEBUG
-            BTG_NOTICE("Trying to change state to " << stateToString(_to) << " from " << stateToString(currentState) << ".");
+            BTG_NOTICE(logWrapper(), "Trying to change state to " << stateToString(_to) << " from " << stateToString(currentState) << ".");
 #endif // BTG_STATEMACHINE_DEBUG
             switch (currentState)
                {
@@ -796,7 +797,7 @@ namespace btg
                   changeState(SM_ATTACH);
                   commands.push_back(_command);
 #if BTG_STATEMACHINE_DEBUG
-                  BTG_NOTICE("Trying to attach to session " << _command->getSession());
+                  BTG_NOTICE(logWrapper(), "Trying to attach to session " << _command->getSession());
 #endif // BTG_STATEMACHINE_DEBUG
                }
          }
@@ -837,7 +838,7 @@ namespace btg
                   if (tf.read(_pathToTorrent))
                      {
 #if BTG_STATEMACHINE_DEBUG
-                        BTG_NOTICE("Creating file '" << _pathToTorrent << ", size=" << tf.size());
+                        BTG_NOTICE(logWrapper(), "Creating file '" << _pathToTorrent << ", size=" << tf.size());
 #endif // BTG_STATEMACHINE_DEBUG
                         std::string filename;
                         if (Util::getFileFromPath(_pathToTorrent, filename))
@@ -856,7 +857,7 @@ namespace btg
                      }
                   else
                      {
-                        BTG_ERROR_LOG("Unable to read '" << _pathToTorrent << "'");
+                        BTG_ERROR_LOG(logWrapper(), "Unable to read '" << _pathToTorrent << "'");
                      }
                }
          }
@@ -1103,7 +1104,7 @@ namespace btg
          void stateMachine::callAckCallback(t_int const _commandtype)
          {
 #if BTG_STATEMACHINE_DEBUG
-            BTG_NOTICE("callAckCallback()");
+            BTG_NOTICE(logWrapper(), "callAckCallback()");
 #endif // BTG_STATEMACHINE_DEBUG
             switch(_commandtype)
                {
@@ -1149,7 +1150,7 @@ namespace btg
                   }
                default:
                   {
-                     BTG_ERROR_LOG("No callback defined.");
+                     BTG_ERROR_LOG(logWrapper(), "No callback defined.");
                   }
                }
          }
@@ -1157,11 +1158,11 @@ namespace btg
          void stateMachine::callCallback(Command *_command)
          {
 #if BTG_STATEMACHINE_DEBUG
-            BTG_NOTICE("callCallback()");
+            BTG_NOTICE(logWrapper(), "callCallback()");
 #endif // BTG_STATEMACHINE_DEBUG
             if ((expectedReply[0] != _command->getType()) && (expectedReply[1] != _command->getType()) )
                {
-                  BTG_ERROR_LOG("callCallback: unexpected reply.");
+                  BTG_ERROR_LOG(logWrapper(), "callCallback: unexpected reply.");
                   // Call error callback.
                   return;
                }
@@ -1235,7 +1236,7 @@ namespace btg
                   }
                default:
                   {
-                     BTG_ERROR_LOG("callCallback(), unexpected command, " << Command::getName(currentCommand) << ".");
+                     BTG_ERROR_LOG(logWrapper(), "callCallback(), unexpected command, " << Command::getName(currentCommand) << ".");
                   }
                }
          }
@@ -1317,7 +1318,7 @@ namespace btg
                default:
                   // Wrong type of command for this function.
                   // This should never happend.
-                  BTG_ERROR_LOG("callErrorCallback, unexpected command");
+                  BTG_ERROR_LOG(logWrapper(), "callErrorCallback, unexpected command");
                   break;
                }
          }
@@ -1461,7 +1462,7 @@ namespace btg
                                                               dynamic_cast<errorCommand*>(c)->getMessage()
                                                               );
 #if BTG_STATEMACHINE_DEBUG
-                                 BTG_NOTICE("Error: " << dynamic_cast<errorCommand*>(c)->getMessage());
+                                 BTG_NOTICE(logWrapper(), "Error: " << dynamic_cast<errorCommand*>(c)->getMessage());
 #endif // BTG_STATEMACHINE_DEBUG
                                  changeState(SM_ERROR);
                                  _status = true;
@@ -1536,7 +1537,7 @@ namespace btg
                                                         dynamic_cast<errorCommand*>(c)->getMessage()
                                                         );
 #if BTG_STATEMACHINE_DEBUG
-                           BTG_NOTICE("Error: " << dynamic_cast<errorCommand*>(c)->getMessage());
+                           BTG_NOTICE(logWrapper(), "Error: " << dynamic_cast<errorCommand*>(c)->getMessage());
 #endif // BTG_STATEMACHINE_DEBUG
                            changeState(SM_ERROR);
                            _status = true;
@@ -1576,7 +1577,7 @@ namespace btg
                   if (expectedReply[0] == Command::CN_ACK)
                      {
 #if BTG_STATEMACHINE_DEBUG
-                        BTG_NOTICE("expecting: ACK");
+                        BTG_NOTICE(logWrapper(), "expecting: ACK");
 #endif // BTG_STATEMACHINE_DEBUG
                         counter_ack = 0;
                         changeState(SM_COMMAND_ACK_WAIT);
@@ -1584,11 +1585,11 @@ namespace btg
                   else
                      {
 #if BTG_STATEMACHINE_DEBUG
-                        BTG_NOTICE("expecting: " << Command::getName(this->expectedReply[0]));
+                        BTG_NOTICE(logWrapper(), "expecting: " << Command::getName(this->expectedReply[0]));
 
                         if (this->expectedReply[1] != Command::CN_UNDEFINED)
                            {
-                              BTG_NOTICE("or " << Command::getName(this->expectedReply[1]));
+                              BTG_NOTICE(logWrapper(), "or " << Command::getName(this->expectedReply[1]));
                            }
 #endif // BTG_STATEMACHINE_DEBUG
                         changeState(SM_COMMAND_WAIT);
@@ -1647,7 +1648,7 @@ namespace btg
                {
                   if (c != 0)
                      {
-                        BTG_ERROR_LOG("Not the expected reply: '" << c->getName() << "'");
+                        BTG_ERROR_LOG(logWrapper(), "Not the expected reply: '" << c->getName() << "'");
                      }
                   counter_command++;
                }
@@ -1693,7 +1694,7 @@ namespace btg
                {
                   if (c != 0)
                      {
-                        BTG_ERROR_LOG("Error: expecting an ack, got '" << c->getName() << "' instead.");
+                        BTG_ERROR_LOG(logWrapper(), "Error: expecting an ack, got '" << c->getName() << "' instead.");
                      }
                   counter_ack++;
                }
@@ -1745,6 +1746,7 @@ namespace btg
                         t_strList sessionIds = 
                            dynamic_cast<listSessionResponseCommand*>(c)->getNames();
                         btg_assert(sessions.size() == sessionIds.size(), 
+                                   logWrapper(),
                                    "Session list and Id list must have same size.");
                         clientcallback->onListSessions(sessions, sessionIds);
 
@@ -1865,7 +1867,7 @@ namespace btg
             if (receiveCommand(c, true))
                {
 #if BTG_STATEMACHINE_DEBUG
-                  BTG_NOTICE("SM_QUIT_WAIT, actual reply is " << c->getName() << ".");
+                  BTG_NOTICE(logWrapper(), "SM_QUIT_WAIT, actual reply is " << c->getName() << ".");
 #endif // BTG_STATEMACHINE_DEBUG
                   delete c;
                }
@@ -1873,7 +1875,7 @@ namespace btg
             else
                {
 
-                  BTG_NOTICE("SM_QUIT_WAIT, no reply");
+                  BTG_NOTICE(logWrapper(), "SM_QUIT_WAIT, no reply");
                }
 #endif // BTG_STATEMACHINE_DEBUG
             changeState(SM_FINISHED);

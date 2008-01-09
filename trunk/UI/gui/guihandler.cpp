@@ -43,7 +43,8 @@ namespace btg
          using namespace btg::core::client;
          using namespace std;
 
-         guiHandler::guiHandler(btg::core::externalization::Externalization* _e,
+         guiHandler::guiHandler(btg::core::LogWrapperType _logwrapper,
+                                btg::core::externalization::Externalization* _e,
                                 messageTransport*             _transport,
                                 clientConfiguration*          _config,
                                 btg::core::client::lastFiles* _lastfiles,
@@ -51,7 +52,8 @@ namespace btg
                                 bool const                    _autoStartFlag,
                                 mainStatusbar*                _status_bar
                                 )
-            : handlerThreadIf(_e,
+            : handlerThreadIf(_logwrapper,
+                              _e,
                               _transport,
                               _config,
                               _lastfiles,
@@ -122,7 +124,7 @@ namespace btg
          void guiHandler::onError(string const& _errorDescription)
          {
             commandStatus = false;
-            BTG_NOTICE("Error: " << _errorDescription);
+            BTG_NOTICE(logWrapper(), "Error: " << _errorDescription);
          }
 
          void guiHandler::onFatalError(std::string const& _errorDescription)
@@ -130,20 +132,22 @@ namespace btg
             commandStatus = false;
             setFatalError();
 
-            BTG_NOTICE("Fatal Error: " << _errorDescription);
+            BTG_NOTICE(logWrapper(), "Fatal Error: " << _errorDescription);
          }
 
          void guiHandler::onCreateWithData()
          {
             commandStatus = true;
             lastfiles->addLastFile(last_filename);
-            BTG_NOTICE("Added a new torrent with data, filename = " << last_filename << ".");
+            BTG_NOTICE(logWrapper(), 
+                       "Added a new torrent with data, filename = " << last_filename << ".");
             last_filename.clear();
          }
 
          void guiHandler::onAbort()
          {
-            BTG_NOTICE("onAbort, id=" << last_id << ".");
+            BTG_NOTICE(logWrapper(), 
+                       "onAbort, id=" << last_id << ".");
             commandStatus = true;
             idsToRemove.push_back(last_id);
             last_id = ILLEGAL_ID;
@@ -180,7 +184,8 @@ namespace btg
 
          void guiHandler::onStatusError(std::string const& _errorDescription)
          {
-            BTG_NOTICE("Error: " << _errorDescription);
+            BTG_NOTICE(logWrapper(), 
+                       "Error: " << _errorDescription);
 
             statusSize_ = 0;
             commandStatus = false;
@@ -196,7 +201,8 @@ namespace btg
          {
             commandStatus = false;
             fileinfolist.clear();
-            BTG_NOTICE("Error: " << _errorDescription);
+            BTG_NOTICE(logWrapper(), 
+                       "Error: " << _errorDescription);
          }
 
          void guiHandler::onPeers(t_peerList const& _peerlist)
@@ -208,7 +214,8 @@ namespace btg
          void guiHandler::onPeersError(std::string const& _errorDescription)
          {
             commandStatus = false;
-            BTG_NOTICE("Error: " << _errorDescription);
+            BTG_NOTICE(logWrapper(), 
+                       "Error: " << _errorDescription);
          }
 
          void guiHandler::onLimit()
@@ -233,7 +240,8 @@ namespace btg
             last_limit_upload   = 0;
             last_limit_download = 0;
 
-            BTG_NOTICE("Error: " << _errorDescription);
+            BTG_NOTICE(logWrapper(), 
+                       "Error: " << _errorDescription);
          }
 
          void guiHandler::onClean(t_strList const& _filenames, t_intList const& _contextIDs)
@@ -243,7 +251,8 @@ namespace btg
                  iter != _contextIDs.end();
                  iter++)
                {
-                  BTG_NOTICE("Removing context ID=" << *iter);
+                  BTG_NOTICE(logWrapper(), 
+                             "Removing context ID=" << *iter);
                   idsToRemove.push_back(*iter);
                }
 
@@ -266,7 +275,8 @@ namespace btg
 
          void guiHandler::onAttachError(string const& _message)
          {
-            BTG_NOTICE("guiHandler::onAttachError:" << _message);
+            BTG_NOTICE(logWrapper(), 
+                       "guiHandler::onAttachError:" << _message);
             setSession(ILLEGAL_ID);
             attachFailtureMessage = _message;
             attachDone            = false;
@@ -281,12 +291,14 @@ namespace btg
 
          void guiHandler::onListSessionsError(string const& _errorDescription)
          {
-            BTG_FATAL_ERROR(GPD->sGUI_CLIENT(), _errorDescription);
+            BTG_FATAL_ERROR(logWrapper(),
+                            GPD->sGUI_CLIENT(), _errorDescription);
          }
 
          void guiHandler::onSessionError()
          {
-            BTG_FATAL_ERROR(GPD->sGUI_CLIENT(), "Invalid session. Quitting.");
+            BTG_FATAL_ERROR(logWrapper(), 
+                            GPD->sGUI_CLIENT(), "Invalid session. Quitting.");
             setSessionError();
          }
 
@@ -432,11 +444,13 @@ namespace btg
 
          }
 
-         guiStartupHelper::guiStartupHelper(btg::core::client::clientConfiguration*        _config,
+         guiStartupHelper::guiStartupHelper(btg::core::LogWrapperType _logwrapper,
+                                            btg::core::client::clientConfiguration*        _config,
                                             btg::core::client::commandLineArgumentHandler* _clah,
                                             btg::core::messageTransport*                   _messageTransport,
                                             btg::core::client::clientHandler*              _handler)
-            : btg::core::client::startupHelper(GPD->sGUI_CLIENT(),
+            : btg::core::client::startupHelper(_logwrapper,
+                                               GPD->sGUI_CLIENT(),
                                                _config,
                                                _clah,
                                                _messageTransport,
@@ -458,7 +472,8 @@ namespace btg
             if (ssd->getSelectedSession(selected_session) == false)
                {
                   // Pressed cancel.
-                  BTG_FATAL_ERROR(GPD->sGUI_CLIENT(), "Cancelled.");
+                  BTG_FATAL_ERROR(logWrapper(), 
+                                  GPD->sGUI_CLIENT(), "Cancelled.");
 
                   selected_session = Command::INVALID_SESSION;
                }

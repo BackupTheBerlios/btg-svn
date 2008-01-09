@@ -52,7 +52,9 @@ namespace btg
                      /// Constructor.
                      /// @param [in] _filename     The filename from which read/write.
                      /// @param [in] _ignoreErrors When _ignoreErrors is set to true, allow reading from file to fail. Used when creating a new file.
-                     passwordAuth(std::string const& _filename, bool const _ignoreErrors = false);
+                     passwordAuth(btg::core::LogWrapperType _logwrapper,
+                                  std::string const& _filename, 
+                                  bool const _ignoreErrors = false);
 
                      bool checkUser(std::string const& _username,
                                     std::string const& _passwordHash,

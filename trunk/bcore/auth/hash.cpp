@@ -23,6 +23,7 @@
 #include "hash.h"
 
 #include <sstream>
+#include <iomanip>
 
 #include <bcore/helpermacro.h>
 #include <bcore/os/gnutlsif.h>
@@ -75,10 +76,10 @@ namespace btg
 
       void Hash::set(std::string const& _hash)
       {
-         // Expect hash in hex
+         // Expect hash in hex.
          if (_hash.size() != hash_size*2)
             {
-               BTG_NOTICE("Hash:set, broken hash, " << _hash.size() << " bytes");
+               // BTG_NOTICE("Hash:set, broken hash, " << _hash.size() << " bytes");
                return;
             }
 

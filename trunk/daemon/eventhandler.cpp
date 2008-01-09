@@ -74,7 +74,8 @@ namespace btg
 
       const std::string moduleName("evt");
 
-      eventHandler::eventHandler(bool const _verboseFlag,
+      eventHandler::eventHandler(btg::core::LogWrapperType _logwrapper,
+                                 bool const _verboseFlag,
                                  std::string const& _username,
                                  std::string const& _tempDir,
                                  std::string const& _workDir,
@@ -97,7 +98,8 @@ namespace btg
                                  , callbackManager* _cbm
 #endif // BTG_OPTION_EVENTCALLBACK
                                  )
-         : verboseFlag_(_verboseFlag),
+         : btg::core::Logable(_logwrapper),
+           verboseFlag_(_verboseFlag),
            externalization_(_e),
            session(_session),
            username_(_username),
@@ -114,7 +116,8 @@ namespace btg
 #endif // BTG_OPTION_EVENTCALLBACK
            buffer()
       {
-         daemoncontext = new Context(_verboseFlag,
+         daemoncontext = new Context(logWrapper(),
+                                     _verboseFlag,
                                      _username,
                                      _tempDir,
                                      _workDir,
@@ -138,7 +141,7 @@ namespace btg
             }
 #endif // BTG_OPTION_EVENTCALLBACK
 
-         BTG_MNOTICE("created");
+         BTG_MNOTICE(logWrapper(), "created");
       }
 
       void eventHandler::event(Command* _command, t_int _connectionID)
@@ -238,7 +241,7 @@ namespace btg
                }
             default:
                {
-                  BTG_MERROR("event: unhandled command");
+                  BTG_MERROR(logWrapper(), "event: unhandled command");
                   sendError(_connectionID, Command::CN_UNDEFINED, "Unhandled command.");
                }
             }
@@ -247,7 +250,7 @@ namespace btg
       bool eventHandler::setup(const daemonConfiguration* _config,
                                setupCommand* _setupcommand)
       {
-         BTG_MNOTICE("setup, using:" << _setupcommand->toString());
+         BTG_MNOTICE(logWrapper(), "setup, using:" << _setupcommand->toString());
 
          seedLimit_   = _setupcommand->getRequiredData().getSeedLimit();
          seedTimeout_ = _setupcommand->getRequiredData().getSeedTimeout();
@@ -297,25 +300,28 @@ namespace btg
                                                                             dynamic_cast<errorCommand*>(_command)->getErrorCommand()
                                                                             );
 
-                                    MVERBOSE_LOG(moduleName, verboseFlag_, "daemon (" << _connectionID << "): " <<
-                                                _command->getName() << " (caused by " << causedBy << ").");
+                                    MVERBOSE_LOG(logWrapper(), 
+                                                 moduleName, verboseFlag_, "daemon (" << _connectionID << "): " <<
+                                                 _command->getName() << " (caused by " << causedBy << ").");
                                  }
                               else
                                  {
-                                    MVERBOSE_LOG(moduleName, verboseFlag_, "daemon (" << _connectionID << "): " <<
-                                                _command->getName() << ".");
+                                    MVERBOSE_LOG(logWrapper(), 
+                                                 moduleName, verboseFlag_, "daemon (" << _connectionID << "): " <<
+                                                 _command->getName() << ".");
                                  }
                            }
 
-                        BTG_MNOTICE("sending " << _command->getName() <<
-                                   " (connection " << _connectionID << ", " <<
-                                   buffer.size() << " bytes" << ")");
+                        BTG_MNOTICE(logWrapper(), 
+                                    "sending " << _command->getName() <<
+                                    " (connection " << _connectionID << ", " <<
+                                    buffer.size() << " bytes" << ")");
                      }
                   break;
                }
             default:
                {
-                  BTG_MERROR("sendcommand: unhandled command");
+                  BTG_MERROR(logWrapper(), "sendcommand: unhandled command");
                }
 
             } // switch
@@ -326,7 +332,8 @@ namespace btg
             }
          else
             {
-               BTG_MNOTICE("attempt to serialize " << _command->getName() << " failed.");
+               BTG_MNOTICE(logWrapper(), 
+                           "attempt to serialize " << _command->getName() << " failed.");
             }
 
          delete _command;
@@ -365,13 +372,15 @@ namespace btg
       void eventHandler::incClients()
       {
          numClients++;
-         BTG_MNOTICE("session " << session << " increased numClients to " << numClients << ".");
+         BTG_MNOTICE(logWrapper(), 
+                     "session " << session << " increased numClients to " << numClients << ".");
       }
 
       void eventHandler::decClients()
       {
          numClients--;
-         BTG_MNOTICE("session " << session << " decreased numClients to " << numClients << ".");
+         BTG_MNOTICE(logWrapper(), 
+                     "session " << session << " decreased numClients to " << numClients << ".");
       }
 
       t_uint eventHandler::getNumClients()
@@ -639,11 +648,11 @@ namespace btg
                   {
                      // All contexts.
 #if BTG_DEBUG
-                     BTG_MNOTICE("sending list of status objects.");
+                     BTG_MNOTICE(logWrapper(), "sending list of status objects.");
                      vector<Status>::const_iterator iter;
                      for (iter = v_status.begin(); iter != v_status.end(); iter++)
                         {
-                           BTG_MNOTICE("status: " << iter->toString());
+                           BTG_MNOTICE(logWrapper(), "status: " << iter->toString());
                         }
 #endif
                      sendCommand(_connectionID, new contextAllStatusResponseCommand(csc->getContextId(), v_status));
@@ -652,7 +661,7 @@ namespace btg
                   {
                      // One context.
 #if BTG_DEBUG
-                     BTG_MNOTICE("sending status back: " << status.toString() << ".");
+                     BTG_MNOTICE(logWrapper(), "sending status back: " << status.toString() << ".");
 #endif
                      sendCommand(_connectionID, new contextStatusResponseCommand(csc->getContextId(), status));
                   }
@@ -1015,13 +1024,13 @@ namespace btg
 
       eventHandler::~eventHandler()
       {
-         BTG_MENTER("destructor", "");
+         BTG_MENTER(logWrapper(), "destructor", "");
          delete daemoncontext;
          daemoncontext = 0;
 #if BTG_OPTION_EVENTCALLBACK
          cbm_->remove(username_);
 #endif // BTG_OPTION_EVENTCALLBACK
-         BTG_MEXIT("destructor", "");
+         BTG_MEXIT(logWrapper(), "destructor", "");
       }
 
    } // namespace daemon

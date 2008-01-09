@@ -96,7 +96,7 @@ namespace btg
 
          if(this->limitUpld < 0 && this->limitUpld != limitBase::LIMIT_DISABLED)
             {
-               BTG_NOTICE("Deserialize of contextLimitCommand failed, limitUpld is negative but not limitBase::LIMIT_DISABLED");
+               // BTG_NOTICE("Deserialize of contextLimitCommand failed, limitUpld is negative but not limitBase::LIMIT_DISABLED");
                return false;
             }
 
@@ -105,7 +105,7 @@ namespace btg
 
          if(this->limitDwnld < 0 && this->limitDwnld != limitBase::LIMIT_DISABLED)
             {
-               BTG_NOTICE("Deserialize of contextLimitCommand failed, limitUpld is negative but not limitBase::LIMIT_DISABLED");
+               // BTG_NOTICE("Deserialize of contextLimitCommand failed, limitUpld is negative but not limitBase::LIMIT_DISABLED");
                return false;
             }
 
@@ -114,7 +114,7 @@ namespace btg
 
          if(this->seedLimit < 0 && this->seedLimit != limitBase::LIMIT_DISABLED)
             {
-               BTG_NOTICE("Deserialize of contextLimitCommand failed, seedLimit is negative but not limitBase::LIMIT_DISABLED");
+               // BTG_NOTICE("Deserialize of contextLimitCommand failed, seedLimit is negative but not limitBase::LIMIT_DISABLED");
                return false;
             }
 
@@ -123,7 +123,7 @@ namespace btg
 
          if(this->seedTimeout < 0 && this->seedTimeout != limitBase::LIMIT_DISABLED)
             {
-               BTG_NOTICE("Deserialize of contextLimitCommand failed, seedTimeout is negative but not limitBase::LIMIT_DISABLED");
+               // BTG_NOTICE("Deserialize of contextLimitCommand failed, seedTimeout is negative but not limitBase::LIMIT_DISABLED");
                return false;
             }
 

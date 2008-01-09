@@ -27,6 +27,7 @@
 #include <bcore/dbuf.h>
 #include <bcore/type.h>
 #include <bcore/os/gzipif.h>
+#include <bcore/logable.h>
 
 namespace btg
 {
@@ -40,11 +41,12 @@ namespace btg
          /// A class implementing a HTTP Request/Response parser().
          /// Add incomming data with addBytes, get headers/content with getHeader()/getContent() when peek() says its OK.
          /// Do not use this class directly, has to be subclassed.
-         class httpRequest
+         class httpRequest: public Logable
             {
             public:
                /// Default constructor.
-               httpRequest(btg::core::os::gzipIf* _gzipif);
+               httpRequest(LogWrapperType _logwrapper,
+                           btg::core::os::gzipIf* _gzipif);
 
                /// Destructor.
                virtual ~httpRequest();
@@ -118,7 +120,8 @@ namespace btg
             {
             public:
                /// Default constructor.
-               httpRequestServerSide(btg::core::os::gzipIf* _gzipif);
+               httpRequestServerSide(LogWrapperType _logwrapper,
+                                     btg::core::os::gzipIf* _gzipif);
 
                /// Destructor.
                virtual ~httpRequestServerSide();
@@ -133,7 +136,8 @@ namespace btg
             {
             public:
                /// Default constructor.
-               httpRequestClientSide(btg::core::os::gzipIf* _gzipif);
+               httpRequestClientSide(LogWrapperType _logwrapper,
+                                     btg::core::os::gzipIf* _gzipif);
 
                /// Destructor.
                virtual ~httpRequestClientSide();

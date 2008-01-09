@@ -40,14 +40,14 @@
 #include <bcore/crashlog.h>
 #include <bcore/client/carg.h>
 
+#include <bcore/client/handlerthr.h>
+#include <bcore/client/loglevel.h>
+#include <bcore/logable.h>
+
 #include "nconfig.h"
 #include "colors.h"
-
 #include "keys.h"
-
 #include "handler.h"
-#include <bcore/client/handlerthr.h>
-
 #include "initwindow.h"
 
 extern "C"
@@ -66,6 +66,8 @@ void global_signal_handler(int _signal_no);
 // Main file for the client.
 int main(int argc, char* argv[])
 {
+   LogWrapperType logwrapper(new btg::core::logger::logWrapper);
+
    btg::core::crashLog::init();
 
    // UI stuff.
@@ -83,7 +85,6 @@ int main(int argc, char* argv[])
          cla = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_ERROR_EXIT;
       }
@@ -92,7 +93,7 @@ int main(int argc, char* argv[])
    // syntax of the configuration file.
    if (cla->listConfigFileSyntax())
       {
-         ncliConfiguration non_existing("non_existing");
+         ncliConfiguration non_existing(logwrapper, "non_existing");
 
          std::cout << non_existing.getSyntax() << std::endl;
 
@@ -100,7 +101,6 @@ int main(int argc, char* argv[])
          cla = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_NORMAL_EXIT;
       }
@@ -137,16 +137,15 @@ int main(int argc, char* argv[])
          iw = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_ERROR_EXIT;
       }
 
-   ncliConfiguration* config = new ncliConfiguration(config_filename);
+   ncliConfiguration* config = new ncliConfiguration(logwrapper, config_filename);
    bool const gotConfig = config->read();
 
-   clientDynConfig cliDynConf(GPD->sCLI_DYNCONFIG());
-   lastFiles* lastfiles = new lastFiles(cliDynConf);
+   clientDynConfig cliDynConf(logwrapper, GPD->sCLI_DYNCONFIG());
+   lastFiles* lastfiles = new lastFiles(logwrapper, cliDynConf);
 
    // Update init dialog.
    iw->updateProgress(initWindow::IEV_RCONF_DONE);
@@ -169,7 +168,6 @@ int main(int argc, char* argv[])
          iw = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_ERROR_EXIT;
       }
@@ -217,7 +215,6 @@ int main(int argc, char* argv[])
          iw = 0;
        
          projectDefaults::killInstance();
-         logWrapper::killInstance();
        
          return BTG_ERROR_EXIT;
       }
@@ -234,7 +231,8 @@ int main(int argc, char* argv[])
    btg::core::externalization::Externalization* externalization = 0;
    messageTransport* transport                                  = 0;
 
-   transportHelper* transporthelper = new transportHelper(GPD->sCLI_CLIENT(),
+   transportHelper* transporthelper = new transportHelper(logwrapper,
+                                                          GPD->sCLI_CLIENT(),
                                                           config,
                                                           cla);
 
@@ -260,7 +258,6 @@ int main(int argc, char* argv[])
          iw = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_ERROR_EXIT;
       }
@@ -271,7 +268,8 @@ int main(int argc, char* argv[])
    // Update init dialog.
    iw->updateProgress(initWindow::IEV_TRANSP_DONE);
 
-   Handler* handler = new Handler(externalization, 
+   Handler* handler = new Handler(logwrapper,
+                                  externalization, 
                                   transport, 
                                   config, 
                                   lastfiles, 
@@ -283,7 +281,8 @@ int main(int argc, char* argv[])
    iw->updateProgress(initWindow::IEV_SETUP);
 
    // Create a helper to do the initial setup of this client.
-   startupHelper* starthelper = new ncliStartupHelper(config,
+   startupHelper* starthelper = new ncliStartupHelper(logwrapper,
+                                                      config,
                                                       cla,
                                                       transport,
                                                       handler);
@@ -316,38 +315,11 @@ int main(int argc, char* argv[])
          iw = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_ERROR_EXIT;
       }
 
-#if BTG_DEBUG
-   // Set debug logging, if requested.
-   if (cla->doDebug())
-      {
-         logWrapper::getInstance()->setMinMessagePriority(logWrapper::PRIO_DEBUG);
-      }
-   else if (verboseFlag)
-      {
-         logWrapper::getInstance()->setMinMessagePriority(logWrapper::PRIO_VERBOSE);
-      }
-   else
-      {
-         // Default: only report errors.
-         logWrapper::getInstance()->setMinMessagePriority(logWrapper::PRIO_ERROR);
-      }
-#else
-   // No debug enabled, check for verbose flag.
-   if (verboseFlag)
-      {
-         logWrapper::getInstance()->setMinMessagePriority(logWrapper::PRIO_VERBOSE);
-      }
-   else
-      {
-         // Default: only report errors.
-         logWrapper::getInstance()->setMinMessagePriority(logWrapper::PRIO_ERROR);
-      }
-#endif // BTG_DEBUG
+   setDefaultLogLevel(logwrapper, cla->doDebug(), verboseFlag);
 
    // Initialize logging.
    if (starthelper->execute(startupHelper::op_log) != startupHelper::or_log_success)
@@ -376,7 +348,6 @@ int main(int argc, char* argv[])
          iw = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_ERROR_EXIT;
       }
@@ -427,7 +398,6 @@ int main(int argc, char* argv[])
                iw = 0;
 
                projectDefaults::killInstance();
-               logWrapper::killInstance();
 
                return BTG_ERROR_EXIT;
             }
@@ -470,7 +440,6 @@ int main(int argc, char* argv[])
          lastfiles = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_NORMAL_EXIT;
       }
@@ -506,7 +475,6 @@ int main(int argc, char* argv[])
                iw = 0;
 
                projectDefaults::killInstance();
-               logWrapper::killInstance();
 
                return BTG_ERROR_EXIT;
             }
@@ -550,7 +518,6 @@ int main(int argc, char* argv[])
                iw = 0;
 	       
                projectDefaults::killInstance();
-               logWrapper::killInstance();
 
                return BTG_ERROR_EXIT;
             }
@@ -591,7 +558,6 @@ int main(int argc, char* argv[])
                iw = 0;
 
                projectDefaults::killInstance();
-               logWrapper::killInstance();
 
                return BTG_ERROR_EXIT;
             }
@@ -624,7 +590,7 @@ int main(int argc, char* argv[])
    std::string strSession = btg::core::convertToString<t_long>(session);
 
    // Start a thread that takes care of communicating with the daemon.
-   handlerThread* handlerthr = new handlerThread(verboseFlag, handler);
+   handlerThread* handlerthr = new handlerThread(logwrapper, verboseFlag, handler);
 
    UI ui(strSession, neverAskFlag, kmap, colors, handlerthr);
 
@@ -670,7 +636,6 @@ int main(int argc, char* argv[])
    cla = 0;
 
    projectDefaults::killInstance();
-   logWrapper::killInstance();
 
    return BTG_NORMAL_EXIT;
 }

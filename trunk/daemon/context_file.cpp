@@ -43,7 +43,8 @@ namespace btg
       bool Context::moveToDirectory(t_int const _torrent_id, 
                                     std::string const& _destination_dir)
       {
-         BTG_MENTER("moveToDirectory", "id = " << _torrent_id << ", destination = " << _destination_dir);
+         BTG_MENTER(logWrapper(), 
+                    "moveToDirectory", "id = " << _torrent_id << ", destination = " << _destination_dir);
 
          bool result = true;
 
@@ -56,21 +57,22 @@ namespace btg
          // TODO: check alert about moved storage.
          ti->handle.move_storage(_destination_dir);
 
-         BTG_MEXIT("moveToDirectory", result);
+         BTG_MEXIT(logWrapper(), "moveToDirectory", result);
 
          return result;
       }
 
       bool Context::moveToSeedingDir(t_int const _torrent_id)
       {
-         BTG_MENTER("moveToSeedingDir", "id = " << _torrent_id);
+         BTG_MENTER(logWrapper(), 
+                    "moveToSeedingDir", "id = " << _torrent_id);
          bool result = false;
 
          torrentInfo* torrentinfo           = getTorrentInfo(_torrent_id);
 
          if (torrentinfo == 0)
             {
-               BTG_MEXIT("moveToSeedingDir", result);
+               BTG_MEXIT(logWrapper(), "moveToSeedingDir", result);
                return result;
             }
 
@@ -82,29 +84,30 @@ namespace btg
                // The torrent's data is already in the seed directory.
 
                result = true;
-               BTG_MEXIT("moveToSeedingDir", result);
+               BTG_MEXIT(logWrapper(), "moveToSeedingDir", result);
                return result;
             }
 
          result = moveToDirectory(_torrent_id, seedDir_);
 
-         BTG_MEXIT("moveToSeedingDir", result);
+         BTG_MEXIT(logWrapper(), "moveToSeedingDir", result);
          return result;
       }
 
       bool Context::moveToDestinationDir(t_int const _torrent_id)
       {
-         BTG_MENTER("moveToDestinationDir", "id = " << _torrent_id);
+         BTG_MENTER(logWrapper(), 
+                    "moveToDestinationDir", "id = " << _torrent_id);
 
          bool result = moveToDirectory(_torrent_id, outputDir_);
 
-         BTG_MEXIT("moveToDestinationDir", result);
+         BTG_MEXIT(logWrapper(), "moveToDestinationDir", result);
          return result;
       }
 
       bool Context::removeFastResumeData(t_int const _torrent_id)
       {
-         BTG_MENTER("removeFastResumeData", "id = " << _torrent_id);
+         BTG_MENTER(logWrapper(), "removeFastResumeData", "id = " << _torrent_id);
          bool status = false;
 
          std::string filename;
@@ -118,14 +121,14 @@ namespace btg
                   }
             }
 
-         BTG_MEXIT("removeFastResumeData", status);
+         BTG_MEXIT(logWrapper(), "removeFastResumeData", status);
          return status;
       }
 
       bool Context::removeTorrentFile(t_int const _torrent_id)
       {
          bool status = false;
-         BTG_MENTER("removeTorrentFile", "id = " << _torrent_id);
+         BTG_MENTER(logWrapper(), "removeTorrentFile", "id = " << _torrent_id);
 
          std::string filename;
          if (this->getFilename(_torrent_id, filename))
@@ -134,7 +137,7 @@ namespace btg
                status = btg::core::os::fileOperation::remove(filename);
             }
 
-         BTG_MEXIT("removeTorrentFile", status);
+         BTG_MEXIT(logWrapper(), "removeTorrentFile", status);
          return status;
       }
 
@@ -176,11 +179,11 @@ namespace btg
                               std::string const& file_name)
       {
          using namespace boost::filesystem;
-         BTG_MENTER("find_file", "file name = " << file_name);
+         BTG_MENTER(logWrapper(), "find_file", "file name = " << file_name);
 
          if (!exists(dir_path))
             {
-               BTG_MEXIT("find_file", false);
+               BTG_MEXIT(logWrapper(), "find_file", false);
                return false;
             }
 
@@ -195,23 +198,23 @@ namespace btg
                   {
                      if (find_file(*itr, file_name))
                         {
-                           BTG_MEXIT("find_file", true);
+                           BTG_MEXIT(logWrapper(), "find_file", true);
                            return true;
                         }
                   }
                else if (itr->leaf() == file_name) // see below
                   {
-                     BTG_MEXIT("find_file", true);
+                     BTG_MEXIT(logWrapper(), "find_file", true);
                      return true;
                   }
             }
-         BTG_MEXIT("find_file", false);
+         BTG_MEXIT(logWrapper(), "find_file", false);
          return false;
       }
 
       bool Context::dataPresentInSeedDir(libtorrent::torrent_info const& _torrent_info)
       {
-         BTG_MENTER("dataPresentInSeedDir(torrent_info)", "");
+         BTG_MENTER(logWrapper(), "dataPresentInSeedDir(torrent_info)", "");
 
          bool status = true;
 
@@ -255,19 +258,20 @@ namespace btg
                   }
                catch(std::exception& e)
                   {
-                     BTG_ERROR_LOG("Got exception from boost::filesystem, is_directory: " << 
+                     BTG_ERROR_LOG(logWrapper(), 
+                                   "Got exception from boost::filesystem, is_directory: " << 
                                    e.what());
                      status = false;
                   }
 
                if (!status)
                   {
-                     BTG_MEXIT("dataPresentInSeedDir(torrent_info)", status);
+                     BTG_MEXIT(logWrapper(), "dataPresentInSeedDir(torrent_info)", status);
                      return status;
                   }
 
-               BTG_MNOTICE("Using directory '" << file_path.string() << "'");
-               BTG_MNOTICE("Checking file '" << filename << "'");
+               BTG_MNOTICE(logWrapper(), "Using directory '" << file_path.string() << "'");
+               BTG_MNOTICE(logWrapper(), "Checking file '" << filename << "'");
 	      
                try
                   {
@@ -279,20 +283,21 @@ namespace btg
                   }
                catch(std::exception& e)
                   {
-                     BTG_ERROR_LOG("Got exception from find_file: " << e.what());
+                     BTG_ERROR_LOG(logWrapper(), 
+                                   "Got exception from find_file: " << e.what());
                      status = false;
                      break;
                   }
             }
 
-         BTG_MEXIT("dataPresentInSeedDir(torrent_info)", status);
+         BTG_MEXIT(logWrapper(), "dataPresentInSeedDir(torrent_info)", status);
          return status;
       }
 
       bool Context::entryToInfo(libtorrent::entry const& _input,
                                 libtorrent::torrent_info & _output) const
       {
-         BTG_MENTER("entryToInfo", "");
+         BTG_MENTER(logWrapper(), "entryToInfo", "");
 
          bool status = false;
 
@@ -304,17 +309,17 @@ namespace btg
             }
          catch (std::exception& e)
             {
-               BTG_ERROR_LOG("libtorrent exception: " << e.what() );
+               BTG_ERROR_LOG(logWrapper(), "libtorrent exception: " << e.what() );
             }
 
          if (!status)
             {
                // The input is incorrect.
-               BTG_MEXIT("entryToInfo", status);
+               BTG_MEXIT(logWrapper(), "entryToInfo", status);
                return status;
             }
 
-         BTG_MEXIT("entryToInfo", status);
+         BTG_MEXIT(logWrapper(), "entryToInfo", status);
          return status;
       }
 
@@ -322,20 +327,20 @@ namespace btg
                                       std::string const& _directory,
                                       std::vector<std::string> & _entities)
       {
-         BTG_MENTER("getListOfEntities", "_torrent_id = " << _torrent_id);
+         BTG_MENTER(logWrapper(), "getListOfEntities", "_torrent_id = " << _torrent_id);
 
          bool status = false;
 
          if (!configured)
             {
-               BTG_MEXIT("getListOfEntities", status);
+               BTG_MEXIT(logWrapper(), "getListOfEntities", status);
                return status;
             }
 
          torrentInfo* ti;
          if ((ti = getTorrentInfo(_torrent_id)) == 0)
             {
-               BTG_MEXIT("getListOfEntities", status);
+               BTG_MEXIT(logWrapper(), "getListOfEntities", status);
                return status;
             }
 
@@ -438,13 +443,13 @@ namespace btg
                   }
             }
 
-         BTG_MEXIT("getListOfEntities", status);
+         BTG_MEXIT(logWrapper(), "getListOfEntities", status);
          return status;
       }
 
       bool Context::writeResumeData()
       {
-         BTG_MENTER("writeResumeData", "");
+         BTG_MENTER(logWrapper(), "writeResumeData", "");
 
          bool op_status = false;
 
@@ -485,17 +490,17 @@ namespace btg
                   }
                catch (libtorrent::invalid_encoding & e)
                   {
-                     BTG_ERROR_LOG("libtorrent exception: " << e.what() );
+                     BTG_ERROR_LOG(logWrapper(), "libtorrent exception: " << e.what() );
                      return op_status;
                   }
 
-               BTG_MNOTICE("wrote fast resume data for '" << filename << "'");
+               BTG_MNOTICE(logWrapper(), "wrote fast resume data for '" << filename << "'");
                out.close();
             }
 
          op_status = true;
 
-         BTG_MEXIT("writeResumeData", op_status);
+         BTG_MEXIT(logWrapper(), "writeResumeData", op_status);
          return op_status;
       }
 
@@ -508,7 +513,7 @@ namespace btg
 
          if (!status)
             {
-               BTG_MNOTICE("no fast resume data for '" << _torrent_filename << "'");
+               BTG_MNOTICE(logWrapper(), "no fast resume data for '" << _torrent_filename << "'");
             }
          else
             {
@@ -516,7 +521,7 @@ namespace btg
                   boost::filesystem::file_size(boost::filesystem::path(fastResumeFilename));
                if(filesize == 0)
                   {
-                     BTG_MNOTICE("no valid fast resume data for '" << _torrent_filename << "'");
+                     BTG_MNOTICE(logWrapper(), "no valid fast resume data for '" << _torrent_filename << "'");
                      status = false;
                   }
             }
@@ -527,7 +532,7 @@ namespace btg
       bool Context::entryToFiles(libtorrent::entry const& _input,
                                  std::vector<std::string> & _output) const
       {
-         BTG_MENTER("entryToFiles", "");
+         BTG_MENTER(logWrapper(), "entryToFiles", "");
 
          bool status = true;
          try
@@ -540,18 +545,18 @@ namespace btg
                     iter++)
                   {
                      libtorrent::file_entry const& fe = *iter;
-                     BTG_MNOTICE(fe.path.string());
+                     BTG_MNOTICE(logWrapper(), fe.path.string());
 
                      _output.push_back(fe.path.string());
                   }
             }
          catch (std::exception& e)
             {
-               BTG_ERROR_LOG("libtorrent exception: " << e.what() );
+               BTG_ERROR_LOG(logWrapper(), "libtorrent exception: " << e.what() );
                status = false;
             }
 
-         BTG_MEXIT("entryToFiles", status);
+         BTG_MEXIT(logWrapper(), "entryToFiles", status);
          return status;
       }
 

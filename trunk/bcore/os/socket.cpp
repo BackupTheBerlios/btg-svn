@@ -41,8 +41,9 @@ namespace btg
       namespace os
       {
 
-         Socket::Socket()
-            : deleted_(false),
+         Socket::Socket(LogWrapperType _logwrapper)
+            : Logable(_logwrapper),
+              deleted_(false),
               sock_(Socket::UNINITIALIZED)
 
          {
@@ -50,7 +51,8 @@ namespace btg
          }
 
          Socket::Socket(Socket const& _socket)
-            : deleted_(_socket.deleted_),
+            : Logable(_socket),
+              deleted_(_socket.deleted_),
               sock_(_socket.sock_),
               addr_(_socket.addr_)
          {
@@ -63,7 +65,7 @@ namespace btg
             if (!is_valid())
                {
 #if BTG_TRANSPORT_DEBUG
-                  BTG_NOTICE("Socket::create, false");
+                  BTG_NOTICE(logWrapper(), "Socket::create, false");
 #endif // BTG_TRANSPORT_DEBUG
                   return false;
                }
@@ -82,13 +84,13 @@ namespace btg
             if (setsockopt(sock_, SOL_SOCKET, SO_NOSIGPIPE, reinterpret_cast<const char*>(&on), sizeof(on)) == -1)
                {
 #if BTG_TRANSPORT_DEBUG
-                  BTG_NOTICE("Socket::create, false");
+                  BTG_NOTICE(logWrapper(), "Socket::create, false");
 #endif // BTG_TRANSPORT_DEBUG
                   return false;
                }
 #endif // OSX
 #if BTG_TRANSPORT_DEBUG
-            BTG_NOTICE("Socket::create, true");
+            BTG_NOTICE(logWrapper(), "Socket::create, true");
 #endif // BTG_TRANSPORT_DEBUG
             return true;
          }
@@ -98,7 +100,7 @@ namespace btg
             if (!is_valid())
                {
 #if BTG_TRANSPORT_DEBUG
-                  BTG_NOTICE("Socket::bind, false");
+                  BTG_NOTICE(logWrapper(), "Socket::bind, false");
 #endif // BTG_TRANSPORT_DEBUG
                   return false;
                }
@@ -117,7 +119,7 @@ namespace btg
                         // Converting the address as a string to a
                         // binary representation failed.
 #if BTG_TRANSPORT_DEBUG
-                        BTG_NOTICE("Socket::bind, false");
+                        BTG_NOTICE(logWrapper(), "Socket::bind, false");
 #endif // BTG_TRANSPORT_DEBUG
                         return false;
                      }
@@ -133,12 +135,12 @@ namespace btg
                {
                   perror("bind");
 #if BTG_TRANSPORT_DEBUG
-                  BTG_NOTICE("Socket::bind, false");
+                  BTG_NOTICE(logWrapper(), "Socket::bind, false");
 #endif // BTG_TRANSPORT_DEBUG
                   return false;
                }
 #if BTG_TRANSPORT_DEBUG
-            BTG_NOTICE("Socket::bind, true");
+            BTG_NOTICE(logWrapper(), "Socket::bind, true");
 #endif // BTG_TRANSPORT_DEBUG
             return true;
          }
@@ -149,7 +151,7 @@ namespace btg
             if (!is_valid())
                {
 #if BTG_TRANSPORT_DEBUG
-                  BTG_NOTICE("Socket::listen, false");
+                  BTG_NOTICE(logWrapper(), "Socket::listen, false");
 #endif // BTG_TRANSPORT_DEBUG
                   return false;
                }
@@ -159,12 +161,12 @@ namespace btg
             if (listen_return == -1)
                {
 #if BTG_TRANSPORT_DEBUG
-                  BTG_NOTICE("Socket::listen, false");
+                  BTG_NOTICE(logWrapper(), "Socket::listen, false");
 #endif // BTG_TRANSPORT_DEBUG
                   return false;
                }
 #if BTG_TRANSPORT_DEBUG
-            BTG_NOTICE("Socket::listen, true");
+            BTG_NOTICE(logWrapper(), "Socket::listen, true");
 #endif // BTG_TRANSPORT_DEBUG
             return true;
          }
@@ -179,7 +181,7 @@ namespace btg
             if (_new_socket.sock_ <= 0)
                {
 #if BTG_TRANSPORT_DEBUG
-                  BTG_NOTICE("Socket::accept, false");
+                  BTG_NOTICE(logWrapper(), "Socket::accept, false");
 #endif // BTG_TRANSPORT_DEBUG
                   return false;
                }
@@ -190,11 +192,11 @@ namespace btg
             sockaddr_in* addr_i = reinterpret_cast<sockaddr_in*>(&addr);
 
             inet_ntop (AF_INET, &addr_i->sin_addr /* &addr_.sin_addr */, ntopBuffer, ntopBufferSize);
-            BTG_NOTICE("Connection from " << ntopBuffer << ", port " << ntohs(addr_i->sin_port) /* ntohs(addr_.sin_port)*/);
+            BTG_NOTICE(logWrapper(), "Connection from " << ntopBuffer << ", port " << ntohs(addr_i->sin_port) /* ntohs(addr_.sin_port)*/);
 #endif // BTG_TRANSPORT_DEBUG
 
 #if BTG_TRANSPORT_DEBUG
-            BTG_NOTICE("Socket::accept, id = " << static_cast<int>(_new_socket.sock_) << ", true");
+            BTG_NOTICE(logWrapper(), "Socket::accept, id = " << static_cast<int>(_new_socket.sock_) << ", true");
 #endif // BTG_TRANSPORT_DEBUG
             return true;
          }
@@ -302,6 +304,8 @@ namespace btg
 
             if (!status)
                {
+                  Logable::operator=(_socket);
+
                   sock_ = _socket.sock_;
                   addr_ = _socket.addr_;
                }
@@ -310,25 +314,19 @@ namespace btg
 
          bool Socket::operator== (Socket const& _socket) const
          {
-            bool status = true;
+            bool status = Logable::operator==(_socket);
 
             if (sock_ != _socket.sock_)
                {
                   status = false;
                }
 
-            /*
-              if (addr_ != _socket.addr_)
-              {
-              status = false;
-              }
-            */
             return status;
          }
 
          void Socket::shutdown()
          {
-            if(is_valid())
+            if (is_valid())
                {
                   ::shutdown(sock_, SHUT_RDWR);
                }
@@ -342,7 +340,7 @@ namespace btg
          bool Socket::deleted() const
          {
 #if BTG_TRANSPORT_DEBUG
-            BTG_NOTICE("Checking if socket with id = " << sock_ <<
+            BTG_NOTICE(logWrapper(), "Checking if socket with id = " << sock_ <<
                        " is deleted, result = " << deleted_);
 #endif // BTG_TRANSPORT_DEBUG
             return deleted_;
@@ -351,7 +349,7 @@ namespace btg
          void Socket::markAsDeleted()
          {
 #if BTG_TRANSPORT_DEBUG
-            BTG_NOTICE("Marking socket with id = " << sock_ << " as deleted");
+            BTG_NOTICE(logWrapper(), "Marking socket with id = " << sock_ << " as deleted");
 #endif // BTG_TRANSPORT_DEBUG
 
             deleted_ = true;

@@ -123,8 +123,9 @@ namespace btg
       using namespace btg::core;
       using namespace btg::core::logger;
 
-      daemonConfiguration::daemonConfiguration(std::string const& _filename)
-         : Configuration(_filename),
+      daemonConfiguration::daemonConfiguration(btg::core::LogWrapperType _logwrapper,
+                                               std::string const& _filename)
+         : Configuration(_logwrapper, _filename),
            def_transport(messageTransport::UNDEFINED),
            def_listenTo(0,0,0,0,0),
            def_TLS_CA_cert(),
@@ -335,7 +336,7 @@ namespace btg
                         }
                      else
                         {
-                           BTG_NOTICE("Bad configuration value for " << KEY_LIMIT_UPLOAD_RATE_LIMIT);
+                           BTG_NOTICE(logWrapper(), "Bad configuration value for " << KEY_LIMIT_UPLOAD_RATE_LIMIT);
                         }
                   }
 
@@ -356,7 +357,7 @@ namespace btg
                         }
                      else
                         {
-                           BTG_NOTICE("Bad configuration value for " << KEY_LIMIT_DOWNLOAD_RATE_LIMIT);
+                           BTG_NOTICE(logWrapper(), "Bad configuration value for " << KEY_LIMIT_DOWNLOAD_RATE_LIMIT);
                         }
                   }
 
@@ -377,7 +378,7 @@ namespace btg
                         }
                      else
                         {
-                           BTG_NOTICE("Bad configuration value for " << KEY_LIMIT_MAX_UPLOADS);
+                           BTG_NOTICE(logWrapper(), "Bad configuration value for " << KEY_LIMIT_MAX_UPLOADS);
                         }
                   }
 
@@ -398,7 +399,7 @@ namespace btg
                         }
                      else
                         {
-                           BTG_NOTICE("Bad configuration value for " << KEY_LIMIT_MAX_CONNECTIONS);
+                           BTG_NOTICE(logWrapper(), "Bad configuration value for " << KEY_LIMIT_MAX_CONNECTIONS);
                         }
                   }
 #if BTG_OPTION_SAVESESSIONS
@@ -461,7 +462,7 @@ namespace btg
                transportStr = VALUE_TRANSPORT_SXMLRPC;
                break;
             default:
-               BTG_NOTICE("No default transport set");
+               BTG_NOTICE(logWrapper(), "No default transport set");
             }
 
          if (transportStr.size() > 0)
@@ -580,7 +581,7 @@ namespace btg
                loggerStr     = VALUE_LOGGING_SYSLOG;
                break;
             default:
-               BTG_NOTICE("No default log method set");
+               BTG_NOTICE(logWrapper(), "No default log method set");
             }
 
          if (def_logFilename.size() > 0)
@@ -754,7 +755,7 @@ namespace btg
                      setErrorDescription(writeOperation, SECTION_SS, KEY_SS_FILENAME);
                      status = false;
                   }
-               BTG_NOTICE("conf " << def_ss_timeout<<" to string");
+               BTG_NOTICE(logWrapper(), "conf " << def_ss_timeout<<" to string");
                limit = convertToString<t_int>(def_ss_timeout);
 
                if (!inifile->SetValue(KEY_SS_TIMEOUT,

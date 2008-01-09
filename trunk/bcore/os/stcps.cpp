@@ -41,10 +41,12 @@ namespace btg
    {
       namespace os
       {
-         SecureServerSocket::SecureServerSocket(gtlsGlobalServerData* _ggsd, 
+         SecureServerSocket::SecureServerSocket(LogWrapperType _logwrapper,
+                                                gtlsGlobalServerData* _ggsd, 
                                                 std::string const& _host, 
                                                 t_uint const _port)
-            : ggsd_(_ggsd),
+            : Socket::Socket(_logwrapper),
+              ggsd_(_ggsd),
               gsd_(0)
          {
             if (!Socket::create())
@@ -53,7 +55,7 @@ namespace btg
                }
 
 #if BTG_TRANSPORT_DEBUG
-            BTG_NOTICE("Attempt to bind to port " << _port);
+            BTG_NOTICE(logWrapper(), "Attempt to bind to port " << _port);
 #endif // BTG_TRANSPORT_DEBUG
 
             if(!Socket::bind(_host, _port))
@@ -67,8 +69,8 @@ namespace btg
                }
          }
 
-         SecureServerSocket::SecureServerSocket()
-            : Socket::Socket(),
+         SecureServerSocket::SecureServerSocket(LogWrapperType _logwrapper)
+            : Socket::Socket(_logwrapper),
               ggsd_(0),
               gsd_(0)
          {
@@ -87,7 +89,7 @@ namespace btg
             if (!Socket::is_valid())
                {
 #if BTG_TRANSPORT_DEBUG
-                  BTG_NOTICE("(write) Marking socket with id=" << getSockId() << " as deleted");
+                  BTG_NOTICE(logWrapper(), "(write) Marking socket with id=" << getSockId() << " as deleted");
 #endif // BTG_TRANSPORT_DEBUG
                   this->markAsDeleted();
                   return false;
@@ -130,7 +132,7 @@ namespace btg
             if (!Socket::is_valid())
                {
 #if BTG_TRANSPORT_DEBUG
-                  BTG_NOTICE("(read) Marking socket with id=" << getSockId() << " as deleted");
+                  BTG_NOTICE(logWrapper(), "(read) Marking socket with id=" << getSockId() << " as deleted");
 #endif // BTG_TRANSPORT_DEBUG
                   this->markAsDeleted();
                }
@@ -155,7 +157,7 @@ namespace btg
             if (!ggsd_->initialized())
                {
 #if BTG_TRANSPORT_DEBUG
-                  BTG_NOTICE("Global data is not initialized!");
+                  BTG_NOTICE(logWrapper(), "Global data is not initialized!");
 #endif // BTG_TRANSPORT_DEBUG
                   status = false;
                   return status;
@@ -194,7 +196,7 @@ namespace btg
                   if (ret < 0)
                      {
 #if BTG_TRANSPORT_DEBUG
-                        BTG_NOTICE("GNUTLS handshake failed.");
+                        BTG_NOTICE(logWrapper(), "GNUTLS handshake failed.");
 #endif // BTG_TRANSPORT_DEBUG
                         handshake_ok = false;
                         cert_ok      = false;
@@ -203,12 +205,12 @@ namespace btg
                   if (handshake_ok)
                      {
 #if BTG_TRANSPORT_DEBUG
-                        BTG_NOTICE("GNUTLS handshake ok.");
+                        BTG_NOTICE(logWrapper(), "GNUTLS handshake ok.");
 #endif // BTG_TRANSPORT_DEBUG
                         if (!gtlsGeneric::verifyCertificate(current_session))
                            {
 #if BTG_TRANSPORT_DEBUG
-                              BTG_NOTICE("Certificate verification failed.");
+                              BTG_NOTICE(logWrapper(), "Certificate verification failed.");
 #endif // BTG_TRANSPORT_DEBUG
                               cert_ok = false;
                            }
@@ -217,15 +219,15 @@ namespace btg
                   if (handshake_ok && cert_ok)
                      {
 #if BTG_TRANSPORT_DEBUG
-                        BTG_NOTICE("Accepted new TLS connection.");
-                        gtlsGeneric::logSessionInfo(current_session);
+                        BTG_NOTICE(logWrapper(), "Accepted new TLS connection.");
+                        gtlsGeneric::logSessionInfo(logWrapper(), current_session);
 #endif // BTG_TRANSPORT_DEBUG
                         temp_socket.gsd()->setSession(current_session);
                      }
                   else
                      {
 #if BTG_TRANSPORT_DEBUG
-                        BTG_NOTICE("Rejected new TLS connection.");
+                        BTG_NOTICE(logWrapper(), "Rejected new TLS connection.");
 #endif // BTG_TRANSPORT_DEBUG
                         status = false;
 

@@ -19,8 +19,11 @@ namespace btg
 
          const std::string moduleName("aut");
 
-         passwordAuth::passwordAuth(std::string const& _filename, bool const _ignoreErrors)
-            : filename_(_filename),
+         passwordAuth::passwordAuth(btg::core::LogWrapperType _logwrapper,
+                                    std::string const& _filename, 
+                                    bool const _ignoreErrors)
+            : Auth(_logwrapper),
+              filename_(_filename),
               initialized_(true),
               users()
          {
@@ -34,7 +37,7 @@ namespace btg
             else
                {
 #if BTG_AUTH_DEBUG
-                  BTG_MNOTICE("got " << users.size() << " user(s)");
+                  BTG_MNOTICE(logWrapper(), "got " << users.size() << " user(s)");
 #endif // BTG_AUTH_DEBUG
                }
          }
@@ -216,7 +219,8 @@ namespace btg
 
                               std::string callback    = separated[7];
 #if BTG_AUTH_DEBUG
-                              BTG_MNOTICE("read: username '" << username    << "', " <<
+                              BTG_MNOTICE(logWrapper(),
+                                          "read: username '" << username    << "', " <<
                                           "hash     '" << passwd_hash << "', " <<
                                           "temp_dir '" << temp_dir    << "', " <<
                                           "work_dir '" << work_dir    << "', " <<
@@ -237,7 +241,7 @@ namespace btg
             if (_dest.size() == 0)
                {
 #if BTG_AUTH_DEBUG
-                  BTG_MNOTICE("no users");
+                  BTG_MNOTICE(logWrapper(), "no users");
 #endif // BTG_AUTH_DEBUG
                   status = false;
                }
@@ -352,7 +356,7 @@ namespace btg
             if (!file.is_open())
                {
 #if BTG_AUTH_DEBUG
-                  BTG_MNOTICE("saving file '" << filename_ << "' failed");
+                  BTG_MNOTICE(logWrapper(), "saving file '" << filename_ << "' failed");
 #endif // BTG_AUTH_DEBUG
                   return status;
                }
@@ -391,7 +395,7 @@ namespace btg
                   if (file.fail())
                      {
 #if BTG_AUTH_DEBUG
-                        BTG_MNOTICE("saving file '" << filename_ << "' failed");
+                        BTG_MNOTICE(logWrapper(), "saving file '" << filename_ << "' failed");
 #endif // BTG_AUTH_DEBUG
                         status = false;
                         break;
@@ -467,23 +471,14 @@ namespace btg
                             bool const         _controlFlag,
                             std::string const& _callback
                             )
-            :
-            passwordHash_(_passwordHash),
-            tempDir_(_tempDir),
-            workDir_(_workDir),
-            seedDir_(_seedDir),
-            destDir_(_destDir),
-            controlFlag_(_controlFlag),
-            callback_(_callback)
+            : passwordHash_(_passwordHash),
+              tempDir_(_tempDir),
+              workDir_(_workDir),
+              seedDir_(_seedDir),
+              destDir_(_destDir),
+              controlFlag_(_controlFlag),
+              callback_(_callback)
          {
-#if BTG_AUTH_DEBUG
-            BTG_MNOTICE("tempDir_ '" << tempDir_ << "', " <<
-                        "workDir_ '" << workDir_ << "', " <<
-                        "seedDir_ '" << seedDir_ << "', " <<
-                        "destDir_ '" << destDir_ << "', " <<
-                        "controlFlag_ '" << controlFlag_ << "', " <<
-                        "callback_ '" << callback_ << "'");
-#endif // BTG_AUTH_DEBUG
          }
 
          userData::userData(userData const& _userdata)

@@ -75,7 +75,7 @@ namespace btg
          std::string fullFilename(_filename);
          if(!btg::core::os::fileOperation::check(fullFilename, errorString, false))
             {
-               BTG_NOTICE("Failed to read file " << _filename << ".");
+               //BTG_NOTICE("Failed to read file " << _filename << ".");
                return false;
             }
 
@@ -131,11 +131,11 @@ namespace btg
 #else
          file.open(_filename.c_str(), std::ios::out | std::ios::binary);
 #endif
-
-         if (size_ <= 0)
-            {
-               BTG_NOTICE("Size of buffer is zero.");
-            }
+         
+         //if (size_ <= 0)
+         //   {
+         //      BTG_NOTICE("Size of buffer is zero.");
+         //   }
 
          if (file.is_open())
             {
@@ -143,7 +143,7 @@ namespace btg
             }
          else
             {
-               BTG_NOTICE("Opening file '" << _filename << "' for reading failed.");
+               // BTG_NOTICE("Opening file '" << _filename << "' for reading failed.");
                status = false;
             }
 

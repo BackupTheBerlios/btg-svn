@@ -101,6 +101,7 @@ peer.cpp \
 file_info.cpp \
 dbuf.cpp \
 sbuf.cpp \
+logable.cpp \
 crashlog.cpp \
 addrport.cpp \
 configuration.cpp \
@@ -206,6 +207,7 @@ transport/http.h \
 hru.h hrr.h hrt.h \
 sigh.h \
 logmacro.h util.h status.h trackerstatus.h peer.h file_info.h dbuf.h sbuf.h \
+logable.h \
 crashlog.h \
 serializable.h printable.h addrport.h \
 helpermacro.h configuration.h \

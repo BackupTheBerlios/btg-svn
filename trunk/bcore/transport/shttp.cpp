@@ -36,18 +36,20 @@ namespace btg
    namespace core
    {
       // Server constructor.
-      secureHttpTransport::secureHttpTransport(btg::core::externalization::Externalization* _e,
+      secureHttpTransport::secureHttpTransport(LogWrapperType _logwrapper,
+                                               btg::core::externalization::Externalization* _e,
                                                btg::core::os::gtlsGlobalServerData* _ggsd,
                                                t_int const _bufferSize,
                                                DIRECTION const _direction,
                                                addressPort const & _addressPort,
                                                t_uint const _timeout)
-         : httpTransport(_e, _bufferSize, _direction, _addressPort, false, _timeout)
+         : httpTransport(_logwrapper, _e, _bufferSize, _direction, _addressPort, false, _timeout)
       {
          try
             {
                btg::core::os::SecureServerSocket* tempServer =
-                  new btg::core::os::SecureServerSocket(_ggsd,
+                  new btg::core::os::SecureServerSocket(logWrapper(),
+                                                        _ggsd,
                                                         _addressPort.getIp(),
                                                         _addressPort.getPort());
 
@@ -57,24 +59,26 @@ namespace btg
             {
                initialized = false;
 #if BTG_TRANSPORT_DEBUG
-               BTG_NOTICE("Failed to init server: " << _se.description() );
+               BTG_NOTICE(logWrapper(), "Failed to init server: " << _se.description() );
 #endif // BTG_TRANSPORT_DEBUG
             }
       }
 
       // Client constructor.
-      secureHttpTransport::secureHttpTransport(btg::core::externalization::Externalization* _e,
+      secureHttpTransport::secureHttpTransport(LogWrapperType _logwrapper,
+                                               btg::core::externalization::Externalization* _e,
                                                btg::core::os::gtlsClientData* _gcd,
                                                t_int const _bufferSize,
                                                DIRECTION const _direction,
                                                addressPort const & _addressPort,
                                                t_uint const _timeout)
-         : httpTransport(_e, _bufferSize, _direction, _addressPort, false, _timeout)
+         : httpTransport(_logwrapper, _e, _bufferSize, _direction, _addressPort, false, _timeout)
       {
          try
             {
                btg::core::os::SecureClientSocket* tempClient =
-                  new btg::core::os::SecureClientSocket(_gcd, 
+                  new btg::core::os::SecureClientSocket(logWrapper(),
+                                                        _gcd, 
                                                         _addressPort.getIp(), 
                                                         _addressPort.getPort()
                                                         );
@@ -89,7 +93,7 @@ namespace btg
             {
                initialized = false;
 #if BTG_TRANSPORT_DEBUG
-               BTG_NOTICE("Failed to init client: " << _se.description());
+               BTG_NOTICE(logWrapper(), "Failed to init client: " << _se.description());
 #endif // BTG_TRANSPORT_DEBUG
             }
       }
@@ -102,17 +106,17 @@ namespace btg
       void secureHttpTransport::acceptNewConnections()
       {
          // Handle accepting new clients here.
-         btg::core::os::SecureServerSocket* acceptsock = new btg::core::os::SecureServerSocket();
+         btg::core::os::SecureServerSocket* acceptsock = new btg::core::os::SecureServerSocket(logWrapper());
 
          if (server->accept(*acceptsock))
             {
 
 #if BTG_TRANSPORT_DEBUG
-               BTG_NOTICE("Accepted new connection. (" << reinterpret_cast<void*>(acceptsock) << ") id=" << acceptsock->getSockId());
+               BTG_NOTICE(logWrapper(), "Accepted new connection. (" << reinterpret_cast<void*>(acceptsock) << ") id=" << acceptsock->getSockId());
 #endif // BTG_TRANSPORT_DEBUG
 
                // Got a new client.
-               httpClient* hc   = new httpClient(this->getGzipIf());
+               httpClient* hc   = new httpClient(logWrapper(), this->getGzipIf());
                hc->socket       = acceptsock;
                hc->connectionID = -1;
 
@@ -128,7 +132,7 @@ namespace btg
 
                if(hc->connectionID == NO_CONNECTION_ID)
                   {
-                     BTG_NOTICE("All connections are in use. Dropping connection.");
+                     BTG_NOTICE(logWrapper(), "All connections are in use. Dropping connection.");
                      acceptsock->shutdown();
                      delete hc;
                      hc = 0;
@@ -139,7 +143,7 @@ namespace btg
 
                socketGroup.addSocket(acceptsock);
 
-               BTG_NOTICE("Added new connection " << hc->connectionID);
+               BTG_NOTICE(logWrapper(), "Added new connection " << hc->connectionID);
                clients[hc->connectionID] = hc;
             }
          else

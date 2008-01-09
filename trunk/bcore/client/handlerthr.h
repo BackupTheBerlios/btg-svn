@@ -35,6 +35,8 @@
 #include <bcore/client/clienthandler.h>
 #include <bcore/client/clientcallback.h>
 
+#include <bcore/logable.h>
+
 namespace btg
 {
    namespace core
@@ -49,11 +51,12 @@ namespace btg
                class handlerThreadIf;
 
                /// Thread running the handler communicating with the daemon.
-               class handlerThread
+               class handlerThread: public Logable
                   {
                   public:
                      /// Constructor.
-                     handlerThread(bool const _verboseFlag,
+                     handlerThread(LogWrapperType _logwrapper,
+                                   bool const _verboseFlag,
                                    handlerThreadIf* _handler);
 
                      /// Get the mutex used by this thread, so that
@@ -102,7 +105,8 @@ namespace btg
                   {
                   public:
                      /// Constructor.
-                     handlerThreadIf(btg::core::externalization::Externalization* _e,
+                     handlerThreadIf(LogWrapperType _logwrapper,
+                                     btg::core::externalization::Externalization* _e,
                                      btg::core::messageTransport*            _transport,
                                      btg::core::client::clientConfiguration* _config,
                                      btg::core::client::lastFiles*           _lastfiles,

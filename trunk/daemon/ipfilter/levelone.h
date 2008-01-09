@@ -39,7 +39,8 @@ namespace btg
             {
             public:
                /// Constructor.
-               levelOne(bool const _verboseFlag,
+               levelOne(btg::core::LogWrapperType _logwrapper,
+                        bool const _verboseFlag,
                         std::string const& _filename);
 
                void set(libtorrent::session & _session) const;

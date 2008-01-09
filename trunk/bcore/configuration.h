@@ -30,6 +30,7 @@
 #include <map>
 
 #include <external/ini/cdatafile.h>
+#include <bcore/logable.h>
 
 namespace btg
 {
@@ -41,11 +42,12 @@ namespace btg
          /** @{ */
 
          /// Base class for reading and writing configuration files.
-         class Configuration
+         class Configuration: public Logable
             {
             public:
                /// Constructor.
-               Configuration(std::string const& _filename);
+               Configuration(LogWrapperType _logwrapper,
+                             std::string const& _filename);
 
                /// Read the file.
                /// @param [in] _force Force reading of the file.

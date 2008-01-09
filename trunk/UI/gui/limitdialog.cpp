@@ -245,7 +245,7 @@ namespace btg
                   seedTimeSpin->set_value(0);
                }
 
-            BTG_NOTICE("Update - limit, seed % " << seedPercentSpin->get_value() << " time = " << seedTimeSpin->get_value());
+            // BTG_NOTICE("Update - limit, seed % " << seedPercentSpin->get_value() << " time = " << seedTimeSpin->get_value());
          }
 
          void limitDialog::on_button_pressed(int _button)
@@ -258,7 +258,7 @@ namespace btg
 
                      int selection = uploadCombo->get_active_row_number();
 
-                     BTG_NOTICE("selection = " << selection);
+                     // BTG_NOTICE("selection = " << selection);
 
                      // Upload:
                      if (selection == 0)

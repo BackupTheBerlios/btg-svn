@@ -61,8 +61,9 @@ namespace btg
 	      std::string const COLOR_WARNING("COLOR_WARNING");
 	      std::string const COLOR_ERROR("COLOR_ERROR");
 
-	      ncliConfiguration::ncliConfiguration(std::string const& _filename)
-            : clientConfiguration(_filename),
+	      ncliConfiguration::ncliConfiguration(btg::core::LogWrapperType _logwrapper,
+                                              std::string const& _filename)
+            : clientConfiguration(_logwrapper, _filename),
               helpKey(keyMapping::K_UNDEF),
               detachKey(keyMapping::K_UNDEF),
               quitKey(keyMapping::K_UNDEF),

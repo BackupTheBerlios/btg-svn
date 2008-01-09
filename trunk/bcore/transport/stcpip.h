@@ -55,7 +55,8 @@ namespace btg
                /// @param [in] _direction      Direction.
                /// @param [in] _addressPort    Address and port.
                /// @param [in] _timeout        Max time in milliseconds to block in a read(), 0 for no block.
-               secureTcpTransport(btg::core::externalization::Externalization* _e,
+               secureTcpTransport(LogWrapperType _logwrapper,
+                                  btg::core::externalization::Externalization* _e,
                                   btg::core::os::gtlsGlobalServerData* _ggsd,
                                   t_int const _bufferSize,
                                   DIRECTION const _direction,
@@ -69,7 +70,8 @@ namespace btg
                /// @param [in] _direction      Direction.
                /// @param [in] _addressPort    Address and port.
                /// @param [in] _timeout        Max time in milliseconds to block in a read(), 0 for no block.
-               secureTcpTransport(btg::core::externalization::Externalization* _e,
+               secureTcpTransport(LogWrapperType _logwrapper,
+                                  btg::core::externalization::Externalization* _e,
                                   btg::core::os::gtlsClientData* _gcd,
                                   t_int const _bufferSize,
                                   DIRECTION const _direction,

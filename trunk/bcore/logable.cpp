@@ -1,5 +1,5 @@
 /*
- * btg Copyright (C) 2007 Roman Rybalko.
+ * btg Copyright (C) 2005 Michael Wojciechowski.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,41 +20,53 @@
  * $Id$
  */
 
-#include "externalization_factory.h"
-
-#include "simple.h"
-#include "xmlrpc.h"
-
-#include <bcore/logmacro.h>
+#include "logable.h"
 
 namespace btg
 {
    namespace core
    {
-      namespace externalization
-      {
-         
-         Externalization* Factory::createExternalization(LogWrapperType _logwrapper,
-                                                         eExternalizationType _et)
-         {
-            switch (_et)
-            {
-            case etSimple:
-               return new Simple(_logwrapper);
-            case etXml:
-               return new XMLRPC(_logwrapper);
-            default:
-               BTG_NOTICE(_logwrapper, "Unknown serializator: " << _et)
-               return 0;
-            }
-         }
-         
-         void Factory::destroyExternalization(Externalization* & _ext)
-         {
-            delete _ext;
-            _ext = 0;
-         }
 
-      } // namespace externalization
+      Logable::Logable(LogWrapperType _logwrapper)
+         : logwrapper_(_logwrapper)
+      {
+
+      }
+
+      /// Get the logwrapper.
+      LogWrapperType Logable::logWrapper() const
+      {
+         return logwrapper_;
+      }
+
+      Logable::Logable(Logable const& _logable)
+         : logwrapper_(_logable.logwrapper_)
+      {
+
+      }
+
+      Logable& Logable::operator= (Logable const& _logable)
+      {
+         bool status = (_logable == *this);
+
+         if (!status)
+            {
+               logwrapper_ = _logable.logwrapper_;
+            }
+
+         return *this;
+      }
+
+      bool Logable::operator== (Logable const& _logable) const
+      {
+         return (_logable.logwrapper_ == logwrapper_);
+      }
+
+      /// Destructor.
+      Logable::~Logable() 
+      {
+      }
+
    } // namespace core
 } // namespace btg
+

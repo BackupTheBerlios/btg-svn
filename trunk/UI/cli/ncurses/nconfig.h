@@ -95,7 +95,8 @@ namespace btg
                   public:
                      /// Constructor.
                      /// @param [in] _filename The filename to use for reading/writing.
-                     ncliConfiguration(std::string const& _filename);
+                     ncliConfiguration(btg::core::LogWrapperType _logwrapper,
+                                       std::string const& _filename);
 
                      /// Read the configuration file.
                      bool read(bool const _force = false);

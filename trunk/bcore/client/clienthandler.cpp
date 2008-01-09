@@ -41,15 +41,17 @@ namespace btg
          using namespace btg::core;
          using namespace std;
 
-         clientHandler::clientHandler(btg::core::externalization::Externalization* _e,
+         clientHandler::clientHandler(LogWrapperType _logwrapper,
+                                      btg::core::externalization::Externalization* _e,
                                       btg::core::client::clientCallback* _callback,
                                       btg::core::messageTransport*       _transport,
                                       btg::core::client::clientConfiguration*  _config,
                                       btg::core::client::lastFiles*            _lastfiles,
                                       bool const _verboseFlag,
                                       bool const _autoStartFlag)
-            : transport(_transport),
-              statemachine(_e, transport, _callback, _verboseFlag),
+            : Logable(_logwrapper),
+              transport(_transport),
+              statemachine(_logwrapper, _e, transport, _callback, _verboseFlag),
               setupDone(false),
               attachDone(false),
               commandStatus(false),

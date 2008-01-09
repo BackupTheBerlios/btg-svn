@@ -42,7 +42,8 @@ using namespace std;
 
 void testBcoreClient::setUp()
 {
-   contextId = 100;
+   contextId  = 100;
+   logwrapper = btg::core::LogWrapperType(new btg::core::logger::logWrapper);
 }
 
 void testBcoreClient::tearDown()
@@ -77,7 +78,7 @@ void testBcoreClient::testConfiguration()
 
    string config_filename        = TESTFILE_CONFIG;
 
-   clientConfiguration *config = new clientConfiguration(config_filename);
+   clientConfiguration *config = new clientConfiguration(logwrapper, config_filename);
 
    // Defaults:
 
@@ -110,7 +111,8 @@ void testBcoreClient::testConfiguration()
    config = 0;
 
    // Check the values which were read from the file.
-   config = new clientConfiguration(config_filename);
+   config = new clientConfiguration(logwrapper,
+                                    config_filename);
    CPPUNIT_ASSERT(config->read());
 
    CPPUNIT_ASSERT(config->getTransport() == transport);
@@ -146,8 +148,10 @@ void testBcoreClient::testConfigurationLastOpenFiles()
    last_files.push_back(TESTFILE_LAST_10);
    last_files.push_back(TESTFILE_LAST_11);
 
-   clientDynConfig *cliDynConf = new clientDynConfig(dynconfig_filename);
-   lastFiles *config = new lastFiles(*cliDynConf);
+   clientDynConfig *cliDynConf = new clientDynConfig(logwrapper,
+                                                     dynconfig_filename);
+   lastFiles *config = new lastFiles(logwrapper,
+                                     *cliDynConf);
 
    config->setLastFiles(last_files);
 
@@ -156,8 +160,10 @@ void testBcoreClient::testConfigurationLastOpenFiles()
    delete cliDynConf;
    cliDynConf = 0;
 
-   cliDynConf = new clientDynConfig(dynconfig_filename);
-   config = new lastFiles(*cliDynConf);
+   cliDynConf = new clientDynConfig(logwrapper,
+                                    dynconfig_filename);
+   config = new lastFiles(logwrapper,
+                          *cliDynConf);
 
    CPPUNIT_ASSERT(config->getLastFiles() == last_files);
    CPPUNIT_ASSERT(config->getLastFiles().size() == last_files.size());

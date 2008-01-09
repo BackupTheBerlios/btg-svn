@@ -104,8 +104,9 @@ using namespace std;
 
 void testBcore::setUp()
 {
+   logwrapper      = btg::core::LogWrapperType(new btg::core::logger::logWrapper);
    command_pointer = 0;
-   externalization = new btg::core::externalization::Simple();
+   externalization = new btg::core::externalization::Simple(logwrapper);
 }
 
 void testBcore::tearDown()
@@ -118,16 +119,17 @@ void testBcore::tearDown()
 
 void testBcore::testCommand()
 {
+   btg::core::commandFactory cf(logwrapper, externalization);
    // A most basic command. This command cannot be serialized, its
    // serialize/deserialize methods are used by its children to store
    // session and command type.
    Command* c = new Command(Command::CN_UNDEFINED);
-   CPPUNIT_ASSERT(commandFactory::convertToBytes(externalization, c) == 0);
+   CPPUNIT_ASSERT(cf.convertToBytes(c) == 0);
 
    CPPUNIT_ASSERT(c->getType() == Command::CN_UNDEFINED);
    CPPUNIT_ASSERT(c->getName() == "Undefined");
    commandFactory::decodeStatus error;
-   command_pointer = commandFactory::createFromBytes(externalization, error);
+   command_pointer = cf.createFromBytes(error);
    CPPUNIT_ASSERT(error == commandFactory::DS_UNKNOWN);
    CPPUNIT_ASSERT(command_pointer == 0);
 
@@ -149,7 +151,7 @@ void testBcore::testCommandNames()
    i += 255;
    CPPUNIT_ASSERT(Command::getName(i) == Command::getName(Command::CN_UNDEFINED));
 
-   btg::core::externalization::Externalization* e = new btg::core::externalization::Simple();
+   btg::core::externalization::Externalization* e = new btg::core::externalization::Simple(logwrapper);
 
    for (i=Command::CN_GINITCONNECTION ; i<Command::CN_UNDEFINED; i++)
       {
@@ -162,12 +164,14 @@ void testBcore::testCommandNames()
 
 void testBcore::testListCommand()
 {
+   btg::core::commandFactory cf(logwrapper, externalization);
+
    // List command
    listCommand *lc = new listCommand();
    lc->serialize(externalization);
 
    commandFactory::decodeStatus error;
-   command_pointer = commandFactory::createFromBytes(externalization, error);
+   command_pointer = cf.createFromBytes(error);
    CPPUNIT_ASSERT(error == commandFactory::DS_OK);
    CPPUNIT_ASSERT(command_pointer != 0);
    CPPUNIT_ASSERT(command_pointer->getType() == Command::CN_GLIST);
@@ -180,6 +184,8 @@ void testBcore::testListCommand()
 
 void testBcore::testListCommandResponse()
 {
+   btg::core::commandFactory cf(logwrapper, externalization);
+
    vector<t_int> ids;
    vector<string> files;
 
@@ -196,7 +202,7 @@ void testBcore::testListCommandResponse()
    lcr->serialize(externalization);
 
    commandFactory::decodeStatus error;
-   command_pointer = commandFactory::createFromBytes(externalization, error);
+   command_pointer = cf.createFromBytes(error);
    CPPUNIT_ASSERT(error == commandFactory::DS_OK);
    CPPUNIT_ASSERT(buffer.size() == 0);
 
@@ -215,6 +221,8 @@ void testBcore::testListCommandResponse()
 
 void testBcore::testErrorCommand()
 {
+   btg::core::commandFactory cf(logwrapper, externalization);
+
    // List response command:
    string const message = "Message. \nTestMessage. TestTestTest Message          0x0\\\\\0";
    t_int const type     = Command::CN_GLISTRSP;
@@ -223,7 +231,7 @@ void testBcore::testErrorCommand()
    ec->serialize(externalization);
 
    commandFactory::decodeStatus error;
-   command_pointer = commandFactory::createFromBytes(externalization, error);
+   command_pointer = cf.createFromBytes(error);
    CPPUNIT_ASSERT(error == commandFactory::DS_OK);
    CPPUNIT_ASSERT(buffer.size() == 0);
 
@@ -239,11 +247,13 @@ void testBcore::testErrorCommand()
 
 void testBcore::testListContextCommand()
 {
+   btg::core::commandFactory cf(logwrapper, externalization);
+
    listSessionCommand *lcc = new listSessionCommand();
    lcc->serialize(externalization);
 
    commandFactory::decodeStatus error;
-   command_pointer = commandFactory::createFromBytes(externalization, error);
+   command_pointer = cf.createFromBytes(error);
    CPPUNIT_ASSERT(error == commandFactory::DS_OK);
    CPPUNIT_ASSERT(buffer.size() == 0);
 
@@ -258,6 +268,8 @@ void testBcore::testListContextCommand()
 
 void testBcore::testListSessionResponseCommand()
 {
+   btg::core::commandFactory cf(logwrapper, externalization);
+
    std::vector<t_long> vl;
    std::vector<std::string> sn;
    for (t_long i=0; i<50; i++)
@@ -270,7 +282,7 @@ void testBcore::testListSessionResponseCommand()
 
    lsrc->serialize(externalization);
    commandFactory::decodeStatus error;
-   command_pointer = commandFactory::createFromBytes(externalization, error);
+   command_pointer = cf.createFromBytes(error);
    CPPUNIT_ASSERT(error == commandFactory::DS_OK);
    CPPUNIT_ASSERT(buffer.size() == 0);
 
@@ -288,6 +300,8 @@ void testBcore::testListSessionResponseCommand()
 
 void testBcore::testAttachSessionCommand()
 {
+   btg::core::commandFactory cf(logwrapper, externalization);
+
    using namespace std;
 
    for (t_long trySession=0; trySession<512; trySession++)
@@ -296,7 +310,7 @@ void testBcore::testAttachSessionCommand()
          asc->serialize(externalization);
 
          commandFactory::decodeStatus error;
-         command_pointer = commandFactory::createFromBytes(externalization, error);
+         command_pointer = cf.createFromBytes(error);
          CPPUNIT_ASSERT(error == commandFactory::DS_OK);
          CPPUNIT_ASSERT(buffer.size() == 0);
 
@@ -316,6 +330,7 @@ void testBcore::testAttachSessionCommand()
 
 void testBcore::testContextStatusResponseCommand()
 {
+   btg::core::commandFactory cf(logwrapper, externalization);
 
    trackerStatus ts(-1, 0);
    Status status(100, "/path/to/file", Status::ts_queued, 100, 101, 102, 1, 1, 50, 1, 100, 200, 0, 0, 0, 0, ts, 0);
@@ -323,7 +338,7 @@ void testBcore::testContextStatusResponseCommand()
    csrc->serialize(externalization);
 
    commandFactory::decodeStatus error;
-   command_pointer = commandFactory::createFromBytes(externalization, error);
+   command_pointer = cf.createFromBytes(error);
 
    CPPUNIT_ASSERT(error == commandFactory::DS_OK);
    CPPUNIT_ASSERT(buffer.size() == 0);
@@ -346,6 +361,8 @@ void testBcore::testContextStatusResponseCommand()
 
 void testBcore::testContextAllStatusResponseCommand()
 {
+   btg::core::commandFactory cf(logwrapper, externalization);
+
    vector<Status> vstatus;
    for (t_int i=0; i<9; i++)
       {
@@ -359,7 +376,7 @@ void testBcore::testContextAllStatusResponseCommand()
    casrc->serialize(externalization);
 
    commandFactory::decodeStatus error;
-   command_pointer = commandFactory::createFromBytes(externalization, error);
+   command_pointer = cf.createFromBytes(error);
    CPPUNIT_ASSERT(error == commandFactory::DS_OK);
    CPPUNIT_ASSERT(buffer.size() == 0);
 
@@ -377,6 +394,8 @@ void testBcore::testContextAllStatusResponseCommand()
 
 void testBcore::testUtil_simple_types()
 {
+   btg::core::commandFactory cf(logwrapper, externalization);
+
    dBuffer output_buffer;
    bool bool_value = false;
 
@@ -473,6 +492,8 @@ void testBcore::testDbuffer()
 
 void testBcore::testStatus()
 {
+   btg::core::commandFactory cf(logwrapper, externalization);
+
    t_int context_id     = 1024;
    std::string filename("/tmp/test.torrent");
    Status::torrent_status
@@ -528,12 +549,14 @@ void testBcore::testStatus()
 
 void testBcore::testContextCleanCommand()
 {
-   contextCleanCommand *ccc = new contextCleanCommand();
+   btg::core::commandFactory cf(logwrapper, externalization);
+
+   contextCleanCommand* ccc = new contextCleanCommand();
 
    ccc->serialize(externalization);
 
    commandFactory::decodeStatus error;
-   command_pointer = commandFactory::createFromBytes(externalization, error);
+   command_pointer = cf.createFromBytes(error);
    CPPUNIT_ASSERT(error == commandFactory::DS_OK);
    CPPUNIT_ASSERT(buffer.size() == 0);
 
@@ -548,6 +571,8 @@ void testBcore::testContextCleanCommand()
 
 void testBcore::testContextCleanResponseCommand()
 {
+   btg::core::commandFactory cf(logwrapper, externalization);
+
    vector<string> filenames;
    vector<t_int>  ids;
 
@@ -577,7 +602,7 @@ void testBcore::testContextCleanResponseCommand()
    ccrc->serialize(externalization);
 
    commandFactory::decodeStatus error;
-   command_pointer = commandFactory::createFromBytes(externalization, error);
+   command_pointer = cf.createFromBytes(error);
    CPPUNIT_ASSERT(error == commandFactory::DS_OK);
    CPPUNIT_ASSERT(buffer.size() == 0);
 
@@ -813,6 +838,8 @@ void testBcore::testFileInfo()
 
 void testBcore::testFileInfoResponseCommand()
 {
+   btg::core::commandFactory cf(logwrapper, externalization);
+
    vector<bool> boolvect;
 
    for (t_int i=0; i<256; i++)
@@ -838,7 +865,7 @@ void testBcore::testFileInfoResponseCommand()
    cfirc->serialize(externalization);
 
    commandFactory::decodeStatus error;
-   command_pointer = commandFactory::createFromBytes(externalization, error);
+   command_pointer = cf.createFromBytes(error);
    CPPUNIT_ASSERT(error == commandFactory::DS_OK);
    CPPUNIT_ASSERT(buffer.size() == 0);
 
@@ -1071,6 +1098,8 @@ void testBcore::testAddrPort()
 
 void testBcore::testPeer()
 {
+   btg::core::commandFactory cf(logwrapper, externalization);
+
    t_peerList peerlist;
 
    for (t_int i = 0; i<12; i++)
@@ -1093,7 +1122,7 @@ void testBcore::testPeer()
    cprc->serialize(externalization);
 
    commandFactory::decodeStatus error;
-   command_pointer = commandFactory::createFromBytes(externalization, error);
+   command_pointer = cf.createFromBytes(error);
    CPPUNIT_ASSERT(error == commandFactory::DS_OK);
    CPPUNIT_ASSERT(buffer.size() == 0);
 
@@ -1236,7 +1265,7 @@ void testBcore::testXmlRpc()
 {
    /* Attempt to test all the primitive types. */
 
-   btg::core::externalization::Externalization* e = new btg::core::externalization::XMLRPC();
+   btg::core::externalization::Externalization* e = new btg::core::externalization::XMLRPC(logwrapper);
    t_int command_id   = btg::core::Command::CN_GINITCONNECTION;
    t_int context_id   = 100;
    bool flag          = true;
@@ -1337,7 +1366,7 @@ void testBcore::testXmlRpc()
 
    /* */
 
-   e = new btg::core::externalization::XMLRPC();
+   e = new btg::core::externalization::XMLRPC(logwrapper);
 
    e->setBuffer(buffer);
 
@@ -1451,9 +1480,9 @@ void testBcore::testXmlRpc()
 void testBcore::testXmlRpcCommands()
 {
    btg::core::externalization::Externalization* eSource = 
-      new btg::core::externalization::XMLRPC();
+      new btg::core::externalization::XMLRPC(logwrapper);
    btg::core::externalization::Externalization* eDestin = 
-      new btg::core::externalization::XMLRPC();
+      new btg::core::externalization::XMLRPC(logwrapper);
 
    XmlRpcSerializeDeserialize(eSource, eDestin);
 
@@ -1467,9 +1496,9 @@ void testBcore::testXmlRpcCommands()
 void testBcore::stressTestXmlRpcCommands()
 {
    btg::core::externalization::Externalization* eSource = 
-      new btg::core::externalization::XMLRPC();
+      new btg::core::externalization::XMLRPC(logwrapper);
    btg::core::externalization::Externalization* eDestin = 
-      new btg::core::externalization::XMLRPC();
+      new btg::core::externalization::XMLRPC(logwrapper);
 
    for (t_int i = 0;
         i < 254;
@@ -1488,6 +1517,8 @@ void testBcore::stressTestXmlRpcCommands()
 void testBcore::XmlRpcSerializeDeserialize(btg::core::externalization::Externalization* _eSource,
                                            btg::core::externalization::Externalization* _eDestin)
 {
+   btg::core::commandFactory cf(logwrapper, externalization);
+
    std::vector<btg::core::Command*> org_commands;
    std::vector<btg::core::Command*> restored_commands;
    createCommands(org_commands);
@@ -1501,7 +1532,7 @@ void testBcore::XmlRpcSerializeDeserialize(btg::core::externalization::Externali
       {
          Command* c = *iter;
 
-         CPPUNIT_ASSERT(commandFactory::convertToBytes(_eSource, c));
+         CPPUNIT_ASSERT(cf.convertToBytes(c));
          
          _eSource->getBuffer(buffer);
          _eSource->reset();
@@ -1509,7 +1540,7 @@ void testBcore::XmlRpcSerializeDeserialize(btg::core::externalization::Externali
          _eDestin->setBuffer(buffer);
 
          commandFactory::decodeStatus ds;
-         Command* c2 = commandFactory::createFromBytes(_eDestin, ds);
+         Command* c2 = cf.createFromBytes(ds);
          CPPUNIT_ASSERT(ds == commandFactory::DS_OK);
          CPPUNIT_ASSERT(c2 != 0);
 

@@ -24,6 +24,7 @@
 #define SESSION_LIST_H
 
 #include <bcore/type.h>
+#include <bcore/logable.h>
 
 #include "eventhandler.h"
 #include <map>
@@ -34,13 +35,14 @@ namespace btg
       {
          /// List of sessions.
          /// Maps session IDs to eventhandler instances.
-         class sessionList
+         class sessionList: public btg::core::Logable
             {
             public:
                /// Constructor.
                /// @param [in] _verboseFlag Indicates that verbose logging should be done.
                /// @param [in] _maxSessions The max number of sessions.
-               sessionList(bool const _verboseFlag,
+               sessionList(btg::core::LogWrapperType _logwrapper,
+                           bool const _verboseFlag,
                            t_uint const _maxSessions);
 
                /// Get a new session id.

@@ -24,7 +24,7 @@
 #define HELPER_H
 
 #include <bcore/transport/transport.h>
-#include <bcore/logmacro.h>
+#include <bcore/logable.h>
 
 #include <bcore/client/helper_argif.h>
 #include <bcore/client/configuration.h>
@@ -45,14 +45,15 @@ namespace btg
                /// Base class for creating helpers used by the
                /// clients. Stores a number of pointers and is able
                /// to log messages than can be extracted later.
-               class Helper
+               class Helper: public Logable
                   {
                   public:
                      /// Constructor.
                      /// @param [in] _clientName       The name of the client using this helper.
                      /// @param [in] _config           The client configuration used.
                      /// @param [in] _clah             The client command line arguments.
-                     Helper(std::string const&          _clientName,
+                     Helper(LogWrapperType _logwrapper,
+                            std::string const&          _clientName,
                             clientConfiguration*        _config,
                             HelperArgIf* _clah);
                      /// Get all the saved messages as one string.
@@ -138,7 +139,8 @@ namespace btg
                      /// @param [in] _messageTransport The message transport used.
                      /// @param [in] _handler          The client handler used.
 
-                     startupHelper(std::string const&          _clientName,
+                     startupHelper(LogWrapperType _logwrapper,
+                                   std::string const&          _clientName,
                                    clientConfiguration*        _config,
                                    HelperArgIf*                _clah,
                                    messageTransport*           _messageTransport,
@@ -235,7 +237,8 @@ namespace btg
                      /// @param [in] _clientName       The name of the client using this helper.
                      /// @param [in] _config           The client configuration used.
                      /// @param [in] _clah             The client command line arguments.
-                     transportHelper(std::string const&          _clientName,
+                     transportHelper(LogWrapperType _logwrapper,
+                                     std::string const&          _clientName,
                                      clientConfiguration*        _config,
                                      HelperArgIf*                _clah);
 

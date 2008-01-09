@@ -40,7 +40,9 @@ namespace btg
       namespace os
       {
 
-         ClientSocket::ClientSocket (std::string const& _host, t_uint const _port)
+         ClientSocket::ClientSocket(LogWrapperType _logwrapper,
+                                    std::string const& _host, t_uint const _port)
+            : Socket(_logwrapper)
          {
             if (!Socket::create())
                {

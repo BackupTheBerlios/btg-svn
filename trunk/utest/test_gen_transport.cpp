@@ -79,7 +79,7 @@ void testGenericTransport::testSmallQue()
    t_int status = readFromTransport(mq_server, db_input, connectionID, readAttempts, readSleepInMs);
 
    CPPUNIT_ASSERT( status > 0 );
-	BTG_NOTICE("dbinput.size() = " << db_input.size());
+
    CPPUNIT_ASSERT( db_input.size() == 9 );
 
    // Get all the data contained in the buffer.

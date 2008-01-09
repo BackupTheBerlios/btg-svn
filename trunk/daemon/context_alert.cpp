@@ -44,9 +44,9 @@ namespace btg
          asio::ip::basic_endpoint<asio::ip::tcp> endp = _alert->ip;
          asio::ip::address_v4 banned_ip = endp.address().to_v4();
 
-         BTG_NOTICE("Banned host: " << banned_ip.to_string() << ".");
+         BTG_NOTICE(logWrapper(), "Banned host: " << banned_ip.to_string() << ".");
 
-         VERBOSE_LOG(verboseFlag_, "Banned host: " << banned_ip.to_string() << ".");
+         VERBOSE_LOG(logWrapper(), verboseFlag_, "Banned host: " << banned_ip.to_string() << ".");
       }
 
       void Context::handleFinishedTorrent(libtorrent::torrent_finished_alert* _alert)
@@ -70,7 +70,7 @@ namespace btg
          // Unknown id?
          if (torrent_id == -1 || !ti)
             {
-               BTG_NOTICE("Context::handleAlerts(), got torrent_finished_alert for unknown torrent handle " << &(_alert->handle));
+               BTG_NOTICE(logWrapper(), "Context::handleAlerts(), got torrent_finished_alert for unknown torrent handle " << &(_alert->handle));
                return;
             }
 
@@ -78,7 +78,7 @@ namespace btg
 
          if (!this->moveToSeedingDir(torrent_id))
             {
-               BTG_NOTICE("Context::handleAlerts(), unable to move to the seeding directory.");
+               BTG_NOTICE(logWrapper(), "Context::handleAlerts(), unable to move to the seeding directory.");
             }
 
          // -/- -/- -/- -/- -/- -/- -/- -/- -/-
@@ -103,7 +103,8 @@ namespace btg
             {
                // Get the current time.
                ti->finished_timestamp = boost::posix_time::ptime(boost::posix_time::second_clock::local_time());
-               BTG_NOTICE("Torrent " << torrent_id
+               BTG_NOTICE(logWrapper(),
+                          "Torrent " << torrent_id
                           << " finished at "
                           << boost::posix_time::to_simple_string(ti->finished_timestamp));
             }
@@ -114,7 +115,7 @@ namespace btg
          // A peer generates errors.
          asio::ip::basic_endpoint<asio::ip::tcp> endp = _alert->ip;
          asio::ip::address_v4 banned_ip = endp.address().to_v4();
-         BTG_NOTICE("Errors from peer: " << banned_ip.to_string() << ".");
+         BTG_NOTICE(logWrapper(), "Errors from peer: " << banned_ip.to_string() << ".");
       }
 
       void Context::handleTrackerAlert(libtorrent::tracker_alert* _alert)
@@ -127,24 +128,25 @@ namespace btg
 
          if (getIdFromHandle(handle, torrent_id, ti))
             {
-	      getFilename(torrent_id, filename);
+               getFilename(torrent_id, filename);
 
-	       VERBOSE_LOG(verboseFlag_, "Tracker alert: filename '" << 
-			   filename << "', status = " << 
-			   _alert->status_code << ", message '" << 
-			   _alert->msg() << "'");
-	       ti->trackerStatus.invalidate();
-	       // Handle alerts which have some undefined status code.
-	       if (_alert->status_code != trackerStatus::undefined)
-		 {
-		   ti->trackerStatus.setStatus(_alert->status_code);
-		 }
-	       else
-		 {
-		   ti->trackerStatus.setStatus(trackerStatus::warning);
-		 }
+               VERBOSE_LOG(logWrapper(),
+                           verboseFlag_, "Tracker alert: filename '" << 
+                           filename << "', status = " << 
+                           _alert->status_code << ", message '" << 
+                           _alert->msg() << "'");
+               ti->trackerStatus.invalidate();
+               // Handle alerts which have some undefined status code.
+               if (_alert->status_code != trackerStatus::undefined)
+                  {
+                     ti->trackerStatus.setStatus(_alert->status_code);
+                  }
+               else
+                  {
+                     ti->trackerStatus.setStatus(trackerStatus::warning);
+                  }
                ti->trackerStatus.setSerial(ti->serial);
-	       ti->trackerStatus.setMessage(_alert->msg());
+               ti->trackerStatus.setMessage(_alert->msg());
                ti->serial++;
 
                if (ti->serial > trackerStatus::MAX_SERIAL)
@@ -160,15 +162,16 @@ namespace btg
 
          t_int torrent_id;
          torrentInfo *ti;
-	 std::string filename;
+         std::string filename;
 
          if (getIdFromHandle(handle, torrent_id, ti))
             {
-	      getFilename(torrent_id, filename);
+               getFilename(torrent_id, filename);
 
-               VERBOSE_LOG(verboseFlag_, "Tracker reply alert: filename '" << 
-			   filename << "', status = 200 OK");
-	       ti->trackerStatus.invalidate();
+               VERBOSE_LOG(logWrapper(),
+                           verboseFlag_, "Tracker reply alert: filename '" << 
+                           filename << "', status = 200 OK");
+               ti->trackerStatus.invalidate();
                ti->trackerStatus.setStatus(200);
                ti->trackerStatus.setSerial(ti->serial);
                ti->serial++;
@@ -180,23 +183,23 @@ namespace btg
             }
       }
 
-     void Context::handleTrackerWarningAlert(libtorrent::tracker_warning_alert* _alert)
-     {
-       // Tracker wants to tell the client about something.
+      void Context::handleTrackerWarningAlert(libtorrent::tracker_warning_alert* _alert)
+      {
+         // Tracker wants to tell the client about something.
 
-       libtorrent::torrent_handle const& handle = _alert->handle;
+         libtorrent::torrent_handle const& handle = _alert->handle;
 
-       t_int torrent_id;
-       torrentInfo *ti;
-       std::string filename;
+         t_int torrent_id;
+         torrentInfo *ti;
+         std::string filename;
 
-       if (getIdFromHandle(handle, torrent_id, ti))
-	 {
-	   getFilename(torrent_id, filename);
+         if (getIdFromHandle(handle, torrent_id, ti))
+            {
+               getFilename(torrent_id, filename);
 
-	   VERBOSE_LOG(verboseFlag_, "Tracker warning alert: filename '" << 
-		       filename << "', message '" << _alert->msg() << "'");
-	       ti->trackerStatus.invalidate();
+               VERBOSE_LOG(logWrapper(), verboseFlag_, "Tracker warning alert: filename '" << 
+                           filename << "', message '" << _alert->msg() << "'");
+               ti->trackerStatus.invalidate();
                ti->trackerStatus.setStatus(trackerStatus::warning);
                ti->trackerStatus.setSerial(ti->serial);
                ti->trackerStatus.setMessage(_alert->msg());
@@ -207,7 +210,7 @@ namespace btg
                      ti->serial = trackerStatus::MIN_SERIAL;
                   }
             }
-     }
+      }
 
       void Context::handleAlerts()
       {
@@ -240,12 +243,12 @@ namespace btg
                   }
                else if (typeid(*alert) == typeid(libtorrent::tracker_warning_alert))
                   {
-		    handleTrackerWarningAlert(dynamic_cast<libtorrent::tracker_warning_alert*>(alert));
+                     handleTrackerWarningAlert(dynamic_cast<libtorrent::tracker_warning_alert*>(alert));
                   }
                else
                   {
                      // Log other alerts.
-                     BTG_NOTICE("Alert: " << alert->msg());
+                     BTG_NOTICE(logWrapper(), "Alert: " << alert->msg());
                   }
             }
       }

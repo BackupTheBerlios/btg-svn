@@ -46,6 +46,8 @@ extern "C"
 #include <arpa/inet.h>
 }
 
+#include <bcore/logable.h>
+
 namespace btg
 {
    namespace core
@@ -58,7 +60,7 @@ namespace btg
                /** @{ */
 
                /// Implements a low level tcp/ip socket.
-               class Socket
+               class Socket: public btg::core::Logable
                   {
                   public:
 
@@ -73,7 +75,7 @@ namespace btg
                         };
 
                      /// Constructor.
-                     Socket();
+                     Socket(LogWrapperType _logwrapper);
 
                      /// Copy constructor.
                      Socket(Socket const& _socket);

@@ -383,7 +383,7 @@ namespace btg
                   status = false;
                }
 
-            BTG_NOTICE("save_btn_pressed = " << save_btn_pressed);
+            // BTG_NOTICE("save_btn_pressed = " << save_btn_pressed);
 
             return status;
          }

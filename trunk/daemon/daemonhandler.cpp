@@ -53,10 +53,13 @@ namespace btg
 
       typedef std::map<t_long, eventHandler*> handlerMap;
 
-      daemonHandler::daemonHandler(daemonData* _dd, bool const _verboseFlag)
-         : dd_(_dd),
+      daemonHandler::daemonHandler(btg::core::LogWrapperType _logwrapper,
+                                   daemonData* _dd, 
+                                   bool const _verboseFlag)
+         : btg::core::Logable(_logwrapper),
+           dd_(_dd),
            verboseFlag_(_verboseFlag),
-           sessionlist_(_verboseFlag, 1024*1024 /* Max number of sessions. */),
+           sessionlist_(_logwrapper, _verboseFlag, 1024*1024 /* Max number of sessions. */),
            command_(0),
            session_(0),
            readBytes_(0),
@@ -76,21 +79,23 @@ namespace btg
            aliveCounter_(0),
            aliveCounterMax_(5),
 #endif // BTG_DEBUG
-           portManager_(_verboseFlag, _dd->portRange),
-           limitManager_(_verboseFlag, limit_timer_.maxValue(),
+           portManager_(_logwrapper, _verboseFlag, _dd->portRange),
+           limitManager_(_logwrapper, _verboseFlag, limit_timer_.maxValue(),
                          _dd->config->getUploadRateLimit(),
                          _dd->config->getDownloadRateLimit(),
                          _dd->config->getMaxUploads(),
                          _dd->config->getMaxConnections()),
 #if BTG_OPTION_SAVESESSIONS
-           sessionsaver_(_verboseFlag,
+           sessionsaver_(_logwrapper,
+                         _verboseFlag,
                          portManager_,
                          limitManager_,
                          sessionlist_,
                          *dd_),
            sessiontimer_(dd_->ss_timeout),
 #endif // BTG_OPTION_SAVESESSIONS
-           sendBuffer_()
+           sendBuffer_(),
+           cf_(_logwrapper, _dd->externalization)
       {
 #if BTG_OPTION_SAVESESSIONS
          if(dd_->ss_enable)
@@ -99,27 +104,27 @@ namespace btg
                   {
                      if(btg::core::os::fileOperation::check(dd_->ss_filename))
                         {
-                           MVERBOSE_LOG(moduleName, verboseFlag_, "Loading sessions from " << dd_->ss_filename << ".");
-                           BTG_MNOTICE("loading sessions from " << dd_->ss_filename);
+                           MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Loading sessions from " << dd_->ss_filename << ".");
+                           BTG_MNOTICE(logWrapper(), "loading sessions from " << dd_->ss_filename);
 
                            t_int numberOfSessions = sessionsaver_.loadSessions(dd_->ss_filename);
 
-                           MVERBOSE_LOG(moduleName, verboseFlag_, "Loaded " << numberOfSessions << " sesssion(s).");
+                           MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Loaded " << numberOfSessions << " sesssion(s).");
                         }
                      else
                         {
-                           BTG_MNOTICE("session file " << dd_->ss_filename << " not found. Not loading");
+                           BTG_MNOTICE(logWrapper(), "session file " << dd_->ss_filename << " not found. Not loading");
                         }
                   }
                else
                   {
-                     BTG_MNOTICE("session reloading disabled on command line, skipping reload");
+                     BTG_MNOTICE(logWrapper(), "session reloading disabled on command line, skipping reload");
                   }
             }
          else
             {
-               MVERBOSE_LOG(moduleName, verboseFlag_, "Sesssion saving disabled.");
-               BTG_MNOTICE("sesssion saving disabled");
+               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Sesssion saving disabled.");
+               BTG_MNOTICE(logWrapper(), "sesssion saving disabled");
             }
 #endif // BTG_OPTION_SAVESESSIONS
 
@@ -143,11 +148,11 @@ namespace btg
          // Read a message.
          buffer_.erase();
 #if BTG_TRANSPORT_DEBUG
-         BTG_MNOTICE("readFromTransport, reading from transport");
+         BTG_MNOTICE(logWrapper(), "readFromTransport, reading from transport");
 #endif // BTG_TRANSPORT_DEBUG
          readBytes_ = dd_->transport->read(buffer_, connectionID_);
 #if BTG_TRANSPORT_DEBUG
-         BTG_MNOTICE("readFromTransport, " << readBytes_ << " bytes read from connection " << connectionID_);
+         BTG_MNOTICE(logWrapper(), "readFromTransport, " << readBytes_ << " bytes read from connection " << connectionID_);
 #endif // BTG_TRANSPORT_DEBUG
 
          if (readBytes_ > 0)
@@ -156,13 +161,15 @@ namespace btg
 
                if (connection_ == 0)
                   {
-                     BTG_MNOTICE("new connection " << connectionID_);
+                     BTG_MNOTICE(logWrapper(), "new connection " << connectionID_);
                      dd_->connHandler->addConnection(connectionID_);
                      connection_ = dd_->connHandler->getConnection(connectionID_);
                   }
 
-               BTG_MNOTICE("got " << readBytes_ << " bytes from " << connection_->toString());
-               BTG_MNOTICE("data (in): " << buffer_.size() << " bytes");
+               BTG_MNOTICE(logWrapper(), 
+                           "got " << readBytes_ << " bytes from " << connection_->toString());
+               BTG_MNOTICE(logWrapper(),
+                           "data (in): " << buffer_.size() << " bytes");
 
                if (!dd_->externalization->setBuffer(buffer_))
                   {
@@ -176,7 +183,7 @@ namespace btg
                   }
 
                btg::core::commandFactory::decodeStatus dstatus;
-               command_ = btg::core::commandFactory::createFromBytes(dd_->externalization, dstatus);
+               command_ = cf_.createFromBytes(dstatus);
 
                // This buffer is also used for sending messages, so erase
                // the contents.
@@ -190,7 +197,7 @@ namespace btg
 
                session_ = connection_->getSession();
 
-               BTG_MNOTICE("attempting to handle " << command_->getName() << " with " << connection_->toString());
+               BTG_MNOTICE(logWrapper(), "attempting to handle " << command_->getName() << " with " << connection_->toString());
 
                // Try to find an eventhandler for this session.
                // We dont have to check auth here, since the connecton
@@ -273,7 +280,7 @@ namespace btg
                         {
                            // User is not authorized to do attach/list/setup.
 
-                           MVERBOSE_LOG(moduleName, verboseFlag_, "Client (" << connectionID_ << ") is not authorized.");
+                           MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Client (" << connectionID_ << ") is not authorized.");
 
                            sendCommand(dd_->externalization,
                                        dd_->transport,
@@ -328,7 +335,7 @@ namespace btg
          if (aliveCounter_ > aliveCounterMax_)
             {
                aliveCounter_ = 0;
-               BTG_MNOTICE("alive");
+               BTG_MNOTICE(logWrapper(), "alive");
             }
 #endif // BTG_DEBUG
 
@@ -347,9 +354,9 @@ namespace btg
             }
          else
             {
-               BTG_MNOTICE("terminating session " << session_);
+               BTG_MNOTICE(logWrapper(), "terminating session " << session_);
 
-               MVERBOSE_LOG(moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
 
                // Remove the session data.
                sessionlist_.erase(session_);
@@ -364,11 +371,11 @@ namespace btg
 
       void daemonHandler::handleDetach(eventHandler* _eventhandler)
       {
-         BTG_MNOTICE("detaching the current session");
+         BTG_MNOTICE(logWrapper(), "detaching the current session");
          _eventhandler->decClients();
 
          // Send an ack message back, as the session was detached.
-         MVERBOSE_LOG(moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
          sendAck(Command::CN_SDETACH);
          connection_->setSession(0);
          dd_->transport->endConnection(connectionID_);
@@ -414,8 +421,8 @@ namespace btg
 
       void daemonHandler::handleKill()
       {
-         BTG_MNOTICE("killing the daemon");
-         MVERBOSE_LOG(moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         BTG_MNOTICE(logWrapper(), "killing the daemon");
+         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
 
          sendAck(Command::CN_GKILL);
          dd_->transport->endConnection(connectionID_);
@@ -425,8 +432,8 @@ namespace btg
 
       void daemonHandler::handleGlobalLimit()
       {
-         BTG_MNOTICE("Setting global limits");
-         MVERBOSE_LOG(moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         BTG_MNOTICE(logWrapper(), "Setting global limits");
+         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
 
          limitCommand* lc = dynamic_cast<limitCommand*>(command_);
 
@@ -439,9 +446,9 @@ namespace btg
 
       void daemonHandler::handleGlobalStatus()
       {
-         BTG_MNOTICE("Global limits request");
+         BTG_MNOTICE(logWrapper(), "Global limits request");
 
-         MVERBOSE_LOG(moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
 
          t_int limitBytesUpld  = 0;
          t_int limitBytesDwnld = 0;
@@ -464,7 +471,7 @@ namespace btg
 
       void daemonHandler::handleUptime()
       {
-         MVERBOSE_LOG(moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
          buffer_.erase();
 
          time_t now;
@@ -480,7 +487,7 @@ namespace btg
 
       void daemonHandler::handleSessionName(eventHandler* _eventhandler)
       {
-         MVERBOSE_LOG(moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
 
          sendCommand(dd_->externalization, 
                      dd_->transport,
@@ -491,7 +498,7 @@ namespace btg
       void daemonHandler::handleSessionSetName(eventHandler* _eventhandler, 
                                                Command* _command)
       {
-         MVERBOSE_LOG(moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
 
          setSessionNameCommand* ssnc = dynamic_cast<setSessionNameCommand*>(_command);
 
@@ -517,7 +524,7 @@ namespace btg
 
       void daemonHandler::handleSessionInInvalidState(t_int const _id)
       {
-         MVERBOSE_LOG(moduleName, verboseFlag_, "client (" << connectionID_ << "): Message not supported.");
+         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): Message not supported.");
 
          sendError(_id, "Not supported in this state.");
       }
@@ -532,24 +539,24 @@ namespace btg
                // Success
                connection_->setUsername(icc->getUsername());
 
-               BTG_MNOTICE(connection_->toString() <<
+               BTG_MNOTICE(logWrapper(), connection_->toString() <<
                            " is authorized with username " << icc->getUsername());
 
-               MVERBOSE_LOG(moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
 
                if (!sendAck(Command::CN_GINITCONNECTION))
                   {
-                     BTG_MNOTICE("sending of ack(initConnectionCommand) failed");
+                     BTG_MNOTICE(logWrapper(), "sending of ack(initConnectionCommand) failed");
                   }
             }
          else
             {
                // Failure.
 
-               BTG_MNOTICE("connection " << connection_->toString() << " used incorrect username '" << icc->getUsername() << "', password hash = '" << icc->getPassword() << "'");
-               MVERBOSE_LOG(moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << " failed.");
+               BTG_MNOTICE(logWrapper(), "connection " << connection_->toString() << " used incorrect username '" << icc->getUsername() << "', password hash = '" << icc->getPassword() << "'");
+               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << " failed.");
 
-               MVERBOSE_LOG(moduleName, verboseFlag_, "Client (" << connectionID_ << "): Rejecting connection from user '" <<
+               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Client (" << connectionID_ << "): Rejecting connection from user '" <<
                             icc->getUsername() << "'.");
 
                if (!sendCommand(dd_->externalization,
@@ -560,14 +567,14 @@ namespace btg
                                                  "Failed to authorize user.")
                                 ))
                   {
-                     BTG_MNOTICE("sending of error(initConnectionCommand) failed");
+                     BTG_MNOTICE(logWrapper(), "sending of error(initConnectionCommand) failed");
                   }
             }
       }
 
       void daemonHandler::handleSessionList()
       {
-         MVERBOSE_LOG(moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
 
          std::vector<t_long> sessions;
          std::vector<std::string> session_names;
@@ -594,7 +601,9 @@ namespace btg
 
          if (sessions.size() > 0)
             {
-               btg_assert(sessions.size() == session_names.size(), "Session list and Id list must have same size.");
+               btg_assert(sessions.size() == session_names.size(), 
+                          logWrapper(), 
+                          "Session list and Id list must have same size.");
                sendCommand(dd_->externalization,
                            dd_->transport,
                            connectionID_,
@@ -616,7 +625,7 @@ namespace btg
          if (asc->getBuildID() != GPD->sBUILD())
             {
                // Wrong build.
-               BTG_ERROR_LOG("Attach, unexpected build id '" << asc->getBuildID() << "'");
+               BTG_ERROR_LOG(logWrapper(), "Attach, unexpected build id '" << asc->getBuildID() << "'");
 
                sendCommand(dd_->externalization, dd_->transport, connectionID_, new errorCommand(command_->getType(), "Wrong build ID"));
                return;
@@ -624,7 +633,7 @@ namespace btg
 
          // Build ok.
 
-         BTG_MNOTICE("attach, client build id '" << asc->getBuildID() << "'");
+         BTG_MNOTICE(logWrapper(), "attach, client build id '" << asc->getBuildID() << "'");
 
          t_long attachTo    = asc->getSession();
          if (connection_->getSession() != 0)
@@ -692,7 +701,7 @@ namespace btg
          connection_->setSession(attachTo);
 
          // Send an ack message back with the new session. Everything is OK.
-         MVERBOSE_LOG(moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
          sendAck(Command::CN_SATTACH);
       }
 
@@ -702,7 +711,7 @@ namespace btg
 
          if (sc->getRequiredData().getBuildID() != GPD->sBUILD())
             {
-               BTG_ERROR_LOG("Setup, unexpected build id '" << sc->getRequiredData().getBuildID() << "', expected '" << GPD->sBUILD() << "'");
+               BTG_ERROR_LOG(logWrapper(), "Setup, unexpected build id '" << sc->getRequiredData().getBuildID() << "', expected '" << GPD->sBUILD() << "'");
                sendCommand(dd_->externalization,
                            dd_->transport,
                            connectionID_,
@@ -756,12 +765,15 @@ namespace btg
                t_long session;
                sessionlist_.new_session(session);
 
-               BTG_MNOTICE("setup, client build id '" << sc->getRequiredData().getBuildID() << "'");
+               BTG_MNOTICE(logWrapper(), 
+                           "setup, client build id '" << sc->getRequiredData().getBuildID() << "'");
 
                // Setup a new context.
-               BTG_MNOTICE("setup, attempt to establish a new session with session id " << session);
+               BTG_MNOTICE(logWrapper(), 
+                           "setup, attempt to establish a new session with session id " << session);
 
-               BTG_MNOTICE("using the following paths:" <<
+               BTG_MNOTICE(logWrapper(), 
+                           "using the following paths:" <<
                            "tempdir '" << userTempDir << "', " <<
                            "work dir '" << userWorkDir << "', " <<
                            "seed dir '" << userSeedDir << "', " <<
@@ -778,11 +790,12 @@ namespace btg
                                  connectionID_,
                                  new errorCommand(command_->getType(), "Failed to setup session (all ports used)."));
 
-                     MVERBOSE_LOG(moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << " failed.");
+                     MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << " failed.");
                      return;
                   }
 
-               eventHandler* eh = new eventHandler(verboseFlag_,
+               eventHandler* eh = new eventHandler(logWrapper(),
+                                                   verboseFlag_,
                                                    connection_->getUsername(),
                                                    userTempDir,
                                                    userWorkDir,
@@ -838,7 +851,7 @@ namespace btg
                            setupInfoMessage += " Encryption: OFF.";
                         }
                      
-                     MVERBOSE_LOG(moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << "(" << setupInfoMessage << ").");
+                     MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << "(" << setupInfoMessage << ").");
 
                      // Write a response:
                      sendCommand(dd_->externalization,
@@ -854,7 +867,7 @@ namespace btg
                                  connectionID_,
                                  new errorCommand(command_->getType(), "Failed to setup session."));
 
-                     MVERBOSE_LOG(moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << " failed.");
+                     MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << " failed.");
                   }
             }
       }
@@ -918,7 +931,7 @@ namespace btg
       void daemonHandler::handleOther(eventHandler* _eventhandler, Command* _command)
       {
          // All other events.
-         MVERBOSE_LOG(moduleName, verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
          _eventhandler->event(_command, connectionID_);
       }
 
@@ -946,7 +959,7 @@ namespace btg
          bool status          = false;
          sendBuffer_.erase();
 
-         BTG_MNOTICE("sending '" << _command->getName() <<"'");
+         BTG_MNOTICE(logWrapper(), "sending '" << _command->getName() <<"'");
 
          if (verboseFlag_)
             {
@@ -959,12 +972,12 @@ namespace btg
                                                              dynamic_cast<errorCommand*>(_command)->getErrorCommand()
                                                              );
 
-                     MVERBOSE_LOG(moduleName, verboseFlag_, "daemon (" << _connectionID << "): " <<
+                     MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "daemon (" << _connectionID << "): " <<
                                   _command->getName() << " (caused by " << causedBy << ").");
                   }
                else
                   {
-                     MVERBOSE_LOG(moduleName, verboseFlag_, "daemon (" << _connectionID << "): " <<
+                     MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "daemon (" << _connectionID << "): " <<
                                   _command->getName() << ".");
                   }
 
@@ -980,12 +993,12 @@ namespace btg
             }
          else
             {
-               BTG_MNOTICE("failed to serialize command for sending");
+               BTG_MNOTICE(logWrapper(), "failed to serialize command for sending");
             }
 
          delete _command;
 
-         BTG_MNOTICE("data (out): " << sendBuffer_.size() << " bytes");
+         BTG_MNOTICE(logWrapper(), "data (out): " << sendBuffer_.size() << " bytes");
 
          if (_transport->write(sendBuffer_, _connectionID) != messageTransport::OPERATION_FAILED)
             {
@@ -1012,19 +1025,22 @@ namespace btg
                      connection_ = dd_->connHandler->getConnection(*iter);
                      if (connection_ == 0)
                         {
-                           BTG_MNOTICE("got a dead connection ID " <<
+                           BTG_MNOTICE(logWrapper(), 
+                                       "got a dead connection ID " <<
                                        *iter << " from transport");
                            continue;
                         }
 
                      // Find out if the connection had a session attached.
-                     BTG_MNOTICE("connection " << connection_->toString() << " has died");
+                     BTG_MNOTICE(logWrapper(), 
+                                 "connection " << connection_->toString() << " has died");
                      if (connection_->getSession() != 0)
                         {
                            eventHandler* eventhandler = 0;
                            if (sessionlist_.get(connection_->getSession(), eventhandler))
                               {
-                                 BTG_MNOTICE("detaching dead connection from session " << connection_->getSession());
+                                 BTG_MNOTICE(logWrapper(), 
+                                             "detaching dead connection from session " << connection_->getSession());
                                  eventhandler->decClients();
                               }
                         }
@@ -1039,7 +1055,7 @@ namespace btg
       void daemonHandler::handleDeserializationError(btg::core::commandFactory::decodeStatus const& _decodestatus)
       {
          // Broken command, we failed to deserialize it...
-         BTG_MNOTICE("unhandled data: " << buffer_.toString());
+         BTG_MNOTICE(logWrapper(), "unhandled data: " << buffer_.toString());
 
          // OK This is probably not good for some transports... A null session...
          // However, we should somehow notify the client that the command failed...
@@ -1070,9 +1086,11 @@ namespace btg
 
       void daemonHandler::logDirectoryNotFound(std::string const& _type, std::string const& _value)
       {
-         BTG_MNOTICE(_type << ": directory '" << _value << "' not found");
+         BTG_MNOTICE(logWrapper(), 
+                     _type << ": directory '" << _value << "' not found");
 
-         MVERBOSE_LOG(moduleName, verboseFlag_, "daemon (" << connectionID_ << "): " <<
+         MVERBOSE_LOG(logWrapper(), 
+                      moduleName, verboseFlag_, "daemon (" << connectionID_ << "): " <<
                       _type << ", directory '" << _value << "' not found.");
       }
 
@@ -1080,7 +1098,7 @@ namespace btg
       {
          if (session_timer_trigger_)
             {
-               MVERBOSE_LOG(moduleName, verboseFlag_, "Checking limits and alerts.");
+               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Checking limits and alerts.");
                sessionlist_.checkLimitsAndAlerts();
                session_timer_trigger_ = false;
                session_timer_.Reset();
@@ -1092,8 +1110,8 @@ namespace btg
 #if BTG_OPTION_SAVESESSIONS
                if (dd_->ss_enable)
                   {
-                     BTG_MNOTICE("Periodically saving sessions");
-                     MVERBOSE_LOG(moduleName, verboseFlag_, "Periodically saving sessions.");
+                     BTG_MNOTICE(logWrapper(), "Periodically saving sessions");
+                     MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Periodically saving sessions.");
                      sessionsaver_.saveSessions(dd_->ss_filename, false);
                   }
 #endif
@@ -1104,7 +1122,7 @@ namespace btg
 
          if (limit_timer_trigger_)
             {
-               MVERBOSE_LOG(moduleName, verboseFlag_, "Updating limits.");
+               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Updating limits.");
                limitManager_.update();
                limit_timer_.Reset();
                limit_timer_trigger_ = false;
@@ -1113,7 +1131,7 @@ namespace btg
 
          if (elapsed_timer_trigger_)
             {
-               MVERBOSE_LOG(moduleName, verboseFlag_, "Updating seed counters.");
+               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Updating seed counters.");
                sessionlist_.updateElapsedOrSeedCounter();
                elapsed_timer_trigger_ = false;
                elapsed_seed_timer_.Reset();
@@ -1143,21 +1161,21 @@ namespace btg
 
       void daemonHandler::shutdown()
       {
-         BTG_MNOTICE("cleaning up.");
+         BTG_MNOTICE(logWrapper(), "cleaning up.");
 
          limitManager_.stop();
 
 #if BTG_OPTION_SAVESESSIONS
          if(dd_->ss_enable)
             {
-               BTG_MNOTICE("saving sessions to '" << dd_->ss_filename << "'");
-               MVERBOSE_LOG(moduleName, verboseFlag_, "Saving sessions to '" << dd_->ss_filename << "'.");
+               BTG_MNOTICE(logWrapper(), "saving sessions to '" << dd_->ss_filename << "'");
+               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Saving sessions to '" << dd_->ss_filename << "'.");
                sessionsaver_.saveSessions(dd_->ss_filename, true);
             }
          else
             {
-               BTG_MNOTICE("sesssion saving disabled");
-               MVERBOSE_LOG(moduleName, verboseFlag_, "Sesssion saving disabled.");
+               BTG_MNOTICE(logWrapper(), "sesssion saving disabled");
+               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Sesssion saving disabled.");
             }
 #endif // BTG_OPTION_SAVESESSIONS
 

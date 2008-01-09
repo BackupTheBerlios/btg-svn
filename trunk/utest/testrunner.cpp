@@ -39,6 +39,7 @@
 
 int main(int argc, char **argv)
 {
+   /*
    using namespace btg::core::logger;
    logWrapper* log = logWrapper::getInstance();
    log->setLogStream(new logStream(new consoleLogger()));
@@ -50,6 +51,7 @@ int main(int argc, char **argv)
    // Only log errors.
    log->setMinMessagePriority(logWrapper::PRIO_ERROR);
 #endif // BTG_DEBUG
+   */
 
    // Default, run the tests one time.
    t_int repeatCount = 1;
@@ -83,14 +85,10 @@ int main(int argc, char **argv)
          if (!wasSucessful)
             {
                btg::core::projectDefaults::killInstance();
-               btg::core::logger::logWrapper::killInstance();
 
                return wasSucessful ? 0 : 1;
             }
       }
-
-   btg::core::projectDefaults::killInstance();
-   btg::core::logger::logWrapper::killInstance();
 
    return wasSucessful ? 0 : 1;
 }

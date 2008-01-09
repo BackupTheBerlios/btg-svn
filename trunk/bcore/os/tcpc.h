@@ -48,7 +48,9 @@ namespace btg
                   {
                   public:
                      /// Constructor.
-                     ClientSocket (std::string const& _host, t_uint const _port);
+                     ClientSocket(LogWrapperType _logwrapper,
+                                  std::string const& _host, 
+                                  t_uint const _port);
 
                      /// Write a byte array.
                      /// @return True - success. False - failture.

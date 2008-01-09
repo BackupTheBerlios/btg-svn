@@ -77,14 +77,26 @@ namespace btg
    {
       using namespace std;
 
-      Command* commandFactory::createFromBytes(btg::core::externalization::Externalization* _e,
-                                               decodeStatus & _status)
+      commandFactory::commandFactory(LogWrapperType _logwrapper,
+                                     btg::core::externalization::Externalization* _e)
+         : Logable(_logwrapper),
+           e(_e)
+      {
+
+      }
+
+      commandFactory::~commandFactory()
+      {
+         
+      }
+
+      Command* commandFactory::createFromBytes(decodeStatus & _status)
       {
          Command *c = 0;
          _status    = commandFactory::DS_OK;
 
          t_int cmdid;
-         _e->determineCommandType(cmdid);
+         e->determineCommandType(cmdid);
 
          // Create the command class
          switch (cmdid)
@@ -377,7 +389,7 @@ namespace btg
                   break;
                }
             default:
-               BTG_ERROR_LOG("createFromBytes: wrong command type: " << cmdid << ".");
+               BTG_ERROR_LOG(logWrapper(), "createFromBytes: wrong command type: " << cmdid << ".");
                _status = commandFactory::DS_UNKNOWN;
                c       = 0;
                break;
@@ -385,9 +397,9 @@ namespace btg
 
          if (c != 0)
             {
-               if (!c->deserialize(_e))
+               if (!c->deserialize(e))
                   {
-                     BTG_ERROR_LOG("commandFactory, unable to deserialize " << 
+                     BTG_ERROR_LOG(logWrapper(), "commandFactory, unable to deserialize " << 
                                    c->getName() << ".");
                      _status = commandFactory::DS_FAILED;
 
@@ -399,8 +411,7 @@ namespace btg
          return c;
       }
 
-      bool commandFactory::convertToBytes(btg::core::externalization::Externalization* _e,
-                                          const Command* _command)
+      bool commandFactory::convertToBytes(const Command* _command)
       {
          bool status = false;
 
@@ -409,7 +420,7 @@ namespace btg
                return status;
             }
 
-         _e->reset();
+         e->reset();
 
          switch (_command->getType())
             {
@@ -464,17 +475,23 @@ namespace btg
             case Command::CN_MOREAD:
             case Command::CN_MOWRITE:
                {
-                  status = _command->serialize(_e);
+                  status = _command->serialize(e);
                   break;
                }
             default:
-               BTG_ERROR_LOG("convertToBytes, wrong command type: " << 
+               BTG_ERROR_LOG(logWrapper(), "convertToBytes, wrong command type: " << 
                              static_cast<t_int>(_command->getType()) << ".");
                status = false;
                break;
             }
 
          return status;
+      }
+
+      void commandFactory::getBytes(btg::core::DIRECTION const _dir, dBuffer & _dbuffer)
+      {
+         e->setDirection(_dir);
+         e->getBuffer(_dbuffer);
       }
 
    } // namespace core

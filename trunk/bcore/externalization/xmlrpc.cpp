@@ -41,8 +41,9 @@ namespace btg
       namespace externalization
       {
 
-         XMLRPC::XMLRPC()
-            : xmlrpc_request(0),
+         XMLRPC::XMLRPC(LogWrapperType _logwrapper)
+            : Externalization(_logwrapper),
+              xmlrpc_request(0),
               doRewind(false)
          {
             reset();
@@ -56,7 +57,7 @@ namespace btg
          void XMLRPC::reset()
          {
 #if BTG_EXTERNALIZATION_DEBUG
-            BTG_NOTICE("XMLRPC::reset");
+            BTG_NOTICE(logWrapper(), "XMLRPC::reset");
 #endif
             XMLRPC_RequestFree(xmlrpc_request, 1);
             xmlrpc_request = XMLRPC_RequestNew();
@@ -76,7 +77,7 @@ namespace btg
                   param = XMLRPC_VectorNext(params);
 
 #if BTG_EXTERNALIZATION_DEBUG
-            BTG_NOTICE("XMLRPC::getNextValue() retrieved param of type " << XMLRPC_GetValueType(param));
+            BTG_NOTICE(logWrapper(), "XMLRPC::getNextValue() retrieved param of type " << XMLRPC_GetValueType(param));
 #endif
             return param;
          }
@@ -176,7 +177,7 @@ namespace btg
             /* in xml_element.c:695 fprintf(stderr...) is used on
                error conditions.. Might wan't to remove that */
 #if BTG_EXTERNALIZATION_DEBUG
-            BTG_NOTICE("Deserializing command from " << s << " of size " << buffSize);
+            BTG_NOTICE(logWrapper(), "Deserializing command from " << s << " of size " << buffSize);
 #endif // BTG_EXTERNALIZATION_DEBUG
             temp_request = XMLRPC_REQUEST_FromXML(s, buffSize, NULL);
 
@@ -244,7 +245,7 @@ namespace btg
                }
 
 #if BTG_EXTERNALIZATION_DEBUG
-            BTG_NOTICE("Serialized command to " << buff);
+            BTG_NOTICE(logWrapper(), "Serialized command to " << buff);
 #endif // BTG_EXTERNALIZATION_DEBUG
             _buffer.erase();
             _buffer.addBytes(reinterpret_cast<t_byteCP>(buff), buffsize);
@@ -263,14 +264,14 @@ namespace btg
             if(_dir == btg::core::FROM_SERVER)
                {
 #if BTG_EXTERNALIZATION_DEBUG
-                  BTG_NOTICE("XMLRPC::setDirection: xmlrcp_request_response");
+                  BTG_NOTICE(logWrapper(), "XMLRPC::setDirection: xmlrcp_request_response");
 #endif // BTG_EXTERNALIZATION_DEBUG
                   XMLRPC_RequestSetRequestType(xmlrpc_request, xmlrpc_request_response);
                }
             else
                {
 #if BTG_EXTERNALIZATION_DEBUG
-                  BTG_NOTICE("XMLRPC::setDirection: xmlrcp_request_call");
+                  BTG_NOTICE(logWrapper(), "XMLRPC::setDirection: xmlrcp_request_call");
 #endif // BTG_EXTERNALIZATION_DEBUG
                   XMLRPC_RequestSetRequestType(xmlrpc_request, xmlrpc_request_call);
                }
@@ -280,7 +281,7 @@ namespace btg
          {
             reset();
 #if BTG_EXTERNALIZATION_DEBUG
-            BTG_NOTICE("XMLRPC::setCommand() " << _command << " :" <<getCommandName(_command));
+            BTG_NOTICE(logWrapper(), "XMLRPC::setCommand() " << _command << " :" <<getCommandName(_command));
 #endif // BTG_EXTERNALIZATION_DEBUG
             XMLRPC_RequestSetMethodName(xmlrpc_request, getCommandName(_command).c_str());
             addByte(_command);
@@ -304,7 +305,7 @@ namespace btg
                }
 
 #if BTG_EXTERNALIZATION_DEBUG
-            BTG_NOTICE("XMLRPC::getCommand() " << _command << " :" << getCommandName(_command));
+            BTG_NOTICE(logWrapper(), "XMLRPC::getCommand() " << _command << " :" << getCommandName(_command));
 #endif // BTG_EXTERNALIZATION_DEBUG
 
             return _command;

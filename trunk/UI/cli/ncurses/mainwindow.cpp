@@ -247,13 +247,13 @@ namespace btg
                         // New context.
                         // This also sets the updated flag.
                         new_entries.push_back(*iter);
-                        BTG_NOTICE("Added new context");
+                        // BTG_NOTICE("Added new context");
                      }
                }
 
             if (new_entries.size() > 0)
                {
-                  BTG_NOTICE("Context number changed - add");
+                  // BTG_NOTICE("Context number changed - add");
                   changed_ = true;
                }
 
@@ -283,13 +283,13 @@ namespace btg
 
                   if (erase_iter != statusList_.end())
                      {
-                        BTG_NOTICE("Removing " << erase_iter->second.status.contextID());
+                        // BTG_NOTICE("Removing " << erase_iter->second.status.contextID());
                         statusList_.erase(erase_iter);
                      }
                }
             if (_id_list.size() > 0)
                {
-                  BTG_NOTICE("Context number changed - remove");
+                  // BTG_NOTICE("Context number changed - remove");
                   changed_ = true;
                }
          }
@@ -301,7 +301,7 @@ namespace btg
 
          void statusList::resetChanged()
          {
-            BTG_NOTICE("Reseting context change flag");
+            // BTG_NOTICE("Reseting context change flag");
 
             changed_ = false;
          }

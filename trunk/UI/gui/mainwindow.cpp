@@ -179,14 +179,14 @@ namespace btg
                handler->setStatusBar(msb);
             }
 
-            BTG_NOTICE("Main window created.\n");
+            // BTG_NOTICE("Main window created.\n");
          }
 
          bool mainWindow::on_refresh_timeout(int)
          {
             if (!updateContexts)
                {
-                  BTG_NOTICE("Not updating contexts");
+                  // BTG_NOTICE("Not updating contexts");
                   return true;
                }
 
@@ -335,7 +335,7 @@ namespace btg
          {
             bool non_context = false;
 
-            BTG_NOTICE("updateContexts = " << updateContexts);
+            // BTG_NOTICE("updateContexts = " << updateContexts);
 
             // During execution of this function, no updates of
             // contexts should be done.
@@ -367,7 +367,7 @@ namespace btg
                case buttonMenuIds::BTN_LOAD:
                   {
                      handle_btn_load();
-                     BTG_NOTICE("(global) mainToolbar::BTN_LOAD");
+                     // BTG_NOTICE("(global) mainToolbar::BTN_LOAD");
                      non_context = true;
                      break;
                   }
@@ -528,12 +528,12 @@ namespace btg
                   }
                case(Gtk::RESPONSE_CANCEL):
                   {
-                     BTG_NOTICE("Cancel clicked.");
+                     // BTG_NOTICE("Cancel clicked.");
                      break;
                   }
                default:
                   {
-                     BTG_NOTICE("Unexpected button clicked.");
+                     // BTG_NOTICE("Unexpected button clicked.");
                      break;
                   }
                } // switch
@@ -583,7 +583,7 @@ namespace btg
                   return;
                }
 
-            VERBOSE_LOG(verboseFlag, _msg);
+            // VERBOSE_LOG(verboseFlag, _msg);
             logMessage(_msg);
          }
 
@@ -912,7 +912,7 @@ namespace btg
                   }
                default:
                   {
-                     BTG_NOTICE("Unexpected button clicked.");
+                     // BTG_NOTICE("Unexpected button clicked.");
                      break;
                   }
                } // switch
@@ -937,7 +937,7 @@ namespace btg
          {
             GET_HANDLER_INST;
 
-            BTG_NOTICE("mainToolbar::BTN_START");
+            // BTG_NOTICE("mainToolbar::BTN_START");
             handler->reqStart(_id);
             if (handler->commandSuccess())
                {
@@ -952,7 +952,7 @@ namespace btg
          {
             GET_HANDLER_INST;
 
-            BTG_NOTICE("mainToolbar::BTN_STOP");
+            // BTG_NOTICE("mainToolbar::BTN_STOP");
             handler->reqStop(_id);
             if (handler->commandSuccess())
                {
@@ -967,7 +967,7 @@ namespace btg
          {
             GET_HANDLER_INST;
 
-            BTG_NOTICE("mainToolbar::BTN_ERASE");
+            // BTG_NOTICE("mainToolbar::BTN_ERASE");
             handler->reqAbort(_id, true /* erase data */, false);
             if (handler->commandSuccess())
                {
@@ -983,7 +983,7 @@ namespace btg
          {
             GET_HANDLER_INST;
 
-            BTG_NOTICE("mainToolbar::BTN_ABORT");
+            // BTG_NOTICE("mainToolbar::BTN_ABORT");
             handler->reqAbort(_id, false, false);
             if (handler->commandSuccess())
                {
@@ -999,7 +999,7 @@ namespace btg
          {
             GET_HANDLER_INST;
 
-            BTG_NOTICE("(global) mainToolbar::BTN_CLEAN");
+            // BTG_NOTICE("(global) mainToolbar::BTN_CLEAN");
             handler->reqClean(_id, false);
             string filename("");
             handler->idToFilename(_id, filename);
@@ -1087,7 +1087,7 @@ namespace btg
                         seed_timeout = limitdialog->getSeedTimeout();
                      }
 
-                  BTG_NOTICE("mainToolbar::BTN_LIMIT");
+                  // BTG_NOTICE("mainToolbar::BTN_LIMIT");
 
                   handler->reqLimit(_id,
                                    up_limit, down_limit,
@@ -1098,10 +1098,10 @@ namespace btg
                      {
                         msb->set(USERMESSAGE_LIMIT_B + limit_filename + USERMESSAGE_LIMIT_E);
                         logVerboseMessage(USERMESSAGE_LIMIT_B + limit_filename + USERMESSAGE_LIMIT_E);
-                        BTG_NOTICE("limit set, upload = " << up_limit
-                                   << ", download = " << down_limit
-                                   << ", seed percent = " << seed_percent
-                                   << ", seed timeout = " << seed_timeout);
+                        // BTG_NOTICE("limit set, upload = " << up_limit
+                        //           << ", download = " << down_limit
+                        //           << ", seed percent = " << seed_percent
+                        //           << ", seed timeout = " << seed_timeout);
                      }
                }
             else
@@ -1129,14 +1129,14 @@ namespace btg
          
          bool mainWindow::on_window_state_event (GdkEventWindowState* event)
          {
-            BTG_NOTICE("Change window state to: " << ((event->new_window_state && Gdk::WINDOW_STATE_MAXIMIZED)?"MAXIMIZED":"unmaximized"));
+            // BTG_NOTICE("Change window state to: " << ((event->new_window_state && Gdk::WINDOW_STATE_MAXIMIZED)?"MAXIMIZED":"unmaximized"));
             m_clientDynConfig.set_gui_window_maximized(event->new_window_state && Gdk::WINDOW_STATE_MAXIMIZED);
             return Gtk::Window::on_window_state_event(event);
          }
          
          bool mainWindow::on_configure_event (GdkEventConfigure* event)
          {
-            BTG_NOTICE("Resizing to: " << event->x << "x" << event->y << "+" << event->width << "+" << event->height);
+            // BTG_NOTICE("Resizing to: " << event->x << "x" << event->y << "+" << event->width << "+" << event->height);
             // ugly hack related to state/configure events order
             if (event->x)
             {

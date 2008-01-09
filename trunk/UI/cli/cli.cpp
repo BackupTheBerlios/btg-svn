@@ -237,13 +237,15 @@ namespace btg
          /* */
          /* */
 
-         cliHandler::cliHandler(btg::core::externalization::Externalization* _e,
+         cliHandler::cliHandler(btg::core::LogWrapperType _logwrapper,
+                                btg::core::externalization::Externalization* _e,
                                 messageTransport* _transport,
                                 clientConfiguration* _config,
                                 btg::core::client::lastFiles* _lastfiles,
                                 bool const _verboseFlag,
                                 bool const _autoStartFlag)
-            : clientHandler(_e,
+            : clientHandler(_logwrapper,
+                            _e,
                             this,
                             _transport,
                             _config,
@@ -1051,7 +1053,7 @@ namespace btg
             this->cmd_failture++;
 
             setError("Listing failed.");
-            BTG_NOTICE("Listing failed.");
+            BTG_NOTICE(logWrapper(), "Listing failed.");
 
             // Listing failed, so there are no context IDs.
             setCurrentID(cliHandler::WRONG_CONTEXT_ID);
@@ -1062,7 +1064,7 @@ namespace btg
             this->cmd_failture++;
 
             setError(_errorDescription);
-            BTG_NOTICE("On error: " << _errorDescription);
+            BTG_NOTICE(logWrapper(), "On error: " << _errorDescription);
 
             setCurrentID(cliHandler::WRONG_CONTEXT_ID);
          }
@@ -1584,14 +1586,16 @@ namespace btg
 
          void cliHandler::onLimitStatus(t_int const _uploadRate, t_int const _downloadRate, t_int const _seedLimit, t_long const _seedTimeout)
          {
-            BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unused function, onLimitStatus, called with parameters: " << _uploadRate << ", " << _downloadRate << ", " << _seedLimit << ", " << _seedTimeout << ".");
+            BTG_FATAL_ERROR(logWrapper(),
+                            GPD->sCLI_CLIENT(), "Unused function, onLimitStatus, called with parameters: " << _uploadRate << ", " << _downloadRate << ", " << _seedLimit << ", " << _seedTimeout << ".");
          }
 
          void cliHandler::onLimitStatusError(std::string const& _errorDescription)
          {
             this->cmd_failture++;
 
-            BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unused function, onLimitStatusError, called with parameter: " << _errorDescription << ".");
+            BTG_FATAL_ERROR(logWrapper(),
+                            GPD->sCLI_CLIENT(), "Unused function, onLimitStatusError, called with parameter: " << _errorDescription << ".");
          }
 
          void cliHandler::setCurrentID(t_int const _currentID)
@@ -1936,11 +1940,13 @@ namespace btg
          {
          }
 
-         cliStartupHelper::cliStartupHelper(btg::core::client::clientConfiguration*        _config,
+         cliStartupHelper::cliStartupHelper(btg::core::LogWrapperType _logwrapper,
+                                            btg::core::client::clientConfiguration*        _config,
                                             btg::core::client::commandLineArgumentHandler* _clah,
                                             btg::core::messageTransport*                   _messageTransport,
                                             btg::core::client::clientHandler*              _handler)
-            : btg::core::client::startupHelper(GPD->sCLI_CLIENT(),
+            : btg::core::client::startupHelper(_logwrapper,
+                                               GPD->sCLI_CLIENT(),
                                                _config,
                                                _clah,
                                                _messageTransport,

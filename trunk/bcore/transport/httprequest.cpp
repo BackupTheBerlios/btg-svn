@@ -30,8 +30,10 @@ namespace btg
 {
    namespace core
    {
-      httpRequest::httpRequest(btg::core::os::gzipIf* _gzipif)
-         : recvBuffer(),
+      httpRequest::httpRequest(LogWrapperType _logwrapper,
+                               btg::core::os::gzipIf* _gzipif)
+         : Logable(_logwrapper),
+           recvBuffer(),
            request_headers(),
            request_content(),
            request_content_length(0),
@@ -46,56 +48,58 @@ namespace btg
       httpRequest::~httpRequest()
       {
 #if BTG_TRANSPORT_DEBUG
-         BTG_NOTICE("httpRequest cleanup");
+         BTG_NOTICE(logWrapper(), "httpRequest cleanup");
 #endif // BTG_TRANSPORT_DEBUG
       }
 
-      httpRequestServerSide::httpRequestServerSide(btg::core::os::gzipIf* _gzipif)
-         : httpRequest(_gzipif)
+      httpRequestServerSide::httpRequestServerSide(LogWrapperType _logwrapper,
+                                                   btg::core::os::gzipIf* _gzipif)
+         : httpRequest(_logwrapper, _gzipif)
       {
       }
 
       httpRequestServerSide::~httpRequestServerSide()
       {
 #if BTG_TRANSPORT_DEBUG
-         BTG_NOTICE("httpRequest cleanup");
+         BTG_NOTICE(logWrapper(), "httpRequest cleanup");
 #endif // BTG_TRANSPORT_DEBUG
       }
 
-      httpRequestClientSide::httpRequestClientSide(btg::core::os::gzipIf* _gzipif)
-         : httpRequest(_gzipif)
+      httpRequestClientSide::httpRequestClientSide(LogWrapperType _logwrapper,
+                                                   btg::core::os::gzipIf* _gzipif)
+         : httpRequest(_logwrapper, _gzipif)
       {
       }
 
       httpRequestClientSide::~httpRequestClientSide()
       {
 #if BTG_TRANSPORT_DEBUG
-         BTG_NOTICE("httpRequest cleanup");
+         BTG_NOTICE(logWrapper(), "httpRequest cleanup");
 #endif // BTG_TRANSPORT_DEBUG
       }
 
       void httpRequest::addBytes(t_byteCP _buffer, t_int _len)
       {
-         recvBuffer+=std::string(reinterpret_cast<const char*>(_buffer), static_cast<std::string::size_type>(_len));
+         recvBuffer += std::string(reinterpret_cast<const char*>(_buffer), static_cast<std::string::size_type>(_len));
          parse();
       }
 
       bool httpRequest::getHeader(std::string header, std::string &value)
       {
 #if BTG_TRANSPORT_DEBUG
-         BTG_NOTICE("httpRequest::getHeader() Checking for header '" << header << "'.");
+         BTG_NOTICE(logWrapper(), "httpRequest::getHeader() Checking for header '" << header << "'.");
 #endif // BTG_TRANSPORT_DEBUG
          if (request_headers.find(header) == request_headers.end())
             {
 #if BTG_TRANSPORT_DEBUG
-               BTG_NOTICE("httpRequest::getHeader() Not found");
+               BTG_NOTICE(logWrapper(), "httpRequest::getHeader() Not found");
 #endif // BTG_TRANSPORT_DEBUG
                return false;
             }
 
          value = request_headers[header];
 #if BTG_TRANSPORT_DEBUG
-         BTG_NOTICE("httpRequest::getHeader() Found, value '" << value << "'");
+         BTG_NOTICE(logWrapper(), "httpRequest::getHeader() Found, value '" << value << "'");
 #endif // BTG_TRANSPORT_DEBUG
          return true;
       }
@@ -113,7 +117,7 @@ namespace btg
                if (content_encoding.find("gzip") != std::string::npos)
                   {
 #if BTG_TRANSPORT_DEBUG
-                     BTG_NOTICE("httpRequest::getContent(), decompressing content using GZIP. Compressed size is " << request_content.length());
+                     BTG_NOTICE(logWrapper(), "httpRequest::getContent(), decompressing content using GZIP. Compressed size is " << request_content.length());
 #endif // BTG_TRANSPORT_DEBUG
 
                      try
@@ -124,13 +128,13 @@ namespace btg
                         }
                      catch(...)
                         {
-                           BTG_ERROR_LOG("httpRequest::getContent(), failed to decompress GZIP'ed content.");
+                           BTG_ERROR_LOG(logWrapper(), "httpRequest::getContent(), failed to decompress GZIP'ed content.");
                            bAbort = true;
                            return 0;
                         }
 
 #if BTG_TRANSPORT_DEBUG
-                     BTG_NOTICE("httpRequest::getContent(), decompressed, uncompressed size is " << request_content.length());
+                     BTG_NOTICE(logWrapper(), "httpRequest::getContent(), decompressed, uncompressed size is " << request_content.length());
 #endif // BTG_TRANSPORT_DEBUG
                   }
             }
@@ -145,7 +149,7 @@ namespace btg
       void httpRequest::reset()
       {
 #if BTG_TRANSPORT_DEBUG
-         BTG_NOTICE("httpRequest::reset()");
+         BTG_NOTICE(logWrapper(), "httpRequest::reset()");
 #endif // BTG_TRANSPORT_DEBUG
          request_content_length = 0;
 
@@ -220,7 +224,7 @@ namespace btg
 				// Broken client/server in remote end.
                                  bAbort=true;
 #if BTG_TRANSPORT_DEBUG
-                                 BTG_NOTICE("httpRequest::parse() Broken firstline");
+                                 BTG_NOTICE(logWrapper(), "httpRequest::parse() Broken firstline");
 #endif // BTG_TRANSPORT_DEBUG
                                  return false;
                               }
@@ -240,7 +244,7 @@ namespace btg
 				      // No content length.
                                        bAbort=true;
 #if BTG_TRANSPORT_DEBUG
-                                       BTG_NOTICE("httpRequest::parse() Missing Content-Length header");
+                                       BTG_NOTICE(logWrapper(), "httpRequest::parse() Missing Content-Length header");
 #endif // BTG_TRANSPORT_DEBUG
                                        return false;
                                     }
@@ -254,7 +258,7 @@ namespace btg
 				      // Zero content?.
                                        bAbort=true;
 #if BTG_TRANSPORT_DEBUG
-                                       BTG_NOTICE("httpRequest::parse() Zero content: " << request_headers["Content-Length"]);
+                                       BTG_NOTICE(logWrapper(), "httpRequest::parse() Zero content: " << request_headers["Content-Length"]);
 #endif // BTG_TRANSPORT_DEBUG
                                        return false;
                                     }
@@ -276,7 +280,7 @@ namespace btg
                                     {
 				      // Broken request.
 #if BTG_TRANSPORT_DEBUG
-                                       BTG_NOTICE("httpRequest::parse() Broken header line: " << line);
+                                       BTG_NOTICE(logWrapper(), "httpRequest::parse() Broken header line: " << line);
 #endif // BTG_TRANSPORT_DEBUG
                                        bAbort=true;
                                        return false;

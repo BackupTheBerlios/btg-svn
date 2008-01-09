@@ -43,7 +43,8 @@ namespace btg
             public:
                /// Constructor.
                /// @param [in] _filename The file name used.
-               daemonConfiguration(std::string const& _filename);
+               daemonConfiguration(btg::core::LogWrapperType _logwrapper,
+                                   std::string const& _filename);
 
                /// Read the config file.
                bool read();

@@ -29,6 +29,8 @@
 #include <daemon/lt_version.h>
 #include <libtorrent/ip_filter.hpp>
 
+#include <bcore/logable.h>
+
 #include <string>
 
 namespace btg
@@ -42,7 +44,7 @@ namespace btg
          /** @{ */
 
          /// IPv4 filter interface.
-         class IpFilterIf
+         class IpFilterIf: public btg::core::Logable
             {
             public:
 
@@ -55,7 +57,8 @@ namespace btg
                   };
 
                /// Constructor.
-               IpFilterIf(bool const _verboseFlag, 
+               IpFilterIf(btg::core::LogWrapperType _logwrapper,
+                          bool const _verboseFlag, 
                           TYPE const _type, 
                           std::string const& _filename);
 

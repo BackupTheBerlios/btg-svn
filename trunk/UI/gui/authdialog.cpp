@@ -140,14 +140,15 @@ namespace btg
                   {
                      if (username_ok && password_ok)
                         {
-                           BTG_NOTICE("valid");
+                           // BTG_NOTICE("valid");
                            this->hide();
                         }
                      break;
                   }
                default:
                   {
-                     BTG_NOTICE("invalid");
+                     // BTG_NOTICE("invalid");
+                     break;
                   }
                }
 

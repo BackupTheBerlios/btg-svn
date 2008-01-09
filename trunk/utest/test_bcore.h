@@ -28,6 +28,7 @@
 #include <bcore/dbuf.h>
 
 #include <bcore/externalization/externalization.h>
+#include <bcore/logable.h>
 
 class testBcore : public CppUnit::TestFixture
 {
@@ -156,4 +157,5 @@ class testBcore : public CppUnit::TestFixture
    btg::core::dBuffer                           buffer;
    btg::core::externalization::Externalization* externalization;
    btg::core::Command*                          command_pointer;
+   btg::core::LogWrapperType                    logwrapper;
 };

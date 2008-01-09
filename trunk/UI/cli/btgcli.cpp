@@ -25,6 +25,7 @@
 #include <bcore/client/carg.h>
 #include <bcore/client/configuration.h>
 #include <bcore/client/lastfiles.h>
+#include <bcore/client/loglevel.h>
 
 #include <bcore/os/id.h>
 #include <bcore/os/fileop.h>
@@ -59,6 +60,7 @@ extern "C"
 #include <bcore/client/helper.h>
 #include <bcore/logger/file_log.h>
 
+#include <bcore/logable.h>
 #include <bcore/crashlog.h>
 
 using namespace btg::core;
@@ -72,6 +74,8 @@ void handleInput(std::string const& _line, cliHandler* _clihandler, ncursesScree
 // Main file for the client.
 int main(int argc, char* argv[])
 {
+   LogWrapperType logwrapper(new btg::core::logger::logWrapper);
+
    btg::core::crashLog::init();
 
    // Parse command line arguments.
@@ -85,7 +89,6 @@ int main(int argc, char* argv[])
          cla = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_ERROR_EXIT;
       }
@@ -94,7 +97,7 @@ int main(int argc, char* argv[])
    // syntax of the configuration file.
    if (cla->listConfigFileSyntax())
       {
-         clientConfiguration non_existing("non_existing");
+         clientConfiguration non_existing(logwrapper, "non_existing");
 
          std::cout << non_existing.getSyntax() << std::endl;
 
@@ -102,7 +105,6 @@ int main(int argc, char* argv[])
          cla = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_NORMAL_EXIT;
       }
@@ -120,26 +122,25 @@ int main(int argc, char* argv[])
    string errorString;
    if (!btg::core::os::fileOperation::check(config_filename, errorString, false))
       {
-         BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Could not open file '" << config_filename << "'.");
+         BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Could not open file '" << config_filename << "'.");
 
          delete cla;
          cla = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_ERROR_EXIT;
       }
 
-   clientConfiguration* config = new clientConfiguration(config_filename);
+   clientConfiguration* config = new clientConfiguration(logwrapper, config_filename);
    bool const gotConfig = config->read();
 
-   clientDynConfig cliDynConf(GPD->sCLI_DYNCONFIG());
-   lastFiles* lastfiles = new lastFiles(cliDynConf);
+   clientDynConfig cliDynConf(logwrapper, GPD->sCLI_DYNCONFIG());
+   lastFiles* lastfiles = new lastFiles(logwrapper, cliDynConf);
 
    if (!gotConfig)
       {
-         BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Could not read the config file, '" << GPD->sCLI_CONFIG() << "'. Create one.");
+         BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Could not read the config file, '" << GPD->sCLI_CONFIG() << "'. Create one.");
 
          delete config;
          config = 0;
@@ -151,7 +152,6 @@ int main(int argc, char* argv[])
          cla    = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_ERROR_EXIT;
       }
@@ -162,7 +162,8 @@ int main(int argc, char* argv[])
    btg::core::externalization::Externalization* externalization = 0;
    messageTransport* transport                                  = 0;
 
-   transportHelper* transporthelper = new transportHelper(GPD->sCLI_CLIENT(),
+   transportHelper* transporthelper = new transportHelper(logwrapper,
+                                                          GPD->sCLI_CLIENT(),
                                                           config,
                                                           cla);
 
@@ -184,7 +185,6 @@ int main(int argc, char* argv[])
          externalization = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_ERROR_EXIT;
       }
@@ -192,24 +192,26 @@ int main(int argc, char* argv[])
    delete transporthelper;
    transporthelper = 0;
 
-   cliHandler* clihandler = new cliHandler(externalization, 
-					   transport, 
-					   config, 
-					   lastfiles, 
-					   verboseFlag, 
-					   cla->automaticStart());
+   cliHandler* clihandler = new cliHandler(logwrapper,
+                                           externalization, 
+                                           transport, 
+                                           config, 
+                                           lastfiles, 
+                                           verboseFlag, 
+                                           cla->automaticStart());
 
    string initialStatusMessage("");
 
    // Create a helper to do the initial setup of this client.
-   startupHelper* starthelper = new cliStartupHelper(config,
+   startupHelper* starthelper = new cliStartupHelper(logwrapper,
+                                                     config,
                                                      cla,
                                                      transport,
                                                      clihandler);
 
    if (!starthelper->init())
       {
-         BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Internal error: start up helper not initialized.");
+         BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Internal error: start up helper not initialized.");
 
          delete starthelper;
          starthelper = 0;
@@ -230,43 +232,16 @@ int main(int argc, char* argv[])
          lastfiles = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_ERROR_EXIT;
       }
 
-#if BTG_DEBUG
-   // Set debug logging, if requested.
-   if (cla->doDebug())
-      {
-         logWrapper::getInstance()->setMinMessagePriority(logWrapper::PRIO_DEBUG);
-      }
-   else if (verboseFlag)
-      {
-         logWrapper::getInstance()->setMinMessagePriority(logWrapper::PRIO_VERBOSE);
-      }
-   else
-      {
-         // Default: only report errors.
-         logWrapper::getInstance()->setMinMessagePriority(logWrapper::PRIO_ERROR);
-      }
-#else
-   // No debug enabled, check for verbose flag.
-   if (verboseFlag)
-      {
-         logWrapper::getInstance()->setMinMessagePriority(logWrapper::PRIO_VERBOSE);
-      }
-   else
-      {
-         // Default: only report errors.
-         logWrapper::getInstance()->setMinMessagePriority(logWrapper::PRIO_ERROR);
-      }
-#endif // BTG_DEBUG
+   setDefaultLogLevel(logwrapper, cla->doDebug(), verboseFlag);
 
    // Initialize logging.
    if (starthelper->execute(startupHelper::op_log) != startupHelper::or_log_success)
       {
-         BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to initialize logging");
+         BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Unable to initialize logging");
          delete starthelper;
          starthelper = 0;
 
@@ -286,7 +261,6 @@ int main(int argc, char* argv[])
          lastfiles = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_ERROR_EXIT;
       }
@@ -302,7 +276,7 @@ int main(int argc, char* argv[])
          // Ask the user about which username and password to use.
          if (starthelper->execute(startupHelper::op_auth) != startupHelper::or_auth_success)
             {
-               BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to initialize auth");
+               BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Unable to initialize auth");
 
                delete starthelper;
                starthelper = 0;
@@ -323,7 +297,6 @@ int main(int argc, char* argv[])
                lastfiles = 0;
 
                projectDefaults::killInstance();
-               logWrapper::killInstance();
 
                return BTG_ERROR_EXIT;
             }
@@ -357,7 +330,6 @@ int main(int argc, char* argv[])
          lastfiles = 0;
 
          projectDefaults::killInstance();
-         logWrapper::killInstance();
 
          return BTG_NORMAL_EXIT;
       }
@@ -367,7 +339,7 @@ int main(int argc, char* argv[])
 
          if (starthelper->execute(startupHelper::op_attach_first) == startupHelper::or_attach_first_failture)
             {
-               BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to attach to session");
+               BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Unable to attach to session");
 
                // Clean up, before quitting.
                delete starthelper;
@@ -389,13 +361,12 @@ int main(int argc, char* argv[])
                lastfiles = 0;
 
                projectDefaults::killInstance();
-               logWrapper::killInstance();
 
                return BTG_ERROR_EXIT;
             }
 
-	 t_long session = clihandler->session();
-	 std::string strSession = btg::core::convertToString<t_long>(session);
+         t_long session = clihandler->session();
+         std::string strSession = btg::core::convertToString<t_long>(session);
          initialStatusMessage = "Attached to session #" + strSession + ".";
       }
    else if (cla->doAttach())
@@ -405,7 +376,7 @@ int main(int argc, char* argv[])
 
          if (starthelper->execute(startupHelper::op_attach) == startupHelper::or_attach_failture)
             {
-               BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to attach to session");
+               BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Unable to attach to session");
 
                // Clean up, before quitting.
                delete starthelper;
@@ -427,13 +398,12 @@ int main(int argc, char* argv[])
                lastfiles = 0;
 
                projectDefaults::killInstance();
-               logWrapper::killInstance();
 
                return BTG_ERROR_EXIT;
             }
 
          t_long session = clihandler->session();
-	 std::string strSession = btg::core::convertToString<t_long>(session);
+         std::string strSession = btg::core::convertToString<t_long>(session);
          initialStatusMessage = "Attached to session #" + strSession + ".";
       }
 
@@ -442,7 +412,7 @@ int main(int argc, char* argv[])
       {
          if (starthelper->execute(startupHelper::op_setup) == startupHelper::or_setup_failture)
             {
-               BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to connect to daemon.");
+               BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Unable to connect to daemon.");
 
                // Clean up, before quitting.
                delete starthelper;
@@ -463,14 +433,11 @@ int main(int argc, char* argv[])
                delete lastfiles;
                lastfiles = 0;
 
-               projectDefaults::killInstance();
-               logWrapper::killInstance();
-
                return BTG_ERROR_EXIT;
             }
 
-	 t_long session = clihandler->session();
-	 std::string strSession = btg::core::convertToString<t_long>(session);
+         t_long session = clihandler->session();
+         std::string strSession = btg::core::convertToString<t_long>(session);
          initialStatusMessage = "Established session #" + strSession + ".";
       }
 
@@ -563,7 +530,7 @@ int main(int argc, char* argv[])
             {
             case ncursesScreen::EVENT_RESIZE:
                {
-                  BTG_NOTICE("Resize event received (2).");
+                  BTG_NOTICE(logwrapper, "Resize event received (2).");
                   nscr->resize();
                   nscr->clear();
                   nscr->refresh();
@@ -572,7 +539,7 @@ int main(int argc, char* argv[])
             case ncursesScreen::EVENT_KEY:
                {
                   line = nscr->getInput();
-                  BTG_NOTICE("Got input: '" << line << "'");
+                  BTG_NOTICE(logwrapper, "Got input: '" << line << "'");
                   handleInput(line, clihandler, nscr, neverAskFlag);
                   break;
                }
@@ -607,7 +574,6 @@ int main(int argc, char* argv[])
    nscr = 0;
 
    projectDefaults::killInstance();
-   logWrapper::killInstance();
 
    return BTG_NORMAL_EXIT;
 }

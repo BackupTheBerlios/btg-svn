@@ -52,12 +52,13 @@ namespace btg
                   {
                   public:
                      /// Constructor.
-                     SecureServerSocket(gtlsGlobalServerData* _ggsd, 
+                     SecureServerSocket(LogWrapperType _logwrapper,
+                                        gtlsGlobalServerData* _ggsd, 
                                         std::string const& _host,
                                         t_uint const _port);
 
                      /// Default constructor.
-                     SecureServerSocket();
+                     SecureServerSocket(LogWrapperType _logwrapper);
 
                      /// Copy constructor.
                      SecureServerSocket(SecureServerSocket const& _serversocket);

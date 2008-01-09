@@ -39,9 +39,11 @@ namespace btg
 
          using namespace btg::core;
 
-         handlerThread::handlerThread(bool const _verboseFlag,
+         handlerThread::handlerThread(LogWrapperType _logwrapper,
+                                      bool const _verboseFlag,
                                       handlerThreadIf* _handler)
-            : verboseFlag_(_verboseFlag),
+            : Logable(_logwrapper),
+              verboseFlag_(_verboseFlag),
               interfaceMutex_(),
               die_(false),
               handler_(_handler),
@@ -68,7 +70,7 @@ namespace btg
          {
             boost::mutex::scoped_lock interface_lock(interfaceMutex_);
 
-            BTG_NOTICE("Updating status");
+            BTG_NOTICE(logWrapper(), "Updating status");
             timer_.Reset();
             handler_->resetStatusList();
             handler_->reqStatus(-1, true);
@@ -81,7 +83,7 @@ namespace btg
                boost::mutex::scoped_lock interface_lock(interfaceMutex_);
                handler_->resetStatusList();
                handler_->reqStatus(-1, true);
-               BTG_NOTICE("Initial update.")
+               BTG_NOTICE(logWrapper(), "Initial update.")
             }
 
             // Keep on doing updates, dictated by a timer.
@@ -101,7 +103,7 @@ namespace btg
                               if (!handler_->statusListUpdated())
                                  {
                                     // Request status of all contexts.
-                                    BTG_NOTICE("Updating status");
+                                    BTG_NOTICE(logWrapper(), "Updating status");
                                     handler_->reqStatus(-1, true);
                                  }
                            }
@@ -124,19 +126,21 @@ namespace btg
             die_ = true;
             thread_.join();
 
-            BTG_NOTICE("Thread stopped.");
+            BTG_NOTICE(logWrapper(), "Thread stopped.");
          }
 
          /* */
 
-         handlerThreadIf::handlerThreadIf(btg::core::externalization::Externalization* _e,
+         handlerThreadIf::handlerThreadIf(LogWrapperType _logwrapper,
+                                          btg::core::externalization::Externalization* _e,
                                           btg::core::messageTransport*            _transport,
                                           btg::core::client::clientConfiguration* _config,
                                           btg::core::client::lastFiles*           _lastfiles,
                                           bool const _verboseFlag,
                                           bool const _autoStartFlag)
             : clientCallback(),
-              clientHandler(_e,
+              clientHandler(_logwrapper,
+                            _e,
                             this,
                             _transport,
                             _config,

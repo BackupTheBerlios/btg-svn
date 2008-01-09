@@ -33,6 +33,8 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/condition.hpp>
 
+#include <bcore/logable.h>
+
 namespace btg
 {
    namespace daemon
@@ -43,7 +45,7 @@ namespace btg
           */
          /** @{ */
 
-         class callbackManager
+         class callbackManager: public btg::core::Logable
             {
             public:
                /// The events reported by btgdaemon.
@@ -58,7 +60,8 @@ namespace btg
                   };
 
                /// Constructor.
-               callbackManager(bool const _verboseFlag);
+               callbackManager(btg::core::LogWrapperType _logwrapper,
+                               bool const _verboseFlag);
 
                /// Add an user with a callback.
                bool add(std::string const& _username,

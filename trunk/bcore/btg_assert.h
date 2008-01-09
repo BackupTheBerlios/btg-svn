@@ -24,7 +24,18 @@
 #define BTG_ASSERT_H
 
 #include <string>
+#include <bcore/logable.h>
 
-void btg_assert(bool _a, std::string const& _message);
+namespace btg
+{
+   namespace core
+   {
+
+      void btg_assert(bool _a, 
+                      LogWrapperType _logwrapper, 
+                      std::string const& _message);
+
+   } // namespace core
+} // namespace btg
 
 #endif // BTG_ASSERT_H

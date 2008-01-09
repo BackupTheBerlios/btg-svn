@@ -31,18 +31,20 @@ namespace btg
    namespace core
    {
       // Server constructor.
-      secureTcpTransport::secureTcpTransport(btg::core::externalization::Externalization* _e,
+      secureTcpTransport::secureTcpTransport(LogWrapperType _logwrapper,
+                                             btg::core::externalization::Externalization* _e,
                                              btg::core::os::gtlsGlobalServerData* _ggsd,
                                              t_int const _bufferSize,
                                              DIRECTION const _direction,
                                              addressPort const & _addressPort,
                                              t_uint const _timeout)
-         : tcpTransportBase(_e, _bufferSize, _direction, _timeout)
+         : tcpTransportBase(_logwrapper, _e, _bufferSize, _direction, _timeout)
       {
          try
             {
                btg::core::os::SecureServerSocket* tempServer =
-                  new btg::core::os::SecureServerSocket(_ggsd, 
+                  new btg::core::os::SecureServerSocket(logWrapper(),
+                                                        _ggsd, 
                                                         _addressPort.getIp(), 
                                                         _addressPort.getPort());
 
@@ -52,24 +54,25 @@ namespace btg
             {
                initialized = false;
 #if BTG_TRANSPORT_DEBUG
-               BTG_NOTICE("Failed to init server: " << _se.description() );
+               BTG_NOTICE(logWrapper(), "Failed to init server: " << _se.description() );
 #endif // BTG_TRANSPORT_DEBUG
             }
       }
 
       // Client constructor.
-      secureTcpTransport::secureTcpTransport(btg::core::externalization::Externalization* _e,
+      secureTcpTransport::secureTcpTransport(LogWrapperType _logwrapper,
+                                             btg::core::externalization::Externalization* _e,
                                              btg::core::os::gtlsClientData* _gcd,
                                              t_int const _bufferSize,
                                              DIRECTION const _direction,
                                              addressPort const & _addressPort,
                                              t_uint const _timeout)
-         : tcpTransportBase(_e, _bufferSize, _direction, _timeout)
+         : tcpTransportBase(_logwrapper, _e, _bufferSize, _direction, _timeout)
       {
          try
             {
                btg::core::os::SecureClientSocket* tempClient =
-                  new btg::core::os::SecureClientSocket(_gcd, _addressPort.getIp(), _addressPort.getPort());
+                  new btg::core::os::SecureClientSocket(logWrapper(), _gcd, _addressPort.getIp(), _addressPort.getPort());
 
                setSocket(tempClient);
 
@@ -78,7 +81,7 @@ namespace btg
             {
                initialized = false;
 #if BTG_TRANSPORT_DEBUG
-               BTG_NOTICE("Failed to init client: " << _se.description());
+               BTG_NOTICE(logWrapper(), "Failed to init client: " << _se.description());
 #endif // BTG_TRANSPORT_DEBUG
             }
       }
@@ -91,20 +94,20 @@ namespace btg
       void secureTcpTransport::acceptNewConnections()
       {
 #if BTG_TRANSPORT_DEBUG
-         BTG_NOTICE("secureTcpTransport::acceptNewConnections, accept on #" << server->getSockId() );
+         BTG_NOTICE(logWrapper(), "secureTcpTransport::acceptNewConnections, accept on #" << server->getSockId() );
 #endif // BTG_TRANSPORT_DEBUG
          // Handle accepting new clients here.
-         btg::core::os::SecureServerSocket* acceptsock = new btg::core::os::SecureServerSocket();
+         btg::core::os::SecureServerSocket* acceptsock = new btg::core::os::SecureServerSocket(logWrapper());
 
          if (server->accept(*acceptsock))
             {
 
 #if BTG_TRANSPORT_DEBUG
-               BTG_NOTICE("Accepted new connection.");
+               BTG_NOTICE(logWrapper(), "Accepted new connection.");
 #endif // BTG_TRANSPORT_DEBUG
 
                // Got a new client.
-               tcpClient *tc = new tcpClient;
+               tcpClient *tc = new tcpClient(logWrapper());
                tc->socket = acceptsock;
                tc->connectionID = -1;
 
@@ -120,7 +123,7 @@ namespace btg
 
                if(tc->connectionID == NO_CONNECTION_ID)
                   {
-                     BTG_NOTICE("All connections are in use. Dropping connection.");
+                     BTG_NOTICE(logWrapper(), "All connections are in use. Dropping connection.");
                      acceptsock->shutdown();
                      delete tc;
                      tc = 0;
@@ -131,12 +134,12 @@ namespace btg
 
                socketGroup.addSocket(acceptsock);
 
-               BTG_NOTICE("Added new connection " << tc->connectionID);
+               BTG_NOTICE(logWrapper(), "Added new connection " << tc->connectionID);
                clients[tc->connectionID] = tc;
             }
          else
             {
-               BTG_NOTICE("Rejected new connection.");
+               BTG_NOTICE(logWrapper(), "Rejected new connection.");
                delete acceptsock;
                acceptsock = 0;
             }

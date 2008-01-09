@@ -25,6 +25,7 @@
 #include "ext_macro.h"
 
 #include <bcore/helpermacro.h>
+#include <bcore/logmacro.h>
 
 namespace btg
 {
@@ -33,8 +34,9 @@ namespace btg
       namespace externalization
       {
 
-         Simple::Simple()
-            : buffer_()
+         Simple::Simple(LogWrapperType _logwrapper)
+            : Externalization(_logwrapper),
+              buffer_()
          {
          }
          Simple::~Simple() {}
@@ -168,7 +170,7 @@ namespace btg
                }
             catch(...)
                {
-                  BTG_ERROR_LOG("Simple::getBytes(), Failed to allocate " << _size << " bytes of memory.");
+                  BTG_ERROR_LOG(logWrapper(), "Simple::getBytes(), Failed to allocate " << _size << " bytes of memory.");
                   return false;
                }
 

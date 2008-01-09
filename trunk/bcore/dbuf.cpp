@@ -185,7 +185,7 @@ namespace btg
       {
          if (_n > current_size)
             {
-               BTG_NOTICE("dBuffer::getNBytes failed: _n(" << _n << ") > current_size(" << current_size << ").");
+               // BTG_NOTICE("dBuffer::getNBytes failed: _n(" << _n << ") > current_size(" << current_size << ").");
 
                lastRemovedBytes = dBuffer::INVALID_RWOP;
                return dBuffer::INVALID_RWOP;
@@ -193,7 +193,7 @@ namespace btg
 
          if (_n > _dst_size)
             {
-               BTG_NOTICE("dBuffer::getNBytes failed: _n > _dst_size.");
+               // BTG_NOTICE("dBuffer::getNBytes failed: _n > _dst_size.");
 
                lastRemovedBytes = dBuffer::INVALID_RWOP;
                return dBuffer::INVALID_RWOP;

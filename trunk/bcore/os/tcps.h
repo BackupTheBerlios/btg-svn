@@ -48,10 +48,12 @@ namespace btg
                   {
                   public:
                      /// Constructor.
-                     ServerSocket(std::string const& _host, t_uint const _port);
+                     ServerSocket(LogWrapperType _logwrapper,
+                                  std::string const& _host, 
+                                  t_uint const _port);
 
                      /// Default constructor.
-                     ServerSocket();
+                     ServerSocket(LogWrapperType _logwrapper);
 
                      /// Copy constructor.
                      ServerSocket(ServerSocket const& _serversocket);

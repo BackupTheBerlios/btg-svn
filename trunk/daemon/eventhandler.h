@@ -32,6 +32,7 @@
 
 #include <bcore/command/setup.h>
 #include <bcore/addrport.h>
+#include <bcore/logable.h>
 
 #include "connectionhandler.h"
 
@@ -56,7 +57,7 @@ namespace btg
          class daemonConfiguration;
 
          /// Daemon handles events using this class.
-         class eventHandler
+         class eventHandler: public btg::core::Logable
             {
             public:
                /// Constructor.
@@ -78,7 +79,8 @@ namespace btg
                /// @param [in] _connectionHandler Connection handler used by the eventhandler to store per-connection data.
                /// @param [in] _sessionName       Name of the session.
                /// @param [in] _cbm           Pointer to the callback manager used.
-               eventHandler(bool const _verboseFlag,
+               eventHandler(btg::core::LogWrapperType _logwrapper,
+                            bool const _verboseFlag,
                             std::string const& _username,
                             std::string const& _tempDir,
                             std::string const& _workDir,

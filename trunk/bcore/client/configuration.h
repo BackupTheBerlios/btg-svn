@@ -43,7 +43,8 @@ namespace btg
                   public:
                      /// Constructor.
                      /// @param [in] _filename The filename to use for reading/writing.
-                     clientConfiguration(std::string const& _filename);
+                     clientConfiguration(LogWrapperType _logwrapper,
+                                         std::string const& _filename);
 
                      /// Read the configuration file.
                      bool read(bool const _force = false);

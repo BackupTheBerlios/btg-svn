@@ -54,13 +54,13 @@ using namespace btg::daemon;
 // Version information.
 
 // New file format. Incompatible with the old format..
-// Increase with 1 for every change here or deeper down in the save struct
+// Increase with 1 for every change here or deeper down in the save struct.
 const t_byte ss_version = 0x99;
 
 #define DESERIALIZE_CHECK(i, m, r) { \
   if((i)) \
   { \
-    BTG_ERROR_LOG(m); \
+    BTG_ERROR_LOG(logWrapper(), m); \
     return r; \
   } \
 }
@@ -71,12 +71,14 @@ namespace btg
    {
       const std::string moduleName("ses");
 
-      SessionSaver::SessionSaver(bool const _verboseFlag,
+      SessionSaver::SessionSaver(btg::core::LogWrapperType _logwrapper,
+                                 bool const _verboseFlag,
                                  portManager & _portManager,
                                  limitManager & _limitManager,
                                  sessionList & _sessionlist,
                                  daemonData & _dd)
-         : verboseFlag_(_verboseFlag),
+         : btg::core::Logable(_logwrapper),
+           verboseFlag_(_verboseFlag),
            portManager_(_portManager),
            limitManager_(_limitManager),
            sessionlist_(_sessionlist),
@@ -93,7 +95,7 @@ namespace btg
          t_int handler_count = 0;
 
          std::ifstream file;
-         BTG_MNOTICE("loadSessions(), Loading sessions from file " << _filename);
+         BTG_MNOTICE(logWrapper(), "loadSessions(), Loading sessions from file " << _filename);
 
 #if HAVE_IOS_BASE
          file.open(_filename.c_str(), std::ios_base::in | std::ios_base::binary);
@@ -102,7 +104,7 @@ namespace btg
 #endif
          if (!file.is_open())
             {
-               BTG_ERROR_LOG("loadSessions(), Failed to open " << _filename << " to restore sessions.");
+               BTG_ERROR_LOG(logWrapper(), "loadSessions(), Failed to open " << _filename << " to restore sessions.");
                return 0;
             }
 
@@ -120,7 +122,7 @@ namespace btg
 
          if (size <= 0)
             {
-               BTG_ERROR_LOG("loadSessions(), " << _filename << " is empty.");
+               BTG_ERROR_LOG(logWrapper(), "loadSessions(), " << _filename << " is empty.");
                file.close();
                return 0;
             }
@@ -135,10 +137,10 @@ namespace btg
          
 #ifdef OLD_FORMAT
          if(useBinaryFormat)
-            ext = new btg::core::externalization::Simple();
+            ext = new btg::core::externalization::Simple(logWrapper());
          else
 #endif
-            ext = new btg::core::externalization::XMLRPC();
+            ext = new btg::core::externalization::XMLRPC(logWrapper());
 
          btg::core::dBuffer dbuf(buffer, size);
          ext->setBuffer(dbuf);
@@ -154,7 +156,8 @@ namespace btg
 
          if ((!ext->bytesToUint(&sig0)) || (!ext->bytesToUint(&sig1)))
             {
-               BTG_ERROR_LOG("SessionSaver::loadSessions(), failed to parse " << _filename 
+               BTG_ERROR_LOG(logWrapper(), 
+                             "SessionSaver::loadSessions(), failed to parse " << _filename 
                              << ", unable to read signature byte(s).");
                delete ext;
                ext = 0;
@@ -162,7 +165,8 @@ namespace btg
 #ifdef OLD_FORMAT
                if(!useBinaryFormat)
                {
-                  BTG_ERROR_LOG("SesssionSaver::loadSessions(), trying old binary format..");
+                  BTG_ERROR_LOG(logWrapper(),
+                                "SesssionSaver::loadSessions(), trying old binary format..");
                   return loadSessions(_filename, true);
                }
 #endif
@@ -171,7 +175,8 @@ namespace btg
 
          if ((sig0 != ~((t_uint)sig1)))
             {
-               BTG_ERROR_LOG("SesssionSaver::loadSessions(), bad signature bytes");
+               BTG_ERROR_LOG(logWrapper(),
+                             "SesssionSaver::loadSessions(), bad signature bytes");
                // Unknown signature.
                delete ext;
                ext = 0;
@@ -226,19 +231,22 @@ namespace btg
                                                 seedTimeout);
                if (!eh)
                   {
-                     BTG_ERROR_LOG("SessionSaver::loadSessions(), failed to create session with id " << session);
+                     BTG_ERROR_LOG(logWrapper(),
+                                   "SessionSaver::loadSessions(), failed to create session with id " << session);
                      continue;
                   }
 
                if (!eh->deserialize(_e, _version))
                   {
-                     BTG_ERROR_LOG("SessionSaver::loadSessions(), failed to deserialize session " << session);
+                     BTG_ERROR_LOG(logWrapper(),
+                                   "SessionSaver::loadSessions(), failed to deserialize session " << session);
                      delete eh;
                      eh = 0;
                      return handler_count;
                   }
 
-               BTG_MNOTICE("sessionSaver::loadSessions(), successfully reloaded session " << session);
+               BTG_MNOTICE(logWrapper(),
+                           "sessionSaver::loadSessions(), successfully reloaded session " << session);
 
                sessionlist_.add(session, eh, true);
 
@@ -250,10 +258,11 @@ namespace btg
 
       bool SessionSaver::saveSessions(std::string const& _filename, bool const _dumpFastResume)
       {
-         BTG_MNOTICE("saveSessions(), Writing sessions to file");
+         BTG_MNOTICE(logWrapper(),
+                     "saveSessions(), Writing sessions to file");
 
          btg::core::externalization::Externalization* ext = 
-            new btg::core::externalization::XMLRPC();
+            new btg::core::externalization::XMLRPC(logWrapper());
 
          // Add signature bytes.
 
@@ -266,7 +275,8 @@ namespace btg
          sessionlist_.serialize(ext, _dumpFastResume);
 
          btg::core::dBuffer db;
-         BTG_MNOTICE("Calling getBuffer on " << ext << " with db " << &db);
+         BTG_MNOTICE(logWrapper(),
+                     "Calling getBuffer on " << ext << " with db " << &db);
          ext->getBuffer(db);
 
          delete ext;
@@ -281,7 +291,8 @@ namespace btg
 
          if (!file.is_open())
             {
-               BTG_ERROR_LOG("saveSessions(), Failed to open " << _filename << " to write active sessions.");
+               BTG_ERROR_LOG(logWrapper(),
+                             "saveSessions(), Failed to open " << _filename << " to write active sessions.");
                return false;
             }
 
@@ -304,7 +315,8 @@ namespace btg
                                                 t_int const _seed_limit,
                                                 t_int const _seed_timeout)
       {
-         BTG_MNOTICE("attempt to restore a session with id " << _session_id << " for user " << _username);
+         BTG_MNOTICE(logWrapper(),
+                     "attempt to restore a session with id " << _session_id << " for user " << _username);
 
          std::string tempDir;
          std::string workDir;
@@ -332,24 +344,29 @@ namespace btg
             {
                if (!tempDirPresent)
                   {
-                     BTG_ERROR_LOG("tempDir missing for user " << _username);
+                     BTG_ERROR_LOG(logWrapper(),
+                                   "tempDir missing for user " << _username);
                   }
                if (!workDirPresent)
                   {
-                     BTG_ERROR_LOG("workDir missing for user " << _username);
+                     BTG_ERROR_LOG(logWrapper(),
+                                   "workDir missing for user " << _username);
                   }
                if (!seedDirPresent)
                   {
-                     BTG_ERROR_LOG("seedDir missing for user " << _username);
+                     BTG_ERROR_LOG(logWrapper(),
+                                   "seedDir missing for user " << _username);
                   }
                if (!destDirPresent)
                   {
-                     BTG_ERROR_LOG("destDir missing for user " << _username);
+                     BTG_ERROR_LOG(logWrapper(),
+                                   "destDir missing for user " << _username);
                   }
 #if BTG_OPTION_EVENTCALLBACK
                if (!callbackPresent)
                   {
-                     BTG_ERROR_LOG("callback missing for user " << _username);
+                     BTG_ERROR_LOG(logWrapper(),
+                                   "callback missing for user " << _username);
                   }
 #endif // BTG_OPTION_EVENTCALLBACK
                return 0;
@@ -361,16 +378,19 @@ namespace btg
              !btg::core::os::fileOperation::check(seedDir, true) ||
              !btg::core::os::fileOperation::check(destDir, true))
             {
-               BTG_ERROR_LOG("tempDir, workDir, seedDir or destDir does not exist for " << _username);
+               BTG_ERROR_LOG(logWrapper(),
+                             "tempDir, workDir, seedDir or destDir does not exist for " << _username);
                return 0;
             }
 
-         BTG_MNOTICE("using the following paths:" << " tempdir = " << tempDir <<
+         BTG_MNOTICE(logWrapper(),
+                     "using the following paths:" << " tempdir = " << tempDir <<
                      ", work dir = " << workDir <<
                      ", seed dir = " << seedDir <<
                      ", dest dir = " << destDir);
 
-         eventHandler *eh = new eventHandler(verboseFlag_,
+         eventHandler* eh = new eventHandler(logWrapper(),
+                                             verboseFlag_,
                                              _username,
                                              tempDir,
                                              workDir,

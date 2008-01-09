@@ -34,31 +34,35 @@ namespace btg
 {
    namespace core
    {
-      httpClient::httpClient(btg::core::os::gzipIf* _gzipif)
-         : httpRequest(_gzipif)
+      httpClient::httpClient(LogWrapperType _logwrapper,
+                             btg::core::os::gzipIf* _gzipif)
+         : tcpClient(_logwrapper),
+           httpRequest(_logwrapper, _gzipif)
       {
 
       }
 
-      httpTransport::httpTransport(btg::core::externalization::Externalization* _e,
+      httpTransport::httpTransport(LogWrapperType _logwrapper,
+                                   btg::core::externalization::Externalization* _e,
                                    t_int const _bufferSize,
                                    DIRECTION const _direction,
                                    addressPort const & _addressPort,
                                    t_uint const _timeout)
-         : tcpTransport(_e, _bufferSize, _direction, _addressPort, true, _timeout),
+         : tcpTransport(_logwrapper, _e, _bufferSize, _direction, _addressPort, true, _timeout),
            clientRequest(0),
            gzipif(new btg::core::os::gzip())
       {
          setup(_direction);
       }
 
-      httpTransport::httpTransport(btg::core::externalization::Externalization* _e,
+      httpTransport::httpTransport(LogWrapperType _logwrapper,
+                                   btg::core::externalization::Externalization* _e,
                                    t_int const _bufferSize,
                                    DIRECTION const _direction,
                                    addressPort const & _addressPort,
                                    bool const _createSocket,
                                    t_uint const _timeout)
-         : tcpTransport(_e, _bufferSize, _direction, _addressPort, _createSocket, _timeout),
+         : tcpTransport(_logwrapper, _e, _bufferSize, _direction, _addressPort, _createSocket, _timeout),
            clientRequest(0),
            gzipif(new btg::core::os::gzip())
       {
@@ -72,7 +76,7 @@ namespace btg
                switch(_direction)
                   {
                   case TO_SERVER:
-                     clientRequest = new httpRequestClientSide(this->getGzipIf());
+                     clientRequest = new httpRequestClientSide(logWrapper(), this->getGzipIf());
                      break;
                   case FROM_SERVER:
                      clientRequest = 0;
@@ -86,7 +90,7 @@ namespace btg
          t_int status = _size;
          std::string data(reinterpret_cast<const char*>(_msg), _size);
 #if BTG_TRANSPORT_DEBUG
-         BTG_NOTICE("httpTransport::write, size=" << _size);
+         BTG_NOTICE(logWrapper(), "httpTransport::write, size=" << _size);
 #endif // BTG_TRANSPORT_DEBUG
 
          switch (this->direction)
@@ -120,12 +124,12 @@ namespace btg
                   buff.append(data);
 
 #if BTG_TRANSPORT_DEBUG
-                  BTG_NOTICE("httpTransport::write(), Sending to server ("<<buff.length()<<" bytes)"); //  << buff);
+                  BTG_NOTICE(logWrapper(), "httpTransport::write(), Sending to server ("<<buff.length()<<" bytes)"); //  << buff);
 #endif // BTG_TRANSPORT_DEBUG
 
                   if (!client->write(reinterpret_cast<t_byteCP>(buff.c_str()), buff.length()))
                      {
-                        BTG_NOTICE("httpTransport::write(), Failed to write " << buff.length() << " bytes to server");
+                        BTG_NOTICE(logWrapper(), "httpTransport::write(), Failed to write " << buff.length() << " bytes to server");
                         status = httpTransport::OPERATION_FAILED;
                      }
                   break;
@@ -135,14 +139,14 @@ namespace btg
                   tcpClient *c = resolve(_connectionID);
                   if (!c)
                      {
-                        BTG_NOTICE("httpTransport::write() Tried to write to unknown connection " << _connectionID << "!");
+                        BTG_NOTICE(logWrapper(), "httpTransport::write() Tried to write to unknown connection " << _connectionID << "!");
                         status = httpTransport::OPERATION_FAILED;
                         break;
                      }
 
                   httpClient* client = dynamic_cast<httpClient*>(c);
 #if BTG_TRANSPORT_DEBUG
-                  BTG_NOTICE("httpTransport::write(), Using client (" << reinterpret_cast<void*>(client) << ") #" << client->socket->getSockId());
+                  BTG_NOTICE(logWrapper(), "httpTransport::write(), Using client (" << reinterpret_cast<void*>(client) << ") #" << client->socket->getSockId());
 #endif // BTG_TRANSPORT_DEBUG
 
                   /* Add HTTP server response headers. Use \r\n for linebreaks
@@ -165,7 +169,7 @@ namespace btg
                               use_gzip = true;
                               std::string tmp;
 #if BTG_TRANSPORT_DEBUG
-                              BTG_NOTICE("httpTransport::write(), Using GZIP encoding. Uncompressed size: " << data.length()); // << ": " << buff);
+                              BTG_NOTICE(logWrapper(), "httpTransport::write(), Using GZIP encoding. Uncompressed size: " << data.length()); // << ": " << buff);
 #endif // BTG_TRANSPORT_DEBUG
                               try
                                  {
@@ -175,11 +179,11 @@ namespace btg
                               catch(...)
                                  {
                                     use_gzip = false;
-                                    BTG_ERROR_LOG("gzip_compress failed, not using compression.");
+                                    BTG_ERROR_LOG(logWrapper(), "gzip_compress failed, not using compression.");
                                  }
                               
 #if BTG_TRANSPORT_DEBUG
-                              BTG_NOTICE("httpTransport::write(), compressed size: " << data.length()); // << ": " << buff);
+                              BTG_NOTICE(logWrapper(), "httpTransport::write(), compressed size: " << data.length()); // << ": " << buff);
 #endif // BTG_TRANSPORT_DEBUG
                            }
                      }
@@ -202,7 +206,7 @@ namespace btg
                   buff.append(data);
 
 #if BTG_TRANSPORT_DEBUG
-                  BTG_NOTICE("httpTransport::write(), Sending to current session"); // << ": " << buff);
+                  BTG_NOTICE(logWrapper(), "httpTransport::write(), Sending to current session"); // << ": " << buff);
 #endif // BTG_TRANSPORT_DEBUG
 
                   if (!client->socket->write(reinterpret_cast<t_byteCP>(buff.c_str()), buff.length()))
@@ -220,7 +224,7 @@ namespace btg
       {
          if (this->direction != TO_SERVER)
             {
-               BTG_ERROR_LOG("httpTransport::read(dBuffer) can only be used on client side!! Not on server side!");
+               BTG_ERROR_LOG(logWrapper(), "httpTransport::read(dBuffer) can only be used on client side!! Not on server side!");
                return 0;
             }
 
@@ -232,7 +236,7 @@ namespace btg
       {
 
 #if BTG_TRANSPORT_DEBUG
-         BTG_NOTICE("httpTransport::read");
+         BTG_NOTICE(logWrapper(), "httpTransport::read");
 #endif // BTG_TRANSPORT_DEBUG
          t_int status = httpTransport::OPERATION_FAILED;
 
@@ -253,7 +257,7 @@ namespace btg
             case TO_SERVER:
                {
 #if BTG_TRANSPORT_DEBUG
-                  BTG_NOTICE("httpTransport::read, TO_SERVER");
+                  BTG_NOTICE(logWrapper(), "httpTransport::read, TO_SERVER");
 #endif // BTG_TRANSPORT_DEBUG
                   // We only have one socket in the socketGroup so no
                   // need to determine which socket it was...
@@ -277,7 +281,7 @@ namespace btg
                   if (rsize > 0)
                      {
 #if BTG_TRANSPORT_DEBUG
-                        BTG_NOTICE("httpTransport::read(), TO_SERVER, read " <<
+                        BTG_NOTICE(logWrapper(), "httpTransport::read(), TO_SERVER, read " <<
                                    rsize << " bytes from server");
 #endif // BTG_TRANSPORT_DEBUG
                         status = rsize;
@@ -287,13 +291,13 @@ namespace btg
                   if (clientRequest->peek())
                      {
 #if BTG_TRANSPORT_DEBUG
-                        BTG_NOTICE("httpTransport::read(), TO_SERVER, got a full request.");
+                        BTG_NOTICE(logWrapper(), "httpTransport::read(), TO_SERVER, got a full request.");
 #endif // BTG_TRANSPORT_DEBUG
                         status = clientRequest->getContent(_buffer);
                         clientRequest->reset();
                         if ((status == 0) && (clientRequest->abort()))
                            {
-                              BTG_NOTICE("httpTransport::read(), TO_SERVER, failed to retreive request! Bad gzip?");
+                              BTG_NOTICE(logWrapper(), "httpTransport::read(), TO_SERVER, failed to retreive request! Bad gzip?");
                               // Probably broken gzip compression,
                               // shutdown.
                               client->shutdown();
@@ -305,7 +309,7 @@ namespace btg
             case FROM_SERVER:
                {
 #if BTG_TRANSPORT_DEBUG
-                  BTG_NOTICE("httpTransport::read, FROM_SERVER");
+                  BTG_NOTICE(logWrapper(), "httpTransport::read, FROM_SERVER");
 #endif // BTG_TRANSPORT_DEBUG
 
                   // Read from all clients.
@@ -326,7 +330,7 @@ namespace btg
                         if (client->socket->deleted())
                            {
 #if BTG_TRANSPORT_DEBUG
-                              BTG_NOTICE("httpTransport::read: deleting dead client " << client);
+                              BTG_NOTICE(logWrapper(), "httpTransport::read: deleting dead client " << client);
 #endif // BTG_TRANSPORT_DEBUG
                               // Terminate the conneciotn
                               endConnection(client->connectionID);
@@ -342,12 +346,12 @@ namespace btg
                         if (rsize > 0)
                            {
 #if BTG_TRANSPORT_DEBUG
-                              BTG_NOTICE("httpTransport::read(), FROM_SERVER, read " << rsize << " bytes from client "<< client);
+                              BTG_NOTICE(logWrapper(), "httpTransport::read(), FROM_SERVER, read " << rsize << " bytes from client "<< client);
 #endif // BTG_TRANSPORT_DEBUG
                               client->httpRequest.addBytes(sndrec_buffer, rsize);
                               if (client->httpRequest.abort())
                                  {
-                                    BTG_NOTICE("httpRequest::read(), Fatal error from client " << client); // << ": " << buff);
+                                    BTG_NOTICE(logWrapper(), "httpRequest::read(), Fatal error from client " << client); // << ": " << buff);
                                     // A fatal error occured.
 
                                     std::stringstream ss;
@@ -359,7 +363,7 @@ namespace btg
 
                                     client->socket->write(reinterpret_cast<t_byteCP>(ss.str().c_str()), ss.str().length());
 #if BTG_TRANSPORT_DEBUG
-                                    BTG_NOTICE("httpTransport::read(), shutting down socket "<< client->socket->getSockId());
+                                    BTG_NOTICE(logWrapper(), "httpTransport::read(), shutting down socket "<< client->socket->getSockId());
 #endif // BTG_TRANSPORT_DEBUG
                                     client->socket->shutdown();
                                  }
@@ -376,7 +380,7 @@ namespace btg
                                     else if (client->httpRequest.abort())
                                        {
 #if BTG_TRANSPORT_DEBUG
-                                          BTG_NOTICE("httpTransport::read(), shutting down socket " <<
+                                          BTG_NOTICE(logWrapper(), "httpTransport::read(), shutting down socket " <<
                                                      client->socket->getSockId());
 #endif // BTG_TRANSPORT_DEBUG
                                           // Probably broken gzip
@@ -406,17 +410,17 @@ namespace btg
       void httpTransport::acceptNewConnections()
       {
          // Handle accepting new clients here.
-         btg::core::os::ServerSocket* acceptsock = new btg::core::os::ServerSocket();
+         btg::core::os::ServerSocket* acceptsock = new btg::core::os::ServerSocket(logWrapper());
 
          if (server->accept(*acceptsock))
             {
 
 #if BTG_TRANSPORT_DEBUG
-               BTG_NOTICE("Accepted new connection. (" << reinterpret_cast<void*>(acceptsock) << ") id=" << acceptsock->getSockId());
+               BTG_NOTICE(logWrapper(), "Accepted new connection. (" << reinterpret_cast<void*>(acceptsock) << ") id=" << acceptsock->getSockId());
 #endif // BTG_TRANSPORT_DEBUG
 
                // Got a new client.
-               httpClient* hc   = new httpClient(this->getGzipIf());
+               httpClient* hc   = new httpClient(logWrapper(), this->getGzipIf());
                hc->socket       = acceptsock;
                hc->connectionID = -1;
 
@@ -432,7 +436,7 @@ namespace btg
 
                if (hc->connectionID == NO_CONNECTION_ID)
                   {
-                     BTG_NOTICE("All connections are in use. Dropping connection.");
+                     BTG_NOTICE(logWrapper(), "All connections are in use. Dropping connection.");
                      acceptsock->shutdown();
                      delete hc;
                      hc = 0;
@@ -443,7 +447,7 @@ namespace btg
 
                socketGroup.addSocket(acceptsock);
 
-               BTG_NOTICE("Added new connection " << hc->connectionID);
+               BTG_NOTICE(logWrapper(), "Added new connection " << hc->connectionID);
                clients[hc->connectionID] = hc;
             }
          else

@@ -50,7 +50,8 @@ namespace btg
                   {
                   public:
                      /// Constructor.
-                     SecureClientSocket(gtlsClientData* _gcd,
+                     SecureClientSocket(LogWrapperType _logwrapper,
+                                        gtlsClientData* _gcd,
                                         std::string const& _host,
                                         t_uint const _port);
 

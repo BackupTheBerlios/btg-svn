@@ -101,6 +101,7 @@ namespace btg
          std::vector<std::string>::const_iterator arg_iter;
          std::vector<std::string>::const_iterator entries_iter;
 
+         /*
          BTG_MNOTICE("isUnique, argument entries:");
          for (arg_iter = _entries.begin();
               arg_iter != _entries.end();
@@ -116,6 +117,7 @@ namespace btg
             {
                BTG_MNOTICE("entry = " << "'" << *arg_iter << "'.");
             }
+         */
 
          for (arg_iter = _entries.begin();
               arg_iter != _entries.end();
@@ -128,27 +130,29 @@ namespace btg
                if (entries_iter != entries_.end())
                   {
                      // Not unique.
-                     BTG_MNOTICE("isUnique, false.");
+                     // BTG_MNOTICE("isUnique, false.");
                      return false;
                   }
             }
 	  
-         BTG_MNOTICE("isUnique, true.");
+         // BTG_MNOTICE("isUnique, true.");
          return true;
       }
 
       void fileTrackData::setFiles(std::vector<std::string> const& _files)
       {
-         BTG_MNOTICE("setFiles, entries:");
+         // BTG_MNOTICE("setFiles, entries:");
 
          std::vector<std::string>::const_iterator arg_iter;
 
+         /*
          for (arg_iter = _files.begin();
               arg_iter != _files.end();
               arg_iter++)
             {
                BTG_MNOTICE("entry = " << "'" << *arg_iter << "'.");
             }
+         */
 
          entries_ = _files;
       }
@@ -162,8 +166,6 @@ namespace btg
       {
          entries_.clear();
       }
-
-      /** @} */
 
    } // namespace daemon
 } // namespace btg

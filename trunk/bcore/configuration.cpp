@@ -30,8 +30,10 @@ namespace btg
    namespace core
    {
 
-      Configuration::Configuration(std::string const& _filename)
-         : filename(_filename),
+      Configuration::Configuration(LogWrapperType _logwrapper,
+                                   std::string const& _filename)
+         : Logable(_logwrapper),
+           filename(_filename),
            inifile(0),
            opened(false),
            data_modified(false),
@@ -73,7 +75,7 @@ namespace btg
                if (!opened)
                   {
                      setErrorDescription(WRITE_ERROR + "file not open");
-                     BTG_NOTICE("File not open.");
+                     // BTG_NOTICE("File not open.");
                      return status;
                   }
             }

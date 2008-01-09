@@ -53,7 +53,8 @@ namespace btg
                /// @param [in] _direction      Direction.
                /// @param [in] _addressPort    Address and port.
                /// @param [in] _timeout        Max time in milliseconds to block in a read(), 0 for no blocking.
-               tcpTransport(btg::core::externalization::Externalization* _e,
+               tcpTransport(LogWrapperType _logwrapper,
+                            btg::core::externalization::Externalization* _e,
                             t_int const _bufferSize,
                             DIRECTION const _direction,
                             addressPort const & _addressPort,
@@ -66,7 +67,8 @@ namespace btg
                /// @param [in] _addressPort    Address and port.
                /// @param [in] _createSocket   Flag deciding if a socket should be created (used when subclassing)
                /// @param [in] _timeout        Max time in milliseconds to block in a read(), 0 for no blocking.
-               tcpTransport(btg::core::externalization::Externalization* _e,
+               tcpTransport(LogWrapperType _logwrapper,
+                            btg::core::externalization::Externalization* _e,
                             t_int const _bufferSize,
                             DIRECTION const _direction,
                             addressPort const & _addressPort,

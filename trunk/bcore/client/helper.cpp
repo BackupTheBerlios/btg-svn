@@ -42,6 +42,7 @@
 #include <bcore/logger/syslog_log.h>
 
 #include <bcore/auth/hash.h>
+#include <bcore/logmacro.h>
 
 namespace btg
 {
@@ -49,10 +50,12 @@ namespace btg
    {
       namespace client
       {
-         Helper::Helper(std::string const&          _clientName,
+         Helper::Helper(LogWrapperType _logwrapper,
+                        std::string const&          _clientName,
                         clientConfiguration*        _config,
                         HelperArgIf* _clah)
-            : clientName(_clientName),
+            : Logable(_logwrapper),
+              clientName(_clientName),
               config(_config),
               clah(_clah),
               session(Command::INVALID_SESSION),
@@ -88,13 +91,14 @@ namespace btg
             messages.push_back(_message);
          }
 
-         startupHelper::startupHelper(std::string const&          _clientName,
+         startupHelper::startupHelper(LogWrapperType _logwrapper,
+                                      std::string const&          _clientName,
                                       clientConfiguration*        _config,
                                       HelperArgIf*                _clah,
                                       messageTransport*           _mtrans,
                                       clientHandler*              _handler
                                       )
-            : Helper(
+            : Helper(_logwrapper,
                      _clientName,
                      _config,
                      _clah),
@@ -135,8 +139,8 @@ namespace btg
                         {
                         case logBuffer::STDOUT:
                            {
-                              logWrapper* log = logWrapper::getInstance();
-                              log->setLogStream(new logStream(new consoleLogger()));
+                              boost::shared_ptr<btg::core::logger::logStream> l(new btg::core::logger::logStream(new btg::core::logger::consoleLogger()));
+                              logWrapper()->setLogStream(l);
                               break;
                            }
                         case logBuffer::LOGFILE:
@@ -144,18 +148,20 @@ namespace btg
                               std::string logfilename = config->getLogFile();
                               btg::core::os::fileOperation::resolvePath(logfilename);
 
-                              logWrapper* log     = logWrapper::getInstance();
-                              fileLogger* fl      = new fileLogger(logfilename);
+                              fileLogger* fl = new fileLogger(logfilename);
 
                               if (fl->open())
                                  {
-                                    log->setLogStream(new logStream(fl));
-                                    BTG_NOTICE("Logfile opened");
+                                    boost::shared_ptr<btg::core::logger::logStream> l(new btg::core::logger::logStream(fl));
+                                    logWrapper()->setLogStream(l);
+                                    BTG_NOTICE(logWrapper(), "Logfile opened");
                                  }
                               else
                                  {
+                                    delete fl;
+                                    fl = 0;
                                     result = or_log_failture;
-                                    BTG_NOTICE("Failed to open '" << logfilename << "' for writing.");
+                                    BTG_NOTICE(logWrapper(), "Failed to open '" << logfilename << "' for writing.");
                                  }
 
                               break;
@@ -163,8 +169,8 @@ namespace btg
                         case logBuffer::SYSLOG:
                            {
                               // Log to syslog.
-                              logWrapper* log = logWrapper::getInstance();
-                              log->setLogStream(new logStream(new syslogLogger()));
+                              boost::shared_ptr<btg::core::logger::logStream> l(new logStream(new syslogLogger()));
+                              logWrapper()->setLogStream(l);
                               break;
                            }
                         case logBuffer::UNDEF:
@@ -196,7 +202,7 @@ namespace btg
                      // actually set.
                      if (!authSet())
                         {
-                           BTG_NOTICE("No auth information set.");
+                           BTG_NOTICE(logWrapper(), "No auth information set.");
                            result = startupHelper::or_auth_failture;
                         }
 
@@ -432,10 +438,11 @@ namespace btg
 
          /* -- */
 
-         transportHelper::transportHelper(std::string const&   _clientName,
+         transportHelper::transportHelper(LogWrapperType _logwrapper,
+                                          std::string const&   _clientName,
                                           clientConfiguration* _config,
                                           HelperArgIf*         _clah)
-            : Helper(
+            : Helper(_logwrapper,
                      _clientName,
                      _config,
                      _clah)
@@ -496,9 +503,10 @@ namespace btg
                            ap = clah->getDaemon();
                         }
 
-                     _e = new btg::core::externalization::XMLRPC;
+                     _e = new btg::core::externalization::XMLRPC(logWrapper());
 
-                     _transport = new tcpTransport(_e,
+                     _transport = new tcpTransport(logWrapper(),
+                                                   _e,
                                                    100 * 1024,
                                                    TO_SERVER,
                                                    ap,
@@ -534,9 +542,10 @@ namespace btg
                            return status;
                         }
 
-                     _e = new btg::core::externalization::XMLRPC;
+                     _e = new btg::core::externalization::XMLRPC(logWrapper());
                      btg::core::os::gtlsGeneric::init();
-                     _transport = new secureTcpTransport(_e,
+                     _transport = new secureTcpTransport(logWrapper(),
+                                                         _e,
                                                          new btg::core::os::gtlsClientData(ca_cert, cert, privkey),
                                                          100 * 1024,
                                                          TO_SERVER,
@@ -562,9 +571,10 @@ namespace btg
                            ap = clah->getDaemon();
                         }
 
-                     _e = new btg::core::externalization::XMLRPC;
+                     _e = new btg::core::externalization::XMLRPC(logWrapper());
 
-                     _transport = new httpTransport(_e,
+                     _transport = new httpTransport(logWrapper(),
+                                                    _e,
                                                     100 * 1024,
                                                     TO_SERVER,
                                                     ap,
@@ -598,9 +608,10 @@ namespace btg
                            return status;
                         }
 
-                     _e = new btg::core::externalization::XMLRPC;
+                     _e = new btg::core::externalization::XMLRPC(logWrapper());
                      btg::core::os::gtlsGeneric::init();
-                     _transport = new secureHttpTransport(_e,
+                     _transport = new secureHttpTransport(logWrapper(),
+                                                          _e,
                                                           new btg::core::os::gtlsClientData(ca_cert, cert, privkey),
                                                           100 * 1024,
                                                           TO_SERVER,

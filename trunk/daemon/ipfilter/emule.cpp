@@ -40,9 +40,11 @@ namespace btg
    {
       const std::string moduleName("flt");
 
-      Emule::Emule(bool const _verboseFlag,
+      Emule::Emule(btg::core::LogWrapperType _logwrapper,
+                   bool const _verboseFlag,
                    std::string const& _filename)
-         : IpFilterIf(_verboseFlag, 
+         : IpFilterIf(_logwrapper,
+                      _verboseFlag, 
                       IpFilterIf::IPF_EMULE,
                       _filename)
       {
@@ -56,7 +58,7 @@ namespace btg
          file.open(filename_.c_str(), std::ios::in);
 #endif
 
-         BTG_MNOTICE(getName() << ": attempting to open '" << filename_ << "'");
+         BTG_MNOTICE(logWrapper(), getName() << ": attempting to open '" << filename_ << "'");
 
          if (file.is_open())
             {
@@ -148,7 +150,7 @@ namespace btg
 
                                                    if ((numberOfentries_ % 1000) == 0)
                                                       {
-                                                         VERBOSE_LOG(verboseFlag_, "Filter " << getName() << " added " << numberOfentries_ << " entries.");
+                                                         VERBOSE_LOG(logWrapper(), verboseFlag_, "Filter " << getName() << " added " << numberOfentries_ << " entries.");
                                                       }
                                                 }
                                           }
@@ -162,22 +164,22 @@ namespace btg
                if (numberOfentries_ > 0)
                   {
                      initialized_ = true;
-                     BTG_MNOTICE(getName() << ": initialized, " << numberOfentries_ << " entries");
+                     BTG_MNOTICE(logWrapper(), getName() << ": initialized, " << numberOfentries_ << " entries");
                   }
                else
                   {
-                     BTG_MNOTICE(getName() << ": not initialized");
+                     BTG_MNOTICE(logWrapper(), getName() << ": not initialized");
                   }
             }
          else
             {
-               BTG_MNOTICE(getName() << ": unable to open file: '" << filename_ << "'");
+               BTG_MNOTICE(logWrapper(), getName() << ": unable to open file: '" << filename_ << "'");
             }
       }
 
       void Emule::set(libtorrent::session & _session) const
       {
-         BTG_MNOTICE(getName() << ": making session use filter");
+         BTG_MNOTICE(logWrapper(), getName() << ": making session use filter");
          _session.set_ip_filter(filter_);
       }
 

@@ -24,8 +24,6 @@
 
 #include <stdlib.h>
 
-#include <bcore/logmacro.h>
-
 namespace btg
 {
    namespace core
@@ -55,7 +53,7 @@ namespace btg
             // Lets not wait for the callback to complete.
             command += " &";
 
-            BTG_NOTICE("Executing command '" << command << "'.");
+            // BTG_NOTICE("Executing command '" << command << "'.");
 
             int result = ::system(command.c_str());
             if (result >= 0)
@@ -63,7 +61,7 @@ namespace btg
                   status = true;
                }
 
-            BTG_NOTICE("Status: " << status << ".");
+            // BTG_NOTICE("Status: " << status << ".");
 
             return status;
          }
@@ -79,7 +77,7 @@ namespace btg
                   status = true;
                }
 
-            BTG_NOTICE("Checking if '" << _filename << "' is executable: " << status << ".");
+            // BTG_NOTICE("Checking if '" << _filename << "' is executable: " << status << ".");
 
             return status;
          }

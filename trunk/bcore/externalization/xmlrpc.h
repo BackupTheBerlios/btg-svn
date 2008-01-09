@@ -48,7 +48,7 @@ namespace btg
             {
             public:
                /// Default constructor.
-               XMLRPC();
+               XMLRPC(LogWrapperType _logwrapper);
 
                /// Destructor.
                virtual ~XMLRPC();

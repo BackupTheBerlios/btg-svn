@@ -14,8 +14,10 @@ namespace btg
          using namespace btg::core;
          using namespace btg::core::logger;
 
-         lastFiles::lastFiles(clientDynConfig & cc)
-            : m_cc(cc),
+         lastFiles::lastFiles(LogWrapperType _logwrapper,
+                              clientDynConfig & cc)
+            : Logable(_logwrapper),
+              m_cc(cc),
               data_modified_(false),
               lastFiles_(cc.lastFiles_)
          {
@@ -31,7 +33,7 @@ namespace btg
             t_strListCI strIter = find(lastFiles_.begin(), lastFiles_.end(), _filename);
             if (strIter == lastFiles_.end())
                {
-                  BTG_NOTICE("Adding '" << _filename << "'.");
+                  BTG_NOTICE(logWrapper(), "Adding '" << _filename << "'.");
                   lastFiles_.push_back(_filename);
                   set_modified(true);
                }

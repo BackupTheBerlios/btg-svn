@@ -142,7 +142,7 @@ namespace btg
 
          /// An abstraction which is used to communicate with the thread that
          /// runs the bittorrent client.
-         class Context
+         class Context: public btg::core::Logable
             {
             public:
 
@@ -169,7 +169,8 @@ namespace btg
                /// @param [in] _useTorrentName Enable/disable using the torrent name from the tracker.
                /// @param [in] _cbm           Pointer to callback manager.
                /// @param [in] _clientAttached If true, a client is attached.
-               Context(bool const _verboseFlag,
+               Context(btg::core::LogWrapperType _logwrapper,
+                       bool const _verboseFlag,
                        std::string const& _username,
                        std::string const& _tempDir,
                        std::string const& _workDir,

@@ -26,6 +26,7 @@
 #include "type.h"
 
 #include <bcore/externalization/externalization.h>
+#include <bcore/logable.h>
 
 namespace btg
 {
@@ -41,7 +42,7 @@ namespace btg
 
          /// Convert between commands and externalized representation
          /// and the other way around.
-         class commandFactory
+         class commandFactory : public btg::core::Logable
             {
             public:
                /// The createFromBytes function uses these enums to
@@ -53,19 +54,31 @@ namespace btg
                      DS_FAILED   //!< Failed to deserialize command.
                   };
 
+               /// Constructor.
+               commandFactory(LogWrapperType _logwrapper,
+                              btg::core::externalization::Externalization* _e);
+
                /// Create an instance of Command by reading from a byte array.
                /// @param [in]  _e      Pointer to the externalization which is used.
                /// @param [out] _status Status code.
                /// @return              A pointer to a command object or 0 on failture.
-               static Command* createFromBytes(btg::core::externalization::Externalization* _e,
-                                               decodeStatus & _status);
+               Command* createFromBytes(decodeStatus & _status);
 
                /// Convert a command into bytes.
                /// @param [out] _e           Pointer to the externalization which is used.
                /// @param [in]  _command     Pointer to a command object.
                /// @return                   The number of bytes written to _destination.
-               static bool convertToBytes(btg::core::externalization::Externalization* _e,
-                                          const Command* _command);
+               bool convertToBytes(const Command* _command);
+
+               /// Get the bytes produced by a sucessful call to convertToBytes.
+               void getBytes(btg::core::DIRECTION const _dir, dBuffer & _dbuffer);
+
+               /// Destructor.
+               virtual ~commandFactory();
+
+            protected:
+               /// The externalization interface used.
+               btg::core::externalization::Externalization* e;
             };
 
          /** @} */

@@ -34,6 +34,8 @@
 #include "configuration.h"
 #include "lastfiles.h"
 
+#include <bcore/logable.h>
+
 #include <string>
 
 namespace btg
@@ -55,7 +57,7 @@ namespace btg
          /// for calling callbacks with the result from the statemachine.
          /// A number of members is avaible to hold information
          /// obtained as the result from executed commands.
-         class clientHandler
+         class clientHandler: public Logable
          {
          public:
             /// Constructor.
@@ -77,7 +79,8 @@ namespace btg
             /// holding a list of last accessed files.
             /// @param [in] _verboseFlag Instructs this class to do verbose logging.
             /// @param [in] _autoStartFlag Indicates that the handler should start torrents automatically after loading them.
-            clientHandler(btg::core::externalization::Externalization* _e,
+            clientHandler(LogWrapperType _logwrapper,
+                          btg::core::externalization::Externalization* _e,
                           btg::core::client::clientCallback* _callback,
                           btg::core::messageTransport*       _transport,
                           btg::core::client::clientConfiguration*  _config,

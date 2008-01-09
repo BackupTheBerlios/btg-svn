@@ -27,6 +27,8 @@
 
 #include <boost/program_options.hpp>
 
+#include <iostream>
+
 namespace btg
 {
    namespace daemon

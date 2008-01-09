@@ -52,7 +52,9 @@ using namespace btg::core::os;
 
 void testOS::setUp()
 {
-   externalization = new btg::core::externalization::Simple();
+   logwrapper = btg::core::LogWrapperType(new btg::core::logger::logWrapper);
+
+   externalization = new btg::core::externalization::Simple(logwrapper);
 
    /* Make sure the dir for the test files exist */
    if(access(TESTFILE_BASE_DIR, W_OK) == -1)

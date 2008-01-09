@@ -26,6 +26,7 @@
 #include <bcore/type.h>
 #include <bcore/type_btg.h>
 #include <bcore/addrport.h>
+#include <bcore/logable.h>
 
 #include <string>
 
@@ -42,11 +43,11 @@ namespace btg
 
                /// Authorization of users.
                /// Base class.
-               class Auth
+               class Auth: public btg::core::Logable
                   {
                   public:
                      /// Constructor.
-                     Auth() {};
+                     Auth(btg::core::LogWrapperType _logwrapper);
 
                      /// Return true, if an user identified by an username,
                      /// hash of password and (address:port) is authorized
@@ -90,7 +91,7 @@ namespace btg
                      virtual bool reInit() = 0;
 
                      /// Destructor.
-                     virtual ~Auth() {};
+                     virtual ~Auth();
                   };
 
                /** @} */

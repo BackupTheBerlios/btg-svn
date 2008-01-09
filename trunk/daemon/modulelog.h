@@ -31,21 +31,21 @@
 /// Used to write uniform notices for different modules.
 /// 
 /// \note Adds punctuation character.
-#define BTG_MNOTICE(_TEXT) { BTG_MESSAGE_LOG(btg::core::logger::logWrapper::PRIO_NOTICE, moduleName << ": " << _TEXT << ".", BTG_DEBUG, false); }
+#define BTG_MNOTICE(_LOGW, _TEXT) { BTG_MESSAGE_LOG(_LOGW, btg::core::logger::logWrapper::PRIO_NOTICE, moduleName << ": " << _TEXT << ".", BTG_DEBUG, false); }
 
 /// Used to write uniform errors for different modules.
 /// 
 /// \note Adds punctuation character.
-#define BTG_MERROR(_TEXT) { BTG_MESSAGE_LOG(btg::core::logger::logWrapper::PRIO_ERROR, moduleName << ", error: " << _TEXT << ".", BTG_DEBUG, false); }
+#define BTG_MERROR(_LOGW, _TEXT) { BTG_MESSAGE_LOG(_LOGW, btg::core::logger::logWrapper::PRIO_ERROR, moduleName << ", error: " << _TEXT << ".", BTG_DEBUG, false); }
 
 /// A function enter.
-#define BTG_MENTER(_FUNCTION_NAME, _ARGUMENTS)   { BTG_MNOTICE("en:" << _FUNCTION_NAME << ", arg: " << _ARGUMENTS); }
+#define BTG_MENTER(_LOGW, _FUNCTION_NAME, _ARGUMENTS)   { BTG_MNOTICE(_LOGW, "en:" << _FUNCTION_NAME << ", arg: " << _ARGUMENTS); }
 
 /// A function exit.
-#define BTG_MEXIT(_FUNCTION_NAME, _RETURN_VALUE) { BTG_MNOTICE("ex:" << _FUNCTION_NAME << ", ret: " << _RETURN_VALUE); }
+#define BTG_MEXIT(_LOGW, _FUNCTION_NAME, _RETURN_VALUE) { BTG_MNOTICE(_LOGW, "ex:" << _FUNCTION_NAME << ", ret: " << _RETURN_VALUE); }
 
 /// Verbose log for a certain module.
-#define MVERBOSE_LOG(_moduleName, _flag, _text) { VERBOSE_LOG(_flag, _moduleName << ": " << _text); }
+#define MVERBOSE_LOG(_LOGW, _moduleName, _flag, _text) { VERBOSE_LOG(_LOGW, _flag, _moduleName << ": " << _text); }
 
 #endif // MODULELOG_H
 

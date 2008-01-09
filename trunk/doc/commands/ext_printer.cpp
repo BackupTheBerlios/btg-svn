@@ -1,7 +1,32 @@
-#include <iomanip>
+/*
+ * btg Copyright (C) 2005 Michael Wojciechowski.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+/*
+ * $Id$
+ */
+
 #include "ext_printer.h"
 
 #include <bcore/command/command.h>
+
+#include <iomanip>
+#include <iostream>
+#include <sstream>
 
 namespace btg
 {
@@ -12,7 +37,8 @@ namespace btg
 
          using namespace btg::core;
 
-         externalizationPrinter::externalizationPrinter()
+         externalizationPrinter::externalizationPrinter(btg::core::LogWrapperType _logwrapper)
+            : btg::core::externalization::Externalization(_logwrapper)
          {
 
          }
@@ -29,8 +55,8 @@ namespace btg
 
          t_int externalizationPrinter::getBufferSize()
          {
-	   // Not used.
-	   return 0;
+            // Not used.
+            return 0;
          }
 
          void externalizationPrinter::getBuffer(btg::core::dBuffer & _buffer)

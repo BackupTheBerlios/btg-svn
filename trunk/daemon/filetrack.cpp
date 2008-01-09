@@ -31,15 +31,16 @@ namespace btg
    {
       const std::string moduleName("fit");
 
-      fileTrack::fileTrack()
-         : files_()
+      fileTrack::fileTrack(btg::core::LogWrapperType _logwrapper)
+         : btg::core::Logable(_logwrapper),
+           files_()
       {
       }
 
       bool fileTrack::add(std::string const& _userdir,
                           std::string const& _filename)
       {
-         BTG_MNOTICE("adding filename '" << _filename << "'.");
+         BTG_MNOTICE(logWrapper(), "adding filename '" << _filename << "'.");
 
          bool status = false;
 
@@ -114,12 +115,12 @@ namespace btg
       void fileTrack::remove(std::string const& _userdir,
                              std::string const& _filename)
       {
-         BTG_MNOTICE("removing filename '" << _filename << "'.");
+         BTG_MNOTICE(logWrapper(), "removing filename '" << _filename << "'.");
 
          std::vector<fileTrackData>::iterator iter;
          if (!check(_userdir, _filename, iter))
             {
-               BTG_MNOTICE("filename '" << _filename << "' was not found.");
+               BTG_MNOTICE(logWrapper(), "filename '" << _filename << "' was not found.");
                return;
             }
 
