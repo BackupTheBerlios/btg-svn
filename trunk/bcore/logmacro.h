@@ -40,12 +40,6 @@
   \brief Logging macros.
 */
 
-
-#define BTG_EXTERNALIZATION_DEBUG 1
-#define BTG_STATEMACHINE_DEBUG 1
-#define BTG_AUTH_DEBUG 1
-#define BTG_TRANSPORT_DEBUG 1
-
 /// Set to 1 to log/output transport debug information.
 #ifndef BTG_TRANSPORT_DEBUG
 #define BTG_TRANSPORT_DEBUG 0
