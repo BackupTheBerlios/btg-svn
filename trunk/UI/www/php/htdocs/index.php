@@ -86,6 +86,8 @@ for(var i=0;i<t.length;i++) {
 		<p>If you'd like to setup a new session, enter default seed limit (how many % we should seed before we stop) and/or default seed timeout (how long time we should seed before we stop).
 		Both can be empty, in which case you have to stop your torrents by your self, or one of them can be used, in which case that condition will be used, or both can be used, and the first reached will be used.</p>
 		<form action="" name="frm_sessionsetup">
+		Encryption <input type="checkbox" id="session_enc" name="session_enc" value="1"/>, 
+		DHT <input type="checkbox" id="session_dht" name="session_dht" value="1"/>, 
 		Seed limit <input type="text" id="seedLimit" name="seedLimit" value="" style="width:30px;"/>%,
 		seed timeout <input type="text" id="seedTimeout" name="seedTimeout" value="" style="width:40px;"/> minutes
 		<input type="submit" id="setup_button" onClick="sessionSetup(); return false;" value="Setup"/>

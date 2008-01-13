@@ -97,19 +97,42 @@ function sessionAttach()
 /* sessionSetup, setup a new session */
 function sessionSetup()
 {
-	var seedLimit = document.frm_sessionsetup.seedLimit.value;
+	var seedLimit   = document.frm_sessionsetup.seedLimit.value;
 	var seedTimeout = document.frm_sessionsetup.seedTimeout.value;
+	var encryption  = 0;
+	var DHT         = 0;
 
-	if(seedLimit.length == 0)
+	if (document.frm_sessionsetup.session_enc.value == 1)
+	    {
+		encryption = 1;
+	    }
+
+	if (document.frm_sessionsetup.session_dht.value == 1)
+	    {
+		DHT = 1;
+	    }
+
+	if (seedLimit.length == 0)
+	    {
 		seedLimit = noLimit;
-	if(seedTimeout.length == 0)
+	    }
+	if (seedTimeout.length == 0)
+	    {
 		seedTimeout = noLimit;
+	    }
 	else
+	    {
 		// User enters minutes...
 		seedTimeout=seedTimeout*60;
+	    }
 
 	setStatus("Setting up new session...");
-	btg_sessionSetup(cb_sessionSetup, cb_sessionSetup_err, seedLimit, seedTimeout);
+	btg_sessionSetup(cb_sessionSetup, 
+			 cb_sessionSetup_err, 
+			 encryption, 
+			 DHT, 
+			 seedLimit, 
+			 seedTimeout);
 }
 
 /* sessionDetach, detach from the current session */
@@ -1709,7 +1732,6 @@ function createTorrentDetails()
 	c = r.insertCell(-1);
 
 	// Add a tracker URL.
-	// !!!
 	c.className = 'extrainfo_type';
 	c.innerHTML='Tracker:';
 
@@ -1828,7 +1850,6 @@ function updateTorrentDetails(t, s)
 
 	t.rows[4].cells[5].innerHTML = RoundToNdp(s.done,1)+'%';
 	// Tracker url.
-	// !!!
 	t.rows[5].cells[1].innerHTML = s.tracker;
 
 }

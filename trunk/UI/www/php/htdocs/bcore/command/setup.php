@@ -42,13 +42,13 @@ class requiredSetupData extends BTGSerializable
 	/// Use Encryption
 	private $useEncryption;
 
-	public function requiredSetupData($buildID="", $seedLimit = -1, $seedTimeout = -1, $useDHT = false, $useEncryption = false)
+	public function requiredSetupData($buildID="", $seedLimit = -1, $seedTimeout = -1, $DHT = true, $Encryption = true)
 	{
-		$this->buildID = $buildID;
-		$this->seedLimit = $seedLimit;
-		$this->seedTimeout = $seedTimeout;
-		$this->useDHT = $useDHT;
-		$this->useEncryption = $useEncryption;
+		$this->buildID       = $buildID;
+		$this->seedLimit     = $seedLimit;
+		$this->seedTimeout   = $seedTimeout;
+		$this->useDHT        = $DHT;
+		$this->useEncryption = $Encryption;
 	}
 
 	public function toString()

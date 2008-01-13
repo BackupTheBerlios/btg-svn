@@ -89,9 +89,9 @@ Stable Releases
 
 Experimental Releases
 ---------------------
-- `btg-0.9.6-rc4.tar.gz`_ (`Rasterbar Libtorrent`_ 0.12/SVN)
+- `btg-0.9.7-rc1.tar.gz`_ (`Rasterbar Libtorrent`_ 0.13RC/SVN)
 
-.. _btg-0.9.6-rc4.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.6-rc4.tar.gz
+.. _btg-0.9.7-rc1.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.7-rc1.tar.gz
 
 Packages
 ~~~~~~~~
