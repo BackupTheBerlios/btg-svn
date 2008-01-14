@@ -323,26 +323,23 @@ class BTG
 	}
 
 	/// Setup a new session
-	public function sessionSetup($encryption = 0, $dht = 0, $seedLimit = limitBase::LIMIT_DISABLED, $seedTimeout = limitBase::LIMIT_DISABLED)
+	public function sessionSetup($seedLimit = limitBase::LIMIT_DISABLED, $seedTimeout = limitBase::LIMIT_DISABLE, $useDHT = false, $useEncryption = false)
 	{
-		$temp_enc = false;
-		if ($encryption == 1)
-		{
-			$temp_enc = true;
-		}
+		if(!$useDHT || $useDHT == "false")
+			$useDHT = false;
+		else
+			$useDHT = true;
+		if(!$useEncryption || $useEncryption == "false")
+			$useEncryption = false;
+		else
+			$useEncryption = true;
 
-		$temp_dht = false;
-		if ($dht)
-		{
-			$temp_dht = true;
-		}
-
-		$this->log_debug("Encryption: $temp_enc");
-		$this->log_debug("DHT: $temp_dht");
 		$this->authLast();
 		$output = "";
-		$this->log_debug("Setting up session, seedLimit ".$seedLimit.", seedTimeout ".$seedTimeout);
-		$r = $this->executeCommand(new setupCommand(new requiredSetupData($this->buildID, (int)$seedLimit, (double)$seedTimeout), $temp_dht, $temp_enc), true);
+		$this->log_debug("Setting up session, seedLimit ".$seedLimit.", seedTimeout ".$seedTimeout.", DHT $useDHT, encryption $useEncryption");
+		$r = $this->executeCommand(new setupCommand(
+			new requiredSetupData($this->buildID, (int)$seedLimit, (double)$seedTimeout, $useDHT, $useEncryption)),
+			true);
 
 		if($r instanceof errorCommand)
 		{

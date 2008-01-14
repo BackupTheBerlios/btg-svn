@@ -99,40 +99,31 @@ function sessionSetup()
 {
 	var seedLimit   = document.frm_sessionsetup.seedLimit.value;
 	var seedTimeout = document.frm_sessionsetup.seedTimeout.value;
-	var encryption  = 0;
-	var DHT         = 0;
+	var useEncryption  = false;
+	var useDHT         = false; 
 
-	if (document.frm_sessionsetup.session_enc.value == 1)
-	    {
-		encryption = 1;
-	    }
+	if (document.frm_sessionsetup.session_enc.checked)
+		useEncryption = true;
 
-	if (document.frm_sessionsetup.session_dht.value == 1)
-	    {
-		DHT = 1;
-	    }
+	if (document.frm_sessionsetup.session_dht.checked)
+		useDHT = true;
 
 	if (seedLimit.length == 0)
-	    {
 		seedLimit = noLimit;
-	    }
+
 	if (seedTimeout.length == 0)
-	    {
 		seedTimeout = noLimit;
-	    }
 	else
-	    {
 		// User enters minutes...
 		seedTimeout=seedTimeout*60;
-	    }
 
 	setStatus("Setting up new session...");
 	btg_sessionSetup(cb_sessionSetup, 
 			 cb_sessionSetup_err, 
-			 encryption, 
-			 DHT, 
 			 seedLimit, 
-			 seedTimeout);
+			 seedTimeout,
+			 useDHT,
+			 useEncryption);
 }
 
 /* sessionDetach, detach from the current session */

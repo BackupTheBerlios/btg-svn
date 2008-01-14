@@ -75,5 +75,5 @@ $btg_config_autostart = true;
  * and is shown to the client by default.
  * The syslog messages produced are also written to syslog.
  */
-$btg_config_debug = 1;
+$btg_config_debug = 0;
 ?>
