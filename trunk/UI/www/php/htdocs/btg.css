@@ -256,7 +256,7 @@ td.ctx_control
 	font-weight: bold !important;
 }
 
-#refresh_button{
+#refresh_button, #stop_refresh{
 	border:0;
 	background: transparent;
 	cursor: pointer;

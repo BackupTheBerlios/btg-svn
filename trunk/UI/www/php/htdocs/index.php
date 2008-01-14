@@ -167,6 +167,7 @@ for(var i=0;i<t.length;i++) {
 <div id="network_status">
 	<pre id="statusMessage">Loading...</pre>
 	<input id="refresh_button" class="control_buttons" type="button" name="update" onClick="refreshContextList();" value="Refresh now"/>
+	<input id="stop_refresh" class="control_buttons" type="button" name="stop_refresh" onClick="changeUpdateMode();" value="Stop updates"/>
 	<h2 id="status_download">Total download speed is: 0b/s</h2>
 	<h2 id="status_upload">Total upload speed is: 0b/s</h2>
 </div>

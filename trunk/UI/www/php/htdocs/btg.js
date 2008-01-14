@@ -55,6 +55,9 @@ var noLimit     = -1;
 // Constant.
 var bytesPerKiB = 1024;
 
+// Indicates that automatic updates are stopped.
+var updatesStopped = 0;
+
 /**************************************************
  * Functions called from user interface in some 
  * way or another (either via user action or other
@@ -606,11 +609,13 @@ function timer()
 			document.getElementById('statusMessage').innerHTML = 'Window not on focus, wont update...';
 		else if(diff <= 0)
 		{
-			refreshContextList();
+			if (updatesStopped == 0)
+				refreshContextList();
 		}
 		else if(diff > 0)
 		    {
-			document.getElementById('statusMessage').innerHTML = 'Update in ' + (refreshTimeout - contextsAge)  + ' seconds.';
+			if (updatesStopped == 0)
+				document.getElementById('statusMessage').innerHTML = 'Update in ' + (refreshTimeout - contextsAge)  + ' seconds.';
 		    }
 	}
 	else
@@ -1220,8 +1225,30 @@ function humanizeSpeed(size, precision)
 /* Refresh the context list */
 function refreshContextList()
 {
+	if (updatesStopped == 1)
+	{
+		changeUpdateMode();
+	}
+
 	setStatus("Updating torrent list...");
 	btg_contextStatus(cb_contextStatus, cb_contextStatus_err, -1, true);
+}
+
+function changeUpdateMode()
+{
+	if (updatesStopped == 0)
+	{
+	    updatesStopped = 1;
+	    setStatus("Stopped automatic updates...");
+	    document.getElementById('stop_refresh').value='Start updates';
+	}
+    else
+	{
+	    contextsAge    = 0;
+	    updatesStopped = 0;
+	    document.getElementById('stop_refresh').value='Stop updates';
+	    setStatus();
+	}
 }
 
 /* Update the name of the current session. */
