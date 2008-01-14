@@ -16,6 +16,7 @@ The following bugs were fixed:
 012544 BTGWWW, add missing files in bcore/command.
 012535 btgncli: show peers/seeds in the list of torrents.
 012330 Add another version of contextStatusCommand.
+012329 Add "stop autoupdating" button in wwwbtg.
 012308 Clean up daemon/limitval.cpp.
 012301 Update doxygen.
 012241 Please use pkglib_LTLIBRARIES instead of lib_LTLIBRARIES.
