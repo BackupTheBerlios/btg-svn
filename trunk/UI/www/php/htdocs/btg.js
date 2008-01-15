@@ -58,6 +58,10 @@ var bytesPerKiB = 1024;
 // Indicates that automatic updates are stopped.
 var updatesStopped = 0;
 
+// Age of a message shown on the statusbar. In seconds.
+// Used to decide when to clear the statusbar.
+var StatusAge = 0;
+
 /**************************************************
  * Functions called from user interface in some 
  * way or another (either via user action or other
@@ -599,6 +603,17 @@ function uploadDone()
  */
 function timer()
 {
+    if (isStatusIdle == 0)
+	{
+	    StatusAge++;
+
+	    if (StatusAge >= 1)
+		{
+		    setStatus();
+		    StatusAge = 0;
+		}
+	}
+
 	if(doAutoRefresh && isStatusIdle)
 	{
 		contextsAge++;
@@ -609,13 +624,13 @@ function timer()
 			document.getElementById('statusMessage').innerHTML = 'Window not on focus, wont update...';
 		else if(diff <= 0)
 		{
-			if (updatesStopped == 0)
-				refreshContextList();
+		    if (updatesStopped == 0)
+       			refreshContextList();
 		}
 		else if(diff > 0)
 		    {
 			if (updatesStopped == 0)
-				document.getElementById('statusMessage').innerHTML = 'Update in ' + (refreshTimeout - contextsAge)  + ' seconds.';
+			    document.getElementById('statusMessage').innerHTML = 'Update in ' + (refreshTimeout - contextsAge)  + ' seconds.';
 		    }
 	}
 	else
@@ -1110,6 +1125,7 @@ function cb_contextClean_err(error, errStr)
 function setStatus(msg)
 {
 	isStatusIdle = 0;
+	StatusAge = 0;
 	if(msg == '' || msg == null || msg == undefined)
 	{
 		isStatusIdle = 1;
