@@ -63,7 +63,9 @@ WWW Frontend
 
 Support Scripts
 ~~~~~~~~~~~~~~~
-- Dialog.
+- `Dialog`_.
+
+.. _Dialog: http://hightek.org/dialog/
 
 Building the Daemon
 -------------------
@@ -120,6 +122,7 @@ The following options can be given to configure at this time:
 ======================= ==================================================================
 Option                  Description 
 ----------------------- ------------------------------------------------------------------
+--enable-btg-config     Enable generating the btg-config script (uses Dialog).
 --enable-gui            Enable building GUI client.
 --enable-viewer         Enable building SDL viewer (uses AGAR).
 --enable-cli            Enable building CLI clients.
