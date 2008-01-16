@@ -933,7 +933,8 @@ namespace btg
             std::string helpText;
             genHelpText(helpText);
 
-            statuswindow_.setStatus("Showing file(s). " + helpText);
+            std::string numberOfEntries = btg::core::convertToString<t_ulong>(_fi.size());
+            statuswindow_.setStatus("Showing " + numberOfEntries + " file(s). " + helpText);
 
             windowSize fldimensions;
             mainwindow_.getSize(fldimensions);
