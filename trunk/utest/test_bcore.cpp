@@ -397,6 +397,7 @@ void testBcore::testUtil_simple_types()
 
    dBuffer output_buffer;
    bool bool_value = false;
+	t_int command;
 
    externalization->setCommand(btg::core::Command::CN_GINITCONNECTION);
    externalization->boolToBytes(bool_value);
@@ -404,10 +405,12 @@ void testBcore::testUtil_simple_types()
    externalization->getBuffer(output_buffer);
    externalization->reset();
    externalization->setBuffer(output_buffer);
+   CPPUNIT_ASSERT(externalization->getCommand(command) == btg::core::Command::CN_GINITCONNECTION);
    CPPUNIT_ASSERT(externalization->bytesToBool(bool_value));
    CPPUNIT_ASSERT(bool_value == false);
 
    output_buffer.erase();
+   externalization->reset();
 
    bool_value = true;
    externalization->boolToBytes(bool_value);
@@ -418,6 +421,7 @@ void testBcore::testUtil_simple_types()
    CPPUNIT_ASSERT(bool_value == true);
 
    output_buffer.erase();
+   externalization->reset();
 
    // String:
    string string_value = "1234567890Test1234567890Test1234567890Test1234567890Test1234567890TestB";
