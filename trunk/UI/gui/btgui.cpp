@@ -27,7 +27,6 @@
 #include <bcore/client/configuration.h>
 #include <bcore/client/lastfiles.h>
 
-#include <bcore/externalization/simple.h>
 #include <bcore/externalization/xmlrpc.h>
 
 #include <bcore/os/id.h>

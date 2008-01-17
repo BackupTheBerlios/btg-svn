@@ -26,7 +26,6 @@
 #include <bcore/transport/tcpip.h>
 #include <bcore/transport/http.h>
 
-#include <bcore/externalization/simple.h>
 #include <bcore/externalization/xmlrpc.h>
 
 #include "darg.h"

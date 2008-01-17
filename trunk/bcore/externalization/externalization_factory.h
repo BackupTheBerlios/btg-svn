@@ -40,8 +40,7 @@ namespace btg
             /// Externalization types.
             enum eExternalizationType
             {
-               etSimple = 0, //< For Simple serializator.
-               etXml    = 1, //< For XMLRPC serializator.
+               etXml    = 0, //< For XMLRPC serializator.
                etMax         //< Max.
             };
             

@@ -83,7 +83,6 @@ logger/null_log.cpp \
 logger/syslog_log.cpp
 
 EXTERNALIZATION_SOURCES=externalization/externalization.cpp \
-externalization/simple.cpp \
 externalization/xmlrpc.cpp \
 externalization/externalization_factory.cpp
 
@@ -193,9 +192,7 @@ logger/syslog_log.h
 
 EXTERNALIZATION_HEADER=externalization/ext_macro.h \
 externalization/externalization.h \
-externalization/simple.h \
 externalization/xmlrpc.h \
-externalization/t_simple.h \
 externalization/externalization_factory.h
 
 AUTH_HEADER=auth/hash.h

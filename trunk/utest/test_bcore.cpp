@@ -44,7 +44,6 @@ extern "C"
 #include <bcore/peer.h>
 #include <bcore/addrport.h>
 #include <bcore/externalization/xmlrpc.h>
-#include <bcore/externalization/simple.h>
 #include <bcore/auth/hash.h>
 
 #include <bcore/os/fileop.h>
@@ -106,7 +105,7 @@ void testBcore::setUp()
 {
    logwrapper      = btg::core::LogWrapperType(new btg::core::logger::logWrapper);
    command_pointer = 0;
-   externalization = new btg::core::externalization::Simple(logwrapper);
+   externalization = new btg::core::externalization::XMLRPC(logwrapper);
 }
 
 void testBcore::tearDown()
@@ -151,7 +150,7 @@ void testBcore::testCommandNames()
    i += 255;
    CPPUNIT_ASSERT(Command::getName(i) == Command::getName(Command::CN_UNDEFINED));
 
-   btg::core::externalization::Externalization* e = new btg::core::externalization::Simple(logwrapper);
+   btg::core::externalization::Externalization* e = new btg::core::externalization::XMLRPC(logwrapper);
 
    for (i=Command::CN_GINITCONNECTION ; i<Command::CN_UNDEFINED; i++)
       {
@@ -399,6 +398,7 @@ void testBcore::testUtil_simple_types()
    dBuffer output_buffer;
    bool bool_value = false;
 
+   externalization->setCommand(btg::core::Command::CN_GINITCONNECTION);
    externalization->boolToBytes(bool_value);
    CPPUNIT_ASSERT(externalization->getBufferSize() > 0);
    externalization->getBuffer(output_buffer);

@@ -39,6 +39,8 @@
 #include <bcore/logger/file_log.h>
 #include <bcore/logger/syslog_log.h>
 
+#include <bcore/externalization/xmlrpc.h>
+
 #include "daemondata.h"
 
 #include "dconfig.h"

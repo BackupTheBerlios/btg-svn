@@ -28,7 +28,6 @@
 #include <bcore/type.h>
 #include <bcore/util.h>
 #include <bcore/logable.h>
-#include <bcore/externalization/simple.h>
 #include <bcore/externalization/xmlrpc.h>
 #include <bcore/os/id.h>
 #include <bcore/os/fileop.h>

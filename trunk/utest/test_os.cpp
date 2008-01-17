@@ -29,7 +29,7 @@
 #include <vector>
 #include <iostream> // for cout, which should not be used here.
 
-#include <bcore/externalization/simple.h>
+#include <bcore/externalization/xmlrpc.h>
 
 extern "C"
 {
@@ -54,7 +54,7 @@ void testOS::setUp()
 {
    logwrapper = btg::core::LogWrapperType(new btg::core::logger::logWrapper);
 
-   externalization = new btg::core::externalization::Simple(logwrapper);
+   externalization = new btg::core::externalization::XMLRPC(logwrapper);
 
    /* Make sure the dir for the test files exist */
    if(access(TESTFILE_BASE_DIR, W_OK) == -1)

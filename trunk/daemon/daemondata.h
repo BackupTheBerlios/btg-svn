@@ -30,8 +30,7 @@
 #include <bcore/transport/shttp.h>
 #include <bcore/os/gnutlsif.h>
 
-#include <bcore/externalization/simple.h>
-#include <bcore/externalization/xmlrpc.h>
+#include <bcore/externalization/externalization.h>
 
 #include "ipfilter/ipfilterif.h"
 

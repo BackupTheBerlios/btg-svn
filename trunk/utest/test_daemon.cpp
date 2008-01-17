@@ -170,7 +170,7 @@ void testDaemon::testSessionSaver()
       dd.torrentOutputDir = TESTFILE_BASE_DIR;
       dd.portRange = ;
       // Externalization and transport is never used.
-      dd.externalization = new btg::core::externalization::Simple();
+      dd.externalization = new btg::core::externalization::XMLRPC();
       dd.transport = new httpTransport(dd.externalization,
       100 * 1024,
       FROM_SERVER,

@@ -22,7 +22,6 @@
 
 #include "externalization_factory.h"
 
-#include "simple.h"
 #include "xmlrpc.h"
 
 #include <bcore/logmacro.h>
@@ -39,8 +38,6 @@ namespace btg
          {
             switch (_et)
             {
-            case etSimple:
-               return new Simple(_logwrapper);
             case etXml:
                return new XMLRPC(_logwrapper);
             default:

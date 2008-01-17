@@ -29,7 +29,7 @@
 #include "externalization.h"
 extern "C"
 {
-#include "../../external/xmlrpc-epi/src/xmlrpc.h"
+#include <external/xmlrpc-epi/src/xmlrpc.h>
 }
 
 namespace btg
