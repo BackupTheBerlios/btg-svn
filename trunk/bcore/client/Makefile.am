@@ -23,8 +23,8 @@ handlerthr.h \
 clientdynconfig.h \
 loglevel.h
 
-libbtgclient_la_CFLAGS   = @DEBUG_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@
-libbtgclient_la_CXXFLAGS = @DEBUG_CXXFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@
+libbtgclient_la_CFLAGS   = @DEBUG_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ -DBTG_SVNREV="@BTG_SVNREV@"
+libbtgclient_la_CXXFLAGS = @DEBUG_CXXFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ -DBTG_SVNREV="@BTG_SVNREV@"
 libbtgclient_la_LDFLAGS  = -l@BOOST_PROGRAM_OPTIONS_LIB@
 
 INCLUDES             = -I$(top_srcdir)
