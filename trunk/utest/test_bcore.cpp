@@ -85,7 +85,7 @@ extern "C"
 #include <bcore/command/context_last.h>
 #include <bcore/command/context_file.h>
 
-#include <iostream> // for cout, which should not be used here.
+#include <bcore/logger/console_log.h>
 
 #include "files.h"
 
@@ -104,6 +104,10 @@ using namespace std;
 void testBcore::setUp()
 {
    logwrapper      = btg::core::LogWrapperType(new btg::core::logger::logWrapper);
+
+   boost::shared_ptr<btg::core::logger::logStream> l(new btg::core::logger::logStream(new btg::core::logger::consoleLogger()));
+   logwrapper->setLogStream(l);
+   
    command_pointer = 0;
    externalization = new btg::core::externalization::XMLRPC(logwrapper);
 }
@@ -129,7 +133,7 @@ void testBcore::testCommand()
    CPPUNIT_ASSERT(c->getName() == "Undefined");
    commandFactory::decodeStatus error;
    command_pointer = cf.createFromBytes(error);
-   CPPUNIT_ASSERT(error == commandFactory::DS_UNKNOWN);
+   CPPUNIT_ASSERT(error != commandFactory::DS_OK);
    CPPUNIT_ASSERT(command_pointer == 0);
 
    delete c;
@@ -329,18 +333,55 @@ void testBcore::testAttachSessionCommand()
 
 void testBcore::testContextStatusResponseCommand()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   // !!!
+   btg::core::externalization::Externalization* eSource = 
+      new btg::core::externalization::XMLRPC(logwrapper);
+   
+   btg::core::commandFactory cf1(logwrapper, eSource);
 
    trackerStatus ts(-1, 0);
-   Status status(100, "/path/to/file", Status::ts_queued, 100, 101, 102, 1, 1, 50, 1, 100, 200, 0, 0, 0, 0, ts, 0);
-   contextStatusResponseCommand *csrc = new contextStatusResponseCommand(2048, status);
-   csrc->serialize(externalization);
+   Status status(100, 
+                 "test", 
+                 Status::ts_queued, 
+                 100, 
+                 101, 
+                 102, 
+                 1, 
+                 1, 
+                 50, 
+                 1, 
+                 100, 
+                 200, 
+                 0, 
+                 0, 
+                 0, 
+                 0, 
+                 ts, 
+                 0);
+
+   contextStatusResponseCommand* csrc = new contextStatusResponseCommand(5, status);
+
+   bool result = cf1.convertToBytes(csrc);
+
+   CPPUNIT_ASSERT(result);
+
+   dBuffer dbuffer;
+
+   eSource->getBuffer(dbuffer);
+
+   btg::core::externalization::Externalization* eDestin = 
+      new btg::core::externalization::XMLRPC(logwrapper);
+   eDestin->setBuffer(dbuffer);
+
+   btg::core::commandFactory cf2(logwrapper, eDestin);
+
+   // csrc->serialize(externalization);
 
    commandFactory::decodeStatus error;
-   command_pointer = cf.createFromBytes(error);
+   command_pointer = cf2.createFromBytes(error);
 
    CPPUNIT_ASSERT(error == commandFactory::DS_OK);
-   CPPUNIT_ASSERT(buffer.size() == 0);
+   // CPPUNIT_ASSERT(buffer.size() == 0);
 
    CPPUNIT_ASSERT(csrc->getType()             == Command::CN_CSTATUSRSP);
    CPPUNIT_ASSERT(command_pointer->getType()  == Command::CN_CSTATUSRSP);
@@ -356,6 +397,10 @@ void testBcore::testContextStatusResponseCommand()
    delete csrc;
    CLEANUP;
 
+   delete eSource;
+   eSource = 0;
+   delete eDestin;
+   eDestin = 0;
 }
 
 void testBcore::testContextAllStatusResponseCommand()
@@ -405,7 +450,9 @@ void testBcore::testUtil_simple_types()
    externalization->getBuffer(output_buffer);
    externalization->reset();
    externalization->setBuffer(output_buffer);
-   CPPUNIT_ASSERT(externalization->getCommand(command) == btg::core::Command::CN_GINITCONNECTION);
+   CPPUNIT_ASSERT(externalization->getCommand(command));
+   CPPUNIT_ASSERT(command == btg::core::Command::CN_GINITCONNECTION);
+
    CPPUNIT_ASSERT(externalization->bytesToBool(bool_value));
    CPPUNIT_ASSERT(bool_value == false);
 
@@ -727,8 +774,6 @@ void testBcore::testHumanReadableTime()
    seconds = 60ull * 60ull;
    hrt     = humanReadableTime::convert(seconds);
 
-   std::cout << hrt.getValue() << std::endl;
-
    CPPUNIT_ASSERT(hrt.getValue() == 1);
    CPPUNIT_ASSERT(hrt.getValueUnit() == humanReadableTime::HOUR);
 
@@ -783,13 +828,6 @@ void testBcore::testFileInfo()
          boolvect.push_back(true);
       }
    fileInformation fi("max_size", boolvect, bytesPerPiece, filesize);
-   CPPUNIT_ASSERT(fi.size() == bits);
-
-   // Serialize.
-   CPPUNIT_ASSERT(fi.serialize(externalization));
-   // Deserialize.
-   CPPUNIT_ASSERT(fi.deserialize(externalization));
-
    CPPUNIT_ASSERT(fi.size() == bits);
 
    // Add more data, double the input size.
@@ -1521,7 +1559,8 @@ void testBcore::stressTestXmlRpcCommands()
 void testBcore::XmlRpcSerializeDeserialize(btg::core::externalization::Externalization* _eSource,
                                            btg::core::externalization::Externalization* _eDestin)
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf1(logwrapper, _eSource);
+   btg::core::commandFactory cf2(logwrapper, _eDestin);
 
    std::vector<btg::core::Command*> org_commands;
    std::vector<btg::core::Command*> restored_commands;
@@ -1536,7 +1575,7 @@ void testBcore::XmlRpcSerializeDeserialize(btg::core::externalization::Externali
       {
          Command* c = *iter;
 
-         CPPUNIT_ASSERT(cf.convertToBytes(c));
+         CPPUNIT_ASSERT(cf1.convertToBytes(c));
          
          _eSource->getBuffer(buffer);
          _eSource->reset();
@@ -1544,7 +1583,7 @@ void testBcore::XmlRpcSerializeDeserialize(btg::core::externalization::Externali
          _eDestin->setBuffer(buffer);
 
          commandFactory::decodeStatus ds;
-         Command* c2 = cf.createFromBytes(ds);
+         Command* c2 = cf2.createFromBytes(ds);
          CPPUNIT_ASSERT(ds == commandFactory::DS_OK);
          CPPUNIT_ASSERT(c2 != 0);
 
@@ -1553,6 +1592,7 @@ void testBcore::XmlRpcSerializeDeserialize(btg::core::externalization::Externali
          buffer.erase();
       }
 
+   CPPUNIT_ASSERT(restored_commands.size() > 0);
    CPPUNIT_ASSERT(org_commands.size() == restored_commands.size());
 
    std::vector<btg::core::Command*>::iterator org_iter;

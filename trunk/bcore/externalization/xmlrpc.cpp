@@ -254,7 +254,7 @@ namespace btg
             reset();
          }
 
-         t_byte XMLRPC::determineCommandType(t_int & _command)
+         bool XMLRPC::determineCommandType(t_int & _command)
          {
             return getCommand(_command);
          }
@@ -277,18 +277,17 @@ namespace btg
                }
          }
 
-         t_byte XMLRPC::setCommand(t_int const _command)
+         bool XMLRPC::setCommand(t_int const _command)
          {
             reset();
 #if BTG_EXTERNALIZATION_DEBUG
             BTG_NOTICE(logWrapper(), "XMLRPC::setCommand() " << _command << " :" <<getCommandName(_command));
 #endif // BTG_EXTERNALIZATION_DEBUG
             XMLRPC_RequestSetMethodName(xmlrpc_request, getCommandName(_command).c_str());
-            addByte(_command);
-            return 1;
+            return addByte(_command);
          }
 
-         t_byte XMLRPC::getCommand(t_int & _command)
+         bool XMLRPC::getCommand(t_int & _command)
          {
             doRewind = true;
             t_byte cmd;
@@ -304,11 +303,7 @@ namespace btg
                      }
                }
 
-#if BTG_EXTERNALIZATION_DEBUG
-            BTG_NOTICE(logWrapper(), "XMLRPC::getCommand() " << _command << " :" << getCommandName(_command));
-#endif // BTG_EXTERNALIZATION_DEBUG
-
-            return _command;
+            return true;
          }
 
          bool XMLRPC::boolToBytes(bool const _source)
@@ -322,6 +317,8 @@ namespace btg
                                     XMLRPC_RequestGetData(xmlrpc_request),
                                     XMLRPC_CreateValueBoolean(NULL, val)
                                     );
+
+            success();
             return true;
          }
 
@@ -347,6 +344,7 @@ namespace btg
                   return false;
                }
 
+            success();
             return true;
          }
 
@@ -357,6 +355,7 @@ namespace btg
                                     XMLRPC_CreateValueInt(NULL, _byte)
                                     );
 
+            success();
             return true;
          }
 
@@ -371,6 +370,7 @@ namespace btg
             int res = XMLRPC_GetValueInt(v);
             _byte = static_cast<t_byte>(res);
 
+            success();
             return true;
          }
 

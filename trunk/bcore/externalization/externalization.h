@@ -87,7 +87,7 @@ namespace btg
 
                /// Return a byte which can be used to establish which
                /// btg command will be deserialized next.
-               virtual t_byte determineCommandType(t_int & _command) = 0;
+               virtual bool determineCommandType(t_int & _command) = 0;
 
                /// Sets the direction of the message
                virtual void setDirection(btg::core::DIRECTION _dir) = 0;
@@ -100,10 +100,10 @@ namespace btg
                virtual void setParamInfo(std::string const& _name, bool _required);
 
                /// Sets the name of the command to be serialized
-               virtual t_byte setCommand(t_int const _command) = 0;
+               virtual bool setCommand(t_int const _command) = 0;
 
                /// Get the command id of the current command.
-               virtual t_byte getCommand(t_int & _command) = 0;
+               virtual bool getCommand(t_int & _command) = 0;
 
                /// Convert an boolean to unsigned char and write it to the buffer.
                /// @param [in]  _source       Value.

@@ -21,7 +21,6 @@
  */
 
 #include "command.h"
-#include <iostream>
 #include <bcore/project.h>
 #include <bcore/t_string.h>
 #include <bcore/helpermacro.h>
@@ -147,9 +146,7 @@ namespace btg
       {
          // Write the command id.
          _e->setParamInfo("command type", true);
-         //BTG_NOTICE("cmd::serialize, status setting type " << this->type);
          BTG_RCHECK( _e->setCommand(this->type));
-         //BTG_NOTICE("cmd::serialize, seems ok ");
 
          return true;
       }

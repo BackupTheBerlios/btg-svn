@@ -57,10 +57,10 @@ namespace btg
                t_int getBufferSize();
                void getBuffer(dBuffer & _buffer);
                void reset();
-               t_byte determineCommandType(t_int & _command);
+               bool determineCommandType(t_int & _command);
                void setDirection(btg::core::DIRECTION _dir);
-               t_byte getCommand(t_int & _command);
-               t_byte setCommand(t_int const _command);
+               bool getCommand(t_int & _command);
+               bool setCommand(t_int const _command);
 
                bool boolToBytes(bool const _source);
                bool bytesToBool(bool & _destination);

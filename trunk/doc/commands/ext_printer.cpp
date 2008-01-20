@@ -143,9 +143,9 @@ namespace btg
                }
          }
 
-         t_byte externalizationPrinter::determineCommandType(t_int & _command)
+         bool externalizationPrinter::determineCommandType(t_int & _command)
          {
-            return 1;
+            return true;
          }
 
          void externalizationPrinter::setDirection(btg::core::DIRECTION _dir)
@@ -153,20 +153,18 @@ namespace btg
             direction = _dir;
          }
 
-         t_byte externalizationPrinter::getCommand(t_int & _command)
+         bool externalizationPrinter::getCommand(t_int & _command)
          {
-            return 1;
+            return true;
          }
 
-         t_byte externalizationPrinter::setCommand(t_int const _command)
+         bool externalizationPrinter::setCommand(t_int const _command)
          {
             command_name = Command::getName(_command);
             command_method_name = getCommandName(_command);
             setParamInfo("command ID", true);
             command_id = _command;
-            addByte(_command);
-
-            return 1;
+            return addByte(_command);
          }
 
          void externalizationPrinter::setParamInfo(std::string const& _name, bool _required)
