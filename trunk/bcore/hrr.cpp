@@ -25,8 +25,6 @@
 #include "t_string.h"
 #include <iostream>
 
-using namespace std;
-
 namespace btg
 {
    namespace core
@@ -76,9 +74,9 @@ namespace btg
          return humanReadableRate(hru.getValue(), u);
       }
 
-      string humanReadableRate::toString(bool const _shrt) const
+      std::string humanReadableRate::toString(bool const _shrt) const
       {
-         string output;
+         std::string output;
 
          output += convertToString<t_ulong>(value);
 

@@ -42,8 +42,7 @@ namespace btg
 
       std::string ackCommand::toString() const
       {
-         using namespace std;
-         string output = Command::toString() + GPD->sSPACE() + "Ack for " + Command::getName(command_type) + ".";
+         std::string output = Command::toString() + GPD->sSPACE() + "Ack for " + Command::getName(command_type) + ".";
          return output;
       }
 

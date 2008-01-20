@@ -27,9 +27,6 @@ namespace btg
 {
    namespace daemon
    {
-      using namespace std;
-
-
       Progress::Progress()
          : progressMap()
       {
@@ -177,11 +174,11 @@ namespace btg
          return this->undefined;
       }
 
-      string timeSpecification::toString()
+      std::string timeSpecification::toString()
       {
          using namespace btg::core;
 
-         string output;
+         std::string output;
 
          if (this->day_ < 10)
             {

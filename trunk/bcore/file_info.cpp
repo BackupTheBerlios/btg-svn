@@ -33,8 +33,6 @@ namespace btg
 {
    namespace core
    {
-      using namespace std;
-
       fileInformation::fileInformation()
          : Serializable(),
            Printable(),
@@ -75,7 +73,7 @@ namespace btg
          
       }
 
-      fileInformation::fileInformation(string const& _filename, 
+      fileInformation::fileInformation(std::string const& _filename, 
                                        t_bitList const& _pieces, 
                                        t_int const _bytesPerPiece, 
                                        t_ulong const _file_size)
@@ -364,11 +362,11 @@ namespace btg
          return list_to_return;
       }
 
-      string fileInformation::toString() const
+      std::string fileInformation::toString() const
       {
          t_int const lineWidth = 79;
 
-         string output;
+         std::string output;
 
          output += "Filename: ";
          output += this->filename;

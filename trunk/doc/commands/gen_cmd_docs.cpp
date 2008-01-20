@@ -62,7 +62,6 @@
 
 using namespace btg::core;
 using namespace btg::core::externalization;
-using namespace std;
 
 void printCommand(btg::core::commandFactory & cf,
                   btg::core::externalization::Externalization* _e, Command* _command);

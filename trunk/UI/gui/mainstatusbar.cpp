@@ -29,8 +29,6 @@ namespace btg
       namespace gui
       {
 
-         using namespace std;
-
          mainStatusbar::mainStatusbar(t_uint _timeout)
             : timeout(_timeout),
               trigger_counter(0)

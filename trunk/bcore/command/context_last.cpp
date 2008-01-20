@@ -27,10 +27,8 @@ namespace btg
 {
    namespace core
    {
-      using namespace std;
-
       lastCIDCommand::lastCIDCommand()
-	: Command(Command::CN_CLAST)
+         : Command(Command::CN_CLAST)
       {
       }
 

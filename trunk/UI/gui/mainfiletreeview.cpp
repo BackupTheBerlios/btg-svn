@@ -36,7 +36,6 @@ namespace btg
       namespace gui
       {
 
-         using namespace std;
          using namespace btg::core;
 
          typedef Gtk::TreeModel::Children::iterator  child_iter;

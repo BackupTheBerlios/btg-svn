@@ -1936,6 +1936,12 @@ namespace btg
 
          }
 
+         void cliHandler::onSessionInfo(bool const _encryption, bool const _dht)
+         {
+            dht_enabled_        = _encryption;
+            encryption_enabled_ = _dht;
+         }
+
          cliHandler::~cliHandler()
          {
          }

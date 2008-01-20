@@ -95,6 +95,8 @@ namespace btg
                      CN_SATTACH,           //!< Attach to a running session.
                      CN_SDETACH,           //!< Detach from a running session.
                      CN_SERROR,            //!< Daemon uses this command to tell clients that their session is invalid.
+                     CN_SINFO,             //!< Get information about a session.
+                     CN_SINFORSP,          //!< Information about a session.
                      CN_SQUIT,             //!< Quit the current session.
                      CN_SLIST,             //!< Get a list of sessions.
                      CN_SLISTRSP,          //!< Response that lists sessions.

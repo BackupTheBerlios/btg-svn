@@ -31,7 +31,6 @@ extern "C"
 #include <iostream>
 
 using namespace btg::core;
-using namespace std;
 
 namespace btg
 {
@@ -54,13 +53,13 @@ namespace btg
             if (pbase() != pptr())
                {
                   int len      = (pptr() - pbase());
-                  char *buffer = new char[len + 1];
+                  char* buffer = new char[len + 1];
 
                   strncpy(buffer, pbase(), len);
                   buffer[len] = '\0';
 
-                  string s(buffer);
-                  cout << s;
+                  std::string s(buffer);
+                  std::cout << s;
 
                   setp(pbase(), epptr());
                   delete [] buffer;
@@ -70,10 +69,10 @@ namespace btg
 
          void consoleLogger::put_char(int _char)
          {
-            char *c = new char;
+            char* c = new char;
             *c = _char;
-            string s(c);
-            cout << s;
+            std::string s(c);
+            std::cout << s;
             delete c;
             c = 0;
          }

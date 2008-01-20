@@ -24,8 +24,6 @@
 #include "t_string.h"
 #include <iostream>
 
-using namespace std;
-
 namespace btg
 {
    namespace core
@@ -46,7 +44,7 @@ namespace btg
       }
 
       humanReadableTime humanReadableTime::convert(t_ullong const _numberOfseconds, 
-						   bool const _cont)
+                                                   bool const _cont)
       {
          humanReadableTime::HRT_UNIT pri_unit  = humanReadableTime::UNKN;
          t_ullong                    pri_value = 0;
@@ -68,7 +66,7 @@ namespace btg
          if (_numberOfseconds == 0)
             {
                humanReadableTime zerovalue(0, humanReadableTime::SECOND, 
-					   0, humanReadableTime::UNKN);
+                                           0, humanReadableTime::UNKN);
                return zerovalue;
             }
 
@@ -145,9 +143,9 @@ namespace btg
          return finalValue;
       }
 
-      string humanReadableTime::toString() const
+      std::string humanReadableTime::toString() const
       {
-         string output;
+         std::string output;
 
          if (value == 0)
             {
@@ -156,7 +154,7 @@ namespace btg
          else 
             {
                output += convertToString<t_ullong>(value);
-	       unitToString(value_unit, value, output);
+               unitToString(value_unit, value, output);
             } // value > 0
 
          if (remainder > 0)
@@ -164,51 +162,51 @@ namespace btg
                output += ", ";
                output += convertToString<unsigned long>(remainder);
 
-	       unitToString(remainder_unit, remainder, output);
+               unitToString(remainder_unit, remainder, output);
 
             } // remainder > 0
 
          return output;
       }
 
-     void humanReadableTime::unitToString(HRT_UNIT const _unit, 
-					  t_ullong const _value,
-					  std::string & _output) const
-     {
-       switch(_unit)
-	 {
-	 case SECOND:
-	   _output += " second";
-	   break;
-	 case MINUTE:
-	   _output += " minute";
-	   break;
-	 case HOUR:
-	   _output += " hour";
-	   break;
-	 case DAY:
-	   _output += " day";
-	   break;
-	 case WEEK:
-	   _output += " week";
-	   break;
-	 case MONTH:
-	   _output += " month";
-	   break;
-	 case YEAR:
-	   _output += " year";
-	   break;
-	 default:
-	   // Output nothing if the unit is not known.
-	   break;
-	 }
+      void humanReadableTime::unitToString(HRT_UNIT const _unit, 
+                                           t_ullong const _value,
+                                           std::string & _output) const
+      {
+         switch(_unit)
+            {
+            case SECOND:
+               _output += " second";
+               break;
+            case MINUTE:
+               _output += " minute";
+               break;
+            case HOUR:
+               _output += " hour";
+               break;
+            case DAY:
+               _output += " day";
+               break;
+            case WEEK:
+               _output += " week";
+               break;
+            case MONTH:
+               _output += " month";
+               break;
+            case YEAR:
+               _output += " year";
+               break;
+            default:
+               // Output nothing if the unit is not known.
+               break;
+            }
 
-       if ((_value > 1) && _unit != UNKN)
-	 {
-	   _output += "s";
-	 }
+         if ((_value > 1) && _unit != UNKN)
+            {
+               _output += "s";
+            }
 
-     }
+      }
 
    } // namespace core
 } // namespace btg

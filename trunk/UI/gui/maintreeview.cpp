@@ -38,7 +38,6 @@ namespace btg
       namespace gui
       {
 
-         using namespace std;
          using namespace btg::core;
 
          typedef std::map<int, bool>::iterator elemMap_iter;
@@ -125,7 +124,7 @@ namespace btg
          {
             Gtk::TreeModel::Row row = *_iter;
 
-            string filename;
+            std::string filename;
 
             if (Util::getFileFromPath(_status.filename(), filename))
                {
@@ -175,32 +174,32 @@ namespace btg
 
             if (_updateProgress)
                {
-		  std::string progress;
+                  std::string progress;
 
-                  string done_str = convertToString<t_int>(_status.done()) + " %";
+                  std::string done_str = convertToString<t_int>(_status.done()) + " %";
 
                   if (_status.status() == btg::core::Status::ts_downloading)
                      {
-		       if (_status.validTimeLeft())
-			 {
-			   std::string timespec;
-			   _status.timeLeftToString(timespec);
-			   progress = timespec + " (" + done_str + ")";
-			 }
-		       else
-			 {
-			   // Invalid progress, show percent.
-			   progress = done_str;
-			 }
-		     } // downloading
-		  else
-		    {
-		      // Not downloading.
-		      progress = done_str;
-		    }
+                        if (_status.validTimeLeft())
+                           {
+                              std::string timespec;
+                              _status.timeLeftToString(timespec);
+                              progress = timespec + " (" + done_str + ")";
+                           }
+                        else
+                           {
+                              // Invalid progress, show percent.
+                              progress = done_str;
+                           }
+                     } // downloading
+                  else
+                     {
+                        // Not downloading.
+                        progress = done_str;
+                     }
 #if GTKMM_2_6_OR_BETTER
                   row[statusrecord.done]     = _status.done();
-		  row[statusrecord.doneText] = progress;
+                  row[statusrecord.doneText] = progress;
 #else
                   row[statusrecord.done] = progress;
 #endif // GTKMM_2_6_OR_BETTER

@@ -28,8 +28,6 @@ namespace btg
 {
    namespace core
    {
-      using namespace std;
-
       contextCreateWithDataCommand::contextCreateWithDataCommand()
          : Command(Command::CN_CCREATEWITHDATA),
            filename(),
@@ -48,8 +46,7 @@ namespace btg
 
       std::string contextCreateWithDataCommand::toString() const
       {
-         using namespace std;
-         string output = Command::toString() + GPD->sSPACE() + "Filename = " + filename + ".";
+         std::string output = Command::toString() + GPD->sSPACE() + "Filename = " + filename + ".";
 	 if (start)
 	   {
 	     output += " Start flag set.";

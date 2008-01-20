@@ -54,6 +54,7 @@
 #include <bcore/command/session_quit.h>
 #include <bcore/command/session_list.h>
 #include <bcore/command/session_name.h>
+#include <bcore/command/session_info.h>
 #include <bcore/command/uptime.h>
 #include <bcore/command/list.h>
 
@@ -93,7 +94,6 @@ namespace btg
             currentState = SM_ERROR;                                    \
          }
          using namespace btg::core;
-         using namespace std;
 
          stateMachine::stateMachine(LogWrapperType _logwrapper,
                                     btg::core::externalization::Externalization* _e,
@@ -773,6 +773,14 @@ namespace btg
                }
          }
 
+         void stateMachine::doSessionInfo()
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(new sessionInfoCommand());
+               }
+         }
+
          void stateMachine::doSessionName()
          {
             if (checkState(SM_COMMAND))
@@ -1088,6 +1096,12 @@ namespace btg
                      expectedReply[1] = Command::CN_UNDEFINED;
                      break;
                   }
+               case Command::CN_SINFO:
+                  {
+                     expectedReply[0] = Command::CN_SINFORSP;
+                     expectedReply[1] = Command::CN_UNDEFINED;
+                     break;
+                  }
                default:
                   {
                      expectedReply[0] = Command::CN_UNDEFINED;
@@ -1234,6 +1248,11 @@ namespace btg
                      cb_CN_SNAME(_command);
                      break;
                   }
+               case Command::CN_SINFO:
+                  {
+                     cb_CN_SINFO(_command);
+                     break;
+                  }
                default:
                   {
                      BTG_ERROR_LOG(logWrapper(), "callCallback(), unexpected command, " << Command::getName(currentCommand) << ".");
@@ -1247,8 +1266,8 @@ namespace btg
                {
                case Command::CN_ERROR:
                   {
-                     errorCommand* errcmd = dynamic_cast<errorCommand*>(_command);
-                     string errmessage    = errcmd->getMessage();
+                     errorCommand* errcmd   = dynamic_cast<errorCommand*>(_command);
+                     std::string errmessage = errcmd->getMessage();
 
                      switch(currentCommand)
                         {
@@ -1325,7 +1344,7 @@ namespace btg
 
          std::string stateMachine::stateToString(State _state) const
          {
-            string statestring;
+            std::string statestring;
             switch(_state)
                {
                case SM_ERROR:

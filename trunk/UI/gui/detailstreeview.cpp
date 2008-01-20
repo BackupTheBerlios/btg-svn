@@ -38,7 +38,6 @@ namespace btg
       namespace gui
       {
 
-         using namespace std;
          using namespace btg::core;
 
          detailsTreeview::detailsTreeview()

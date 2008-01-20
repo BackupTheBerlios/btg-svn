@@ -589,6 +589,20 @@ int main(int argc, char* argv[])
    t_long session = handler->session();
    std::string strSession = btg::core::convertToString<t_long>(session);
 
+   // Get some info about the current session, so it can be displayed
+   // to the user.
+   handler->reqSessionInfo();
+
+   if (handler->dht())
+      {
+         strSession += " D";
+      }
+
+   if (handler->encryption())
+      {
+         strSession += " E";
+      }
+
    // Start a thread that takes care of communicating with the daemon.
    handlerThread* handlerthr = new handlerThread(logwrapper, verboseFlag, handler);
 

@@ -39,8 +39,6 @@ namespace btg
       namespace gui
       {
 
-         using namespace std;
-
          fileRecord::fileRecord()
             : filename(),
               filepieces(),

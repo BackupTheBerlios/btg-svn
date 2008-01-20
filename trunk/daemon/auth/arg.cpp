@@ -37,7 +37,6 @@ namespace btg
       {
 
          using namespace btg::core;
-         using namespace std;
 
 #define configLabel      "config,f"
 #define configLabelKey   "config"
@@ -83,7 +82,7 @@ namespace btg
 
          const std::string parsingFailedMessage("Parsing command line arguments failed: ");
 
-         commandLineArgumentHandler::commandLineArgumentHandler(string const& _config_file)
+         commandLineArgumentHandler::commandLineArgumentHandler(std::string const& _config_file)
             : btg::core::argumentInterface("BTG passwd", false),
               createNewSwitch(false),
               addUserSwitch(false),

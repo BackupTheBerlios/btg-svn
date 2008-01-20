@@ -34,8 +34,6 @@ namespace btg
    namespace core
    {
 
-      using namespace std;
-
       trackerStatus::trackerStatus()
          : Printable(),
            status_(undefined),
@@ -195,9 +193,9 @@ namespace btg
          return true;
       }
 
-      string trackerStatus::toString() const
+      std::string trackerStatus::toString() const
       {
-         string output("");
+         std::string output("");
 
          output += "status (" + convertToString<t_int>(serial_) + "): " + getDescription();
 
@@ -206,7 +204,7 @@ namespace btg
 
       std::string trackerStatus::getDescription() const
       {
-         string output;
+         std::string output;
 
          switch(status_)
             {

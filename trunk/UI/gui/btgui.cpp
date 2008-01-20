@@ -55,7 +55,6 @@ using namespace btg::core;
 using namespace btg::core::logger;
 using namespace btg::core::client;
 using namespace btg::UI::gui;
-using namespace std;
 
 int main(int argc, char **argv)
 {
@@ -115,7 +114,7 @@ int main(int argc, char **argv)
          config_filename = cla->configFile();
       }
 
-   string errorString;
+   std::string errorString;
    if (!btg::core::os::fileOperation::check(config_filename, errorString, false))
       {
          BTG_FATAL_ERROR(logwrapper,
@@ -227,7 +226,7 @@ int main(int argc, char **argv)
                                            cla->automaticStart(),
                                            0 /* initially null */);
 
-   string initialStatusMessage("");
+   std::string initialStatusMessage("");
 
    // Update init dialog.
    iw->updateProgress(initWindow::IEV_SETUP);

@@ -67,7 +67,6 @@ using namespace btg::core;
 using namespace btg::core::logger;
 using namespace btg::core::client;
 using namespace btg::UI::cli;
-using namespace std;
 
 void handleInput(std::string const& _line, cliHandler* _clihandler, ncursesScreen* _nscr, bool const _neverAskFlag);
 
@@ -119,7 +118,7 @@ int main(int argc, char* argv[])
          config_filename = cla->configFile();
       }
 
-   string errorString;
+   std::string errorString;
    if (!btg::core::os::fileOperation::check(config_filename, errorString, false))
       {
          BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Could not open file '" << config_filename << "'.");
@@ -200,7 +199,7 @@ int main(int argc, char* argv[])
                                            verboseFlag, 
                                            cla->automaticStart());
 
-   string initialStatusMessage("");
+   std::string initialStatusMessage("");
 
    // Create a helper to do the initial setup of this client.
    startupHelper* starthelper = new cliStartupHelper(logwrapper,
@@ -520,7 +519,7 @@ int main(int argc, char* argv[])
             }
       }
 
-   string line = "";
+   std::string line = "";
 
    while (global_btg_run > 0)
       {

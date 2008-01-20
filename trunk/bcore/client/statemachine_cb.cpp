@@ -39,6 +39,7 @@
 #include <bcore/command/session_quit.h>
 #include <bcore/command/session_list.h>
 #include <bcore/command/session_name.h>
+#include <bcore/command/session_info.h>
 #include <bcore/command/uptime.h>
 #include <bcore/command/list.h>
 
@@ -174,6 +175,13 @@ namespace btg
             sessionNameResponseCommand* snrc = dynamic_cast<sessionNameResponseCommand*>(_command);
 
             clientcallback->onSessionName(snrc->getName());
+         }
+
+         void stateMachine::cb_CN_SINFO(btg::core::Command* _command)
+         {
+            sessionInfoResponseCommand* sirc = dynamic_cast<sessionInfoResponseCommand*>(_command);
+
+            clientcallback->onSessionInfo(sirc->encryption(), sirc->dht());
          }
 
       } // namespace client

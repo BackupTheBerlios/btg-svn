@@ -27,8 +27,6 @@ namespace btg
 {
    namespace core
    {
-      using namespace std;
-
       contextGetTrackersCommand::contextGetTrackersCommand()
          : contextCommand(Command::CN_CGETTRACKERS, contextCommand::UNDEFINED_CONTEXT, false)
       {}

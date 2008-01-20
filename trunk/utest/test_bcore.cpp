@@ -99,7 +99,6 @@ CPPUNIT_TEST_SUITE_REGISTRATION( testBcore );
 #endif // BTG_UTEST_BCORE
 
 using namespace btg::core;
-using namespace std;
 
 void testBcore::setUp()
 {
@@ -189,8 +188,8 @@ void testBcore::testListCommandResponse()
 {
    btg::core::commandFactory cf(logwrapper, externalization);
 
-   vector<t_int> ids;
-   vector<string> files;
+   std::vector<t_int> ids;
+   std::vector<std::string> files;
 
    ids.push_back(1000);   files.push_back("1");
    ids.push_back(5000);   files.push_back("2");
@@ -227,7 +226,7 @@ void testBcore::testErrorCommand()
    btg::core::commandFactory cf(logwrapper, externalization);
 
    // List response command:
-   string const message = "Message. \nTestMessage. TestTestTest Message          0x0\\\\\0";
+   std::string const message = "Message. \nTestMessage. TestTestTest Message          0x0\\\\\0";
    t_int const type     = Command::CN_GLISTRSP;
 
    errorCommand *ec = new errorCommand(type, message);
@@ -304,8 +303,6 @@ void testBcore::testListSessionResponseCommand()
 void testBcore::testAttachSessionCommand()
 {
    btg::core::commandFactory cf(logwrapper, externalization);
-
-   using namespace std;
 
    for (t_long trySession=0; trySession<512; trySession++)
       {
@@ -407,7 +404,7 @@ void testBcore::testContextAllStatusResponseCommand()
 {
    btg::core::commandFactory cf(logwrapper, externalization);
 
-   vector<Status> vstatus;
+   std::vector<Status> vstatus;
    for (t_int i=0; i<9; i++)
       {
          trackerStatus ts(-1, 0);
@@ -429,7 +426,7 @@ void testBcore::testContextAllStatusResponseCommand()
 
    CPPUNIT_ASSERT(BASIC_EQUAL1(casrc, command_pointer));
 
-   vector<Status> new_vstatus = dynamic_cast<contextAllStatusResponseCommand*>(command_pointer)->getStatus();
+   std::vector<Status> new_vstatus = dynamic_cast<contextAllStatusResponseCommand*>(command_pointer)->getStatus();
    CPPUNIT_ASSERT(new_vstatus == vstatus);
 
    delete casrc;
@@ -471,7 +468,7 @@ void testBcore::testUtil_simple_types()
    externalization->reset();
 
    // String:
-   string string_value = "1234567890Test1234567890Test1234567890Test1234567890Test1234567890TestB";
+   std::string string_value = "1234567890Test1234567890Test1234567890Test1234567890Test1234567890TestB";
 
    externalization->stringToBytes(&string_value);
 
@@ -479,7 +476,7 @@ void testBcore::testUtil_simple_types()
    externalization->reset();
    externalization->setBuffer(output_buffer);
 
-   string string_target("");
+   std::string string_target("");
    CPPUNIT_ASSERT(externalization->bytesToString(&string_target));
    CPPUNIT_ASSERT(string_target == string_value);
 }
@@ -624,8 +621,8 @@ void testBcore::testContextCleanResponseCommand()
 {
    btg::core::commandFactory cf(logwrapper, externalization);
 
-   vector<string> filenames;
-   vector<t_int>  ids;
+   std::vector<std::string> filenames;
+   std::vector<t_int>  ids;
 
    filenames.push_back("/path/to/test0");
    ids.push_back(0);
@@ -817,7 +814,7 @@ void testBcore::testFileInfo()
    t_uint const bytesPerPiece = 1024;
    t_ulong const filesize     = 1024 * 1024 * 1024;
 
-   vector<bool> boolvect;
+   std::vector<bool> boolvect;
 
    for (t_uint i=0; i<(bits / 2); i++)
       {
@@ -882,7 +879,7 @@ void testBcore::testFileInfoResponseCommand()
 {
    btg::core::commandFactory cf(logwrapper, externalization);
 
-   vector<bool> boolvect;
+   std::vector<bool> boolvect;
 
    for (t_int i=0; i<256; i++)
       {

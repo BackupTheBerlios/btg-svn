@@ -38,7 +38,6 @@ namespace btg
 
             using namespace btg::core;
             using namespace btg::core::client;
-            using namespace std;
 
             viewerHandler::viewerHandler(btg::core::LogWrapperType _logwrapper,
                                          btg::core::externalization::Externalization* _e,
@@ -118,7 +117,7 @@ namespace btg
                commandStatus = false;
             }
 
-            void viewerHandler::onError(string const& _errorDescription)
+            void viewerHandler::onError(std::string const& _errorDescription)
             {
                commandStatus = false;
                BTG_NOTICE(logWrapper(), 
@@ -271,7 +270,7 @@ namespace btg
                attachDone = true;
             }
 
-            void viewerHandler::onAttachError(string const& _message)
+            void viewerHandler::onAttachError(std::string const& _message)
             {
                BTG_NOTICE(logWrapper(),
                           "viewerHandler::onAttachError:" << _message);
@@ -287,7 +286,7 @@ namespace btg
                sessionNames = _sessionNames;
             }
 
-            void viewerHandler::onListSessionsError(string const& _errorDescription)
+            void viewerHandler::onListSessionsError(std::string const& _errorDescription)
             {
                BTG_FATAL_ERROR(logWrapper(),
                                "btgvs", _errorDescription);
@@ -376,7 +375,7 @@ namespace btg
                return fileinfolist;
             }
 
-            bool viewerHandler::idToFilename(t_int const _id, string & _filename)
+            bool viewerHandler::idToFilename(t_int const _id, std::string & _filename)
             {
                bool status = false;
                t_intStrMapCI iter = idToFilenameMap.find(_id);
@@ -433,6 +432,12 @@ namespace btg
                return selected_files;
             }
          
+            void viewerHandler::onSessionInfo(bool const _encryption, bool const _dht)
+            {
+               dht_enabled_        = _encryption;
+               encryption_enabled_ = _dht;
+            }
+
             viewerHandler::~viewerHandler()
             {
 

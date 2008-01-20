@@ -37,9 +37,6 @@ namespace btg
 {
    namespace core
    {
-
-      using namespace std;
-
       dBuffer::dBuffer(t_int const _initialSize)
          : contents(_initialSize),
            current_size(_initialSize),

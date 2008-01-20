@@ -52,8 +52,6 @@ namespace btg
             }
       }
 
-      using namespace std;
-
       projectDefaults::projectDefaults()
          : project_name("btg"),
            cli_client_name("btg*cli"),
@@ -133,22 +131,22 @@ namespace btg
       {
       }
 
-      string projectDefaults::sPROJECT_NAME() const
+      std::string projectDefaults::sPROJECT_NAME() const
       {
          return project_name;
       }
 
-      string projectDefaults::sCLI_CLIENT() const
+      std::string projectDefaults::sCLI_CLIENT() const
       {
          return cli_client_name;
       }
 
-      string projectDefaults::sGUI_CLIENT() const
+      std::string projectDefaults::sGUI_CLIENT() const
       {
          return gui_client_name;
       }
 
-      string projectDefaults::sCLI_CONFIG() const
+      std::string projectDefaults::sCLI_CONFIG() const
       {
          return config_name;
       }
@@ -159,17 +157,17 @@ namespace btg
          return dynconfig_name;
       }
 
-      string projectDefaults::sGUI_CONFIG() const
+      std::string projectDefaults::sGUI_CONFIG() const
       {
          return config_name;
       }
 
-      string projectDefaults::sDAEMON() const
+      std::string projectDefaults::sDAEMON() const
       {
          return daemon_name;
       }
 
-      string projectDefaults::sVERSION() const
+      std::string projectDefaults::sVERSION() const
       {
          return version;
       }
@@ -206,12 +204,12 @@ namespace btg
          return revisionVersion;
       }
 
-      string projectDefaults::sBUILD() const
+      std::string projectDefaults::sBUILD() const
       {
          return build;
       }
 
-      string projectDefaults::sHiddenPrefix() const
+      std::string projectDefaults::sHiddenPrefix() const
       {
          return hidden_prefix;
       }
@@ -221,7 +219,7 @@ namespace btg
          return nullchar;
       }
 
-      string projectDefaults::sNEWLINE() const
+      std::string projectDefaults::sNEWLINE() const
       {
          return newline;
       }
@@ -231,7 +229,7 @@ namespace btg
          return newline[0];
       }
 
-      string projectDefaults::sSPACE() const
+      std::string projectDefaults::sSPACE() const
       {
          return space;
       }
@@ -241,17 +239,17 @@ namespace btg
          return space[0];
       }
 
-      string projectDefaults::sPATH_SEPARATOR() const
+      std::string projectDefaults::sPATH_SEPARATOR() const
       {
          return path_separator;
       }
 
-      string projectDefaults::sHOME_CHAR() const
+      std::string projectDefaults::sHOME_CHAR() const
       {
          return home_char;
       }
 
-      string projectDefaults::sHOME_ENV() const
+      std::string projectDefaults::sHOME_ENV() const
       {
          return home_env;
       }
@@ -276,12 +274,12 @@ namespace btg
          return default_work_dir;
       }
 
-      string projectDefaults::sDEFAULT_DEST_DIR() const
+      std::string projectDefaults::sDEFAULT_DEST_DIR() const
       {
          return default_dest_dir;
       }
 
-      string projectDefaults::sDEFAULT_QUE() const
+      std::string projectDefaults::sDEFAULT_QUE() const
       {
          return default_que;
       }

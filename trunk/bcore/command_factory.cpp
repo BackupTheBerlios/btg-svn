@@ -59,6 +59,7 @@
 #include <bcore/command/session_error.h>
 #include <bcore/command/session_name.h>
 #include <bcore/command/session_rw.h>
+#include <bcore/command/session_info.h>
 #include <bcore/command/setup.h>
 
 #include <bcore/command/initconnection.h>
@@ -75,8 +76,6 @@ namespace btg
 {
    namespace core
    {
-      using namespace std;
-
       commandFactory::commandFactory(LogWrapperType _logwrapper,
                                      btg::core::externalization::Externalization* _e)
          : Logable(_logwrapper),
@@ -311,6 +310,16 @@ namespace btg
                   break;
                }
 
+            case Command::CN_SINFO:
+               {
+                  c = new sessionInfoCommand();
+                  break;
+               }
+            case Command::CN_SINFORSP:
+               {
+                  c = new sessionInfoResponseCommand();
+                  break;
+               }
             case Command::CN_SDETACH:
                {
                   c = new detachSessionCommand();
@@ -417,6 +426,7 @@ namespace btg
 
          if ((_command->getType() == 0) || (_command->getType() == Command::CN_UNDEFINED))
             {
+               BTG_ERROR_LOG(logWrapper(), "convertToBytes, undefined command.");
                return status;
             }
 
@@ -461,6 +471,8 @@ namespace btg
             case Command::CN_SATTACH:
             case Command::CN_SQUIT:
             case Command::CN_SERROR:
+            case Command::CN_SINFO:
+            case Command::CN_SINFORSP:
             case Command::CN_SDETACH:
             case Command::CN_SNAME:
             case Command::CN_SNAMERSP:

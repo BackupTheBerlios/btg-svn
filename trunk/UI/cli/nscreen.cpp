@@ -39,7 +39,6 @@ namespace btg
       namespace cli
       {
 
-         using namespace std;
          using namespace btg::core;
 
          ncursesScreen::ncursesScreen(bool const _pretend)
@@ -462,7 +461,7 @@ namespace btg
             wrefresh(main_window);
          }
 
-         void ncursesScreen::toUser(string const& _s)
+         void ncursesScreen::toUser(std::string const& _s)
          {
             if (pretend)
                {
@@ -472,7 +471,7 @@ namespace btg
             wprintw(main_window, "%s%c", _s.c_str(), GPD->cNEWLINE());
          }
 
-         void ncursesScreen::setInput(string const& _s)
+         void ncursesScreen::setInput(std::string const& _s)
          {
             if (pretend)
                {
@@ -505,12 +504,12 @@ namespace btg
                }
          }
 
-         string ncursesScreen::getInput()
+         std::string ncursesScreen::getInput()
          {
             return this->last_input;
          }
 
-         void ncursesScreen::setOutput(string const& _s)
+         void ncursesScreen::setOutput(std::string const& _s)
          {
             toUser(_s);
             refresh();

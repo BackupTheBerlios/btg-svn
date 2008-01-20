@@ -67,8 +67,7 @@ namespace btg
 
       std::string contextAbortCommand::toString() const
       {
-         using namespace std;
-         string output = contextCommand::toString();
+         std::string output = contextCommand::toString();
 
          if (eraseData_)
             {

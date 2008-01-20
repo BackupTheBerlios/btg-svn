@@ -30,10 +30,8 @@ namespace btg
       namespace logger
       {
 
-         using namespace std;
-
          logBuffer::logBuffer(logInterface* _target, t_int _bufferSize):
-            streambuf(),
+            std::streambuf(),
             buffer(0),
             target(_target)
          {
@@ -88,7 +86,7 @@ namespace btg
          }
 
          logStream::logStream(logBuffer *_logbuffer):
-            ostream(_logbuffer),
+            std::ostream(_logbuffer),
             logbuffer(_logbuffer)
          {}
 

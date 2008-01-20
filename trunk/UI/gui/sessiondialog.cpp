@@ -16,7 +16,6 @@ namespace btg
    {
       namespace gui
       {
-         using namespace std;
          using namespace btg::core;
 
          sessionDialog::sessionDialog(t_longList const& _sessionIDs, 
@@ -116,7 +115,7 @@ namespace btg
 
          void sessionDialog::on_combo_changed()
          {
-            string active = cbt->get_active_text();
+            std::string active = cbt->get_active_text();
             if (active != "")
                {
                   attachbutton->show();                  
@@ -129,7 +128,7 @@ namespace btg
 
          void sessionDialog::on_ok_clicked()
          {
-            string active = cbt->get_active_text();
+            std::string active = cbt->get_active_text();
             if (active != "")
                {
                   std::string::size_type pos = active.find_first_of("(");

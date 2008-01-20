@@ -28,8 +28,6 @@ namespace btg
 {
    namespace core
    {
-      using namespace std;
-
       const t_int contextCommand::UNDEFINED_CONTEXT = -1;
 
       contextCommand::contextCommand(commandType _type)
@@ -44,8 +42,7 @@ namespace btg
 
       std::string contextCommand::toString() const
       {
-         using namespace std;
-         string output = Command::toString() + GPD->sSPACE() + "Context_id=" + convertToString<t_long>(this->context_id) + ".";
+         std::string output = Command::toString() + GPD->sSPACE() + "Context_id=" + convertToString<t_long>(this->context_id) + ".";
 
          if (allContexts)
             {

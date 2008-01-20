@@ -32,6 +32,7 @@
 #include <bcore/command/session_list_rsp.h>
 #include <bcore/command/session_name.h>
 #include <bcore/command/session_rw.h>
+#include <bcore/command/session_info.h>
 #include <bcore/command/uptime.h>
 #include <bcore/command/limit.h>
 
@@ -248,6 +249,10 @@ namespace btg
                            {
                               handleSessionSetName(eventhandler, command_);
                               break;
+                           }
+                        case Command::CN_SINFO:
+                           {
+                              handleSessionInfo(eventhandler, command_);
                            }
                         case Command::CN_MOREAD:
                            {
@@ -520,6 +525,39 @@ namespace btg
             {
                sendError(command_->getType(), "Session name too short.");
             }
+      }
+
+      void daemonHandler::handleSessionInfo(eventHandler* _eventhandler, 
+                                            btg::core::Command* _command)
+      {
+         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+
+         bool encryption = _eventhandler->encryptionEnabled();
+         bool dht        = _eventhandler->dhtEnabled();
+         
+         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): session info:");
+         if (dht)
+            {
+               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "DHT: ON" << ".");
+            }
+         else
+            {
+               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "DHT: OFF" << ".");
+            }
+
+         if (encryption)
+            {
+               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Encryption: ON" << ".");
+            }
+         else
+            {
+               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Encryption: OFF" << ".");
+            }
+
+         sendCommand(dd_->externalization, 
+                     dd_->transport,
+                     connectionID_, 
+                     new sessionInfoResponseCommand(encryption, dht));
       }
 
       void daemonHandler::handleSessionInInvalidState(t_int const _id)

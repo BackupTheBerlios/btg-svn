@@ -31,8 +31,6 @@ namespace btg
 {
    namespace core
    {
-      using namespace std;
-
       requiredSetupData::requiredSetupData():
          buildID_(),
          seedLimit_(btg::core::limitBase::LIMIT_DISABLED),
@@ -56,7 +54,7 @@ namespace btg
 
       }
 
-      string requiredSetupData::getBuildID() const
+      std::string requiredSetupData::getBuildID() const
       {
          return buildID_;
       }

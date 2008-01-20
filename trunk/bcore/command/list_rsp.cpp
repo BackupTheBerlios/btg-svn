@@ -30,8 +30,6 @@ namespace btg
 {
    namespace core
    {
-      using namespace std;
-
       listCommandResponse::listCommandResponse()
          : Command(Command::CN_GLISTRSP),
            context_ids(0), 
@@ -44,9 +42,9 @@ namespace btg
            filenames(_filenames)
       {}
 
-      string listCommandResponse::toString() const
+      std::string listCommandResponse::toString() const
       {
-         string output("");
+         std::string output("");
 
          t_strListCI ci = filenames.begin();
          for (t_intListCI i=context_ids.begin(); i != context_ids.end(); i++)

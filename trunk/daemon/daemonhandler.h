@@ -110,6 +110,10 @@ namespace btg
                void handleSessionSetName(eventHandler* _eventhandler, 
                                          btg::core::Command* _command);
 
+               /// Handle getting information about a session.
+               void handleSessionInfo(eventHandler* _eventhandler, 
+                                      btg::core::Command* _command);
+
                /// Handle session messages in invalid state.
                void handleSessionInInvalidState(t_int const _id);
 

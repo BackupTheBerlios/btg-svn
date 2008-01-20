@@ -24,8 +24,6 @@
 #include "t_string.h"
 #include <iostream>
 
-using namespace std;
-
 namespace btg
 {
    namespace core
@@ -133,9 +131,9 @@ namespace btg
          return finalValue;
       }
 
-      string humanReadableUnit::toString() const
+      std::string humanReadableUnit::toString() const
       {
-         string output;
+         std::string output;
 
          if (value == 0)
             {

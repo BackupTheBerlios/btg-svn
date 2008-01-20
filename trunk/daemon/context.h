@@ -435,6 +435,12 @@ namespace btg
                /// and eventhandler class.
                void shutdown();
 
+               /// Indicates if dht is enabled.
+               bool dhtEnabled() const;
+
+               /// Indicates if encryption is enabled.
+               bool encryptionEnabled() const;
+
                /// Destructor.
                ~Context();
             private:

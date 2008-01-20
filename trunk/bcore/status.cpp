@@ -32,8 +32,6 @@ namespace btg
    namespace core
    {
 
-      using namespace std;
-
       Status::Status()
          : Serializable(),
            Printable(),
@@ -54,11 +52,11 @@ namespace btg
            time_left_m_(0),
            time_left_s_(0),
            trackerStatus_(),
-	   activityCounter_(0)
+           activityCounter_(0)
       {}
 
       Status::Status(t_int const _contextID,
-                     string const& _filename,
+                     std::string const& _filename,
                      torrent_status const _status,
                      t_ulong const _dn_total,
                      t_ulong const _ul_total,
@@ -74,7 +72,7 @@ namespace btg
                      t_int const _time_left_m,
                      t_int _time_left_s,
                      btg::core::trackerStatus _trackerStatus,
-		     t_ulong const _activityCounter)
+                     t_ulong const _activityCounter)
          : Serializable(),
            Printable(),
            contextID_(_contextID),
@@ -94,7 +92,7 @@ namespace btg
            time_left_m_(_time_left_m),
            time_left_s_(_time_left_s),
            trackerStatus_(_trackerStatus),
-	   activityCounter_(_activityCounter)
+           activityCounter_(_activityCounter)
       {}
 
       Status::Status(Status const& _status)
@@ -117,11 +115,11 @@ namespace btg
            time_left_m_(_status.time_left_m_),
            time_left_s_(_status.time_left_s_),
            trackerStatus_(_status.trackerStatus_),
-	   activityCounter_(_status.activityCounter_)
+           activityCounter_(_status.activityCounter_)
       {}
 
       void Status::set(t_int const _contextID,
-                       string const& _filename,
+                       std::string const& _filename,
                        torrent_status const _status,
                        t_ulong const _dn_total,
                        t_ulong const _ul_total,
@@ -137,7 +135,7 @@ namespace btg
                        t_int const _time_left_m,
                        t_int _time_left_s,
                        btg::core::trackerStatus _trackerStatus,
-		       t_ulong const _activityCounter)
+                       t_ulong const _activityCounter)
       {
          contextID_         = _contextID;
          filename_          = _filename;
@@ -156,7 +154,7 @@ namespace btg
          time_left_m_       = _time_left_m;
          time_left_s_       = _time_left_s;
          trackerStatus_     = _trackerStatus;
-	 activityCounter_   = _activityCounter;
+         activityCounter_   = _activityCounter;
       }
 
       bool Status::serialize(btg::core::externalization::Externalization* _e) const
@@ -214,7 +212,7 @@ namespace btg
          //tracker status;
          BTG_RCHECK( trackerStatus_.serialize(_e) );
 
-	 // unsigned long, counter, minutes;
+         // unsigned long, counter, minutes;
          BTG_RCHECK( _e->uLongToBytes(&this->activityCounter_) );
 
          return true;
@@ -295,15 +293,15 @@ namespace btg
          // Trackerstatus
          BTG_RCHECK( trackerStatus_.deserialize(_e));
 
-	 // unsigned long, counter, minutes;
+         // unsigned long, counter, minutes;
          BTG_RCHECK( _e->bytesToULong(&this->activityCounter_) );
 
          return true;
       }
 
-      string Status::toString() const
+      std::string Status::toString() const
       {
-         string output("");
+         std::string output("");
 
          output += "contex id: "    + convertToString<t_int>(contextID_) + ", ";
          output += "filename: '"    + filename_ + "', ";
@@ -316,14 +314,14 @@ namespace btg
          output += "ul_rate: "      + convertToString<t_ulong>(uploadRate_) + ", ";
          output += "done: "         + convertToString<t_int>(done_) + ", ";
          output += "filesize: "     + convertToString<t_ulong>(filesize_) + ", ";
-         output += "leechers: "      + convertToString<t_int>(leechers_) + ", ";
+         output += "leechers: "     + convertToString<t_int>(leechers_) + ", ";
          output += "seeders: "      + convertToString<t_int>(seeders_) + ", ";
 
          output += "progress: "     + convertToString<t_int>(time_left_d_) + ":" + convertToString<t_ulong>(time_left_h_) + ":" +
             convertToString<t_int>(time_left_m_) + ":" +
             convertToString<t_int>(time_left_s_) + ", ";
 
-	 output += "activity counter:" + convertToString<t_ulong>(activityCounter_);
+         output += "activity counter:" + convertToString<t_ulong>(activityCounter_);
 
          return output;
       }
@@ -333,26 +331,26 @@ namespace btg
          bool op_status = true;
 
          if ((this->contextID_ != _status.contextID_) ||
-	     (this->filename_ != _status.filename_) || 
-	     (this->status_ != _status.status_) || 
-	     (this->downloadTotal_ != _status.downloadTotal_) || 
-	     (this->uploadTotal_ != _status.uploadTotal_) || 
-	     (this->failedBytes_ != _status.failedBytes_) || 
-	     (this->downloadRate_ != _status.downloadRate_) || 
-	     (this->uploadRate_ != _status.uploadRate_) ||
-	     (this->done_ != _status.done_) ||
-	     (this->filesize_ != _status.filesize_) ||
-	     (this->leechers_ != _status.leechers_) ||
-	     (this->seeders_ != _status.seeders_) ||
-	     (this->time_left_d_ != _status.time_left_d_) ||
-	     (this->time_left_h_ != _status.time_left_h_) ||
-	     (this->time_left_m_ != _status.time_left_m_) ||
-	     (this->time_left_s_ != _status.time_left_s_) ||
-	     (this->trackerStatus_ != _status.trackerStatus_) ||
-	     (activityCounter_ != _status.activityCounter_))
-	   {
-	     op_status = false;
-	   }
+             (this->filename_ != _status.filename_) || 
+             (this->status_ != _status.status_) || 
+             (this->downloadTotal_ != _status.downloadTotal_) || 
+             (this->uploadTotal_ != _status.uploadTotal_) || 
+             (this->failedBytes_ != _status.failedBytes_) || 
+             (this->downloadRate_ != _status.downloadRate_) || 
+             (this->uploadRate_ != _status.uploadRate_) ||
+             (this->done_ != _status.done_) ||
+             (this->filesize_ != _status.filesize_) ||
+             (this->leechers_ != _status.leechers_) ||
+             (this->seeders_ != _status.seeders_) ||
+             (this->time_left_d_ != _status.time_left_d_) ||
+             (this->time_left_h_ != _status.time_left_h_) ||
+             (this->time_left_m_ != _status.time_left_m_) ||
+             (this->time_left_s_ != _status.time_left_s_) ||
+             (this->trackerStatus_ != _status.trackerStatus_) ||
+             (activityCounter_ != _status.activityCounter_))
+            {
+               op_status = false;
+            }
 
          return op_status;
       }
@@ -380,74 +378,74 @@ namespace btg
                time_left_m_    = _status.time_left_m_;
                time_left_s_    = _status.time_left_s_;
                trackerStatus_   = _status.trackerStatus_;
-	       activityCounter_ = _status.activityCounter_;
+               activityCounter_ = _status.activityCounter_;
             }
 
          return *this;
       }
 
-     bool Status::validTimeLeft() const
-     {
-       bool status = false;
+      bool Status::validTimeLeft() const
+      {
+         bool status = false;
 
-       if ((time_left_d_ != 0) || 
-	   (time_left_h_ != 0) ||
-	   (time_left_m_ != 0) || 
-	   (time_left_s_ != 0))
-	 {
-	   status = true;
-	 }
+         if ((time_left_d_ != 0) || 
+             (time_left_h_ != 0) ||
+             (time_left_m_ != 0) || 
+             (time_left_s_ != 0))
+            {
+               status = true;
+            }
 
-       return status;
-     }
+         return status;
+      }
 
-     void Status::timeLeftToString(std::string & _output, 
-				   bool const _shortFormat) const
-     {
-       if (time_left_d_ > 0)
-	 {
-	   // Show only days.
-	   _output += convertToString<t_ulong>(time_left_d_);
+      void Status::timeLeftToString(std::string & _output, 
+                                    bool const _shortFormat) const
+      {
+         if (time_left_d_ > 0)
+            {
+               // Show only days.
+               _output += convertToString<t_ulong>(time_left_d_);
 
-	   if (!_shortFormat)
-	     {
-	       if (time_left_d_ > 1)
-		 {
-		   _output += " days";
-		 }
-	       else
-		 {
-		   _output += " day";
-		 }
-	     }
-	   else
-	     {
-	       _output += " d";
-	     }
-	 }
-       else
-	 {
-	   // Show only h:m:s.
+               if (!_shortFormat)
+                  {
+                     if (time_left_d_ > 1)
+                        {
+                           _output += " days";
+                        }
+                     else
+                        {
+                           _output += " day";
+                        }
+                  }
+               else
+                  {
+                     _output += " d";
+                  }
+            }
+         else
+            {
+               // Show only h:m:s.
 
-	   if (time_left_h_ < 10)
-	     {
-	       _output += "0";
-	     }
-	   _output += convertToString<t_ulong>(time_left_h_) + ":";
+               if (time_left_h_ < 10)
+                  {
+                     _output += "0";
+                  }
+               _output += convertToString<t_ulong>(time_left_h_) + ":";
 
-	   if (time_left_m_ < 10)
-	     {
-	       _output += "0";
-	     }
-	   _output += convertToString<t_int>(time_left_m_) + ":";
+               if (time_left_m_ < 10)
+                  {
+                     _output += "0";
+                  }
+               _output += convertToString<t_int>(time_left_m_) + ":";
 	   
-	   if (time_left_s_ < 10)
-	     {
-	       _output += "0";
-	     }
-	   _output += convertToString<t_int>(time_left_s_);
-	 }	  
-     }
+               if (time_left_s_ < 10)
+                  {
+                     _output += "0";
+                  }
+               _output += convertToString<t_int>(time_left_s_);
+            }	  
+      }
 
       Status::~Status()
       {}

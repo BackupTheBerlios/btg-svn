@@ -30,21 +30,17 @@ namespace btg
 {
    namespace core
    {
-
-      using namespace std;
-
       errorCommand::errorCommand()
          : Command(Command::CN_ERROR), which_command(Command::CN_UNDEFINED), message("none"), isMessagePresent(false)
       {}
 
-      errorCommand::errorCommand(t_int const _which_command, string const& _message)
+      errorCommand::errorCommand(t_int const _which_command, std::string const& _message)
          : Command(Command::CN_ERROR), which_command(_which_command), message(_message), isMessagePresent(true)
       {}
 
       std::string errorCommand::toString() const
       {
-         using namespace std;
-         string output = Command::toString() +
+         std::string output = Command::toString() +
             GPD->sSPACE() + "Failed command=" + Command::getName(this->which_command) + "." +
             GPD->sSPACE() + "Message='" + this->message + "'.";
 
@@ -132,12 +128,12 @@ namespace btg
          return this->which_command;
       }
 
-      void errorCommand::setMessage(string const& _message)
+      void errorCommand::setMessage(std::string const& _message)
       {
          this->message = _message;
       }
 
-      string errorCommand::getMessage() const
+      std::string errorCommand::getMessage() const
       {
          return message;
       }

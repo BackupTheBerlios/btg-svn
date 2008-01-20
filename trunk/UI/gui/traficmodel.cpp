@@ -33,9 +33,6 @@ namespace btg
       namespace gui
       {
 
-         using namespace std;
-
-
          traficModel::traficModel(t_int const _resolutionX)
             : resolutionX(_resolutionX),
               position(0),

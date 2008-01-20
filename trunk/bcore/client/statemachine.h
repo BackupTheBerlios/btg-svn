@@ -91,6 +91,8 @@ namespace btg
             /// Action.
             void doUptime();
             /// Action.
+            void doSessionInfo();
+            /// Action.
             void doSessionName();
             /// Action.
             void doSetSessionName(std::string const& _name);
@@ -377,7 +379,8 @@ namespace btg
             /// Call a callback. Received the name of the current
             /// session.
             void cb_CN_SNAME(btg::core::Command* _command);
-
+            /// Call a callback. Session information.
+            void cb_CN_SINFO(btg::core::Command* _command);
          private:
             /// Copy constructor.
             stateMachine(stateMachine const& _sm);

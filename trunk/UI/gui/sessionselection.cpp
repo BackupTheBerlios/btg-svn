@@ -18,7 +18,6 @@ namespace btg
    {
       namespace gui
       {
-         using namespace std;
          using namespace btg::core;
 
          sessionSelectionDialog::sessionSelectionDialog(t_longList const& _sessionIDs, 
@@ -118,7 +117,7 @@ namespace btg
 
          void sessionSelectionDialog::on_ok_clicked()
          {
-            string active = cbt->get_active_text();
+            std::string active = cbt->get_active_text();
             if (active != "")
                {
                   std::string::size_type pos = active.find_first_of("(");

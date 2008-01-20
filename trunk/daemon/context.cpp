@@ -2116,6 +2116,16 @@ namespace btg
             }
       }
 
+      bool Context::dhtEnabled() const
+      {
+         return enabledDHT_;
+      }
+
+      bool Context::encryptionEnabled() const
+      {
+         return useEncryption_;
+      }
+
       Context::~Context()
       {
          portMgr->giveBack(listen_port_range_);

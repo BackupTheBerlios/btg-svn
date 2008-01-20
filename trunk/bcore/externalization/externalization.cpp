@@ -88,6 +88,8 @@ namespace btg
                t_IdToNameElem(Command::CN_SDETACH,         "session.detach"),
                t_IdToNameElem(Command::CN_SQUIT,           "session.quit"),
                t_IdToNameElem(Command::CN_SERROR,          "session.error"),
+               t_IdToNameElem(Command::CN_SINFO,           "session.info"),
+               t_IdToNameElem(Command::CN_SINFORSP,        "session.inforsp"),
                t_IdToNameElem(Command::CN_SLIST,           "session.list"),
                t_IdToNameElem(Command::CN_SLISTRSP,        "session.listrsp"),
                t_IdToNameElem(Command::CN_SNAME,           "session.name"),

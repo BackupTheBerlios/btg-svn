@@ -39,7 +39,6 @@ namespace btg
    {
       namespace gui
       {
-         using namespace std;
          using namespace btg::core;
 
          mainMenubar::mainMenubar(mainWindow* _mainwindow)
@@ -275,7 +274,7 @@ namespace btg
 
          void mainMenubar::updateLastFileList(t_strList const& _lastFileList)
          {
-            vector<Gtk::MenuItem*>::iterator iter;
+            std::vector<Gtk::MenuItem*>::iterator iter;
             t_uint counter = 0;
 
             // First hide all the elements from the array.
@@ -302,8 +301,8 @@ namespace btg
                         Gtk::MenuItem* temp = *iter;
                         Gtk::Label* label = dynamic_cast<Gtk::Label*>(temp->get_child());
                         // Attempt to remove path information, just keep the filename.
-                        string long_filename = _lastFileList.at(counter);
-                        string short_filename;
+                        std::string long_filename = _lastFileList.at(counter);
+                        std::string short_filename;
                         if (Util::getFileFromPath(long_filename, short_filename) == true)
                            {
                               label->set_text(short_filename);

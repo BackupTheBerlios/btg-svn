@@ -379,6 +379,12 @@ namespace btg
             _selected_files = lastSelected_files_;
          }
 
+         void Handler::onSessionInfo(bool const _encryption, bool const _dht)
+         {
+            dht_enabled_        = _encryption;
+            encryption_enabled_ = _dht;
+         }
+
          Handler::~Handler()
          {
          }

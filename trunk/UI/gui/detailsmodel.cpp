@@ -31,8 +31,6 @@ namespace btg
       namespace gui
       {
 
-         using namespace std;
-
          detailsRecord::detailsRecord()
             : text()
          {

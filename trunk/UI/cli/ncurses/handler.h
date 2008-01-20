@@ -162,7 +162,10 @@ namespace btg
                                                 t_int const  _limitBytesDwnld,
                                                 t_int const  _maxUplds,
                                                 t_long const _maxConnections);
+
                      void onGlobalLimitResponseError(std::string _ErrorDescription);
+
+                     void onSessionInfo(bool const _encryption, bool const _dht);
 
                      /// Limit.
                      t_int          last_uploadRate;

@@ -54,8 +54,7 @@ namespace btg
             textview->set_wrap_mode(Gtk::WRAP_NONE);
             textview->set_justification(Gtk::JUSTIFY_LEFT);
 
-            using namespace std;
-            string text;
+            std::string text;
             text += "btg Copyright (C) 2005 Michael Wojciechowski.";
             text += GPD->sNEWLINE();
             text += "This program is free software; you can redistribute it and/or modify";

@@ -41,7 +41,6 @@ namespace btg
       namespace gui
       {
 
-         using namespace std;
          using namespace btg::core;
 
          traficPlot::traficPlot()
@@ -145,7 +144,7 @@ namespace btg
             plot->replot();
          }
 
-         string traficPlot::bytesPerSecondToString(int const _bytes, bool const _shrt)
+         std::string traficPlot::bytesPerSecondToString(int const _bytes, bool const _shrt)
          {
             humanReadableRate hrr = humanReadableRate::convert(_bytes);
 

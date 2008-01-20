@@ -180,6 +180,8 @@ namespace btg
             /// Request uptime from the daemon.
             virtual void reqUptime();
 
+            virtual void reqSessionInfo();
+
             /// Request the name of the current session.
             virtual void reqSessionName();
 
@@ -260,6 +262,9 @@ namespace btg
 
             /// Set the session ID used by this handler.
             virtual void setSession(t_long const _session);
+            
+            virtual bool dht();
+            virtual bool encryption();
 
             /// Destructor.
             virtual ~clientHandler();
@@ -364,6 +369,9 @@ namespace btg
             /// Indicates that the handler should start
             /// torrents automatically after loading them.
             bool const                        autoStartFlag_;
+
+            bool                              dht_enabled_;
+            bool                              encryption_enabled_;
          private:
             /// Copy constructor.
             clientHandler(clientHandler const& _ch);

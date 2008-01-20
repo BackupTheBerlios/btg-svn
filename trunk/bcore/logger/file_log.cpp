@@ -39,7 +39,7 @@ extern "C"
 #endif
 
 using namespace btg::core;
-using namespace std;
+
 namespace btg
 {
    namespace core
@@ -47,7 +47,7 @@ namespace btg
       namespace logger
       {
 
-         fileLogger::fileLogger(string _filename)
+         fileLogger::fileLogger(std::string _filename)
             : logBuffer(0, 1024), 
               filename(_filename),
               file()
@@ -57,9 +57,9 @@ namespace btg
          bool fileLogger::open()
          {
 #if HAVE_IOS_BASE
-            file.open(this->filename.c_str(), ios_base::out);
+            file.open(this->filename.c_str(), std::ios_base::out);
 #else
-            file.open(this->filename.c_str(), ios::out);
+            file.open(this->filename.c_str(), std::ios::out);
 #endif
             return file.is_open();
          }
@@ -84,12 +84,12 @@ namespace btg
             if (pbase() != pptr())
                {
                   int len      = (pptr() - pbase());
-                  char *buffer = new char[len + 1];
+                  char* buffer = new char[len + 1];
 
                   strncpy(buffer, pbase(), len);
                   buffer[len] = '\0';
 
-                  string s(buffer);
+                  std::string s(buffer);
 
                   file << s;
                   file.flush();
@@ -101,9 +101,9 @@ namespace btg
 
          void fileLogger::put_char(int _char)
          {
-            char *c = new char;
+            char* c = new char;
             *c = _char;
-            string s(c);
+            std::string s(c);
 
             file << s;
             file.flush();

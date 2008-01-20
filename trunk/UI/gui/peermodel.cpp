@@ -30,9 +30,6 @@ namespace btg
    {
       namespace gui
       {
-
-         using namespace std;
-
          peerRecord::peerRecord()
             : ipv4(),
               status(),

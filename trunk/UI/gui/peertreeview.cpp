@@ -35,8 +35,6 @@ namespace btg
    {
       namespace gui
       {
-
-         using namespace std;
          using namespace btg::core;
 
          peerTreeview::peerTreeview()

@@ -29,8 +29,6 @@ namespace btg
    namespace core
    {
 
-      using namespace std;
-
       contextStartCommand::contextStartCommand()
          : contextCommand(Command::CN_CSTART, contextCommand::UNDEFINED_CONTEXT, false)
       {}

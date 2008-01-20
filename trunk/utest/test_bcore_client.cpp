@@ -38,7 +38,6 @@ CPPUNIT_TEST_SUITE_REGISTRATION( testBcoreClient );
 #endif // BTG_UTEST_CLIENT
 
 using namespace btg::core;
-using namespace std;
 
 void testBcoreClient::setUp()
 {
@@ -76,7 +75,7 @@ void testBcoreClient::testConfiguration()
    using namespace btg::core;
    using namespace btg::core::logger;
 
-   string config_filename        = TESTFILE_CONFIG;
+   std::string config_filename        = TESTFILE_CONFIG;
 
    clientConfiguration *config = new clientConfiguration(logwrapper, config_filename);
 
@@ -132,8 +131,8 @@ void testBcoreClient::testConfigurationLastOpenFiles()
    using namespace btg::core;
    using namespace btg::core::logger;
 
-   string dynconfig_filename        = std::string(TESTFILE_CONFIG) + ".dynconfig";
-   vector<string> last_files;
+   std::string dynconfig_filename        = std::string(TESTFILE_CONFIG) + ".dynconfig";
+   std::vector<std::string> last_files;
 
    last_files.push_back(TESTFILE_LAST_0);
    last_files.push_back(TESTFILE_LAST_1);

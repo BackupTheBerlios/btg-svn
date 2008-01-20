@@ -31,7 +31,6 @@ extern "C"
 
 using namespace btg::core;
 using namespace btg::core::logger;
-using namespace std;
 
 namespace btg
 {
@@ -54,12 +53,12 @@ namespace btg
             if (pbase() != pptr())
                {
                   int len      = (pptr() - pbase());
-                  char *buffer = new char[len + 1];
+                  char* buffer = new char[len + 1];
 
                   strncpy(buffer, pbase(), len);
                   buffer[len] = '\0';
 
-                  string s(buffer);
+                  std::string s(buffer);
                   this->getTarget()->writeLog(s);
 
                   setp(pbase(), epptr());
@@ -69,9 +68,9 @@ namespace btg
 
          void nscreenLogger::put_char(int _char)
          {
-            char *c = new char;
-            * c = _char;
-            string s(c);
+            char* c = new char;
+            *c = _char;
+            std::string s(c);
             this->getTarget()->writeLog(s);
             delete c;
          }

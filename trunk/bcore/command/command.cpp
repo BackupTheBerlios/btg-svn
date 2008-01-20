@@ -30,8 +30,6 @@ extern "C"
 #include <assert.h>
 }
 
-using namespace std;
-
 namespace btg
 {
    namespace core
@@ -94,6 +92,9 @@ namespace btg
             t_IdToNameElem(Command::CN_SDETACH,         "(s) Detach"),
             t_IdToNameElem(Command::CN_SQUIT,           "(s) Quit"),
             t_IdToNameElem(Command::CN_SERROR,          "(s) Error"),
+            t_IdToNameElem(Command::CN_SINFO,           "(s) Info"),
+            t_IdToNameElem(Command::CN_SINFORSP,        "(s) Info response"),
+
             t_IdToNameElem(Command::CN_SLIST,           "(s) List"),
             t_IdToNameElem(Command::CN_SLISTRSP,        "(s) List response"),
             t_IdToNameElem(Command::CN_SNAME,           "(s) Session name"),
@@ -121,12 +122,12 @@ namespace btg
          return this->type;
       }
 
-      string Command::getName() const
+      std::string Command::getName() const
       {
          return Command::getName(this->type);
       }
 
-      string Command::getName(t_int const _type)
+      std::string Command::getName(t_int const _type)
       {
          static const t_IdToName map(&commandNames[0], &commandNames[commandNames_size]);
 

@@ -182,6 +182,8 @@ namespace btg
                                                 t_long const _maxConnections);
                      void onGlobalLimitResponseError(std::string _ErrorDescription);
 
+                     void onSessionInfo(bool const _encryption, bool const _dht);
+
                      /// List of context IDs.
                      t_intList      contextIDs;
 

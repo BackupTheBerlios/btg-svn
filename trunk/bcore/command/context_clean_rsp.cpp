@@ -28,9 +28,6 @@ namespace btg
 {
    namespace core
    {
-
-      using namespace std;
-
       contextCleanResponseCommand::contextCleanResponseCommand()
          : Command(Command::CN_CCLEANRSP),
            filenames(),

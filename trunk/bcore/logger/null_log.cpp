@@ -31,7 +31,6 @@ extern "C"
 #include <iostream>
 
 using namespace btg::core;
-using namespace std;
 
 namespace btg
 {

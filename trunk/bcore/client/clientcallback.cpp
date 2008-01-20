@@ -34,7 +34,6 @@ namespace btg
       {
 
          using namespace btg::core;
-         using namespace std;
 
          clientCallback::clientCallback()
          {

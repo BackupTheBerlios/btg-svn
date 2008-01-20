@@ -70,7 +70,6 @@ namespace btg
    {
 
       using namespace btg::core;
-      using namespace std;
 
       const std::string moduleName("evt");
 
@@ -364,7 +363,9 @@ namespace btg
          sendCommand(_connectionID, new ackCommand(_type));
       }
 
-      void eventHandler::sendError(t_int _connectionID, Command::commandType _type, string const& _error)
+      void eventHandler::sendError(t_int _connectionID, 
+                                   Command::commandType _type, 
+                                   std::string const& _error)
       {
          sendCommand(_connectionID, new errorCommand(_type, _error));
       }
@@ -433,12 +434,12 @@ namespace btg
 
       void eventHandler::handle_CN_GLIST(t_int _connectionID)
       {
-         vector<t_int> list = daemoncontext->getContexts();
+         std::vector<t_int> list = daemoncontext->getContexts();
          if (list.size() > 0)
             {
-               vector<string> filenames;
-               vector<t_int>::const_iterator ci;
-               string s;
+               std::vector<std::string> filenames;
+               std::vector<t_int>::const_iterator ci;
+               std::string s;
                for (ci = list.begin(); ci != list.end(); ci++)
                   {
                      // BROKEN: this locks libtorrent!
@@ -649,7 +650,7 @@ namespace btg
                      // All contexts.
 #if BTG_DEBUG
                      BTG_MNOTICE(logWrapper(), "sending list of status objects.");
-                     vector<Status>::const_iterator iter;
+                     std::vector<Status>::const_iterator iter;
                      for (iter = v_status.begin(); iter != v_status.end(); iter++)
                         {
                            BTG_MNOTICE(logWrapper(), "status: " << iter->toString());
@@ -1020,6 +1021,16 @@ namespace btg
       void eventHandler::setName(std::string const& _name)
       {
          name_ = _name;
+      }
+
+      bool eventHandler::dhtEnabled() const
+      {
+         return daemoncontext->dhtEnabled();
+      }
+
+      bool eventHandler::encryptionEnabled() const
+      {
+         return daemoncontext->encryptionEnabled();
       }
 
       eventHandler::~eventHandler()

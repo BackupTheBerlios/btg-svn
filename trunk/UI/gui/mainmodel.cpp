@@ -35,8 +35,6 @@ namespace btg
       namespace gui
       {
 
-         using namespace std;
-
          statusRecord::statusRecord()
             : id(),
               filename(),

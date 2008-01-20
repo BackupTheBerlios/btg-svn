@@ -32,7 +32,6 @@ namespace btg
       namespace gui
       {
 
-         using namespace std;
          using namespace btg::core;
 
          fileInfoPixbox::fileInfoPixbox(int const _bits_per_sample,

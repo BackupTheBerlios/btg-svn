@@ -39,7 +39,6 @@ namespace btg
       {
 
          using namespace btg::core;
-         using namespace std;
 
          clientHandler::clientHandler(LogWrapperType _logwrapper,
                                       btg::core::externalization::Externalization* _e,
@@ -78,7 +77,9 @@ namespace btg
               fatalerror(false),
               sessionerror(false),
               session_(clientHandler::ILLEGAL_ID),
-              autoStartFlag_(_autoStartFlag)
+              autoStartFlag_(_autoStartFlag),
+              dht_enabled_(false),
+              encryption_enabled_(false)
          {
          }
 
@@ -312,6 +313,14 @@ namespace btg
             statemachine.work();
          }
 
+         void clientHandler::reqSessionInfo()
+         {
+            commandStatus = false;
+
+            statemachine.doSessionInfo();
+            statemachine.work();
+         }
+
          void clientHandler::reqSessionName()
          {
             commandStatus = false;
@@ -414,6 +423,16 @@ namespace btg
          void clientHandler::setSession(t_long const _session)
          {
             session_ = _session;
+         }
+
+         bool clientHandler::dht()
+         {
+            return dht_enabled_;
+         }
+
+         bool clientHandler::encryption()
+         {
+            return encryption_enabled_;
          }
 
          clientHandler::~clientHandler()

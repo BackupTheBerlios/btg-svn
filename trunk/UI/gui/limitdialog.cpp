@@ -124,9 +124,8 @@ namespace btg
 
             for (t_int i=limit_interval; i<=200; i=i+limit_interval)
                {
-                  using namespace std;
                   using namespace btg::core;
-                  string s = convertToString<int>(i) + " KiB/sec";
+                  std::string s = convertToString<int>(i) + " KiB/sec";
                   uploadCombo->append_text(s);
                   downloadCombo->append_text(s);
                }

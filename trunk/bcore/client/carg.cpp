@@ -35,7 +35,6 @@ namespace btg
    {
       namespace client
       {
-         using namespace std;
          using namespace btg::core;
 
 #define sessionLabel        "session,s"
@@ -173,7 +172,7 @@ namespace btg
 
                   if (!daemon.fromString(hostport))
                      {
-                        cerr << "Error: invalid value for arg daemon." << endl;
+                        std::cerr << "Error: invalid value for arg daemon." << std::endl;
                      }
                   else
                      {

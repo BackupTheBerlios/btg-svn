@@ -162,6 +162,12 @@ namespace btg
                /// Get the name of the session.
                std::string getName() const;
 
+               /// Indicates if dht is enabled.
+               bool dhtEnabled() const;
+
+               /// Indicates if encryption is enabled.
+               bool encryptionEnabled() const;
+
                /// Destructor.
                ~eventHandler();
             private:

@@ -209,6 +209,8 @@ namespace btg
                      /// A session name was set.
                      virtual void onSetSessionName() = 0;
 
+                     virtual void onSessionInfo(bool const _encryption, bool const _dht) = 0;
+
                      /// Destructor.
                      virtual ~clientCallback();
                   };

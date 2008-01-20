@@ -29,8 +29,6 @@ namespace btg
    namespace core
    {
 
-      using namespace std;
-
       sessionErrorCommand::sessionErrorCommand()
          : Command(Command::CN_SERROR), which_command(Command::CN_UNDEFINED)
       {}

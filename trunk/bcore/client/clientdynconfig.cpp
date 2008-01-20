@@ -40,10 +40,9 @@ namespace btg
 
          using namespace btg::core::externalization;
          using namespace btg::core;
-         using namespace std;
          
          clientDynConfig::clientDynConfig(LogWrapperType _logwrapper,
-                                          string const& _file_name)
+                                          std::string const& _file_name)
             : Logable(_logwrapper),
               m_file_name(_file_name),
               m_data_modified(false),
@@ -79,11 +78,11 @@ namespace btg
             
             set_modified(false);
 
-            ifstream file;
+            std::ifstream file;
 #if HAVE_IOS_BASE
-            file.open(m_file_name.c_str(), ios_base::in | ios_base::binary);
+            file.open(m_file_name.c_str(), std::ios_base::in | std::ios_base::binary);
 #else
-            file.open(m_file_name.c_str(), ios::in | ios::binary);
+            file.open(m_file_name.c_str(), std::ios::in | std::ios::binary);
 #endif
             if (!file.is_open())
             {
@@ -94,13 +93,13 @@ namespace btg
             // find out file size
             t_int size = 0;
 #if HAVE_IOS_BASE
-            file.seekg (0, ios_base::end);
+            file.seekg (0, std::ios_base::end);
             size = file.tellg();
-            file.seekg (0, ios_base::beg);
+            file.seekg (0, std::ios_base::beg);
 #else
-            file.seekg (0, ios::end);
+            file.seekg (0, std::ios::end);
             size = file.tellg();
-            file.seekg (0, ios::beg);
+            file.seekg (0, std::ios::beg);
 #endif
 
             if (size <= 0)
@@ -113,7 +112,7 @@ namespace btg
             memset(buffer, size, 0);
             file.read(reinterpret_cast<char*>(buffer), size);
             
-            auto_ptr<Externalization> ext(Factory::createExternalization(logWrapper()));
+            std::auto_ptr<Externalization> ext(Factory::createExternalization(logWrapper()));
             
             dBuffer dbuf(buffer, size);
             ext->setBuffer(dbuf);
@@ -158,7 +157,7 @@ namespace btg
             BTG_NOTICE(logWrapper(), "save(), Writing dynconfig file " << m_file_name);
             
             // Create serializator
-            auto_ptr<Externalization> ext(Factory::createExternalization(logWrapper()));
+            std::auto_ptr<Externalization> ext(Factory::createExternalization(logWrapper()));
 
             // store signature
             t_uint sig = cfg_format_version;
@@ -184,11 +183,11 @@ namespace btg
             ext->getBuffer(db);
             
             // Write file
-            ofstream file;
+            std::ofstream file;
 #if HAVE_IOS_BASE
-            file.open(m_file_name.c_str(), ios_base::out | ios_base::binary);
+            file.open(m_file_name.c_str(), std::ios_base::out | std::ios_base::binary);
 #else
-            file.open(m_file_name.c_str(), ios::out | ios::binary);
+            file.open(m_file_name.c_str(), std::ios::out | std::ios::binary);
 #endif
             if (!file.is_open())
             {

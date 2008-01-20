@@ -77,9 +77,7 @@ namespace btg
    {
       namespace gui
       {
-
          using namespace btg::core::logger;
-         using namespace std;
 
          mainWindow::mainWindow(std::string const& _session,
                                 bool const _verboseFlag,
@@ -941,7 +939,7 @@ namespace btg
             handler->reqStart(_id);
             if (handler->commandSuccess())
                {
-                  string filename("");
+                  std::string filename("");
                   handler->idToFilename(_id, filename);
                   logVerboseMessage(USERMESSAGE_STARTED_B + filename + USERMESSAGE_STARTED_E);
                   msb->set(USERMESSAGE_STARTED_B + filename + USERMESSAGE_STARTED_E);
@@ -956,7 +954,7 @@ namespace btg
             handler->reqStop(_id);
             if (handler->commandSuccess())
                {
-                  string filename("");
+                  std::string filename("");
                   handler->idToFilename(_id, filename);
                   logVerboseMessage(USERMESSAGE_STOPPED_B + filename + USERMESSAGE_STOPPED_E);
                   msb->set(USERMESSAGE_STOPPED_B + filename + USERMESSAGE_STOPPED_E);
@@ -972,7 +970,7 @@ namespace btg
             if (handler->commandSuccess())
                {
                   removeTrackerStatus(_id);
-                  string filename("");
+                  std::string filename("");
                   handler->idToFilename(_id, filename);
                   logVerboseMessage(USERMESSAGE_ERASED_B + filename + USERMESSAGE_ERASED_E);
                   msb->set(USERMESSAGE_ERASED_B + filename + USERMESSAGE_ERASED_E);
@@ -988,7 +986,7 @@ namespace btg
             if (handler->commandSuccess())
                {
                   removeTrackerStatus(_id);
-                  string filename("");
+                  std::string filename("");
                   handler->idToFilename(_id, filename);
                   logVerboseMessage(USERMESSAGE_ABORTED_B + filename + USERMESSAGE_ABORTED_E);
                   msb->set(USERMESSAGE_ABORTED_B + filename + USERMESSAGE_ABORTED_E);
@@ -1001,7 +999,7 @@ namespace btg
 
             // BTG_NOTICE("(global) mainToolbar::BTN_CLEAN");
             handler->reqClean(_id, false);
-            string filename("");
+            std::string filename("");
             handler->idToFilename(_id, filename);
             if (handler->commandSuccess())
                {
@@ -1028,7 +1026,7 @@ namespace btg
             // Only popup the limit dialog _once_.
             bool limit_popup = false;
 
-            string limit_filename;
+            std::string limit_filename;
             
             if (limitdialog == 0)
                {

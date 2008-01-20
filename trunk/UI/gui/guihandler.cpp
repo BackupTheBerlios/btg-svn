@@ -41,7 +41,6 @@ namespace btg
 
          using namespace btg::core;
          using namespace btg::core::client;
-         using namespace std;
 
          guiHandler::guiHandler(btg::core::LogWrapperType _logwrapper,
                                 btg::core::externalization::Externalization* _e,
@@ -121,7 +120,7 @@ namespace btg
             commandStatus = false;
          }
 
-         void guiHandler::onError(string const& _errorDescription)
+         void guiHandler::onError(std::string const& _errorDescription)
          {
             commandStatus = false;
             BTG_NOTICE(logWrapper(), "Error: " << _errorDescription);
@@ -273,7 +272,7 @@ namespace btg
             attachDone = true;
          }
 
-         void guiHandler::onAttachError(string const& _message)
+         void guiHandler::onAttachError(std::string const& _message)
          {
             BTG_NOTICE(logWrapper(), 
                        "guiHandler::onAttachError:" << _message);
@@ -289,7 +288,7 @@ namespace btg
             sessionNames = _sessionNames;
          }
 
-         void guiHandler::onListSessionsError(string const& _errorDescription)
+         void guiHandler::onListSessionsError(std::string const& _errorDescription)
          {
             BTG_FATAL_ERROR(logWrapper(),
                             GPD->sGUI_CLIENT(), _errorDescription);
@@ -377,7 +376,7 @@ namespace btg
             return fileinfolist;
          }
 
-         bool guiHandler::idToFilename(t_int const _id, string & _filename)
+         bool guiHandler::idToFilename(t_int const _id, std::string & _filename)
          {
             bool status = false;
             t_intStrMapCI iter = idToFilenameMap.find(_id);
@@ -437,6 +436,12 @@ namespace btg
          btg::core::selectedFileEntryList guiHandler::getLastSelectedFiles() const
          {
             return selected_files;
+         }
+
+         void guiHandler::onSessionInfo(bool const _encryption, bool const _dht)
+         {
+            dht_enabled_        = _encryption;
+            encryption_enabled_ = _dht;
          }
          
          guiHandler::~guiHandler()

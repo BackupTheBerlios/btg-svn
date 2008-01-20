@@ -34,7 +34,6 @@ namespace btg
    namespace daemon
    {
       using namespace btg::core;
-      using namespace std;
 
 #define configLabel           "config,c"
 #define configLabelKey        "config"
@@ -49,7 +48,7 @@ namespace btg
 #  define noreloadLabelKey    "no-reload"
 #endif // BTG_OPTION_SAVESESSIONS
 
-      commandLineArgumentHandler::commandLineArgumentHandler(string const& _config_file)
+      commandLineArgumentHandler::commandLineArgumentHandler(std::string const& _config_file)
          : btg::core::argumentInterface("BTG daemon", true),
            config_file(_config_file),
            config_file_present(false),
