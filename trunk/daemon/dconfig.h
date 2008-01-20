@@ -42,7 +42,8 @@ namespace btg
             {
             public:
                /// Constructor.
-               /// @param [in] _filename The file name used.
+               /// @param [in] _logwrapper Pointer used to send logs to.
+               /// @param [in] _filename   The file name used.
                daemonConfiguration(btg::core::LogWrapperType _logwrapper,
                                    std::string const& _filename);
 

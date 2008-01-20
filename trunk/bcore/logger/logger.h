@@ -154,8 +154,10 @@ namespace btg
                      /// Constructor.
                      logWrapper();
 
+                     /// Indicates if the logstream used has been set.
                      bool logStreamSet() const;
 
+                     /// Set the logstream instance to be used.
                      void setLogStream(boost::shared_ptr<logStream> _logstream);
 
                      /// Get a pointer to the debugStream instance used for logging.
@@ -183,6 +185,7 @@ namespace btg
                      /// Logging priority.
                      logWrapper::MESSAGEPRIORITY   minMessagePriority;
 
+                     /// Indicates if the logstream instance was set.
                      bool logstreamset;
                   };
 

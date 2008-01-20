@@ -49,9 +49,10 @@ namespace btg
                   {
                   public:
                      /// Constructor.
-                     /// @param [in] _clientName       The name of the client using this helper.
-                     /// @param [in] _config           The client configuration used.
-                     /// @param [in] _clah             The client command line arguments.
+                     /// @param [in] _logwrapper Pointer used to send logs to.
+                     /// @param [in] _clientName The name of the client using this helper.
+                     /// @param [in] _config     The client configuration used.
+                     /// @param [in] _clah       The client command line arguments.
                      Helper(LogWrapperType _logwrapper,
                             std::string const&          _clientName,
                             clientConfiguration*        _config,
@@ -133,6 +134,7 @@ namespace btg
 
                      /// Constructor.
                      /// \note None of the pointers are deleted by the destructor of this class.
+                     /// @param [in] _logwrapper       Pointer used to send logs to.
                      /// @param [in] _clientName       The name of the client using this helper.
                      /// @param [in] _config           The client configuration used.
                      /// @param [in] _clah             The client command line arguments.
@@ -234,9 +236,10 @@ namespace btg
                   public:
                      /// Constructor.
                      /// \note None of the pointers are deleted by the destructor of this class.
-                     /// @param [in] _clientName       The name of the client using this helper.
-                     /// @param [in] _config           The client configuration used.
-                     /// @param [in] _clah             The client command line arguments.
+                     /// @param [in] _logwrapper Pointer used to send logs to.
+                     /// @param [in] _clientName The name of the client using this helper.
+                     /// @param [in] _config     The client configuration used.
+                     /// @param [in] _clah       The client command line arguments.
                      transportHelper(LogWrapperType _logwrapper,
                                      std::string const&          _clientName,
                                      clientConfiguration*        _config,

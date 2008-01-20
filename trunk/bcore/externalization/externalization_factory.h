@@ -49,7 +49,8 @@ namespace btg
             {
             public:
                /// Creates serializator instance.
-               /// @param [in] _et Serializator type.
+               /// @param [in] _logwrapper Pointer used to send logs to.
+               /// @param [in] _et         Serializator type.
                /// @return Pointer to externalization implementation or 0.
                static Externalization* createExternalization(LogWrapperType _logwrapper,
                                                              eExternalizationType _et = etXml);

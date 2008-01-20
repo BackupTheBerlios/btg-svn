@@ -62,7 +62,8 @@ namespace btg
                   public:
                      /// Constructor.
                      ///
-                     /// @param [in] _e         The externalization used.
+                     /// @param [in] _logwrapper Pointer used to send logs to.
+                     /// @param [in] _e          The externalization used.
                      ///
                      /// @param [in] _transport Message transport to
                      /// be used for communicating with the daemon.

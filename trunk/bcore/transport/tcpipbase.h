@@ -49,6 +49,7 @@ namespace btg
             {
             public:
                /// Constructor.
+               /// @param [in] _logwrapper Pointer used to send logs to.
                tcpClient(LogWrapperType _logwrapper);
 
                /// Destructor.
@@ -74,6 +75,7 @@ namespace btg
             {
             public:
                /// Constructor.
+               /// @param [in] _logwrapper     Pointer used to send logs to.
                /// @param [in] _e              Externalization.
                /// @param [in] _bufferSize     Buffer size.
                /// @param [in] _direction      Direction.

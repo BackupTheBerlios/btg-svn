@@ -27,10 +27,16 @@ namespace btg
 {
    namespace core
       {
+         /**
+          * \addtogroup commands
+          */
+         /** @{ */
 
+         /// Base class used when session/torrent limits are required.
          class limitBase
             {
             public:
+               /// Constructor.
                limitBase();
 
                enum
@@ -39,10 +45,14 @@ namespace btg
                      KiB_to_B       = 1024  //!< KiB in bytes.
                   };
 
+               /// Destructor.
                virtual ~limitBase();
             };
+
+         /* @} */
 
       } // namespace core
 } // namespace btg
 
 #endif
+

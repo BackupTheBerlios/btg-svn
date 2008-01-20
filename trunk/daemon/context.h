@@ -156,18 +156,19 @@ namespace btg
                   };
 
                /// Constructor.
-               /// @param [in] _verboseFlag            Indicates that verbose logging should be done.
-               /// @param [in] _username               Username.
-               /// @param [in] _tempDir                Temporary directory.
-               /// @param [in] _workDir                Working directory.
-               /// @param [in] _seedDir                Seeding directory.
-               /// @param [in] _outputDir              Output directory.
-               /// @param [in] _portMgr                Pointer to port manager.
-               /// @param [in] _limitMgr               Pointer to limit manager.
-               /// @param [in] _filetrack     Pointer to the class keeping track of added/removed torrents.
-               /// @param [in] _filter        Pointer to a filter, used to ban peers.
+               /// @param [in] _logwrapper     Pointer used to send logs to.
+               /// @param [in] _verboseFlag    Indicates that verbose logging should be done.
+               /// @param [in] _username       Username.
+               /// @param [in] _tempDir        Temporary directory.
+               /// @param [in] _workDir        Working directory.
+               /// @param [in] _seedDir        Seeding directory.
+               /// @param [in] _outputDir      Output directory.
+               /// @param [in] _portMgr        Pointer to port manager.
+               /// @param [in] _limitMgr       Pointer to limit manager.
+               /// @param [in] _filetrack      Pointer to the class keeping track of added/removed torrents.
+               /// @param [in] _filter         Pointer to a filter, used to ban peers.
                /// @param [in] _useTorrentName Enable/disable using the torrent name from the tracker.
-               /// @param [in] _cbm           Pointer to callback manager.
+               /// @param [in] _cbm            Pointer to callback manager.
                /// @param [in] _clientAttached If true, a client is attached.
                Context(btg::core::LogWrapperType _logwrapper,
                        bool const _verboseFlag,

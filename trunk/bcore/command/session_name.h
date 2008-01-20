@@ -35,6 +35,7 @@ namespace btg
        */
       /** @{ */
 
+      /// Request a session's name.
       class sessionNameCommand: public Command
       {
       public:
@@ -48,6 +49,7 @@ namespace btg
          virtual ~sessionNameCommand();
       };
 
+      /// Get a session's name.
       class sessionNameResponseCommand: public Command
       {
       public:
@@ -69,6 +71,7 @@ namespace btg
          std::string name;
       };
 
+      /// Set a session's name.
       class setSessionNameCommand: public Command
       {
       public:

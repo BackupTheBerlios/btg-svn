@@ -50,6 +50,7 @@ namespace btg
                   {
                   public:
                      /// Constructor.
+                     /// @param [in] _logwrapper   Pointer used to send logs to.
                      /// @param [in] _filename     The filename from which read/write.
                      /// @param [in] _ignoreErrors When _ignoreErrors is set to true, allow reading from file to fail. Used when creating a new file.
                      passwordAuth(btg::core::LogWrapperType _logwrapper,

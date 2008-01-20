@@ -35,6 +35,7 @@ namespace btg
           */
          /** @{ */
 
+         /// Mark session as read only.
          class sessionROCommand: public Command
             {
             public:
@@ -48,6 +49,7 @@ namespace btg
                virtual ~sessionROCommand();
             };
 
+         /// Mark session as writable.
          class sessionRWCommand: public Command
             {
             public:

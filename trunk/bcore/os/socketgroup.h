@@ -43,10 +43,12 @@ namespace btg
                   {
                   public:
                      /// Default constructor.
+                     /// @param [in] _logwrapper Pointer used to send logs to.
                      SocketGroup(LogWrapperType _logwrapper);
 
                      /// Constructor.
-                     /// @param [in] _timeout Max time in milliseconds to block on doSelect().
+                     /// @param [in] _logwrapper Pointer used to send logs to.
+                     /// @param [in] _timeout    Max time in milliseconds to block on doSelect().
                      SocketGroup(LogWrapperType _logwrapper,
                                  const t_uint _timeout);
 

@@ -62,16 +62,13 @@ namespace btg
          public:
             /// Constructor.
             ///
-            /// @param [in] _e         Pointer to the externalization which is used.
-            /// @param [in] _callback  Pointer to an
-            /// implementation of the client callback
-            /// interface.
+            /// @param [in] _logwrapper Pointer used to send logs to.
+            /// @param [in] _e          Pointer to the externalization which is used.
+            /// @param [in] _callback   Pointer to an implementation of the client callback interface.
             ///
-            /// @param [in] _transport Pointer to an
-            /// implementation of the transport interface.
+            /// @param [in] _transport Pointer to an implementation of the transport interface.
             ///
-            /// @param [in] _config Pointer to the class
-            /// holding the client configuration.
+            /// @param [in] _config Pointer to the class holding the client configuration.
             ///
             /// \note This class owns this pointer and
             /// deletes it in the destructor.

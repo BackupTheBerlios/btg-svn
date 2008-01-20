@@ -35,6 +35,7 @@ namespace btg
        */
       /** @{ */
 
+      /// Get info about a session.
       class sessionInfoCommand: public Command
       {
       public:
@@ -48,6 +49,7 @@ namespace btg
          virtual ~sessionInfoCommand();
       };
 
+      /// Information about a session.
       class sessionInfoResponseCommand: public Command
       {
       public:
@@ -59,13 +61,18 @@ namespace btg
          bool serialize(btg::core::externalization::Externalization* _e) const;
          bool deserialize(btg::core::externalization::Externalization* _e);
 
+         /// Indicates if encryption is enabled.
          bool encryption() const;
+
+         /// Indicates if dht is enabled.
          bool dht() const;
 
          /// Destructor.
          virtual ~sessionInfoResponseCommand();
       private:
+         /// Indicates if encryption is enabled.
          bool encryption_;
+         /// Indicates if dht is enabled.
          bool dht_;
       };
 

@@ -85,7 +85,7 @@ Stable Releases
 .. _btg-0.8.5.tar.gz: http://download.berlios.de/btg/btg-0.8.5.tar.gz
 .. _btg-0.9.0.tar.gz: http://download.berlios.de/btg/btg-0.9.0.tar.gz
 .. _btg-0.9.5.tar.gz: http://download.berlios.de/btg/btg-0.9.5.tar.gz
-.. _btg-0.9.6.tar.gz: http://download.berlios.de/btg/btg-0.9.6.tar.gz
+.. _btg-0.9.6.tar.gz: http://download.berlios.de/btg/btg-0.9.6-p1.tar.gz
 
 Experimental Releases
 ---------------------

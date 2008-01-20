@@ -53,6 +53,7 @@ namespace btg
          {
          public:
             /// Constructor.
+            /// @param [in] _logwrapper     Pointer used to send logs to.
             /// @param [in] _e              Pointer to the externalization which is used.
             /// @param [in] _transport      Pointer to the message que used to communicate with the daemon.
             /// @param [in] _clientcallback Pointer to an instance which are used for callbacks.
@@ -149,6 +150,7 @@ namespace btg
             /// Pointer to the externalization which is used.
             btg::core::externalization::Externalization* externalization_;
 
+            /// The command factory used by this class.
             btg::core::commandFactory cf;
 
             /// The states this machine can be in.

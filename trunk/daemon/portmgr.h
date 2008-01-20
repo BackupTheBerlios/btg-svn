@@ -44,6 +44,7 @@ namespace btg
             public:
                /// Constructor.
                /// Set up this instance with a port range.
+               /// @param [in] _logwrapper  Pointer used to send logs to.
                /// @param [in] _verboseFlag Indicates if this class should do verbose logging.
                /// @param [in] _port_range  The port range to use.
                portManager(btg::core::LogWrapperType _logwrapper,

@@ -55,17 +55,17 @@ namespace btg
                   };
 
                /// Constructor.
+               /// @param [in] _logwrapper Used for logging by this class.
+               /// @param [in] _e          Pointer to the externalization which is used.
                commandFactory(LogWrapperType _logwrapper,
                               btg::core::externalization::Externalization* _e);
 
                /// Create an instance of Command by reading from a byte array.
-               /// @param [in]  _e      Pointer to the externalization which is used.
                /// @param [out] _status Status code.
                /// @return              A pointer to a command object or 0 on failture.
                Command* createFromBytes(decodeStatus & _status);
 
                /// Convert a command into bytes.
-               /// @param [out] _e           Pointer to the externalization which is used.
                /// @param [in]  _command     Pointer to a command object.
                /// @return                   The number of bytes written to _destination.
                bool convertToBytes(const Command* _command);

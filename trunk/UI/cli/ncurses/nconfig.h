@@ -94,7 +94,8 @@ namespace btg
                   {
                   public:
                      /// Constructor.
-                     /// @param [in] _filename The filename to use for reading/writing.
+                     /// @param [in] _logwrapper Pointer used to send logs to.
+                     /// @param [in] _filename   The filename to use for reading/writing.
                      ncliConfiguration(btg::core::LogWrapperType _logwrapper,
                                        std::string const& _filename);
 

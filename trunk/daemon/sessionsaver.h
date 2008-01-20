@@ -47,11 +47,12 @@ namespace btg
          {
          public:
             /// Constructor.
-            /// @param _verboseFlag   Indicates that the session saver should log verbose messages.
-            /// @param _portManager   Reference to the port manager.
-            /// @param _limitManager  Reference to the limit manager.
-            /// @param _sessionlist   Reference to a list of sessions.
-            /// @param _dd            Data used to initialize the daemon.
+            /// @param [in] _logwrapper      Pointer used to send logs to.
+            /// @param [in] _verboseFlag     Indicates that the session saver should log verbose messages.
+            /// @param [in] _portManager     Reference to the port manager.
+            /// @param [in] _limitManager    Reference to the limit manager.
+            /// @param [in] _sessionlist     Reference to a list of sessions.
+            /// @param [in] _dd              Data used to initialize the daemon.
             SessionSaver(btg::core::LogWrapperType _logwrapper,
                          bool const _verboseFlag,
                          portManager & _portManager,

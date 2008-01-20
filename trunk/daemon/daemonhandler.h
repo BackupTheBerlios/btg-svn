@@ -54,12 +54,13 @@ namespace btg
 {
    namespace daemon
       {
-
+         /// Handler class used by the daemon.
          class daemonHandler: public btg::core::Logable
             {
             public:
                /// Construct the daemon handler.
-               /// The pointer _must_ point at initialized daemon data.
+               /// 
+               /// Note: the pointer _must_ point at initialized daemon data.
                daemonHandler(btg::core::LogWrapperType _logwrapper,
                              daemonData* _dd, 
                              bool const _verboseFlag);
@@ -246,6 +247,7 @@ namespace btg
                /// clients.
                btg::core::dBuffer              sendBuffer_;
 
+               /// Command factory used by this instance.
                btg::core::commandFactory       cf_;
             private:
                /// Copy constructor.

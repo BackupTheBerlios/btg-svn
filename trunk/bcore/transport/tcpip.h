@@ -48,6 +48,7 @@ namespace btg
             {
             public:
                /// Constructor.
+               /// @param [in] _logwrapper     Pointer used to send logs to.
                /// @param [in] _e              Externalization.
                /// @param [in] _bufferSize     Buffer size.
                /// @param [in] _direction      Direction.
@@ -61,6 +62,7 @@ namespace btg
                             t_uint const _timeout);
 
                /// Constructor.
+               /// @param [in] _logwrapper     Pointer used to send logs to.
                /// @param [in] _e              Externalization.
                /// @param [in] _bufferSize     Buffer size.
                /// @param [in] _direction      Direction.

@@ -49,6 +49,7 @@ namespace btg
             {
             public:
                /// Constructor, used to construct a secure server transport.
+               /// @param [in] _logwrapper     Pointer used to send logs to.
                /// @param [in] _e              Externalization.
                /// @param [in] _ggsd           Pointer to already initialized global GnuTLS data used by the underlaying secure socket.
                /// @param [in] _bufferSize     Buffer size.
@@ -64,6 +65,7 @@ namespace btg
                                   t_uint const _timeout);
 
                /// Constructor, used to construct a secure client transport.
+               /// @param [in] _logwrapper     Pointer used to send logs to.
                /// @param [in] _e              Externalization.
                /// @param [in] _gcd            Pointer to already initialized GnuTLS data used by the underlaying secure socket.
                /// @param [in] _bufferSize     Buffer size.

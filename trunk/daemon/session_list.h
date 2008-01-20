@@ -39,6 +39,7 @@ namespace btg
             {
             public:
                /// Constructor.
+               /// @param [in] _logwrapper  Pointer used to send logs to.
                /// @param [in] _verboseFlag Indicates that verbose logging should be done.
                /// @param [in] _maxSessions The max number of sessions.
                sessionList(btg::core::LogWrapperType _logwrapper,

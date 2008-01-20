@@ -66,6 +66,7 @@ namespace btg
                   };
 
                /// Constructor.
+               /// @param [in] _logwrapper  Pointer used to send logs to.
                /// @param [in] _verboseFlag Indicates if verbose logging should be performed.
                /// @param [in] _interval    How often the update function is called. In seconds.
                /// @param [in] _upload_rate_limit      Initial max upload rate for this session.

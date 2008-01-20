@@ -61,24 +61,25 @@ namespace btg
             {
             public:
                /// Constructor.
-               /// @param [in] _verboseFlag            Decides if this eventhandler should log verbose messages.
-               /// @param [in] _username               User creating the session.
-               /// @param [in] _tempDir                Temporary directory.
-               /// @param [in] _workDir                Working directory.
-               /// @param [in] _seedDir                Seeding directory.
-               /// @param [in] _outputDir              Output directory.
-               /// @param [in] _callback               Callback to use, if enabled.
-               /// @param [in] _portMgr                Pointer to the port manager to use to obtain ports.
-               /// @param [in] _limitMgr               Pointer to the global limit manager.
-               /// @param [in] _e             The externalization to use.
-               /// @param [in] _session       The session to use.
-               /// @param [in] _transport     Pointer to the transport to use to communicate with clients.
-               /// @param [in] _filetrack     Pointer to the class keeping track of added/removed torrents.
-               /// @param [in] _filter        Pointer to a filter, used to ban peers.
+               /// @param [in] _logwrapper     Pointer used to send logs to.
+               /// @param [in] _verboseFlag    Decides if this eventhandler should log verbose messages.
+               /// @param [in] _username       User creating the session.
+               /// @param [in] _tempDir        Temporary directory.
+               /// @param [in] _workDir        Working directory.
+               /// @param [in] _seedDir        Seeding directory.
+               /// @param [in] _outputDir      Output directory.
+               /// @param [in] _callback       Callback to use, if enabled.
+               /// @param [in] _portMgr        Pointer to the port manager to use to obtain ports.
+               /// @param [in] _limitMgr       Pointer to the global limit manager.
+               /// @param [in] _e              The externalization to use.
+               /// @param [in] _session        The session to use.
+               /// @param [in] _transport      Pointer to the transport to use to communicate with clients.
+               /// @param [in] _filetrack      Pointer to the class keeping track of added/removed torrents.
+               /// @param [in] _filter         Pointer to a filter, used to ban peers.
                /// @param [in] _useTorrentName Enable/disable using the torrent name from the tracker.
                /// @param [in] _connectionHandler Connection handler used by the eventhandler to store per-connection data.
-               /// @param [in] _sessionName       Name of the session.
-               /// @param [in] _cbm           Pointer to the callback manager used.
+               /// @param [in] _sessionName    Name of the session.
+               /// @param [in] _cbm            Pointer to the callback manager used.
                eventHandler(btg::core::LogWrapperType _logwrapper,
                             bool const _verboseFlag,
                             std::string const& _username,

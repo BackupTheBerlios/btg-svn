@@ -50,7 +50,8 @@ namespace btg
                   
                   public:
                      /// Constructor.
-                     /// @param [in] _file_name Dynamic client config data file name
+                     /// @param [in] _logwrapper Pointer used to send logs to.
+                     /// @param [in] _file_name  Dynamic client config data file name
                      /// for store/load config data
                      clientDynConfig(LogWrapperType _logwrapper,
                                      std::string const& _file_name);

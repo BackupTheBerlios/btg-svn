@@ -42,7 +42,8 @@ namespace btg
                   {
                   public:
                      /// Constructor.
-                     /// @param [in] cc The dynamic client configuration data object
+                     /// @param [in] _logwrapper Pointer used to send logs to.
+                     /// @param [in] cc          The dynamic client configuration data object
                      lastFiles(LogWrapperType _logwrapper,
                                clientDynConfig & cc);
 
