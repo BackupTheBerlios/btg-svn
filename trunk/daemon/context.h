@@ -171,6 +171,7 @@ namespace btg
                /// @param [in] _cbm            Pointer to callback manager.
                /// @param [in] _clientAttached If true, a client is attached.
                Context(btg::core::LogWrapperType _logwrapper,
+                       const daemonConfiguration* _config,
                        bool const _verboseFlag,
                        std::string const& _username,
                        std::string const& _tempDir,
@@ -193,8 +194,7 @@ namespace btg
 
                /// Setup this context.
                /// \note The interface parameter is not used.
-               bool setup(const daemonConfiguration* _config,
-                          btg::core::requiredSetupData const& _rsd);
+               bool setup(btg::core::requiredSetupData const& _rsd);
 
                /// Set the DHT nodes used by libtorrent.
                /// @param [in] _nodes List of nodes.
@@ -448,6 +448,8 @@ namespace btg
                /// messages.
                bool const verboseFlag_;
 
+               const daemonConfiguration* config_;
+
                /// The username used.
                std::string username_;
 
@@ -637,6 +639,8 @@ namespace btg
                /// Disable the use of DHT.
                void disableDHT();
 
+               /// Enable encryption.
+               void enableEncryption();
             private:
                /// Copy constructor.
                Context(Context const& _c);

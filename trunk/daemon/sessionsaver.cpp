@@ -55,7 +55,7 @@ using namespace btg::daemon;
 
 // New file format. Incompatible with the old format..
 // Increase with 1 for every change here or deeper down in the save struct.
-const t_byte ss_version = 0x99;
+const t_byte ss_version = 0x9a;
 
 #define DESERIALIZE_CHECK(i, m, r) { \
   if((i)) \
@@ -390,6 +390,7 @@ namespace btg
                      ", dest dir = " << destDir);
 
          eventHandler* eh = new eventHandler(logWrapper(),
+                                             dd.config,
                                              verboseFlag_,
                                              _username,
                                              tempDir,
@@ -423,7 +424,7 @@ namespace btg
                                           false);
          btg::core::setupCommand sc(rsd);
 
-         if (!eh->setup(dd.config, &sc))
+         if (!eh->setup(&sc))
             {
                delete eh;
                eh=0;

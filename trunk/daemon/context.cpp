@@ -87,6 +87,7 @@ namespace btg
       bool Context::set_boost_native_paths = true;
 
       Context::Context(btg::core::LogWrapperType _logwrapper,
+                       const daemonConfiguration* _config,
                        bool const _verboseFlag,
                        std::string const& _username,
                        std::string const& _tempDir,
@@ -105,6 +106,7 @@ namespace btg
                        )
          : btg::core::Logable(_logwrapper),
            verboseFlag_(_verboseFlag),
+           config_(_config),
            username_(_username),
            tempDir_(_tempDir),
            workDir_(_workDir),
@@ -245,8 +247,7 @@ namespace btg
          return configured;
       }
 
-      bool Context::setup(const daemonConfiguration* _config,
-                          btg::core::requiredSetupData const& _rsd)
+      bool Context::setup(btg::core::requiredSetupData const& _rsd)
       {
          BTG_MENTER(logWrapper(), "setup", "workDir=" << workDir_ << ", outputDir=" << outputDir_);
 
@@ -335,87 +336,7 @@ namespace btg
          // Enable encryption.
          if (useEncryption_)
             {
-               try
-                  {
-                     libtorrent::pe_settings enc_settings;
-
-                     daemonConfiguration::encryption_policy in;
-                     daemonConfiguration::encryption_policy out;
-                     daemonConfiguration::encryption_level level;
-                     bool preferRc4;
-                     _config->getEncryptionSettings(in, out, level, preferRc4);
-
-                     std::string verboseEncryption;
-
-                     switch (in)
-                        {
-                        case daemonConfiguration::forced:
-                           enc_settings.in_enc_policy     = libtorrent::pe_settings::forced;
-                           verboseEncryption             += "in: forced";
-                           break;
-                        case daemonConfiguration::enabled:
-                           enc_settings.in_enc_policy     = libtorrent::pe_settings::enabled;
-                           verboseEncryption             += "in: enabled";
-                           break;
-                        case daemonConfiguration::disabled:
-                           enc_settings.in_enc_policy     = libtorrent::pe_settings::disabled;
-                           verboseEncryption             += "in: disabled";
-                           break;
-                        }
-
-                     switch (out)
-                        {
-                        case daemonConfiguration::forced:
-                           enc_settings.out_enc_policy    = libtorrent::pe_settings::forced;
-                           verboseEncryption             += " out: forced";
-                           break;
-                        case daemonConfiguration::enabled:
-                           enc_settings.out_enc_policy    = libtorrent::pe_settings::enabled;
-                           verboseEncryption             += " out: enabled";
-                           break;
-                        case daemonConfiguration::disabled:
-                           enc_settings.out_enc_policy    = libtorrent::pe_settings::disabled;
-                           verboseEncryption             += " out: disabled";
-                           break;
-                        }
-
-                     switch(level)
-                        {
-                        case daemonConfiguration::plaintext:
-                           enc_settings.allowed_enc_level = libtorrent::pe_settings::plaintext;
-                           verboseEncryption             += " lvl: plaintext";
-                           break;
-                        case daemonConfiguration::rc4:
-                           enc_settings.allowed_enc_level = libtorrent::pe_settings::rc4;
-                           verboseEncryption             += " lvl: rc4";
-                           break;
-                        case daemonConfiguration::both:
-                           enc_settings.allowed_enc_level = libtorrent::pe_settings::both;
-                           verboseEncryption             += " lvl: both";
-                           break;
-                        }
-
-                     enc_settings.prefer_rc4 = preferRc4;
-
-                     if (preferRc4)
-                        {
-                           verboseEncryption += " prefer: on";
-                        }
-                     else
-                        {
-                           verboseEncryption += " prefer: off";
-                        }
-
-                     VERBOSE_LOG(logWrapper(), verboseFlag_, "Encryption settings:");
-                     VERBOSE_LOG(logWrapper(), verboseFlag_, verboseEncryption << ".");
-
-                     torrent_session->set_pe_settings(enc_settings);
-                     BTG_MNOTICE(logWrapper(), "Encryption settings set");
-                  }
-               catch (std::exception& e)
-                  {
-                     BTG_ERROR_LOG(logWrapper(), "libtorrent exception: " << e.what() );
-                  }
+               enableEncryption();
             }
 #endif // BTG_LT_0_13
 
@@ -1610,10 +1531,10 @@ namespace btg
          BTG_MENTER(logWrapper(), "applySelectedFiles", "torrent info");
 #if BTG_LT_0_13
          enum lt_file_priority
-            {
-               LTF_NO  = 0,
-               LTF_YES = 1
-            };
+         {
+            LTF_NO  = 0,
+            LTF_YES = 1
+         };
 
          std::vector<selectedFileEntry> const& files = _input.files();
 
@@ -2124,6 +2045,93 @@ namespace btg
       bool Context::encryptionEnabled() const
       {
          return useEncryption_;
+      }
+
+      void Context::enableEncryption()
+      {
+#if BTG_LT_0_13
+         try
+            {
+               libtorrent::pe_settings enc_settings;
+                     
+               daemonConfiguration::encryption_policy in;
+               daemonConfiguration::encryption_policy out;
+               daemonConfiguration::encryption_level level;
+               bool preferRc4;
+               config_->getEncryptionSettings(in, out, level, preferRc4);
+
+               std::string verboseEncryption;
+
+               switch (in)
+                  {
+                  case daemonConfiguration::forced:
+                     enc_settings.in_enc_policy     = libtorrent::pe_settings::forced;
+                     verboseEncryption             += "in: forced";
+                     break;
+                  case daemonConfiguration::enabled:
+                     enc_settings.in_enc_policy     = libtorrent::pe_settings::enabled;
+                     verboseEncryption             += "in: enabled";
+                     break;
+                  case daemonConfiguration::disabled:
+                     enc_settings.in_enc_policy     = libtorrent::pe_settings::disabled;
+                     verboseEncryption             += "in: disabled";
+                     break;
+                  }
+
+               switch (out)
+                  {
+                  case daemonConfiguration::forced:
+                     enc_settings.out_enc_policy    = libtorrent::pe_settings::forced;
+                     verboseEncryption             += " out: forced";
+                     break;
+                  case daemonConfiguration::enabled:
+                     enc_settings.out_enc_policy    = libtorrent::pe_settings::enabled;
+                     verboseEncryption             += " out: enabled";
+                     break;
+                  case daemonConfiguration::disabled:
+                     enc_settings.out_enc_policy    = libtorrent::pe_settings::disabled;
+                     verboseEncryption             += " out: disabled";
+                     break;
+                  }
+
+               switch(level)
+                  {
+                  case daemonConfiguration::plaintext:
+                     enc_settings.allowed_enc_level = libtorrent::pe_settings::plaintext;
+                     verboseEncryption             += " lvl: plaintext";
+                     break;
+                  case daemonConfiguration::rc4:
+                     enc_settings.allowed_enc_level = libtorrent::pe_settings::rc4;
+                     verboseEncryption             += " lvl: rc4";
+                     break;
+                  case daemonConfiguration::both:
+                     enc_settings.allowed_enc_level = libtorrent::pe_settings::both;
+                     verboseEncryption             += " lvl: both";
+                     break;
+                  }
+
+               enc_settings.prefer_rc4 = preferRc4;
+
+               if (preferRc4)
+                  {
+                     verboseEncryption += " prefer: on";
+                  }
+               else
+                  {
+                     verboseEncryption += " prefer: off";
+                  }
+
+               VERBOSE_LOG(logWrapper(), verboseFlag_, "Encryption settings:");
+               VERBOSE_LOG(logWrapper(), verboseFlag_, verboseEncryption << ".");
+
+               torrent_session->set_pe_settings(enc_settings);
+               BTG_MNOTICE(logWrapper(), "Encryption settings set");
+            }
+         catch (std::exception& e)
+            {
+               BTG_ERROR_LOG(logWrapper(), "libtorrent exception: " << e.what() );
+            }
+#endif // BTG_LT_0_13      
       }
 
       Context::~Context()

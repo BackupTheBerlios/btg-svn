@@ -592,7 +592,7 @@ int main(int argc, char* argv[])
    // Get some info about the current session, so it can be displayed
    // to the user.
    handler->reqSessionInfo();
-
+   
    if (handler->dht())
       {
          strSession += " D";

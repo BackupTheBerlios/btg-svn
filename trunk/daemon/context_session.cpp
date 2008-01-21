@@ -122,19 +122,6 @@ namespace btg
 
                sbuf.serialize(_e);
 
-               // Save DHT status.
-               _e->boolToBytes(useDHT_);
-
-               if (useDHT_)
-                  {
-                     std::vector<t_byte> buf;
-                     libtorrent::bencode(std::back_inserter(buf), torrent_session->dht_state());
-                     _e->addBytes(&buf[0], buf.size());
-                  }
-
-               // Save encryption status.
-               _e->boolToBytes(useEncryption_);
-
                // Save selected files.
                ti->selected_files.serialize(_e);
 
@@ -145,6 +132,21 @@ namespace btg
                MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Peer ID used: '" << peerid << "'.");
                _e->stringToBytes(&peerid);
             }
+
+         // Global settings.
+         // Save DHT status.
+         _e->boolToBytes(useDHT_);
+         
+         if (useDHT_)
+            {
+               std::vector<t_byte> buf;
+               libtorrent::bencode(std::back_inserter(buf), torrent_session->dht_state());
+               _e->addBytes(&buf[0], buf.size());
+            }
+
+         // Save encryption status.
+         _e->boolToBytes(useEncryption_);
+         
          return true;
       }
 
@@ -152,7 +154,7 @@ namespace btg
 
       bool Context::deserialize(btg::core::externalization::Externalization* _e, t_uint _version)
       {
-         BTG_MENTER(logWrapper(), "deserialize", "");
+         BTG_MENTER(logWrapper(), "deserialize", "version = " << std::hex << _version);
          bool status = true;
          std::string filename;
          bool paused;
@@ -239,7 +241,7 @@ namespace btg
                      return false;
                   }
 
-					if(_version >= 0x97)
+					if (_version >= 0x97 && _version < 0x9a)
 					{
 						// Deserialize DHT flag and list of nodes.
 						BTG_MNOTICE(logWrapper(), "deserialize, reading DHT information");
@@ -263,14 +265,17 @@ namespace btg
 					}
 
 					selectedFileEntryList selectedfileentryList;
-					if(_version >= 0x98)
+					if (_version >= 0x98 && _version < 0x9a)
 					{
 						// Encryption:
 						BTG_CDC(!_e->bytesToBool(useEncryption_), "encryption flag");
+               }
 
-						// Selected files.
-						BTG_CDC(!selectedfileentryList.deserialize(_e), "list of selected files");
-					}
+               if (_version >= 0x98)
+                  {
+                     // Selected files.
+                     BTG_CDC(!selectedfileentryList.deserialize(_e), "list of selected files");
+                  }
 
                if (_version >= 0x99)
                   {
@@ -299,9 +304,9 @@ namespace btg
                      ti->total_upload           = total_upload;
                      ti->total_payload_download = total_payload_download;
                      ti->total_payload_upload   = total_payload_upload;
-							if(_version >= 0x89)
+							if (_version >= 0x89)
 							{
-								ti->selected_files         = selectedfileentryList;
+								ti->selected_files = selectedfileentryList;
 							}
 
                      // Restore state
@@ -333,6 +338,47 @@ namespace btg
                      BTG_ERROR_LOG(logWrapper(), "Falied to add " << filename << ".");
                   }
             } // for
+
+         if (_version >= 0x9a)
+            {
+               // Per session settings.
+
+               // DHT flag and list of nodes.
+               BTG_MNOTICE(logWrapper(), "deserialize, reading DHT information");
+               
+               BTG_CDC(!_e->bytesToBool(useDHT_), "DHT flag");
+               
+               if (useDHT_)
+                  {
+                     
+                     BTG_MNOTICE(logWrapper(), "deserialize, session is using DHT");
+                     
+                     t_uint dhtStatusLength;
+                     t_byteP buf;
+                     BTG_CDC(!_e->getBytes(&buf,dhtStatusLength), "DHT status");
+							
+                     libtorrent::entry dhtState = libtorrent::bdecode(buf, buf+dhtStatusLength);
+                     
+                     delete buf;
+                     enableDHT(dhtState);
+                  }
+               else
+                  {
+                     BTG_MNOTICE(logWrapper(), "deserialize, session is not using DHT");
+                  }
+
+               // Encryption.
+               BTG_CDC(!_e->bytesToBool(useEncryption_), "encryption flag");
+               if (useEncryption_)
+                  {
+                     BTG_MNOTICE(logWrapper(), "deserialize, session is using encryption");
+                     enableEncryption();
+                  }
+               else
+                  {
+                     BTG_MNOTICE(logWrapper(), "deserialize, session is not using encryption");
+                  }
+            }
          BTG_MEXIT(logWrapper(), "deserialize", status);
          return status;
       }

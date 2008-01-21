@@ -532,32 +532,12 @@ namespace btg
       {
          MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
 
-         bool encryption = _eventhandler->encryptionEnabled();
-         bool dht        = _eventhandler->dhtEnabled();
-         
-         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): session info:");
-         if (dht)
-            {
-               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "DHT: ON" << ".");
-            }
-         else
-            {
-               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "DHT: OFF" << ".");
-            }
-
-         if (encryption)
-            {
-               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Encryption: ON" << ".");
-            }
-         else
-            {
-               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Encryption: OFF" << ".");
-            }
-
          sendCommand(dd_->externalization, 
                      dd_->transport,
                      connectionID_, 
-                     new sessionInfoResponseCommand(encryption, dht));
+                     new sessionInfoResponseCommand(_eventhandler->encryptionEnabled(), 
+                                                    _eventhandler->dhtEnabled())
+                     );
       }
 
       void daemonHandler::handleSessionInInvalidState(t_int const _id)
@@ -833,6 +813,7 @@ namespace btg
                   }
 
                eventHandler* eh = new eventHandler(logWrapper(),
+                                                   dd_->config,
                                                    verboseFlag_,
                                                    connection_->getUsername(),
                                                    userTempDir,
@@ -859,7 +840,7 @@ namespace btg
 
                // Use the received setup command to setup
                // the eventhandler and context.
-               if (eh->setup(dd_->config, sc))
+               if (eh->setup(sc))
                   {
                      sessionlist_.add(session, eh);
                      handlerCount_++;

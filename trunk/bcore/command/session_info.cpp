@@ -68,6 +68,31 @@ namespace btg
 
       }
 
+      std::string sessionInfoResponseCommand::toString() const
+      {
+         std::string output = Command::toString() + GPD->sSPACE();
+
+         if (encryption_)
+            {
+               output += "Encryption on";
+            }
+         else
+            {
+               output += "Encryption off";
+            }
+
+         if (dht_)
+            {
+               output += ", DHT on";
+            }
+         else
+            {
+               output += ", DHT off";
+            }
+
+         return output;
+      }
+
       bool sessionInfoResponseCommand::serialize(btg::core::externalization::Externalization* _e) const
       {
          BTG_RCHECK( Command::serialize(_e) );
@@ -89,7 +114,7 @@ namespace btg
          BTG_RCHECK( _e->bytesToBool(encryption_) );
 
          _e->setParamInfo("DHT.", true);
-         BTG_RCHECK( _e->boolToBytes(dht_) );
+         BTG_RCHECK( _e->bytesToBool(dht_) );
          
          return true;
       }

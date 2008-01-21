@@ -57,6 +57,8 @@ namespace btg
          sessionInfoResponseCommand();
          /// Constructor.
          sessionInfoResponseCommand(bool _encryption, bool _dht);
+         
+         std::string toString() const;
 
          bool serialize(btg::core::externalization::Externalization* _e) const;
          bool deserialize(btg::core::externalization::Externalization* _e);

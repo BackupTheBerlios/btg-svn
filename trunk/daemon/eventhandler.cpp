@@ -74,6 +74,7 @@ namespace btg
       const std::string moduleName("evt");
 
       eventHandler::eventHandler(btg::core::LogWrapperType _logwrapper,
+                                 const daemonConfiguration* _config,
                                  bool const _verboseFlag,
                                  std::string const& _username,
                                  std::string const& _tempDir,
@@ -116,6 +117,7 @@ namespace btg
            buffer()
       {
          daemoncontext = new Context(logWrapper(),
+                                     _config,
                                      _verboseFlag,
                                      _username,
                                      _tempDir,
@@ -246,8 +248,7 @@ namespace btg
             }
       }
 
-      bool eventHandler::setup(const daemonConfiguration* _config,
-                               setupCommand* _setupcommand)
+      bool eventHandler::setup(setupCommand* _setupcommand)
       {
          BTG_MNOTICE(logWrapper(), "setup, using:" << _setupcommand->toString());
 
@@ -255,8 +256,7 @@ namespace btg
          seedTimeout_ = _setupcommand->getRequiredData().getSeedTimeout();
          useDht_      = _setupcommand->getRequiredData().useDHT();
 
-         return daemoncontext->setup(_config, 
-                                     _setupcommand->getRequiredData());
+         return daemoncontext->setup(_setupcommand->getRequiredData());
       }
 
       void eventHandler::sendCommand(t_int _connectionID, Command* _command)

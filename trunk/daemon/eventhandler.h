@@ -81,6 +81,7 @@ namespace btg
                /// @param [in] _sessionName    Name of the session.
                /// @param [in] _cbm            Pointer to the callback manager used.
                eventHandler(btg::core::LogWrapperType _logwrapper,
+                            const daemonConfiguration* _config,
                             bool const _verboseFlag,
                             std::string const& _username,
                             std::string const& _tempDir,
@@ -106,8 +107,7 @@ namespace btg
                             );
 
                /// Setup this instance and the context.
-               bool setup(const daemonConfiguration* _config,
-                          btg::core::setupCommand* _setupcommand);
+               bool setup(btg::core::setupCommand* _setupcommand);
 
                /// Handle an event. Send a response if needed.
                /// @param [in] _command Pointer to an instance of command,
