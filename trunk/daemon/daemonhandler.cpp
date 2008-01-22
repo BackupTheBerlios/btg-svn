@@ -35,6 +35,7 @@
 #include <bcore/command/session_info.h>
 #include <bcore/command/uptime.h>
 #include <bcore/command/limit.h>
+#include <bcore/command/context_move.h>
 
 #include <bcore/verbose.h>
 #include "modulelog.h"
@@ -260,6 +261,11 @@ namespace btg
                            }
                         case Command::CN_MOWRITE:
                            {
+                              break;
+                           }
+                        case Command::CN_CMOVE:
+                           {
+                              handleMoveContext(eventhandler, command_);
                               break;
                            }
                         default:
@@ -525,6 +531,12 @@ namespace btg
             {
                sendError(command_->getType(), "Session name too short.");
             }
+      }
+
+      void daemonHandler::handleMoveContext(eventHandler* _eventhandler, 
+                                            btg::core::Command* _command)
+      {
+         
       }
 
       void daemonHandler::handleSessionInfo(eventHandler* _eventhandler, 

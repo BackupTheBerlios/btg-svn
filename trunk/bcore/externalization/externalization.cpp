@@ -80,6 +80,7 @@ namespace btg
                t_IdToNameElem(Command::CN_CGETFILESRSP,    "context.getfilesrsp"),
                t_IdToNameElem(Command::CN_CGETTRACKERS,    "context.gettrackers"),
                t_IdToNameElem(Command::CN_CGETTRACKERSRSP, "context.gettrackersrsp"),
+               t_IdToNameElem(Command::CN_CMOVE,           "context.move"),
                // General:
                t_IdToNameElem(Command::CN_ERROR,           "general.error"),
                t_IdToNameElem(Command::CN_ACK,             "general.ack"),

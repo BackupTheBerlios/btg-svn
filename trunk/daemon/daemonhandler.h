@@ -128,6 +128,10 @@ namespace btg
 
                /// Handle setup request.
                void handleSetup(btg::core::Command* _command);
+               
+               /// Move a context from one session to another.
+               void handleMoveContext(eventHandler* _eventhandler, 
+                                      btg::core::Command* _command);
 
                /// Handle any other request.
                void handleOther(eventHandler* _eventhandler, btg::core::Command* _command);

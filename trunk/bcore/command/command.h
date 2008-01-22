@@ -90,6 +90,7 @@ namespace btg
                      CN_CGETFILESRSP,      //!< Response containing the selected files
                      CN_CGETTRACKERS,      //!< Get the list of used trackers.
                      CN_CGETTRACKERSRSP,   //!< List of trackers used for a context.
+                     CN_CMOVE,             //!< Move a context from one session to another.
                      CN_ERROR,             //!< General error.
                      CN_ACK,               //!< General acknowlegment.
                      CN_SATTACH,           //!< Attach to a running session.

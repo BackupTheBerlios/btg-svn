@@ -84,6 +84,7 @@ namespace btg
             t_IdToNameElem(Command::CN_CGETFILESRSP,    "(c) Get selected files response"),
             t_IdToNameElem(Command::CN_CGETTRACKERS,    "(c) Get used trackers"),
             t_IdToNameElem(Command::CN_CGETTRACKERSRSP, "(c) Get used trackers response"),
+            t_IdToNameElem(Command::CN_CMOVE,           "(c) Move"),
             // General:
             t_IdToNameElem(Command::CN_ERROR,           "(g) Error"),
             t_IdToNameElem(Command::CN_ACK,             "(g) Ack"),
