@@ -39,60 +39,60 @@ class Command extends BTGSerializable
 		Only the const stuff is added from _gencommands, not the maps!
 	*/
 
-	const CN_GINITCONNECTION = 1;  //!< Init session.
-	const CN_GSETUP = 2;           //!< Setup command.
-	const CN_GSETUPRSP = 3;        //!< Setup response command.
-	const CN_GKILL = 4;            //!< Bring down the daemon.
-	const CN_GLIMIT = 5;           //!< Limit.
-	const CN_GLIMITSTAT = 6;       //!< Limit request.
-	const CN_GLIMITSTATRSP = 7;    //!< Limit request response.
-	const CN_GUPTIME = 8;          //!< Get daemon uptime.
-	const CN_GUPTIMERSP = 9;       //!< Daemon uptime response.
-	const CN_GLIST = 10;            //!< List request.
-	const CN_GLISTRSP = 11;         //!< List request response.
-	const CN_CCREATEWITHDATA = 12;  //!< Create a context, using embedded data.
-	const CN_CLAST = 13;            //!< Last context.
-	const CN_CLASTRSP = 14;         //!< Last context response.
-	const CN_CSTART = 15;           //!< Start a context.
-	const CN_CSTOP = 16;            //!< Stop a context.
-	const CN_CABORT = 17;           //!< Abort a context.
-	const CN_CSTATUS = 18;          //!< Request status information about a context.
-	const CN_CSTATUSRSP = 19;       //!< Status information about one context.
-	const CN_CALLSTATUSRSP = 20;    //!< Status information about all contexts.
-   const CN_CMSTATUS = 21;
+	const CN_GINITCONNECTION = 1;
+	const CN_GSETUP = 2;
+	const CN_GSETUPRSP = 3;
+	const CN_GKILL = 4;
+	const CN_GLIMIT = 5;
+	const CN_GLIMITSTAT = 6;
+	const CN_GLIMITSTATRSP = 7;
+	const CN_GUPTIME = 8;
+	const CN_GUPTIMERSP = 9;
+	const CN_GLIST = 10;
+	const CN_GLISTRSP = 11;
+	const CN_CCREATEWITHDATA = 12;
+	const CN_CLAST = 13;
+	const CN_CLASTRSP = 14;
+	const CN_CSTART = 15;
+	const CN_CSTOP = 16;
+	const CN_CABORT = 17;
+	const CN_CSTATUS = 18;
+	const CN_CSTATUSRSP = 19;
+	const CN_CALLSTATUSRSP = 20;
+  	const CN_CMSTATUS = 21;
 	const CN_CMSTATUSRSP = 22;
-	const CN_CFILEINFO = 23;        //!< Request file info information about a context.
-	const CN_CFILEINFORSP = 24;     //!< File info information about a context.
-	const CN_CALLFILEINFORSP = 25;  //!< File info information about all contexts.
-	const CN_CCLEAN = 26;           //!< Request to clean finished contexts.
-	const CN_CCLEANRSP = 27;        //!> Response that informs the client that some contexts have been cleaned.
-	const CN_CLIMIT = 28;           //!< Limit a context.
-	const CN_CLIMITSTATUS = 29;     //!< Limit status.
-	const CN_CLIMITSTATUSRSP = 30;  //!< Limit status response.
-	const CN_CPEERS = 31;           //!< Request a list of peers.
-	const CN_CPEERSRSP = 32;        //!< Response containing a list of peers.
-
+	const CN_CFILEINFO = 23;
+	const CN_CFILEINFORSP = 24;
+	const CN_CALLFILEINFORSP = 25;
+	const CN_CCLEAN = 26;
+	const CN_CCLEANRSP = 27;
+	const CN_CLIMIT = 28;
+	const CN_CLIMITSTATUS = 29;
+	const CN_CLIMITSTATUSRSP = 30;
+	const CN_CPEERS = 31;
+	const CN_CPEERSRSP = 32;
 	const CN_CSETFILES = 33;
 	const CN_CGETFILES = 34;
 	const CN_CGETFILESRSP = 35;
 	const CN_CGETTRACKERS = 36;
 	const CN_CGETTRACKERSRSP = 37;
-
-	const CN_ERROR = 38;            //!< General error.
-	const CN_ACK = 39;              //!< General acknowlegment.
-	const CN_SATTACH = 40;          //!< Attach to a running session.
-	const CN_SDETACH = 41;          //!< Detach from a running session.
-	const CN_SERROR = 42;           //!< Daemon uses this command to tell clients that their session is invalid.
-	const CN_SQUIT = 43;            //!< Quit the current session.
-	const CN_SLIST = 44;            //!< Get a list of sessions.
-	const CN_SLISTRSP = 45;         //!< Response that lists sessions.
-	const CN_SNAME = 46;            //!< Get current session name.
-   const CN_SNAMERSP = 47;         //!< Current session name.
-   const CN_SSETNAME = 48;         //!< Set current session name.
-   const CN_MOREAD   = 49;         //!< Only read only access. Usefull for writing monitor applets.
-   const CN_MOWRITE  = 50;         //!< Default write mode.
-
-	const CN_UNDEFINED = 51;        //!< Undefined command.
+	const CN_CMOVE = 38;
+	const CN_ERROR = 39;
+	const CN_ACK = 40;
+	const CN_SATTACH = 41;
+	const CN_SDETACH = 42;
+	const CN_SERROR = 43;
+	const CN_SINFO = 44;
+	const CN_SINFORSP = 45;
+	const CN_SQUIT = 46;
+	const CN_SLIST = 47;
+	const CN_SLISTRSP = 48;
+	const CN_SNAME = 49;
+	const CN_SNAMERSP = 50;
+	const CN_SSETNAME = 51;
+	const CN_MOREAD   = 52;
+	const CN_MOWRITE  = 53;
+	const CN_UNDEFINED = 54;
 
 
 	/* Map differnt commands to descriptive names */
@@ -119,7 +119,7 @@ class Command extends BTGSerializable
          Command::CN_CSTATUS         => "(c) Status",
          Command::CN_CSTATUSRSP      => "(c) Status response",
          Command::CN_CALLSTATUSRSP   => "(c) Status all response",
-			Command::CN_CMSTATUS        => "(c) Status, multiple",
+         Command::CN_CMSTATUS        => "(c) Status, multiple",
          Command::CN_CMSTATUSRSP     => "(c) Status, multiple response",
          Command::CN_CFILEINFO       => "(c) File info",
          Command::CN_CFILEINFORSP    => "(c) File info response",
@@ -132,19 +132,21 @@ class Command extends BTGSerializable
          Command::CN_CPEERS          => "(c) List peers",
          Command::CN_CPEERSRSP       => "(c) List peers response",
          Command::CN_CSETFILES       => "(c) Set files",
-	      Command::CN_CGETFILES       => "(c) Get selected files",
-       	Command::CN_CGETFILESRSP    => "(c) Get selected files response",
+			Command::CN_CGETFILES       => "(c) Get selected files",
+			Command::CN_CGETFILESRSP    => "(c) Get selected files response",
          Command::CN_CGETTRACKERS    => "(c) Get used trackers",
          Command::CN_CGETTRACKERSRSP => "(c) Get used trackers response",
-
+			Command::CN_CMOVE           => "(c) Move",
          // General:
          Command::CN_ERROR           => "(g) Error",
          Command::CN_ACK             => "(g) Ack",
          // Session:
          Command::CN_SATTACH         => "(s) Attach",
          Command::CN_SDETACH         => "(s) Detach",
-         Command::CN_SQUIT           => "(s) Quit",
          Command::CN_SERROR          => "(s) Error",
+			Command::CN_SINFO           => "(s) Info",
+			Command::CN_SINFORSP        => "(s) Info response",
+         Command::CN_SQUIT           => "(s) Quit",
          Command::CN_SLIST           => "(s) List",
          Command::CN_SLISTRSP        => "(s) List response",
 	 Command::CN_SNAME           => "(s) Session name",
@@ -182,8 +184,8 @@ class Command extends BTGSerializable
             Command::CN_CSTATUS         => "context.status",
             Command::CN_CSTATUSRSP      => "context.statusrsp",
             Command::CN_CALLSTATUSRSP   => "context.statusallrsp",
-				Command::CN_CMSTATUS        => "context.statusm",
-				Command::CN_CMSTATUSRSP     => "context.statusmrsp",
+	    Command::CN_CMSTATUS        => "context.statusm",
+	    Command::CN_CMSTATUSRSP     => "context.statusmrsp",
             Command::CN_CFILEINFO       => "context.fileinfo",
             Command::CN_CFILEINFORSP    => "context.fileinforsp",
             Command::CN_CALLFILEINFORSP => "context.fileinfoallrsp",
@@ -199,14 +201,17 @@ class Command extends BTGSerializable
             Command::CN_CGETFILESRSP    => "context.getfilesrsp",
             Command::CN_CGETTRACKERS    => "context.gettrackers",
             Command::CN_CGETTRACKERSRSP => "context.gettrackersrsp",
+				Command::CN_CMOVE           => "context.move",
             // General:
             Command::CN_ERROR           => "general.error",
             Command::CN_ACK             => "general.ack",
             // Session:
             Command::CN_SATTACH         => "session.attach",
             Command::CN_SDETACH         => "session.detach",
-            Command::CN_SQUIT           => "session.quit",
             Command::CN_SERROR          => "session.error",
+				Command::CN_SINFO           => "session.info",
+				Command::CN_SINFORSP        => "session.inforsp",
+            Command::CN_SQUIT           => "session.quit",
             Command::CN_SLIST           => "session.list",
             Command::CN_SLISTRSP        => "session.listrsp",
 	    Command::CN_SNAME           => "session.name",

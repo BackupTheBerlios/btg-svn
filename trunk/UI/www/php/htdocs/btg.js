@@ -414,6 +414,7 @@ function setUIState(state)
 		document.getElementById('setup_button').style.display='none';
 		document.getElementById('quit_button').style.display='none';
 		document.getElementById('refresh_button').style.display='none';
+		document.getElementById('stop_refresh').style.display='none';
 		document.getElementById('collapse_button').style.display='none';
 		document.getElementById('cleanall_button').style.display='none';
 		document.getElementById('layer_glimit').style.display='none';
@@ -440,6 +441,7 @@ function setUIState(state)
 		document.getElementById('setup_button').style.display='none';
 		document.getElementById('quit_button').style.display='none';
 		document.getElementById('refresh_button').style.display='none';
+		document.getElementById('stop_refresh').style.display='none';
 		document.getElementById('collapse_button').style.display='none';
 		document.getElementById('cleanall_button').style.display='none';
 		document.getElementById('layer_glimit').style.display='none';
@@ -462,6 +464,7 @@ function setUIState(state)
 		document.getElementById('layer_auth').style.display='none';
 		document.getElementById('quit_button').style.display='none';
 		document.getElementById('refresh_button').style.display='none';
+		document.getElementById('stop_refresh').style.display='none';
 		document.getElementById('collapse_button').style.display='none';
 		document.getElementById('cleanall_button').style.display='none';
 		document.getElementById('layer_glimit').style.display='none';
@@ -489,6 +492,7 @@ function setUIState(state)
 		document.getElementById('attach_button').style.display='none';
 		document.getElementById('setup_button').style.display='none';
 		document.getElementById('refresh_button').style.display='block';
+		document.getElementById('stop_refresh').style.display='block';
 		document.getElementById('quit_button').style.display='inline';
 		document.getElementById('collapse_button').style.display='inline';
 		document.getElementById('cleanall_button').style.display='inline';
@@ -513,6 +517,7 @@ function setUIState(state)
 		document.getElementById('attach_button').style.display='none';
 		document.getElementById('setup_button').style.display='none';
 		document.getElementById('refresh_button').style.display='none';
+		document.getElementById('stop_refresh').style.display='none';
 		document.getElementById('quit_button').style.display='inline';
 		document.getElementById('collapse_button').style.display='none';
 		document.getElementById('cleanall_button').style.display='none';
@@ -536,6 +541,7 @@ function setUIState(state)
 		document.getElementById('attach_button').style.display='none';
 		document.getElementById('setup_button').style.display='none';
 		document.getElementById('refresh_button').style.display='none';
+		document.getElementById('stop_refresh').style.display='none';
 		document.getElementById('quit_button').style.display='inline';
 		document.getElementById('collapse_button').style.display='none';
 		document.getElementById('cleanall_button').style.display='none';
