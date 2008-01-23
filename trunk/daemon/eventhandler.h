@@ -62,6 +62,7 @@ namespace btg
             public:
                /// Constructor.
                /// @param [in] _logwrapper     Pointer used to send logs to.
+               /// @param [in] _config         Pointer to the daemon configuration.
                /// @param [in] _verboseFlag    Decides if this eventhandler should log verbose messages.
                /// @param [in] _username       User creating the session.
                /// @param [in] _tempDir        Temporary directory.

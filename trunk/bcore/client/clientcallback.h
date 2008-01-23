@@ -209,6 +209,7 @@ namespace btg
                      /// A session name was set.
                      virtual void onSetSessionName() = 0;
 
+                     /// Information about the current session.
                      virtual void onSessionInfo(bool const _encryption, bool const _dht) = 0;
 
                      /// Destructor.

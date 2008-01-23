@@ -2,6 +2,7 @@ BTG version 0.9.7
 -----------------
 The following bugs were fixed:
 
+013007 Show session settings.
 012997 Session saving, fix saving of dht/encryption settings.
 012975 externalization, simple, exorcism.
 012952 Add switch to disable generating btg-config.
@@ -23,7 +24,7 @@ The following bugs were fixed:
 012329 Add "stop autoupdating" button in wwwbtg.
 012308 Clean up daemon/limitval.cpp.
 012301 Update doxygen.
-012241 Please use pkglib_LTLIBRARIES instead of lib_LTLIBRARIES.
+012241 Use pkglib_LTLIBRARIES instead of lib_LTLIBRARIES.
 012226 btgui, files showing as 100%.
 012208 Add logging using syslog to wwwui.
 012205 torrent files which contain same files but different tracker.

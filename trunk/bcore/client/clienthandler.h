@@ -180,6 +180,7 @@ namespace btg
             /// Request uptime from the daemon.
             virtual void reqUptime();
 
+            /// Request information about the current session.
             virtual void reqSessionInfo();
 
             /// Request the name of the current session.
@@ -263,7 +264,11 @@ namespace btg
             /// Set the session ID used by this handler.
             virtual void setSession(t_long const _session);
             
+            /// Indicates if DHT is enabled for the current session.
             virtual bool dht();
+
+            /// Indicates if encryption is enabled for the current
+            /// session.
             virtual bool encryption();
 
             /// Destructor.
@@ -370,7 +375,11 @@ namespace btg
             /// torrents automatically after loading them.
             bool const                        autoStartFlag_;
 
+            /// Indicates if DHT is enabled for the current session.
             bool                              dht_enabled_;
+
+            /// Indicates if encryption is enabled for the current
+            /// session.
             bool                              encryption_enabled_;
          private:
             /// Copy constructor.

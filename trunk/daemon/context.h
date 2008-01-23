@@ -157,6 +157,7 @@ namespace btg
 
                /// Constructor.
                /// @param [in] _logwrapper     Pointer used to send logs to.
+               /// @param [in] _config         Pointer to the daemon configuration.
                /// @param [in] _verboseFlag    Indicates that verbose logging should be done.
                /// @param [in] _username       Username.
                /// @param [in] _tempDir        Temporary directory.
@@ -448,6 +449,7 @@ namespace btg
                /// messages.
                bool const verboseFlag_;
 
+               /// Pointer to the daemon configuration.
                const daemonConfiguration* config_;
 
                /// The username used.
