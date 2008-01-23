@@ -485,6 +485,32 @@ int main(int argc, char* argv[])
    nscr->setOutput(GPD->sCLI_CLIENT() +" version " + GPD->sFULLVERSION() + ", build " + GPD->sBUILD() + " initializing ..");
    nscr->setOutput(initialStatusMessage);
 
+   // Get some info about the current session, so it can be displayed
+   // to the user.
+   clihandler->reqSessionInfo();
+   
+   initialStatusMessage = "Session settings: ";
+
+   if (clihandler->dht())
+      {
+         initialStatusMessage += "DHT: on.";
+      }
+   else
+      {
+         initialStatusMessage += "DHT: off.";
+      }
+
+   if (clihandler->encryption())
+      {
+         initialStatusMessage += " Encryption: on.";
+      }
+   else
+      {
+         initialStatusMessage += " Encryption: off.";
+      }
+
+   nscr->setOutput(initialStatusMessage);
+
    // If the user requested to open any files, do it.
    if (cla->inputFilenamesPresent())
       {

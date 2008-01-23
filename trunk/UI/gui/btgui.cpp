@@ -672,6 +672,20 @@ int main(int argc, char **argv)
    t_long session = guihandler->session();
    std::string str_session = btg::core::convertToString<t_long>(session);
 
+   // Get some info about the current session, so it can be displayed
+   // to the user.
+   guihandler->reqSessionInfo();
+   
+   if (guihandler->dht())
+      {
+         str_session += " D";
+      }
+
+   if (guihandler->encryption())
+      {
+         str_session += " E";
+      }
+
    // Start a thread that takes care of communicating with the daemon.
    handlerThread* handlerthr = new handlerThread(logwrapper,
                                                  verboseFlag, 

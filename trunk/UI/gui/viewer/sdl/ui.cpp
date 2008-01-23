@@ -32,6 +32,8 @@
 
 #include <algorithm>
 
+#include "agar-if.h"
+
 namespace btg
 {
    namespace UI
@@ -234,7 +236,7 @@ namespace btg
 
                // Create a new window.
                _gui.window = AG_WindowNewNamed(AG_WINDOW_NOTITLE | AG_WINDOW_NOBORDERS, "%s", "BTGVS");
-               AG_WindowSetCaption(_gui.window, "%s", "TEST");
+               // AG_WindowSetCaption(_gui.window, "%s", "TEST");
 
                _gui.contents_box = AG_VBoxNew(_gui.window, AG_VBOX_EXPAND);
 
@@ -259,7 +261,9 @@ namespace btg
                                           "Peers %s. Seeds %s.",
                                           _gui.peersStr.c_str(), 
                                           _gui.seedsStr.c_str());
-#elsif AGAR_1_3
+#endif
+
+#if AGAR_1_3
                AG_LabelNewStatic(_gui.contents_box, AG_LABEL_STATIC, "Totals:");
                _gui.bwLabel = AG_LabelNewStatic(_gui.contents_box, AG_LABEL_STATIC,
                                                 "Upload %s. Download %s.",

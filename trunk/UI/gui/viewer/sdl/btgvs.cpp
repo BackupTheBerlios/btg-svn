@@ -454,7 +454,27 @@ int main(int argc, char **argv)
    starthelper = 0;
 
    t_long session = clientdata.handler->session();
-   std::string str_session = btg::core::convertToString<t_long>(session);
+
+   std::string str_session = "BTGVS";
+
+   str_session += " (session #";
+   str_session += btg::core::convertToString<t_long>(session);
+
+   // Get some info about the current session, so it can be displayed
+   // to the user.
+   clientdata.handler->reqSessionInfo();
+   
+   if (clientdata.handler->dht())
+      {
+         str_session += " D";
+      }
+
+   if (clientdata.handler->encryption())
+      {
+         str_session += " E";
+      }
+
+   str_session += ")";
 
    // Start a thread that takes care of communicating with the daemon.
    // clientdata.handlerthr = new handlerThread(verboseFlag, clientdata.handler);
@@ -469,7 +489,7 @@ int main(int argc, char **argv)
    //  
 
 	// Initialize Agar.
-	if (AG_InitCore("BTGVS", 0) == -1)
+	if (AG_InitCore(str_session.c_str(), 0) == -1)
       {
          std::cerr << "Unable to initialize agar subsystem." << std::endl;
          return -1;

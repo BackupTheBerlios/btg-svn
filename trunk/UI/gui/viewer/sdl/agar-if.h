@@ -32,7 +32,7 @@ extern "C"
 
 #if (AGAR_MAJOR_VERSION == 1 && AGAR_MINOR_VERSION == 2)
 #  define AGAR_1_2 1
-#elif (AGAR_MAJOR_VERSION == 1 && AGAR_MINOR_VERSION == 3)
+#elif (AGAR_MAJOR_VERSION >= 1 && AGAR_MINOR_VERSION >= 3)
 #  define AGAR_1_3 1
 #else
 #  error "Unsupported AGAR version."
