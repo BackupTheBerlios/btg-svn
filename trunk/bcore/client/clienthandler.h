@@ -106,8 +106,7 @@ namespace btg
             /// Setup the client - connect to a running session.
             virtual void reqSetupAttach(t_long const _old_session);
 
-            /// Get a list of active sessions, return true
-            /// and modify the argument.
+            /// Get a list of active sessions.
             virtual void reqGetActiveSessions();
 
             /// Do a list of contexts.
@@ -188,6 +187,9 @@ namespace btg
 
             /// Set the name of the current session.
             virtual void reqSetSessionName(std::string const& _name);
+
+            virtual void reqMoveContext(t_int const _id,
+                                        t_long const _toSession);
 
             /// Returns true if the statemachine thinks that
             /// it completed the setup of the client.

@@ -356,6 +356,11 @@ namespace btg
             commandStatus = true;
          }
 
+         void Handler::onMove()
+         {
+            commandStatus = true;
+         }
+
          void Handler::onSetFilesError(std::string const& _errorDescription)
          {
             commandStatus = false;

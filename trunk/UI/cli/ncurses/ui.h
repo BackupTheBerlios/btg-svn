@@ -127,7 +127,8 @@ namespace btg
                            M_CLEAN,       //!< Clean a torrent.
                            M_SHOWFILES,   //!< Show files belonging to a torrent.
                            M_SELECTFILES, //!< Select files to download in a torrent.
-                           M_SHOWPEERS    //!< Show peers.
+                           M_SHOWPEERS,   //!< Show peers.
+                           M_MOVE
                         };
 
                      /// Used to return information about the state
@@ -204,6 +205,11 @@ namespace btg
                      void handleMenuEntry(menuEntries const _menuentry,
                                           t_int const _context_id,
                                           std::string const& _filename);
+
+                     /// Show a dialog used to move a context to
+                     /// another session.
+                     void handleMoveToSession(t_int const _context_id,
+                                              std::string const& _filename);
 
                      /// Handle setting limits when multiple torrents
                      /// are selected.

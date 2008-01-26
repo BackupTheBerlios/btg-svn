@@ -96,7 +96,9 @@ namespace btg
             void doSessionName();
             /// Action.
             void doSetSessionName(std::string const& _name);
-
+            /// Action.
+            void doMoveContext(t_int const _id,
+                               t_long const _toSession);
             /// Action.
             void doAttach(attachSessionCommand* _command);
             /// Action.

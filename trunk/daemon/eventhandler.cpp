@@ -128,7 +128,7 @@ namespace btg
                                      _limitMgr,
                                      _filetrack,
                                      _filter,
-				     _useTorrentName
+                                     _useTorrentName
 #if BTG_OPTION_EVENTCALLBACK
                                      , _cbm
 #endif // BTG_OPTION_EVENTCALLBACK
@@ -399,10 +399,10 @@ namespace btg
          daemoncontext->checkSeedLimits();
       }
 
-     void eventHandler::updateElapsedOrSeedCounter()
-     {
-       daemoncontext->updateElapsedOrSeedCounter();
-     }
+      void eventHandler::updateElapsedOrSeedCounter()
+      {
+         daemoncontext->updateElapsedOrSeedCounter();
+      }
 
       void eventHandler::handleAlerts()
       {
@@ -460,26 +460,65 @@ namespace btg
             }
       }
 
-      void eventHandler::handle_CN_CCREATEWITHDATA(btg::core::Command* _command, t_int _connectionID)
+      bool eventHandler::createWithData(btg::core::Command* _command, t_int _connectionID)
       {
+         bool status = false;
+
          contextCreateWithDataCommand* ccwdc = dynamic_cast<contextCreateWithDataCommand*>(_command);
-	 t_int handle_id = -1;
+         t_int handle_id = -1;
          Context::addResult res = daemoncontext->add(ccwdc->getFilename(),
-						     ccwdc->getFile(),
-						     handle_id);
+                                                     ccwdc->getFile(),
+                                                     handle_id);
 
          ConnectionExtraState& extraState = this->connHandler->getConnection(_connectionID)->ExtraState();
          extraState.setLastCreatedContextId(handle_id);
+         
+         if (!ccwdc->getStart())
+            {
+               // Not starting torrents automagically after adding.
+               if (res == Context::ERR_OK)
+                  {
+                     daemoncontext->stop(handle_id);
+                  }
+            }
+         
+         switch(res)
+            {
+            case Context::ERR_OK:
+               {
+                  status = true;
+                  break;
+               }
+            default:
+               {
+                  status = false;
+                  break;
+               }
+            }
 
-	 if (!ccwdc->getStart())
-	   {
-	     // Not starting torrents automagically after adding.
-	     if (res == Context::ERR_OK)
-	       {
-		 daemoncontext->stop(handle_id);
-	       }
-	   }
+         return status;
+      }
 
+      void eventHandler::handle_CN_CCREATEWITHDATA(btg::core::Command* _command, t_int _connectionID)
+      {
+         contextCreateWithDataCommand* ccwdc = dynamic_cast<contextCreateWithDataCommand*>(_command);
+         t_int handle_id = -1;
+         Context::addResult res = daemoncontext->add(ccwdc->getFilename(),
+                                                     ccwdc->getFile(),
+                                                     handle_id);
+
+         ConnectionExtraState& extraState = this->connHandler->getConnection(_connectionID)->ExtraState();
+         extraState.setLastCreatedContextId(handle_id);
+         
+         if (!ccwdc->getStart())
+            {
+               // Not starting torrents automagically after adding.
+               if (res == Context::ERR_OK)
+                  {
+                     daemoncontext->stop(handle_id);
+                  }
+            }
+         
          switch(res)
             {
             case Context::ERR_OK:
@@ -505,6 +544,7 @@ namespace btg
                {
                   sendCommand(_connectionID, new errorCommand(Command::CN_CCREATEWITHDATA,
                                                               "Adding '"+ccwdc->getFilename()+"' failed."));
+                  break;
                }
             }
       }
@@ -919,8 +959,8 @@ namespace btg
             case true:
                {
                   sendCommand(_connectionID, 
-                                    new contextGetFilesResponseCommand(cgfc->getContextId(),
-                                                                       file_list));
+                              new contextGetFilesResponseCommand(cgfc->getContextId(),
+                                                                 file_list));
                   break;
                }
             case false:
@@ -993,8 +1033,8 @@ namespace btg
                   {
                   case true:
                      sendCommand(_connectionID, new contextGetTrackersResponseCommand(
-                                                                                cgtc->getContextId(),
-                                                                                trackers));
+                                                                                      cgtc->getContextId(),
+                                                                                      trackers));
                      break;
                   case false:
                      sendError(_connectionID, Command::CN_CGETTRACKERS, "Failed to obtain tracker information.");
@@ -1031,6 +1071,72 @@ namespace btg
       bool eventHandler::encryptionEnabled() const
       {
          return daemoncontext->encryptionEnabled();
+      }
+
+      bool eventHandler::move(t_int const _connectionID,
+                              t_int context_id, 
+                              eventHandler* _eventhandler)
+      {
+         /// !!!
+         bool status = false;
+
+         // Get the data required to recreate the torrent using
+         // another eventhandler.
+         // Filename.
+         std::string filename;
+
+         // Buffer containing file.
+         btg::core::sBuffer sbuf;
+
+         if (!daemoncontext->getFile(context_id, filename, sbuf))
+            {
+               return status;
+            }
+
+         // State.
+         btg::core::Status state;
+         if (!daemoncontext->getStatus(context_id, state))
+            {
+               return status;
+            }
+
+         bool start = false;
+         switch (state.status())
+            {
+            case Status::ts_queued:
+            case Status::ts_checking:
+            case Status::ts_connecting:
+            case Status::ts_downloading:
+            case Status::ts_seeding:
+               // Torrent is running.
+               start = true;
+               break;
+            case Status::ts_stopped:
+            case Status::ts_finished:
+               // Stopped.
+               start = false;
+               break;
+            }
+         
+         // Remove the old torrent.
+         if (!daemoncontext->remove(context_id, false /* do not erase. */))
+            {
+               return status;
+            }
+
+         // Recreate.
+         contextCreateWithDataCommand* ccwdc = 
+            new contextCreateWithDataCommand(filename, sbuf, start);
+
+         if (_eventhandler->createWithData(ccwdc, _connectionID))
+            {
+               status = true;
+            }
+
+         delete ccwdc;
+         ccwdc = 0;
+
+         return status;
       }
 
       eventHandler::~eventHandler()

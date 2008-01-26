@@ -40,6 +40,7 @@
 
 #include <bcore/command/limit_base.h>
 #include <bcore/hrr.h>
+#include "sessionselect.h"
 
 #define GET_HANDLER_INST \
    boost::shared_ptr<boost::mutex> ptr = handlerthread_->mutex(); \
@@ -844,7 +845,7 @@ namespace btg
                   windowSize menudimensions;
                   mainwindow_.getSize(menudimensions);
 
-                  baseMenu bm(keymap_, menudimensions, "Quit?", contents);
+                  baseMenu bm(keymap_, menudimensions, "Quit?", contents, statuswindow_);
 
                   switch(bm.run())
                      {
@@ -1044,6 +1045,65 @@ namespace btg
             refresh();
 
             return UI::sS_SELECT_ABORT;
+         }
+
+         void UI::handleMoveToSession(t_int const _context_id,
+                                      const std::string& _filename)
+         {
+            GET_HANDLER_INST;
+            handler->reqList();
+            
+            if (!handler->commandSuccess())
+               {
+                  actionFailture("Move to session", _filename);
+                  return;
+               }
+
+            t_longList sessions    = handler->getSessionList();
+            t_strList  names       = handler->getSessionNames();
+            t_long current_session = handler->session();
+
+            windowSize ssdimensions;
+            mainwindow_.getSize(ssdimensions);
+
+            sessionSelect ss(keymap_, 
+                             ssdimensions,
+                             sessions,
+                             names,
+                             current_session);
+
+            // Use the same dimenstions as the main window.
+            if (ss.run() == dialog::R_RESIZE)
+               {
+                  // the window was resized.
+                  handleResizeMainWindow();
+
+                  actionFailture("Move to session", _filename);
+
+                  return;
+               }
+
+            t_long newsession;
+            if (!ss.getSession(newsession))
+               {
+                  actionFailture("Move to session", _filename);
+                  return;
+               }
+            
+            
+            handler->reqMoveContext(_context_id, newsession);
+
+            if (!handler->commandSuccess())
+               {
+                  actionFailture("Move to session", _filename);
+                  return;
+               }
+
+            // setDefaultStatusText();
+
+            refresh();
+
+            actionSuccess("Move to session", _filename);
          }
 
       } // namespace cli

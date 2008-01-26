@@ -1921,6 +1921,11 @@ namespace btg
 
          }
 
+         void cliHandler::onMove()
+         {
+            
+         }
+
          void cliHandler::onSetFilesError(std::string const& _errorDescription)
          {
 

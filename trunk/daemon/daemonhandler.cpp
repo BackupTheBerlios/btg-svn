@@ -211,13 +211,18 @@ namespace btg
 
                if (sessionlist_.get(session_, eventhandler))
                   {
-                     // Special case, where the client wishes to close
-                     // the session.
                      switch (command_->getType())
                         {
                         case Command::CN_SQUIT:
                            {
+                              // Special case, where the client wishes to close
+                              // the session.
                               handleQuit(eventhandler);
+                              break;
+                           }
+                        case Command::CN_SLIST:
+                           {
+                              handleSessionList();
                               break;
                            }
                         case Command::CN_SDETACH:
@@ -329,7 +334,6 @@ namespace btg
                                  {
                                     // These commands are not supported here.
                                     // Send an nice error back.
-                                    // !!!
                                     handleSessionInInvalidState(command_->getType());
                                     break;
                                  }
@@ -536,7 +540,33 @@ namespace btg
       void daemonHandler::handleMoveContext(eventHandler* _eventhandler, 
                                             btg::core::Command* _command)
       {
-         
+         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+
+         contextMoveToSessionCommand* cmtsc = dynamic_cast<contextMoveToSessionCommand*>(_command);
+
+         if (cmtsc->isAllContextsFlagSet())
+            {
+               sendError(command_->getType(), "Moving all contexts is not supported.");
+            }
+         else
+            {
+               t_int context_id   = cmtsc->getContextId();
+               t_long old_session = cmtsc->session();
+               eventHandler* new_eventhandler;
+               if (!sessionlist_.get(old_session, new_eventhandler))
+                  {
+                     sendError(command_->getType(), "Unable to find target session.");
+                     return;
+                  }
+               
+               if (!_eventhandler->move(connectionID_, context_id, new_eventhandler))
+                  {
+                     sendError(command_->getType(), "Unable to move context.");
+                     return;
+                  }
+               /// !!!
+               sendAck(command_->getType());
+            }
       }
 
       void daemonHandler::handleSessionInfo(eventHandler* _eventhandler, 

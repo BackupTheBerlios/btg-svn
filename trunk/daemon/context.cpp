@@ -242,6 +242,28 @@ namespace btg
          return true;
       }
 
+      bool Context::getFile(t_int const _torrent_id,
+                            std::string & _filename, 
+                            btg::core::sBuffer & _buffer) const
+      {
+         torrentInfo *ti;
+         if ((ti = getTorrentInfo(_torrent_id)) == 0)
+            {
+               return false;
+            }
+
+         std::string fullFilename = tempDir_ + GPD->sPATH_SEPARATOR() + ti->filename;
+         if (!_buffer.read(fullFilename))
+            {
+               BTG_MNOTICE(logWrapper(), 
+                           "failed to read .torrent file from '" << fullFilename << "'");
+               return false;
+            }
+
+         _filename = ti->filename;
+         return true;
+      }
+
       bool Context::isConfigured() const
       {
          return configured;
@@ -1593,9 +1615,9 @@ namespace btg
 #endif // BTG_LT_0_13
       }
 
-      torrentInfo* Context::getTorrentInfo(t_int const _torrent_id)
+      torrentInfo* Context::getTorrentInfo(t_int const _torrent_id) const
       {
-         std::map<t_int, torrentInfo*>::iterator tii = torrents.find(_torrent_id);
+         std::map<t_int, torrentInfo*>::const_iterator tii = torrents.find(_torrent_id);
 
          if (tii == torrents.end())
             {

@@ -337,6 +337,15 @@ namespace btg
             statemachine.work();
          }
 
+         void clientHandler::reqMoveContext(t_int const _id,
+                                            t_long const _toSession)
+         {
+            commandStatus = false;
+            
+            statemachine.doMoveContext(_id, _toSession);
+            statemachine.work();
+         }
+
          bool clientHandler::isSetupDone() const
          {
             return setupDone;

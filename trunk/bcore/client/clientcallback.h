@@ -126,6 +126,9 @@ namespace btg
                      /// The files requested by the client were set.
                      virtual void onSetFiles() = 0;
 
+                     /// A context was moved to another session.
+                     virtual void onMove() = 0;
+
                      /// The files requested by the client could not
                      /// be set.
                      virtual void onSetFilesError(std::string const& _errorDescription) = 0;

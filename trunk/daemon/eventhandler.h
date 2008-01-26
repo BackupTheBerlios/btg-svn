@@ -114,7 +114,7 @@ namespace btg
                /// @param [in] _command Pointer to an instance of command,
                /// @param [in] _connectionID Connection ID of the client
                /// which causes this handler to act.
-               void event(btg::core::Command* _command, t_int _connectionID);
+               void event(btg::core::Command* _command, t_int const _connectionID);
 
                /// Increase the number of connected clients
                void incClients();
@@ -168,6 +168,13 @@ namespace btg
 
                /// Indicates if encryption is enabled.
                bool encryptionEnabled() const;
+
+               /// Move a torrent from this eventhandler to another.
+               bool move(t_int const _connectionID,
+                         t_int context_id, 
+                         eventHandler* _eventhandler);
+
+               bool createWithData(btg::core::Command* _command, t_int _connectionID);
 
                /// Destructor.
                ~eventHandler();

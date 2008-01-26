@@ -360,6 +360,12 @@ namespace btg
                /// @return True if operation was successful, false if not.
                bool getFilename(t_int const _torrent_id, std::string& _destination);
 
+               /// Get the full filename and the contents of the
+               /// torrent file.
+               bool getFile(t_int const _torrent_id,
+                            std::string & _filename, 
+                            btg::core::sBuffer & _buffer) const;
+
                /// Tell this context if there is a client attached or not.
                void setClientAttached(bool const _clientAttached);
 
@@ -564,7 +570,7 @@ namespace btg
                /// libtorrent functions on it. If it exists, a pointer to the torrentinfo class is returned.
                /// @param [in] _torrent_id The ID of the libtorrent handle.
                /// @return 0 if not found, else pointer to the torrentinfo.
-               torrentInfo* getTorrentInfo(t_int const _torrent_id);
+               torrentInfo* getTorrentInfo(t_int const _torrent_id) const;
 
                /// Check that file info can be obtained from a handle.
                /// Libtorrent either casts an exception or crashes or

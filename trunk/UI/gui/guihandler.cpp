@@ -417,6 +417,11 @@ namespace btg
             commandStatus = true;
          }
          
+         void guiHandler::onMove()
+         {
+            commandStatus = true;
+         }
+
          void guiHandler::onSetFilesError(std::string const& _errorDescription)
          {
             commandStatus = false;

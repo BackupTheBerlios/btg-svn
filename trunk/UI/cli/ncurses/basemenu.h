@@ -30,6 +30,7 @@
 #include <bcore/type_btg.h>
 
 #include "window.h"
+#include "statuswindow.h"
 
 namespace btg
 {
@@ -79,7 +80,8 @@ namespace btg
                      baseMenu(keyMapping const& _kmap,
                               windowSize const& _ws,
                               std::string const& _title,
-                              std::vector<menuEntry> const& _contents);
+                              std::vector<menuEntry> const& _contents,
+                              statusWindow & _statusWindow);
 
                      /// Show the menu.
                      ///
@@ -103,6 +105,8 @@ namespace btg
 
                      /// Menu entries.
                      std::vector<menuEntry> contents_;
+
+                     statusWindow &         statusWindow_;
 
                      /// The line number of the selected text.
                      t_int                  selection_;

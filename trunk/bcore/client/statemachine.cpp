@@ -71,6 +71,7 @@
 #include <bcore/command/context_status.h>
 #include <bcore/command/context_stop.h>
 #include <bcore/command/context_file.h>
+#include <bcore/command/context_move.h>
 
 #include <bcore/command/limit.h>
 
@@ -797,6 +798,15 @@ namespace btg
                }
          }
 
+         void stateMachine::doMoveContext(t_int const _id,
+                                          t_long const _toSession)
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(new contextMoveToSessionCommand(_id, _toSession));
+               }
+         }
+
          void stateMachine::doAttach(attachSessionCommand* _command)
          {
             if (checkState(SM_TRANSPORT_READY))
@@ -824,6 +834,10 @@ namespace btg
                {
                   commands.push_back(new listSessionCommand());
                   changeState(SM_SESSION_LIST);
+               }
+            else if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(new listSessionCommand());
                }
          }
 
@@ -1056,6 +1070,7 @@ namespace btg
                case Command::CN_CABORT:
                case Command::CN_CLIMIT:
                case Command::CN_CSETFILES:
+               case Command::CN_CMOVE:
                   {
                      ackForCommand = static_cast<Command::commandType>(_type);
                      expectedReply[0] = Command::CN_ACK;
@@ -1155,6 +1170,11 @@ namespace btg
                case Command::CN_CSETFILES:
                   {
                      clientcallback->onSetFiles();
+                     break;
+                  }
+               case Command::CN_CMOVE:
+                  {
+                     clientcallback->onMove();
                      break;
                   }
                case Command::CN_SSETNAME:

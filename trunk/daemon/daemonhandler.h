@@ -178,9 +178,6 @@ namespace btg
                /// Indicates if the daemon should be verbose.
                bool const                      verboseFlag_;
 
-               /// Map connection ID to event handler.
-               // std::map<t_long, eventHandler*> eventhandlers_;
-
                sessionList                     sessionlist_;
 
                /// Pointer to the current command.

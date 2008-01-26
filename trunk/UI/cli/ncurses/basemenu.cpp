@@ -45,11 +45,13 @@ namespace btg
          baseMenu::baseMenu(keyMapping const& _kmap,
                             windowSize const& _ws,
                             std::string const& _title,
-                            std::vector<menuEntry> const& _contents)
+                            std::vector<menuEntry> const& _contents,
+                            statusWindow & _statusWindow)
             : baseWindow(_kmap),
               size_(_ws),
               title_(_title),
               contents_(_contents),
+              statusWindow_(_statusWindow),
               selection_(0),
               selected_(false)
          {
@@ -197,6 +199,8 @@ namespace btg
                         unSetColor(Colors::C_MARK);
                         setColor(Colors::C_NORMAL);
                         ::wattroff(window_, A_REVERSE);
+
+                        statusWindow_.setStatus(iter->descr);
                      }
                   else
                      {
@@ -268,7 +272,29 @@ namespace btg
 
             ws.topX = 1;
             ws.topY = 5;
-            ws.width  = title_.size()    + 2; // Add extra space for the box sorrounding the window.
+
+            t_uint max_width = 0;
+            std::vector<menuEntry>::const_iterator iter;
+            for (iter = contents_.begin();
+                 iter != contents_.end();
+                 iter++)
+               {
+                  if (iter->label.size() > max_width)
+                     {
+                        max_width = iter->label.size();
+                     }
+               }
+
+            if (max_width > title_.size())
+               {
+                  ws.width = max_width;
+               }
+            else
+               {
+                  ws.width  = title_.size();
+               }
+
+            ws.width += 2; // Add extra space for the box sorrounding the window.
             ws.height = contents_.size() + 4; // Add extra space for the title and the surronding box.
 
             return ws;

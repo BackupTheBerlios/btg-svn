@@ -284,6 +284,11 @@ namespace btg
                      }
                      break;
                   }
+               case UI::M_MOVE:
+                  {
+                     handleMoveToSession(_context_id, _filename);
+                     break;
+                  }
                case UI::M_UNDEF:
                   {
                      break;
@@ -318,11 +323,13 @@ namespace btg
                                          "Select files to download"));
             contents.push_back(menuEntry(UI::M_SHOWPEERS, "Show peers", 
                                          "Show the peers for a torrent"));
+            contents.push_back(menuEntry(UI::M_MOVE, "Move to session", 
+                                         "Move to another session"));
             
             windowSize menudimensions;
             mainwindow_.getSize(menudimensions);
 
-            baseMenu bm(keymap_, menudimensions, "Torrent menu", contents);
+            baseMenu bm(keymap_, menudimensions, "Torrent menu", contents, statuswindow_);
 
             switch(bm.run())
                {
@@ -356,31 +363,34 @@ namespace btg
             switch (bm.getResult())
                {
                case UI::M_START:
-                  entry = M_START;
+                  entry = UI::M_START;
                   break;
                case UI::M_STOP:
-                  entry = M_STOP;
+                  entry = UI::M_STOP;
                   break;
                case UI::M_ABORT:
-                  entry = M_ABORT;
+                  entry = UI::M_ABORT;
                   break;
                case UI::M_ERASE:
-                  entry = M_ERASE;
+                  entry = UI::M_ERASE;
                   break;
                case UI::M_LIMIT:
-                  entry = M_LIMIT;
+                  entry = UI::M_LIMIT;
                   break;
                case UI::M_CLEAN:
-                  entry = M_CLEAN;
+                  entry = UI::M_CLEAN;
                   break;
                case UI::M_SHOWFILES:
-                  entry = M_SHOWFILES;
+                  entry = UI::M_SHOWFILES;
                   break;
                case UI::M_SELECTFILES:
-                  entry = M_SELECTFILES;
+                  entry = UI::M_SELECTFILES;
                   break;
                case UI::M_SHOWPEERS:
-                  entry = M_SHOWPEERS;
+                  entry = UI::M_SHOWPEERS;
+                  break;
+               case UI::M_MOVE:
+                  entry = UI::M_MOVE;
                   break;
                case UI::M_UNDEF:
                   break;

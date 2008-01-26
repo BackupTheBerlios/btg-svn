@@ -411,6 +411,11 @@ namespace btg
                commandStatus = true;
             }
          
+            void viewerHandler::onMove()
+            {
+               commandStatus = true;
+            }
+
             void viewerHandler::onSetFilesError(std::string const& _errorDescription)
             {
                commandStatus = false;
