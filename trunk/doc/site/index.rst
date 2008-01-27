@@ -77,21 +77,49 @@ classes are documented.
 Stable Releases
 ---------------
 
-- `btg-0.9.6.tar.gz`_ (`Rasterbar Libtorrent`_ 0.12)
-- `btg-0.9.5.tar.gz`_ (`Rasterbar Libtorrent`_ 0.9/0.10/0.11/0.12)
-- `btg-0.9.0.tar.gz`_ (`Rasterbar Libtorrent`_ 0.9/0.10/0.11)
-- `btg-0.8.5.tar.gz`_ (`Rasterbar Libtorrent`_ 0.9/0.10/0.11)
+======================= ========================== ======================= ============================================
+Source                  Release note               Changelog               `Rasterbar Libtorrent`_ version
+----------------------- -------------------------- ----------------------- --------------------------------------------
+`btg-0.9.6.tar.gz`_     `0.9.6 release note`_      `0.9.6 changelog`_      0.12
+`btg-0.9.5.tar.gz`_     `0.9.5 release note`_      `0.9.5 changelog`_      0.9/0.10/0.11/0.12
+`btg-0.9.0.tar.gz`_     `0.9.0 release note`_      `0.9.0 changelog`_      0.9/0.10/0.11
+`btg-0.8.5.tar.gz`_     `0.8.5 release note`_      `0.8.5 changelog`_      0.9/0.10/0.11
+======================= ========================== ======================= ============================================
 
 .. _btg-0.8.5.tar.gz: http://download.berlios.de/btg/btg-0.8.5.tar.gz
+.. _0.8.5 release note: http://developer.berlios.de/project/shownotes.php?release_id=12057
+.. _0.8.5 changelog: http://developer.berlios.de/project/shownotes.php?release_id=12057
+
 .. _btg-0.9.0.tar.gz: http://download.berlios.de/btg/btg-0.9.0.tar.gz
+.. _0.9.0 release note: http://developer.berlios.de/project/shownotes.php?release_id=12316
+.. _0.9.0 changelog: http://developer.berlios.de/project/shownotes.php?release_id=12316
+
 .. _btg-0.9.5.tar.gz: http://download.berlios.de/btg/btg-0.9.5.tar.gz
+.. _0.9.5 release note: http://developer.berlios.de/project/shownotes.php?release_id=12768
+.. _0.9.5 changelog: http://developer.berlios.de/project/shownotes.php?release_id=12768
+
 .. _btg-0.9.6.tar.gz: http://download.berlios.de/btg/btg-0.9.6-p1.tar.gz
+.. _0.9.6 release note: http://developer.berlios.de/project/shownotes.php?release_id=13428
+.. _0.9.6 changelog: http://developer.berlios.de/project/shownotes.php?release_id=13428
 
 Experimental Releases
 ---------------------
-- `btg-0.9.7-rc1.tar.gz`_ (`Rasterbar Libtorrent`_ 0.13RC/SVN)
+
+======================= ========================== ======================= ==================================
+Source                  Release note               Changelog               `Rasterbar Libtorrent`_ version
+----------------------- -------------------------- ----------------------- ----------------------------------
+`btg-0.9.7-rc2.tar.gz`_ `0.9.7 RC2 release note`_  `0.9.7 RC2 changelog`_  0.13RC/SVN
+`btg-0.9.7-rc1.tar.gz`_ `0.9.7 RC1 release note`_  `0.9.7 RC1 changelog`_  0.13RC/SVN
+======================= ========================== ======================= ==================================
+
+.. _btg-0.9.7-rc2.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.7-rc2.tar.gz
+.. _0.9.7 RC2 release note: http://developer.berlios.de/project/shownotes.php?release_id=14078
+.. _0.9.7 RC2 changelog: http://developer.berlios.de/project/shownotes.php?release_id=14078
 
 .. _btg-0.9.7-rc1.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.7-rc1.tar.gz
+.. _0.9.7 RC1 release note: http://developer.berlios.de/project/shownotes.php?release_id=13992
+.. _0.9.7 RC1 changelog: http://developer.berlios.de/project/shownotes.php?release_id=13992
+
 
 Packages
 ~~~~~~~~
