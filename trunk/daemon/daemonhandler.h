@@ -178,6 +178,7 @@ namespace btg
                /// Indicates if the daemon should be verbose.
                bool const                      verboseFlag_;
 
+               /// List of contained sessions.
                sessionList                     sessionlist_;
 
                /// Pointer to the current command.

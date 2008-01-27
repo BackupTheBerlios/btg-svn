@@ -46,6 +46,7 @@ namespace btg
                   {
                   public:
                      /// Constructor.
+                     /// @param [in] _title            Title of this dialog.
                      /// @param [in] _sessionIDs       List of sessions.
                      /// @param [in] _sessionsNames    List of session names.
                      /// @param [in] _disableSelection False, selection of a session disabled. True, selection of a session is enabled.

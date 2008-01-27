@@ -174,6 +174,7 @@ namespace btg
                          t_int context_id, 
                          eventHandler* _eventhandler);
 
+               /// Create a new context.
                bool createWithData(btg::core::Command* _command, t_int _connectionID);
 
                /// Destructor.

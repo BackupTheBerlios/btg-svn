@@ -188,6 +188,7 @@ namespace btg
             /// Set the name of the current session.
             virtual void reqSetSessionName(std::string const& _name);
 
+            /// Move context to another session.
             virtual void reqMoveContext(t_int const _id,
                                         t_long const _toSession);
 

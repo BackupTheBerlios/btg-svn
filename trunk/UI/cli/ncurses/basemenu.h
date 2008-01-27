@@ -106,6 +106,8 @@ namespace btg
                      /// Menu entries.
                      std::vector<menuEntry> contents_;
 
+                     /// Reference to status window to which messages
+                     /// about selected items are written to.
                      statusWindow &         statusWindow_;
 
                      /// The line number of the selected text.

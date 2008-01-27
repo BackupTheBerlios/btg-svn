@@ -5,6 +5,7 @@ The following bugs were fixed:
 013007 Show session settings.
 012997 Session saving, fix saving of dht/encryption settings.
 012975 externalization, simple, exorcism.
+012970 Add moving torrents to another sessions.
 012952 Add switch to disable generating btg-config.
 012839 DHT + encryption support in wwwbtg.
 012814 Daemon segfaults when starting client with DHT (0.9.6).

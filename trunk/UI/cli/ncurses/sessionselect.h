@@ -47,9 +47,12 @@ namespace btg
                 */
                /** @{ */
 
+               /// Structure used for keeping a session id/session name pair in. 
                struct sessionIdAndName
                {
+                  /// Session id.
                   t_long      id;
+                  /// Session name.
                   std::string name; 
                };
 
@@ -79,6 +82,7 @@ namespace btg
                      /// Size of this window.
                      windowSize size_;
 
+                     /// Session information used by this window.
                      std::vector<sessionIdAndName> sessions_;
 
                      /// Number of lines this window can contain.
@@ -103,6 +107,7 @@ namespace btg
                      /// Indicates that the user selected a session.
                      bool       pressed_select_key_;
 
+                     /// Selected session id.
                      t_long     selected_session_;
 
                      bool init(windowSize const& _ws);
@@ -133,6 +138,7 @@ namespace btg
                      /// Show help for this window.
                      dialog::RESULT showHelp();
 
+                     /// Handle selecting a session.
                      void handleSelect();
                   };
 
