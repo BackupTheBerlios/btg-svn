@@ -27,6 +27,7 @@
 #include <gtkmm/comboboxtext.h>
 
 #include <bcore/type.h>
+#include <string>
 
 namespace btg
 {
@@ -48,7 +49,8 @@ namespace btg
                      /// @param [in] _sessionIDs       List of sessions.
                      /// @param [in] _sessionsNames    List of session names.
                      /// @param [in] _disableSelection False, selection of a session disabled. True, selection of a session is enabled.
-                     sessionSelectionDialog(t_longList const& _sessionIDs, 
+                     sessionSelectionDialog(std::string const& _title,
+                                            t_longList const& _sessionIDs, 
                                             t_strList const& _sessionsNames,
                                             bool const _disableSelection = false);
 

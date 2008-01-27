@@ -33,6 +33,7 @@
 #include "sig_button_menu.h"
 
 #include <bcore/type_btg.h>
+#include <bcore/logable.h>
 
 #include <map>
 
@@ -59,11 +60,12 @@ namespace btg
          class preferencesDialog;
 
          /// The main window of the gui client.
-         class mainWindow : public Gtk::Window
+         class mainWindow : public Gtk::Window, public btg::core::Logable
             {
             public:
                /// Constructor.
-               mainWindow(std::string const& _session,
+               mainWindow(btg::core::LogWrapperType logwrapper,
+                          std::string const& _session,
                           bool const _verboseFlag, 
                           bool const _neverAskFlag,
                           btg::core::client::handlerThread* _handlerthread,
@@ -181,6 +183,9 @@ namespace btg
 
                /// Handle limit.
                void handle_btn_limit(t_int const _id);
+
+               /// Handle moving context to session.
+               void handle_btn_move(t_int const _id);
 
                /// Handle preferences.
                void handle_btn_prefs(t_int const _id);

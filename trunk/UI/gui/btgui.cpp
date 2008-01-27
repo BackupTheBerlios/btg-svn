@@ -691,7 +691,8 @@ int main(int argc, char **argv)
                                                  verboseFlag, 
                                                  guihandler);
 
-   mainWindow* mainWindow = new class mainWindow(str_session, 
+   mainWindow* mainWindow = new class mainWindow(logwrapper,
+                                                 str_session, 
                                                  verboseFlag, 
                                                  neverAskFlag,
                                                  handlerthr,

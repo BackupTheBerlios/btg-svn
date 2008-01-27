@@ -52,7 +52,8 @@ namespace btg
               abortMenuitem(0),
               eraseMenuitem(0),
               cleanMenuitem(0),
-              limitMenuitem(0)
+              limitMenuitem(0),
+              moveMenuitem(0)
          {
             Gtk::MenuBar *mainMenubar          = this;
             Gtk::MenuItem *load_menuitem       = 0;
@@ -164,6 +165,9 @@ namespace btg
             controlMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Limit"));
             limitMenuitem = reinterpret_cast<Gtk::MenuItem *>(&controlMenu->items().back());
 
+            controlMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Move to session"));
+            moveMenuitem = reinterpret_cast<Gtk::MenuItem *>(&controlMenu->items().back());
+            
             // Control should be disabled per default.
             this->disableControlFunction(true);
 
@@ -211,6 +215,7 @@ namespace btg
             cleanMenuitem->show();
             control_separator1->show();
             limitMenuitem->show();
+            moveMenuitem->show();
             controlMenuItem->show();
 
             aboutMenuitem->show();
@@ -251,9 +256,14 @@ namespace btg
                                                      sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LIMIT )
                                                      );
 
-            globallimitMenuitem->signal_activate().connect(
-                                                    sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_GLIMIT )
+            moveMenuitem->signal_activate().connect(
+                                                    sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_MOVE )
                                                     );
+            
+
+            globallimitMenuitem->signal_activate().connect(
+                                                           sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_GLIMIT )
+                                                           );
 
             killMenuitem->signal_activate().connect(
                                                     sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_KILL )
@@ -264,8 +274,8 @@ namespace btg
                                                       );
 
             sessionNameMenuitem->signal_activate().connect(
-                                                      sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_SESNAME )
-                                                      );
+                                                           sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_SESNAME )
+                                                           );
 
             aboutMenuitem->signal_activate().connect(
                                                      sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_ABOUT )
@@ -303,7 +313,7 @@ namespace btg
                         // Attempt to remove path information, just keep the filename.
                         std::string long_filename = _lastFileList.at(counter);
                         std::string short_filename;
-                        if (Util::getFileFromPath(long_filename, short_filename) == true)
+                        if (Util::getFileFromPath(long_filename, short_filename))
                            {
                               label->set_text(short_filename);
                            }
@@ -325,7 +335,7 @@ namespace btg
 
          void mainMenubar::enableControlFunction()
          {
-            if (controlFunctionEnabled == false)
+            if (!controlFunctionEnabled)
                {
                   startMenuitem->set_sensitive(true);
                   stopMenuitem->set_sensitive(true);
@@ -333,7 +343,7 @@ namespace btg
                   eraseMenuitem->set_sensitive(true);
                   limitMenuitem->set_sensitive(true);
                   cleanMenuitem->set_sensitive(true);
-
+                  moveMenuitem->set_sensitive(true);
                   // controlMenuItem->set_sensitive(true);
                   controlFunctionEnabled = true;
                }
@@ -341,7 +351,7 @@ namespace btg
 
          void mainMenubar::disableControlFunction(bool const _force)
          {
-            if ((controlFunctionEnabled == true) || (_force == true))
+            if ((controlFunctionEnabled) || (_force))
                {
                   // controlMenuItem->set_sensitive(false);
 
@@ -351,7 +361,7 @@ namespace btg
                   eraseMenuitem->set_sensitive(false);
                   limitMenuitem->set_sensitive(false);
                   cleanMenuitem->set_sensitive(false);
-
+                  moveMenuitem->set_sensitive(false);
                   controlFunctionEnabled = false;
                }
          }

@@ -90,6 +90,8 @@ namespace btg
                      Gtk::MenuItem*              cleanMenuitem;
                      /// Item in the control menu.
                      Gtk::MenuItem*              limitMenuitem;
+                     /// Item in the control menu.
+                     Gtk::MenuItem*              moveMenuitem;
                   private:
                      /// Copy constructor.
                      mainMenubar(mainMenubar const& _mm);

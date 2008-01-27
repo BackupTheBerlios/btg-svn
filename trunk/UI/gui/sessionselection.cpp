@@ -20,7 +20,8 @@ namespace btg
       {
          using namespace btg::core;
 
-         sessionSelectionDialog::sessionSelectionDialog(t_longList const& _sessionIDs, 
+         sessionSelectionDialog::sessionSelectionDialog(std::string const& _title,
+                                                        t_longList const& _sessionIDs, 
                                                         t_strList const& _sessionsNames,
                                                         bool const _disableSelection)
             : disableSelection_(_disableSelection),
@@ -28,20 +29,12 @@ namespace btg
               session(Command::INVALID_SESSION),
               cbt(0)
          {
-            Gtk::Button *cancelbutton = Gtk::manage(new class Gtk::Button(Gtk::StockID("gtk-cancel")));
-            Gtk::Button *okbutton     = Gtk::manage(new class Gtk::Button(Gtk::StockID("gtk-ok")));
-            Gtk::Label *label;
-            if (!disableSelection_)
-               {
-                  label = Gtk::manage(new class Gtk::Label("Select session"));
-               }
-            else
-               {
-                  label = Gtk::manage(new class Gtk::Label("Available sessions"));
-               }
+            Gtk::Button* cancelbutton = Gtk::manage(new class Gtk::Button(Gtk::StockID("gtk-cancel")));
+            Gtk::Button* okbutton     = Gtk::manage(new class Gtk::Button(Gtk::StockID("gtk-ok")));
+            Gtk::Label* label = Gtk::manage(new class Gtk::Label(_title));
 
             cbt                   = Gtk::manage(new class Gtk::ComboBoxText());
-            Gtk::VBox *vbox       = Gtk::manage(new class Gtk::VBox(false, 0));
+            Gtk::VBox* vbox       = Gtk::manage(new class Gtk::VBox(false, 0));
 
             cancelbutton->set_flags(Gtk::CAN_FOCUS);
             cancelbutton->set_relief(Gtk::RELIEF_NORMAL);
@@ -61,15 +54,7 @@ namespace btg
             get_vbox()->set_spacing(0);
             get_vbox()->pack_start(*vbox);
 
-            if (!disableSelection_)
-               {
-                  set_title("Select session");
-               }
-            else
-               {
-                  set_title("Available sessions");
-               }
-
+            set_title(_title);
             set_modal(true);
             property_window_position().set_value(Gtk::WIN_POS_NONE);
             set_resizable(true);

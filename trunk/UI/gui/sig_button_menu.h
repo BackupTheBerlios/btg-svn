@@ -43,20 +43,21 @@ namespace btg
                      enum MENUID
                         {
                            BTN_LOAD        = 100,  //!< Open a file.
-                           BTN_START       = 101,  //!< Start a context.
-                           BTN_STOP        = 102,  //!< Start a context.
-                           BTN_ABORT       = 103,  //!< Abort a context.
-                           BTN_ERASE       = 104,  //!< Abort a context.
-                           BTN_CLEAN       = 105,  //!< Clean downloaded contexts.
-                           BTN_LIMIT       = 106,  //!< Limit download/upload of contexts.
-                           BTN_PREFERENCES = 107,  //!< Show preferences.
-                           BTN_DETACH      = 108,  //!< Detach from daemon.
-                           BTN_ABOUT       = 109,  //!< Show an about box.
-                           BTN_QUIT        = 110,  //!< Quit the application.
-                           BTN_KILL        = 111,  //!< Kill the daemon.
-                           BTN_GLIMIT      = 112,  //!< Set globa limits.
-                           BTN_UPTIME      = 113,  //!< Ask the daemon for uptime.
-                           BTN_SESNAME     = 114,  //!< Change the name of the current session.
+                           BTN_START,              //!< Start a context.
+                           BTN_STOP,               //!< Start a context.
+                           BTN_ABORT,              //!< Abort a context.
+                           BTN_ERASE,              //!< Abort a context.
+                           BTN_CLEAN,              //!< Clean downloaded contexts.
+                           BTN_LIMIT,              //!< Limit download/upload of contexts.
+                           BTN_MOVE,               //!< Move context to another session.
+                           BTN_PREFERENCES,        //!< Show preferences.
+                           BTN_DETACH,             //!< Detach from daemon.
+                           BTN_ABOUT,              //!< Show an about box.
+                           BTN_QUIT,               //!< Quit the application.
+                           BTN_KILL,               //!< Kill the daemon.
+                           BTN_GLIMIT,             //!< Set globa limits.
+                           BTN_UPTIME,             //!< Ask the daemon for uptime.
+                           BTN_SESNAME,            //!< Change the name of the current session.
 
                            BTN_LASTFILE0 = 0,   //!< Last opened file #0.
                            BTN_LASTFILE1 = 1,   //!< Last opened file #1.

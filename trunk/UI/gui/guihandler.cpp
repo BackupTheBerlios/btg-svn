@@ -475,7 +475,7 @@ namespace btg
             // Assumption: An instance of Gtk::Main was constructed before the call to
             // sessionSelectionDialog::run().
 
-            sessionSelectionDialog* ssd = new sessionSelectionDialog(_sessions, _sessionIds);
+            sessionSelectionDialog* ssd = new sessionSelectionDialog("Select session to attach to", _sessions, _sessionIds);
             ssd->run();
 
             t_long selected_session;
@@ -522,7 +522,8 @@ namespace btg
          void guiStartupHelper::showSessions(t_longList const& _sessions,
                                              t_strList const& _sessionNames) const
          {
-            sessionSelectionDialog* ssd = new sessionSelectionDialog(_sessions, 
+            sessionSelectionDialog* ssd = new sessionSelectionDialog("Available sessions",
+                                                                     _sessions, 
                                                                      _sessionNames, 
                                                                      true /* no selection. */);
             ssd->run();

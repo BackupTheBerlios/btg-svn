@@ -58,4 +58,10 @@
 #define USERMESSAGE_SNAMESET     "Session name set."
 #define USERMESSAGE_NOT_SNAMESET "Session name not set."
 
+#define USERMESSAGE_MOVED_B        "Moved '"
+#define USERMESSAGE_MOVED_E        "' to another session."
+
+#define USERMESSAGE_NOT_MOVED_B    "Unable to move '"
+#define USERMESSAGE_NOT_MOVED_E    "' to another session."
+
 #endif // USERMESSAGE_H

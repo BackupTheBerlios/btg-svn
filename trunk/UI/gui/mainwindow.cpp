@@ -50,7 +50,7 @@
 #include "limitdialog.h"
 #include "errordialog.h"
 #include "sndialog.h"
-
+#include "sessionselection.h"
 #include "logtextview.h"
 
 #include "usermessage.h"
@@ -65,6 +65,7 @@
 
 #include <bcore/client/clientdynconfig.h>
 #include <bcore/project.h>
+#include <bcore/btg_assert.h>
 
 #define GET_HANDLER_INST \
    boost::shared_ptr<boost::mutex> ptr = handlerthread->mutex(); \
@@ -79,12 +80,14 @@ namespace btg
       {
          using namespace btg::core::logger;
 
-         mainWindow::mainWindow(std::string const& _session,
+         mainWindow::mainWindow(btg::core::LogWrapperType _logwrapper,
+                                std::string const& _session,
                                 bool const _verboseFlag,
                                 bool const _neverAskFlag,
                                 btg::core::client::handlerThread* _handlerthread,
                                 btg::core::client::clientDynConfig & dc)
             : Gtk::Window(Gtk::WINDOW_TOPLEVEL),
+              btg::core::Logable(_logwrapper),
               verboseFlag(_verboseFlag),
               neverAskFlag(_neverAskFlag),
               timeout_connection(),
@@ -467,6 +470,11 @@ namespace btg
                            case buttonMenuIds::BTN_LIMIT:
                               {
                                  handle_btn_limit(id);
+                                 break;
+                              }
+                           case buttonMenuIds::BTN_MOVE:
+                              {
+                                 handle_btn_move(id);
                                  break;
                               }
                            case buttonMenuIds::BTN_PREFERENCES:
@@ -1108,6 +1116,74 @@ namespace btg
                }
          }
          
+         void mainWindow::handle_btn_move(t_int const _id)
+         {
+            GET_HANDLER_INST;
+
+            std::string movefilename;
+            handler->idToFilename(_id, movefilename);
+
+            handler->reqList();
+            
+            if (!handler->commandSuccess())
+               {
+                  msb->set(USERMESSAGE_NOT_MOVED_B + movefilename + USERMESSAGE_NOT_MOVED_E);
+                  logVerboseMessage(USERMESSAGE_NOT_MOVED_B + movefilename + USERMESSAGE_NOT_MOVED_E);
+                  return;
+               }
+
+            t_longList sessions    = handler->getSessionList();
+            t_strList  names       = handler->getSessionNames();
+            t_long current_session = handler->session();
+
+            // Remove the current sessions from session to which this
+            // context can be moved to.
+            t_strListI nameIter = names.begin();
+            for (t_longListI idIter = sessions.begin();
+                 idIter != sessions.end();
+                 idIter++)
+               {
+                  if (*idIter == current_session)
+                     {
+                        sessions.erase(idIter);
+                        names.erase(nameIter);
+                        break;
+                     }
+                  nameIter++;
+               }
+
+            btg::core::btg_assert(names.size() == sessions.size(),
+                                  logWrapper(),
+                                  "number of sessions equal to number of session names");
+            
+            sessionSelectionDialog ssd("Select session to move torrent to", 
+                                       sessions, 
+                                       names);
+            ssd.show();
+            ssd.run();
+
+            t_long newsession;
+            
+            if (!ssd.getSelectedSession(newsession))
+               {
+                  msb->set(USERMESSAGE_NOT_MOVED_B + movefilename + USERMESSAGE_NOT_MOVED_E);
+                  logVerboseMessage(USERMESSAGE_NOT_MOVED_B + movefilename + USERMESSAGE_NOT_MOVED_E);
+                  return;
+               }
+            
+            handler->reqMoveContext(_id, newsession);
+
+            if (!handler->commandSuccess())
+               {
+                  msb->set(USERMESSAGE_NOT_MOVED_B + movefilename + USERMESSAGE_NOT_MOVED_E);
+                  logVerboseMessage(USERMESSAGE_NOT_MOVED_B + movefilename + USERMESSAGE_NOT_MOVED_E);
+                  return;
+               }
+
+               msb->set(USERMESSAGE_MOVED_B + movefilename + USERMESSAGE_MOVED_E);
+               logVerboseMessage(USERMESSAGE_MOVED_B + movefilename + USERMESSAGE_MOVED_E);
+         }
+
          void mainWindow::handle_btn_prefs(t_int const _id)
          {
             Gtk::MessageDialog d(*this, "Torrent preferences not available yet.", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
