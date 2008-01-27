@@ -48,9 +48,7 @@ namespace btg
            applicationName(_applicationName),
            printHelp(false),
            syntaxEnabled(_syntaxEnabled),
-#if BTG_DEBUG
            debugMode(false),
-#endif // BTG_DEBUG
            verboseMode(false),
            listSyntax(false),
            desc(_applicationName + " (version " + GPD->sFULLVERSION() + ") options"),
@@ -128,12 +126,10 @@ namespace btg
          return true;
       }
 
-#if BTG_DEBUG
       bool argumentInterface::doDebug() const
       {
          return debugMode;
       }
-#endif // BTG_DEBUG
 
       bool argumentInterface::beVerbose() const
       {

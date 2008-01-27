@@ -53,11 +53,9 @@ namespace btg
                /// Parse command line options.
                virtual bool parse(int argc, char **argv);
 
-#if BTG_DEBUG
                /// Returns true if the daemon is to write debug
                /// information to the log.
                virtual bool doDebug() const;
-#endif // BTG_DEBUG
 
                /// Returns true, if the daemon is to be verbose.
                virtual bool beVerbose() const;
@@ -81,12 +79,9 @@ namespace btg
                bool              printHelp;
                /// Indicates that listConfigFileSyntax should be supported.
                bool              syntaxEnabled;
-#if BTG_DEBUG
                /// Switch that indicates that the daemon should write
                /// extensive debug info to the log.
                bool              debugMode;
-#endif // BTG_DEBUG
-
                /// Verbose mode - write verbose messages about what
                /// the daemon is doing.
                bool              verboseMode;
