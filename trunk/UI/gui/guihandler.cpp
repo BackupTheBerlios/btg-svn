@@ -92,9 +92,8 @@ namespace btg
          {
             contextIDs = _contextIDs;
 
+            // Map context to filename.
             idToFilenameMap.clear();
-
-            // Map context to filenames.
             if (_contextIDs.size() == _filenames.size())
                {
                   t_strListCI j = _filenames.begin();
@@ -174,6 +173,15 @@ namespace btg
 
          void guiHandler::onStatusAll(t_statusList const& _vstatus)
          {
+            // Map context to filename.
+            idToFilenameMap.clear();
+            for (t_statusListCI iter = _vstatus.begin();
+                 iter != _vstatus.end();
+                 iter++)
+               {
+                  idToFilenameMap[iter->contextID()] = iter->filename();
+               }
+
             statusList_        = _vstatus;
             statusSize_        = _vstatus.size();
             statusListUpdated_ = true;
