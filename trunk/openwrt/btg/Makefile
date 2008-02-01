@@ -26,7 +26,7 @@ define Package/btg
   CATEGORY:=Network
   TITLE:=BTG - a bittorrent daemon
   URL:=btg.berlios.de
-  DEPENDS:=+rblibtorrent +libiconv +libexpat
+  DEPENDS:=+rblibtorrent +libiconv +libexpat +gnutls
 endef
 
 define Package/btg/description
