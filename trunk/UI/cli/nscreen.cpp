@@ -230,7 +230,7 @@ namespace btg
                                  wprintw(main_window, "%s", "\n");
                                  this->refresh();
 
-                                 if (status == true)
+                                 if (status)
                                     {
                                        done = ncursesScreen::EVENT_KEY;
                                     }
@@ -346,7 +346,7 @@ namespace btg
             char win_str[2];
 
             // Copy the contents of the command window.
-            if (multipleLines == false)
+            if (!multipleLines)
                {
                   for (x = this->input_min; x < this->input_max-1; x++)
                      {
@@ -385,7 +385,7 @@ namespace btg
                   _text.clear();
 
                   // Find out where the command ends.
-                  if (_strip == true)
+                  if (_strip)
                      {
                         // Strip spaces from the end of string.
 
@@ -408,7 +408,7 @@ namespace btg
                                  }
                            }
 
-                        if (found_alpha == false)
+                        if (!found_alpha)
                            {
                               // BTG_NOTICE("Input is an empty string..");
 
@@ -545,7 +545,7 @@ namespace btg
             t_int lines   = -1;
             t_int columns = -1;
 
-            if (is_term_resized(lines, columns) == true)
+            if (is_term_resized(lines, columns))
                {
                   resizeterm(lines, columns);
                }

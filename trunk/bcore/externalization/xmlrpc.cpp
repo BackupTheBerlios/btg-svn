@@ -310,7 +310,7 @@ namespace btg
          {
             int val=0;
 
-            if (_source == true)
+            if (_source)
                val=1;
 
             XMLRPC_AddValueToVector(

@@ -149,8 +149,7 @@ namespace btg
 
          if (
              (this->isMessagePresent == _ec->messagePresent()) &&
-             (this->message          == _ec->getMessage()) &&
-             parent                  == true
+             (this->message          == _ec->getMessage()) && parent
              )
             {
                return true;

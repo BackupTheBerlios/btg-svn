@@ -255,7 +255,7 @@ namespace btg
       {
          t_int temp_read_counter = read_counter;
 
-         if (_resetCounter == true)
+         if (_resetCounter)
             {
                read_counter = 0;
             }

@@ -487,7 +487,7 @@ namespace btg
             ssd->run();
 
             t_long selected_session;
-            if (ssd->getSelectedSession(selected_session) == false)
+            if (!ssd->getSelectedSession(selected_session))
                {
                   // Pressed cancel.
                   BTG_FATAL_ERROR(logWrapper(), 

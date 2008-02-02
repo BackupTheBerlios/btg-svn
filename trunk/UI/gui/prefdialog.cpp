@@ -316,7 +316,7 @@ namespace btg
          void preferencesDialog::on_path_select_button_pressed()
          {
             std::string destinationDir;
-            if (popUpDirSelection(outputPath_initial_value, destinationDir) == true)
+            if (popUpDirSelection(outputPath_initial_value, destinationDir))
                {
                   outputPathEntry->set_text(destinationDir);
                }
@@ -326,7 +326,7 @@ namespace btg
          void preferencesDialog::on_work_path_select_button_pressed()
          {
             std::string workDir;
-            if (popUpDirSelection(workPath_initial_value, workDir) == true)
+            if (popUpDirSelection(workPath_initial_value, workDir))
                {
                   workPathEntry->set_text(workDir);
                }
@@ -378,7 +378,7 @@ namespace btg
                }
 
             // If something was changed, but the user pressed cancel.
-            if (save_btn_pressed == false)
+            if (!save_btn_pressed)
                {
                   status = false;
                }

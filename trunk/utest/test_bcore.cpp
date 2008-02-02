@@ -451,7 +451,7 @@ void testBcore::testUtil_simple_types()
    CPPUNIT_ASSERT(command == btg::core::Command::CN_GINITCONNECTION);
 
    CPPUNIT_ASSERT(externalization->bytesToBool(bool_value));
-   CPPUNIT_ASSERT(bool_value == false);
+   CPPUNIT_ASSERT(!bool_value);
 
    output_buffer.erase();
    externalization->reset();
@@ -462,7 +462,7 @@ void testBcore::testUtil_simple_types()
    externalization->reset();
    externalization->setBuffer(output_buffer);
    CPPUNIT_ASSERT(externalization->bytesToBool(bool_value));
-   CPPUNIT_ASSERT(bool_value == true);
+   CPPUNIT_ASSERT(bool_value);
 
    output_buffer.erase();
    externalization->reset();
@@ -488,25 +488,25 @@ void testBcore::testUtil_str_nocasecmp()
 
    s1="test";
    s2="test";
-   CPPUNIT_ASSERT(Util::compareStringNoCase(s1,s2) == true);
-   CPPUNIT_ASSERT(Util::compareStringNoCase(s2,s1) == true);
+   CPPUNIT_ASSERT(Util::compareStringNoCase(s1,s2));
+   CPPUNIT_ASSERT(Util::compareStringNoCase(s2,s1));
    s2="TEST";
-   CPPUNIT_ASSERT(Util::compareStringNoCase(s1,s2) == true);
-   CPPUNIT_ASSERT(Util::compareStringNoCase(s2,s1) == true);
+   CPPUNIT_ASSERT(Util::compareStringNoCase(s1,s2));
+   CPPUNIT_ASSERT(Util::compareStringNoCase(s2,s1));
    s2="TeSt";
-   CPPUNIT_ASSERT(Util::compareStringNoCase(s1,s2) == true);
-   CPPUNIT_ASSERT(Util::compareStringNoCase(s2,s1) == true);
+   CPPUNIT_ASSERT(Util::compareStringNoCase(s1,s2));
+   CPPUNIT_ASSERT(Util::compareStringNoCase(s2,s1));
    s2="TeSt23";
-   CPPUNIT_ASSERT(Util::compareStringNoCase(s1,s2) == false);
-   CPPUNIT_ASSERT(Util::compareStringNoCase(s2,s1) == false);
+   CPPUNIT_ASSERT(!Util::compareStringNoCase(s1,s2));
+   CPPUNIT_ASSERT(!Util::compareStringNoCase(s2,s1));
    s1="TeSt23";
-   CPPUNIT_ASSERT(Util::compareStringNoCase(s1,s2) == true);
-   CPPUNIT_ASSERT(Util::compareStringNoCase(s2,s1) == true);
+   CPPUNIT_ASSERT(Util::compareStringNoCase(s1,s2));
+   CPPUNIT_ASSERT(Util::compareStringNoCase(s2,s1));
 
    s1="123123123";
    s2="123123123";
-   CPPUNIT_ASSERT(Util::compareStringNoCase(s1,s2) == true);
-   CPPUNIT_ASSERT(Util::compareStringNoCase(s2,s1) == true);
+   CPPUNIT_ASSERT(Util::compareStringNoCase(s1,s2));
+   CPPUNIT_ASSERT(Util::compareStringNoCase(s2,s1));
 }
 
 void testBcore::testDbuffer()
@@ -928,7 +928,7 @@ void testBcore::testSelectedFileEntry()
    btg::core::selectedFileEntry* sfe = new btg::core::selectedFileEntry;
 
    CPPUNIT_ASSERT(sfe->filename() == "none");
-   CPPUNIT_ASSERT(sfe->selected() == true);
+   CPPUNIT_ASSERT(sfe->selected());
 
    delete sfe;
    sfe = 0;
@@ -936,7 +936,7 @@ void testBcore::testSelectedFileEntry()
    // Constructor with filename only.
    sfe = new selectedFileEntry(filename);
    CPPUNIT_ASSERT(sfe->filename() == filename);
-   CPPUNIT_ASSERT(sfe->selected() == true);
+   CPPUNIT_ASSERT(sfe->selected());
 
    delete sfe;
    sfe = 0;
@@ -961,7 +961,7 @@ void testBcore::testSelectedFileEntry()
    original = copied;
 
    CPPUNIT_ASSERT(original.filename() == filename);
-   CPPUNIT_ASSERT(original.selected() == false);
+   CPPUNIT_ASSERT(!original.selected());
 }
 
 void testBcore::testSelectedFileEntryList()
@@ -982,25 +982,25 @@ void testBcore::testSelectedFileEntryList()
    std::vector<selectedFileEntry> entries = sfel->files();
 
    CPPUNIT_ASSERT(entries[0].filename() == "filename1");
-   CPPUNIT_ASSERT(entries[0].selected() == true);
+   CPPUNIT_ASSERT(entries[0].selected());
    CPPUNIT_ASSERT(entries[1].filename() == "filename2");
-   CPPUNIT_ASSERT(entries[1].selected() == true);
+   CPPUNIT_ASSERT(entries[1].selected());
    CPPUNIT_ASSERT(entries[2].filename() == "filename3");
-   CPPUNIT_ASSERT(entries[2].selected() == true);
+   CPPUNIT_ASSERT(entries[2].selected());
    CPPUNIT_ASSERT(entries[3].filename() == "filename4");
-   CPPUNIT_ASSERT(entries[3].selected() == false);
+   CPPUNIT_ASSERT(!entries[3].selected());
    CPPUNIT_ASSERT(entries[4].filename() == "filename5");
-   CPPUNIT_ASSERT(entries[4].selected() == true);
+   CPPUNIT_ASSERT(entries[4].selected());
    CPPUNIT_ASSERT(entries[5].filename() == "filename6");
-   CPPUNIT_ASSERT(entries[5].selected() == true);
+   CPPUNIT_ASSERT(entries[5].selected());
    CPPUNIT_ASSERT(entries[6].filename() == "filename7");
-   CPPUNIT_ASSERT(entries[6].selected() == false);
+   CPPUNIT_ASSERT(!entries[6].selected());
    CPPUNIT_ASSERT(entries[7].filename() == "filename8");
-   CPPUNIT_ASSERT(entries[7].selected() == true);
+   CPPUNIT_ASSERT(entries[7].selected());
    CPPUNIT_ASSERT(entries[8].filename() == "filename9");
-   CPPUNIT_ASSERT(entries[8].selected() == true);
+   CPPUNIT_ASSERT(entries[8].selected());
    CPPUNIT_ASSERT(entries[9].filename() == "filename10");
-   CPPUNIT_ASSERT(entries[9].selected() == true);
+   CPPUNIT_ASSERT(entries[9].selected());
 
    delete sfel;
    sfel = 0;
@@ -1011,25 +1011,25 @@ void testBcore::testSelectedFileEntryList()
    std::vector<selectedFileEntry> entries2 = sfel->files();
 
    CPPUNIT_ASSERT(entries2[0].filename() == "filename1");
-   CPPUNIT_ASSERT(entries2[0].selected() == true);
+   CPPUNIT_ASSERT(entries2[0].selected());
    CPPUNIT_ASSERT(entries2[1].filename() == "filename2");
-   CPPUNIT_ASSERT(entries2[1].selected() == true);
+   CPPUNIT_ASSERT(entries2[1].selected());
    CPPUNIT_ASSERT(entries2[2].filename() == "filename3");
-   CPPUNIT_ASSERT(entries2[2].selected() == true);
+   CPPUNIT_ASSERT(entries2[2].selected());
    CPPUNIT_ASSERT(entries2[3].filename() == "filename4");
-   CPPUNIT_ASSERT(entries2[3].selected() == false);
+   CPPUNIT_ASSERT(!entries2[3].selected());
    CPPUNIT_ASSERT(entries2[4].filename() == "filename5");
-   CPPUNIT_ASSERT(entries2[4].selected() == true);
+   CPPUNIT_ASSERT(entries2[4].selected());
    CPPUNIT_ASSERT(entries2[5].filename() == "filename6");
-   CPPUNIT_ASSERT(entries2[5].selected() == true);
+   CPPUNIT_ASSERT(entries2[5].selected());
    CPPUNIT_ASSERT(entries2[6].filename() == "filename7");
-   CPPUNIT_ASSERT(entries2[6].selected() == false);
+   CPPUNIT_ASSERT(!entries2[6].selected());
    CPPUNIT_ASSERT(entries2[7].filename() == "filename8");
-   CPPUNIT_ASSERT(entries2[7].selected() == true);
+   CPPUNIT_ASSERT(entries2[7].selected());
    CPPUNIT_ASSERT(entries2[8].filename() == "filename9");
-   CPPUNIT_ASSERT(entries2[8].selected() == true);
+   CPPUNIT_ASSERT(entries2[8].selected());
    CPPUNIT_ASSERT(entries2[9].filename() == "filename10");
-   CPPUNIT_ASSERT(entries2[9].selected() == true);
+   CPPUNIT_ASSERT(entries2[9].selected());
 
    delete sfel;
    sfel = 0;
@@ -1043,25 +1043,25 @@ void testBcore::testSelectedFileEntryList()
    std::vector<selectedFileEntry> entries3 = copied.files();
 
    CPPUNIT_ASSERT(entries3[0].filename() == "filename1");
-   CPPUNIT_ASSERT(entries3[0].selected() == true);
+   CPPUNIT_ASSERT(entries3[0].selected());
    CPPUNIT_ASSERT(entries3[1].filename() == "filename2");
-   CPPUNIT_ASSERT(entries3[1].selected() == true);
+   CPPUNIT_ASSERT(entries3[1].selected());
    CPPUNIT_ASSERT(entries3[2].filename() == "filename3");
-   CPPUNIT_ASSERT(entries3[2].selected() == true);
+   CPPUNIT_ASSERT(entries3[2].selected());
    CPPUNIT_ASSERT(entries3[3].filename() == "filename4");
-   CPPUNIT_ASSERT(entries3[3].selected() == false);
+   CPPUNIT_ASSERT(!entries3[3].selected());
    CPPUNIT_ASSERT(entries3[4].filename() == "filename5");
-   CPPUNIT_ASSERT(entries3[4].selected() == true);
+   CPPUNIT_ASSERT(entries3[4].selected());
    CPPUNIT_ASSERT(entries3[5].filename() == "filename6");
-   CPPUNIT_ASSERT(entries3[5].selected() == true);
+   CPPUNIT_ASSERT(entries3[5].selected());
    CPPUNIT_ASSERT(entries3[6].filename() == "filename7");
-   CPPUNIT_ASSERT(entries3[6].selected() == false);
+   CPPUNIT_ASSERT(!entries3[6].selected());
    CPPUNIT_ASSERT(entries3[7].filename() == "filename8");
-   CPPUNIT_ASSERT(entries3[7].selected() == true);
+   CPPUNIT_ASSERT(entries3[7].selected());
    CPPUNIT_ASSERT(entries3[8].filename() == "filename9");
-   CPPUNIT_ASSERT(entries3[8].selected() == true);
+   CPPUNIT_ASSERT(entries3[8].selected());
    CPPUNIT_ASSERT(entries3[9].filename() == "filename10");
-   CPPUNIT_ASSERT(entries3[9].selected() == true);
+   CPPUNIT_ASSERT(entries3[9].selected());
 
    // The equality operator.
    copied.deSelect("filename10");
@@ -1072,32 +1072,32 @@ void testBcore::testSelectedFileEntryList()
    CPPUNIT_ASSERT(original == copied);
 
    CPPUNIT_ASSERT(entries4[8].filename() == "filename9");
-   CPPUNIT_ASSERT(entries4[8].selected() == true);
+   CPPUNIT_ASSERT(entries4[8].selected());
    CPPUNIT_ASSERT(entries4[9].filename() == "filename10");
-   CPPUNIT_ASSERT(entries4[9].selected() == false);
+   CPPUNIT_ASSERT(!entries4[9].selected());
 
    std::vector<selectedFileEntry> entries5 = entries4;
 
    CPPUNIT_ASSERT(entries5[0].filename() == "filename1");
-   CPPUNIT_ASSERT(entries5[0].selected() == true);
+   CPPUNIT_ASSERT(entries5[0].selected());
    CPPUNIT_ASSERT(entries5[1].filename() == "filename2");
-   CPPUNIT_ASSERT(entries5[1].selected() == true);
+   CPPUNIT_ASSERT(entries5[1].selected());
    CPPUNIT_ASSERT(entries5[2].filename() == "filename3");
-   CPPUNIT_ASSERT(entries5[2].selected() == true);
+   CPPUNIT_ASSERT(entries5[2].selected());
    CPPUNIT_ASSERT(entries5[3].filename() == "filename4");
-   CPPUNIT_ASSERT(entries5[3].selected() == false);
+   CPPUNIT_ASSERT(!entries5[3].selected());
    CPPUNIT_ASSERT(entries5[4].filename() == "filename5");
-   CPPUNIT_ASSERT(entries5[4].selected() == true);
+   CPPUNIT_ASSERT(entries5[4].selected());
    CPPUNIT_ASSERT(entries5[5].filename() == "filename6");
-   CPPUNIT_ASSERT(entries5[5].selected() == true);
+   CPPUNIT_ASSERT(entries5[5].selected());
    CPPUNIT_ASSERT(entries5[6].filename() == "filename7");
-   CPPUNIT_ASSERT(entries5[6].selected() == false);
+   CPPUNIT_ASSERT(!entries5[6].selected());
    CPPUNIT_ASSERT(entries5[7].filename() == "filename8");
-   CPPUNIT_ASSERT(entries5[7].selected() == true);
+   CPPUNIT_ASSERT(entries5[7].selected());
    CPPUNIT_ASSERT(entries5[8].filename() == "filename9");
-   CPPUNIT_ASSERT(entries5[8].selected() == true);
+   CPPUNIT_ASSERT(entries5[8].selected());
    CPPUNIT_ASSERT(entries5[9].filename() == "filename10");
-   CPPUNIT_ASSERT(entries5[9].selected() == false);
+   CPPUNIT_ASSERT(!entries5[9].selected());
 
 }
 
@@ -1277,14 +1277,14 @@ void testBcore::testOsFileOp()
    std::string errorMessage;
 
    // A file exists.
-   CPPUNIT_ASSERT(btg::core::os::fileOperation::check(fileExists, errorMessage, false) == true);
+   CPPUNIT_ASSERT(btg::core::os::fileOperation::check(fileExists, errorMessage, false));
    // A file does not exist.
-   CPPUNIT_ASSERT(btg::core::os::fileOperation::check(fileDoesNotExist, errorMessage, false) == false);
+   CPPUNIT_ASSERT(!btg::core::os::fileOperation::check(fileDoesNotExist, errorMessage, false));
 
    // A dir exists.
-   CPPUNIT_ASSERT(btg::core::os::fileOperation::check(dirExists, errorMessage, true) == true);
+   CPPUNIT_ASSERT(btg::core::os::fileOperation::check(dirExists, errorMessage, true));
    // A dir does not exist.
-   CPPUNIT_ASSERT(btg::core::os::fileOperation::check(dirDoesNotExist, errorMessage, true) == false);
+   CPPUNIT_ASSERT(!btg::core::os::fileOperation::check(dirDoesNotExist, errorMessage, true));
 }
 
 void testBcore::testVersion()

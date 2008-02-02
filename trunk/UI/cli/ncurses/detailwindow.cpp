@@ -28,6 +28,11 @@
 #include <bcore/hrr.h>
 #include <bcore/hrt.h>
 
+extern "C"
+{
+#include <math.h>
+}
+
 namespace btg
 {
    namespace UI
@@ -131,36 +136,53 @@ namespace btg
 
                   addValue(st_status);
 
-		  if (currentStatus.status() == btg::core::Status::ts_downloading)
-		    {
-		      addTopic("Download time:");
-		      btg::core::humanReadableTime hrt = btg::core::humanReadableTime::convert(
-											       60ull * currentStatus.activityCounter()
-											       );
-		      std::string download_time = hrt.toString();
+                  addTopic("Download/upload ratio:");
 
-		      addValue(download_time);
-		    }
-		  else if (currentStatus.status() == btg::core::Status::ts_seeding)
-		    {
-		      addTopic("Seed time:");
+                  t_ulong dl_total = currentStatus.downloadTotal();
+                  t_ulong ul_total = currentStatus.uploadTotal();
 
-		      btg::core::humanReadableTime hrt = btg::core::humanReadableTime::convert(
-									 60ull * currentStatus.activityCounter()
-									 );
-		      std::string seed_time = hrt.toString();
+                  t_float ratio = 0;
+                  if (dl_total > 0)
+                     {
+                        ratio = (1.0f*ul_total) / (1.0f*dl_total);
+                     }
 
-		      addValue(seed_time);
-		    }
+                  // Only show two decimal places.
+                  t_float rounded = roundf(ratio * 100) / 100;
+
+                  std::string st_ratio = btg::core::convertToString<t_float>(rounded);
+                  addValue(st_ratio);
+
+                  if (currentStatus.status() == btg::core::Status::ts_downloading)
+                     {
+                        addTopic("Download time:");
+                        btg::core::humanReadableTime hrt = btg::core::humanReadableTime::convert(
+                                                                                                 60ull * currentStatus.activityCounter()
+                                                                                                 );
+                        std::string download_time = hrt.toString();
+
+                        addValue(download_time);
+                     }
+                  else if (currentStatus.status() == btg::core::Status::ts_seeding)
+                     {
+                        addTopic("Seed time:");
+
+                        btg::core::humanReadableTime hrt = btg::core::humanReadableTime::convert(
+                                                                                                 60ull * currentStatus.activityCounter()
+                                                                                                 );
+                        std::string seed_time = hrt.toString();
+
+                        addValue(seed_time);
+                     }
 
                   // Progress:
                   if (currentStatus.validTimeLeft())
                      {
-		       addTopic("Time left:");
-		       std::string st_progress;
+                        addTopic("Time left:");
+                        std::string st_progress;
 
-		       currentStatus.timeLeftToString(st_progress);
-		       addValue(st_progress);
+                        currentStatus.timeLeftToString(st_progress);
+                        addValue(st_progress);
                      }
 
                   addTopic("Total download:");

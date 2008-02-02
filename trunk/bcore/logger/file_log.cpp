@@ -67,7 +67,7 @@ namespace btg
          bool fileLogger::close()
          {
             file.close();
-            if (file.is_open() == true)
+            if (file.is_open())
                {
                   return false;
                }

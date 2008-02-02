@@ -118,7 +118,7 @@ namespace btg
 
          humanReadableUnit finalValue(pri_value, pri_unit, sec_value, sec_unit);
 
-         if (_cont == true && pri_unit != humanReadableUnit::B)
+         if (_cont && pri_unit != humanReadableUnit::B)
             {
                humanReadableUnit hru = humanReadableUnit::convert(sec_value, false);
                if (hru.value_unit != humanReadableUnit::B)

@@ -175,7 +175,7 @@ namespace btg
       std::string Command::toString() const
       {
          std::string output;
-         if (this->isInitialized() == true)
+         if (this->isInitialized())
             {
                output = this->getName() + ".";
             }
