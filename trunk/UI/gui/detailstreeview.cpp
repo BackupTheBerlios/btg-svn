@@ -30,6 +30,7 @@
 #include <bcore/hrr.h>
 #include <bcore/hrt.h>
 #include <bcore/t_string.h>
+#include <bcore/client/ratio.h>
 
 namespace btg
 {
@@ -98,25 +99,6 @@ namespace btg
                }
 
             add("Status:", st_status);
-            /*
-            btg::core::humanReadableUnit hru =
-               btg::core::humanReadableUnit::convert(_status.downloadTotal());
-            std::string st_tdl = hru.toString();
-            add("Total download:", st_tdl);
-
-            hru = btg::core::humanReadableUnit::convert(_status.uploadTotal());
-            std::string st_tul = hru.toString();
-            add("Total upload:", st_tul);
-
-            btg::core::humanReadableRate hrr =
-               btg::core::humanReadableRate::convert(static_cast<t_uint>(_status.downloadRate()));
-            std::string st_dlr = hrr.toString();
-            add("Download rate:", st_dlr);
-
-            hrr = btg::core::humanReadableRate::convert(static_cast<t_uint>(_status.uploadRate()));
-            std::string st_ulr = hrr.toString();
-            add("Upload rate:", st_ulr);
-            */
 
             if (_status.status() == btg::core::Status::ts_downloading)
                {
@@ -136,6 +118,11 @@ namespace btg
                   
                   add("Seed time:", seed_time);
                }
+
+            // Ratio:
+            std::string st_ratio;
+            btg::core::client::CalculateUlDlRatio(_status, st_ratio);
+            add("Up/down ratio:", st_ratio);
 
             // Progress:
             if (_status.validTimeLeft())

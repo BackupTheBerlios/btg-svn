@@ -28,10 +28,7 @@
 #include <bcore/hrr.h>
 #include <bcore/hrt.h>
 
-extern "C"
-{
-#include <math.h>
-}
+#include <bcore/client/ratio.h>
 
 namespace btg
 {
@@ -136,21 +133,9 @@ namespace btg
 
                   addValue(st_status);
 
-                  addTopic("Download/upload ratio:");
-
-                  t_ulong dl_total = currentStatus.downloadTotal();
-                  t_ulong ul_total = currentStatus.uploadTotal();
-
-                  t_float ratio = 0;
-                  if (dl_total > 0)
-                     {
-                        ratio = (1.0f*ul_total) / (1.0f*dl_total);
-                     }
-
-                  // Only show two decimal places.
-                  t_float rounded = roundf(ratio * 100) / 100;
-
-                  std::string st_ratio = btg::core::convertToString<t_float>(rounded);
+                  addTopic("Up/down ratio:");
+                  std::string st_ratio;
+                  btg::core::client::CalculateUlDlRatio(currentStatus, st_ratio);
                   addValue(st_ratio);
 
                   if (currentStatus.status() == btg::core::Status::ts_downloading)

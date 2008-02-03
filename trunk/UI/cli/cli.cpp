@@ -51,6 +51,8 @@ extern t_int global_btg_run;
 #include <bcore/command/context_stop.h>
 #include <bcore/command/error.h>
 
+#include <bcore/client/ratio.h>
+
 #include "runstate.h"
 
 namespace btg
@@ -1293,6 +1295,11 @@ namespace btg
                         break;
                      }
 
+                  _output += GPD->sNEWLINE();
+                  _output += "Up/down ratio: ";
+                  std::string st_ratio;
+                  btg::core::client::CalculateUlDlRatio(_status, st_ratio);
+                  _output += st_ratio;
                   _output += GPD->sNEWLINE();
 
                   // Progress:

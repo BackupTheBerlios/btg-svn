@@ -29,6 +29,7 @@
 #include <bcore/hru.h>
 #include <bcore/t_string.h>
 #include <bcore/util.h>
+#include <bcore/client/ratio.h>
 
 #include <algorithm>
 
@@ -150,6 +151,9 @@ namespace btg
                                  break;
                               }
 
+                           // Ratio.
+                           btg::core::client::CalculateUlDlRatio(*iter, td.ratio);
+
                            td.dlRate = iter->downloadRate();
                            td.ulRate = iter->uploadRate();
 
@@ -245,8 +249,10 @@ namespace btg
  
                // Insert the columns.
                std::string sizeSpecifier("<01234567890123456789>");
+               std::string ratioSizeSpecifier("<00.0>");
                AG_TableAddCol(_gui.table, "Filename", sizeSpecifier.c_str(), 0);
                AG_TableAddCol(_gui.table, "Status", sizeSpecifier.c_str(), 0);
+               AG_TableAddCol(_gui.table, "UL/DL ratio", ratioSizeSpecifier.c_str(), 0);
                AG_TableAddCol(_gui.table, "Progress", sizeSpecifier.c_str(), 0);
                AG_TableAddCol(_gui.table, "Dl/Ul", sizeSpecifier.c_str(), 0);
                AG_TableAddCol(_gui.table, "Size", sizeSpecifier.c_str(), 0);
@@ -305,9 +311,10 @@ namespace btg
                     iter++)
                   {
                      const tableData & td = *iter;
-                     AG_TableAddRow(_gui.table, "%s:%s:%s:%s:%s:%s", 
+                     AG_TableAddRow(_gui.table, "%s:%s:%s:%s:%s:%s:%s", 
                                     td.filename.c_str(),
                                     td.status.c_str(),
+                                    td.ratio.c_str(),
                                     td.progress.c_str(),
                                     td.dlul.c_str(),
                                     td.size.c_str(),

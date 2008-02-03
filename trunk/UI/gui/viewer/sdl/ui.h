@@ -47,7 +47,8 @@ namespace btg
                std::string status;
                /// Progress.
                std::string progress;
-
+               /// UL/DL ratio.
+               std::string ratio;
                /// Upload rate in bytes per second.
                t_uint      ulRate;
 

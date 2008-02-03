@@ -10,7 +10,8 @@ helper_argif.cpp \
 helper.cpp \
 handlerthr.cpp \
 clientdynconfig.cpp \
-loglevel.cpp
+loglevel.cpp \
+ratio.cpp
 
 noinst_HEADERS = carg.h \
 configuration.h lastfiles.h \
@@ -21,7 +22,8 @@ helper_argif.h \
 helper.h \
 handlerthr.h \
 clientdynconfig.h \
-loglevel.h
+loglevel.h \
+ratio.h
 
 libbtgclient_la_CFLAGS   = @DEBUG_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ -DBTG_SVNREV="@BTG_SVNREV@"
 libbtgclient_la_CXXFLAGS = @DEBUG_CXXFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ -DBTG_SVNREV="@BTG_SVNREV@"
