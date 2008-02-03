@@ -13,8 +13,8 @@ PKG_VERSION:=0.9.7
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=http://wojci.dk/download/
-PKG_MD5SUM:=17a8185bf7d8c75db1e4508b44e1b589
+PKG_SOURCE_URL:=ftp://ftp.berlios.de/pub/btg/openwrt/
+PKG_MD5SUM:=94b8338db3828298888fb1171bbdab36
 #PKG_BUILD_DIR:=$(BUILD_DIR)/libtorrent-$(PKG_VERSION)
 PKG_BUILD_DEPENDS:=libtool
 
@@ -37,6 +37,7 @@ CONFIGURE_ARGS+= \
 	--disable-static \
 	--disable-debug \
 	--enable-session-saving \
+	--enable-btg-config \
 	--with-boost-date-time=gcc41-mt-1_34_1 \
 	--with-boost-filesystem=gcc41-mt-1_34_1 \
 	--with-boost-thread=gcc41-mt-1_34_1 \

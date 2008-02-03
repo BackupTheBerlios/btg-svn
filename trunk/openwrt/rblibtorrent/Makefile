@@ -9,12 +9,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=rblibtorrent
-PKG_VERSION:=0.14
+PKG_VERSION:=0.13
 PKG_RELEASE:=1
 
 PKG_SOURCE:=libtorrent-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=http://wojci.dk/download/
-PKG_MD5SUM:=2765935b1ea8538ed26a9250ff79093f
+PKG_SOURCE_URL:=ftp://ftp.berlios.de/pub/btg/openwrt
+PKG_MD5SUM:=63cf5ac3b07fd6e70712b3758c271da2
 PKG_BUILD_DIR:=$(BUILD_DIR)/libtorrent-$(PKG_VERSION)
 PKG_BUILD_DEPENDS:=libtool
 
