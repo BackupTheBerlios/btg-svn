@@ -815,14 +815,22 @@ any e-mail.
 OpenWrt
 =======
 
-This section describes how to build BTG for use with `OpenWrt`_. Note
-that this procedure is highly experimental.
+This section describes how to build BTG for use with `OpenWrt`_
+kamikaze. Note that this procedure is highly experimental.
 
 Check out the required software:
 
  - BTG SVN in ~/remote-svn/btg.
  - OpenWrt SVN into ~/remote-svn/openwrt (buildroot).
  - OpenWrt package SVN in ~/remote-svn/openwrt-packages.
+
+The following OpenWrt revisions are known to build:
+
+======================= ==========================
+**OpenWrt trunk**       **OpenWrt packages trunk**     
+----------------------- --------------------------
+10359                   10359
+======================= ==========================
 
 The method of building a working OpenWrt is described `elsewhere`_.
 

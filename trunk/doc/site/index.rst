@@ -78,7 +78,7 @@ Stable Releases
 ---------------
 
 ======================= ========================== ======================= ============================================
-Source                  Release note               Changelog               `Rasterbar Libtorrent`_ version
+**Source**              **Release note**           **Changelog**           **Rasterbar Libtorrent version**
 ----------------------- -------------------------- ----------------------- --------------------------------------------
 `btg-0.9.6.tar.gz`_     `0.9.6 release note`_      `0.9.6 changelog`_      0.12
 `btg-0.9.5.tar.gz`_     `0.9.5 release note`_      `0.9.5 changelog`_      0.9/0.10/0.11/0.12
@@ -106,7 +106,7 @@ Experimental Releases
 ---------------------
 
 ======================= ========================== ======================= ==================================
-Source                  Release note               Changelog               `Rasterbar Libtorrent`_ version
+**Source**              **Release note**           **Changelog**           **Rasterbar Libtorrent version**
 ----------------------- -------------------------- ----------------------- ----------------------------------
 `btg-0.9.7-rc2.tar.gz`_ `0.9.7 RC2 release note`_  `0.9.7 RC2 changelog`_  0.13RC/SVN
 `btg-0.9.7-rc1.tar.gz`_ `0.9.7 RC1 release note`_  `0.9.7 RC1 changelog`_  0.13RC/SVN
