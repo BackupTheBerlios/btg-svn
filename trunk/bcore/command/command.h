@@ -46,67 +46,75 @@ namespace btg
                /// Indicates that a session is invalid.
                static t_long const INVALID_SESSION;
 
-               // The types of commands which are implemented and their responses.
-               /// As the entries in this enum are also used for finding command
-               /// names from a static array, its important that their values
-               /// start at 1 and only increase by one for each entry.
-               /// Remember to add new commands to command.cpp and externalization.cpp too!
+               /// The types of commands which are implemented and
+               /// their responses.
+               /// 
+               /// \note Do _not_ change the numeric IDs of existing
+               /// commands. Only add new commands to this enum.
+               /// 
+               /// Remember to add new commands to command.cpp and
+               /// externalization.cpp too. If not updated, the
+               /// btg::core unittest will fail.
                enum commandType
                   {
-                     CN_GINITCONNECTION = 1, //!< Init connection.
-                     CN_GSETUP,            //!< Setup command.
-                     CN_GSETUPRSP,         //!< Setup response command.
-                     CN_GKILL,             //!< Bring down the daemon.
-                     CN_GLIMIT,            //!< Set global limits.
-                     CN_GLIMITSTAT,        //!< Request the current global limit.
-                     CN_GLIMITSTATRSP,     //!< Response to request for the current global limit.
-                     CN_GUPTIME,           //!< Get daemon uptime.
-                     CN_GUPTIMERSP,        //!< Daemon uptime response.
-                     CN_GLIST,             //!< List request.
-                     CN_GLISTRSP,          //!< List request response.
-                     CN_CCREATEWITHDATA,   //!< Create a context, using embedded data.
-                     CN_CLAST,             //!< Request the context ID of the last created context.
-                     CN_CLASTRSP,          //!< Context ID of the last created context.
-                     CN_CSTART,            //!< Start a context.
-                     CN_CSTOP,             //!< Stop a context.
-                     CN_CABORT,            //!< Abort a context.
-                     CN_CSTATUS,           //!< Request status information about a context.
-                     CN_CSTATUSRSP,        //!< Status information about one context.
-                     CN_CALLSTATUSRSP,     //!< Status information about all contexts.
-                     CN_CMSTATUS,          //!< Status information, a number of contexts.
-                     CN_CMSTATUSRSP,       //!< Status information, a number of contexts - response.
-                     CN_CFILEINFO,         //!< Request file info information about a context.
-                     CN_CFILEINFORSP,      //!< File info information about a context.
-                     CN_CALLFILEINFORSP,   //!< File info information about all contexts.
-                     CN_CCLEAN,            //!< Request to clean finished contexts.
-                     CN_CCLEANRSP,         //!< Response that informs the client that some contexts have been cleaned.
-                     CN_CLIMIT,            //!< Limit a context.
-                     CN_CLIMITSTATUS,      //!< Limit status.
-                     CN_CLIMITSTATUSRSP,   //!< Limit status response.
-                     CN_CPEERS,            //!< Request a list of peers.
-                     CN_CPEERSRSP,         //!< Response containing a list of peers.
-                     CN_CSETFILES,         //!< Set the files (inside torrent) to download.
-                     CN_CGETFILES,         //!< Get the selected files.
-                     CN_CGETFILESRSP,      //!< Response containing the selected files
-                     CN_CGETTRACKERS,      //!< Get the list of used trackers.
-                     CN_CGETTRACKERSRSP,   //!< List of trackers used for a context.
-                     CN_CMOVE,             //!< Move a context from one session to another.
-                     CN_ERROR,             //!< General error.
-                     CN_ACK,               //!< General acknowlegment.
-                     CN_SATTACH,           //!< Attach to a running session.
-                     CN_SDETACH,           //!< Detach from a running session.
-                     CN_SERROR,            //!< Daemon uses this command to tell clients that their session is invalid.
-                     CN_SINFO,             //!< Get information about a session.
-                     CN_SINFORSP,          //!< Information about a session.
-                     CN_SQUIT,             //!< Quit the current session.
-                     CN_SLIST,             //!< Get a list of sessions.
-                     CN_SLISTRSP,          //!< Response that lists sessions.
-                     CN_SNAME,             //!< Get current session name.
-                     CN_SNAMERSP,          //!< Current session name.
-                     CN_SSETNAME,          //!< Set current session name.
-                     CN_MOREAD,            //!< Only read only access. Usefull for writing monitor applets.
-                     CN_MOWRITE,           //!< Default write mode.
-                     CN_UNDEFINED          //!< Undefined command.
+                     /* Global commands. */
+                     CN_GINITCONNECTION = 1,  //!< Init connection.
+                     CN_GSETUP          = 10, //!< Setup command.
+                     CN_GSETUPRSP       = 11, //!< Setup response command.
+                     CN_GKILL           = 12, //!< Bring down the daemon.
+                     CN_GLIMIT          = 13, //!< Set global limits.
+                     CN_GLIMITSTAT      = 14, //!< Request the current global limit.
+                     CN_GLIMITSTATRSP   = 15, //!< Response to request for the current global limit.
+                     CN_GUPTIME         = 16, //!< Get daemon uptime.
+                     CN_GUPTIMERSP      = 17, //!< Daemon uptime response.
+                     CN_GLIST           = 18, //!< List request.
+                     CN_GLISTRSP        = 19, //!< List request response.
+                     /* Context commands.*/
+                     CN_CCREATEWITHDATA = 40, //!< Create a context, using embedded data.
+                     CN_CLAST           = 41, //!< Request the context ID of the last created context.
+                     CN_CLASTRSP        = 42, //!< Context ID of the last created context.
+                     CN_CSTART          = 43, //!< Start a context.
+                     CN_CSTOP           = 44, //!< Stop a context.
+                     CN_CABORT          = 45, //!< Abort a context.
+                     CN_CSTATUS         = 46, //!< Request status information about a context.
+                     CN_CSTATUSRSP      = 47, //!< Status information about one context.
+                     CN_CALLSTATUSRSP   = 48, //!< Status information about all contexts.
+                     CN_CMSTATUS        = 49, //!< Status information, a number of contexts.
+                     CN_CMSTATUSRSP     = 50, //!< Status information, a number of contexts - response.
+                     CN_CFILEINFO       = 51, //!< Request file info information about a context.
+                     CN_CFILEINFORSP    = 52, //!< File info information about a context.
+                     CN_CALLFILEINFORSP = 53, //!< File info information about all contexts.
+                     CN_CCLEAN          = 54, //!< Request to clean finished contexts.
+                     CN_CCLEANRSP       = 55, //!< Clean response.
+                     CN_CLIMIT          = 56, //!< Limit a context.
+                     CN_CLIMITSTATUS    = 57, //!< Limit status.
+                     CN_CLIMITSTATUSRSP = 58, //!< Limit status response.
+                     CN_CPEERS          = 59, //!< Request a list of peers.
+                     CN_CPEERSRSP       = 60, //!< Response containing a list of peers.
+                     CN_CSETFILES       = 61, //!< Set the files (inside torrent) to download.
+                     CN_CGETFILES       = 62, //!< Get the selected files.
+                     CN_CGETFILESRSP    = 63, //!< Response containing the selected files
+                     CN_CGETTRACKERS    = 64, //!< Get the list of used trackers.
+                     CN_CGETTRACKERSRSP = 65, //!< List of trackers used for a context.
+                     CN_CMOVE           = 66, //!< Move a context from one session to another.
+                     /* General commands. */ 
+                     CN_ERROR           = 100, //!< General error.
+                     CN_ACK             = 101, //!< General acknowlegment.
+                     /* Session commands. */ 
+                     CN_SATTACH         = 120, //!< Attach to a running session.
+                     CN_SDETACH         = 121, //!< Detach from a running session.
+                     CN_SERROR          = 122, //!< Daemon uses this command to tell clients that their session is invalid.
+                     CN_SINFO           = 123, //!< Get information about a session.
+                     CN_SINFORSP        = 124, //!< Information about a session.
+                     CN_SQUIT           = 125, //!< Quit the current session.
+                     CN_SLIST           = 126, //!< Get a list of sessions.
+                     CN_SLISTRSP        = 127, //!< Response that lists sessions.
+                     CN_SNAME           = 128, //!< Get current session name.
+                     CN_SNAMERSP        = 129, //!< Current session name.
+                     CN_SSETNAME        = 130, //!< Set current session name.
+                     CN_MOREAD          = 131, //!< Only read only access. Usefull for writing monitor applets.
+                     CN_MOWRITE         = 132, //!< Default write mode.
+                     CN_UNDEFINED       = 254  //!< Undefined command.
                   };
 
             public:

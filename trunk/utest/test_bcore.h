@@ -153,6 +153,8 @@ class testBcore : public CppUnit::TestFixture
 
    void XmlRpcSerializeDeserialize(btg::core::externalization::Externalization* _eSource,
                                    btg::core::externalization::Externalization* _eDestin);
+
+   void testListCommandRange(t_uint _start, t_uint _end);
  private:
    btg::core::dBuffer                           buffer;
    btg::core::externalization::Externalization* externalization;

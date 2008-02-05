@@ -143,19 +143,30 @@ void testBcore::testCommand()
 void testBcore::testCommandNames()
 {
    // The usual command names.
-   t_int i;
-   for (i=Command::CN_GINITCONNECTION; i<Command::CN_UNDEFINED; i++)
+   t_uint i = Command::CN_GINITCONNECTION;
+   CPPUNIT_ASSERT(Command::getName(i) != Command::getName(Command::CN_UNDEFINED));
+
+   // CN_UNDEFINED
+   // Name for an undefined command.
+   i += 255;
+   CPPUNIT_ASSERT(Command::getName(i) == Command::getName(Command::CN_UNDEFINED));
+   
+   testListCommandRange(Command::CN_GSETUP, Command::CN_GLISTRSP);
+   testListCommandRange(Command::CN_CCREATEWITHDATA, Command::CN_CMOVE);
+   testListCommandRange(Command::CN_ERROR, Command::CN_ACK);
+   testListCommandRange(Command::CN_SATTACH, Command::CN_MOWRITE);
+}
+
+void testBcore::testListCommandRange(t_uint _start, t_uint _end)
+{   
+   for (t_uint i=_start; i <= _end; i++)
       {
          CPPUNIT_ASSERT(Command::getName(i) != Command::getName(Command::CN_UNDEFINED));
       }
 
-   // Name for an undefined command.
-   i += 255;
-   CPPUNIT_ASSERT(Command::getName(i) == Command::getName(Command::CN_UNDEFINED));
-
    btg::core::externalization::Externalization* e = new btg::core::externalization::XMLRPC(logwrapper);
 
-   for (i=Command::CN_GINITCONNECTION ; i<Command::CN_UNDEFINED; i++)
+   for (t_uint i=_start ; i <= _end; i++)
       {
          CPPUNIT_ASSERT(e->getCommandName(i) != e->getCommandName(Command::CN_UNDEFINED));
       }
