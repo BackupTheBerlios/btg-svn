@@ -95,6 +95,11 @@ torrents). Press the help key (default /h/) to get help.
 .BI "-h|--help"
 \- Print a short help.
 
+.SH FILE BROWSER
+
+In the file browser (used to locate torrents to load), one can press
+shift-letter to jump to that letter.
+
 .SH FILES
 See btg_config(1).
 
