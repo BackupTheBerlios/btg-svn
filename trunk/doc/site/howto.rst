@@ -812,6 +812,99 @@ The above entry calls the script each minute. Notice that cron will
 e-mail the output of the script to you, so add "&> /dev/null" to avoid
 any e-mail.
 
+Setting global limits based on the time of the day
+--------------------------------------------------
+
+The following script could be used to set upload limits based on the time of the day.
+
+::
+
+ #!/bin/sh
+ 
+ # The location of the BTG client application.
+ CLIENT=btgcli
+ 
+ H=`date +%H`
+ O="none"
+ 
+ if [ "$H" -gt "0" ] || [ "$H" -lt "6" ] 
+ then
+     O="night"
+ fi
+ 
+ if [ "$H" -gt "6" ] || [ "$H" -lt "12" ]
+ then
+     O="morning"
+ fi
+ 
+ if [ "$H" -gt "12" ] || [ "$H" -lt "16" ]
+ then
+     O="midday"
+ fi
+ 
+ if [ "$H" -gt "16" ] || [ "$H" -lt "23" ]
+ then
+     O="evening"
+ fi
+ 
+ # Max upload limit.
+ UL_MAX=75
+ 
+ # Global limits in KiB/sec.
+ UL=-1
+ DL=-1
+ SET_LIMIT=0
+ 
+ case "$O" in
+     night)
+ 	UL=$UL_MAX
+ 	SET_LIMIT=1
+ 	echo "Limit:$O:$UL:$DL"
+ 	;;
+     morning)
+ 	UL=`expr $UL_MAX - 20`
+ 	SET_LIMIT=1
+ 	echo "Limit:$O:$UL:$DL"
+ 	;;
+     midday)
+ 	UL=`expr $UL_MAX - 40`
+ 	SET_LIMIT=1
+ 	echo "Limit:$O:$UL:$DL"
+ 	;;
+     evening)
+ 	UL=`expr $UL_MAX - 70`
+ 	SET_LIMIT=1
+ 	echo "Limit:$O:$UL:$DL"
+ 	;;
+     *) 
+ 	echo "Not setting limit."
+ 	;;
+ esac
+ 
+ if [ "$SET_LIMIT" -eq "0" ]
+ then
+     exit 0
+ fi
+ 
+ GOT_SESSION=0
+ $CLIENT -A -n -c "detach" &> /dev/null && GOT_SESSION=1
+ 
+ if [ $GOT_SESSION -eq 0 ]
+ then
+   $CLIENT -n -c "detach" &> /dev/null && GOT_SESSION=1
+ fi
+ 
+ if [ $GOT_SESSION -eq 0 ]
+ then
+   echo "Unable to attach or create a BTG session."
+   exit -1
+ fi
+ 
+ $CLIENT -A -n -c "glimit $UL $DL -1 -1;detach" &> /dev/null && \
+ echo "Limit set."
+
+Add it to cron like the script used to load torrents from an incoming directory.
+
 OpenWrt
 =======
 
