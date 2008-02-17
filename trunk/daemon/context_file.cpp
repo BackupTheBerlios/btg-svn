@@ -98,7 +98,29 @@ namespace btg
       {
          BTG_MENTER(logWrapper(), 
                     "moveToDestinationDir", "id = " << _torrent_id);
-
+         
+         // remove unselected files (probably they aren't completely downloaded)
+         selectedFileEntryList aSelectedFileEntryList;
+         if (getSelectedFiles(_torrent_id, aSelectedFileEntryList))
+         {
+            std::vector<selectedFileEntry> vSelectedFileEntry = aSelectedFileEntryList.files();
+            for (std::vector<selectedFileEntry>::const_iterator iSelectedFileEntry = vSelectedFileEntry.begin(); \
+               iSelectedFileEntry != vSelectedFileEntry.end(); ++iSelectedFileEntry)
+            {
+               if (!iSelectedFileEntry->selected())
+               {
+                  btg::core::os::fileOperation::remove(seedDir_ + "/" + iSelectedFileEntry->filename());
+                  // just for sure
+                  btg::core::os::fileOperation::remove(workDir_ + "/" + iSelectedFileEntry->filename());
+               }
+            }
+         }
+         else
+         {
+            BTG_MERROR(logWrapper(),"getSelectedFiles");
+            // but still continue
+         }
+         
          bool result = moveToDirectory(_torrent_id, outputDir_);
 
          BTG_MEXIT(logWrapper(), "moveToDestinationDir", result);
