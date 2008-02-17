@@ -121,14 +121,22 @@ namespace btg
             mtsw->property_window_placement().set_value(Gtk::CORNER_TOP_LEFT);
             mtsw->add(*mtw);
 
+            /*
+             * Ergonomically better to show notewbook without scrollbars, and draw scrolls inside it
+             * (my opinion - romanr)
+             */
+            
+            /*
             ntsw->set_flags(Gtk::CAN_FOCUS);
             ntsw->set_shadow_type(Gtk::SHADOW_IN);
             ntsw->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
             ntsw->property_window_placement().set_value(Gtk::CORNER_TOP_LEFT);
             ntsw->add(*mnb);
+            */
 
             contentsVPaned->pack1(*mtsw, true, false);
-            contentsVPaned->pack2(*ntsw, true, false);
+            //contentsVPaned->pack2(*ntsw, true, false);
+            contentsVPaned->pack2(*mnb, true, false);
 
             mainVbox->pack_start(*mmb, Gtk::PACK_SHRINK, 0);
 
@@ -157,12 +165,7 @@ namespace btg
             if (m_clientDynConfig.get_gui_window_maximized())
                maximize();
 
-            mtsw->show();
-            ntsw->show();
-
-            contentsVPaned->show();
-            mainVbox->show();
-            show();
+            show_all();
 
             // Create/connect a timer used for updating the list of
             // contexts.
