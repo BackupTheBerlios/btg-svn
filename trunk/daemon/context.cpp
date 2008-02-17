@@ -1562,7 +1562,7 @@ namespace btg
 
          if (ti->handle.get_torrent_info().num_files() != static_cast<t_int>(files.size()))
             {
-               BTG_MEXIT(logWrapper(), "applySelectedFiles", false);
+               BTG_MEXIT(logWrapper(), "applySelectedFiles (get_torrent_info().num_files() != files.size())", false);
                return false;
             }
 

@@ -264,17 +264,17 @@ namespace btg
 							}
 					}
 
-					selectedFileEntryList selectedfileentryList;
 					if (_version >= 0x98 && _version < 0x9a)
 					{
 						// Encryption:
 						BTG_CDC(!_e->bytesToBool(useEncryption_), "encryption flag");
                }
 
+               selectedFileEntryList aSelectedFileEntryList;
                if (_version >= 0x98)
                   {
                      // Selected files.
-                     BTG_CDC(!selectedfileentryList.deserialize(_e), "list of selected files");
+                     BTG_CDC(!aSelectedFileEntryList.deserialize(_e), "list of selected files");
                   }
 
                if (_version >= 0x99)
@@ -306,7 +306,8 @@ namespace btg
                      ti->total_payload_upload   = total_payload_upload;
 							if (_version >= 0x89)
 							{
-								ti->selected_files = selectedfileentryList;
+								BTG_CDC(!applySelectedFiles(ti,aSelectedFileEntryList), "call applySelectedFiles");
+                        //ti->selected_files = aSelectedFileEntryList; // already done in applySelectedFiles
 							}
 
                      // Restore state
