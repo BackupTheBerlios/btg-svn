@@ -1144,6 +1144,10 @@ void testBcore::testAddrPort()
    addressPort ap4(ap3);
 
    CPPUNIT_ASSERT(ap4 == ap3);
+   
+   input = "10.255.255.217:16000";
+   CPPUNIT_ASSERT(ap.fromString(input));
+   CPPUNIT_ASSERT(ap == addressPort(10,255,255,217,16000));
 }
 
 void testBcore::testPeer()
