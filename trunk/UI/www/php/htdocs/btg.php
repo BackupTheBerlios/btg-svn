@@ -633,7 +633,9 @@ class BTG
 					if($r2 instanceof contextGetTrackersResponseCommand)
 					{
 						$arr = $r2->getTrackers();
-						$output .= "<tracker>".$arr[0]."</tracker>\n";
+						$output .= "<tracker>"
+							. str_replace("\"","&quot;",str_replace(">","&gt;",str_replace("<","&lt;",str_replace("&","&amp;",$arr[0]))))
+							. "</tracker>\n";
 					}
 
 					// $output .= contextTrackers($contextStatus->getContextID());
@@ -675,7 +677,9 @@ class BTG
 				if($r2 instanceof contextGetTrackersResponseCommand)
 				{
 					$arr = $r2->getTrackers();
-					$output .= "<tracker>".$arr[0]."</tracker>\n";
+					$output .= "<tracker>"
+						. str_replace("\"","&quot;",str_replace(">","&gt;",str_replace("<","&lt;",str_replace("&","&amp;",$arr[0]))))
+						. "</tracker>\n";
 				}
 
 				$output .= "</context>\n";
