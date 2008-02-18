@@ -35,6 +35,7 @@
 
 #include <fstream>
 #include <ostream>
+#include <iostream>
 #if BTG_OPTION_SAVESESSIONS
 #  include <sstream>
 #endif // BTG_OPTION_SAVESESSIONS
@@ -51,6 +52,7 @@
 
 #include "dconfig.h"
 
+#include <bcore/t_string.h>
 #include <bcore/btg_assert.h>
 
 namespace btg
@@ -207,7 +209,69 @@ namespace btg
                // Events that can be considered normal, but still deserves
                // an event. This could be a piece hash that fails.
                torrent_session->set_severity_level(libtorrent::alert::info);
+
+               setPeerIdFromConfig();
             }
+      }
+
+      void Context::setPeerIdFromConfig()
+      {
+         // Read a Peer ID from config.
+         // Convert it to a string in which each character is a hex pair.
+         // This is representation which is used by libtorrent.
+         // Pad with zeros or truncate the string if its more than 20 characters.
+         const t_uint minPeerIdSize = 4;
+         const t_uint maxPeerIdSize = 20;
+
+         std::string peerid = config_->getPeerId();
+
+         if (peerid.size() == 0)
+            {
+               return;
+            }
+
+         if (peerid.size() < minPeerIdSize)
+            {
+               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, 
+                            "Peer ID: '" << peerid << "' must be at least " << 
+                            minPeerIdSize << " characters.");
+               return;
+            }
+
+         if (peerid.size() > maxPeerIdSize)
+            {
+               peerid = peerid.substr(0, maxPeerIdSize);
+            }
+
+         std::ostringstream oss;
+         std::string::const_iterator iter;
+         t_uint i = 0;
+         for (iter = peerid.begin();
+              iter != peerid.end();
+              iter++)
+            {
+               i = *iter;
+               oss << std::hex << std::setw(2) << std::setfill('0') << i;
+            }
+
+         if (peerid.size() < maxPeerIdSize)
+            {
+               i = 0;
+               for (t_uint counter = 0;
+                    counter < (maxPeerIdSize - peerid.size());
+                    counter++)
+                  {
+                     oss << std::hex << std::setw(2) << std::setfill('0') << i;
+                  }
+            }
+         
+         oss << std::dec << std::setfill(' ');
+
+         libtorrent::peer_id pid = btg::core::convertStringTo<libtorrent::peer_id>(oss.str());
+
+         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, 
+                      "Overriding libtorrent peer ID with: '" << peerid << "'.");
+         torrent_session->set_peer_id(pid);
       }
 
       t_intList Context::getContexts() const
@@ -1935,8 +1999,17 @@ namespace btg
          session_settings_.peer_timeout                    = 512;
          session_settings_.urlseed_timeout                 = 512;
          session_settings_.tracker_maximum_response_length = 1024 * 1024 * 1024;
-         session_settings_.user_agent                      = GPD->sDAEMON() + GPD->sSPACE() + GPD->sVERSION();
-
+         std::string userAgent = config_->getUserAgent();
+         if (userAgent.size() > 0)
+            {
+               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, 
+                            "Overriding user agent with: '" << userAgent << "'.");
+               session_settings_.user_agent = userAgent;
+            }
+         else
+            {
+               session_settings_.user_agent = GPD->sDAEMON() + GPD->sSPACE() + GPD->sVERSION();
+            }
          BTG_MNOTICE(logWrapper(), "user agent string: " << session_settings_.user_agent);
 
          torrent_session->set_settings(session_settings_);

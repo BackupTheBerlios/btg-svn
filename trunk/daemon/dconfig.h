@@ -214,6 +214,12 @@ namespace btg
                bool getUseUPnP() const;
 #endif // BTG_OPTION_UPNP
 
+               /// Get the Peer ID to use when creating new contexts.
+               std::string getPeerId() const;
+
+               /// Get user agent string.
+               std::string getUserAgent() const;
+
                /// Encryption policy used.
                enum encryption_policy
                   {
@@ -239,7 +245,6 @@ namespace btg
                /// Destructor.
                virtual ~daemonConfiguration();
             private:
-
                /// Read the encryption policy.
                void readEncryptionPolicy(std::string const& _input,
                                          encryption_policy & _output);
@@ -274,6 +279,12 @@ namespace btg
                               std::string const& _section,
                               std::string const& _description,
                               bool const& _value);
+
+               /// Read the peer ID and user agent settings.
+               void readPeerIdAndUserAgent();
+
+               /// Write the peer ID and user agent settings.
+               bool writePeerIdAndUserAgent();
 
                /* Transport */
                /// Default transport.
@@ -369,6 +380,11 @@ namespace btg
                /// If encrypted connections are prefered.
                bool                                        def_prefer_rc4;
 
+               /// Peer ID to use when creating new contexts.
+               std::string                                 def_peerId;
+
+               /// User agent used.
+               std::string                                 def_userAgent;
             };
 
       } // namespace daemon

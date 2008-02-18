@@ -649,6 +649,8 @@ namespace btg
 
                /// Enable encryption.
                void enableEncryption();
+
+               void setPeerIdFromConfig();
             private:
                /// Copy constructor.
                Context(Context const& _c);

@@ -79,6 +79,10 @@ filter           \- Filename from wich IPv4 addresses are read from. See "filter
 filter_type      \- Format of the above file. Choice between: "level1" and "emule".
 .TP
 use-torrent-name \- True/false. Enable/disable using torrent names (as stored in the torrent file) instead of torrent file names.
+.TP
+peer-id          \- String. Override the Peer ID.
+.TP
+user-agent       \- String. Override the user agent sent to tracker.
 
 .SS
 Section "auth"

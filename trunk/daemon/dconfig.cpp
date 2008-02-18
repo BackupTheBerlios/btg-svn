@@ -90,6 +90,12 @@ namespace btg
       std::string const VALUE_FILTERTYPE_LEVEL1("level1");
       std::string const VALUE_FILTERTYPE_EMULE("emule");
 
+      std::string const KEY_MISC_PEERID("peer-id");
+      std::string const DESCR_MISC_PEERID("Peer ID");
+
+      std::string const KEY_MISC_USERAGENT("user-agent");
+      std::string const DESCR_MISC_USERAGENT("user agent string");
+
       std::string const SECTION_LIMIT("limit");
       std::string const KEY_LIMIT_UPLOAD_RATE_LIMIT("upload_rate_limit");
       std::string const KEY_LIMIT_DOWNLOAD_RATE_LIMIT("download_rate_limit");
@@ -157,7 +163,9 @@ namespace btg
            def_out_enc_policy(daemonConfiguration::disabled),
            def_in_enc_policy(daemonConfiguration::disabled),
            def_enc_level(daemonConfiguration::plaintext),
-           def_prefer_rc4(false)
+           def_prefer_rc4(false),
+           def_peerId(""),
+           def_userAgent("")
       {
       }
 
@@ -314,6 +322,8 @@ namespace btg
                            def_filterType = IpFilterIf::IPF_EMULE;
                         }
                   }
+
+               readPeerIdAndUserAgent();
 
                /* Limit */
                std::string s_limit;
@@ -672,6 +682,11 @@ namespace btg
                   }
             }
 
+         if (!writePeerIdAndUserAgent())
+            {
+               status = false;
+            }
+
          /* Limit */
          std::string limit;
          /* Upload rate limit. */
@@ -1011,6 +1026,24 @@ namespace btg
 
          formatKey(KEY_MISC_FILTERTYPE,
                    "File containing IPv4 filter",
+                   temp,
+                   output);
+
+         /* Client ID. */
+         temp.clear();
+         temp.push_back(std::string("string"));
+
+         formatKey(KEY_MISC_PEERID,
+                   "String for use as peer ID",
+                   temp,
+                   output);
+
+         /* User agent. */
+         temp.clear();
+         temp.push_back(std::string("string"));
+
+         formatKey(KEY_MISC_USERAGENT,
+                   "String for use as user agent",
                    temp,
                    output);
 
@@ -1592,6 +1625,60 @@ namespace btg
          _out       = def_out_enc_policy;
          _level     = def_enc_level;
          _preferRc4 = def_prefer_rc4;
+      }
+
+      std::string daemonConfiguration::getPeerId() const
+      {
+         return def_peerId;
+      }
+
+      std::string daemonConfiguration::getUserAgent() const
+      {
+         return def_userAgent;
+      }
+
+      void daemonConfiguration::readPeerIdAndUserAgent()
+      {
+         std::string peerIdStr = inifile->GetValue(KEY_MISC_PEERID, SECTION_MISC);
+         if (peerIdStr.size() > 0)
+            {
+               def_peerId = peerIdStr;
+            }
+         
+         std::string userAgentStr = inifile->GetValue(KEY_MISC_USERAGENT, SECTION_MISC);
+         if (userAgentStr.size() > 0)
+            {
+               def_userAgent = userAgentStr;
+            }
+      }
+
+      bool daemonConfiguration::writePeerIdAndUserAgent()
+      {
+         if (def_peerId.size() > 0)
+            {
+               if (!inifile->SetValue(KEY_MISC_PEERID,
+                                      def_peerId,
+                                      DESCR_MISC_PEERID,
+                                      SECTION_MISC))
+                  {
+                     setErrorDescription(writeOperation, SECTION_MISC, KEY_MISC_PEERID);
+                     return false;
+                  }
+            }
+         
+         if (def_userAgent.size() > 0)
+            {
+               if (!inifile->SetValue(KEY_MISC_USERAGENT,
+                                      def_userAgent,
+                                      DESCR_MISC_USERAGENT,
+                                      SECTION_MISC))
+                  {
+                     setErrorDescription(writeOperation, SECTION_MISC, KEY_MISC_USERAGENT);
+                     return false;
+                  }
+            }
+
+         return true;
       }
 
       daemonConfiguration::~daemonConfiguration()
