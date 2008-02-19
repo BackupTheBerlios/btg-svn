@@ -69,7 +69,8 @@ rm -f datestamp
 
 AC_PATH_PROGS(SVNVERSION, svnversion, [])
 if test -n "$SVNVERSION" ; then
-  BTG_SVNREV="SVN rev. `${SVNVERSION} . -n`"
+  local_SRC_DIR=`dirname $0`
+  BTG_SVNREV="SVN rev. `${SVNVERSION} -n $local_SRC_DIR`"
 else
   BTG_SVNREV=""
 fi   
