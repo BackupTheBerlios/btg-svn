@@ -2,6 +2,9 @@ BTG version 0.9.7
 -----------------
 The following bugs were fixed:
 
+013147 Handle octets set to 255 in Address/addressPort.
+013146 XML Pasing error (wwwui).
+013142 Restore file priorities after restart.
 013007 Show session settings.
 012997 Session saving, fix saving of dht/encryption settings.
 012975 externalization, simple, exorcism.
