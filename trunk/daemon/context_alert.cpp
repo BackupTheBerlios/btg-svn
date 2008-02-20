@@ -53,19 +53,8 @@ namespace btg
       {
          // A torrent finnished.
 
-         // Resolve the torrent handle to a torrent id.
-         torrentInfo* ti = 0;
-         std::map<t_int, torrentInfo*>::iterator tii;
-         t_int torrent_id = -1;
-         for (tii = torrents.begin(); tii != torrents.end(); tii++)
-            {
-               if (tii->second->handle == _alert->handle)
-                  {
-                     torrent_id = tii->first;
-                     ti = tii->second;
-                     break;
-                  }
-            }
+         t_int torrent_id = handleToID(_alert->handle);
+         torrentInfo* ti = getTorrentInfo(torrent_id);
 
          // Unknown id?
          if (torrent_id == -1 || !ti)
@@ -76,7 +65,7 @@ namespace btg
 
          // Move the output to the seeding dir.
 
-         if (!this->moveToSeedingDir(torrent_id))
+         if (!moveToSeedingDir(torrent_id))
             {
                BTG_NOTICE(logWrapper(), "Context::handleAlerts(), unable to move to the seeding directory.");
             }
@@ -212,6 +201,15 @@ namespace btg
             }
       }
 
+      void Context::handleBlockDownloadingAlert(libtorrent::block_downloading_alert* _alert)
+      {
+         t_int torrent_id = handleToID(_alert->handle);
+         if (!moveToWorkingDir(torrent_id))
+         {
+            BTG_ERROR_LOG(logWrapper(), "moveToWorkingDir failed");
+         }
+      }
+
       void Context::handleAlerts()
       {
          std::auto_ptr<libtorrent::alert> sp_alert = torrent_session->pop_alert();
@@ -244,6 +242,10 @@ namespace btg
                else if (typeid(*alert) == typeid(libtorrent::tracker_warning_alert))
                   {
                      handleTrackerWarningAlert(dynamic_cast<libtorrent::tracker_warning_alert*>(alert));
+                  }
+               else if (typeid(*alert) == typeid(libtorrent::block_downloading_alert))
+                  {
+                     handleBlockDownloadingAlert(dynamic_cast<libtorrent::block_downloading_alert*>(alert));
                   }
                else
                   {

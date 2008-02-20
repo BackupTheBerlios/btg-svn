@@ -139,7 +139,7 @@ namespace btg
          class portManager;
          class limitManager;
          class daemonConfiguration;
-
+         
          /// An abstraction which is used to communicate with the thread that
          /// runs the bittorrent client.
          class Context: public btg::core::Logable
@@ -202,7 +202,7 @@ namespace btg
                /// @return True - success, false otherwise.
                bool setDHTNodes(std::vector<std::pair<std::string, t_int> > const& _nodes);
 
-               /// Add a torrent file to this context. Starts stopped.
+               /// Add a torrent file to this context.
                /// @param [in] _torrent_filename  Filename of the torrent file to add (expected to be in tempDir).
                /// @param [in] _buffer            The contents of the file.
                /// @param [out] _handle_id        The ID of the added context. Defined only if the torrent was added. Check the returned status.
@@ -390,6 +390,12 @@ namespace btg
                /// Used to remove the .torrent file from the temporary storage
                bool removeTorrentFile(t_int const _torrent_id);
 
+               /// Used to move an uncompleted by some reasons download
+               /// to the working directory (workDir_).
+               /// @param [in]  _torrent_id  Context ID of a torrent.
+               /// @return True if operation was successful, false if not.
+               bool moveToWorkingDir(t_int const _torrent_id);
+
                /// Used to move a finished download to the seeding
                /// directory (seedDir_).
                /// @param [in]  _torrent_id  Context ID of a torrent.
@@ -425,6 +431,9 @@ namespace btg
 
                /// Handle libtorrent alert.
                void handleTrackerWarningAlert(libtorrent::tracker_warning_alert* _alert);
+
+               /// Handle libtorrent alert.
+               void handleBlockDownloadingAlert(libtorrent::block_downloading_alert* _alert);
             public:
 #if BTG_OPTION_SAVESESSIONS
                /// Session saving: serialize the torrents so they can be reloaded later.
@@ -523,6 +532,12 @@ namespace btg
 
                /// Map of torrent information.
                std::map<t_int, torrentInfo*>             torrents;
+               
+               /// where storage for torrent is
+               enum torrentStorage { tsWork, tsSeed, tsDest };
+               
+               /// Map of torrent storage
+               std::map<t_int, torrentStorage>           torrent_storage;
 
                /// Flag which tells if a client is attached.
                bool                                      clientAttached;
@@ -578,6 +593,10 @@ namespace btg
                /// @param [in] _torrent_id The ID of the libtorrent handle.
                /// @return True - success. False - failture.
                bool safeForFileInfo(t_int const _torrent_id);
+
+               /// Resolve the torrent handle to a torrent id.
+               /// @param [in] handle torrent handle
+               t_int handleToID(const libtorrent::torrent_handle & handle) const;
 
                /// Set http settings for normal usage.
                void setNormalHttpSettings();

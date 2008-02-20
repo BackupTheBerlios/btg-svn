@@ -62,33 +62,49 @@ namespace btg
          return result;
       }
 
+      bool Context::moveToWorkingDir(t_int const _torrent_id)
+      {
+         BTG_MENTER(logWrapper(), 
+                    "moveToWorkingDir", "id = " << _torrent_id);
+         
+         bool result = false;
+
+         if (torrent_storage[_torrent_id] == tsWork)
+         {
+            result = true;
+            // already in work
+            BTG_MEXIT(logWrapper(), "moveToWorkingDir", result);
+            return result;
+         }
+
+         result = moveToDirectory(_torrent_id, workDir_);
+
+         if (result)
+            torrent_storage[_torrent_id] = tsWork;
+
+         BTG_MEXIT(logWrapper(), "moveToWorkingDir", result);
+         return result;
+      }
+      
       bool Context::moveToSeedingDir(t_int const _torrent_id)
       {
          BTG_MENTER(logWrapper(), 
                     "moveToSeedingDir", "id = " << _torrent_id);
+         
          bool result = false;
 
-         torrentInfo* torrentinfo           = getTorrentInfo(_torrent_id);
-
-         if (torrentinfo == 0)
-            {
-               BTG_MEXIT(logWrapper(), "moveToSeedingDir", result);
-               return result;
-            }
-
-         libtorrent::torrent_info const& ti = torrentinfo->handle.get_torrent_info();
-
-         if (dataPresentInSeedDir(ti))
-            {
-               // There is no need to move the data.
-               // The torrent's data is already in the seed directory.
-
-               result = true;
-               BTG_MEXIT(logWrapper(), "moveToSeedingDir", result);
-               return result;
-            }
-
+         if (torrent_storage[_torrent_id] == tsSeed)
+         {
+            result = true;
+            // already in seed
+            BTG_MEXIT(logWrapper(), "moveToSeedingDir", result);
+            return result;
+         }
+         
          result = moveToDirectory(_torrent_id, seedDir_);
+
+         if (result)
+            torrent_storage[_torrent_id] = tsSeed;
 
          BTG_MEXIT(logWrapper(), "moveToSeedingDir", result);
          return result;
@@ -98,6 +114,16 @@ namespace btg
       {
          BTG_MENTER(logWrapper(), 
                     "moveToDestinationDir", "id = " << _torrent_id);
+
+         bool result = false;
+         
+         if (torrent_storage[_torrent_id] == tsDest)
+         {
+            result = true;
+            // already in dest
+            BTG_MEXIT(logWrapper(), "moveToDestinationDir", result);
+            return result;
+         }
          
          // remove unselected files (probably they aren't completely downloaded)
          selectedFileEntryList aSelectedFileEntryList;
@@ -121,7 +147,10 @@ namespace btg
             // but still continue
          }
          
-         bool result = moveToDirectory(_torrent_id, outputDir_);
+         result = moveToDirectory(_torrent_id, outputDir_);
+         
+         if (result)
+            torrent_storage[_torrent_id] = tsDest;
 
          BTG_MEXIT(logWrapper(), "moveToDestinationDir", result);
          return result;
@@ -239,6 +268,10 @@ namespace btg
          BTG_MENTER(logWrapper(), "dataPresentInSeedDir(torrent_info)", "");
 
          bool status = true;
+         
+         // Fix of bug #10064
+         // Try to find ANY file in seed dir before give up
+         bool found = false;
 
          libtorrent::torrent_info::file_iterator iter;
 
@@ -261,10 +294,11 @@ namespace btg
                      file_path = file_path.branch_path();
                   }
 
-               // Fix of bug #11575 / #12055.
+               // Fix of bug #11575 / #12055
                // Check if the found file path is a directory.
                // If its not, then its just files in the seed
                // directory.
+               
                
                try
                   {
@@ -284,12 +318,7 @@ namespace btg
                                    "Got exception from boost::filesystem, is_directory: " << 
                                    e.what());
                      status = false;
-                  }
-
-               if (!status)
-                  {
-                     BTG_MEXIT(logWrapper(), "dataPresentInSeedDir(torrent_info)", status);
-                     return status;
+                     break;
                   }
 
                BTG_MNOTICE(logWrapper(), "Using directory '" << file_path.string() << "'");
@@ -297,9 +326,9 @@ namespace btg
 	      
                try
                   {
-                     if (!find_file(boost::filesystem::path(file_path), filename))
+                     if (find_file(boost::filesystem::path(file_path), filename))
                         {
-                           status = false;
+                           found = true;
                            break;
                         }
                   }
@@ -312,8 +341,8 @@ namespace btg
                   }
             }
 
-         BTG_MEXIT(logWrapper(), "dataPresentInSeedDir(torrent_info)", status);
-         return status;
+         BTG_MEXIT(logWrapper(), "dataPresentInSeedDir(torrent_info)", (status && found) );
+         return status && found;
       }
 
       bool Context::entryToInfo(libtorrent::entry const& _input,

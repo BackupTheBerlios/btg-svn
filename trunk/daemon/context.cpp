@@ -208,7 +208,7 @@ namespace btg
                // From the libtorrent manual.
                // Events that can be considered normal, but still deserves
                // an event. This could be a piece hash that fails.
-               torrent_session->set_severity_level(libtorrent::alert::info);
+               torrent_session->set_severity_level(libtorrent::alert::debug);
 
                setPeerIdFromConfig();
             }
@@ -535,14 +535,16 @@ namespace btg
 
          // Check the torrent file against the seed dir. Attempt to
          // find out if the data resides in the seed directory.
-
+         torrentStorage ts = tsWork;
          if (dataPresentInSeedDir(*tinfo))
             {
                dataPath =  boost::filesystem::path(seedDir_, boost::filesystem::native);
+               ts = tsSeed;
             }
          else
             {
                dataPath = boost::filesystem::path(workDir_, boost::filesystem::native);
+               ts = tsWork;
             }
 
          libtorrent::torrent_handle handle;
@@ -614,6 +616,7 @@ namespace btg
 
                torrents[handle_id] = ti;
                torrent_ids.push_back(handle_id);
+               torrent_storage[handle_id] = ts;
 
                // Updated handle ID in arguments.
                _handle_id          = handle_id;
@@ -745,6 +748,9 @@ namespace btg
          torrents.erase(_torrent_id);
          delete ti;
          ti = 0;
+         
+         // Remove storage data
+         torrent_storage.erase(_torrent_id);
 
          // Remove the context id:
          t_intListI ii;
@@ -1690,6 +1696,19 @@ namespace btg
             }
 
          return tii->second;
+      }
+
+      t_int Context::handleToID(const libtorrent::torrent_handle & handle) const
+      {
+         std::map<t_int, torrentInfo*>::const_iterator tii;
+         for (tii = torrents.begin(); tii != torrents.end(); ++tii)
+            {
+               if (tii->second->handle == handle)
+                  {
+                     return tii->first;
+                  }
+            }
+         return -1;
       }
 
       bool Context::safeForFileInfo(t_int const _torrent_id)
