@@ -669,6 +669,8 @@ namespace btg
                /// Enable encryption.
                void enableEncryption();
 
+               /// Set peer ID (read from configuration, converting it
+               /// to a format used by libtorrent).
                void setPeerIdFromConfig();
             private:
                /// Copy constructor.
