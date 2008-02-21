@@ -21,12 +21,7 @@
  */
 
 #include "mainwindow.h"
-#include <gdk/gdkkeysyms.h>
-#include <gtkmm/accelgroup.h>
-#include <gtkmm/label.h>
-#include <gtkmm/scrolledwindow.h>
-#include <gtkmm/box.h>
-#include <gtkmm/paned.h>
+#include <gtkmm.h>
 
 #include "mainmenubar.h"
 #include "maintreeview.h"
@@ -106,14 +101,13 @@ namespace btg
               trackerstatSerial(),
               m_clientDynConfig(dc)
          {
-            mmb                       = Gtk::manage(new class mainMenubar(this));
-            mtw                       = Gtk::manage(new class mainTreeview());
-            Gtk::ScrolledWindow* mtsw = Gtk::manage(new class Gtk::ScrolledWindow());
-            Gtk::ScrolledWindow* ntsw = Gtk::manage(new class Gtk::ScrolledWindow());
-            mnb                       = Gtk::manage(new class mainNotebook());
-            Gtk::VPaned* contentsVPaned = Gtk::manage(new class Gtk::VPaned);
-            msb                       = Gtk::manage(new class mainStatusbar());
-            Gtk::VBox *mainVbox       = Gtk::manage(new class Gtk::VBox(false, 0));
+            mmb                       = Gtk::manage(new mainMenubar(this));
+            mtw                       = Gtk::manage(new mainTreeview);
+            Gtk::ScrolledWindow* mtsw = Gtk::manage(new Gtk::ScrolledWindow);
+            mnb                       = Gtk::manage(new mainNotebook);
+            Gtk::VPaned* contentsVPaned = Gtk::manage(new Gtk::VPaned);
+            msb                       = Gtk::manage(new mainStatusbar);
+            Gtk::VBox *mainVbox       = Gtk::manage(new Gtk::VBox);
 
             mtsw->set_flags(Gtk::CAN_FOCUS);
             mtsw->set_shadow_type(Gtk::SHADOW_IN);
@@ -121,28 +115,60 @@ namespace btg
             mtsw->property_window_placement().set_value(Gtk::CORNER_TOP_LEFT);
             mtsw->add(*mtw);
 
-            /*
-             * Ergonomically better to show notewbook without scrollbars, and draw scrolls inside it
-             * (my opinion - romanr)
-             */
-            
-            /*
-            ntsw->set_flags(Gtk::CAN_FOCUS);
-            ntsw->set_shadow_type(Gtk::SHADOW_IN);
-            ntsw->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-            ntsw->property_window_placement().set_value(Gtk::CORNER_TOP_LEFT);
-            ntsw->add(*mnb);
-            */
-
             contentsVPaned->pack1(*mtsw, true, false);
-            //contentsVPaned->pack2(*ntsw, true, false);
             contentsVPaned->pack2(*mnb, true, false);
 
             mainVbox->pack_start(*mmb, Gtk::PACK_SHRINK, 0);
 
             // Start with the control menu disabled.
             mmb->disableControlFunction();
+            
 
+            // Toolbar
+            Gtk::Toolbar *tbar = Gtk::manage(new Gtk::Toolbar);
+            Gtk::ToolButton *tbutton;
+
+            tbutton = Gtk::manage(new Gtk::ToolButton);
+            tbutton->set_label("Open");
+            tbutton->set_icon_name("gtk-new");
+            tbar->append(*tbutton,sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*this, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LOAD ));
+            
+            tbar->append(*Gtk::manage(new Gtk::SeparatorToolItem));
+            
+            tbutton = Gtk::manage(new Gtk::ToolButton);
+            tbutton->set_label("Start");
+            // something strange with this icon - impossible set via set_icon_name :-/
+            //tbutton->set_icon_name("gtk-media-play");
+            tbutton->set_stock_id(Gtk::Stock::MEDIA_PLAY);
+            tbar->append(*tbutton,sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*this, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_START ));
+
+            tbutton = Gtk::manage(new Gtk::ToolButton);
+            tbutton->set_label("Stop");
+            tbutton->set_icon_name("gtk-media-pause");
+            tbar->append(*tbutton,sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*this, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_STOP ));
+
+            tbar->append(*Gtk::manage(new Gtk::SeparatorToolItem));
+
+            tbutton = Gtk::manage(new Gtk::ToolButton);
+            tbutton->set_label("Abort");
+            tbutton->set_icon_name("gtk-cancel");
+            tbar->append(*tbutton,sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*this, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_ABORT ));
+            
+            tbutton = Gtk::manage(new Gtk::ToolButton);
+            tbutton->set_label("Clean");
+            tbutton->set_icon_name("gtk-apply");
+            tbar->append(*tbutton,sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*this, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_CLEAN ));
+            
+            tbar->append(*Gtk::manage(new Gtk::SeparatorToolItem));
+
+            tbutton = Gtk::manage(new Gtk::ToolButton);
+            tbutton->set_label("Limit");
+            tbutton->set_icon_name("gtk-preferences");
+            tbar->append(*tbutton,sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*this, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LIMIT ));
+
+            mainVbox->pack_start(*tbar,Gtk::PACK_SHRINK);
+
+            
             mainVbox->pack_start(*contentsVPaned);
             mainVbox->pack_start(*msb, Gtk::PACK_SHRINK, 0);
             set_title("btgui (session #" + _session + ")");
