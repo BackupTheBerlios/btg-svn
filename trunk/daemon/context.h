@@ -594,10 +594,6 @@ namespace btg
                /// @return True - success. False - failture.
                bool safeForFileInfo(t_int const _torrent_id);
 
-               /// Resolve the torrent handle to a torrent id.
-               /// @param [in] handle torrent handle
-               t_int handleToID(const libtorrent::torrent_handle & handle) const;
-
                /// Set http settings for normal usage.
                void setNormalHttpSettings();
 

@@ -1698,19 +1698,6 @@ namespace btg
          return tii->second;
       }
 
-      t_int Context::handleToID(const libtorrent::torrent_handle & handle) const
-      {
-         std::map<t_int, torrentInfo*>::const_iterator tii;
-         for (tii = torrents.begin(); tii != torrents.end(); ++tii)
-            {
-               if (tii->second->handle == handle)
-                  {
-                     return tii->first;
-                  }
-            }
-         return -1;
-      }
-
       bool Context::safeForFileInfo(t_int const _torrent_id)
       {
          bool result = false;
@@ -2070,7 +2057,7 @@ namespace btg
 
          for (tii = torrents.begin();
               tii != torrents.end();
-              tii++)
+              ++tii)
             {
                if (tii->second->handle == _handle)
                   {
