@@ -56,6 +56,9 @@ namespace btg
          t_int torrent_id = handleToID(_alert->handle);
          torrentInfo* ti = getTorrentInfo(torrent_id);
 
+         BTG_NOTICE(logWrapper(), "handleFinishedTorrent torrent_id=" << torrent_id \
+            << ", ti=0x" << std::hex << ti << std::dec );
+
          // Unknown id?
          if (torrent_id == -1 || !ti)
             {
@@ -201,9 +204,21 @@ namespace btg
             }
       }
 
-      void Context::handleBlockDownloadingAlert(libtorrent::block_downloading_alert* _alert)
+      void Context::handleDownloadingAlert(libtorrent::torrent_alert* _alert)
       {
          t_int torrent_id = handleToID(_alert->handle);
+
+#if BTG_DEBUG
+         libtorrent::block_downloading_alert* bd_alert = dynamic_cast<libtorrent::block_downloading_alert*>(_alert);
+         if (bd_alert)
+         {
+            BTG_NOTICE(logWrapper(), "handleBlockDownloadingAlert torrent_id=" << torrent_id \
+               << ", peer_speedmsg=" << bd_alert->peer_speedmsg \
+               << ", block_index=" << bd_alert->block_index \
+               << ", piece_index=" << bd_alert->piece_index);
+         }
+#endif
+
          if (!moveToWorkingDir(torrent_id))
          {
             BTG_ERROR_LOG(logWrapper(), "moveToWorkingDir failed");
@@ -212,47 +227,56 @@ namespace btg
 
       void Context::handleAlerts()
       {
-         std::auto_ptr<libtorrent::alert> sp_alert = torrent_session->pop_alert();
-         libtorrent::alert* alert = sp_alert.get();
+         // fetch and handle all libtorrent alerts present in queue
+         for(;;)
+         {
+            std::auto_ptr<libtorrent::alert> sp_alert = torrent_session->pop_alert();
+            libtorrent::alert* alert = sp_alert.get();
 
-         if (alert != 0)
-            {
-               // peer_ban_alert
-               // peer_error_alert
-               if (typeid(*alert) == typeid(libtorrent::peer_ban_alert))
-                  {
-                     handleBannedHost(dynamic_cast<libtorrent::peer_ban_alert*>(alert));
-                  }
-               else if (typeid(*alert) == typeid(libtorrent::torrent_finished_alert))
-                  {
-                     handleFinishedTorrent(dynamic_cast<libtorrent::torrent_finished_alert*>(alert));
-                  }
-               else if (typeid(*alert) == typeid(libtorrent::peer_error_alert))
-                  {
-                     handlePeerError(dynamic_cast<libtorrent::peer_error_alert*>(alert));
-                  }
-               else if (typeid(*alert) == typeid(libtorrent::tracker_alert))
-                  {
-                     handleTrackerAlert(dynamic_cast<libtorrent::tracker_alert*>(alert));
-                  }
-               else if (typeid(*alert) == typeid(libtorrent::tracker_reply_alert))
-                  {
-                     handleTrackerReplyAlert(dynamic_cast<libtorrent::tracker_reply_alert*>(alert));
-                  }
-               else if (typeid(*alert) == typeid(libtorrent::tracker_warning_alert))
-                  {
-                     handleTrackerWarningAlert(dynamic_cast<libtorrent::tracker_warning_alert*>(alert));
-                  }
-               else if (typeid(*alert) == typeid(libtorrent::block_downloading_alert))
-                  {
-                     handleBlockDownloadingAlert(dynamic_cast<libtorrent::block_downloading_alert*>(alert));
-                  }
-               else
-                  {
-                     // Log other alerts.
-                     BTG_NOTICE(logWrapper(), "Alert: " << alert->msg());
-                  }
-            }
+            if (alert != 0)
+               {
+                  // peer_ban_alert
+                  // peer_error_alert
+                  if (typeid(*alert) == typeid(libtorrent::peer_ban_alert))
+                     {
+                        handleBannedHost(dynamic_cast<libtorrent::peer_ban_alert*>(alert));
+                     }
+                  else if (typeid(*alert) == typeid(libtorrent::torrent_finished_alert))
+                     {
+                        handleFinishedTorrent(dynamic_cast<libtorrent::torrent_finished_alert*>(alert));
+                     }
+                  else if (typeid(*alert) == typeid(libtorrent::peer_error_alert))
+                     {
+                        handlePeerError(dynamic_cast<libtorrent::peer_error_alert*>(alert));
+                     }
+                  else if (typeid(*alert) == typeid(libtorrent::tracker_alert))
+                     {
+                        handleTrackerAlert(dynamic_cast<libtorrent::tracker_alert*>(alert));
+                     }
+                  else if (typeid(*alert) == typeid(libtorrent::tracker_reply_alert))
+                     {
+                        handleTrackerReplyAlert(dynamic_cast<libtorrent::tracker_reply_alert*>(alert));
+                     }
+                  else if (typeid(*alert) == typeid(libtorrent::tracker_warning_alert))
+                     {
+                        handleTrackerWarningAlert(dynamic_cast<libtorrent::tracker_warning_alert*>(alert));
+                     }
+                  else if (typeid(*alert) == typeid(libtorrent::block_downloading_alert))
+                     {
+                        handleDownloadingAlert(dynamic_cast<libtorrent::torrent_alert*>(alert));
+                     }
+                  else
+                     {
+                        // Log other alerts.
+                        BTG_NOTICE(logWrapper(), "Alert: " << alert->msg() << " (" << typeid(*alert).name() << ")");
+                     }
+               }
+            else
+               {
+                  // no more alerts in queue
+                  break;
+               }
+         }
       }
 
    } // namespace daemon
