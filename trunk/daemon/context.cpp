@@ -1102,7 +1102,10 @@ namespace btg
                ts = Status::ts_seeding;
                break;
             case libtorrent::torrent_status::finished:
-               ts = Status::ts_downloading;
+               // FINISHED = (not all files selected) && (all selected files downloaded)
+               // we show FINISHED when (not all files selected) && (all selected files downloaded) && (torrent stopped)
+               // so here we show SEEDING
+               ts = Status::ts_seeding;
                break;
             default:
                ts = Status::ts_undefined;
