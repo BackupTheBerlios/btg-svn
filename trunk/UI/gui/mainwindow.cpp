@@ -224,8 +224,6 @@ namespace btg
 
             msb->trigger();
 
-            mnb->getPlot()->resetCounters();
-
             bool doUpdateProgress = false;
 
             if (progressCounter >= progressMax)
@@ -252,6 +250,8 @@ namespace btg
 
             if (gotStatus)
                {
+                  mnb->getPlot()->resetCounters();
+
                   for (t_statusListI iter = statuslist.begin();
                        iter != statuslist.end();
                        iter++)
@@ -264,6 +264,8 @@ namespace btg
 
                         updateTrackerStatus(*iter);
                      }
+
+                  mnb->getPlot()->updateModel();
                }
             else
                {
@@ -284,6 +286,14 @@ namespace btg
                   }
                }
 
+            mainNotebook::CurrentSelection currentselection = mnb->selected();
+
+            // Update the plot even when no torrents are selected.
+            if (currentselection == mainNotebook::GRAPH)
+               {
+                  updatePlot();
+               }
+
             // If a torrent is selected, attempt to get a file info
             // and list of peers.
             if (mtw->gotSelection())
@@ -299,13 +309,8 @@ namespace btg
                         elemMap_citer ci = m.begin();
                         int id           = ci->first;
 
-                        mainNotebook::CurrentSelection currentselection = mnb->selected();
-
                         switch (currentselection)
                            {
-                           case mainNotebook::GRAPH:
-                              updatePlot();
-                              break;
                            case mainNotebook::DETAILS:
                               updateDetails(id, statuslist);
                               break;
@@ -322,6 +327,8 @@ namespace btg
                               updatePeers(id);
                               break;
                            case mainNotebook::LOG:
+                              break;
+                           default:
                               break;
                            }
 
@@ -684,7 +691,7 @@ namespace btg
          void mainWindow::updatePlot()
          {
             // Redraw the bandwidth plot.
-            mnb->getPlot()->updateModel();
+            mnb->getPlot()->redraw();
          }
 
          void mainWindow::checkSelectedFiles()

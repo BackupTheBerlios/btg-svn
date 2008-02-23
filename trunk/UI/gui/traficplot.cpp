@@ -124,7 +124,10 @@ namespace btg
 
             tm.getUpload(x,y);
             ul_curve->set_data(x, y);
+         }
 
+         void traficPlot::redraw()
+         {
             // Update the title:
             std::string title("Current bandwidth: ");
             title += bytesPerSecondToString(tm.getCurrentDownload(), true);
