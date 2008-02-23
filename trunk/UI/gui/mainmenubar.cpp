@@ -21,9 +21,7 @@
  */
 
 #include "mainmenubar.h"
-#include <gtkmm/menuitem.h>
-#include <gtkmm/menu.h>
-#include <gtkmm/main.h>
+#include <gtkmm.h>
 
 #include <iostream>
 
@@ -43,32 +41,27 @@ namespace btg
 
          mainMenubar::mainMenubar(mainWindow* _mainwindow)
             : controlMenuItem(0),
-              controlFunctionEnabled(false),
-              lastFiles_separator(0),
+              controlFunctionEnabled(true),
+              lastFilesMenu(0),
               lastFiles(0),
-              open_all_last(0),
               startMenuitem(0),
               stopMenuitem(0),
               abortMenuitem(0),
               eraseMenuitem(0),
               cleanMenuitem(0),
               limitMenuitem(0),
-              moveMenuitem(0)
+              moveMenuitem(0),
+              preferencesMenuitem(0)
          {
             Gtk::MenuBar *mainMenubar          = this;
             Gtk::MenuItem *load_menuitem       = 0;
             Gtk::MenuItem *detachMenuitem      = 0;
-            Gtk::MenuItem *file_separator      = 0;
-            Gtk::MenuItem *preferencesMenuitem = 0;
-            Gtk::MenuItem *quitMenuitem        = 0;
             Gtk::Menu *fileMenu                = Gtk::manage(new class Gtk::Menu());
 
-            Gtk::Menu *recentFileMenu          = Gtk::manage(new class Gtk::Menu());
-            Gtk::MenuItem *RecentMenuitem      = 0;
+            lastFilesMenu                      = Gtk::manage(new class Gtk::Menu());
+            Gtk::MenuItem *openAllLastMenuitem = 0;
 
             Gtk::MenuItem *fileMenuitem        = 0;
-
-            Gtk::MenuItem *control_separator1  = 0;
 
             Gtk::Menu* controlMenu             = Gtk::manage(new class Gtk::Menu());
             controlMenuItem                    = 0;
@@ -76,210 +69,150 @@ namespace btg
             Gtk::Menu *daemonMenu              = Gtk::manage(new class Gtk::Menu());
             Gtk::MenuItem *daemonMenuitem      = 0;
             Gtk::MenuItem *globallimitMenuitem = 0;
-            Gtk::MenuItem *killMenuitem        = 0;
-            Gtk::MenuItem *uptimeMenuitem      = 0;
-            Gtk::MenuItem *sessionNameMenuitem = 0;
             Gtk::MenuItem *aboutMenuitem       = 0;
             Gtk::Menu *helpMenu                = Gtk::manage(new class Gtk::Menu());
             Gtk::MenuItem *helpMenuitem        = 0;
-            Gtk::MenuItem *last_separator      = 0;
+
+            /*
+             * Main menu
+             */
 
             mainMenubar->items().push_back(Gtk::Menu_Helpers::MenuElem("_File", *fileMenu));
-            fileMenuitem = reinterpret_cast<Gtk::MenuItem *>(&mainMenubar->items().back());
+            fileMenuitem = & mainMenubar->items().back();
 
             mainMenubar->items().push_back(Gtk::Menu_Helpers::MenuElem("_Control", *controlMenu));
-            controlMenuItem = reinterpret_cast<Gtk::MenuItem *>(&mainMenubar->items().back());
+            controlMenuItem = & mainMenubar->items().back();
 
             mainMenubar->items().push_back(Gtk::Menu_Helpers::MenuElem("_Daemon", *daemonMenu));
-            daemonMenuitem = reinterpret_cast<Gtk::MenuItem *>(&mainMenubar->items().back());
+            daemonMenuitem = & mainMenubar->items().back();
 
             mainMenubar->items().push_back(Gtk::Menu_Helpers::MenuElem("_Help", *helpMenu));
-            helpMenuitem = reinterpret_cast<Gtk::MenuItem *>(&mainMenubar->items().back());
+            helpMenuitem = & mainMenubar->items().back();
 
-            fileMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Open"));
-            load_menuitem = reinterpret_cast<Gtk::MenuItem *>(&fileMenu->items().back());
+            /*
+             * File menu
+             */
+            
+            load_menuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::NEW, Gtk::ICON_SIZE_MENU)), "_Open", true);
+            load_menuitem->signal_activate().connect( sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LOAD ) );
+            fileMenu->items().push_back(*load_menuitem);
 
             fileMenu->items().push_back(Gtk::Menu_Helpers::SeparatorElem());
-            file_separator = reinterpret_cast<Gtk::MenuItem *>(&fileMenu->items().back());
 
-            fileMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Preferences"));
-            preferencesMenuitem = reinterpret_cast<Gtk::MenuItem *>(&fileMenu->items().back());
+            preferencesMenuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::PROPERTIES, Gtk::ICON_SIZE_MENU)), "_Preferences", true);
+            preferencesMenuitem->signal_activate().connect( sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_PREFERENCES ) );
+            fileMenu->items().push_back(*preferencesMenuitem);
 
             fileMenu->items().push_back(Gtk::Menu_Helpers::SeparatorElem());
-            last_separator = reinterpret_cast<Gtk::MenuItem *>(&fileMenu->items().back());
 
             // Recent files, sub-menu.
-            fileMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Recent", *recentFileMenu));
-            RecentMenuitem = reinterpret_cast<Gtk::MenuItem *>(&fileMenu->items().back());
+            fileMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Recent", *lastFilesMenu));
 
             // Used to open all files.
-            recentFileMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("Open _all files"));
-            open_all_last = reinterpret_cast<Gtk::MenuItem *>(&recentFileMenu->items().back());
-            open_all_last->hide();
-            open_all_last->signal_activate().connect(sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_ALL_LAST) );
+            openAllLastMenuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::OPEN, Gtk::ICON_SIZE_MENU)), "Open _all files", true);
+            openAllLastMenuitem->signal_activate().connect(sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_ALL_LAST) );
+            lastFilesMenu->items().push_back(*openAllLastMenuitem);
+
+            lastFilesMenu->items().push_back(Gtk::Menu_Helpers::SeparatorElem());
 
             // List of recent files, in the submenu.
-            Gtk::MenuItem* temp = 0;
-
             for (t_int i=0; i<10; i++)
                {
-                  recentFileMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("LastFile"));
-                  temp = reinterpret_cast<Gtk::MenuItem *>(&recentFileMenu->items().back());
-                  temp->hide();
+                  lastFilesMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("LastFile"));
 
+                  Gtk::MenuItem* temp = & lastFilesMenu->items().back();
                   temp->signal_activate().connect(sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), static_cast<buttonMenuIds::MENUID>(i) ));
+
                   lastFiles.push_back(temp);
                }
 
             fileMenu->items().push_back(Gtk::Menu_Helpers::SeparatorElem());
-            lastFiles_separator = reinterpret_cast<Gtk::MenuItem *>(&fileMenu->items().back());
-            lastFiles_separator->hide();
 
-            fileMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Detach"));
-            detachMenuitem = reinterpret_cast<Gtk::MenuItem *>(&fileMenu->items().back());
+            detachMenuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::QUIT, Gtk::ICON_SIZE_MENU)), "_Detach", true);
+            detachMenuitem->signal_activate().connect( sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_DETACH ) );
+            fileMenu->items().push_back(*detachMenuitem);
 
-            fileMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Quit"));
-            quitMenuitem = reinterpret_cast<Gtk::MenuItem *>(&fileMenu->items().back());
+            fileMenu->items().push_back(
+               Gtk::Menu_Helpers::MenuElem(
+                  "_Quit",
+                  sigc::bind<buttonMenuIds::MENUID>(
+                     sigc::mem_fun(
+                        *_mainwindow,
+                        &mainWindow::on_menu_item_selected
+                     ),
+                     buttonMenuIds::BTN_QUIT
+                  )
+               )
+            );
 
             /* */
             /* */
 
-            controlMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Start"));
-            startMenuitem = reinterpret_cast<Gtk::MenuItem *>(&controlMenu->items().back());
+            startMenuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::MEDIA_PLAY, Gtk::ICON_SIZE_MENU)), "_Start", true);
+            startMenuitem->signal_activate().connect( sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_START ) );
+            controlMenu->items().push_back(*startMenuitem);
 
-            controlMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("S_top"));
-            stopMenuitem = reinterpret_cast<Gtk::MenuItem *>(&controlMenu->items().back());
+            stopMenuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::MEDIA_PAUSE, Gtk::ICON_SIZE_MENU)), "S_top", true);
+            stopMenuitem->signal_activate().connect( sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_STOP ) );
+            controlMenu->items().push_back(*stopMenuitem);
 
-            controlMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Abort"));
-            abortMenuitem = reinterpret_cast<Gtk::MenuItem *>(&controlMenu->items().back());
+            abortMenuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::CANCEL, Gtk::ICON_SIZE_MENU)), "_Abort", true);
+            abortMenuitem->signal_activate().connect( sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_ABORT ) );
+            controlMenu->items().push_back(*abortMenuitem);
 
-            controlMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Erase"));
-            eraseMenuitem = reinterpret_cast<Gtk::MenuItem *>(&controlMenu->items().back());
+            eraseMenuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::DELETE, Gtk::ICON_SIZE_MENU)), "Erase"); // dangerous item - without accelerator
+            eraseMenuitem->signal_activate().connect( sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_ERASE ) );
+            controlMenu->items().push_back(*eraseMenuitem);
 
-            controlMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Clean"));
-            cleanMenuitem = reinterpret_cast<Gtk::MenuItem *>(&controlMenu->items().back());
+            cleanMenuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::APPLY, Gtk::ICON_SIZE_MENU)), "_Clean", true);
+            cleanMenuitem->signal_activate().connect( sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_CLEAN ) );
+            controlMenu->items().push_back(*cleanMenuitem);
 
             controlMenu->items().push_back(Gtk::Menu_Helpers::SeparatorElem());
-            control_separator1 = reinterpret_cast<Gtk::MenuItem *>(&controlMenu->items().back());
 
-            controlMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Limit"));
-            limitMenuitem = reinterpret_cast<Gtk::MenuItem *>(&controlMenu->items().back());
+            limitMenuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::PREFERENCES, Gtk::ICON_SIZE_MENU)), "_Limit", true);
+            limitMenuitem->signal_activate().connect( sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LIMIT ) );
+            controlMenu->items().push_back(*limitMenuitem);
 
-            controlMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Move to session"));
-            moveMenuitem = reinterpret_cast<Gtk::MenuItem *>(&controlMenu->items().back());
+            controlMenu->items().push_back(
+               Gtk::Menu_Helpers::MenuElem(
+                  "_Move to session",
+                  sigc::bind<buttonMenuIds::MENUID>(
+                     sigc::mem_fun(
+                        *_mainwindow,
+                        &mainWindow::on_menu_item_selected
+                     ),
+                     buttonMenuIds::BTN_MOVE
+                  )
+               )
+            );
+            moveMenuitem = & controlMenu->items().back();
             
             // Control should be disabled per default.
-            this->disableControlFunction(true);
+            disableControlFunction();
 
             /* */
             /* */
 
-            daemonMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Global limit"));
-            globallimitMenuitem = reinterpret_cast<Gtk::MenuItem *>(&daemonMenu->items().back());
+            globallimitMenuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::PREFERENCES, Gtk::ICON_SIZE_MENU)), "_Global limit", true);
+            globallimitMenuitem->signal_activate().connect( sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_GLIMIT ) );
+            daemonMenu->items().push_back(*globallimitMenuitem);
 
-            daemonMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Kill"));
-            killMenuitem = reinterpret_cast<Gtk::MenuItem *>(&daemonMenu->items().back());
+            daemonMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("Kill", sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_KILL ) ) );
 
-            daemonMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Uptime"));
-            uptimeMenuitem = reinterpret_cast<Gtk::MenuItem *>(&daemonMenu->items().back());
+            daemonMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Uptime", sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_UPTIME ) ) );
 
-            daemonMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Session Name"));
-            sessionNameMenuitem = reinterpret_cast<Gtk::MenuItem *>(&daemonMenu->items().back());
+            daemonMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Session Name", sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_SESNAME ) ) );
 
             /* */
             /* */
 
-            helpMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_About"));
-            aboutMenuitem = reinterpret_cast<Gtk::MenuItem *>(&helpMenu->items().back());
+            aboutMenuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::ABOUT, Gtk::ICON_SIZE_MENU)), "_About", true);
+            aboutMenuitem->signal_activate().connect( sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_ABOUT ) );
+            helpMenu->items().push_back(*aboutMenuitem);
 
-            load_menuitem->show();
-            detachMenuitem->show();
-            file_separator->show();
-            preferencesMenuitem->show();
-            last_separator->show();
-            quitMenuitem->show();
+            /* */
 
-            killMenuitem->show();
-            uptimeMenuitem->show();
-            sessionNameMenuitem->show();
-
-            fileMenuitem->show();
-            RecentMenuitem->show();
-
-            startMenuitem->show();
-            stopMenuitem->show();
-
-            abortMenuitem->show();
-            eraseMenuitem->show();
-
-            cleanMenuitem->show();
-            control_separator1->show();
-            limitMenuitem->show();
-            moveMenuitem->show();
-            controlMenuItem->show();
-
-            aboutMenuitem->show();
-            helpMenuitem->show();
-
-            mainMenubar->show();
-
-            load_menuitem->signal_activate().connect(
-                                                     sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LOAD )
-                                                     );
-
-            detachMenuitem->signal_activate().connect(
-                                                      sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_DETACH )
-                                                      );
-            preferencesMenuitem->signal_activate().connect(
-                                                           sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_PREFERENCES )
-                                                           );
-            quitMenuitem->signal_activate().connect(
-                                                    sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_QUIT )
-                                                    );
-            startMenuitem->signal_activate().connect(
-                                                     sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_START )
-                                                     );
-            stopMenuitem->signal_activate().connect(
-                                                    sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_STOP )
-                                                    );
-            abortMenuitem->signal_activate().connect(
-                                                     sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_ABORT )
-                                                     );
-            eraseMenuitem->signal_activate().connect(
-                                                     sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_ERASE )
-                                                     );
-            cleanMenuitem->signal_activate().connect(
-                                                     sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_CLEAN )
-                                                     );
-
-            limitMenuitem->signal_activate().connect(
-                                                     sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LIMIT )
-                                                     );
-
-            moveMenuitem->signal_activate().connect(
-                                                    sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_MOVE )
-                                                    );
-            
-
-            globallimitMenuitem->signal_activate().connect(
-                                                           sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_GLIMIT )
-                                                           );
-
-            killMenuitem->signal_activate().connect(
-                                                    sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_KILL )
-                                                    );
-
-            uptimeMenuitem->signal_activate().connect(
-                                                      sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_UPTIME )
-                                                      );
-
-            sessionNameMenuitem->signal_activate().connect(
-                                                           sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_SESNAME )
-                                                           );
-
-            aboutMenuitem->signal_activate().connect(
-                                                     sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_ABOUT )
-                                                     );
          }
 
          void mainMenubar::updateLastFileList(t_strList const& _lastFileList)
@@ -295,11 +228,8 @@ namespace btg
                   Gtk::MenuItem* temp = *iter;
                   temp->hide();
                }
-            // Then hide the one item used to open all files.
-            open_all_last->hide();
-
-            // Hide the separator.
-            lastFiles_separator->hide();
+            // Then hide the recent file menu item.
+            lastFilesMenu->set_sensitive(false);
 
             // Set the filenames.
             for (iter  = lastFiles.begin();
@@ -328,8 +258,7 @@ namespace btg
 
             if (_lastFileList.size() > 0)
                {
-                  open_all_last->show();
-                  lastFiles_separator->show();
+                  lastFilesMenu->set_sensitive();
                }
          }
 
@@ -344,17 +273,16 @@ namespace btg
                   limitMenuitem->set_sensitive(true);
                   cleanMenuitem->set_sensitive(true);
                   moveMenuitem->set_sensitive(true);
-                  // controlMenuItem->set_sensitive(true);
+                  preferencesMenuitem->set_sensitive(true);
+                  
                   controlFunctionEnabled = true;
                }
          }
 
-         void mainMenubar::disableControlFunction(bool const _force)
+         void mainMenubar::disableControlFunction()
          {
-            if ((controlFunctionEnabled) || (_force))
+            if (controlFunctionEnabled)
                {
-                  // controlMenuItem->set_sensitive(false);
-
                   startMenuitem->set_sensitive(false);
                   stopMenuitem->set_sensitive(false);
                   abortMenuitem->set_sensitive(false);
@@ -362,6 +290,8 @@ namespace btg
                   limitMenuitem->set_sensitive(false);
                   cleanMenuitem->set_sensitive(false);
                   moveMenuitem->set_sensitive(false);
+                  preferencesMenuitem->set_sensitive(false);
+                  
                   controlFunctionEnabled = false;
                }
          }

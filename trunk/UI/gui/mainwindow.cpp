@@ -120,54 +120,52 @@ namespace btg
 
             mainVbox->pack_start(*mmb, Gtk::PACK_SHRINK, 0);
 
-            // Start with the control menu disabled.
-            mmb->disableControlFunction();
-            
-
             // Toolbar
             Gtk::Toolbar *tbar = Gtk::manage(new Gtk::Toolbar);
             Gtk::ToolButton *tbutton;
 
             tbutton = Gtk::manage(new Gtk::ToolButton);
             tbutton->set_label("Open");
-            tbutton->set_icon_name("gtk-new");
+            tbutton->set_stock_id(Gtk::Stock::NEW);
             tbar->append(*tbutton,sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*this, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LOAD ));
             
             tbar->append(*Gtk::manage(new Gtk::SeparatorToolItem));
             
             tbutton = Gtk::manage(new Gtk::ToolButton);
             tbutton->set_label("Start");
-            // something strange with this icon - impossible set via set_icon_name :-/
-            //tbutton->set_icon_name("gtk-media-play");
             tbutton->set_stock_id(Gtk::Stock::MEDIA_PLAY);
             tbar->append(*tbutton,sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*this, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_START ));
+            torrentControlButtons.push_back(tbutton);
 
             tbutton = Gtk::manage(new Gtk::ToolButton);
             tbutton->set_label("Stop");
-            tbutton->set_icon_name("gtk-media-pause");
+            tbutton->set_stock_id(Gtk::Stock::MEDIA_PAUSE);
             tbar->append(*tbutton,sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*this, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_STOP ));
+            torrentControlButtons.push_back(tbutton);
 
             tbar->append(*Gtk::manage(new Gtk::SeparatorToolItem));
 
             tbutton = Gtk::manage(new Gtk::ToolButton);
             tbutton->set_label("Abort");
-            tbutton->set_icon_name("gtk-cancel");
+            tbutton->set_stock_id(Gtk::Stock::CANCEL);
             tbar->append(*tbutton,sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*this, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_ABORT ));
+            torrentControlButtons.push_back(tbutton);
             
             tbutton = Gtk::manage(new Gtk::ToolButton);
             tbutton->set_label("Clean");
-            tbutton->set_icon_name("gtk-apply");
+            tbutton->set_stock_id(Gtk::Stock::APPLY);
             tbar->append(*tbutton,sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*this, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_CLEAN ));
+            torrentControlButtons.push_back(tbutton);
             
             tbar->append(*Gtk::manage(new Gtk::SeparatorToolItem));
 
             tbutton = Gtk::manage(new Gtk::ToolButton);
             tbutton->set_label("Limit");
-            tbutton->set_icon_name("gtk-preferences");
+            tbutton->set_stock_id(Gtk::Stock::PREFERENCES);
             tbar->append(*tbutton,sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*this, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LIMIT ));
+            torrentControlButtons.push_back(tbutton);
 
             mainVbox->pack_start(*tbar,Gtk::PACK_SHRINK);
-
             
             mainVbox->pack_start(*contentsVPaned);
             mainVbox->pack_start(*msb, Gtk::PACK_SHRINK, 0);
@@ -178,10 +176,13 @@ namespace btg
             property_destroy_with_parent().set_value(false);
             add(*mainVbox);
 
+            show_all();
+
             {
                GET_HANDLER_INST;
 
                // Update the last opened file list in menubar.
+               // can hide items, so should be called after show_all()
                mmb->updateLastFileList(handler->getLastFiles());
             }
 
@@ -190,8 +191,6 @@ namespace btg
             resize(m_clientDynConfig.get_gui_window_width(), m_clientDynConfig.get_gui_window_height());
             if (m_clientDynConfig.get_gui_window_maximized())
                maximize();
-
-            show_all();
 
             // Create/connect a timer used for updating the list of
             // contexts.
@@ -209,6 +208,9 @@ namespace btg
                handler->setStatusBar(msb);
             }
 
+            // Start with the torrent controls disabled.
+            setControlFunction(false);
+            
             // BTG_NOTICE("Main window created.\n");
          }
 
@@ -286,7 +288,7 @@ namespace btg
             // and list of peers.
             if (mtw->gotSelection())
                {
-                  mmb->enableControlFunction();
+                  setControlFunction(true);
 
                   t_uint numberOfSelectedItems = mtw->numberOfSelected();
 
@@ -328,8 +330,8 @@ namespace btg
                   else if (numberOfSelectedItems == 0)
                      {
                         // If nothing is selected, disable certain
-                        // items in the control menu.
-                        mmb->disableControlFunction();
+                        // items in the control menu and toolbar.
+                        setControlFunction(false);
                      }
                   else
                      {
@@ -338,7 +340,7 @@ namespace btg
                }
             else
                {
-                  mmb->disableControlFunction();
+                  setControlFunction(false);
                }
 
             t_intList idstoremove;
@@ -468,7 +470,8 @@ namespace btg
 
             if (mtw->gotSelection())
                {
-                  mmb->disableControlFunction();
+                  // disable controls
+                  setControlFunction(false);
 
                   elemMap m = mtw->getSelectedIds();
 
@@ -518,7 +521,8 @@ namespace btg
                               }
                            } // switch
                      }
-                  mmb->enableControlFunction();
+                  // enable controls
+                  setControlFunction(true);
                }
             this->updateContexts = true;
          }
@@ -696,6 +700,25 @@ namespace btg
                }
          }
 
+         void mainWindow::setControlFunction(const bool bSensitive)
+         {
+            if (bSensitive)
+               {
+                  mmb->enableControlFunction();
+               }
+            else
+               {
+                  mmb->disableControlFunction();
+               }
+
+            for (std::list<Gtk::ToolButton*>::iterator ibutton = torrentControlButtons.begin();
+               ibutton != torrentControlButtons.end();
+               ++ibutton)
+               {
+                  (*ibutton)->set_sensitive(bSensitive);
+               }
+         }
+         
          void mainWindow::updateFiles(t_int const _id)
          {
             GET_HANDLER_INST;
@@ -1000,6 +1023,13 @@ namespace btg
 
          void mainWindow::handle_btn_erase(t_int const _id)
          {
+            Gtk::MessageDialog d(*this, "Are you sure ?", false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK_CANCEL, true);
+            d.set_title("Erase");
+            if (d.run() != Gtk::RESPONSE_OK)
+               {
+                  return;
+               }
+            
             GET_HANDLER_INST;
 
             // BTG_NOTICE("mainToolbar::BTN_ERASE");
@@ -1016,6 +1046,13 @@ namespace btg
 
          void mainWindow::handle_btn_abort(t_int const _id)
          {
+            Gtk::MessageDialog d(*this, "Are you sure ?", false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK_CANCEL, true);
+            d.set_title("Abort");
+            if (d.run() != Gtk::RESPONSE_OK)
+               {
+                  return;
+               }
+
             GET_HANDLER_INST;
 
             // BTG_NOTICE("mainToolbar::BTN_ABORT");

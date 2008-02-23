@@ -66,8 +66,6 @@ namespace btg
             // Add the status record to this view.
             statusrecord.appendToView(this);
 
-            show();
-
             this->clearSelection();
 
             refSelection->signal_changed().connect(sigc::mem_fun(*this, &mainTreeview::on_selection_changed));

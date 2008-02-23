@@ -57,7 +57,7 @@ namespace btg
                      /// Disable the items used to control contexts.
                      /// \note There is no reason for them to be enabled
                      /// when there are no contexts.
-                     void disableControlFunction(bool const _force = false);
+                     void disableControlFunction();
 
                      /// Destructor.
                      virtual ~mainMenubar();
@@ -68,15 +68,15 @@ namespace btg
                      /// Indicates if the control menu is enabled. It
                      /// can be disabled if no contexts are selected.
                      bool                        controlFunctionEnabled;
-
-                     /// Seperator after the list of last files.
-                     Gtk::MenuItem*              lastFiles_separator;
+                     
+                     // torrent preferences
+                     Gtk::MenuItem*              preferencesMenuitem;
+                     
+                     /// Menu item for the list of last files.
+                     Gtk::Menu*                  lastFilesMenu;
 
                      /// List of menu items representing last opened files.
                      std::vector<Gtk::MenuItem*> lastFiles;
-
-                     /// Item used to open all last opened files.
-                     Gtk::MenuItem*              open_all_last;
 
                      /// Item in the control menu.
                      Gtk::MenuItem*              startMenuitem;

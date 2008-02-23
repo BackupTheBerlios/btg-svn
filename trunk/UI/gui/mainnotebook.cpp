@@ -165,8 +165,6 @@ namespace btg
             this->pages().back().set_tab_label_packing(false, true, Gtk::PACK_START);
 
             signal_switch_page().connect(sigc::mem_fun(*this, &mainNotebook::onSwitchPage));
-
-            this->show_all();
          }
 
          logTextview* mainNotebook::getTextView() const

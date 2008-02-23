@@ -23,7 +23,7 @@
 #ifndef QUESTION_DIALOG_H
 #define QUESTION_DIALOG_H
 
-#include <gtkmm/dialog.h>
+#include <gtkmm.h>
 #include <string>
 
 namespace btg
@@ -35,7 +35,7 @@ namespace btg
 
                /// Dialog showing a question and two buttons, yes and
                /// no.
-               class questionDialog: public Gtk::Dialog
+               class questionDialog: public Gtk::MessageDialog
                   {
                   public:
                      /// Constructor.
@@ -58,12 +58,6 @@ namespace btg
                      /// Destructor.
                      virtual ~questionDialog();
                   private:
-                     /// Callback, no button was pressed.
-                     void on_no_clicked();
-
-                     /// Callback, yes button was pressed.
-                     void on_yes_clicked();
-
                      /// True if the Yes-button was pressed. False
                      /// otherwise.
                      bool status_;

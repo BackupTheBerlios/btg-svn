@@ -132,6 +132,9 @@ namespace btg
                /// Get the list of selected files from UI, if
                /// any changed, tell the daemon.
                void checkSelectedFiles();
+               
+               /// Enable and disable toolbar buttons and menu items that controls torrents
+               void setControlFunction(const bool bSensitive = true);
 
                /// Handle opening a last file.
                void handle_btn_lastfile(buttonMenuIds::MENUID _which_item);
@@ -232,6 +235,8 @@ namespace btg
                std::map<t_int, t_int>    trackerstatSerial;
                /// Client dynamic configuration store
                btg::core::client::clientDynConfig & m_clientDynConfig;
+               /// Toolbar buttons related to torrent control
+               std::list<Gtk::ToolButton*> torrentControlButtons;
             private:
                /// Copy constructor.
                mainWindow(mainWindow const& _mw);
