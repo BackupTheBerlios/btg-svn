@@ -431,9 +431,6 @@ namespace btg
 
                /// Handle libtorrent alert.
                void handleTrackerWarningAlert(libtorrent::tracker_warning_alert* _alert);
-
-               /// Handle libtorrent alert.
-               void handleDownloadingAlert(libtorrent::torrent_alert* _alert);
             public:
 #if BTG_OPTION_SAVESESSIONS
                /// Session saving: serialize the torrents so they can be reloaded later.

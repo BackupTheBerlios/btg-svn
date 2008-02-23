@@ -198,37 +198,8 @@ namespace btg
             }
       }
 
-      void Context::handleDownloadingAlert(libtorrent::torrent_alert* _alert)
-      {
-         // torrent's downloading now
-
-         t_int torrent_id;
-         torrentInfo *ti;
-
-#if BTG_DEBUG
-         libtorrent::block_downloading_alert* bd_alert = dynamic_cast<libtorrent::block_downloading_alert*>(_alert);
-         if (bd_alert)
-            {
-               BTG_NOTICE(logWrapper(), "handleBlockDownloadingAlert torrent_id=" << torrent_id \
-                  << ", peer_speedmsg=" << bd_alert->peer_speedmsg \
-                  << ", block_index=" << bd_alert->block_index \
-                  << ", piece_index=" << bd_alert->piece_index);
-            }
-#endif
-
-         if (getIdFromHandle(_alert->handle, torrent_id, ti))
-            {
-               if (!moveToWorkingDir(torrent_id))
-                  {
-                     BTG_ERROR_LOG(logWrapper(), "moveToWorkingDir failed");
-                  }
-            }
-      }
-
       void Context::handleAlerts()
       {
-         std::set<libtorrent::torrent_handle> handle_cache;
-
          // fetch and handle all libtorrent alerts present in queue
          for(;;)
          {
@@ -270,14 +241,6 @@ namespace btg
                   else if (typeid(*alert) == typeid(libtorrent::tracker_warning_alert))
                      {
                         handleTrackerWarningAlert(dynamic_cast<libtorrent::tracker_warning_alert*>(alert));
-                     }
-                  else if (typeid(*alert) == typeid(libtorrent::block_downloading_alert))
-                     {
-                        if (handle_cache.insert(alert->handle).second)
-                           {
-                              // New handle. Process it.
-                              handleDownloadingAlert(alert);
-                           }
                      }
                   else
                      {

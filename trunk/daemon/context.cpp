@@ -208,7 +208,7 @@ namespace btg
                // From the libtorrent manual.
                // Events that can be considered normal, but still deserves
                // an event. This could be a piece hash that fails.
-               torrent_session->set_severity_level(libtorrent::alert::debug);
+               torrent_session->set_severity_level(libtorrent::alert::info);
 
                setPeerIdFromConfig();
             }
@@ -1577,7 +1577,35 @@ namespace btg
                return false;
             }
          
-         applySelectedFiles(ti, _file_list);
+         if (!applySelectedFiles(ti, _file_list))
+            {
+               BTG_MEXIT(logWrapper(), "setSelectedFiles", false);
+               return false;
+            }
+         
+         // after handle.prioritize_files torrent status is recalculated, so we can use it to
+         // switch storage dir
+         switch (ti->handle.status().state)
+            {
+            case libtorrent::torrent_status::queued_for_checking:
+            case libtorrent::torrent_status::checking_files:
+            case libtorrent::torrent_status::connecting_to_tracker:
+            case libtorrent::torrent_status::downloading:
+               if (!moveToWorkingDir(_torrent_id))
+                  {
+                     BTG_MNOTICE(logWrapper(), "moveToWorkingDir failed. state:" << ti->handle.status().state);
+                  }
+               break;
+            case libtorrent::torrent_status::seeding:
+            case libtorrent::torrent_status::finished:
+               if (!moveToSeedingDir(_torrent_id))
+                  {
+                     BTG_MNOTICE(logWrapper(), "moveToSeedingDir failed. state:" << ti->handle.status().state);
+                  }
+               break;
+            default:
+               ; // do nothing
+            }
          
          BTG_MEXIT(logWrapper(), "setSelectedFiles", true);
          return true;
