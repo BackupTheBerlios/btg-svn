@@ -102,12 +102,10 @@ namespace btg
       std::string const KEY_LIMIT_MAX_UPLOADS("max_uploads");
       std::string const KEY_LIMIT_MAX_CONNECTIONS("max_connections");
 
-#if BTG_OPTION_SAVESESSIONS
       std::string const SECTION_SS("savesessions");
       std::string const KEY_SS_FILENAME("filename");
       std::string const KEY_SS_ENABLE("enable");
       std::string const KEY_SS_TIMEOUT("timeout");
-#endif // BTG_OPTION_SAVESESSIONS
 
       std::string const VALUE_ENABLE_TRUE("true");
       std::string const VALUE_ENABLE_YES("yes");
@@ -144,19 +142,15 @@ namespace btg
            def_filterType(IpFilterIf::IPF_UNDEF),
            def_port_range(0,0),
            def_lt_ip(0,0,0,0),
-#if BTG_OPTION_UPNP
            def_use_upnp(false),
-#endif // BTG_OPTION_UPNP
            def_upload_rate_limit(limitBase::LIMIT_DISABLED),
            def_download_rate_limit(limitBase::LIMIT_DISABLED),
            def_max_uploads(limitBase::LIMIT_DISABLED),
-           def_max_connections(limitBase::LIMIT_DISABLED)
-#if BTG_OPTION_SAVESESSIONS
-         , def_ss_enable(false)
-         , def_ss_filename("/non/existing")
-         , def_ss_timeout(60)
-#endif // BTG_OPTION_SAVESESSIONS
-         , def_authFile("/non/existing"),
+           def_max_connections(limitBase::LIMIT_DISABLED),
+           def_ss_enable(false),
+           def_ss_filename("/non/existing"),
+           def_ss_timeout(60),
+           def_authFile("/non/existing"),
            def_runAsUser(),
            def_runAsGroup(),
            def_use_torrent_name(false),
@@ -233,9 +227,7 @@ namespace btg
                /* Encryption */
                readEncryption();
 
-#if BTG_OPTION_UPNP
                readFlag(KEY_USE_UPNP, SECTION_NETWORK, def_use_upnp);
-#endif // BTG_OPTION_UPNP
 
                /* TLS */
                std::string TLS_temp;
@@ -412,7 +404,6 @@ namespace btg
                            BTG_NOTICE(logWrapper(), "Bad configuration value for " << KEY_LIMIT_MAX_CONNECTIONS);
                         }
                   }
-#if BTG_OPTION_SAVESESSIONS
                /* Session Saving */
 
                readFlag(KEY_SS_ENABLE, SECTION_SS, def_ss_enable);
@@ -436,7 +427,6 @@ namespace btg
                               }
                         }
                   }
-#endif // BTG_OPTION_SAVESESSIONS
 
                /* Auth */
                def_authFile = inifile->GetValue(KEY_AUTH_PASSWDFILE, SECTION_AUTH);
@@ -530,12 +520,10 @@ namespace btg
                status = false;
             }
 
-#if BTG_OPTION_UPNP
          if (!writeFlag(KEY_USE_UPNP, SECTION_NETWORK, DESCR_USE_UPNP, def_use_upnp))
             {
                status = false;
             }
-#endif // BTG_OPTION_UPNP
 
          /* TLS */
          if (def_TLS_CA_cert.size() > 0)
@@ -749,7 +737,6 @@ namespace btg
                   }
             }
 
-#if BTG_OPTION_SAVESESSIONS
          /* Session Saving */
 
          if (!writeFlag(KEY_SS_ENABLE,
@@ -782,7 +769,6 @@ namespace btg
                      status = false;
                   }
             }
-#endif // BTG_OPTION_SAVESESSIONS
 
          /* Auth */
          if (def_authFile.size() > 0)
@@ -879,7 +865,6 @@ namespace btg
                    temp,
                    output);
 
-#if BTG_OPTION_UPNP
          temp.clear();
          temp.push_back(std::string(VALUE_ENABLE_TRUE));
          temp.push_back(std::string(VALUE_ENABLE_YES));
@@ -892,8 +877,6 @@ namespace btg
                    "Enable/disable UPnP",
                    temp,
                    output);
-
-#endif // BTG_OPTION_UPNP
 
          /* */
 
@@ -1083,7 +1066,6 @@ namespace btg
                    temp,
                    output);
 
-#if BTG_OPTION_SAVESESSIONS
          /* */
 
          formatSection(SECTION_SS, output);
@@ -1116,7 +1098,6 @@ namespace btg
                    "How often sessions will be saved periodicly (in seconds)",
                    temp,
                    output);
-#endif // BTG_OPTION_SAVESESSIONS
 
          /* */
 
@@ -1322,7 +1303,6 @@ namespace btg
          return def_max_connections;
       }
 
-#if BTG_OPTION_SAVESESSIONS
       std::string daemonConfiguration::getSSFilename() const
       {
          return def_ss_filename;
@@ -1355,7 +1335,6 @@ namespace btg
          def_ss_timeout = _timeout;
          data_modified = true;
       }
-#endif // BTG_OPTION_SAVESESSIONS
 
       std::string daemonConfiguration::getAuthFile() const
       {
@@ -1402,7 +1381,6 @@ namespace btg
          return Configuration::getErrorDescription(_errordescription);
       }
 
-#if BTG_OPTION_UPNP
       void daemonConfiguration::setUseUPnP(bool const _useUpnp)
       {
          def_use_upnp = def_use_upnp;
@@ -1412,7 +1390,6 @@ namespace btg
       {
          return def_use_upnp;
       }
-#endif // BTG_OPTION_UPNP
 
       void daemonConfiguration::readFlag(std::string const& _key,
                                          std::string const& _section,

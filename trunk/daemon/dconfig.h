@@ -154,7 +154,6 @@ namespace btg
                /// Get max connections
                t_int getMaxConnections() const;
 
-#if BTG_OPTION_SAVESESSIONS
                /// Set the filename used to store saved sessions.
                void setSSFilename(std::string const& _filename);
 
@@ -172,7 +171,6 @@ namespace btg
 
 					/// Get Timeout 
                t_int getSSTimeout() const;
-#endif // BTG_OPTION_SAVESESSIONS
 
                /// Set the file name from which autorization information is read from.
                void setAuthFile(std::string const& _authFile);
@@ -206,13 +204,11 @@ namespace btg
                /// Get the textual description of an error.
                bool getErrorDescription(std::string & _errordescription) const;
 
-#if BTG_OPTION_UPNP
                /// Enable/disable the use of UPnP.
                void setUseUPnP(bool const _useUpnp);
 
                /// Indicates if UPnP is used.
                bool getUseUPnP() const;
-#endif // BTG_OPTION_UPNP
 
                /// Get the Peer ID to use when creating new contexts.
                std::string getPeerId() const;
@@ -328,10 +324,9 @@ namespace btg
                /// Libtorrent listens to this IPv4 address.
                btg::core::Address                          def_lt_ip;
 
-#if BTG_OPTION_UPNP
                /// Flag, determines if upnp should be used.
                bool                                        def_use_upnp;
-#endif // BTG_OPTION_UPNP
+
                /* Limit */
                /// Upload rate limit
                t_int                                       def_upload_rate_limit;
@@ -342,7 +337,6 @@ namespace btg
                /// Max connections
                t_int                                       def_max_connections;
 
-#if BTG_OPTION_SAVESESSIONS
                /* Saving sessions */
                /// If session saving is enabled
                bool                                        def_ss_enable;
@@ -353,7 +347,6 @@ namespace btg
 
 					/// Timeout for periodic session saving
 					t_int													  def_ss_timeout;
-#endif // BTG_OPTION_SAVESESSIONS
 
                /// File from which read authorization information.
                std::string                                 def_authFile;
