@@ -121,8 +121,8 @@ namespace btg
               ackForCommand(Command::CN_UNDEFINED),
               clientcallback(_clientcallback),
               read_counter(0),
-              max_read_counter(25),
-              min_sleep_in_ms(50),
+              max_read_counter(15),
+              min_sleep_in_ms(10),
               verboseFlag_(_verboseFlag)
          {
             expectedReply[0] = Command::CN_UNDEFINED;
