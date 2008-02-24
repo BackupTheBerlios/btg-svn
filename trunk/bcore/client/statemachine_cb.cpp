@@ -59,6 +59,10 @@
 
 #include <bcore/command/limit.h>
 
+#if BTG_STATEMACHINE_DEBUG
+#include <bcore/logmacro.h>
+#endif // BTG_STATEMACHINE_DEBUG
+
 namespace btg
 {
    namespace core

@@ -77,6 +77,10 @@
 
 #include <bcore/btg_assert.h>
 
+#if BTG_STATEMACHINE_DEBUG
+#include <bcore/logmacro.h>
+#endif // BTG_STATEMACHINE_DEBUG
+
 namespace btg
 {
    namespace core
@@ -117,7 +121,7 @@ namespace btg
               ackForCommand(Command::CN_UNDEFINED),
               clientcallback(_clientcallback),
               read_counter(0),
-              max_read_counter(250),
+              max_read_counter(25),
               min_sleep_in_ms(50),
               verboseFlag_(_verboseFlag)
          {

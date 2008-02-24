@@ -41,7 +41,9 @@ namespace btg
 
          void Sleep::sleepMiliSeconds(t_uint _ms)
          {
-            usleep(_ms);
+            // usleep(8)
+            // usleep - suspend execution for microsecond intervals
+            usleep(_ms * 1000);
          }
 
          void Sleep::sleepNanoSeconds(t_int _ns)
