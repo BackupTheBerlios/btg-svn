@@ -1,0 +1,108 @@
+.TH BTGUI 1 "28 May 2007"
+.SH NAME
+btgui \- bittorrent client, part of the btg project.
+.SH SYNOPSIS
+.B "btgui" 
+[-o 
+.I "<filename>"
+]
+[--nostart]
+[-l]
+[-A]
+[-a]
+[-s 
+.I "<session ID>"
+]
+[--config 
+.I "<filename>"
+]
+[--dht]
+[--no-dht]
+[--encryption]
+[--no-encryption]
+[-v] 
+[-h]
+
+.SH DESCRIPTION
+.B "btgui" 
+is a gui bittorrent client.
+
+If started without any arguments, it will attempt to connect to the
+daemon (btgdaemon) and start a new session.
+
+After the client connects to the daemon and initializes, it will
+present an empty list of torrents. Use the File menu to open a
+.torrent file.
+
+.SH OPTIONS
+
+.TP
+.BI "-o" 
+.I "<filename>"
+\- Name of a torrent file to open after initializing the client.
+
+.TP
+.BI "--nostart" 
+\- Do not start torrents after opening them. The default is to start a torrent after it was opened.
+
+.TP
+.BI "-l" 
+\- List running sessions.
+
+.TP
+.BI "-A" 
+\- Attach to the first available session.
+
+.TP
+.BI "-a" 
+\- Show a list of sessions and let the user choose which session to attach to.
+
+.TP
+.BI "-s" 
+.I "<session ID>"
+\- Attach to a session described by the session ID.
+
+.TP
+.BI "--config" 
+.I "<filename>"
+\- Name of a client configuration file to use.
+
+.TP
+.BI "-v"
+\- Be verbose.
+
+.TP
+.BI "--dht"
+\- Enable DHT.
+
+.TP
+.BI "--no-dht"
+\- Disable DHT.
+
+.TP
+.BI "--encryption"
+\- Enable encryption.
+
+.TP
+.BI "--no-encryption"
+\- Disable encryption.
+
+.TP
+.BI "-h|--help"
+\- Print a short help.
+
+.SH FILES
+See btg_config(1).
+
+.SH CONFIGURATION
+.TP 
+See btg_config(1).
+
+.SH AUTHOR
+Written by Michael Wojciechowski.
+
+.SH "SEE ALSO"
+btg(5), btg_config(5), btcli(1), btgdaemon(1), btgd(1)
+
+.SH BUGS
+No known bugs.

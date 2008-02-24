@@ -1,0 +1,50 @@
+#!@BASH@
+# $Id: btgq.in,v 1.1.4.1 2006/06/01 20:36:52 wojci Exp $
+# DESCRIPTION: 
+# Download a file using wget. 
+# Attach to a session or create one.
+# Start downloading and detach from it.
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+BTG_PATH=@bindir@
+
+# Check if there are any arguments.
+if [ ! -n "$1" ]
+then
+    echo "No URI, exiting."
+    exit -1
+fi
+
+# Attempt to get the URI.
+FILENAME=`basename $1`
+wget -q -O $FILENAME $1
+
+# Check that the download was sucessful.
+if [ "$?" -ne "0" ]; then
+    echo "Failed to download '$1'"
+    exit -1
+fi
+
+# Check that the file is actually there.
+FILESIZE=`du -b $FILENAME |cut -f 1`
+
+if [ "$FILESIZE" -eq 0 ]; then
+    echo "Failed to download '$1'"
+    exit -1
+fi
+
+# Find out if there are sessions, if not create one.
+if [ `$BTG_PATH/btgcli -l|grep "Session(s)"|wc -l` -eq 0 ]; then
+    $BTG_PATH/btgcli --command "detach"
+fi
+
+# Open the file and detach.
+$BTG_PATH/btgcli -n -A --command "create $FILENAME; detach"
+
+if [ "$?" -ne "0" ]; then
+    echo "Error adding file."
+    exit -1
+fi
+
+exit 0

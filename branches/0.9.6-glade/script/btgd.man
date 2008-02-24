@@ -1,0 +1,23 @@
+.TH BTGD 1 "09 October 2005"
+.SH NAME
+btgd \- start a single instance of btgdaemon.
+.SH SYNOPSIS
+.B "btgd" 
+
+.SH DESCRIPTION
+.B "btgd" 
+is a script that starts btgdaemon if btgdaemon is not already running.
+
+It can be run from a shell script.
+
+.SH OPTIONS
+No options are supported.
+
+.SH AUTHOR
+Written by Michael Wojciechowski.
+
+.SH "SEE ALSO"
+btg(5), btgdaemon(1)
+
+.SH BUGS
+No known bugs.
