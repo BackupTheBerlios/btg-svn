@@ -1,0 +1,61 @@
+@import url(html4css1.css);
+
+body {
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+h1 {
+    font-family:  Arial, Helvetica;
+    margin-bottom: 0px;
+    padding-left: 16px;
+}
+
+h2 {
+    font-family:  Arial, Helvetica;
+    margin-bottom: 0px;
+    padding-left: 32px;
+}
+
+p, li, table {
+    padding-left: 16px
+}
+
+.section {
+    padding-bottom: 5px;
+}
+
+/* */
+ 
+table {
+	/* font: 11px/24px Verdana, Arial, Helvetica, sans-serif; */
+	border-collapse: collapse;
+	/*width: 320px;*/
+	}
+
+th {
+	padding: 0 0.5em;
+	text-align: left;
+	}
+
+tr.yellow td {
+	border-top: 1px solid #FB7A31;
+	border-bottom: 1px solid #FB7A31;
+	background: #FFC;
+	}
+
+td {
+	border-bottom: 1px solid #CCC;
+	padding: 0 0.5em;
+	}
+
+/*
+td:first-child {
+	width: 190px;
+	}
+*/
+
+td+td {
+	border-left: 1px solid #CCC;
+	text-align: center;
+	}
