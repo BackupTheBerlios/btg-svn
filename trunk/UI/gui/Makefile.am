@@ -15,7 +15,8 @@ detailsmodel.cpp detailstreeview.cpp \
 mainwindow.cpp btgui.cpp
 
 noinst_HEADERS = initwindow.h \
-errordialog.h questiondialog.h prefdialog.h aboutdialog.h limitdialog.h sessiondialog.h \
+errordialog.h questiondialog.h prefdialog.h aboutdialog.h aboutimage.h \
+limitdialog.h sessiondialog.h \
 sessionselection.h authdialog.h sndialog.h \
 gtkmm_log.h guihandler.h traficmodel.h filemodel.h fipixbox.h traficplot.h logtextview.h mainfiletreeview.h selectfiletreeview.h mainnotebook.h mainmodel.h mainmenubar.h mainstatusbar.h maintreeview.h \
 peermodel.h peertreeview.h \

@@ -6,11 +6,13 @@
 #include <gtkmm/textview.h>
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/box.h>
+#include <gtkmm/image.h>
 
 #include <string>
 
 #include <bcore/project.h>
 #include "aboutdialog.h"
+#include "aboutimage.h"
 
 namespace btg
 {
@@ -21,19 +23,23 @@ namespace btg
 
          aboutDialog::aboutDialog()
          {
-            Gtk::Dialog *ad = this;
+            Gtk::Button* okbutton    = Gtk::manage(new class Gtk::Button("ok"));
+            Gtk::Label* aboutLabel   = Gtk::manage(new class Gtk::Label( "About " + GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() + ", build " + GPD->sBUILD() ));
+            Gtk::TextView* textview  = Gtk::manage(new class Gtk::TextView());
+            Gtk::ScrolledWindow* scrolledwindow = Gtk::manage(new class Gtk::ScrolledWindow());
+            Gtk::VBox* vbox                     = Gtk::manage(new class Gtk::VBox(false, 0));
 
-            Gtk::Button *okbutton    = Gtk::manage(new class Gtk::Button("ok"));
-            Gtk::Label *aboutLabel   = Gtk::manage(new class Gtk::Label( "About " + GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() + ", build " + GPD->sBUILD() ));
-            Gtk::TextView *textview  = Gtk::manage(new class Gtk::TextView());
-            Gtk::ScrolledWindow *scrolledwindow = Gtk::manage(new class Gtk::ScrolledWindow());
-            Gtk::VBox *vbox                     = Gtk::manage(new class Gtk::VBox(false, 0));
+            // Glib::RefPtr<Gdk::Pixbuf> pixbufRef = Gdk::Pixbuf::create_from_data((const guint8*)aboutimage_data, Gdk::COLORSPACE_RGB, false /* no alpha */, 1, aboutimage_width, aboutimage_height, 3);
+
+            Glib::RefPtr<Gdk::Pixbuf> pixbufRef = Gdk::Pixbuf::create_from_xpm_data(aboutimage_xpm);
+
+            Gtk::Image* image = Gtk::manage(new Gtk::Image(pixbufRef));
 
             okbutton->set_flags(Gtk::CAN_FOCUS);
             okbutton->set_relief(Gtk::RELIEF_NORMAL);
 
-            ad->get_action_area()->property_layout_style().set_value(Gtk::BUTTONBOX_END);
-            ad->set_default_size(300, 200);
+            get_action_area()->property_layout_style().set_value(Gtk::BUTTONBOX_END);
+            set_default_size(300, 200);
 
             aboutLabel->set_alignment(0.5,0.5);
             aboutLabel->set_padding(0,0);
@@ -87,26 +93,29 @@ namespace btg
             scrolledwindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
             scrolledwindow->property_window_placement().set_value(Gtk::CORNER_TOP_LEFT);
             scrolledwindow->add(*textview);
+
             vbox->pack_start(*aboutLabel, Gtk::PACK_SHRINK, 0);
+            vbox->pack_start(*image);
             vbox->pack_start(*scrolledwindow);
-            ad->get_vbox()->set_homogeneous(false);
-            ad->get_vbox()->set_spacing(0);
-            ad->get_vbox()->pack_start(*vbox);
-            ad->set_title( GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() + " / About" );
-            ad->set_modal(true);
-            ad->property_window_position().set_value(Gtk::WIN_POS_CENTER);
-            ad->set_resizable(true);
-            ad->property_destroy_with_parent().set_value(false);
-            ad->set_has_separator(true);
-            ad->add_action_widget(*okbutton, -5);
+            
+            get_vbox()->set_homogeneous(false);
+            get_vbox()->set_spacing(0);
+            get_vbox()->pack_start(*vbox);
+            set_title( GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() + " / About" );
+            set_modal(true);
+            property_window_position().set_value(Gtk::WIN_POS_CENTER);
+            set_resizable(true);
+            property_destroy_with_parent().set_value(false);
+            set_has_separator(true);
+            add_action_widget(*okbutton, -5);
             okbutton->show();
             aboutLabel->show();
             textview->show();
             scrolledwindow->show();
+            image->show();
             vbox->show();
 
             okbutton->signal_clicked().connect(sigc::mem_fun(*this, &aboutDialog::on_ok_clicked));
-            // ad->show();
          }
 
          void aboutDialog::on_ok_clicked()
