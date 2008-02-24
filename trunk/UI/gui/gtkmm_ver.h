@@ -27,6 +27,6 @@
 // Forced to use this, as some things like Gtk::CellRendererProgress
 // are not available in gtkmm 2.2.
 
-#define GTKMM_2_6_OR_BETTER ((GTKMM_MAJOR_VERSION == 2) && (GTKMM_MINOR_VERSION >= 6) && (GTKMM_MICRO_VERSION >= 2))
+#define GTKMM_2_6_OR_BETTER ((GTKMM_MAJOR_VERSION == 2) && (GTKMM_MINOR_VERSION >= 6))
 
 #endif // GTKMM_VER_H
