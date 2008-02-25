@@ -212,10 +212,6 @@ int main(int argc, char* argv[])
    dd.ss_filename      = dd.config->getSSFilename();
 #endif // BTG_OPTION_SAVESESSIONS
 
-#if BTG_OPTION_EVENTCALLBACK
-   dd.callbackmgr      = new callbackManager(logwrapper, verboseFlag);
-#endif // BTG_OPTION_EVENTCALLBACK
-
    // Daemonize.
    if (!dd.cla->doNotDetach())
       {
@@ -252,6 +248,13 @@ int main(int argc, char* argv[])
       {
          VERBOSE_LOG(logwrapper, verboseFlag, "Not detaching from TTY.");
       }
+
+   // creating callback manager after daemonizing,
+   // because callbackManager creates a thread
+   // threads aren't re-created in child process
+#if BTG_OPTION_EVENTCALLBACK
+   dd.callbackmgr      = new callbackManager(logwrapper, verboseFlag);
+#endif // BTG_OPTION_EVENTCALLBACK
 
    // At this point, the daemon has deatached and opened either syslog
    // or a file for logging.
