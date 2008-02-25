@@ -236,11 +236,15 @@ namespace btg
             { 
                AG_SetRefreshRate(25);
 
-               // AG_InitConfigWin(0);
+               setColors();
+
+               setUIStyle(_gui.style);
 
                // Create a new window.
-               _gui.window = AG_WindowNewNamed(AG_WINDOW_NOTITLE | AG_WINDOW_NOBORDERS, "%s", "BTGVS");
-               // AG_WindowSetCaption(_gui.window, "%s", "TEST");
+               _gui.window = AG_WindowNewNamed(AG_WINDOW_NOTITLE | AG_WINDOW_NOBORDERS, 
+                                               "%s", "BTGVS");
+               AG_SetStyle(_gui.window, &_gui.style);
+               AG_WindowSetCaption(_gui.window, "%s", "BTGVS");
 
                _gui.contents_box = AG_VBoxNew(_gui.window, AG_VBOX_EXPAND);
 

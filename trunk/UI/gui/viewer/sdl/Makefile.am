@@ -1,6 +1,6 @@
 bin_PROGRAMS = btgvs
 
-btgvs_SOURCES = arg.cpp handler.cpp ui.cpp btgvs.cpp
+btgvs_SOURCES = arg.cpp handler.cpp ui.cpp ui_style.cpp btgvs.cpp
 
 noinst_HEADERS = agar-if.h arg.h handler.h ui.h btgvs.h
 

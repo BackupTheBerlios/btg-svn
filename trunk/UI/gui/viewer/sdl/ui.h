@@ -93,6 +93,7 @@ namespace btg
                /// Destructor.
                ~btgvsGui();
 
+               AG_Style        style;
                /// Timer.
                AG_Timeout*     timer;
                /// Main window.
@@ -154,6 +155,12 @@ namespace btg
 
             /// Create the timer used for updating tables.
             void createTimer(btgvsGui & _gui, timerData* _timerdata);
+
+            /// Set a custom style.
+            void setUIStyle(AG_Style & _style);
+
+            /// Set colors used by the UI.
+            void setColors();
 
             /// Run the GUI.
             void run();
