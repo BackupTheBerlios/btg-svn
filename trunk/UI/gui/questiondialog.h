@@ -43,6 +43,12 @@ namespace btg
                      /// @param [in] _question Question to ask.
                      questionDialog(std::string const& _title, std::string const& _question);
 
+                     /// Constructor.
+                     /// @param [in] _mt       Gtk::MessageType - dialog icon. (Gtk::MESSAGE_INFO, Gtk::MESSAGE_WARNING, Gtk::MESSAGE_QUESTION, Gtk::MESSAGE_ERROR, Gtk::MESSAGE_OTHER)
+                     /// @param [in] _title    The title.
+                     /// @param [in] _question Question to ask.
+                     questionDialog(Gtk::MessageType _mt, std::string const& _title, std::string const& _question);
+                     
                      /// Construct an instance of this class, show the
                      /// dialog. Wait for the user to press one of the
                      /// buttons.

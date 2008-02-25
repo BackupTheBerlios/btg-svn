@@ -414,8 +414,7 @@ namespace btg
                   {
                      if ( !mtw->gotSelection() )
                      {
-                        Gtk::MessageDialog d(*this, "Please, select a torrent.", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK, true);
-                        d.run();
+                        errorDialog::showAndDie("Please, select a torrent.");
                      }
                      break;
                   }
@@ -876,8 +875,7 @@ namespace btg
             
             if (!neverAskFlag)
                {
-                  doQuit = questionDialog::showAndDie("Quit?",
-                                                      "Are you sure you really want to quit?");
+                  doQuit = questionDialog::showAndDie("Quit?", "Are you sure you really want to quit?");
                }
             else
                {
@@ -910,8 +908,10 @@ namespace btg
             
             if (!neverAskFlag)
                {
-                  suicide = questionDialog::showAndDie("Kill the daemon?",
-                                                       "Are you sure you really want to kill the daemon?");
+                  std::auto_ptr<questionDialog> qd( new questionDialog(Gtk::MESSAGE_WARNING,
+                     "Kill the daemon?",
+                     "Are you sure you really want to kill the daemon?" ));
+                  suicide = qd->status();
                }
             else
                {
@@ -994,8 +994,7 @@ namespace btg
 
          void mainWindow::handle_btn_glimit()
          {
-            Gtk::MessageDialog d(*this, "Global limits setting not available yet.", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-            d.run();
+            errorDialog::showAndDie("Global limits setting not available yet.");
          }
 
          void mainWindow::handle_btn_start(t_int const _id)
@@ -1030,9 +1029,8 @@ namespace btg
 
          void mainWindow::handle_btn_erase(t_int const _id)
          {
-            Gtk::MessageDialog d(*this, "Are you sure ?", false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK_CANCEL, true);
-            d.set_title("Erase");
-            if (d.run() != Gtk::RESPONSE_OK)
+            std::auto_ptr<questionDialog> qd(new questionDialog(Gtk::MESSAGE_WARNING, "Erase", "Are you sure ?")); // shows dialog
+            if (qd->status() == false)
                {
                   return;
                }
@@ -1053,9 +1051,8 @@ namespace btg
 
          void mainWindow::handle_btn_abort(t_int const _id)
          {
-            Gtk::MessageDialog d(*this, "Are you sure ?", false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK_CANCEL, true);
-            d.set_title("Abort");
-            if (d.run() != Gtk::RESPONSE_OK)
+            std::auto_ptr<questionDialog> qd(new questionDialog(Gtk::MESSAGE_WARNING, "Abort", "Are you sure ?")); // shows dialog
+            if (qd->status() == false)
                {
                   return;
                }
@@ -1259,8 +1256,7 @@ namespace btg
 
          void mainWindow::handle_btn_prefs(t_int const _id)
          {
-            Gtk::MessageDialog d(*this, "Torrent preferences not available yet.", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-            d.run();
+            errorDialog::showAndDie("Torrent preferences not available yet.");
          }
 
          mainWindow::~mainWindow()

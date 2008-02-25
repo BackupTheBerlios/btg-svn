@@ -23,9 +23,7 @@
 #ifndef ERROR_DIALOG_H
 #define ERROR_DIALOG_H
 
-#include <gtkmm/dialog.h>
-
-#include <bcore/project.h>
+#include <gtkmm.h>
 #include <string>
 
 namespace btg
@@ -40,7 +38,7 @@ namespace btg
                /** @{ */
 
                /// Dialog used to display fatal errors.
-               class errorDialog : public Gtk::Dialog
+               class errorDialog : public Gtk::MessageDialog
                   {
                   public:
                      /// Constructor.
@@ -53,10 +51,6 @@ namespace btg
 
                      /// Destructor.
                      virtual ~errorDialog();
-
-                  private:
-                     /// Callback: called when the button on this dialog is pressed.
-                     void on_closebutton_clicked();
                   };
 
                /** @} */
