@@ -99,6 +99,13 @@ namespace btg
            sendBuffer_(),
            cf_(_logwrapper, _dd->externalization)
       {
+         /// Set the initial limits.
+         limitManager_.set(_dd->config->getUploadRateLimit(),
+                           _dd->config->getDownloadRateLimit(),
+                           _dd->config->getMaxUploads(),
+                           _dd->config->getMaxConnections());
+
+         limitManager_.update();
 #if BTG_OPTION_SAVESESSIONS
          if(dd_->ss_enable)
             {
@@ -129,14 +136,6 @@ namespace btg
                BTG_MNOTICE(logWrapper(), "sesssion saving disabled");
             }
 #endif // BTG_OPTION_SAVESESSIONS
-
-         /// Set the initial limits.
-         limitManager_.set(_dd->config->getUploadRateLimit(),
-                           _dd->config->getDownloadRateLimit(),
-                           _dd->config->getMaxUploads(),
-                           _dd->config->getMaxConnections());
-
-         limitManager_.update();
       }
 
       void daemonHandler::readFromTransport()

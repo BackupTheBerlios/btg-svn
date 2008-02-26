@@ -22,32 +22,24 @@
  * $Id$
  */
 
+#include "sessionsaver.h"
+#include <bcore/project.h>
+#include <bcore/addrport.h>
+#include <bcore/command/setup.h>
+#include <bcore/command/limit_base.h>
+#include <bcore/util.h>
+#include <bcore/dbuf.h>
+#include <bcore/os/fileop.h>
+#include <bcore/externalization/xmlrpc.h>
+#include <daemon/modulelog.h>
+#include "eventhandler.h"
+#include "session_list.h"
 #include "daemondata.h"
 #include "eventhandler.h"
 #include "dconfig.h"
 
-#include <fstream>
-
-#include <bcore/project.h>
-
-#include <bcore/addrport.h>
-
-#include <bcore/command/setup.h>
-#include <bcore/util.h>
-#include <bcore/dbuf.h>
-#include <bcore/os/fileop.h>
-
-#include <bcore/externalization/xmlrpc.h>
-
-#include "eventhandler.h"
-
 #include <map>
-
-#include "session_list.h"
-
-#include "sessionsaver.h"
-
-#include <daemon/modulelog.h>
+#include <fstream>
 
 using namespace btg::daemon;
 
@@ -163,7 +155,7 @@ namespace btg
                ext = 0;
 
 #ifdef OLD_FORMAT
-               if(!useBinaryFormat)
+               if (!useBinaryFormat)
                {
                   BTG_ERROR_LOG(logWrapper(),
                                 "SesssionSaver::loadSessions(), trying old binary format..");
@@ -196,6 +188,40 @@ namespace btg
                                       btg::core::externalization::Externalization* _e, 
                                       t_uint _version)
       {
+         // Global limits.
+         if (_version >= 0x9a)
+            {
+               t_int upload_rate_limit   = btg::core::limitBase::LIMIT_DISABLED;
+               t_int download_rate_limit = btg::core::limitBase::LIMIT_DISABLED;
+               t_int max_uploads         = btg::core::limitBase::LIMIT_DISABLED;
+               t_long max_connections    = btg::core::limitBase::LIMIT_DISABLED;
+               
+               bool r = _e->bytesToInt(&upload_rate_limit);
+               DESERIALIZE_CHECK(!r, "Unable to load global limit, upload", 0);
+               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Upload limit: " << 
+                            upload_rate_limit << ".");
+
+               r = _e->bytesToInt(&download_rate_limit);
+               DESERIALIZE_CHECK(!r, "Unable to load global limit, download", 0);
+               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Download limit: " << 
+                            download_rate_limit << ".");
+
+               r = _e->bytesToInt(&max_uploads);
+               DESERIALIZE_CHECK(!r, "Unable to load global limit, max uploads", 0);
+               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Max uploads: " << 
+                            max_uploads << ".");
+               
+               r = _e->bytesToLong(&max_connections);
+               DESERIALIZE_CHECK(!r, "Unable to load global limit, max connections", 0);
+               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Max connections: " << 
+                            max_connections << ".");
+               
+               limitManager_.set(upload_rate_limit, 
+                                 download_rate_limit,
+                                 max_uploads,
+                                 max_connections);
+            }
+         
          t_int handler_count = 0;
 
          // get number of handlers
@@ -265,13 +291,37 @@ namespace btg
             new btg::core::externalization::XMLRPC(logWrapper());
 
          // Add signature bytes.
-
          t_uint b = ss_version;
          ext->uintToBytes(&b);
          b = ~b;
          ext->uintToBytes(&b);
 
-         // Move the code that saves the sessions to the session list.
+         // Global limits:
+         t_int upload_rate_limit   = btg::core::limitBase::LIMIT_DISABLED;
+         t_int download_rate_limit = btg::core::limitBase::LIMIT_DISABLED;
+         t_int max_uploads         = btg::core::limitBase::LIMIT_DISABLED;
+         t_long max_connections    = btg::core::limitBase::LIMIT_DISABLED;
+
+         limitManager_.get(upload_rate_limit, 
+                           download_rate_limit,
+                           max_uploads,
+                           max_connections);
+
+         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Upload limit: " << 
+                      upload_rate_limit << ".");
+         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Download limit: " << 
+                      download_rate_limit << ".");
+         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Max uploads: " << 
+                      max_uploads << ".");
+         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Max connections: " << 
+                      max_connections << ".");
+
+         ext->intToBytes(&upload_rate_limit);
+         ext->intToBytes(&download_rate_limit);
+         ext->intToBytes(&max_uploads);
+         ext->longToBytes(&max_connections);
+
+         // Moved the code that saves the sessions to the session list.
          sessionlist_.serialize(ext, _dumpFastResume);
 
          btg::core::dBuffer db;
