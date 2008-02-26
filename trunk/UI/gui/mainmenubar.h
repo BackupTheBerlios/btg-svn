@@ -69,7 +69,7 @@ namespace btg
                      /// can be disabled if no contexts are selected.
                      bool                        controlFunctionEnabled;
                      
-                     // torrent preferences
+                     /// Torrent preferences.
                      Gtk::MenuItem*              preferencesMenuitem;
                      
                      /// Menu item for the list of last files.

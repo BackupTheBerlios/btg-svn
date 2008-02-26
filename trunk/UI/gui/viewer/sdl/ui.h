@@ -93,6 +93,7 @@ namespace btg
                /// Destructor.
                ~btgvsGui();
 
+               /// UI style.
                AG_Style        style;
                /// Timer.
                AG_Timeout*     timer;
