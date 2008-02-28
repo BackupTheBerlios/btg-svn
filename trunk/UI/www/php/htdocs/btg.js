@@ -923,25 +923,6 @@ function cb_contextStatus_err(error, errStr)
 	canGetContexts = 0;
 }
 
-/*
-function cb_contextTrackers(response)
-{
-	 var cid = getFirstChildValue(response, 'cid');
-	 var trackername = getFirstChildValue(response, 'tracker');
-
-	 var itemname = 'trackerfield_' + cid;
-	 var item = document.getElementById(itemname);
-	 item.innerHTML = "Tracker URL for " + cid;
-	 item.innerHTML = trackername;
-
-}
-
-function cb_contextTrackers_err(error, errStr)
-{
-	 setStatus("Failed to get trackers for context: "+errStr);
-}
-*/
-
 function cb_sessionName(response)
 {
 	 var sesnam = getFirstChildValue(response, 'sessionname');
@@ -1769,16 +1750,32 @@ function createTorrentDetails()
 	r = tbl.insertRow(-1);
 	r.className='extra_even_row';
 
-	c = r.insertCell(-1);
-
 	// Add a tracker URL.
+	c = r.insertCell(-1);
 	c.className = 'extrainfo_type';
 	c.innerHTML='Tracker:';
 
 	c = r.insertCell(-1);
 	c.className = 'extrainfo_value';
 	c.innerHTML='';
-	c.colSpan = 3;
+	// c.colSpan = 3;
+
+	// Add ul/dl ratio.
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_type';
+	c.innerHTML = 'Ratio';
+
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_value';
+	c.innerHTML = '';
+
+	// Not used right now.
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_type';
+	c.innerHTML = '';
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_value';
+	c.innerHTML = '';
 
 	return tbl;
 }
@@ -1878,20 +1875,36 @@ function updateTorrentDetails(t, s)
 
 	t.rows[2].cells[1].innerHTML = f;
 	t.rows[2].cells[1].title = s.filename;
-	t.rows[2].cells[3].innerHTML = humanizeSize(s.filesize,2);
+	t.rows[2].cells[3].innerHTML = humanizeSize(s.filesize, 2);
 	t.rows[2].cells[5].innerHTML = s.seeders;
 
-	t.rows[3].cells[1].innerHTML = humanizeSpeed(s.uploadrate,1);
-	t.rows[3].cells[3].innerHTML = humanizeSize(s.uploadtotal,2);
+	t.rows[3].cells[1].innerHTML = humanizeSpeed(s.uploadrate, 1);
+	t.rows[3].cells[3].innerHTML = humanizeSize(s.uploadtotal, 2);
 	t.rows[3].cells[5].innerHTML = s.leechers;
 
-	t.rows[4].cells[1].innerHTML = humanizeSpeed(s.downloadrate ,1);
-	t.rows[4].cells[3].innerHTML = humanizeSize(s.downloadtotal ,2);
+	t.rows[4].cells[1].innerHTML = humanizeSpeed(s.downloadrate, 1);
+	t.rows[4].cells[3].innerHTML = humanizeSize(s.downloadtotal, 2);
 
 	t.rows[4].cells[5].innerHTML = RoundToNdp(s.done,1)+'%';
 	// Tracker url.
 	t.rows[5].cells[1].innerHTML = s.tracker;
 
+	// Ratio.
+	var dltotal = s.downloadtotal;
+	var ultotal = s.uploadtotal;
+
+	var ratio = 0;
+	if (dltotal > 0)
+	{
+		 ratio = ultotal / dltotal;
+	}
+	var ratio_tr = Math.round(ratio*100)/100;
+
+	t.rows[5].cells[3].innerHTML = ratio_tr.toString();
+
+	// Not used right now.
+	t.rows[5].cells[4].innerHTML = "";
+	t.rows[5].cells[5].innerHTML = "";
 }
 
 /**************************************************
