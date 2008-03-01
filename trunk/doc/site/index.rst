@@ -108,9 +108,14 @@ Experimental Releases
 ======================= ========================== ======================= ==================================
 **Source**              **Release note**           **Changelog**           **Rasterbar Libtorrent version**
 ----------------------- -------------------------- ----------------------- ----------------------------------
+`btg-0.9.7-rc3.tar.gz`_ `0.9.7 RC3 release note`_  `0.9.7 RC3 changelog`_  0.13RC/SVN
 `btg-0.9.7-rc2.tar.gz`_ `0.9.7 RC2 release note`_  `0.9.7 RC2 changelog`_  0.13RC/SVN
 `btg-0.9.7-rc1.tar.gz`_ `0.9.7 RC1 release note`_  `0.9.7 RC1 changelog`_  0.13RC/SVN
 ======================= ========================== ======================= ==================================
+
+.. _btg-0.9.7-rc3.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.7-rc3.tar.gz
+.. _0.9.7 RC3 release note: http://developer.berlios.de/project/shownotes.php?release_id=14299
+.. _0.9.7 RC3 changelog: http://developer.berlios.de/project/shownotes.php?release_id=14299
 
 .. _btg-0.9.7-rc2.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.7-rc2.tar.gz
 .. _0.9.7 RC2 release note: http://developer.berlios.de/project/shownotes.php?release_id=14078
