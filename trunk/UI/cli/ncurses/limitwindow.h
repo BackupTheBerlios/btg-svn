@@ -128,6 +128,9 @@ namespace btg
                            COUNTERSIZE = COUNTER4 + 1
                         };
 
+                     /// Unmodified key map. Used for numeric input.
+                     keyMapping org_kmap_;
+
                      /// Size of this window.
                      windowSize size_;
 
@@ -174,6 +177,9 @@ namespace btg
                      void addValue(LIMIT const _type, 
                                    t_int const _value, 
                                    bool const _changed);
+
+                     /// Input a limit using the keyboard (numeric keys).
+                     bool handleInput();
 
                      /// Move to the next counter.
                      void nextChoice();

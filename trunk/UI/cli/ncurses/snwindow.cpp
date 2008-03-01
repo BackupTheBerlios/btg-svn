@@ -199,7 +199,6 @@ namespace btg
             std::vector<std::string> helpText;
 
             helpText.push_back("Help");
-            helpText.push_back("----");
             helpText.push_back("    ");
 
             helpText.push_back("Enter a session name using the keyboard.");

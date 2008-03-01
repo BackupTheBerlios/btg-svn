@@ -196,7 +196,12 @@ namespace btg
                      }
                }
          }
-	
+
+         keyMapping baseWindow::getKeyMap() const
+         {
+            return kmap_;
+         }
+
          baseWindow::~baseWindow()
          {
 

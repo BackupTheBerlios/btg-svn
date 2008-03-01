@@ -567,7 +567,6 @@ namespace btg
             std::vector<std::string> helpText;
 
             helpText.push_back("Help");
-            helpText.push_back("----");
             helpText.push_back("    ");
 
             std::string keyDescr;

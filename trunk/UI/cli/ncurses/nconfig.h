@@ -152,6 +152,8 @@ namespace btg
                      t_int prevKey;
                      /// Key.
                      t_int deleteKey;
+                     /// Key.
+                     t_int inputKey;
 
                      /// Color.
                      colorDef c_normal;

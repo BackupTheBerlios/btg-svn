@@ -52,6 +52,7 @@ namespace btg
 	      std::string const KEY_NEXT("KEY_NEXT");
 	      std::string const KEY_PREV("KEY_PREV");
          std::string const KEY_DELETE("KEY_DELETE");
+         std::string const KEY_INPUT("KEY_INPUT");
 
 	      std::string const COLOR_NORMAL("COLOR_NORMAL");
 	      std::string const COLOR_BORDER("COLOR_BORDER");
@@ -80,7 +81,8 @@ namespace btg
               markAllKey(keyMapping::K_UNDEF),
               nextKey(keyMapping::K_UNDEF),
               prevKey(keyMapping::K_UNDEF),
-              deleteKey(keyMapping::K_UNDEF)
+              deleteKey(keyMapping::K_UNDEF),
+              inputKey(keyMapping::K_UNDEF)
 	      {
 		
 	      }
@@ -144,6 +146,11 @@ namespace btg
 
                   key = inifile->GetValue(KEY_DELETE, SECTION_BTGNCLI);
                   convertKey(key, deleteKey);
+
+                  key = inifile->GetValue(KEY_INPUT, SECTION_BTGNCLI);
+                  convertKey(key, inputKey);
+
+                  
 
                   // Read colors.
 
@@ -267,6 +274,16 @@ namespace btg
                       output);
 
             formatKey(KEY_PREV,
+                      keyDescription,
+                      temp,
+                      output);
+
+            formatKey(KEY_DELETE,
+                      keyDescription,
+                      temp,
+                      output);
+
+            formatKey(KEY_INPUT,
                       keyDescription,
                       temp,
                       output);
@@ -405,6 +422,12 @@ namespace btg
                      value = deleteKey;
                      break;
                   }
+               case keyMapping::K_INPUT:
+                  {
+                     value = inputKey;
+                     break;
+                  }
+
                default:
                   {
                      value =  keyMapping::K_UNDEF;

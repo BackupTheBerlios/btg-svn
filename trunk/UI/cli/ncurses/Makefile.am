@@ -10,6 +10,7 @@ btgncli_SOURCES = nconfig.cpp \
                   fileview.cpp \
                   sessionselect.cpp \
                   fileselect.cpp \
+                  numinput.cpp \
                   mainwindow.cpp \
                   ui.cpp ui_menu.cpp ui_handler.cpp \
                   handler.cpp \
@@ -25,6 +26,7 @@ noinst_HEADERS = nconfig.h \
                  fileview.h \
                  sessionselect.h \
                  fileselect.h \
+                 numinput.cpp \
                  mainwindow.h \
                  ui.h \
                  handler.h

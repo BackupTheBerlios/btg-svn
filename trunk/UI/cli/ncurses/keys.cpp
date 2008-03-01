@@ -142,6 +142,11 @@ namespace btg
                {
                   add(keyMapping::K_DELETE, KEY_DC);
                }
+
+            if (!exists(keyMapping::K_INPUT))
+               {
+                  add(keyMapping::K_INPUT, 'e');
+               }
          }
 
          void keyMapping::add(KEYLABEL const _keyl, int const _value)

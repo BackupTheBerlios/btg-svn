@@ -26,6 +26,7 @@
 #include <bcore/hru.h>
 #include <bcore/hrr.h>
 
+#include "numinput.h"
 #include "helpwindow.h"
 
 namespace btg
@@ -53,6 +54,7 @@ namespace btg
                                   t_int _counter4_max,
                                   std::string const& _counter4label)
             : baseWindow(_kmap),
+              org_kmap_(_kmap),
               size_(_ws),
               currentLimit_(limitWindow::COUNTER1),
               counter_(1),
@@ -93,6 +95,7 @@ namespace btg
             labels.push_back(keyMapping::K_HELP);
             labels.push_back(keyMapping::K_SELECT);
             labels.push_back(keyMapping::K_RESIZE);
+            labels.push_back(keyMapping::K_INPUT);
 
             kmap_.setUsed(labels);
          }
@@ -119,6 +122,16 @@ namespace btg
                      case keyMapping::K_QUIT:
                         {
                            cont = false;
+                           break;
+                        }
+                     case keyMapping::K_INPUT:
+                        {
+                           if (handleInput())
+                              {
+                                 // Resized.
+                                 return dialog::R_RESIZE;
+                              }
+                           refresh();
                            break;
                         }
                      case keyMapping::K_NEXT:
@@ -300,6 +313,40 @@ namespace btg
             counter_++;
          }
 
+         bool limitWindow::handleInput()
+         {
+            windowSize numberdimensions;
+            getSize(numberdimensions);
+
+            numberInputWindow niw(org_kmap_, 
+                                  numberdimensions,
+                                  counters_[choice_].label,
+                                  counters_[choice_].value, 
+                                  counters_[choice_].minimum,
+                                  counters_[choice_].maximum);
+
+            dialog::RESULT res = niw.run();
+            
+            if (res == dialog::R_RESIZE)
+               {
+                  // Resized.
+                  return true;
+               }
+
+            if (niw.changed())
+               {
+                  t_int limit = niw.getNumber();
+                  if (limit == 0)
+                     {
+                        limit = counters_[choice_].minimum;
+                     }
+
+                  counters_[choice_].value = limit;
+               }
+
+            return false;
+         }
+
          void limitWindow::nextChoice()
          {
             switch (choice_)
@@ -440,7 +487,6 @@ namespace btg
             std::vector<std::string> helpText;
 
             helpText.push_back("Help");
-            helpText.push_back("----");
             helpText.push_back("    ");
 
             std::string keyDescr;
@@ -504,6 +550,16 @@ namespace btg
                {
                   helpText.push_back(keyDescr);
                   helpText.push_back("  to dec. the currently selected limit by 100");
+               }
+
+            if (helpWindow::generateHelpForKey(kmap_,
+                                               keyMapping::K_INPUT,
+                                               "",
+                                               keyDescr,
+                                               false))
+               {
+                  helpText.push_back(keyDescr);
+                  helpText.push_back("  to input a number using the keyboard");
                }
 
             if (helpWindow::generateHelpForKey(kmap_,

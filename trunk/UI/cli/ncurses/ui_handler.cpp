@@ -481,7 +481,6 @@ namespace btg
             std::vector<std::string> helpText;
 
             helpText.push_back("Help");
-            helpText.push_back("----");
             helpText.push_back("    ");
             helpText.push_back("For each torrent the following information is shown:");
             helpText.push_back("<filename> <status> <percent> <estimate> <peers/seeds>");

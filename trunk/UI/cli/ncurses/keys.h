@@ -71,6 +71,7 @@ namespace btg
                K_NEXT,       //!< Next entry.
                K_PREV,       //!< Previous entry.
                K_DELETE,     //!< Delete.
+               K_INPUT,      //!< Input using the keyboard.
                // Other:
                K_RESIZE      //!< Display was resized.
             };
