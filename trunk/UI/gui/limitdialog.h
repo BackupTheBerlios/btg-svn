@@ -45,7 +45,11 @@ namespace btg
                   {
                   public:
                      /// Constructor.
-                     limitDialog();
+                     /// @param [in] _szUploadLabel 1st label text (default "Upload")
+                     /// @param [in] _szDownloadLabel 2nd label text (default "Download")
+                     /// @param [in] _szSeedpercUploadscntLabel 3rd label text (default "Seed %")
+                     /// @param [in] _szSeedtimeConnectionscntLabel 4th label text (default "Seed Time")
+                     limitDialog(const char * _szUploadLabel = NULL, const char * _szDownloadLabel = NULL, const char * _szSeedpercUploadscntLabel = NULL, const char * _szSeedtimeConnectionscntLabel = NULL);
 
                      /// Update this dialog. Should be called before
                      /// the run method is called.

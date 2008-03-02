@@ -46,7 +46,7 @@ namespace btg
       namespace gui
       {
 
-         limitDialog::limitDialog()
+         limitDialog::limitDialog(const char * _szUploadLabel, const char * _szDownloadLabel, const char * _szSeedpercUploadscntLabel, const char * _szSeedtimeConnectionscntLabel)
             : limit_interval(5),
               limit_selected(false),
               selected_upload_disable(false),
@@ -60,13 +60,13 @@ namespace btg
               selected_upload_limit(-1),
               selected_download_limit(-1)
          {
-            Gtk::Label *uploadLabel   = Gtk::manage(new class Gtk::Label("Upload"));
-            Gtk::Label *downloadLabel = Gtk::manage(new class Gtk::Label("Download"));
+            Gtk::Label *uploadLabel   = Gtk::manage(new class Gtk::Label( _szUploadLabel ? _szUploadLabel : "Upload" ));
+            Gtk::Label *downloadLabel = Gtk::manage(new class Gtk::Label( _szDownloadLabel ? _szDownloadLabel : "Download" ));
             uploadCombo               = Gtk::manage(new class Gtk::ComboBoxText());
             downloadCombo             = Gtk::manage(new class Gtk::ComboBoxText());
 
-            Gtk::Label *seedPercentLabel = Gtk::manage(new class Gtk::Label("Seed %"));
-            Gtk::Label *seedTimeLabel    = Gtk::manage(new class Gtk::Label("Seed Time"));
+            Gtk::Label *seedPercentLabel = Gtk::manage(new class Gtk::Label( _szSeedpercUploadscntLabel ? _szSeedpercUploadscntLabel : "Seed %" ));
+            Gtk::Label *seedTimeLabel    = Gtk::manage(new class Gtk::Label( _szSeedtimeConnectionscntLabel ? _szSeedtimeConnectionscntLabel : "Seed Time" ));
 
             Gtk::Adjustment *seedPercentAdjustment = Gtk::manage(new class Gtk::Adjustment(1, 0, 100, 1, 10, 10));
             seedPercentSpin = Gtk::manage(new class Gtk::SpinButton(*seedPercentAdjustment, 1, 0));
@@ -162,28 +162,12 @@ namespace btg
 
             set_default_size(300, 200);
 
-            uploadLabel->show();
-            downloadLabel->show();
-
-            seedPercentLabel->show();
-            seedTimeLabel->show();
-
-            uploadCombo->show();
-            downloadCombo ->show();
-
-            seedPercentSpin->show();
-            seedTimeSpin->show();
-
-            settingsTable->show();
-            limitVbox->show();
-
             // Create buttons and connect their signals.
             add_button("Set", 1);
             add_button("Cancel", 2);
             signal_response().connect(sigc::mem_fun(*this, &limitDialog::on_button_pressed));
-
-            get_vbox()->show();
-            show();
+            
+            show_all();
          }
 
          void limitDialog::update(std::string const& _filename,
@@ -199,7 +183,7 @@ namespace btg
 
             if (_currentUploadLimit > 0)
                {
-                  t_int position = (_currentUploadLimit*KiB) / limit_interval;
+                  t_int position = _currentUploadLimit / KiB / limit_interval;
                   uploadCombo->set_active(position);
                }
             else
@@ -209,7 +193,7 @@ namespace btg
 
             if (_currentDownloadLimit > 0)
                {
-                  t_int position = (_currentDownloadLimit*KiB) / limit_interval;
+                  t_int position = _currentDownloadLimit / KiB / limit_interval;
                   downloadCombo->set_active(position);
                }
             else
