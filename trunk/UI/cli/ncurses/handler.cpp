@@ -75,10 +75,6 @@ namespace btg
                               _lastfiles,
                               _verboseFlag,
                               _autoStartFlag),
-              last_uploadRate(limitBase::LIMIT_DISABLED),
-              last_downloadRate(limitBase::LIMIT_DISABLED),
-              last_seedLimit(limitBase::LIMIT_DISABLED),
-              last_seedTimeout(limitBase::LIMIT_DISABLED),
               lastSelected_files_()
          {
          }
@@ -176,35 +172,6 @@ namespace btg
             commandStatus = true;
          }
 
-         void Handler::onGlobalLimit()
-         {
-            commandStatus = true;
-         }
-
-         void Handler::onGlobalLimitError(std::string _ErrorDescription)
-         {
-            commandStatus = false;
-         }
-
-         void Handler::onGlobalLimitResponse(t_int const  _limitBytesUpld,
-                                             t_int const  _limitBytesDwnld,
-                                             t_int const  _maxUplds,
-                                             t_long const _maxConnections)
-         {
-            last_gl_limitBytesUpld  = _limitBytesUpld;
-            last_gl_limitBytesDwnld = _limitBytesDwnld;
-            last_gl_maxUplds        = _maxUplds;
-            last_gl_maxConnections  = _maxConnections;
-
-            commandStatus = true;
-         }
-
-         void Handler::onGlobalLimitResponseError(std::string _ErrorDescription)
-         {
-            commandStatus = false;
-         }
-
-
          void Handler::onCreateWithData()
          {
             commandStatus = true;
@@ -272,11 +239,6 @@ namespace btg
             this->cmd_failture++;
          }
 
-         void Handler::onLimit()
-         {
-            commandStatus = true;
-         }
-
          void Handler::onListSessions(t_longList const& _sessions,
                                       t_strList const& _sessionNames)
          {
@@ -302,43 +264,6 @@ namespace btg
             this->cmd_failture++;
 
             // std::cout << _errorDescription << std::endl;
-         }
-
-         void Handler::onLimitStatus(t_int const _uploadRate, t_int const _downloadRate, t_int const _seedLimit, t_long const _seedTimeout)
-         {
-            commandStatus = true;
-            last_uploadRate     = _uploadRate;
-            last_downloadRate   = _downloadRate;
-            last_seedLimit      = _seedLimit;
-            last_seedTimeout    = _seedTimeout;
-         }
-
-         void Handler::onLimitStatusError(std::string const& _errorDescription)
-         {
-            commandStatus = false;
-            this->cmd_failture++;
-         }
-
-         void Handler::getLastLimitStatus(t_int & _uploadRate, 
-                                          t_int & _downloadRate, 
-                                          t_int & _seedLimit, 
-                                          t_int & _seedTimeout) const
-         {
-            _uploadRate   = last_uploadRate;
-            _downloadRate = last_downloadRate;
-            _seedLimit    = last_seedLimit;
-            _seedTimeout  = last_seedTimeout;
-         }
-
-         void Handler::getLastGlobalLimitStatus(t_int & _gl_limitBytesUpld,
-                                                t_int & _gl_limitBytesDwnld,
-                                                t_int & _gl_maxUplds,
-                                                t_int & _gl_maxConnections) const
-         {
-            _gl_limitBytesUpld  = last_gl_limitBytesUpld;
-            _gl_limitBytesDwnld = last_gl_limitBytesDwnld;
-            _gl_maxUplds        = last_gl_maxUplds;
-            _gl_maxConnections  = last_gl_maxConnections;
          }
 
          void Handler::getLastFileInfoList(t_fileInfoList & _fileInfoList) const

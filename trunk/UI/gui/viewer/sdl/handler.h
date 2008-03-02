@@ -138,10 +138,6 @@ namespace btg
                   void onFileInfoError(std::string const& _errorDescription);
                   void onPeers(t_peerList const& _peerlist);
                   void onPeersError(std::string const& _errorDescription);
-                  void onLimit();
-                  void onLimitStatus(t_int const _uploadRate, t_int const _downloadRate,
-                                     t_int const _seedLimit, t_long const _seedTimeout);
-                  void onLimitStatusError(std::string const& _errorDescription);
 
                   void onSetFiles();
 
@@ -173,14 +169,6 @@ namespace btg
 
                   void onSessionName(std::string const& _name);
                   void onSetSessionName();
-
-                  void onGlobalLimit();
-                  void onGlobalLimitError(std::string _ErrorDescription);
-                  void onGlobalLimitResponse(t_int const  _limitBytesUpld,
-                                             t_int const  _limitBytesDwnld,
-                                             t_int const  _maxUplds,
-                                             t_long const _maxConnections);
-                  void onGlobalLimitResponseError(std::string _ErrorDescription);
 
                   void onSessionInfo(bool const _encryption, bool const _dht);
 

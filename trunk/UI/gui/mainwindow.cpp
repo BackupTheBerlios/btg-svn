@@ -93,7 +93,6 @@ namespace btg
               handlerthread(_handlerthread),
               aboutdialog(0),
               preferencesdialog(0),
-              limitdialog(0),
               lastOpenDirectory(""),
               updateContexts(true),
               progressCounter(0),
@@ -994,7 +993,75 @@ namespace btg
 
          void mainWindow::handle_btn_glimit()
          {
-            errorDialog::showAndDie("Global limits setting not available yet.");
+            GET_HANDLER_INST;
+
+            t_int up_limit   = 0;
+            t_int down_limit = 0;
+            t_int max_uploads  = 0;
+            t_long max_connections = 0;
+            
+            std::auto_ptr<limitDialog> limitdialog(new limitDialog(NULL,NULL,"Max uploads","Max connections"));
+
+            handler->reqGlobalLimitStatus();
+
+            if (handler->commandSuccess())
+               {
+                  handler->getLimitStatus(up_limit, down_limit);
+                  handler->getDaemonLimitStatus(max_uploads, max_connections);
+               }
+            else
+               {
+                  errorDialog::showAndDie("Error getting global limit settings.");
+               }
+
+            limitdialog->update("Global",
+                                up_limit, down_limit,
+                                max_uploads, max_connections);
+            limitdialog->run();
+
+            if (limitdialog->limitSelected())
+               {
+                  up_limit     = btg::core::limitBase::LIMIT_DISABLED;
+                  down_limit   = btg::core::limitBase::LIMIT_DISABLED;
+                  max_uploads = btg::core::limitBase::LIMIT_DISABLED;
+                  max_connections = btg::core::limitBase::LIMIT_DISABLED;
+      
+                  // User selected limits.
+                  if (!limitdialog->uploadLimitDisabled())
+                     {
+                        up_limit = limitdialog->getUploadLimit();
+                     }
+      
+                  // User selected limits.
+                  if (!limitdialog->downloadLimitDisabled())
+                     {
+                        down_limit = limitdialog->getDownloadLimit();
+                     }
+      
+                  // User selected seed limits.
+                  if (!limitdialog->seedPercentDisabled())
+                     {
+                        max_uploads = limitdialog->getSeedPercent(); // FIXME: ugly
+                     }
+      
+                  // User selected seed limits.
+                  if (!limitdialog->seedTimeDisabled())
+                     {
+                        max_connections = limitdialog->getSeedTimeout(); // FIXME: ugly
+                     }
+      
+                  handler->reqGlobalLimit(up_limit, down_limit, max_uploads, max_connections);
+      
+                  if (handler->commandSuccess())
+                     {
+                        msb->set(USERMESSAGE_LIMIT_B + std::string("Global") + USERMESSAGE_LIMIT_E);
+                        logVerboseMessage(USERMESSAGE_LIMIT_B + std::string("Global") + USERMESSAGE_LIMIT_E);
+                     }
+                  else
+                     {
+                        errorDialog::showAndDie("Error setting global limits.");
+                     }
+               }
          }
 
          void mainWindow::handle_btn_start(t_int const _id)
@@ -1106,10 +1173,7 @@ namespace btg
 
             std::string limit_filename;
             
-            if (limitdialog == 0)
-               {
-                  limitdialog = new limitDialog();
-               }
+            std::auto_ptr<limitDialog> limitdialog(new limitDialog());
             
             handler->idToFilename(_id, limit_filename);
 
@@ -1120,8 +1184,11 @@ namespace btg
                   if (handler->commandSuccess())
                      {
                         handler->getLimitStatus(up_limit, down_limit);
-
                         handler->getSeedLimitStatus(seed_percent, seed_timeout);
+                     }
+                  else
+                     {
+                        errorDialog::showAndDie("Error getting limit settings.");
                      }
 
                   limitdialog->update(limit_filename,
@@ -1178,6 +1245,10 @@ namespace btg
                         //           << ", download = " << down_limit
                         //           << ", seed percent = " << seed_percent
                         //           << ", seed timeout = " << seed_timeout);
+                     }
+                  else
+                     {
+                        errorDialog::showAndDie("Error setting limits.");
                      }
                }
             else

@@ -242,10 +242,10 @@ namespace btg
 
             statuswindow_.setStatus("Limiting torrent.");
 
-            t_int download    = limitBase::LIMIT_DISABLED;
-            t_int upload      = limitBase::LIMIT_DISABLED;
-            t_int seedTimeout = limitBase::LIMIT_DISABLED;
+            t_int download     = limitBase::LIMIT_DISABLED;
+            t_int upload       = limitBase::LIMIT_DISABLED;
             t_int seedPercent = limitBase::LIMIT_DISABLED;
+            t_long seedTimeout  = limitBase::LIMIT_DISABLED;
 
             // Get the current limit.
             {
@@ -254,7 +254,8 @@ namespace btg
 
                if (handler->commandSuccess())
                   {
-                     handler->getLastLimitStatus(upload, download, seedTimeout, seedPercent);
+                     handler->getLimitStatus(upload, download);
+                     handler->getSeedLimitStatus(seedPercent, seedTimeout);
 
                      if (upload != limitBase::LIMIT_DISABLED)
                         {
@@ -264,16 +265,6 @@ namespace btg
                      if (download != limitBase::LIMIT_DISABLED)
                         {
                            download    /= limitBase::KiB_to_B;
-                        }
-
-                     if (seedTimeout != limitBase::LIMIT_DISABLED)
-                        {
-                           seedTimeout /= limitBase::KiB_to_B;
-                        }
-
-                     if (seedTimeout != limitBase::LIMIT_DISABLED)
-                        {
-                           seedTimeout /= limitBase::KiB_to_B;
                         }
                   }
             }
@@ -295,7 +286,7 @@ namespace btg
                                     limitBase::LIMIT_DISABLED,
                                     1440,
                                     "Seed timeout (minutes)",
-                                    seedPercent,
+                                    static_cast<t_int>(seedPercent),
                                     limitBase::LIMIT_DISABLED,
                                     10000,
                                     "Seed percent (%)");
@@ -321,12 +312,14 @@ namespace btg
                      break;
                   }
                }
-
+            
+            t_int tmp_seedTimeout;
             if (limitwindow.getLimits(upload,
                                       download,
-                                      seedTimeout,
-                                      seedPercent))
+                                      seedPercent,
+                                      tmp_seedTimeout))
                {
+                  seedTimeout = tmp_seedTimeout; // to convert int to long
                   status = true;
 
                   if (upload != limitBase::LIMIT_DISABLED)
@@ -337,16 +330,6 @@ namespace btg
                   if (download != limitBase::LIMIT_DISABLED)
                      {
                         download    *= limitBase::KiB_to_B;
-                     }
-
-                  if (seedTimeout != limitBase::LIMIT_DISABLED)
-                     {
-                        seedTimeout *= limitBase::KiB_to_B;
-                     }
-
-                  if (seedTimeout != limitBase::LIMIT_DISABLED)
-                     {
-                        seedTimeout *= limitBase::KiB_to_B;
                      }
 
                   _download    = download;

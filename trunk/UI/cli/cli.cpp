@@ -1813,7 +1813,7 @@ namespace btg
                   
                   iter++;
                   
-                  t_int seedTimeout = convertStringTo<t_int>(*iter);
+                  t_long seedTimeout = convertStringTo<t_long>(*iter);
                   
                   if (!this->validateLimitSetting(seedTimeout, 60))
                      {
@@ -1829,7 +1829,7 @@ namespace btg
                         _result = INPUT_ERROR;
                         return;
                      }
-
+                  
                   _result = INPUT_OK;
                   this->reqLimit(_context_id, uploadrate, downloadrate, seedLimit, seedTimeout);
                }

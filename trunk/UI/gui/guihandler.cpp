@@ -225,32 +225,6 @@ namespace btg
                        "Error: " << _errorDescription);
          }
 
-         void guiHandler::onLimit()
-         {
-            commandStatus = true;
-         }
-
-         void guiHandler::onLimitStatus(t_int const _uploadRate, t_int const _downloadRate,
-                                        t_int const _seedLimit, t_long const _seedTimeout)
-         {
-            commandStatus       = true;
-            last_limit_upload   = _uploadRate;
-            last_limit_download = _downloadRate;
-
-            last_limit_seed_percent = _seedLimit;
-            last_limit_seed_timeout = _seedTimeout;
-         }
-
-         void guiHandler::onLimitStatusError(std::string const& _errorDescription)
-         {
-            commandStatus       = false;
-            last_limit_upload   = 0;
-            last_limit_download = 0;
-
-            BTG_NOTICE(logWrapper(), 
-                       "Error: " << _errorDescription);
-         }
-
          void guiHandler::onClean(t_strList const& _filenames, t_intList const& _contextIDs)
          {
             commandStatus = true;
@@ -347,29 +321,6 @@ namespace btg
          void guiHandler::onSetSessionName()
          {
             commandStatus = true;
-         }
-
-         void guiHandler::onGlobalLimit()
-         {
-
-         }
-
-         void guiHandler::onGlobalLimitError(std::string _ErrorDescription)
-         {
-
-         }
-
-         void guiHandler::onGlobalLimitResponse(t_int const  _limitBytesUpld,
-                                                t_int const  _limitBytesDwnld,
-                                                t_int const  _maxUplds,
-                                                t_long const _maxConnections)
-         {
-
-         }
-
-         void guiHandler::onGlobalLimitResponseError(std::string _ErrorDescription)
-         {
-
          }
 
          t_intList guiHandler::getIdsToRemove()

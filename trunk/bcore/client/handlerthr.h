@@ -131,6 +131,23 @@ namespace btg
 
                      /// Destructor.
                      virtual ~handlerThreadIf();
+
+                  protected:
+                     void onLimit();
+                     void onGlobalLimit();
+                     void onGlobalLimitError(std::string _ErrorDescription);
+                     void onGlobalLimitResponse(
+                        t_int const  _limitBytesUpld,
+                        t_int const  _limitBytesDwnld,
+                        t_int const  _maxUplds,
+                        t_long const _maxConnections);
+                     void onGlobalLimitResponseError(std::string _ErrorDescription);
+                     void onLimitStatus(t_int const _uploadRate,
+                                        t_int const _downloadRate,
+                                        t_int const _seedLimit,
+                                        t_long const _seedTimeout);
+                     void onLimitStatusError(std::string const& _errorDescription);
+                     
                   protected:
                      /// List of status objects.
                      t_statusList   statusList_;

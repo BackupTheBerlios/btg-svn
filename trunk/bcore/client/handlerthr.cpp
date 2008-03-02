@@ -180,6 +180,80 @@ namespace btg
 
          }
 
+         void handlerThreadIf::onLimit()
+         {
+            commandStatus = true;
+         }
+         
+         void handlerThreadIf::onGlobalLimit()
+         {
+            commandStatus = true;
+         }
+
+         void handlerThreadIf::onGlobalLimitError(std::string _errorDescription)
+         {
+            commandStatus = false;
+            last_limit_upload   = 0;
+            last_limit_download = 0;
+            last_limit_max_uploads = 0;
+            last_limit_max_connections = 0;
+
+            BTG_NOTICE(logWrapper(),
+                       "onGlobalLimitError: " << _errorDescription);
+         }
+
+         void handlerThreadIf::onGlobalLimitResponse(t_int const  _limitBytesUpld,
+                                                     t_int const  _limitBytesDwnld,
+                                                     t_int const  _maxUplds,
+                                                     t_long const _maxConnections)
+         {
+            last_limit_upload = _limitBytesUpld;
+            last_limit_download = _limitBytesDwnld;
+            last_limit_max_uploads = _maxUplds;
+            last_limit_max_connections = _maxConnections;
+
+            commandStatus = true;
+         }
+
+         void handlerThreadIf::onGlobalLimitResponseError(std::string _errorDescription)
+         {
+            commandStatus = false;
+            last_limit_upload   = 0;
+            last_limit_download = 0;
+            last_limit_max_uploads = 0;
+            last_limit_max_connections = 0;
+
+            BTG_NOTICE(logWrapper(),
+                       "onGlobalLimitResponseError: " << _errorDescription);
+         }
+         
+         void handlerThreadIf::onLimitStatus(t_int const _uploadRate,
+                                             t_int const _downloadRate,
+                                             t_int const _seedLimit,
+                                             t_long const _seedTimeout)
+         {
+            last_limit_upload = _uploadRate;
+            last_limit_download = _downloadRate;
+            last_limit_seed_percent = _seedLimit;
+            last_limit_seed_timeout = _seedTimeout;
+
+            commandStatus = true;
+         }
+
+         void handlerThreadIf::onLimitStatusError(std::string const& _errorDescription)
+         {
+            ++ cmd_failture;
+
+            commandStatus = false;
+            last_limit_upload = 0;
+            last_limit_download = 0;
+            last_limit_seed_percent = 0;
+            last_limit_seed_timeout = 0;
+
+            BTG_NOTICE(logWrapper(),
+                       "onLimitStatusError: " << _errorDescription);
+         }
+
       } // namespace client
    } // namespace core
 } // namespace btg

@@ -220,8 +220,6 @@ namespace btg
                aboutDialog*              aboutdialog;
                /// Pointer to the preferences dialog.
                preferencesDialog*        preferencesdialog;
-               /// Pointer to the limit dialog.
-               limitDialog*              limitdialog;
                /// Used to store the last directory used for
                /// opening files.
                std::string               lastOpenDirectory;

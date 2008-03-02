@@ -65,18 +65,6 @@ namespace btg
                              bool const _verboseFlag,
                              bool const _autoStartFlag);
 
-                     /// Get the last received limit status.
-                     void getLastLimitStatus(t_int & _uploadRate,
-                                             t_int & _downloadRate,
-                                             t_int & _seedLimit,
-                                             t_int & _seedTimeout) const;
-
-                     /// Get the last received limit status.
-                     void getLastGlobalLimitStatus(t_int & _gl_limitBytesUpld,
-                                                   t_int & _gl_limitBytesDwnld,
-                                                   t_int & _gl_maxUplds,
-                                                   t_int & _gl_maxConnections) const;
-
                      /// Get the last saved file info.
                      void getLastFileInfoList(t_fileInfoList & _fileInfoList) const;
 
@@ -118,8 +106,6 @@ namespace btg
                      void onPeers(t_peerList const& _peerlist);
                      void onPeersError(std::string const& _errorDescription);
 
-                     void onLimit();
-
                      void onListSessions(t_longList const& _sessions,
                                          t_strList const& _sessionNames);
 
@@ -131,13 +117,6 @@ namespace btg
 
                      void onError(std::string const& _errorDescription);
                      void onFatalError(std::string const& _errorDescription);
-
-                     void onLimitStatus(t_int const _uploadRate,
-                                        t_int const _downloadRate,
-                                        t_int const _seedLimit,
-                                        t_long const _seedTimeout);
-
-                     void onLimitStatusError(std::string const& _errorDescription);
 
                      void onSetFiles();
 
@@ -158,40 +137,7 @@ namespace btg
                      void onSessionName(std::string const& _name);
                      void onSetSessionName();
 
-                     void onGlobalLimit();
-                     void onGlobalLimitError(std::string _ErrorDescription);
-                     void onGlobalLimitResponse(t_int const  _limitBytesUpld,
-                                                t_int const  _limitBytesDwnld,
-                                                t_int const  _maxUplds,
-                                                t_long const _maxConnections);
-
-                     void onGlobalLimitResponseError(std::string _ErrorDescription);
-
                      void onSessionInfo(bool const _encryption, bool const _dht);
-
-                     /// Limit.
-                     t_int          last_uploadRate;
-
-                     /// Limit.
-                     t_int          last_downloadRate;
-
-                     /// Limit.
-                     t_int          last_seedLimit;
-
-                     /// Limit.
-                     t_long         last_seedTimeout;
-
-                     /// Global limit.
-                     t_int          last_gl_limitBytesUpld;
-
-                     /// Global limit.
-                     t_int          last_gl_limitBytesDwnld;
-
-                     /// Global limit.
-                     t_int          last_gl_maxUplds;
-
-                     /// Global limit.
-                     t_long         last_gl_maxConnections;
 
                      /// Last received list of file info objects.
                      t_fileInfoList lastFileinfolist_;

@@ -215,32 +215,6 @@ namespace btg
                           "Error: " << _errorDescription);
             }
 
-            void viewerHandler::onLimit()
-            {
-               commandStatus = true;
-            }
-
-            void viewerHandler::onLimitStatus(t_int const _uploadRate, t_int const _downloadRate,
-                                              t_int const _seedLimit, t_long const _seedTimeout)
-            {
-               commandStatus       = true;
-               last_limit_upload   = _uploadRate;
-               last_limit_download = _downloadRate;
-
-               last_limit_seed_percent = _seedLimit;
-               last_limit_seed_timeout = _seedTimeout;
-            }
-
-            void viewerHandler::onLimitStatusError(std::string const& _errorDescription)
-            {
-               commandStatus       = false;
-               last_limit_upload   = 0;
-               last_limit_download = 0;
-
-               BTG_NOTICE(logWrapper(),
-                          "Error: " << _errorDescription);
-            }
-
             void viewerHandler::onClean(t_strList const& _filenames, t_intList const& _contextIDs)
             {
                commandStatus = true;
@@ -340,29 +314,6 @@ namespace btg
                
             }
             
-            void viewerHandler::onGlobalLimit()
-            {
-
-            }
-
-            void viewerHandler::onGlobalLimitError(std::string _ErrorDescription)
-            {
-
-            }
-
-            void viewerHandler::onGlobalLimitResponse(t_int const  _limitBytesUpld,
-                                                      t_int const  _limitBytesDwnld,
-                                                      t_int const  _maxUplds,
-                                                      t_long const _maxConnections)
-            {
-
-            }
-
-            void viewerHandler::onGlobalLimitResponseError(std::string _ErrorDescription)
-            {
-
-            }
-
             t_intList viewerHandler::getIdsToRemove()
             {
                t_intList ids = idsToRemove;

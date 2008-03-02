@@ -224,6 +224,9 @@ namespace btg
             /// Get the seed limits.
             virtual void getSeedLimitStatus(t_int & _limitSeedPercent,
                                             t_long & _limitSeedTime);
+            /// Get daemon-specific limits
+            virtual void getDaemonLimitStatus(t_int & _limitMaxUploads,
+                                              t_long & _limitMaxConnections);
 
             /// Get a list of sessions, as returned by
             /// onListSessions.
@@ -273,9 +276,10 @@ namespace btg
             /// Indicates if encryption is enabled for the current
             /// session.
             virtual bool encryption();
-
+            
             /// Destructor.
             virtual ~clientHandler();
+
          protected:
             enum
             {
@@ -337,6 +341,12 @@ namespace btg
 
             /// The last set seed timeout.
             t_long                            last_limit_seed_timeout;
+
+            /// The last set daemon max uploads.
+            t_int                             last_limit_max_uploads;
+
+            /// The last set daemon max connections.
+            t_long                            last_limit_max_connections;
 
             /// Counter: the number of failed requests.
             t_uint                            cmd_failture;

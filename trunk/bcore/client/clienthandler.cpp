@@ -66,6 +66,8 @@ namespace btg
               last_limit_download(0),
               last_limit_seed_percent(0),
               last_limit_seed_timeout(0),
+              last_limit_max_uploads(0),
+              last_limit_max_connections(0),
               cmd_failture(0),
               sessionList(0),
               sessionNames(0),
@@ -394,6 +396,13 @@ namespace btg
             _limitSeedTime    = last_limit_seed_timeout;
          }
 
+         void clientHandler::getDaemonLimitStatus(t_int & _limitMaxUploads,
+                                                  t_long & _limitMaxConnections)
+         {
+            _limitMaxUploads = last_limit_max_uploads;
+            _limitMaxConnections = last_limit_max_connections;
+         }
+         
          t_longList clientHandler::getSessionList() const
          {
             return sessionList;

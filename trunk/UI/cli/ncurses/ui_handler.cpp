@@ -722,10 +722,10 @@ namespace btg
 
             statuswindow_.setStatus("Setting global limits. " + helpText);
 
-            t_int download        = limitBase::LIMIT_DISABLED;
-            t_int upload          = limitBase::LIMIT_DISABLED;
-            t_int max_uploads     = limitBase::LIMIT_DISABLED;
-            t_int max_connections = limitBase::LIMIT_DISABLED;
+            t_int download         = limitBase::LIMIT_DISABLED;
+            t_int upload           = limitBase::LIMIT_DISABLED;
+            t_int max_uploads      = limitBase::LIMIT_DISABLED;
+            t_long max_connections = limitBase::LIMIT_DISABLED;
 
             {
                GET_HANDLER_INST;
@@ -734,11 +734,9 @@ namespace btg
 
                if (handler->commandSuccess())
                   {
-                     handler->getLastGlobalLimitStatus(upload,
-                                                       download,
-                                                       max_uploads,
-                                                       max_connections);
-                     
+                     handler->getLimitStatus(upload, download);
+                     handler->getDaemonLimitStatus(max_uploads, max_connections);
+
                      if (upload != limitBase::LIMIT_DISABLED)
                         {
                            upload      /= limitBase::KiB_to_B;
@@ -768,7 +766,7 @@ namespace btg
                                     limitBase::LIMIT_DISABLED,
                                     65536,
                                     "Global max uploads",
-                                    max_connections,
+                                    static_cast<t_int>(max_connections),
                                     limitBase::LIMIT_DISABLED,
                                     65536,
                                     "Global max connections");
@@ -784,11 +782,13 @@ namespace btg
                   return;
                }
 
+            t_int tmp_max_connections;
             if (limitwindow.getLimits(upload,
                                       download,
                                       max_uploads,
-                                      max_connections))
+                                      tmp_max_connections))
                {
+                  max_connections = tmp_max_connections; // int -> long
                   {
                      GET_HANDLER_INST;
 
