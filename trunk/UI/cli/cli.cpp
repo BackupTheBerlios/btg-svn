@@ -1702,7 +1702,7 @@ namespace btg
 
                   t_int seedTimeout = convertStringTo<t_int>(*iter);
 
-                  if (!this->validateLimitSetting(seedTimeout, 60))
+                  if (!this->validateLimitSetting(seedTimeout, 1))
                      {
                         this->setCurrentID(cliHandler::WRONG_CONTEXT_ID);
                         if (!useCurrentID)
