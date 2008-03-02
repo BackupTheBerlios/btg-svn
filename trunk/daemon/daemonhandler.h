@@ -43,6 +43,8 @@
 
 #include <bcore/os/timer.h>
 
+#include <bcore/command/limit_base.h>
+
 #include <map>
 
 #include "portmgr.h"
@@ -96,6 +98,21 @@ namespace btg
 
                /// Handle setting of global limits.
                void handleGlobalLimit();
+
+               /// Validate global limits.
+               void validateGlobalLimits(t_int & _limitBytesUpld,
+                                         t_int & _limitBytesDwnld,
+                                         t_int & _maxUplds,
+                                         t_long & _maxConnections) const;
+
+               /// Template used to validate limits.
+               template<typename T> void validateLimit(T& _limit) const
+                  {
+                     if ((_limit == 0) || (_limit < btg::core::limitBase::LIMIT_DISABLED))
+                        {
+                           _limit = btg::core::limitBase::LIMIT_DISABLED;
+                        }
+                  }
 
                /// Handle sending the current global limit to client.
                void handleGlobalStatus();

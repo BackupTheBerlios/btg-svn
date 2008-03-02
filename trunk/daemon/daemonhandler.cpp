@@ -444,6 +444,17 @@ namespace btg
          global_btg_run = 0;
       }
 
+      void daemonHandler::validateGlobalLimits(t_int & _limitBytesUpld,
+                                               t_int & _limitBytesDwnld,
+                                               t_int & _maxUplds,
+                                               t_long & _maxConnections) const
+      {
+         validateLimit<t_int>(_limitBytesUpld);
+         validateLimit<t_int>(_limitBytesDwnld);
+         validateLimit<t_int>(_maxUplds);
+         validateLimit<t_long>(_maxConnections);
+      }
+
       void daemonHandler::handleGlobalLimit()
       {
          BTG_MNOTICE(logWrapper(), "Setting global limits");
@@ -451,8 +462,14 @@ namespace btg
 
          limitCommand* lc = dynamic_cast<limitCommand*>(command_);
 
-         limitManager_.set(lc->getUploadLimit(), lc->getDownloadLimit(),
-                           lc->getMaxUplds(), lc->getMaxConnections());
+         t_int limitBytesUpld   = lc->getUploadLimit();
+         t_int limitBytesDwnld  = lc->getDownloadLimit();
+         t_int maxUplds         = lc->getMaxUplds();
+         t_long maxConnections  = lc->getMaxConnections();
+
+         validateGlobalLimits(limitBytesUpld, limitBytesDwnld, maxUplds, maxConnections);
+
+         limitManager_.set(limitBytesUpld, limitBytesDwnld, maxUplds, maxConnections);
 
          // Ack the limit command.
          sendAck(Command::CN_GLIMIT);
@@ -464,10 +481,10 @@ namespace btg
 
          MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
 
-         t_int limitBytesUpld  = 0;
-         t_int limitBytesDwnld = 0;
-         t_int maxUplds        = 0;
-         t_long maxConnections = 0;
+         t_int limitBytesUpld  = btg::core::limitBase::LIMIT_DISABLED;
+         t_int limitBytesDwnld = btg::core::limitBase::LIMIT_DISABLED;
+         t_int maxUplds        = btg::core::limitBase::LIMIT_DISABLED;
+         t_long maxConnections = btg::core::limitBase::LIMIT_DISABLED;
 
          limitManager_.get(limitBytesUpld,
                            limitBytesDwnld,
