@@ -51,8 +51,7 @@ namespace btg
 
                class mainWindow;
 
-               /// Dialog used to set the session name of the current
-               /// session.
+               /// Dialog used to enter numbers.
                class numberInputWindow: public baseWindow, public dialog
                   {
                   public:
@@ -68,6 +67,8 @@ namespace btg
 
                      dialog::RESULT run();
 
+                     /// Indicates if the number this dialog displays
+                     /// when created was changed.
                      bool changed() const;
 
                      /// Get the entered number.
@@ -91,13 +92,21 @@ namespace btg
                      /// Indicates if the session name was changed.
                      bool        changed_;
 
+                     /// The input, as entered by the user.
                      std::string input_;
 
+                     /// Minimum number which can be entered.
                      t_int const min_;
+
+                     /// Maximum number which can be entered.
                      t_int const max_;
 
+                     /// Detect if the entered number is negative (by looking at input_).
                      bool isNegative() const;
+                     /// Validate the entered number.
                      bool validate(std::string const& _input);
+
+                     /// Strip more than one leading zero.
                      void stripLeadingZeros();
 
                      void refresh();

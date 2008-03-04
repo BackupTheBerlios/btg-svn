@@ -123,6 +123,7 @@ namespace btg
             /// Disable the use of a certain color.
             void unSetColor(Colors::COLORLABEL _label);
 
+            /// Get the key map used by this window.
             keyMapping getKeyMap() const;
 
             /// Destructor.
