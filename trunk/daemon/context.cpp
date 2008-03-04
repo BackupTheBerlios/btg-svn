@@ -55,6 +55,8 @@
 #include <bcore/t_string.h>
 #include <bcore/btg_assert.h>
 
+#include "lt_version.h"
+
 namespace btg
 {
    namespace daemon
@@ -491,7 +493,19 @@ namespace btg
                BTG_MEXIT(logWrapper(), "add", status);
                return status;
             }
-
+#if BTG_LT_0_12
+         libtorrent::torrent_info tinfo;
+         if (!entryToInfo(torrent_entry, tinfo))
+            {
+               // Unable to convert the entry to a torrent info.
+               // Adding files cannot continue.
+               
+               filetrack_->remove(tempDir_, fileTrackFilename);
+               status = Context::ERR_LIBTORRENT;
+               BTG_MEXIT(logWrapper(), "add", status);
+               return status;
+            }
+#elif BTG_LT_0_13
          boost::intrusive_ptr<libtorrent::torrent_info> tinfo(new libtorrent::torrent_info);
          // libtorrent::torrent_info tinfo;
          if (!entryToInfo(torrent_entry, *tinfo))
@@ -504,7 +518,7 @@ namespace btg
                BTG_MEXIT(logWrapper(), "add", status);
                return status;
             }
-
+#endif
          std::vector<std::string> contained_files;
          if (!entryToFiles(torrent_entry, contained_files))
             {
@@ -536,7 +550,11 @@ namespace btg
          // Check the torrent file against the seed dir. Attempt to
          // find out if the data resides in the seed directory.
          torrentStorage ts = tsWork;
+#if BTG_LT_0_12
+         if (dataPresentInSeedDir(tinfo))
+#elif BTG_LT_0_13
          if (dataPresentInSeedDir(*tinfo))
+#endif
             {
                dataPath =  boost::filesystem::path(seedDir_, boost::filesystem::native);
                ts = tsSeed;
@@ -574,12 +592,21 @@ namespace btg
                      if (status == Context::ERR_OK)
                         {
                            BTG_MNOTICE(logWrapper(), "using fast resume for '" << _torrent_filename << "'");
+#if BTG_LT_0_12
+                           handle = torrent_session->add_torrent(torrent_entry, dataPath, fastResumeEntry);         
+#elif BTG_LT_0_13
                            handle = torrent_session->add_torrent(tinfo, dataPath, fastResumeEntry);
+#endif
+
                         }
                   }
                else
                   {
+#if BTG_LT_0_12
+                     handle = torrent_session->add_torrent(torrent_entry, dataPath);
+#elif BTG_LT_0_13
                      handle = torrent_session->add_torrent(tinfo, dataPath);
+#endif
                   }
             }
          catch (std::exception& e)
@@ -1710,7 +1737,8 @@ namespace btg
 
          BTG_MEXIT(logWrapper(), "applySelectedFiles", true);
          return true;
-#else
+#elif BTG_LT_0_12
+         BTG_MNOTICE(logWrapper(), "Setting file priorities is not implemented in libtorrent 0.12.x");
          BTG_MEXIT(logWrapper(), "applySelectedFiles", false);
          return false;
 #endif // BTG_LT_0_13
@@ -2055,13 +2083,19 @@ namespace btg
       void Context::setProxyHttpSettings(btg::core::addressPort const& _proxy)
       {
          BTG_MNOTICE(logWrapper(), "setting session settings: proxy");
-
+#if (BTG_LT_0_13)
          libtorrent::proxy_settings ps;
          ps.hostname = _proxy.getIp();
          ps.port     = _proxy.getPort();
          torrent_session->set_peer_proxy(ps);
          torrent_session->set_web_seed_proxy(ps);
          torrent_session->set_tracker_proxy(ps);
+#elif (BTG_LT_0_12)
+         session_settings_.proxy_ip   = _proxy.getIp();
+         session_settings_.proxy_port = _proxy.getPort();
+
+         torrent_session->set_settings(session_settings_);
+#endif // libtorrent version.
       }
 
       void Context::setDestructionlHttpSettings()

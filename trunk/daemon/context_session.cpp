@@ -31,6 +31,7 @@
 
 #include "modulelog.h"
 #include <bcore/verbose.h>
+#include "lt_version.h"
 
 namespace btg
 {
@@ -126,7 +127,12 @@ namespace btg
                ti->selected_files.serialize(_e);
 
                // Peer ID.
-               libtorrent::peer_id pid = torrent_session->id();
+               libtorrent::peer_id pid = 0;
+#if BTG_LT_0_12
+               pid = 0;
+#elif BTG_LT_0_13
+               pid = torrent_session->id();
+#endif
                std::string peerid = btg::core::convertToString<libtorrent::peer_id>(pid);
 
                MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Peer ID used: '" << peerid << "'.");
@@ -306,8 +312,12 @@ namespace btg
                      ti->total_payload_upload   = total_payload_upload;
 							if (_version >= 0x89)
 							{
-								BTG_CDC(!applySelectedFiles(ti,aSelectedFileEntryList), "call applySelectedFiles");
-                        //ti->selected_files = aSelectedFileEntryList; // already done in applySelectedFiles
+                        bool asfr = applySelectedFiles(ti,aSelectedFileEntryList);
+#if BTG_LT_0_13
+								BTG_CDC(!asfr, "call applySelectedFiles");
+#elif BTG_LT_0_12
+                        // Selecting files is not supported by 0.12.x, so ignore this.
+#endif
 							}
 
                      // Restore state

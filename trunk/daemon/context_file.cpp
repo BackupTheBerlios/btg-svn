@@ -26,7 +26,7 @@
 #include <bcore/verbose.h>
 #include <bcore/os/fileop.h>
 #include <bcore/util.h>
-
+#include "lt_version.h"
 #include <libtorrent/identify_client.hpp>
 
 namespace btg
@@ -54,9 +54,18 @@ namespace btg
                return false;
             }
 
-         // TODO: check alert about moved storage.
+#if BTG_LT_0_12
+         if (!ti->handle.move_storage(_destination_dir))
+            {
+               std::string filename;
+               this->getFilename(_torrent_id, filename);
+               BTG_ERROR_LOG(logWrapper(), 
+                             "Attempt to move '" << filename << "' to " << _destination_dir << " failed.");
+               result = false;
+            }
+#elif BTG_LT_0_13
          ti->handle.move_storage(_destination_dir);
-
+#endif // lt version
          BTG_MEXIT(logWrapper(), "moveToDirectory", result);
 
          return result;

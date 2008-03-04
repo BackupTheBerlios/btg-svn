@@ -112,7 +112,7 @@ namespace btg
                                                    ip_part = -1;
                                                    btg::core::stringToNumber<t_int>(str_ip_ip0[counter], ip_part);
 
-                                                   if ((ip_part >= 0) && (ip_part <= 254))
+                                                   if ((ip_part >= 0) && (ip_part <= 255))
                                                       {
                                                          ipa0[counter] = ip_part;
                                                       }
@@ -125,7 +125,7 @@ namespace btg
                                                    ip_part = -1;
                                                    btg::core::stringToNumber<t_int>(str_ip_ip1[counter], ip_part);
 
-                                                   if ((ip_part >= 0) && (ip_part <= 254))
+                                                   if ((ip_part >= 0) && (ip_part <= 255))
                                                       {
                                                          ipa1[counter] = ip_part;
                                                       }
