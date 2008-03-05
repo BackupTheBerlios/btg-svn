@@ -28,18 +28,14 @@ namespace btg
             Gtk::TextView* textview  = Gtk::manage(new class Gtk::TextView());
             Gtk::ScrolledWindow* scrolledwindow = Gtk::manage(new class Gtk::ScrolledWindow());
             Gtk::VBox* vbox                     = Gtk::manage(new class Gtk::VBox(false, 0));
-
-            // Glib::RefPtr<Gdk::Pixbuf> pixbufRef = Gdk::Pixbuf::create_from_data((const guint8*)aboutimage_data, Gdk::COLORSPACE_RGB, false /* no alpha */, 1, aboutimage_width, aboutimage_height, 3);
-
             Glib::RefPtr<Gdk::Pixbuf> pixbufRef = Gdk::Pixbuf::create_from_xpm_data(aboutimage_xpm);
-
-            Gtk::Image* image = Gtk::manage(new Gtk::Image(pixbufRef));
+            Gtk::Image* image                   = Gtk::manage(new Gtk::Image(pixbufRef));
 
             okbutton->set_flags(Gtk::CAN_FOCUS);
             okbutton->set_relief(Gtk::RELIEF_NORMAL);
 
             get_action_area()->property_layout_style().set_value(Gtk::BUTTONBOX_END);
-            set_default_size(300, 200);
+            set_default_size(400, 500);
 
             aboutLabel->set_alignment(0.5,0.5);
             aboutLabel->set_padding(0,0);
@@ -49,7 +45,7 @@ namespace btg
             aboutLabel->set_selectable(false);
 
             textview->set_flags(Gtk::CAN_FOCUS);
-            textview->set_editable(true);
+            textview->set_editable(false);
             textview->set_cursor_visible(true);
             textview->set_pixels_above_lines(0);
             textview->set_pixels_below_lines(0);
