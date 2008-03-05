@@ -45,7 +45,7 @@ namespace btg
          }
 
          /// Default empty implementations for optional callback.
-         void clientCallback::onLast(t_int _contextId)
+         void clientCallback::onLast(t_int)
          {
          }
 

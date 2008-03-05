@@ -9,7 +9,8 @@ echo "Deleting temp files."
 rm -f config.cache
 rm -fr autom4te.cache
 
-if test "`uname`" = "FreeBSD"  && test "`uname -r|cut -f1 -d'.'`" != "7"
+#if test "`uname`" = "FreeBSD"  && test "`uname -r|cut -f1 -d'.'`" != "7"
+if false
 then
 	autoheader259 &&
 	aclocal19 -I m4 -I /usr/local/share/aclocal &&
