@@ -104,6 +104,13 @@ case "$1" in
     mkdir -p $1 && cd $1 && \
     $CONFIGURE --with-rblibtorrent=$ROOT/$1
     ;;
+  0.13rc1)
+    export LIBTORRENT_CFLAGS="-I$ROOT/$1/include -I$ROOT/$1/include/libtorrent" && \
+    export LIBTORRENT_LIBS="-L$ROOT/$1/lib -ltorrent" && \
+    echo "Using \"$CONFIGURE\" in directory \"$1\"";
+    mkdir -p $1 && cd $1 && \
+    $CONFIGURE --with-rblibtorrent=$ROOT/$1
+    ;;
   0.12.1)
     export LIBTORRENT_CFLAGS="-I$ROOT/$1/include -I$ROOT/$1/include/libtorrent" && \
     export LIBTORRENT_LIBS="-L$ROOT/$1/lib -ltorrent" && \

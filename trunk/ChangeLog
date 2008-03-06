@@ -3,6 +3,9 @@ BTG version 0.9.7
 The following bugs were fixed:
 
 013272 Add support for libtorrent 0.12.1.
+013267 Incorrect seeding limit setting in btgcli.
+013266 btgui global limit setting.
+013265 btgui limit settings dialog doesn't correctly display limits.
 013248 btgncli, add dialog used for entering numbers.
 013216 Session saving, add saving global limits.
 013147 Handle octets set to 255 in Address/addressPort.
