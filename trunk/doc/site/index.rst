@@ -45,13 +45,21 @@ BTG is being used or was tested on:
 - GNU Linux - Debian (PowerPC-32, amd64, i686) / Gentoo (PowerPC-64, i686) / Slackware (i586) / OpenWrt (XScale-IXP42x).
 
 Screenshots
------------
+~~~~~~~~~~~
+
+Upcoming 0.9.7 Release
+----------------------
+- `btgui #1`_.
+- `btgui #2`_.
+
+.. _btgui #1: http://developer.berlios.de/dbimage.php?id=3971
+.. _btgui #2: http://developer.berlios.de/dbimage.php?id=3973
+
+0.9.6
+-----
+
 - `WWW UI #1`_.
 - `WWW UI #2`_.
-
-.. _WWW UI #1: http://developer.berlios.de/dbimage.php?id=2916
-.. _WWW UI #2: http://developer.berlios.de/dbimage.php?id=2915
-
 - `btgncli - torrent menu`_.
 - `btgncli - load dialog`_.
 - `btgncli - limit torrent`_.
@@ -59,6 +67,8 @@ Screenshots
 - `btgncli - global limits`_.
 - `btgncli - file view`_.
 
+.. _WWW UI #1: http://developer.berlios.de/dbimage.php?id=2916
+.. _WWW UI #2: http://developer.berlios.de/dbimage.php?id=2915
 .. _btgncli - torrent menu: http://developer.berlios.de/dbimage.php?id=3413
 .. _btgncli - load dialog: http://developer.berlios.de/dbimage.php?id=3412
 .. _btgncli - limit torrent: http://developer.berlios.de/dbimage.php?id=3411
