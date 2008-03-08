@@ -29,36 +29,38 @@ Update site docs        Update site documentation. Update the howto.
 
 Update man pages        Update the man pages, if any new switches were added.
 
-Update Changelog        Update and commit the changelog file in the root of CVS. It must 
+Update Changelog        Update and commit the changelog file in the root of SVN. It must 
                         contain all the bugs which were fixed since last release.
 ======================= ==================================================================
 
-CVS Tagging and Merging
+SVN Tagging and Merging
 -----------------------
 
-The following is done using the "stable-branch" CVS branch. No tags or
-branches are made on the "devel branch" branch.
+The following is done using the "stable-branch" SVN branch.
 
-======================= ==================================================================
+======================= =====================================================================================
 Action                  Description 
------------------------ ------------------------------------------------------------------
-Update to stable branch "cvs update -d -r stable-branch".
+----------------------- -------------------------------------------------------------------------------------
+Update to stable branch Update the current branch to stable branch. This could be done using:
+                        "svn switch svn+ssh://user@svn.berlios.de/svnroot/repos/btg/branches/stable-branch".
 
-Merge from devel branch Merge the changes from the "devel-branch" into "stable branch". 
-                        This can be done using 
-                        "cvs update -j stable-branch -j devel-branch".
+Merge from trunk        Merge the changes from trunk into the stable branch. This could be done using:
+                        "svn merge svn+ssh://user@svn.berlios.de/svnroot/repos/btg/branches/stable-branch \
+                        svn+ssh://user@svn.berlios.de/svnroot/repos/btg/trunk"
 
-Tag                     Add a relase tag, for example using "cvs tag VERSION". Notice that
-                        underscores shall be used for separating release numbers 
-                        (0_9_6 instead of 0.9.6).
-======================= ==================================================================
+Tag                     Add a relase tag. This could be done using:
+                        "svn copy svn+ssh://user@svn.berlios.de/svnroot/repos/btg/trunk \ 
+                        svn+ssh://user@svn.berlios.de/svnroot/repos/btg/tags/0.9.6 \
+                        -m 'Added 0.9.6 tag.'"
+
+======================= =====================================================================================
 
 Generating a Release
 --------------------
 
 Execute "make dist", copy the resulting .tar.gz file to /tmp from
 where it will be built in the following step. Its assumed that the
-setup.sh script which resides in the root of the BTG CVS repository is
+setup.sh script which resides in the root of the BTG SVN repository is
 used.
 
 Building
@@ -84,7 +86,7 @@ Action                         Description
 ------------------------------ ------------------------------------------------------------------
 Add a new file to BTG releases In the berlios admin interface, use "Admin/Edit/Release Files". 
                                Remember to add a release note and to copy the list of fixed bugs 
-                               from the Changelog in CVS.
+                               from the Changelog in SVN.
 
 Submit a news entry            The news are shown on the `BTG berlios.de page`_.
 
