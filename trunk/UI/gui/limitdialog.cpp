@@ -46,17 +46,17 @@ namespace btg
       namespace gui
       {
 
-         limitDialog::limitDialog(const char * _szUploadLabel, const char * _szDownloadLabel, const char * _szSeedpercUploadscntLabel, const char * _szSeedtimeConnectionscntLabel)
+         limitDialog::limitDialog(const char * _szUploadLabel, const char * _szDownloadLabel, const char * _szParam3Label, const char * _szParam4Label)
             : limit_interval(5),
               limit_selected(false),
               selected_upload_disable(false),
               selected_download_disable(false),
-              selected_seed_percent_disable(false),
-              selected_seed_timer_disable(false),
+              selected_param3_disable(false),
+              selected_param4_disable(false),
               uploadCombo(0),
               downloadCombo(0),
-              seedPercentSpin(0),
-              seedTimeSpin(0),
+              param3Spin(0),
+              param4Spin(0),
               selected_upload_limit(-1),
               selected_download_limit(-1)
          {
@@ -65,14 +65,14 @@ namespace btg
             uploadCombo               = Gtk::manage(new class Gtk::ComboBoxText());
             downloadCombo             = Gtk::manage(new class Gtk::ComboBoxText());
 
-            Gtk::Label *seedPercentLabel = Gtk::manage(new class Gtk::Label( _szSeedpercUploadscntLabel ? _szSeedpercUploadscntLabel : "Seed %" ));
-            Gtk::Label *seedTimeLabel    = Gtk::manage(new class Gtk::Label( _szSeedtimeConnectionscntLabel ? _szSeedtimeConnectionscntLabel : "Seed Time" ));
+            Gtk::Label *seedPercentLabel = Gtk::manage(new class Gtk::Label( _szParam3Label ? _szParam3Label : "Seed %" ));
+            Gtk::Label *seedTimeLabel    = Gtk::manage(new class Gtk::Label( _szParam4Label ? _szParam4Label : "Seed Time" ));
 
             Gtk::Adjustment *seedPercentAdjustment = Gtk::manage(new class Gtk::Adjustment(1, 0, 100, 1, 10, 10));
-            seedPercentSpin = Gtk::manage(new class Gtk::SpinButton(*seedPercentAdjustment, 1, 0));
+            param3Spin = Gtk::manage(new class Gtk::SpinButton(*seedPercentAdjustment, 1, 0));
 
             Gtk::Adjustment *seedTimeAdjustment = Gtk::manage(new class Gtk::Adjustment(1, 0, 100, 1, 10, 10));
-            seedTimeSpin    = Gtk::manage(new class Gtk::SpinButton(*seedTimeAdjustment, 1, 0));
+            param4Spin    = Gtk::manage(new class Gtk::SpinButton(*seedTimeAdjustment, 1, 0));
 
             Gtk::Table *settingsTable = Gtk::manage(new class Gtk::Table(4, 2, false));
             Gtk::VBox *limitVbox      = Gtk::manage(new class Gtk::VBox(false, 10));
@@ -105,19 +105,19 @@ namespace btg
             seedTimeLabel->set_use_markup(false);
             seedTimeLabel->set_selectable(false);
 
-            seedPercentSpin->set_flags(Gtk::CAN_FOCUS);
-            seedPercentSpin->set_update_policy(Gtk::UPDATE_ALWAYS);
-            seedPercentSpin->set_numeric(false);
-            seedPercentSpin->set_digits(0);
-            seedPercentSpin->set_wrap(false);
-            seedPercentSpin->set_range(0, MaxSeedProcent);
+            param3Spin->set_flags(Gtk::CAN_FOCUS);
+            param3Spin->set_update_policy(Gtk::UPDATE_ALWAYS);
+            param3Spin->set_numeric(false);
+            param3Spin->set_digits(0);
+            param3Spin->set_wrap(false);
+            param3Spin->set_range(0, MaxParam3Value);
 
-            seedTimeSpin->set_flags(Gtk::CAN_FOCUS);
-            seedTimeSpin->set_update_policy(Gtk::UPDATE_ALWAYS);
-            seedTimeSpin->set_numeric(false);
-            seedTimeSpin->set_digits(0);
-            seedTimeSpin->set_wrap(false);
-            seedTimeSpin->set_range(0, MaxSeedTimeout);
+            param4Spin->set_flags(Gtk::CAN_FOCUS);
+            param4Spin->set_update_policy(Gtk::UPDATE_ALWAYS);
+            param4Spin->set_numeric(false);
+            param4Spin->set_digits(0);
+            param4Spin->set_wrap(false);
+            param4Spin->set_range(0, MaxParam4Value);
 
             uploadCombo->append_text("disable");
             downloadCombo->append_text("disable");
@@ -143,8 +143,8 @@ namespace btg
             settingsTable->attach(*seedPercentLabel, 0, 1, 2, 3, Gtk::FILL, Gtk::AttachOptions(), 0, 0);
             settingsTable->attach(*seedTimeLabel, 0, 1, 3, 4, Gtk::FILL, Gtk::AttachOptions(), 0, 0);
 
-            settingsTable->attach(*seedPercentSpin, 1, 2, 2, 3, Gtk::EXPAND|Gtk::FILL, Gtk::AttachOptions(), 0, 0);
-            settingsTable->attach(*seedTimeSpin,    1, 2, 3, 4, Gtk::EXPAND|Gtk::FILL, Gtk::AttachOptions(), 0, 0);
+            settingsTable->attach(*param3Spin, 1, 2, 2, 3, Gtk::EXPAND|Gtk::FILL, Gtk::AttachOptions(), 0, 0);
+            settingsTable->attach(*param4Spin,    1, 2, 3, 4, Gtk::EXPAND|Gtk::FILL, Gtk::AttachOptions(), 0, 0);
 
             settingsTable->attach(*uploadCombo, 1, 2, 0, 1, Gtk::EXPAND|Gtk::FILL, Gtk::AttachOptions(), 0, 0);
             settingsTable->attach(*downloadCombo, 1, 2, 1, 2, Gtk::EXPAND|Gtk::FILL, Gtk::AttachOptions(), 0, 0);
@@ -173,8 +173,8 @@ namespace btg
          void limitDialog::update(std::string const& _filename,
                                   t_int const _currentUploadLimit,
                                   t_int const _currentDownloadLimit,
-                                  t_int const  _currentSeedPercent,
-                                  t_long const _currentSeedTime)
+                                  t_int const  _currentParam3,
+                                  t_long const _currentParam4)
          {
 
             set_title( GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() + " / Limit: " + _filename );
@@ -207,28 +207,28 @@ namespace btg
             selected_download_disable = false;
             selected_download_limit   = 0;
 
-            selected_seed_percent_disable = false;
-            selected_seed_timer_disable   = false;
+            selected_param3_disable = false;
+            selected_param4_disable = false;
 
-            if (_currentSeedPercent >=0 && _currentSeedPercent <= MaxSeedProcent)
+            if (_currentParam3 > 0 && _currentParam3 <= MaxParam3Value)
                {
-                  seedPercentSpin->set_value(_currentSeedPercent);
+                  param3Spin->set_value(_currentParam3);
                }
             else
                {
-                  seedPercentSpin->set_value(0);
+                  param3Spin->set_value(0);
                }
 
-            if (_currentSeedTime > 0)
+            if (_currentParam4 > 0 && _currentParam4 <= MaxParam4Value)
                {
-                  seedTimeSpin->set_value(_currentSeedTime);
+                  param4Spin->set_value(_currentParam4);
                }
             else
                {
-                  seedTimeSpin->set_value(0);
+                  param4Spin->set_value(0);
                }
 
-            // BTG_NOTICE("Update - limit, seed % " << seedPercentSpin->get_value() << " time = " << seedTimeSpin->get_value());
+            // BTG_NOTICE("Update - limit, seed % " << param3Spin->get_value() << " time = " << param4Spin->get_value());
          }
 
          void limitDialog::on_button_pressed(int _button)
@@ -281,15 +281,15 @@ namespace btg
                         }
 
                      // Seed percent:
-                     if (seedPercentSpin->get_value() == 0)
+                     if (param3Spin->get_value() == 0)
                         {
-                           selected_seed_percent_disable = true;
+                           selected_param3_disable = true;
                         }
 
                      // Seed timer:
-                     if (seedTimeSpin->get_value() == 0)
+                     if (param4Spin->get_value() == 0)
                         {
-                           selected_seed_timer_disable = true;
+                           selected_param4_disable = true;
                         }
 
                      break;
@@ -329,25 +329,25 @@ namespace btg
             return selected_download_limit * KiB;
          }
 
-         bool limitDialog::seedPercentDisabled() const
+         bool limitDialog::param3Disabled() const
          {
-            return selected_seed_percent_disable;
+            return selected_param3_disable;
          }
 
-         t_int limitDialog::getSeedPercent() const
+         t_int limitDialog::getParam3() const
          {
-            double percent = seedPercentSpin->get_value();
+            double percent = param3Spin->get_value();
             return static_cast<t_int>(percent);
          }
 
-         bool limitDialog::seedTimeDisabled() const
+         bool limitDialog::param4Disabled() const
          {
-            return selected_seed_timer_disable;
+            return selected_param4_disable;
          }
 
-         t_long limitDialog::getSeedTimeout() const
+         t_long limitDialog::getParam4() const
          {
-            double timeout = seedTimeSpin->get_value();
+            double timeout = param4Spin->get_value();
 
             return static_cast<t_long>(timeout);
          }

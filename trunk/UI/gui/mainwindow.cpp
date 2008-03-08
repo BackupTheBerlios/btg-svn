@@ -1039,15 +1039,15 @@ namespace btg
                      }
       
                   // User selected seed limits.
-                  if (!limitdialog->seedPercentDisabled())
+                  if (!limitdialog->param3Disabled())
                      {
-                        max_uploads = limitdialog->getSeedPercent(); // FIXME: ugly
+                        max_uploads = limitdialog->getParam3();
                      }
       
                   // User selected seed limits.
-                  if (!limitdialog->seedTimeDisabled())
+                  if (!limitdialog->param4Disabled())
                      {
-                        max_connections = limitdialog->getSeedTimeout(); // FIXME: ugly
+                        max_connections = limitdialog->getParam4();
                      }
       
                   handler->reqGlobalLimit(up_limit, down_limit, max_uploads, max_connections);
@@ -1219,15 +1219,15 @@ namespace btg
                      }
 
                   // User selected seed limits.
-                  if (!limitdialog->seedPercentDisabled())
+                  if (!limitdialog->param3Disabled())
                      {
-                        seed_percent = limitdialog->getSeedPercent();
+                        seed_percent = limitdialog->getParam3();
                      }
 
                   // User selected seed limits.
-                  if (!limitdialog->seedTimeDisabled())
+                  if (!limitdialog->param4Disabled())
                      {
-                        seed_timeout = limitdialog->getSeedTimeout();
+                        seed_timeout = limitdialog->getParam4();
                      }
 
                   // BTG_NOTICE("mainToolbar::BTN_LIMIT");
