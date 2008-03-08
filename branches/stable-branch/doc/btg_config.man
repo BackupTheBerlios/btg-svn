@@ -1,0 +1,202 @@
+.TH BTG_CONFIG 5 "04 Feb 2006"
+.SH NAME
+btg config
+
+.SH DESCRIPTION
+This document describes the configuration files used by the daemon and clients.
+
+.SH LOCATION
+The default daemon config is named "daemon.ini" and is located in "~/.btg". 
+The clients use "client.ini", also located in "~/.btg".
+
+.SH FORMAT
+All config files used by btg uses the same format as Windows ini files.
+
+The general format is:
+
+<SECTION>
+
+<KEY> = <VALUE>
+
+Whitespace between the key and value is ignored.
+
+Lines beginning with ";" are comments.
+
+.SH DAEMON CONFIG
+
+.SS
+Section "transport"
+.TP
+default        \- default transport between btgdaemon and client. Choice between "tcpip", "stcpip", "xml-rpc", "sxml-rpc".
+
+.SS
+Section "network"
+.TP
+listen-to      \- IPv4:port. Where network transports (tcpip, stcpip, xml-rpc and sxml-rpc) will be listening.
+.TP
+torrent-range  \- integer:integer. Which ports to use use for torrent communication and DHT. The daemon will not start unless two ports are available.
+.TP
+torrent-ip     \- IPv4 address. Libtorrent listens to this address.
+.TP
+use-upnp       \- True/false. Enable/disable UPnP (if support for it was selected at compile time).
+
+.SS
+Section "tls"
+.TP 
+ca-cert        \- A filename, containing a TLS CA certificate.
+
+.TP 
+cert           \- A filename, containing a TLS daemon certificate.
+
+.TP 
+cert-privkey   \- A filename, containing a TLS daemon private key.
+
+.SS
+Section "logging"
+.TP
+type           \- Log type. Choice between: "stdout", "file", "syslog".
+.TP
+filename       \- If file logging was selected, filename to write the log to.
+
+.SS
+Section "encryption"
+.TP
+policy-in      \- input policy. Choice between: force|enable|disable.
+.TP
+policy-out     \- output policy. Choice between: force|enable|disable.
+.TP
+level          \- encryption level. Choice between: plaintext|rc4|both.
+.TP
+prefer-rc4     \- indicates if using rc4 is prefered. Choice between: true|false.
+
+.SS
+Section "misc"
+.TP
+proxy            \- IPv4:port. If you want to use a proxy for track communication, place it here.
+.TP
+filter           \- Filename from wich IPv4 addresses are read from. See "filter_type".
+.TP
+filter_type      \- Format of the above file. Choice between: "level1" and "emule".
+.TP
+use-torrent-name \- True/false. Enable/disable using torrent names (as stored in the torrent file) instead of torrent file names.
+.TP
+peer-id          \- String. Override the Peer ID.
+.TP
+user-agent       \- String. Override the user agent sent to tracker.
+
+.SS
+Section "auth"
+.TP
+passwd-file      \- Filename of the password file used by the daemon. See btgpasswd(1).
+
+.SS
+Section "limit"
+The limits in this section will apply to all sessions independent of how many torrents are running. If multiple sessions are running each will have this limit, the limits are NOT shared between SESSIONS, only between torrents in a session.
+.TP
+upload_rate_limit     \- Max session-global upload rate in bytes per second.
+.TP
+download_rate_limit   \- Max session-global download rate in bytes per second.
+.TP
+max_uploads           \- Max session-global number of connected uploads. 
+.TP
+max_connections       \- Max session-global number connections (when downloading).
+
+.SS
+Section "savesessions"
+Sessionsaving is an compile time optional feature in BTG (and can also be disabled from configuration file). It can be used to store information about all running sessions when btg is exited, and periodicly specified by timeout. If enabled, it will save any running sessions and state information about all torrents. Upload/download counters will be saved to, so ratio calculation can be performed even if we restart the daemon. Any settings for the torrent, including run state, limits etc will be saved here. The .torrent file will be removed from the temporary dir and saved in the session save file together with fast-resume data.
+.TP
+enable         \- Choice: "true" or "false".
+.TP
+filename       \- In which file we should save running sessions.
+.TP
+timeout        \- How often to save the sessions (in seconds).
+
+.SS
+Section "runas"
+Run the daemon as another user/group.
+.TP
+user         \- Name of the user the daemon should run as.
+.TP
+group        \- Name of the group the daemon should run as.
+
+.SH EXAMPLE DAEMON CONFIG
+.nf
+[transport]
+default=tcpip
+
+[network]
+listen-to=127.0.0.1:16000
+torrent-range=10024:11240
+
+[logging]
+type=file
+filename=/tmp/btgd.log
+
+[misc]
+proxy=192.168.0.1:8118
+
+[savesessions]
+enable=true
+filename=~/.btg/daemon.save
+
+[limit]
+upload_rate_limit = 40960
+download_rate_limit 409600
+max_uploads = -1
+max_connections = 100
+
+.fi 
+
+.SH CLIENT CONFIG
+.SS Section "transport"
+.TP
+default        \- Choice between "tcpip", "stcpip", "xml-rpc", "sxml-rpc".
+.SS Section "network"
+.TP
+daemon-address \- IPv4:port pair. If a network transport (tcpip, stcpip, xml-rpc or sxml-rpc) is used, this is where we should try to connect to the daemon.
+.SS
+Section "logging"
+.TP
+type           \- Log type. Choice between: "stdout", "file", "syslog".
+.TP
+filename       \- If file logging was selected, filename to write the log to.
+.SS
+Section "Misc"
+.TP
+leech-mode     \- Choice between "true" or "false".
+.TP
+never-ask      \- Never ask the user any questions. Choice between "true" or "false".
+.SS
+Section "auth"
+.TP
+username       \- The username used for accessing the daemon.
+.TP
+password-hash  \- The hash of the password used for accessing the daemon.
+
+.SH EXAMPLE CLIENT CONFIG
+.nf
+[transport]
+default=tcpip
+
+[network]
+daemon-address=127.0.0.1:16000
+
+[logging]
+type=file
+filename=/tmp/btg_client.log
+
+[misc]
+leech-mode=false
+.fi
+
+.SH FILES
+.TP
+~/.btg/daemon.ini - the daemon configuration file.
+.TP
+~/.btg/client.ini - the client configuration file.
+
+.SH AUTHOR
+Written by Michael Wojciechowski and Johan Strom.
+
+.SH "SEE ALSO"
+btg(5), btgdaemon(5), btgpasswd(1), btgcli(1), btgui(1)

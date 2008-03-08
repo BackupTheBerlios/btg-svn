@@ -1,0 +1,223 @@
+BTG version 0.9.7
+-----------------
+The following bugs were fixed:
+
+013272 Add support for libtorrent 0.12.1.
+013267 Incorrect seeding limit setting in btgcli.
+013266 btgui global limit setting.
+013265 btgui limit settings dialog doesn't correctly display limits.
+013248 btgncli, add dialog used for entering numbers.
+013216 Session saving, add saving global limits.
+013147 Handle octets set to 255 in Address/addressPort.
+013146 XML Pasing error (wwwui).
+013142 Restore file priorities after restart.
+013136 Change of peer id / useragent (feature req).
+013007 Show session settings.
+012997 Session saving, fix saving of dht/encryption settings.
+012975 externalization, simple, exorcism.
+012970 Add moving torrents to another sessions.
+012952 Add switch to disable generating btg-config.
+012839 DHT + encryption support in wwwbtg.
+012814 Daemon segfaults when starting client with DHT (0.9.6).
+012784 Remove singleton object used for logging.
+012771 Add openwrt packages to SVN.
+012762 Embed svn version into release information.
+012761 Callback manager: execute calls from a thread.
+012685 btgdaemon/btgpassswd segfaulting upon start.
+012676 Fix boost iostreams detection.
+012616 Remove btgq and btgd.
+012598 Write man page for btgvs.
+012557 Make fails on FreeBSD 6.2.
+012545 Update SDL viewer to AGAR 1.3.1.
+012544 BTGWWW, add missing files in bcore/command.
+012535 btgncli: show peers/seeds in the list of torrents.
+012330 Add another version of contextStatusCommand.
+012329 Add "stop autoupdating" button in wwwbtg.
+012308 Clean up daemon/limitval.cpp.
+012301 Update doxygen.
+012241 Use pkglib_LTLIBRARIES instead of lib_LTLIBRARIES.
+012226 btgui, files showing as 100%.
+012208 Add logging using syslog to wwwui.
+012205 torrent files which contain same files but different tracker.
+012190 Fix "warning: 'add_torrent' is deprecated".
+012125 Update SDL viewer, after refactoring of last files.
+012124 Add command line interface(s) unittest.
+012120 Update to libtorrent 0.13 aka SVN.
+012118 Add session naming.
+012108 btgui: buttons OK and Cancel are equivalent when logging-in.
+012106 Can't set files to download in btgui.
+012055 File checking fails on torrents that contain directories.
+012004 Show tracker for each context.
+011784 More users can't download same torrent at same time.
+011781 FBSD, btgncli does not show the status bar.
+011557 Peer_id sent to tracker (feature req).
+
+BTG version 0.9.6
+-----------------
+The following bugs were fixed:
+
+011971 Inaccuracy in command (Loading All Torrent Files from a Dir).
+011902 Memory leak in external/ini.
+011901 FBSD, memory leak when using boost/zlib.
+011782 FBSD, btgncli uses ~60% of cpu.
+011759 Update howto and configure script.
+011719 WWWUI does not respond (hardcoded port).
+011678 Add more XML-RPC unittests.
+011674 Update XML-RPC in external.
+011644 WebBTG not working with Internet Explorer.
+011575 / 010064 daemon should check "seed" dir for download files.
+011440 btgui, use a thread for updates.
+011237 wwwui, unable to handle "+" in passwords.
+011192 Document release procedure.
+011187 DHT, add command line argument to enable/disable.
+011186 Implement support for encryption.
+011185 Implement support for partial downloads.
+011184 Remove use of old libtorrent versions.
+011183 Session saving, use xmlrpc.
+011122 Update site/howto: Gentoo ebuild	documentation.
+011097 btgpasswd, check for unique directories (request).
+011095 Libtorrent 0.12, FreeBSD, asio and no SO_NOSIGPIPE support.
+010506 Request: Clean all button (wwwui).
+010112 Request: Total time on torrent (wwwui).
+009299 Add support for global limit (wwwui).
+	
+BTG version 0.9.5
+-----------------
+The following bugs were fixed:
+
+010989 Add command_last to makefile.
+010906 Tarball includes unnecessary directories.
+010889 Listening on a single port does not work.
+010880 TCP/IP proto doesn't work.
+010859 XMLRPC, add unittest.
+010858 Typedefs, add float.
+010830 Update the howto with autotools versions.
+010828 Update howto: bash shall be used to run configure script.
+010826 Man pages, wrong sections.
+010814 external/xml-rpc, fix warnings.
+010665 btg-config doesn't work on FC6.
+010639 Doesn't build (event-callback) on FC6.
+010588 Context_create should return the context_id.
+010586 Remove debian directory.
+010582 Can't complie on CentOS 4.4.
+
+BTG version 0.9
+---------------
+The following bugs were fixed:
+
+010473 btgui, use plotmm.
+010437 Clean fails when torrent has only one file (libtorrent bug).
+010424 btgui, add details display.
+010423 Naming torrents (feature request).
+010316 Add check before moving to seed directory.
+010198 Daemon crash: same file referenced by distinct torrents.
+010166 Daemon skips notifies from tracker.
+010076 Display time remaining with days if > 24 hours.
+010065 Add option to open torrent w/o immediate start (feature request).
+010063 Update btg-config man page about moving config files.
+009903 TCP close_wait state.
+
+BTG version 0.8.5
+-----------------
+The following bugs were fixed:
+
+001062 btg-config, use full path to dialog.
+009975 Context::dataPresentInSeedDir, missing try/catch.
+009961 Clients: visible session ID.
+009953 btgpasswd, argument documentation conflicts.
+009939 btgncli, fix clean menu entry.
+009905 btggui, initial dialog.
+009904 Update howto: global limits / lt cvs.
+009897 Update howto: directories used.
+009889 Use shared libraries.
+
+BTG version 0.8
+---------------
+The following bugs were fixed:
+
+009875 btgncli, fix username query.
+009782 btgncli, help menus.
+009750 btgncli, add file menu entry.
+009742 btgncli, load colors from file.
+009740 btgncli, add load keybindings from file.
+009739 btgncli, quit dialog.
+009738 btgncli, init screen.
+009737 btgncli, screen resize.
+009736 btgncli, documentation.
+009575 Listen-to doesn't work correctly.
+009524 Unittest fail on fbsd.
+009375 HTTP transport is not stable.
+009361 Add DHT support.
+009321 Daemon man page missing --config argument.
+009219 Wrong port reported to tracker.
+009112 Doesn't compile with Libtorrent-.11RC1 release.
+009092 Configure fails when no g++ installed.
+008308 libtorrent 0.10 problem, allocate_ressources.
+007472 Add system test.
+
+BTG version 0.7
+---------------
+The following bugs were fixed:
+
+009076 Periodic sessionsaving.
+009030 Howto update (title changed).
+009006 Daemon doesn't save sessions.
+009005 Broken btg-config.
+008897 Format of supported filters.
+008894 Add timers.
+008893 Unable to handle more than 1024 clients.
+008892 SocketGroup is not fair.
+008763 Fatal errors are not printed without debug.
+008663 btgpasswd should create directories.
+008656 btg_config script writes broken transport.
+008653 Add upnp support.
+008637 Invalid AC_CHECK_PROG in configure.in.
+008619 Long delays when adding big torrents.
+008618 btgpasswd confirm password.
+008617 btgpasswd saves directorys in wrong order.
+	
+BTG version 0.6
+---------------
+The following bugs were fixed:
+
+008590 Build all possible configurations.
+008476 Add libtorrent version specific code.
+008358 Error when building man in btg dev branch.
+008355 Quit/kill queries.
+008307 Compiling using -Weffc++.
+008190 CLI: totals when showing status.
+008160 Use libtorrent 0.10.
+008151 Extra qualification problems fixed.
+008142 Invalid constant in daemon config.
+008141 Missing include.
+008139 Missing trackerstatus.php.
+008116 libtorrent finterprint not updated.
+007473 Implemented btg-config.
+
+BTG version 0.5
+---------------
+The following bugs were fixed:
+
+008103 Add webbtg installation to automake config.
+007982 Verbose handling in all binaries.
+007943 Reading config before parsing program args.
+007898 Add --syntax to binaries using ini files.
+007844 Add IP filtering.
+007635 Use boost::filesystem::path..
+007621 Provide client with tracker error status.
+007620 ETA/Time left calculation.
+
+BTG version 0.4
+---------------
+The following bugs were fixed:
+
+007773, 007771, 007769 - Fixes crash on Slackware Linux.
+007757 Daemon overwrites configuration file on exit.
+007594 UI, aborting all torrents.
+007476 Run as another user.
+007475 Command for removing downloaded data.
+007471 Write man page for btgq.
+007468 Confirm before terminating a session.
+007361 Seeding dir.
+007164 Problem when (user's) temp dir does not exist.
+004021 Btg Bandwidth history Graph Unit.
