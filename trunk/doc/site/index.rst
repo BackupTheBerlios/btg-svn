@@ -159,6 +159,7 @@ Documentation
 - `BTG howto (0.4)`_.
 - `BTG howto (0.3)`_.
 - `Manual pages`_ contained in the releases.
+- `BTG Developer Howto`_.
 - `BTG Release Procedure`_.
 
 .. _Manual pages: manpages.html
@@ -192,13 +193,14 @@ Links
 .. _BTG blog: http://developer.berlios.de/blog/categories/32-BTG
 .. _BTG project page: http://developer.berlios.de/projects/btg/ 
 .. _BTG FAQ: faq.html
-.. _BTG howto (current): howto.html
-.. _BTG howto (0.3): howto-0.3.html
-.. _BTG howto (0.4): howto-0.4.html
-.. _BTG howto (0.5): howto-0.5.html
-.. _BTG howto (0.6): howto-0.6.html
-.. _BTG howto (0.7): howto-0.7.html
-.. _BTG howto (0.9.6): howto-0.9.6.html
+.. _BTG Developer Howto: howto_devel.html
+.. _BTG Howto (current): howto.html
+.. _BTG Howto (0.3): howto-0.3.html
+.. _BTG Howto (0.4): howto-0.4.html
+.. _BTG Howto (0.5): howto-0.5.html
+.. _BTG Howto (0.6): howto-0.6.html
+.. _BTG Howto (0.7): howto-0.7.html
+.. _BTG Howto (0.9.6): howto-0.9.6.html
 .. _Rasterbar Libtorrent: http://www.rasterbar.com/products/libtorrent.html
 .. _Gtkmm: http://www.gtkmm.org/
 .. _SDL: http://libsdl.org/
