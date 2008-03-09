@@ -1190,7 +1190,6 @@ namespace btg
                {
                   logVerboseMessage(USERMESSAGE_NOT_CLEAN_B + filename + USERMESSAGE_NOT_CLEAN_E);
                   msb->set(USERMESSAGE_NOT_CLEAN_B + filename + USERMESSAGE_NOT_CLEAN_E);
-                  errorDialog::showAndDie("Error cleaning " + filename);
                }
          }
 
@@ -1373,7 +1372,6 @@ namespace btg
                {
                   msb->set(USERMESSAGE_NOT_MOVED_B + movefilename + USERMESSAGE_NOT_MOVED_E);
                   logVerboseMessage(USERMESSAGE_NOT_MOVED_B + movefilename + USERMESSAGE_NOT_MOVED_E);
-                  errorDialog::showAndDie("Error moving " + movefilename);
                }
          }
 

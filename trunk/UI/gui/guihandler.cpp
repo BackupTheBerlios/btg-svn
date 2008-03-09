@@ -378,7 +378,11 @@ namespace btg
          
          void guiHandler::onMove()
          {
+            BTG_NOTICE(logWrapper(), 
+                       "onMove, id=" << last_id << ".");
             commandStatus = true;
+            idsToRemove.push_back(last_id);
+            last_id = ILLEGAL_ID;
          }
 
          void guiHandler::onSetFilesError(std::string const& _errorDescription)
