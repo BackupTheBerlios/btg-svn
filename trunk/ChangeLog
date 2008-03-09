@@ -2,6 +2,7 @@ BTG version 0.9.7
 -----------------
 The following bugs were fixed:
 
+013306 btgui: executing operations on multiple torrents.
 013272 Add support for libtorrent 0.12.1.
 013267 Incorrect seeding limit setting in btgcli.
 013266 btgui global limit setting.

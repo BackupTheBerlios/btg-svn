@@ -58,6 +58,7 @@ namespace btg
          class aboutDialog;
          class limitDialog;
          class preferencesDialog;
+         class sessionSelectionDialog;
 
          /// The main window of the gui client.
          class mainWindow : public Gtk::Window, public btg::core::Logable
@@ -235,6 +236,13 @@ namespace btg
                btg::core::client::clientDynConfig & m_clientDynConfig;
                /// Toolbar buttons related to torrent control
                std::list<Gtk::ToolButton*> torrentControlButtons;
+               
+               /// Flag used by operations witn multiple selected torrents
+               bool                       m_bMultipleContinue;
+               /// limitDialog used to set limits
+               limitDialog                *m_limitDialog;
+               /// sessionSelectionDialog used by handle_btn_move
+               sessionSelectionDialog     *m_sessionSelectionDialog;
             private:
                /// Copy constructor.
                mainWindow(mainWindow const& _mw);

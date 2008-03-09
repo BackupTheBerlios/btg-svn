@@ -47,7 +47,8 @@ namespace btg
       {
 
          limitDialog::limitDialog(const char * _szUploadLabel, const char * _szDownloadLabel, const char * _szParam3Label, const char * _szParam4Label)
-            : limit_interval(5),
+            : Gtk::Dialog(GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() + " / Limit", true /* modal */, true /* use_separator aka set_has_separator() */ ),
+              limit_interval(5),
               limit_selected(false),
               selected_upload_disable(false),
               selected_download_disable(false),
@@ -122,7 +123,7 @@ namespace btg
             uploadCombo->append_text("disable");
             downloadCombo->append_text("disable");
 
-            for (t_int i=limit_interval; i<=200; i=i+limit_interval)
+            for (t_int i=limit_interval; i<=200; i+=limit_interval)
                {
                   using namespace btg::core;
                   std::string s = convertToString<int>(i) + " KiB/sec";
@@ -151,12 +152,9 @@ namespace btg
 
             limitVbox->pack_start(*settingsTable, Gtk::PACK_SHRINK, 0);
 
-            set_title( GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() + " / Limit" );
-            set_modal(true);
             property_window_position().set_value(Gtk::WIN_POS_CENTER);
             set_resizable(true);
             property_destroy_with_parent().set_value(false);
-            set_has_separator(true);
 
             get_vbox()->pack_start(*limitVbox);
 
@@ -167,7 +165,8 @@ namespace btg
             add_button("Cancel", 2);
             signal_response().connect(sigc::mem_fun(*this, &limitDialog::on_button_pressed));
             
-            show_all();
+            show_all(); // flag all inner elements as visible
+            hide(); // hide toplevel window
          }
 
          void limitDialog::update(std::string const& _filename,
