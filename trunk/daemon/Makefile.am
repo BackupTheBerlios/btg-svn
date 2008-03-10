@@ -63,7 +63,8 @@ btgdaemon_LDADD   = $(top_builddir)/bcore/libbtgcore.la \
                     $(top_builddir)/daemon/resource/libresource.la \
                     $(top_builddir)/daemon/ipfilter/libipfilter.la \
                     $(top_builddir)/daemon/auth/libauth.la $(EXTRA_LDADD) \
-                    $(top_builddir)/external/ini/libini.la
+                    $(top_builddir)/external/ini/libini.la \
+                    $(top_builddir)/bcore/libbtgcore.la
 
 #                    $(top_builddir)/bcore/libcore.la \
 #                    $(top_builddir)/bcore/externalization/libextern.la \

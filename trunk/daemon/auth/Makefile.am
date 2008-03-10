@@ -27,12 +27,6 @@ btgpasswd_LDADD   = $(top_builddir)/bcore/libbtgcore.la \
                     libauth.la \
                     $(top_builddir)/external/ini/libini.la
 
-#                    $(top_builddir)/bcore/libcore.la \
-#                    $(top_builddir)/bcore/logger/liblogger.la \
-#                    $(top_builddir)/bcore/os/libos.la \
-#                    $(top_builddir)/bcore/auth/libbhash.la 
-
-
 btgpasswd_LDFLAGS  = @LIBS@ @LIBTORRENT_LIBS@ -l@BOOST_IOSTREAMS_LIB@ @LIBGNUTLS_LIBS@ @LIBGNUTLS_LIBS@ -l@BOOST_PROGRAM_OPTIONS_LIB@
 
 btgpasswd_CFLAGS   = @CFLAGS@   @DEBUG_CFLAGS@ @LIBGNUTLS_CFLAGS@ \

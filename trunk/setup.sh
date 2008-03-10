@@ -67,6 +67,10 @@ do
 	    export CXX="ccache g++"
 	    export CC="ccache gcc"
 	    ;;
+	"-static")
+	    echo "Enabling static."
+	    export STATIC="--enable-shared=no --enable-static=yes"
+	    ;;
 	"-help")
 	    echo "Help:"
 	    echo "Argument 0:"
@@ -94,7 +98,7 @@ BOOST_SUFFIX="gcc41-mt-1_34_1"
 CONFIGURE_BOOST="--with-boost-date-time=$BOOST_SUFFIX --with-boost-filesystem=$BOOST_SUFFIX --with-boost-thread=$BOOST_SUFFIX --with-boost-regex=$BOOST_SUFFIX --with-boost-program_options=$BOOST_SUFFIX --with-boost-iostreams=$BOOST_SUFFIX"
 
 # Execute this configure command.
-CONFIGURE="./configure --disable-static $DEBUG --enable-btg-config --enable-cli $GUI_CLIENT $GUI_VIEWER --enable-unittest --enable-session-saving --enable-command-list --enable-event-callback --enable-upnp --enable-www --prefix=/pack/btg-cvs $CONFIGURE_BOOST"
+CONFIGURE="./configure $STATIC --disable-static $DEBUG --enable-btg-config --enable-cli $GUI_CLIENT $GUI_VIEWER --enable-unittest --enable-session-saving --enable-command-list --enable-event-callback --enable-upnp --enable-www --prefix=/pack/btg-cvs $CONFIGURE_BOOST"
 
 case "$1" in
   0.13)
