@@ -408,8 +408,8 @@ namespace btg
 
          void guiHandler::onSessionInfo(bool const _encryption, bool const _dht)
          {
-            dht_enabled_        = _encryption;
-            encryption_enabled_ = _dht;
+            dht_enabled_        = _dht;
+            encryption_enabled_ = _encryption;
          }
          
          guiHandler::~guiHandler()
