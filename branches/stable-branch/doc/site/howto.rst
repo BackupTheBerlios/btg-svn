@@ -799,6 +799,11 @@ The above script attempts to:
 - Write the filename of the torrent file which is being loaded into BTG.
 - Write the total number of files loaded.
 
+Remember to add a section named "auth" to your client.ini file. This
+section should contain two keys: "username" and "password-hash". This
+is done to avoid having the client (btgcli) prompt for username and
+password, since its being used from a script called from cron.
+
 Notice that once a torrent file is loaded by BTG, there is no reason
 for keeping the torrent file. See `Supported Directory Structure`_.
 

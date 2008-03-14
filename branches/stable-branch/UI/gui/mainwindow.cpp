@@ -98,7 +98,10 @@ namespace btg
               progressCounter(0),
               progressMax(5),
               trackerstatSerial(),
-              m_clientDynConfig(dc)
+              m_clientDynConfig(dc),
+              m_bMultipleContinue(false), // actually not necessary
+              m_limitDialog(new limitDialog()),
+              m_sessionSelectionDialog(0)
          {
             mmb                       = Gtk::manage(new mainMenubar(this));
             mtw                       = Gtk::manage(new mainTreeview);
@@ -479,8 +482,9 @@ namespace btg
                   setControlFunction(false);
 
                   elemMap m = mtw->getSelectedIds();
+                  m_bMultipleContinue = false;
 
-                  for (elemMap_citer i=m.begin(); i!=m.end(); i++)
+                  for (elemMap_citer i=m.begin(); i!=m.end(); ++i)
                      {
                         int id = i->first;
                         switch(_which_item)
@@ -495,36 +499,28 @@ namespace btg
                               handle_btn_abort(id);
                               break;
                            case buttonMenuIds::BTN_ERASE:
-                              {
-                                 handle_btn_erase(id);
-                                 break;
-                              }
+                              handle_btn_erase(id);
+                              break;
                            case buttonMenuIds::BTN_CLEAN:
-                              {
-                                 handle_btn_clean(id);
-                                 break;
-                              }
+                              handle_btn_clean(id);
+                              break;
                            case buttonMenuIds::BTN_LIMIT:
-                              {
-                                 handle_btn_limit(id);
-                                 break;
-                              }
+                              handle_btn_limit(id);
+                              break;
                            case buttonMenuIds::BTN_MOVE:
-                              {
-                                 handle_btn_move(id);
-                                 break;
-                              }
+                              handle_btn_move(id);
+                              break;
                            case buttonMenuIds::BTN_PREFERENCES:
-                              {
-                                 handle_btn_prefs(id);
-                                 break;
-                              }
+                              handle_btn_prefs(id);
+                              break;
                            default:
-                              {
-                                 // Ignore the rest of buttons, handled elsewhere.
-                                 break;
-                              }
+                              // Ignore the rest of buttons, handled elsewhere.
+                              break;
                            } // switch
+                        if(!m_bMultipleContinue)
+                           {
+                              break; // for (elemMap_citer i=m.begin(); i!=m.end(); ++i)
+                           }
                      }
                   // enable controls
                   setControlFunction(true);
@@ -1000,7 +996,7 @@ namespace btg
             t_int max_uploads  = 0;
             t_long max_connections = 0;
             
-            std::auto_ptr<limitDialog> limitdialog(new limitDialog(NULL,NULL,"Max uploads","Max connections"));
+            std::auto_ptr<limitDialog> ld(new limitDialog(NULL,NULL,"Max uploads","Max connections"));
 
             handler->reqGlobalLimitStatus();
 
@@ -1014,12 +1010,12 @@ namespace btg
                   errorDialog::showAndDie("Error getting global limit settings.");
                }
 
-            limitdialog->update("Global",
+            ld->update("Global",
                                 up_limit, down_limit,
                                 max_uploads, max_connections);
-            limitdialog->run();
+            ld->run();
 
-            if (limitdialog->limitSelected())
+            if (ld->limitSelected())
                {
                   up_limit     = btg::core::limitBase::LIMIT_DISABLED;
                   down_limit   = btg::core::limitBase::LIMIT_DISABLED;
@@ -1027,27 +1023,27 @@ namespace btg
                   max_connections = btg::core::limitBase::LIMIT_DISABLED;
       
                   // User selected limits.
-                  if (!limitdialog->uploadLimitDisabled())
+                  if (!ld->uploadLimitDisabled())
                      {
-                        up_limit = limitdialog->getUploadLimit();
+                        up_limit = ld->getUploadLimit();
                      }
       
                   // User selected limits.
-                  if (!limitdialog->downloadLimitDisabled())
+                  if (!ld->downloadLimitDisabled())
                      {
-                        down_limit = limitdialog->getDownloadLimit();
+                        down_limit = ld->getDownloadLimit();
                      }
       
                   // User selected seed limits.
-                  if (!limitdialog->param3Disabled())
+                  if (!ld->param3Disabled())
                      {
-                        max_uploads = limitdialog->getParam3();
+                        max_uploads = ld->getParam3();
                      }
       
                   // User selected seed limits.
-                  if (!limitdialog->param4Disabled())
+                  if (!ld->param4Disabled())
                      {
-                        max_connections = limitdialog->getParam4();
+                        max_connections = ld->getParam4();
                      }
       
                   handler->reqGlobalLimit(up_limit, down_limit, max_uploads, max_connections);
@@ -1067,15 +1063,23 @@ namespace btg
          void mainWindow::handle_btn_start(t_int const _id)
          {
             GET_HANDLER_INST;
+            
+            m_bMultipleContinue = true; // continue processing multiple selected torrents
+
+            std::string filename;
+            handler->idToFilename(_id, filename);
 
             // BTG_NOTICE("mainToolbar::BTN_START");
+            
             handler->reqStart(_id);
             if (handler->commandSuccess())
                {
-                  std::string filename("");
-                  handler->idToFilename(_id, filename);
                   logVerboseMessage(USERMESSAGE_STARTED_B + filename + USERMESSAGE_STARTED_E);
                   msb->set(USERMESSAGE_STARTED_B + filename + USERMESSAGE_STARTED_E);
+               }
+            else
+               {
+                  errorDialog::showAndDie("Error starting " + filename);
                }
          }
 
@@ -1083,58 +1087,84 @@ namespace btg
          {
             GET_HANDLER_INST;
 
+            m_bMultipleContinue = true; // continue processing multiple selected torrents
+
+            std::string filename;
+            handler->idToFilename(_id, filename);
+            
             // BTG_NOTICE("mainToolbar::BTN_STOP");
+            
             handler->reqStop(_id);
             if (handler->commandSuccess())
                {
-                  std::string filename("");
-                  handler->idToFilename(_id, filename);
                   logVerboseMessage(USERMESSAGE_STOPPED_B + filename + USERMESSAGE_STOPPED_E);
                   msb->set(USERMESSAGE_STOPPED_B + filename + USERMESSAGE_STOPPED_E);
+               }
+            else
+               {
+                  errorDialog::showAndDie("Error stopping " + filename);
                }
          }
 
          void mainWindow::handle_btn_erase(t_int const _id)
          {
-            std::auto_ptr<questionDialog> qd(new questionDialog(Gtk::MESSAGE_WARNING, "Erase", "Are you sure ?")); // shows dialog
-            if (qd->status() == false)
+            if (!m_bMultipleContinue)
                {
-                  return;
+                  std::auto_ptr<questionDialog> qd(new questionDialog(Gtk::MESSAGE_WARNING, "Erase", "Are you sure ?")); // shows dialog
+                  if ( !(m_bMultipleContinue = qd->status()) )
+                     {
+                        return;
+                     }
                }
             
             GET_HANDLER_INST;
 
+            std::string filename;
+            handler->idToFilename(_id, filename);
+
             // BTG_NOTICE("mainToolbar::BTN_ERASE");
+            
             handler->reqAbort(_id, true /* erase data */, false);
             if (handler->commandSuccess())
                {
                   removeTrackerStatus(_id);
-                  std::string filename("");
-                  handler->idToFilename(_id, filename);
                   logVerboseMessage(USERMESSAGE_ERASED_B + filename + USERMESSAGE_ERASED_E);
                   msb->set(USERMESSAGE_ERASED_B + filename + USERMESSAGE_ERASED_E);
+               }
+            else
+               {
+                  errorDialog::showAndDie("Error erase " + filename);
                }
          }
 
          void mainWindow::handle_btn_abort(t_int const _id)
          {
-            std::auto_ptr<questionDialog> qd(new questionDialog(Gtk::MESSAGE_WARNING, "Abort", "Are you sure ?")); // shows dialog
-            if (qd->status() == false)
+            if (!m_bMultipleContinue)
                {
-                  return;
+                  std::auto_ptr<questionDialog> qd(new questionDialog(Gtk::MESSAGE_WARNING, "Abort", "Are you sure ?")); // shows dialog
+                  if ( !(m_bMultipleContinue = qd->status()) )
+                     {
+                        return;
+                     }
                }
 
             GET_HANDLER_INST;
 
+            std::string filename;
+            handler->idToFilename(_id, filename);
+            
             // BTG_NOTICE("mainToolbar::BTN_ABORT");
+
             handler->reqAbort(_id, false, false);
             if (handler->commandSuccess())
                {
                   removeTrackerStatus(_id);
-                  std::string filename("");
-                  handler->idToFilename(_id, filename);
                   logVerboseMessage(USERMESSAGE_ABORTED_B + filename + USERMESSAGE_ABORTED_E);
                   msb->set(USERMESSAGE_ABORTED_B + filename + USERMESSAGE_ABORTED_E);
+               }
+            else
+               {
+                  errorDialog::showAndDie("Error abort " + filename);
                }
          }
 
@@ -1142,10 +1172,14 @@ namespace btg
          {
             GET_HANDLER_INST;
 
-            // BTG_NOTICE("(global) mainToolbar::BTN_CLEAN");
-            handler->reqClean(_id, false);
-            std::string filename("");
+            m_bMultipleContinue = true; // continue processing multiple selected torrents
+            
+            std::string filename;
             handler->idToFilename(_id, filename);
+
+            // BTG_NOTICE("(global) mainToolbar::BTN_CLEAN");
+
+            handler->reqClean(_id, false);
             if (handler->commandSuccess())
                {
                   removeTrackerStatus(_id);
@@ -1163,22 +1197,24 @@ namespace btg
          {
             GET_HANDLER_INST;
 
-            t_int up_limit   = 0;
-            t_int down_limit = 0;
-            t_int seed_percent  = 0;
-            t_long seed_timeout = 0;
-
-            // Only popup the limit dialog _once_.
-            bool limit_popup = false;
+            t_int up_limit   = btg::core::limitBase::LIMIT_DISABLED;
+            t_int down_limit = btg::core::limitBase::LIMIT_DISABLED;
+            t_int seed_percent  = btg::core::limitBase::LIMIT_DISABLED;
+            t_long seed_timeout = btg::core::limitBase::LIMIT_DISABLED;
 
             std::string limit_filename;
             
-            std::auto_ptr<limitDialog> limitdialog(new limitDialog());
-            
             handler->idToFilename(_id, limit_filename);
 
-            if (!limit_popup)
+            if (!m_bMultipleContinue)
                {
+               
+                  /*
+                   * Ugly in some way
+                   * Request and show current limits for first selection only
+                   * but set limit settings for all selected
+                   */
+                  
                   handler->reqLimitStatus(_id);
 
                   if (handler->commandSuccess())
@@ -1188,72 +1224,69 @@ namespace btg
                      }
                   else
                      {
-                        errorDialog::showAndDie("Error getting limit settings.");
+                        errorDialog::showAndDie("Error getting limit settings for " + limit_filename);
                      }
 
-                  limitdialog->update(limit_filename,
+                  m_limitDialog->update(limit_filename,
                                       up_limit, down_limit,
                                       seed_percent, seed_timeout);
-                  limitdialog->show();
-                  limitdialog->run();
+
+                  m_limitDialog->run(); // also shows it
+                  
+                  if ( !(m_bMultipleContinue = m_limitDialog->limitSelected()) )
+                     {
+                        return;
+                     }
+               }
+            
+            up_limit     = btg::core::limitBase::LIMIT_DISABLED;
+            down_limit   = btg::core::limitBase::LIMIT_DISABLED;
+            seed_percent = btg::core::limitBase::LIMIT_DISABLED;
+            seed_timeout = btg::core::limitBase::LIMIT_DISABLED;
+
+            // User selected limits.
+            if (!m_limitDialog->uploadLimitDisabled())
+               {
+                  up_limit = m_limitDialog->getUploadLimit();
                }
 
-            if (limitdialog->limitSelected())
+            // User selected limits.
+            if (!m_limitDialog->downloadLimitDisabled())
                {
-                  limit_popup  = true;
-                  up_limit     = btg::core::limitBase::LIMIT_DISABLED;
-                  down_limit   = btg::core::limitBase::LIMIT_DISABLED;
-                  seed_percent = btg::core::limitBase::LIMIT_DISABLED;
-                  seed_timeout = btg::core::limitBase::LIMIT_DISABLED;
+                  down_limit = m_limitDialog->getDownloadLimit();
+               }
 
-                  // User selected limits.
-                  if (!limitdialog->uploadLimitDisabled())
-                     {
-                        up_limit = limitdialog->getUploadLimit();
-                     }
+            // User selected seed limits.
+            if (!m_limitDialog->param3Disabled())
+               {
+                  seed_percent = m_limitDialog->getParam3();
+               }
 
-                  // User selected limits.
-                  if (!limitdialog->downloadLimitDisabled())
-                     {
-                        down_limit = limitdialog->getDownloadLimit();
-                     }
+            // User selected seed limits.
+            if (!m_limitDialog->param4Disabled())
+               {
+                  seed_timeout = m_limitDialog->getParam4();
+               }
 
-                  // User selected seed limits.
-                  if (!limitdialog->param3Disabled())
-                     {
-                        seed_percent = limitdialog->getParam3();
-                     }
+            // BTG_NOTICE("mainToolbar::BTN_LIMIT");
 
-                  // User selected seed limits.
-                  if (!limitdialog->param4Disabled())
-                     {
-                        seed_timeout = limitdialog->getParam4();
-                     }
+            handler->reqLimit(_id,
+                             up_limit, down_limit,
+                             seed_percent, seed_timeout,
+                             false);
 
-                  // BTG_NOTICE("mainToolbar::BTN_LIMIT");
-
-                  handler->reqLimit(_id,
-                                   up_limit, down_limit,
-                                   seed_percent, seed_timeout,
-                                   false);
-
-                  if (handler->commandSuccess())
-                     {
-                        msb->set(USERMESSAGE_LIMIT_B + limit_filename + USERMESSAGE_LIMIT_E);
-                        logVerboseMessage(USERMESSAGE_LIMIT_B + limit_filename + USERMESSAGE_LIMIT_E);
-                        // BTG_NOTICE("limit set, upload = " << up_limit
-                        //           << ", download = " << down_limit
-                        //           << ", seed percent = " << seed_percent
-                        //           << ", seed timeout = " << seed_timeout);
-                     }
-                  else
-                     {
-                        errorDialog::showAndDie("Error setting limits.");
-                     }
+            if (handler->commandSuccess())
+               {
+                  msb->set(USERMESSAGE_LIMIT_B + limit_filename + USERMESSAGE_LIMIT_E);
+                  logVerboseMessage(USERMESSAGE_LIMIT_B + limit_filename + USERMESSAGE_LIMIT_E);
+                  // BTG_NOTICE("limit set, upload = " << up_limit
+                  //           << ", download = " << down_limit
+                  //           << ", seed percent = " << seed_percent
+                  //           << ", seed timeout = " << seed_timeout);
                }
             else
                {
-                  limit_popup = true;
+                  errorDialog::showAndDie("Error setting limits for " + limit_filename);
                }
          }
          
@@ -1263,49 +1296,64 @@ namespace btg
 
             std::string movefilename;
             handler->idToFilename(_id, movefilename);
-
-            handler->reqList();
             
-            if (!handler->commandSuccess())
+            if (!m_bMultipleContinue)
+            {
+               
+               /*
+                * actually it can be done in constructor
+                * but then we'll have constant session list
+                * and can get moving error
+                * if attempted to move to session
+                * deleted by other client instance
+                * during our execution
+                */ 
+               
+               handler->reqList();
+               
+               if (!handler->commandSuccess())
+                  {
+                     msb->set(USERMESSAGE_NOT_MOVED_B + movefilename + USERMESSAGE_NOT_MOVED_E);
+                     logVerboseMessage(USERMESSAGE_NOT_MOVED_B + movefilename + USERMESSAGE_NOT_MOVED_E);
+                     return;
+                  }
+
+               t_longList sessions    = handler->getSessionList();
+               t_strList  names       = handler->getSessionNames();
+               t_long current_session = handler->session();
+
+               // Remove the current sessions from session to which this
+               // context can be moved to.
+               t_strListI nameIter = names.begin();
+               for (t_longListI idIter = sessions.begin();
+                    idIter != sessions.end();
+                    idIter++)
+                  {
+                     if (*idIter == current_session)
+                        {
+                           sessions.erase(idIter);
+                           names.erase(nameIter);
+                           break;
+                        }
+                     nameIter++;
+                  }
+
+               btg::core::btg_assert(names.size() == sessions.size(),
+                                     logWrapper(),
+                                     "number of sessions equal to number of session names");
+               
+               if (m_sessionSelectionDialog)
                {
-                  msb->set(USERMESSAGE_NOT_MOVED_B + movefilename + USERMESSAGE_NOT_MOVED_E);
-                  logVerboseMessage(USERMESSAGE_NOT_MOVED_B + movefilename + USERMESSAGE_NOT_MOVED_E);
-                  return;
+                  delete m_sessionSelectionDialog;
                }
-
-            t_longList sessions    = handler->getSessionList();
-            t_strList  names       = handler->getSessionNames();
-            t_long current_session = handler->session();
-
-            // Remove the current sessions from session to which this
-            // context can be moved to.
-            t_strListI nameIter = names.begin();
-            for (t_longListI idIter = sessions.begin();
-                 idIter != sessions.end();
-                 idIter++)
-               {
-                  if (*idIter == current_session)
-                     {
-                        sessions.erase(idIter);
-                        names.erase(nameIter);
-                        break;
-                     }
-                  nameIter++;
-               }
-
-            btg::core::btg_assert(names.size() == sessions.size(),
-                                  logWrapper(),
-                                  "number of sessions equal to number of session names");
-            
-            sessionSelectionDialog ssd("Select session to move torrent to", 
-                                       sessions, 
-                                       names);
-            ssd.show();
-            ssd.run();
+               m_sessionSelectionDialog = new sessionSelectionDialog("Select session to move torrent to", 
+                                          sessions,
+                                          names);
+               m_sessionSelectionDialog->run();
+            }
 
             t_long newsession;
-            
-            if (!ssd.getSelectedSession(newsession))
+            if ( !(m_bMultipleContinue = m_sessionSelectionDialog->getSelectedSession(newsession)) )
                {
                   msb->set(USERMESSAGE_NOT_MOVED_B + movefilename + USERMESSAGE_NOT_MOVED_E);
                   logVerboseMessage(USERMESSAGE_NOT_MOVED_B + movefilename + USERMESSAGE_NOT_MOVED_E);
@@ -1314,20 +1362,24 @@ namespace btg
             
             handler->reqMoveContext(_id, newsession);
 
-            if (!handler->commandSuccess())
+            if (handler->commandSuccess())
+               {
+                  removeTrackerStatus(_id);
+                  msb->set(USERMESSAGE_MOVED_B + movefilename + USERMESSAGE_MOVED_E);
+                  logVerboseMessage(USERMESSAGE_MOVED_B + movefilename + USERMESSAGE_MOVED_E);
+               }
+            else
                {
                   msb->set(USERMESSAGE_NOT_MOVED_B + movefilename + USERMESSAGE_NOT_MOVED_E);
                   logVerboseMessage(USERMESSAGE_NOT_MOVED_B + movefilename + USERMESSAGE_NOT_MOVED_E);
-                  return;
                }
-
-               msb->set(USERMESSAGE_MOVED_B + movefilename + USERMESSAGE_MOVED_E);
-               logVerboseMessage(USERMESSAGE_MOVED_B + movefilename + USERMESSAGE_MOVED_E);
          }
 
          void mainWindow::handle_btn_prefs(t_int const _id)
          {
             errorDialog::showAndDie("Torrent preferences not available yet.");
+
+            m_bMultipleContinue = false; // discontinue for multiple selection, show the error only once
          }
 
          mainWindow::~mainWindow()
@@ -1339,6 +1391,9 @@ namespace btg
 
             delete preferencesdialog;
             preferencesdialog = 0;
+            
+            delete m_limitDialog;
+            m_limitDialog = 0;
          }
          
          bool mainWindow::on_window_state_event (GdkEventWindowState* event)

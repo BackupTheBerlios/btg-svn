@@ -2,19 +2,22 @@ BTG version 0.9.7
 -----------------
 The following bugs were fixed:
 
+013359 Compilation error: numinput.h.
+013315 btgui, torrent remains after moving to another session.
+013306 btgui, executing operations on multiple torrents.
 013272 Add support for libtorrent 0.12.1.
-013267 Incorrect seeding limit setting in btgcli.
-013266 btgui global limit setting.
-013265 btgui limit settings dialog doesn't correctly display limits.
+013267 btgcli, incorrect seed limit.
+013266 btgui, global limit setting.
+013265 btgui, limit settings dialog doesn't correctly display limits.
 013248 btgncli, add dialog used for entering numbers.
-013216 Session saving, add saving global limits.
+013216 Session saving, add saving of global limits.
 013147 Handle octets set to 255 in Address/addressPort.
 013146 XML Pasing error (wwwui).
 013142 Restore file priorities after restart.
 013136 Change of peer id / useragent (feature req).
 013007 Show session settings.
 012997 Session saving, fix saving of dht/encryption settings.
-012975 externalization, simple, exorcism.
+012975 Externalization, simple, exorcism.
 012970 Add moving torrents to another sessions.
 012952 Add switch to disable generating btg-config.
 012839 DHT + encryption support in wwwbtg.

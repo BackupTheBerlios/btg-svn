@@ -108,6 +108,7 @@ addrport.cpp \
 configuration.cpp \
 argif.cpp \
 btg_assert.cpp \
+copts.cpp \
 $(OS_SOURCES) \
 $(TRANSPORT_SOURCES) \
 $(COMMAND_SOURCES) \

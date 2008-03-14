@@ -343,6 +343,7 @@ namespace btg
                                             t_long const _toSession)
          {
             commandStatus = false;
+            last_id = _id;
             
             statemachine.doMoveContext(_id, _toSession);
             statemachine.work();

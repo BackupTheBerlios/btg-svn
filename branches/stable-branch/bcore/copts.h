@@ -30,44 +30,17 @@ namespace btg
    namespace core
       {
 
-	/**
-	 * \addtogroup core
-	 */
-	/** @{ */
-
+         /**
+          * \addtogroup core
+          */
+         /** @{ */
+         
          /// Modify _output to contain a description of the compile
          /// time options used.
-         void getCompileTimeOptions(std::string & _output)
-            {
-#if BTG_DEBUG
-               _output += "debug";
-               _output += GPD->sNEWLINE();
-#endif // BTG_DEBUG
-               
-#if BTG_OPTION_SAVESESSIONS
-               _output += "session saving";
-               _output += GPD->sNEWLINE();
-#endif // BTG_OPTION_SAVESESSIONS
-               
-#if BTG_OPTION_EVENTCALLBACK
-               _output += "event callback";
-               _output += GPD->sNEWLINE();
-#endif // BTG_OPTION_EVENTCALLBACK
-               
-#if BTG_OPTION_UPNP
-               _output += "UPnP";
-               _output += GPD->sNEWLINE();
-#endif // BTG_OPTION_UPNP
-               
-#if BTG_OPTION_USECYBERLINK
-               _output += "UPnP CyberLink";
-               _output += GPD->sNEWLINE();
-#endif // BTG_OPTION_USECYBERLINK
-
-            }
-
-	 /** @} */
-
+         void getCompileTimeOptions(std::string & _output);
+         
+         /** @} */
+         
       } // namespace core
 } // namespace btg
 

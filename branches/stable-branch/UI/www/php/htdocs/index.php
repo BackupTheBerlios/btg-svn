@@ -12,6 +12,7 @@ if(!defined("BTG_BUILD"))
 }
 
 session_start();
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
@@ -43,8 +44,8 @@ for(var i=0;i<t.length;i++) {
 
 <div id="top"></div>
 <div id="container" style="display: none;">
+	<iframe name="upload_iframe" id="upload_iframe" style="width: 100px; height: 10px; display: none;" onLoad="uploadDone()"></iframe> 
 	<div id="upload">
-		<iframe name="upload_iframe" id="upload_iframe" style="width: 100px; height: 100px; display:none;" onLoad="uploadDone()"></iframe> 
 		<form action="upload.php" target="upload_iframe" method="post" enctype="multipart/form-data" onSubmit="return uploadCheck();">
 		<input type="hidden" name="MAX_FILE_SIZE" value="1000000" />
 		<input class="btn" type="file" id="upload_input" name="torrent_file"/>

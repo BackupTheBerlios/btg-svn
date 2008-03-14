@@ -24,7 +24,8 @@ namespace btg
                                                         t_longList const& _sessionIDs, 
                                                         t_strList const& _sessionsNames,
                                                         bool const _disableSelection)
-            : disableSelection_(_disableSelection),
+            : Gtk::Dialog(_title, true /* modal */, true /* separator */),
+              disableSelection_(_disableSelection),
               selected(false),
               session(Command::INVALID_SESSION),
               cbt(0)
@@ -54,12 +55,9 @@ namespace btg
             get_vbox()->set_spacing(0);
             get_vbox()->pack_start(*vbox);
 
-            set_title(_title);
-            set_modal(true);
             property_window_position().set_value(Gtk::WIN_POS_NONE);
             set_resizable(true);
             property_destroy_with_parent().set_value(false);
-            set_has_separator(true);
             add_action_widget(*cancelbutton, -6);
             add_action_widget(*okbutton, -5);
 
@@ -86,18 +84,15 @@ namespace btg
                   cancelbutton->show();
                }
 
-            okbutton->show();
-            label->show();
-            cbt->show();
-            vbox->show();
-            show();
-
             // Connect buttons to handlers.
             okbutton->signal_clicked().connect(sigc::mem_fun(*this, &sessionSelectionDialog::on_ok_clicked));
             if (!disableSelection_)
                {
                   cancelbutton->signal_clicked().connect(sigc::mem_fun(*this, &sessionSelectionDialog::on_cancel_clicked));
                }
+            
+            show_all(); // show all elements
+            hide(); // hide toplevel window
          }
 
          void sessionSelectionDialog::on_ok_clicked()

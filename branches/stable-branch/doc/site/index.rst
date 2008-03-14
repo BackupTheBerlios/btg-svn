@@ -45,13 +45,21 @@ BTG is being used or was tested on:
 - GNU Linux - Debian (PowerPC-32, amd64, i686) / Gentoo (PowerPC-64, i686) / Slackware (i586) / OpenWrt (XScale-IXP42x).
 
 Screenshots
------------
+~~~~~~~~~~~
+
+Upcoming 0.9.7 Release
+----------------------
+- `btgui #1`_.
+- `btgui #2`_.
+
+.. _btgui #1: http://developer.berlios.de/dbimage.php?id=3971
+.. _btgui #2: http://developer.berlios.de/dbimage.php?id=3973
+
+0.9.6
+-----
+
 - `WWW UI #1`_.
 - `WWW UI #2`_.
-
-.. _WWW UI #1: http://developer.berlios.de/dbimage.php?id=2916
-.. _WWW UI #2: http://developer.berlios.de/dbimage.php?id=2915
-
 - `btgncli - torrent menu`_.
 - `btgncli - load dialog`_.
 - `btgncli - limit torrent`_.
@@ -59,6 +67,8 @@ Screenshots
 - `btgncli - global limits`_.
 - `btgncli - file view`_.
 
+.. _WWW UI #1: http://developer.berlios.de/dbimage.php?id=2916
+.. _WWW UI #2: http://developer.berlios.de/dbimage.php?id=2915
 .. _btgncli - torrent menu: http://developer.berlios.de/dbimage.php?id=3413
 .. _btgncli - load dialog: http://developer.berlios.de/dbimage.php?id=3412
 .. _btgncli - limit torrent: http://developer.berlios.de/dbimage.php?id=3411
@@ -149,6 +159,7 @@ Documentation
 - `BTG howto (0.4)`_.
 - `BTG howto (0.3)`_.
 - `Manual pages`_ contained in the releases.
+- `BTG Developer Howto`_.
 - `BTG Release Procedure`_.
 
 .. _Manual pages: manpages.html
@@ -182,13 +193,14 @@ Links
 .. _BTG blog: http://developer.berlios.de/blog/categories/32-BTG
 .. _BTG project page: http://developer.berlios.de/projects/btg/ 
 .. _BTG FAQ: faq.html
-.. _BTG howto (current): howto.html
-.. _BTG howto (0.3): howto-0.3.html
-.. _BTG howto (0.4): howto-0.4.html
-.. _BTG howto (0.5): howto-0.5.html
-.. _BTG howto (0.6): howto-0.6.html
-.. _BTG howto (0.7): howto-0.7.html
-.. _BTG howto (0.9.6): howto-0.9.6.html
+.. _BTG Developer Howto: howto_devel.html
+.. _BTG Howto (current): howto.html
+.. _BTG Howto (0.3): howto-0.3.html
+.. _BTG Howto (0.4): howto-0.4.html
+.. _BTG Howto (0.5): howto-0.5.html
+.. _BTG Howto (0.6): howto-0.6.html
+.. _BTG Howto (0.7): howto-0.7.html
+.. _BTG Howto (0.9.6): howto-0.9.6.html
 .. _Rasterbar Libtorrent: http://www.rasterbar.com/products/libtorrent.html
 .. _Gtkmm: http://www.gtkmm.org/
 .. _SDL: http://libsdl.org/

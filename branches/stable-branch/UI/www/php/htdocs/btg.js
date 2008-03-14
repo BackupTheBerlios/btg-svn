@@ -159,7 +159,7 @@ function cleanAllContexts()
 function showGlobalLimits()
 {
 	setUIState(4);
-	setStatus("Setting global limits.");
+	setStatus("Getting global limits.");
 
 	btg_globallimitstatus(cb_globallimitstatus, cb_globallimitstatus_err);
 }
@@ -563,21 +563,34 @@ function setUIState(state)
 
 /* Called when the upload iframe has been loaded, either on first page load
  * or after an upload is complete. 
+ * On safari onLoad is called for the iframe when the page is loaded. Ignore that call.
  */
+var uploadDone_firstRun = 0;
 function uploadDone()
 {
+	if((++uploadDone_firstRun) == 1)
+		return;
+
 	var file = document.getElementById('upload_input');
-	var content = document.getElementById('upload_iframe').contentDocument;
+	var contentDoc = function(iframe_el)
+	{
+		var doc = iframe_el.contentDocument || // W3
+			(
+			 (iframe_el.contentWindow)&&(iframe_el.contentWindow.document)
+			) ||  // IE
+			(
+			 (iframe_el.name)&&(document.frames[iframe_el.name])&&
+			 (document.frames[iframe_el.name].document)
+			) || null;
+		return doc;
+	};
+		
+	var content = contentDoc(document.getElementById('upload_iframe'));
 
 	/* We only care about the contents if its a XMLDocument, not on default empty page load */
 	if(content == null)
 		return;
-		
-	/* This breaks on safari.... However, safari is fuckedup anyways since it doesnt run onLoad on the iframe
-	when its reloaded... Opera does not know about XMLDocument either though... */
-	if(!(content instanceof XMLDocument))
-		return;
-
+	
 	/* Fetch the response object from the DOM */
 	var response = content.getElementsByTagName('response')[0];
 	if(!response)
@@ -683,7 +696,7 @@ function cb_globallimitstatus(response)
 	}
 	else
 	{
-		ri_ull = noLimit;
+		ri_ull = '';
 	}
 
 	var r_dll  = parseInt(getFirstChildValue(response, 'downloadLimit'));
@@ -693,11 +706,15 @@ function cb_globallimitstatus(response)
 	}
 	else
 	{
-		ri_dll = noLimit;
+		ri_dll = '';
 	}
 
 	var r_mull = parseInt(getFirstChildValue(response, 'maxuploads'));
 	var r_mc   = parseInt(getFirstChildValue(response, 'maxconnections'));
+	if(r_mull == noLimit)
+		r_mull = '';
+	if(r_mc == noLimit)
+		r_mc = '';
 
 	// Update the limit table.
 	var eUl = document.getElementById('gupload');
@@ -1758,7 +1775,7 @@ function createTorrentDetails()
 	c = r.insertCell(-1);
 	c.className = 'extrainfo_value';
 	c.innerHTML='';
-	// c.colSpan = 3;
+	c.colSpan = 3;
 
 	// Add ul/dl ratio.
 	c = r.insertCell(-1);
@@ -1770,13 +1787,14 @@ function createTorrentDetails()
 	c.innerHTML = '';
 
 	// Not used right now.
+	/*
 	c = r.insertCell(-1);
 	c.className = 'extrainfo_type';
 	c.innerHTML = '';
 	c = r.insertCell(-1);
 	c.className = 'extrainfo_value';
 	c.innerHTML = '';
-
+	*/
 	return tbl;
 }
 
@@ -1903,8 +1921,8 @@ function updateTorrentDetails(t, s)
 	t.rows[5].cells[3].innerHTML = ratio_tr.toString();
 
 	// Not used right now.
-	t.rows[5].cells[4].innerHTML = "";
-	t.rows[5].cells[5].innerHTML = "";
+//	t.rows[5].cells[4].innerHTML = "";
+//	t.rows[5].cells[5].innerHTML = "";
 }
 
 /**************************************************

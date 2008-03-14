@@ -7,7 +7,12 @@ all:
 man-pages:
 	@./convert-man.sh
 
-html: man-pages index.rst packages.rst howto.rst howto-0.3.rst howto-0.4.rst howto-0.5.rst
+RST_FILES=index.rst \
+packages.rst \
+howto.rst howto_bfs.rst howto_devel.rst \
+howto-0.3.rst howto-0.4.rst howto-0.5.rst howto-0.6.rst howto-0.7.rst howto-0.9.6.rst
+
+html: man-pages $(RST_FILES)
 	$(RST2HTML) index.rst > index.html
 	$(RST2HTML) packages.rst > packages.html
 	$(RST2HTML) howto.rst > howto.html
@@ -15,6 +20,7 @@ html: man-pages index.rst packages.rst howto.rst howto-0.3.rst howto-0.4.rst how
 	$(RST2HTML) manpages.rst > manpages.html
 	$(RST2HTML) release-proc.rst > release-proc.html
 	$(RST2HTML) howto_bfs.rst > howto_bfs.html
+	$(RST2HTML) howto_devel.rst > howto_devel.html
 	$(RST2HTML) howto-0.3.rst > howto-0.3.html
 	$(RST2HTML) howto-0.4.rst > howto-0.4.html
 	$(RST2HTML) howto-0.5.rst > howto-0.5.html
