@@ -26,7 +26,7 @@ noinst_HEADERS = nconfig.h \
                  fileview.h \
                  sessionselect.h \
                  fileselect.h \
-                 numinput.cpp \
+                 numinput.h \
                  mainwindow.h \
                  ui.h \
                  handler.h
