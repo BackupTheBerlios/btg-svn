@@ -47,8 +47,8 @@ BTG is being used or was tested on:
 Screenshots
 ~~~~~~~~~~~
 
-Upcoming 0.9.7 Release
-----------------------
+0.9.7
+-----
 - `btgui #1`_.
 - `btgui #2`_.
 
@@ -90,6 +90,7 @@ Stable Releases
 ======================= ========================== ======================= ============================================
 **Source**              **Release note**           **Changelog**           **Rasterbar Libtorrent version**
 ----------------------- -------------------------- ----------------------- --------------------------------------------
+`btg-0.9.7.tar.gz`_     `0.9.7 release note`_      `0.9.7 changelog`_      0.12.x/0.13rc1
 `btg-0.9.6.tar.gz`_     `0.9.6 release note`_      `0.9.6 changelog`_      0.12
 `btg-0.9.5.tar.gz`_     `0.9.5 release note`_      `0.9.5 changelog`_      0.9/0.10/0.11/0.12
 `btg-0.9.0.tar.gz`_     `0.9.0 release note`_      `0.9.0 changelog`_      0.9/0.10/0.11
@@ -111,6 +112,10 @@ Stable Releases
 .. _btg-0.9.6.tar.gz: http://download.berlios.de/btg/btg-0.9.6-p1.tar.gz
 .. _0.9.6 release note: http://developer.berlios.de/project/shownotes.php?release_id=13428
 .. _0.9.6 changelog: http://developer.berlios.de/project/shownotes.php?release_id=13428
+
+.. _btg-0.9.7.tar.gz: http://download.berlios.de/btg/btg-0.9.7.tar.gz
+.. _0.9.7 release note: http://developer.berlios.de/project/shownotes.php?release_id=14349
+.. _0.9.7 changelog: http://developer.berlios.de/project/shownotes.php?release_id=14349
 
 Experimental Releases
 ---------------------
@@ -152,6 +157,7 @@ Documentation
 ~~~~~~~~~~~~~
 - `BTG FAQ`_.
 - `BTG howto (current)`_.
+- `BTG howto (0.9.7)`_.
 - `BTG howto (0.9.6)`_.
 - `BTG howto (0.7)`_.
 - `BTG howto (0.6)`_.
@@ -178,7 +184,9 @@ Getting Help
 
 Do not use the forums, as they are not monitored. 
 
-Instead use the #libtorrent IRC channel on irc.freenode.net.
+Instead use the `mailing list`_.
+
+.. _mailing list: http://developer.berlios.de/mail/?group_id=3293
 
 Links
 ~~~~~
@@ -201,6 +209,7 @@ Links
 .. _BTG Howto (0.6): howto-0.6.html
 .. _BTG Howto (0.7): howto-0.7.html
 .. _BTG Howto (0.9.6): howto-0.9.6.html
+.. _BTG Howto (0.9.7): howto-0.9.7.html
 .. _Rasterbar Libtorrent: http://www.rasterbar.com/products/libtorrent.html
 .. _Gtkmm: http://www.gtkmm.org/
 .. _SDL: http://libsdl.org/

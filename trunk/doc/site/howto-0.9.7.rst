@@ -33,7 +33,7 @@ following applications are installed:
 Daemon
 ~~~~~~
 - C and C++ compiler.
-- `Rasterbar Libtorrent`_ 0.12.x, 0.13rc1 or SVN. To decide which libtorrent version to use see `Rasterbar Libtorrent Versions`_.
+- `Rasterbar Libtorrent`_ 0.12, 0.13rc1 or SVN. To decide which libtorrent version to use see `Rasterbar Libtorrent Versions`_.
 - Boost 1.33 or better (Because of the use of Boost IOStreams), 
   multithreaded versions of the libs should be used.
 - `GNU TLS`_ 1.0 or better.
