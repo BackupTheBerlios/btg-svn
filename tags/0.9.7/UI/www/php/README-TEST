@@ -1,0 +1,73 @@
+This is an example of running the test script:
+
+The parameres are:
+
+	btgdaemon URL
+	build id
+	test torrent file
+
+The btgdaemon URL is in the format http://localhost:16000/, or https://localhost:16000/ for https.
+The build ID is the version, as of writing this is 0.3.
+
+Example output:
+
+$ php test.php localhost 15000 0.2 /home/johan/btgdl/anonymos-shmoo.iso.torrent
+Send: (g) Init session with session ID 4637.
+Recv: (g) Ack with session ID 4637. Ack for (g) Init session.
+Send: (s) List with session ID 4637.
+Recv: (s) List response with session ID 4637. Available sesions: 269 1643.
+Send: (g) Setup command with session ID 4637.
+Required Data:
+interface=
+work path=/Users/johan/bt
+output path=/Users/johan/bt/finished
+ports=6000 6010
+leech mode: off
+
+Optional Data:
+Torrent output path: not set.
+Proxy: not set.
+
+Recv: (g) Ack with session ID 4637. Ack for (g) Setup command.
+Send: (g) Daemon uptime request with session ID 4637.
+Recv: (g) Daemon uptime response with session ID 4637. Uptime=130
+Send: (s) Detach with session ID 4637.
+Recv: (g) Ack with session ID 4637. Ack for (s) Detach.
+Send: (g) Init session with session ID 555.
+Recv: (g) Ack with session ID 555. Ack for (g) Init session.
+Send: (s) List with session ID 555.
+Recv: (s) List response with session ID 555. Available sesions: 269 1643 4637.
+Send: (s) Attach with session ID 555.
+Recv: (g) Ack with session ID 555. Ack for (s) Attach.
+Send: (c) Status with session ID 555. Context-id=-1. All contexts flag is set.
+Recv: (g) Error with session ID 555. Failed command=(c) Status. Message='Wrong context id.'.
+Send: (g) List request with session ID 555.
+Recv: (g) Error with session ID 555. Failed command=(g) List request. Message='No contexts to list.'.
+Send: (c) Create context with session ID 555. Filename=/Users/johan/bt/anonymos-shmoo.iso.torrent.
+Recv: (g) Ack with session ID 555. Ack for (c) Create context.
+Send: (c) Status with session ID 555. Context-id=-1. All contexts flag is set.
+Recv: (c) Status all response with session ID 555. Context-id=-1.
+Send: (g) List request with session ID 555.
+Recv: (g) List request response with session ID 555.
+Send: (c) File info with session ID 555. Context-id=0.
+Recv: (c) File info response with session ID 555. Context-id=0.
+Sleeping 5 seconds to let daemon retrieve peers list...
+Send: (c) List peers with session ID 555. Context-id=0.
+Recv: (c) List peers response with session ID 555. Context-id=0.
+12.222.120.7424.9.113.20924.34.46.20324.130.221.1747.234.0.5162.14.185.5662.167.61.80, seeding63.100.100.563.192.208.23464.34.176.10, seeding64.34.217.40, seeding66.212.209.12867.128.20.158, seeding67.162.132.147, seeding67.166.179.9668.12.214.19068.171.243.17568.239.198.1469.161.172.8971.224.6.5972.29.110.9872.226.205.6480.78.173.4380.126.109.16280.170.45.24881.167.131.3, seeding81.236.30.3482.207.212.11882.232.246.70, seeding83.57.54.252, seeding83.78.152.21683.171.220.62, seeding83.216.144.24383.243.117.235, seeding84.9.61.8884.57.252.19984.77.91.202, seeding84.183.165.17884.189.77.17284.189.152.9085.75.179.225, seeding85.224.213.15128.8.86.99, seeding128.117.43.39, seeding130.59.1.190131.179.224.133141.156.186.163151.41.176.73153.19.119.50158.91.203.11, seeding195.199.72.166196.211.33.90201.0.23.65, seeding205.127.237.150, seeding205.155.26.206208.214.184.161209.30.85.22212.112.238.98213.114.250.172, seeding217.187.7.222218.212.169.133Send: (c) Limit with session ID 555. Context-id=0.
+Recv: (g) Ack with session ID 555. Ack for (c) Limit.
+Send: (c) Limit status with session ID 555. Context-id=0.
+Recv: (c) Limit status response with session ID 555. Context-id=0.
+Send: (c) Stop context with session ID 555. Context-id=0.
+Recv: (g) Ack with session ID 555. Ack for (c) Stop context.
+Send: (c) Status with session ID 555. Context-id=0.
+Recv: (c) Status response with session ID 555. Context-id=0.
+Send: (c) Start context with session ID 555. Context-id=0.
+Recv: (g) Ack with session ID 555. Ack for (c) Start context.
+Send: (c) Status with session ID 555. Context-id=0.
+Recv: (c) Status response with session ID 555. Context-id=0.
+Send: (s) Quit with session ID 555.
+Recv: (g) Ack with session ID 555. Ack for (s) Quit.
+All tests done. If you got this far, all OK!
+
+
