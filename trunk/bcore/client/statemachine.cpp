@@ -417,6 +417,9 @@ namespace btg
                         case SM_TRANSPORT_READY:
                            currentState = SM_TRANSPORT_READY;
                            break;
+                        case SM_INIT:
+                           currentState = SM_INIT;
+                           break;
                         default:
                            DEFAULT_ERROR_ACTION;
                            break;
@@ -709,6 +712,18 @@ namespace btg
 
                } // switch currentstate
          }
+         
+#define SM_REQUEST_LOSS \
+   else \
+      { \
+         BTG_ERROR_LOG(logWrapper(), "SM Request lost!"); \
+      }
+
+#define SM_REQUEST_ERROR \
+   else \
+      { \
+         changeState(SM_ERROR); \
+      }
 
          void stateMachine::doInit(std::string const& _username,
                                    btg::core::Hash const& _hash)
@@ -718,6 +733,7 @@ namespace btg
                   commands.push_back(new initConnectionCommand(_username, _hash));
                   changeState(SM_TRANSINIT);
                }
+            SM_REQUEST_ERROR;
          }
 
          void stateMachine::doSetup(setupCommand* _command)
@@ -730,6 +746,7 @@ namespace btg
                   changeState(SM_SETUP);
                   commands.push_back(_command);
                }
+            SM_REQUEST_ERROR;
          }
 
          void stateMachine::doQuit()
@@ -738,6 +755,7 @@ namespace btg
                {
                   changeState(SM_QUIT);
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doKill()
@@ -746,6 +764,7 @@ namespace btg
                {
                   changeState(SM_KILL);
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doGlobalLimit(t_int const  _limitBytesUpld,
@@ -760,6 +779,7 @@ namespace btg
                                                       _maxUplds,
                                                       _maxConnections));
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doGlobalLimitStatus()
@@ -768,6 +788,7 @@ namespace btg
                {
                   commands.push_back(new limitStatusCommand());
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doUptime()
@@ -776,6 +797,7 @@ namespace btg
                {
                   commands.push_back(new uptimeCommand());
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doSessionInfo()
@@ -784,6 +806,7 @@ namespace btg
                {
                   commands.push_back(new sessionInfoCommand());
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doSessionName()
@@ -792,6 +815,7 @@ namespace btg
                {
                   commands.push_back(new sessionNameCommand());
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doSetSessionName(std::string const& _name)
@@ -800,6 +824,7 @@ namespace btg
                {
                   commands.push_back(new setSessionNameCommand(_name));
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doMoveContext(t_int const _id,
@@ -809,6 +834,7 @@ namespace btg
                {
                   commands.push_back(new contextMoveToSessionCommand(_id, _toSession));
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doAttach(attachSessionCommand* _command)
@@ -822,6 +848,7 @@ namespace btg
                   BTG_NOTICE(logWrapper(), "Trying to attach to session " << _command->getSession());
 #endif // BTG_STATEMACHINE_DEBUG
                }
+            SM_REQUEST_ERROR;
          }
 
          void stateMachine::doDetach()
@@ -830,6 +857,7 @@ namespace btg
                {
                   changeState(SM_DETACH);
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doListSessions()
@@ -843,6 +871,7 @@ namespace btg
                {
                   commands.push_back(new listSessionCommand());
                }
+            SM_REQUEST_ERROR;
          }
 
          void stateMachine::doList()
@@ -852,6 +881,7 @@ namespace btg
                   // Send the command.
                   commands.push_back(new listCommand());
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doCreate(std::string const& _pathToTorrent,
@@ -886,6 +916,7 @@ namespace btg
                         BTG_ERROR_LOG(logWrapper(), "Unable to read '" << _pathToTorrent << "'");
                      }
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doLast()
@@ -894,6 +925,7 @@ namespace btg
                {
                   commands.push_back(new lastCIDCommand());
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doAbort(t_int const _contextID, bool const _eraseData, bool const _allContexts)
@@ -903,6 +935,7 @@ namespace btg
                   // Send the command.
                   commands.push_back(new contextAbortCommand(_contextID, _eraseData, _allContexts));
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doStart(t_int const _contextID, bool const _allContexts)
@@ -912,6 +945,7 @@ namespace btg
                   // Send the command.
                   commands.push_back(new contextStartCommand(_contextID, _allContexts));
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doStop(t_int const _contextID, bool const _allContexts)
@@ -921,6 +955,7 @@ namespace btg
                   // Send the command.
                   commands.push_back(new contextStopCommand(_contextID, _allContexts));
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doStatus(t_int const _contextID, bool const _allContexts)
@@ -930,6 +965,7 @@ namespace btg
                   // Send the command.
                   commands.push_back(new contextStatusCommand(_contextID, _allContexts));
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doFileInfo(t_int const _contextID, bool const _allContexts)
@@ -939,6 +975,7 @@ namespace btg
                   // Send the command.
                   commands.push_back(new contextFileInfoCommand(_contextID, _allContexts));
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doPeers(t_int const _contextID, bool const _allContexts)
@@ -948,6 +985,7 @@ namespace btg
                   // Send the command.
                   commands.push_back(new contextPeersCommand(_contextID, _allContexts));
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doLimit(t_int const _contextID,
@@ -967,6 +1005,7 @@ namespace btg
                                                              _seedTimeout,
                                                              _allContexts));
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doLimitStatus(t_int const _contextID, bool const _allContexts)
@@ -977,6 +1016,7 @@ namespace btg
                   commands.push_back(new contextLimitStatusCommand(_contextID,
                                                                    _allContexts));
                }
+            SM_REQUEST_LOSS;
          }
          
          void stateMachine::doSetFiles(t_int const _contextID, 
@@ -986,6 +1026,7 @@ namespace btg
                {
                   commands.push_back(new contextSetFilesCommand(_contextID, _files));
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doGetFiles(t_int const _contextID)
@@ -994,6 +1035,7 @@ namespace btg
                {
                   commands.push_back(new contextGetFilesCommand(_contextID));
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doClean(t_int const _contextID, bool const _allContexts)
@@ -1003,6 +1045,7 @@ namespace btg
                   // Send the command.
                   commands.push_back(new contextCleanCommand(_contextID, _allContexts));
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::setExpectedReply(Command::commandType _type)
@@ -1501,13 +1544,13 @@ namespace btg
                         {
                            if (dynamic_cast<errorCommand*>(c)->getErrorCommand() == Command::CN_GINITCONNECTION)
                               {
-                                 clientcallback->onSetupError(
+                                 clientcallback->onTransinitwaitError(
                                                               dynamic_cast<errorCommand*>(c)->getMessage()
                                                               );
 #if BTG_STATEMACHINE_DEBUG
                                  BTG_NOTICE(logWrapper(), "Error: " << dynamic_cast<errorCommand*>(c)->getMessage());
 #endif // BTG_STATEMACHINE_DEBUG
-                                 changeState(SM_ERROR);
+                                 changeState(SM_INIT); // try to auth again
                                  _status = true;
                               }
                         }
@@ -1745,7 +1788,7 @@ namespace btg
 
          void stateMachine::step_SM_ERROR(bool & _status)
          {
-            clientcallback->onFatalError("Waited for an ack. Never got it.");
+            clientcallback->onFatalError("Fatal error. (Waited for an ack. Never got it. | Inappropriate state.)");
             _status = true;
          }
 

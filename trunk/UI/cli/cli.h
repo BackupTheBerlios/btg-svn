@@ -288,6 +288,7 @@ namespace btg
                      void handleGlobalLimitStatus(cliResponse & _result);
 
                      void onTransportInit();
+                     void onTransinitwaitError(std::string const& _message);
                      void onSetup(t_long const _session);
                      void onSetupError(std::string const& _message);
 

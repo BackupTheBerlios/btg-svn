@@ -186,7 +186,7 @@ namespace btg
                      btg::core::Hash h;
                      h.set(passwordHash());
                      handler->reqInit(user(), h);
-                     result = startupHelper::or_init_success;
+                     result = handler->transinitwaitError() ? startupHelper::or_init_failure : startupHelper::or_init_success;
                      break;
                   }
                case startupHelper::op_auth:

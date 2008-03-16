@@ -48,7 +48,7 @@ namespace btg
          void clientCallback::onLast(t_int)
          {
          }
-
+         
       } // namespace client
    } // namespace core
 } // namespace btg

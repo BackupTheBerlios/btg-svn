@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
 
    bool verboseFlag  = cla->beVerbose();
 
-   initWindow* iw = new initWindow(kmap);
+   std::auto_ptr<initWindow> iw(new initWindow(kmap));
    iw->show();
 
    // Update init dialog.
@@ -132,9 +132,6 @@ int main(int argc, char* argv[])
          cla = 0;
 
          iw->showError("Could not open file '" + config_filename + "'.");
-
-         delete iw;
-         iw = 0;
 
          projectDefaults::killInstance();
 
@@ -164,8 +161,6 @@ int main(int argc, char* argv[])
          cla    = 0;
 
          iw->showError("Could not read config file, '" + GPD->sCLI_CONFIG() + "'.");
-         delete iw;
-         iw = 0;
 
          projectDefaults::killInstance();
 
@@ -211,8 +206,6 @@ int main(int argc, char* argv[])
          cla    = 0;
        
          iw->showError(keyError);
-         delete iw;
-         iw = 0;
        
          projectDefaults::killInstance();
        
@@ -254,8 +247,6 @@ int main(int argc, char* argv[])
          externalization = 0;
 
          iw->showError("Failed to initialize transport.");
-         delete iw;
-         iw = 0;
 
          projectDefaults::killInstance();
 
@@ -311,9 +302,6 @@ int main(int argc, char* argv[])
 
          iw->showError("Internal error: startup helper not initialized.");
 
-         delete iw;
-         iw = 0;
-
          projectDefaults::killInstance();
 
          return BTG_ERROR_EXIT;
@@ -344,20 +332,14 @@ int main(int argc, char* argv[])
          lastfiles = 0;
 
          iw->showError("Unable to initialize logging.");
-         delete iw;
-         iw = 0;
 
          projectDefaults::killInstance();
 
          return BTG_ERROR_EXIT;
       }
 
-   // In case authorization is required from the user, erase the
-   // init window to avoid dealing with ncurses.
-   // It will be recreated later.
+   // In case authorization is required from the user, hide window
    iw->hide();
-   delete iw;
-   iw = 0;
 
    if (config->authSet())
       {
@@ -367,6 +349,7 @@ int main(int argc, char* argv[])
       }
    else
       {
+         AUTH_RETRY:
          // Ask the user about which username and password to use.
          if (starthelper->execute(startupHelper::op_auth) != startupHelper::or_auth_success)
             {
@@ -391,11 +374,8 @@ int main(int argc, char* argv[])
                lastfiles = 0;
 
                // Show the init window to display the error.
-               iw = new initWindow(kmap);
                iw->show();
                iw->showError("Authorization failed.");
-               delete iw;
-               iw = 0;
 
                projectDefaults::killInstance();
 
@@ -403,20 +383,21 @@ int main(int argc, char* argv[])
             }
       }
 
-   // Recreate the init window.
-   iw = new initWindow(kmap);
    iw->show();
    iw->updateProgress(initWindow::IEV_SETUP);
 
    /// Initialize the transport.
-   starthelper->execute(startupHelper::op_init);
+   if (starthelper->execute(startupHelper::op_init) != startupHelper::or_init_success)
+   {
+      iw->hide();
+      std::cout << "Authentication error." << std::endl;
+      goto AUTH_RETRY;
+   }
 
    // Handle command line options:
    if (cla->doList())
       {
-         // iw->showError("Unable to list sessions.");
-         delete iw;
-         iw = 0;
+         iw->showError("Unable to list sessions.");
 
          starthelper->execute(startupHelper::op_list);
 
@@ -471,8 +452,6 @@ int main(int argc, char* argv[])
                lastfiles = 0;
 
                iw->showError("Unable to attach to session.");
-               delete iw;
-               iw = 0;
 
                projectDefaults::killInstance();
 
@@ -485,8 +464,6 @@ int main(int argc, char* argv[])
          // command line or chosen by the user from a list.
 
          iw->hide();
-         delete iw;
-         iw = 0;
 
          if (starthelper->execute(startupHelper::op_attach) == startupHelper::or_attach_failture)
             {
@@ -511,18 +488,14 @@ int main(int argc, char* argv[])
                delete lastfiles;
                lastfiles = 0;
 
-               iw = new initWindow(kmap);
                iw->show();
                iw->showError("Unable to attach to session.");
-               delete iw;
-               iw = 0;
 	       
                projectDefaults::killInstance();
 
                return BTG_ERROR_EXIT;
             }
 
-         iw = new initWindow(kmap);
          iw->show();
          iw->updateProgress(initWindow::IEV_SETUP);
       }
@@ -554,8 +527,6 @@ int main(int argc, char* argv[])
                lastfiles = 0;
 
                iw->showError("Unable to connect to daemon.");
-               delete iw;
-               iw = 0;
 
                projectDefaults::killInstance();
 
@@ -582,9 +553,6 @@ int main(int argc, char* argv[])
    iw->updateProgress(initWindow::IEV_END);
 
    iw->hide();
-
-   delete iw;
-   iw = 0;
 
    t_long session = handler->session();
    std::string strSession = btg::core::convertToString<t_long>(session);

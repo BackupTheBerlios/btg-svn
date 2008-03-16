@@ -254,6 +254,11 @@ namespace btg
                        "onLimitStatusError: " << _errorDescription);
          }
 
+         void handlerThreadIf::onTransinitwaitError(std::string const&)
+         {
+            m_bTransinitwaitError = true;
+         }
+         
       } // namespace client
    } // namespace core
 } // namespace btg

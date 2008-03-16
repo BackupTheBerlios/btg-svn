@@ -272,6 +272,7 @@ int main(int argc, char* argv[])
       }
    else
       {
+         AUTH_RETRY:
          // Ask the user about which username and password to use.
          if (starthelper->execute(startupHelper::op_auth) != startupHelper::or_auth_success)
             {
@@ -302,7 +303,11 @@ int main(int argc, char* argv[])
       }
 
    /// Initialize the transport.
-   starthelper->execute(startupHelper::op_init);
+   if (starthelper->execute(startupHelper::op_init) != startupHelper::or_init_success)
+   {
+      std::cout << "Authentication error." << std::endl;
+      return BTG_ERROR_EXIT;
+   }
 
    // Handle command line options:
    if (cla->doList())

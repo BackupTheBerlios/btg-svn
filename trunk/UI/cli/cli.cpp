@@ -1000,6 +1000,11 @@ namespace btg
          {
 
          }
+         
+         void cliHandler::onTransinitwaitError(std::string const&)
+         {
+            m_bTransinitwaitError = true;
+         }
 
          void cliHandler::onSetup(t_long const _session)
          {

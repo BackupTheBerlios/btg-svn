@@ -147,6 +147,7 @@ namespace btg
                                         t_int const _seedLimit,
                                         t_long const _seedTimeout);
                      void onLimitStatusError(std::string const& _errorDescription);
+                     void onTransinitwaitError(std::string const& _message);
                      
                   protected:
                      /// List of status objects.

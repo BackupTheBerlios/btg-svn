@@ -173,7 +173,7 @@ namespace btg
                      void onSetSessionName();
 
                      void onSessionInfo(bool const _encryption, bool const _dht);
-
+                     
                      /// List of context IDs.
                      t_intList      contextIDs;
 

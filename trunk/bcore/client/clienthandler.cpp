@@ -87,6 +87,7 @@ namespace btg
 
          void clientHandler::reqInit(std::string const _username, btg::core::Hash const _password)
          {
+            m_bTransinitwaitError = false;
             statemachine.doInit(_username, _password);
             statemachine.work();
          }

@@ -117,6 +117,7 @@ namespace btg
                            // An attempt to setup or attach will fail
                            // if the transport is not ready.
                            or_init_success          =  3, //!< Initialize the transport.
+                           or_init_failure          = -3, //!< Initialize the transport failed (from server side, incorrect user credentials).
 
                            or_attach_success        =  4, //!< Client attached.
                            or_attach_cancelled      = -4, //!< Client cancelled attach operation.

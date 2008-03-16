@@ -59,6 +59,9 @@ namespace btg
                      /// @param [in] _session The session ID that was assigned to this new session
                      virtual void onSetup(t_long const _session) = 0;
 
+                     /// Transport init failed. Server fault (probably incorrect auth).
+                     virtual void onTransinitwaitError(std::string const& _message) = 0;
+                     
                      /// Setup failed.
                      virtual void onSetupError(std::string const& _message) = 0;
 

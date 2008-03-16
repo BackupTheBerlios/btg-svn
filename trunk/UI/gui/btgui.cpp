@@ -95,6 +95,8 @@ int main(int argc, char **argv)
 
    bool verboseFlag = cla->beVerbose();
 
+   setDefaultLogLevel(logwrapper, cla->doDebug(), verboseFlag);
+   
    Gtk::Main* initMain = new Gtk::Main(&argc, &argv);
 
    BTG_NOTICE(logwrapper, "Creating the init window.");
@@ -226,7 +228,7 @@ int main(int argc, char **argv)
                                            cla->automaticStart(),
                                            0 /* initially null */);
 
-   std::string initialStatusMessage("");
+   std::string initialStatusMessage;
 
    // Update init dialog.
    iw->updateProgress(initWindow::IEV_SETUP);
@@ -272,9 +274,7 @@ int main(int argc, char **argv)
 
          return BTG_ERROR_EXIT;
       }
-
-   setDefaultLogLevel(logwrapper, cla->doDebug(), verboseFlag);
-
+   
    // Initialize logging.
    if (starthelper->execute(startupHelper::op_log) != startupHelper::or_log_success)
       {
@@ -318,6 +318,7 @@ int main(int argc, char **argv)
       }
    else
       {
+         AUTH_RETRY:
          // Ask the user about which username and password to use.
          if (starthelper->execute(startupHelper::op_auth) != startupHelper::or_auth_success)
             {
@@ -352,10 +353,14 @@ int main(int argc, char **argv)
                return BTG_ERROR_EXIT;
             }
       }
-
+   
    /// Initialize the transport
-   starthelper->execute(startupHelper::op_init);
-
+   if (starthelper->execute(startupHelper::op_init) != startupHelper::or_init_success)
+   {
+      errorDialog::showAndDie("Authentication error.");
+      goto AUTH_RETRY;
+   }
+   
    // Handle command line options:
    if (cla->doList())
       {

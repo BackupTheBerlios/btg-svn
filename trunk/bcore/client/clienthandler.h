@@ -277,6 +277,9 @@ namespace btg
             /// session.
             virtual bool encryption();
             
+            /// Indicates that was transport init error from the server side. (auth failure)
+            virtual bool transinitwaitError() const { return m_bTransinitwaitError; };
+            
             /// Destructor.
             virtual ~clientHandler();
 
@@ -394,6 +397,9 @@ namespace btg
             /// Indicates if encryption is enabled for the current
             /// session.
             bool                              encryption_enabled_;
+            
+            /// Trainport init error from the server side. Auth failure.
+            bool m_bTransinitwaitError;
          private:
             /// Copy constructor.
             clientHandler(clientHandler const& _ch);
