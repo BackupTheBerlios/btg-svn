@@ -71,8 +71,17 @@ rm -f datestamp
 AC_PATH_PROGS(SVNVERSION, svnversion, [])
 if test -n "$SVNVERSION" ; then
   local_SRC_DIR=`dirname $0`
-  BTG_SVNREV="SVN rev. `${SVNVERSION} -n $local_SRC_DIR`"
+  SVNREV=`${SVNVERSION} -n $local_SRC_DIR`
+  dnl If the source was exported, do not set a version.
+  if test "$SVNREV" == "exported"; then
+    BTG_SVNREV=""
+    AC_MSG_NOTICE([Not using svn revision.])
+  else
+    BTG_SVNREV="SVN rev. $SVNREV"
+    AC_MSG_NOTICE([Using svn revision: $SVNREV.])
+  fi
 else
+  AC_MSG_NOTICE([Not using svn revision.])
   BTG_SVNREV=""
 fi   
 AC_SUBST(BTG_SVNREV)
