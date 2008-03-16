@@ -697,7 +697,7 @@ namespace btg
       void daemonHandler::handleAttach(Command* _command)
       {
          attachSessionCommand *asc = dynamic_cast<attachSessionCommand*>(_command);
-
+         /*
          if (asc->getBuildID() != GPD->sBUILD())
             {
                // Wrong build.
@@ -706,7 +706,7 @@ namespace btg
                sendCommand(dd_->externalization, dd_->transport, connectionID_, new errorCommand(command_->getType(), "Wrong build ID"));
                return;
             }
-
+         */
          // Build ok.
 
          BTG_MNOTICE(logWrapper(), "attach, client build id '" << asc->getBuildID() << "'");

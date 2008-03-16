@@ -36,6 +36,12 @@ Clients
 - btgui (Gtkmm_ GUI).
 - btgvs (SDL_ viewer GUI using AGAR_).
 
+Third Party Clients
+-------------------
+- `BTGFox`_ - a Firefox extension written by Nelson Silva.
+
+.. _BTGFox: http://www.bakanl.net/btgfox/
+
 Platforms
 ---------
 BTG is being used or was tested on:
@@ -193,9 +199,6 @@ Links
 
 - `BTG project page`_ / `BTG bugtracker`_ / `BTG blog`_.
 - `Rasterbar Libtorrent`_.
-- `BTGFox`_ - a Firefox extension written by Nelson Silva.
-
-.. _BTGFox: http://www.bakanl.net/btgfox/
 
 .. _BTG bugtracker: http://developer.berlios.de/bugs/?group_id=3293
 .. _BTG blog: http://developer.berlios.de/blog/categories/32-BTG
