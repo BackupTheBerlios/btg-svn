@@ -74,17 +74,18 @@ if test -n "$SVNVERSION" ; then
   SVNREV=`${SVNVERSION} -n $local_SRC_DIR`
   dnl If the source was exported, do not set a version.
   if test "$SVNREV" == "exported"; then
-    BTG_SVNREV=""
+    BTG_REV=""
     AC_MSG_NOTICE([Not using svn revision.])
   else
-    BTG_SVNREV="SVN rev. $SVNREV"
+    BTG_REV="SVN rev. $SVNREV"
     AC_MSG_NOTICE([Using svn revision: $SVNREV.])
   fi
 else
   AC_MSG_NOTICE([Not using svn revision.])
-  BTG_SVNREV=""
-fi   
-AC_SUBST(BTG_SVNREV)
+  BTG_REV=""
+fi
+[ -z "$BTG_REV" ] && BTG_REV="TRUNK"
+AC_SUBST(BTG_REV)
 
 AC_CACHE_SAVE
 

@@ -60,7 +60,7 @@ namespace btg
            gui_client_name("btgui"),
            daemon_name("btgdaemon"),
            version(BTG_EXPAND(BTG_VERSION)),
-           revision(BTG_EXPAND(BTG_SVNREV)),
+           revision(BTG_EXPAND(BTG_REV)),
            majorVersion(0),
            minorVersion(0),
            revisionVersion(0),

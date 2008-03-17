@@ -67,12 +67,7 @@ BTG_BUILD=$VERSION
 AC_SUBST(BTG_BUILD)
 rm -f datestamp
 
-AC_PATH_PROGS(SVNVERSION, svnversion, [])
-if test -n "$SVNVERSION" ; then
-  BTG_SVNREV="SVN rev. `${SVNVERSION} . -n`"
-else
-  BTG_SVNREV=""
-fi   
+BTG_SVNREV="RC1"
 AC_SUBST(BTG_SVNREV)
 
 AC_CACHE_SAVE
