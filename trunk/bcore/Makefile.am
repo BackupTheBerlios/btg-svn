@@ -229,12 +229,12 @@ AM_CFLAGS           = @CFLAGS@   @DEBUG_CFLAGS@ \
                     -DBTG_DEBUG=@BTG_DEBUG@ \
                     -DBTG_VERSION="@VERSION@" \
                     -DBTG_BUILD="@BTG_BUILD@" \
-                    -DBTG_SVNREV="@BTG_SVNREV@"
+                    -DBTG_REV="@BTG_REV@"
 
 AM_CXXFLAGS         = @CXXFLAGS@ @DEBUG_CXXFLAGS@ \
                     -DBTG_DEBUG=@BTG_DEBUG@ \
                     -DBTG_VERSION="@VERSION@" \
                     -DBTG_BUILD="@BTG_BUILD@" \
-                    -DBTG_SVNREV="@BTG_SVNREV@"
+                    -DBTG_REV="@BTG_REV@"
 
 INCLUDES            = -I$(top_srcdir) 

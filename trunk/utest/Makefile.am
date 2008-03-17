@@ -79,23 +79,23 @@ testrunner_CFLAGS   = @CFLAGS@   $(CPPUNIT_CFLAGS) @LIBTORRENT_CFLAGS@ @LIBGNUTL
                       -DBTG_DEBUG=@BTG_DEBUG@ \
                       -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \
                       -DBTG_OPTION_EVENTCALLBACK=@BTG_OPTION_EVENTCALLBACK@ \
-                      -DBTG_SVNREV="@BTG_SVNREV@"
+                      -DBTG_REV="@BTG_REV@"
 
 testrunner_CXXFLAGS = @CXXFLAGS@ $(CPPUNIT_CFLAGS) @LIBTORRENT_CFLAGS@ @LIBGNUTLS_CFLAGS@ \
                       -DBTG_DEBUG=@BTG_DEBUG@ \
                       -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \
                       -DBTG_OPTION_EVENTCALLBACK=@BTG_OPTION_EVENTCALLBACK@ \
-                      -DBTG_SVNREV="@BTG_SVNREV@"
+                      -DBTG_REV="@BTG_REV@"
 AM_CFLAGS         = @CFLAGS@   @DEBUG_CFLAGS@ \
                     -DBTG_DEBUG=@BTG_DEBUG@ \
                     -DBTG_VERSION="@VERSION@" \
                     -DBTG_BUILD="@BTG_BUILD@" \
-                    -DBTG_SVNREV="@BTG_SVNREV@"
+                    -DBTG_REV="@BTG_REV@"
 
 AM_CXXFLAGS       = @CXXFLAGS@ @DEBUG_CXXFLAGS@ \
                     -DBTG_DEBUG=@BTG_DEBUG@ \
                     -DBTG_VERSION="@VERSION@" \
                     -DBTG_BUILD="@BTG_BUILD@" \
-                    -DBTG_SVNREV="@BTG_SVNREV@"
+                    -DBTG_REV="@BTG_REV@"
 
 INCLUDES = -I$(top_srcdir)

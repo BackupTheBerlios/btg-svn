@@ -25,8 +25,8 @@ clientdynconfig.h \
 loglevel.h \
 ratio.h
 
-libbtgclient_la_CFLAGS   = @DEBUG_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ -DBTG_SVNREV="@BTG_SVNREV@"
-libbtgclient_la_CXXFLAGS = @DEBUG_CXXFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ -DBTG_SVNREV="@BTG_SVNREV@"
+libbtgclient_la_CFLAGS   = @DEBUG_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ -DBTG_REV="@BTG_REV@"
+libbtgclient_la_CXXFLAGS = @DEBUG_CXXFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ -DBTG_REV="@BTG_REV@"
 libbtgclient_la_LDFLAGS  = -l@BOOST_PROGRAM_OPTIONS_LIB@
 
 INCLUDES             = -I$(top_srcdir)
