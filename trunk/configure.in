@@ -84,7 +84,7 @@ else
   AC_MSG_NOTICE([Not using svn revision.])
   BTG_REV=""
 fi
-[ -z "$BTG_REV" ] && BTG_REV="TRUNK"
+test -z "$BTG_REV" && BTG_REV="TRUNK"
 AC_SUBST(BTG_REV)
 
 AC_CACHE_SAVE
@@ -135,7 +135,7 @@ fi
 
 AM_LIBGNUTLS_VERSION
 
-LIBCURL_CHECK_CONFIG([], [7.18.0], [libcurlfound=true], [libcurlfound=false])
+LIBCURL_CHECK_CONFIG([], [7.16.0], [libcurlfound=true], [libcurlfound=false])
 if test "$libcurlfound" == "false"; then
         AC_MSG_ERROR([unable to find libcurl, currently this is required.])
 fi
