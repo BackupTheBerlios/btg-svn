@@ -1,5 +1,5 @@
 /*
- * btg Copyright (C) 2005 Michael Wojciechowski.
+ * btg Copyright (C) 2008 Michael Wojciechowski.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,20 +20,25 @@
  * $Id$
  */
 
-// Use 1 to enable and 0 to disable.
+#include "httpif.h"
 
-// Enable printing of status of each test.
-#define BTG_UTEST_VERBOSE 1
-// Run bcore tests.
-#define BTG_UTEST_BCORE   0
-// Run bcore/client tests.
-#define BTG_UTEST_CLIENT  0
-// Run TCP/IP transport tests.
-#define BTG_UTEST_TCPIP   0
-// Run HTTP transport tests.
-#define BTG_UTEST_HTTP    0
-// Run daemon tests.
-#define BTG_UTEST_DAEMON  1
-// Run os specific tests.
-#define BTG_UTEST_OS      0
+namespace btg
+{
+   namespace daemon
+   {
+      namespace http
+      {
+         httpInterface::httpInterface()
+            : status(httpInterface::ERROR)
+         {
+         }
+         
+         httpInterface::~httpInterface()
+         {
+            
+         }
+         
+      } // namespace http
+   } // namespace daemon
+} // namespace btg
 

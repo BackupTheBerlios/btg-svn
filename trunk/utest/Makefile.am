@@ -69,33 +69,35 @@ noinst_PROGRAMS     = testrunner
 
 testrunner_LDADD   = $(top_builddir)/bcore/libbtgcore.la $(BCORE_CLIENT_TEST_LIB) \
                      $(top_builddir)/daemon/libdaemon.la \
+                     $(top_builddir)/daemon/http/libhttp.la \
                      $(top_builddir)/daemon/resource/libresource.la \
                      $(top_builddir)/external/ini/libini.la \
                      $(top_builddir)/bcore/libbtgcore.la
 
-testrunner_LDFLAGS  = @LIBS@ $(CPPUNIT_LIBS) @LIBTORRENT_LIBS@ -l@BOOST_IOSTREAMS_LIB@ -l@BOOST_FILESYSTEM_LIB@ @LIBGNUTLS_LIBS@
+testrunner_LDFLAGS  = @LIBS@ $(CPPUNIT_LIBS) @LIBTORRENT_LIBS@ -l@BOOST_IOSTREAMS_LIB@ -l@BOOST_FILESYSTEM_LIB@ @LIBGNUTLS_LIBS@ @LIBCURL@
 
 testrunner_CFLAGS   = @CFLAGS@   $(CPPUNIT_CFLAGS) @LIBTORRENT_CFLAGS@ @LIBGNUTLS_CFLAGS@ \
                       -DBTG_DEBUG=@BTG_DEBUG@ \
                       -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \
                       -DBTG_OPTION_EVENTCALLBACK=@BTG_OPTION_EVENTCALLBACK@ \
-                      -DBTG_REV="@BTG_REV@"
+                      -DBTG_REV="@BTG_REV@" @LIBCURL_CPPFLAGS@
 
 testrunner_CXXFLAGS = @CXXFLAGS@ $(CPPUNIT_CFLAGS) @LIBTORRENT_CFLAGS@ @LIBGNUTLS_CFLAGS@ \
                       -DBTG_DEBUG=@BTG_DEBUG@ \
                       -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \
                       -DBTG_OPTION_EVENTCALLBACK=@BTG_OPTION_EVENTCALLBACK@ \
-                      -DBTG_REV="@BTG_REV@"
+                      -DBTG_REV="@BTG_REV@" @LIBCURL_CPPFLAGS@
+
 AM_CFLAGS         = @CFLAGS@   @DEBUG_CFLAGS@ \
                     -DBTG_DEBUG=@BTG_DEBUG@ \
                     -DBTG_VERSION="@VERSION@" \
                     -DBTG_BUILD="@BTG_BUILD@" \
-                    -DBTG_REV="@BTG_REV@"
+                    -DBTG_REV="@BTG_REV@" @LIBCURL_CPPFLAGS@
 
 AM_CXXFLAGS       = @CXXFLAGS@ @DEBUG_CXXFLAGS@ \
                     -DBTG_DEBUG=@BTG_DEBUG@ \
                     -DBTG_VERSION="@VERSION@" \
                     -DBTG_BUILD="@BTG_BUILD@" \
-                    -DBTG_REV="@BTG_REV@"
+                    -DBTG_REV="@BTG_REV@" @LIBCURL_CPPFLAGS@
 
 INCLUDES = -I$(top_srcdir)

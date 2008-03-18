@@ -85,6 +85,10 @@ namespace btg
             t_IdToNameElem(Command::CN_CGETTRACKERS,    "(c) Get used trackers"),
             t_IdToNameElem(Command::CN_CGETTRACKERSRSP, "(c) Get used trackers response"),
             t_IdToNameElem(Command::CN_CMOVE,           "(c) Move"),
+            t_IdToNameElem(Command::CN_CCREATEFROMURL,  "(c) Create context from URL"),
+            t_IdToNameElem(Command::CN_CURLSTATUS,      "(c) URL download status"),
+            t_IdToNameElem(Command::CN_CURLSTATUSRSP,   "(c) URL download status response"),
+
             // General:
             t_IdToNameElem(Command::CN_ERROR,           "(g) Error"),
             t_IdToNameElem(Command::CN_ACK,             "(g) Ack"),

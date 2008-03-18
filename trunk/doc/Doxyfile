@@ -92,6 +92,7 @@ INPUT                  = \
 ../daemon \
 ../daemon/auth \
 ../daemon/ipfilter \
+../daemon/http \
 ../daemon/upnp \
 ../daemon/resource
 

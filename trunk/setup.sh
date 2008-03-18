@@ -39,9 +39,6 @@ else
   echo "NOT building GUI viewer."
 fi
 
-export CXXFLAGS="-Wall -W"
-export CFLAGS="-Wall -W"
-
 for arg in "$@"
 do
     case "$arg" in

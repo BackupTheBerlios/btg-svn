@@ -203,9 +203,6 @@ externalization/externalization_factory.h
 AUTH_HEADER=auth/hash.h
 
 noinst_HEADERS     = t_string.h type.h type_btg.h project.h \
-transport/transport.h \
-transport/tcpip.h \
-transport/http.h \
 hru.h hrr.h hrt.h \
 sigh.h \
 logmacro.h util.h status.h trackerstatus.h peer.h file_info.h dbuf.h sbuf.h \

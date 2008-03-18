@@ -47,9 +47,17 @@ extern "C"
 #include <daemon/darg.h>
 #include <bcore/logable.h>
 
+#include <bcore/logger/logger.h>
+#include <bcore/logger/console_log.h>
+
+#include <daemon/http/httpmgr.h>
+#include <bcore/os/sleep.h>
+
 #if BTG_UTEST_DAEMON
 CPPUNIT_TEST_SUITE_REGISTRATION( testDaemon );
 #endif // BTG_UTEST_DAEMON
+
+#include <iostream>
 
 void testDaemon::setUp()
 {
@@ -61,6 +69,10 @@ void testDaemon::setUp()
       }
 
    logwrapper = btg::core::LogWrapperType(new btg::core::logger::logWrapper);
+   logwrapper->setMinMessagePriority(btg::core::logger::logWrapper::PRIO_DEBUG);
+
+   boost::shared_ptr<btg::core::logger::logStream> l(new btg::core::logger::logStream(new btg::core::logger::consoleLogger()));
+   logwrapper->setLogStream(l);
 }
 
 void testDaemon::tearDown()
@@ -393,4 +405,57 @@ void testDaemon::testCommandLineHandler()
 
    delete clah;
    clah = 0;
+}
+
+// Note: these tests can fail if the required files are not present on
+// the http server they are downloaded from.
+void testDaemon::testHttpDownload()
+{
+   using namespace btg::daemon::http;
+   using namespace btg::core::os;
+
+   httpManager httpm(logwrapper);
+
+   // Download a non existing file.
+   t_uint serial = httpm.Fetch("http://127.0.0.1/test.torrent", "test.torrent");
+   
+   bool done = false;
+   httpInterface::Status stat = httpInterface::ERROR;
+   while (!done)
+      {
+         stat = httpm.getStatus(serial);
+         if ((stat == httpInterface::FINISH) || (stat == httpInterface::ERROR))
+            {
+               done = true;
+               break;
+            }
+
+         Sleep::sleepSecond(1);
+      }
+   CPPUNIT_ASSERT(stat == httpInterface::ERROR);
+
+   btg::core::sBuffer buffer;
+   CPPUNIT_ASSERT(!httpm.Result(serial, buffer));
+
+   // Download a file which exists.
+   serial = httpm.Fetch("http://127.0.0.1/test2.torrent", "test2.torrent");
+   done = false;
+   while (!done)
+      {
+         stat = httpm.getStatus(serial);
+         if ((stat == httpInterface::FINISH) || (stat == httpInterface::ERROR))
+            {
+               done = true;
+               break;
+            }
+
+         Sleep::sleepSecond(1);
+      }
+   CPPUNIT_ASSERT(stat == httpInterface::FINISH);
+
+   btg::core::sBuffer buffer2;
+   CPPUNIT_ASSERT(httpm.Result(serial, buffer2));
+   CPPUNIT_ASSERT(buffer2.size() > 0);
+
+   std::cout << "Got bytes: " << buffer2.size() << std::endl;
 }
