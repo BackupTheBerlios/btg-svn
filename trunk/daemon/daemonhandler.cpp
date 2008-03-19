@@ -36,6 +36,7 @@
 #include <bcore/command/uptime.h>
 #include <bcore/command/limit.h>
 #include <bcore/command/context_move.h>
+#include <bcore/command/context_create_url.h>
 
 #include <bcore/verbose.h>
 #include "modulelog.h"
@@ -71,6 +72,8 @@ namespace btg
            buffer_(),
            session_timer_(10), /* 10 seconds. */
            session_timer_trigger_(false),
+           url_timer_(5),
+           url_timer_trigger_(false),
            limit_timer_(30), /* 30 seconds. */
            limit_timer_trigger_(false),
            elapsed_seed_timer_(60), /* 1 minute. */
@@ -97,7 +100,9 @@ namespace btg
            sessiontimer_(dd_->ss_timeout),
 #endif // BTG_OPTION_SAVESESSIONS
            sendBuffer_(),
-           cf_(_logwrapper, _dd->externalization)
+           cf_(_logwrapper, _dd->externalization),
+           httpmgr(_logwrapper),
+           UrlIdSessions()
       {
          /// Set the initial limits.
          limitManager_.set(_dd->config->getUploadRateLimit(),
@@ -272,6 +277,14 @@ namespace btg
                               handleMoveContext(eventhandler, command_);
                               break;
                            }
+
+                        case Command::CN_CCREATEFROMURL:
+                        case Command::CN_CURLSTATUS:
+                           {
+                              handleUrlMessages(eventhandler, command_);
+                              break;
+                           }
+
                         default:
                            {
                               handleOther(eventhandler, command_);
@@ -580,7 +593,6 @@ namespace btg
                      sendError(command_->getType(), "Unable to move context.");
                      return;
                   }
-               /// !!!
                sendAck(command_->getType());
             }
       }
@@ -1005,6 +1017,68 @@ namespace btg
          return status;
       }
 
+      void daemonHandler::handleUrlMessages(eventHandler* _eventhandler, btg::core::Command* _command)
+      {
+         // Messages which download from URL or which get the status
+         // of a download.
+         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
+      
+         switch (_command->getType())
+            {
+            case Command::CN_CCREATEFROMURL:
+               {
+                  contextCreateFromUrlCommand* ccful = dynamic_cast<contextCreateFromUrlCommand*>(_command);
+                  t_uint hid = httpmgr.Fetch(ccful->getUrl(), ccful->getFilename());
+
+                  UrlIdSessionMapping usmap(hid, _eventhandler->getSession());
+                  UrlIdSessions.push_back(usmap);
+
+                  BTG_MNOTICE(logWrapper(), "Added mapping: HID " << hid << " -> " << _eventhandler->getSession());
+      
+                  // TODO: Start a timer.
+
+                  sendCommand(dd_->externalization,
+                              dd_->transport,
+                              connectionID_,
+                              new contextCreateFromUrlResponseCommand(hid));
+                  break;
+               }
+            case Command::CN_CURLSTATUS:
+               {
+                  contextUrlStatusCommand* cusc = dynamic_cast<contextUrlStatusCommand*>(_command);
+                  t_uint hid = cusc->id();
+                  btg::daemon::http::httpInterface::Status httpstat = httpmgr.getStatus(hid);
+
+                  btg::core::urlStatus urlstat = URLS_UNDEF;
+                  
+                  switch (httpstat)
+                     {
+                     case btg::daemon::http::httpInterface::ERROR:
+                        urlstat = URLS_ERROR;
+                        break;
+                     case btg::daemon::http::httpInterface::INIT:
+                        urlstat = URLS_WORKING;
+                        break;
+                     case btg::daemon::http::httpInterface::WAIT:
+                        urlstat = URLS_WORKING;
+                        break;
+                     case btg::daemon::http::httpInterface::FINISH:
+                        {
+                           // TODO: Finished downloading. Add it.
+                           urlstat = URLS_FINISHED;
+                           break;
+                        }
+                     }
+
+                  sendCommand(dd_->externalization,
+                              dd_->transport,
+                              connectionID_,
+                              new contextUrlStatusResponseCommand(hid, urlstat));
+                  break;
+               }
+            }
+      }
+
       void daemonHandler::handleOther(eventHandler* _eventhandler, Command* _command)
       {
          // All other events.
@@ -1173,6 +1247,17 @@ namespace btg
 
       void daemonHandler::checkTimeout()
       {
+         if (url_timer_trigger_)
+            {
+               url_timer_trigger_ = false;
+               url_timer_.Reset();
+               if (UrlIdSessions.size() > 0)
+                  {
+                     MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Checking url downloads.");
+                     handleUrlDownloads();
+                  }
+            }
+
          if (session_timer_trigger_)
             {
                MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Checking limits and alerts.");
@@ -1213,6 +1298,11 @@ namespace btg
                elapsed_timer_trigger_ = false;
                elapsed_seed_timer_.Reset();
                return;
+            }
+
+         if (url_timer_.Timeout())
+            {
+               url_timer_trigger_ = true;
             }
 
          if (session_timer_.Timeout())
@@ -1260,6 +1350,45 @@ namespace btg
 
          // Delete all sessions/eventhandlers.
          sessionlist_.deleteAll();
+      }
+
+      void daemonHandler::handleUrlDownloads()
+      {
+         const t_uint max_age = 30;
+
+         std::vector<UrlIdSessionMapping>::iterator i;
+         for (i = UrlIdSessions.begin();
+              i != UrlIdSessions.end();
+              i++)
+            {
+               i->age++;
+
+               btg::daemon::http::httpInterface::Status s = httpmgr.getStatus(i->hid);
+               if (s == btg::daemon::http::httpInterface::FINISH)
+                  {
+                     // Dl finished, now create the context.
+                  }
+
+               if (s == btg::daemon::http::httpInterface::ERROR)
+                  {
+                     // Expire this download.
+                     i->age = max_age;
+                  }
+            }
+
+         // Remove expired downloads.
+         i = UrlIdSessions.begin();
+         while (i != UrlIdSessions.end())
+            {
+               if (i->age > max_age)
+                  {
+                     UrlIdSessions.erase(i++);
+                  }
+               else
+                  {
+                     i++;
+                  }
+            }
       }
 
       daemonHandler::~daemonHandler()

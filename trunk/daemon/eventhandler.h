@@ -225,6 +225,7 @@ namespace btg
                /// Buffer used to send responses back to client which
                /// uses this event handler.
                btg::core::dBuffer           buffer;
+
                /// Send a command using the messageTransport. Delete the memory used
                /// by the command afterwards.
                /// @param [in] _connectionID The ID of the connection used.

@@ -50,6 +50,8 @@
 #include "portmgr.h"
 #include "limitmgr.h"
 
+#include <daemon/http/httpmgr.h>
+
 #include <bcore/logable.h>
 
 namespace btg
@@ -150,6 +152,8 @@ namespace btg
                void handleMoveContext(eventHandler* _eventhandler, 
                                       btg::core::Command* _command);
 
+               void handleUrlMessages(eventHandler* _eventhandler, btg::core::Command* _command);
+
                /// Handle any other request.
                void handleOther(eventHandler* _eventhandler, btg::core::Command* _command);
 
@@ -226,6 +230,9 @@ namespace btg
                /// Indicates that the session timer has expired.
                bool                            session_timer_trigger_;
 
+               btg::core::os::Timer            url_timer_;
+               bool                            url_timer_trigger_;
+
                /// Timer used for setting global limits.
                btg::core::os::Timer            limit_timer_;
 
@@ -272,6 +279,26 @@ namespace btg
 
                /// Command factory used by this instance.
                btg::core::commandFactory       cf_;
+
+               btg::daemon::http::httpManager  httpmgr;
+
+               struct UrlIdSessionMapping
+               {
+                  UrlIdSessionMapping(t_uint _hid, long _session)
+                  : hid(_hid),
+                     session(_session),
+                     age(0)
+                  {
+                  }
+
+                  t_uint hid;
+                  long   session;
+                  t_uint age;
+               };
+
+               std::vector<UrlIdSessionMapping> UrlIdSessions;
+
+               void handleUrlDownloads();
             private:
                /// Copy constructor.
                daemonHandler(daemonHandler const& _dh);

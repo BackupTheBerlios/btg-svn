@@ -1077,7 +1077,6 @@ namespace btg
                               t_int context_id, 
                               eventHandler* _eventhandler)
       {
-         /// !!!
          bool status = false;
 
          // Get the data required to recreate the torrent using
