@@ -111,6 +111,12 @@ namespace btg
             void doCreate(std::string const& _pathToTorrent,
                           bool const _start = true);
             /// Action.
+            void doCreateFromUrl(std::string const& _filename,
+                                 std::string const& _url,
+                                 bool const _start = true);
+            /// Action.
+            void doUrlStatus(t_uint const _id);
+            /// Action.
             void doLast();
             /// Action.
             void doAbort(t_int const _contextID, bool const _eraseData, bool const _allContexts = false);
@@ -383,6 +389,9 @@ namespace btg
             void cb_CN_SNAME(btg::core::Command* _command);
             /// Call a callback. Session information.
             void cb_CN_SINFO(btg::core::Command* _command);
+            /// Call a callback. URL downloading.
+            void cb_CN_CCREATEFROMURL(btg::core::Command* _command);
+            void cb_CN_CURLSTATUS(btg::core::Command* _command);
          private:
             /// Copy constructor.
             stateMachine(stateMachine const& _sm);

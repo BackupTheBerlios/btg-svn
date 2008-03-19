@@ -141,6 +141,29 @@ namespace btg
                        "Added a new torrent with data, filename = " << last_filename << ".");
             last_filename.clear();
          }
+         
+         void guiHandler::onCreateFromUrl(t_uint const _id)
+         {
+            commandStatus = true;
+            setUrlId(_id);
+         }
+         
+         void guiHandler::onCreateFromUrlError(std::string const& _message)
+         {
+            commandStatus = false;
+         }
+         
+         void guiHandler::onUrlStatus(t_uint const _id, 
+                                      btg::core::urlStatus const _status)
+         {
+            commandStatus = true;
+            setUrlStatusResponse(_id, _status);
+         }
+         
+         void guiHandler::onUrlStatusError(std::string const& _message)
+         {
+            commandStatus = false;
+         }
 
          void guiHandler::onAbort()
          {

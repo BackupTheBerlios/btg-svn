@@ -45,6 +45,7 @@
 
 #include <bcore/command/context_last.h>
 #include <bcore/command/context_create.h>
+#include <bcore/command/context_create_url.h>
 #include <bcore/command/context_abort.h>
 
 #include <bcore/command/context_clean.h>
@@ -188,6 +189,19 @@ namespace btg
             clientcallback->onSessionInfo(sirc->encryption(), sirc->dht());
          }
 
+         void stateMachine::cb_CN_CCREATEFROMURL(btg::core::Command* _command)
+         {
+            contextCreateFromUrlResponseCommand* ccfurc = dynamic_cast<contextCreateFromUrlResponseCommand*>(_command);
+
+            clientcallback->onCreateFromUrl(ccfurc->id());
+         }
+
+         void stateMachine::cb_CN_CURLSTATUS(btg::core::Command* _command)
+         {
+            contextUrlStatusResponseCommand* cusrc = dynamic_cast<contextUrlStatusResponseCommand*>(_command);
+
+            clientcallback->onUrlStatus(cusrc->id(), cusrc->status());
+         }
       } // namespace client
    } // namespace core
 } // namespace btg

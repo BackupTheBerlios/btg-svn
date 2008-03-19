@@ -302,6 +302,13 @@ namespace btg
                      void onListError();
 
                      void onCreateWithData();
+
+                     void onCreateFromUrl(t_uint const _id);
+                     void onCreateFromUrlError(std::string const& _message);
+                     void onUrlStatus(t_uint const _id, 
+                                      btg::core::urlStatus const _status);
+                     void onUrlStatusError(std::string const& _message);
+
                      void onAbort();
                      void onStart();
                      void onStop();

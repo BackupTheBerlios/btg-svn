@@ -28,6 +28,7 @@
 #include <bcore/status.h>
 #include <bcore/addrport.h>
 #include <bcore/file_info.h>
+#include <bcore/urlstatus.h>
 
 #include "clientcallback.h"
 #include "statemachine.h"
@@ -118,6 +119,12 @@ namespace btg
 
             /// Used to open a number of filenames.
             virtual void reqCreate(t_strList const& _filenames);
+
+            /// Download a file, then open it.
+            virtual void reqCreateFromUrl(std::string const& _filename,
+                                          std::string const& _url);
+
+            virtual void reqUrlStatus(t_uint _id);
 
             /// Get status from the daemon.
             virtual void reqStatus(t_int const _id, bool const _allContexts = false);
@@ -280,6 +287,15 @@ namespace btg
             /// Indicates that was transport init error from the server side. (auth failure)
             virtual bool transinitwaitError() const { return m_bTransinitwaitError; };
             
+            virtual t_uint UrlId() const;
+            virtual void setUrlId(t_uint const _id);
+
+            virtual void setUrlStatusResponse(t_uint const _id, 
+                                              btg::core::urlStatus const _status);
+
+            virtual void UrlStatusResponse(t_uint & _id, 
+                                           btg::core::urlStatus & _status) const;
+
             /// Destructor.
             virtual ~clientHandler();
 
@@ -399,7 +415,12 @@ namespace btg
             bool                              encryption_enabled_;
             
             /// Trainport init error from the server side. Auth failure.
-            bool m_bTransinitwaitError;
+            bool                              m_bTransinitwaitError;
+
+            t_uint                            last_url_id;
+
+            t_uint                            last_surl_id; 
+            btg::core::urlStatus              last_surl_status;
          private:
             /// Copy constructor.
             clientHandler(clientHandler const& _ch);

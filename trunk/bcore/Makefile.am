@@ -44,6 +44,7 @@ command/context_abort.cpp \
 command/context_clean.cpp \
 command/context_clean_rsp.cpp \
 command/context_create.cpp \
+command/context_create_url.cpp \
 command/context_last.cpp \
 command/context_start.cpp \
 command/context_status.cpp \
@@ -154,6 +155,7 @@ command/context_abort.h \
 command/context_clean.h \
 command/context_clean_rsp.h \
 command/context_create.h \
+command/context_create_url.cpp \
 command/context_last.h \
 command/context_start.h \
 command/context_status.h \
@@ -205,7 +207,7 @@ AUTH_HEADER=auth/hash.h
 noinst_HEADERS     = t_string.h type.h type_btg.h project.h \
 hru.h hrr.h hrt.h \
 sigh.h \
-logmacro.h util.h status.h trackerstatus.h peer.h file_info.h dbuf.h sbuf.h \
+logmacro.h util.h status.h urlstatus.h trackerstatus.h peer.h file_info.h dbuf.h sbuf.h \
 logable.h \
 crashlog.h \
 serializable.h printable.h addrport.h \

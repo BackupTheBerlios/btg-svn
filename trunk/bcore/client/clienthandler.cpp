@@ -81,7 +81,10 @@ namespace btg
               session_(clientHandler::ILLEGAL_ID),
               autoStartFlag_(_autoStartFlag),
               dht_enabled_(false),
-              encryption_enabled_(false)
+              encryption_enabled_(false),
+              last_url_id(URLS_INVALID_URLID),
+              last_surl_id(URLS_INVALID_URLID), 
+              last_surl_status(URLS_UNDEF)
          {
          }
 
@@ -147,6 +150,26 @@ namespace btg
                {
                   this->reqCreate(*iter);
                }
+         }
+
+         void clientHandler::reqCreateFromUrl(std::string const& _filename,
+                                              std::string const& _url)
+         {
+            commandStatus = false;
+            last_id       = clientHandler::ILLEGAL_ID;
+            last_filename = _filename;
+
+            statemachine.doCreateFromUrl(_filename,
+                                         _url, 
+                                         autoStartFlag_);
+            statemachine.work();
+         }
+
+         void clientHandler::reqUrlStatus(t_uint _id)
+         {
+            commandStatus = false;
+            statemachine.doUrlStatus(_id);
+            statemachine.work();
          }
 
          void clientHandler::reqStatus(t_int const _id, bool const _allContexts)
@@ -453,6 +476,30 @@ namespace btg
          bool clientHandler::encryption()
          {
             return encryption_enabled_;
+         }
+
+         t_uint clientHandler::UrlId() const
+         {
+            return last_url_id;
+         }
+
+         void clientHandler::setUrlId(t_uint const _id)
+         {
+            last_url_id = _id;
+         }
+
+         void clientHandler::UrlStatusResponse(t_uint & _id, 
+                                               btg::core::urlStatus & _status) const
+         {
+            _id     = last_surl_id; 
+            _status = last_surl_status;
+         }
+
+         void clientHandler::setUrlStatusResponse(t_uint const _id, 
+                                                  btg::core::urlStatus const _status)
+         {
+            last_surl_id     = _id;
+            last_surl_status = _status;
          }
 
          clientHandler::~clientHandler()

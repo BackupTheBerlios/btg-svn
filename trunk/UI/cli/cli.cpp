@@ -1199,6 +1199,27 @@ namespace btg
             last_filename.clear();
          }
 
+         void cliHandler::onCreateFromUrl(t_uint const _id)
+         {
+
+         }
+
+         void cliHandler::onCreateFromUrlError(std::string const& _message)
+         {
+
+         }
+
+         void cliHandler::onUrlStatus(t_uint const _id, 
+                                      btg::core::urlStatus const _status)
+         {
+
+         }
+
+         void cliHandler::onUrlStatusError(std::string const& _message)
+         {
+
+         }
+
          void cliHandler::onAbort()
          {
             if (eraseFlag)

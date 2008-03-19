@@ -32,10 +32,11 @@ namespace btg
       {
 
          const std::string moduleName("hmgr");
+         const t_uint min_id = 1;
 
          httpManager::httpManager(btg::core::LogWrapperType _logwrapper)
          : btg::core::Logable(_logwrapper),
-           current_id(0),
+           current_id(min_id),
            max_id(0xFFFFFF),
            processes()
          {
@@ -49,7 +50,7 @@ namespace btg
 
             if (id > max_id)
                {
-                  current_id = 0;
+                  current_id = min_id;
                }
 
             return id;

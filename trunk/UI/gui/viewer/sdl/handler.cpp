@@ -141,6 +141,27 @@ namespace btg
                last_filename.clear();
             }
 
+            void viewerHandler::onCreateFromUrl(t_uint const _id)
+            {
+
+            }
+            
+            void viewerHandler::onCreateFromUrlError(std::string const& _message)
+            {
+               
+            }
+            
+            void viewerHandler::onUrlStatus(t_uint const _id, 
+                                            btg::core::urlStatus const _status)
+            {
+               
+            }
+            
+            void viewerHandler::onUrlStatusError(std::string const& _message)
+            {
+               
+            }
+            
             void viewerHandler::onAbort()
             {
                BTG_NOTICE(logWrapper(),

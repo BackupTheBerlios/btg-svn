@@ -28,6 +28,7 @@
 #include <bcore/command/context_abort.h>
 #include <bcore/command/context_clean.h>
 #include <bcore/command/context_create.h>
+#include <bcore/command/context_create_url.h>
 #include <bcore/command/context_last.h>
 #include <bcore/command/context_start.h>
 #include <bcore/command/context_status.h>
@@ -103,305 +104,325 @@ namespace btg
             {
             case Command::CN_ERROR:
                {
-                  c = new errorCommand();
+                  c = new errorCommand;
                   break;
                }
 
             case Command::CN_ACK:
                {
-                  c = new ackCommand();
+                  c = new ackCommand;
                   break;
                }
 
             case Command::CN_GLIST:
                {
-                  c = new listCommand();
+                  c = new listCommand;
                   break;
                }
 
             case Command::CN_GLISTRSP:
                {
-                  c = new listCommandResponse();
+                  c = new listCommandResponse;
                   break;
                }
 
             case Command::CN_GSETUP:
                {
-                  c = new setupCommand();
+                  c = new setupCommand;
                   break;
                }
 
             case Command::CN_GSETUPRSP:
                {
-                  c = new setupResponseCommand();
+                  c = new setupResponseCommand;
                   break;
                }
 
             case Command::CN_CCREATEWITHDATA:
                {
-                  c = new contextCreateWithDataCommand();
+                  c = new contextCreateWithDataCommand;
+                  break;
+               }
+            case Command::CN_CCREATEFROMURL:
+               {
+                  c = new contextCreateFromUrlCommand;
+                  break;
+               }
+            case Command::CN_CCREATEFROMURLRSP:
+               {
+                  c = new contextCreateFromUrlResponseCommand;
+                  break;
+               }
+            case Command::CN_CURLSTATUS:
+               {
+                  c = new contextUrlStatusCommand;
+                  break;
+               }
+            case Command::CN_CURLSTATUSRSP:
+               {
+                  c = new contextUrlStatusResponseCommand;
                   break;
                }
             case Command::CN_CLAST:
                {
-                  c = new lastCIDCommand();
+                  c = new lastCIDCommand;
                   break;
                }
             case Command::CN_CLASTRSP:
                {
-                  c = new lastCIDResponseCommand();
+                  c = new lastCIDResponseCommand;
                   break;
                }
             case Command::CN_CSTART:
                {
-                  c = new contextStartCommand();
+                  c = new contextStartCommand;
                   break;
                }
 
             case Command::CN_CSTOP:
                {
-                  c = new contextStopCommand();
+                  c = new contextStopCommand;
                   break;
                }
 
             case Command::CN_CABORT:
                {
-                  c = new contextAbortCommand();
+                  c = new contextAbortCommand;
                   break;
                }
 
             case Command::CN_CSTATUS:
                {
-                  c = new contextStatusCommand();
+                  c = new contextStatusCommand;
                   break;
                }
 
             case Command::CN_CSTATUSRSP:
                {
-                  c = new contextStatusResponseCommand();
+                  c = new contextStatusResponseCommand;
                   break;
                }
 
             case Command::CN_CALLSTATUSRSP:
                {
-                  c = new contextAllStatusResponseCommand();
+                  c = new contextAllStatusResponseCommand;
                   break;
                }
 
             case Command::CN_CMSTATUS:
                {
-                  c = new contextMultipleStatusCommand();
+                  c = new contextMultipleStatusCommand;
                   break;
                }
 
             case Command::CN_CMSTATUSRSP:
                {
-                  c = new contextMultipleStatusResponseCommand();
+                  c = new contextMultipleStatusResponseCommand;
                   break;
                }
 
             case Command::CN_CFILEINFO:
                {
-                  c = new contextFileInfoCommand();
+                  c = new contextFileInfoCommand;
                   break;
                }
             case Command::CN_CFILEINFORSP:
                {
-                  c = new contextFileInfoResponseCommand();
+                  c = new contextFileInfoResponseCommand;
                   break;
                }
             case Command::CN_CCLEAN:
                {
-                  c = new contextCleanCommand();
+                  c = new contextCleanCommand;
                   break;
                }
             case Command::CN_CCLEANRSP:
                {
-                  c = new contextCleanResponseCommand();
+                  c = new contextCleanResponseCommand;
                   break;
                }
 
             case Command::CN_CLIMIT:
                {
-                  c = new contextLimitCommand();
+                  c = new contextLimitCommand;
                   break;
                }
 
             case Command::CN_CLIMITSTATUS:
                {
-                  c = new contextLimitStatusCommand();
+                  c = new contextLimitStatusCommand;
                   break;
                }
 
             case Command::CN_CLIMITSTATUSRSP:
                {
-                  c = new contextLimitStatusResponseCommand();
+                  c = new contextLimitStatusResponseCommand;
                   break;
                }
 
             case Command::CN_CPEERS:
                {
-                  c = new contextPeersCommand();
+                  c = new contextPeersCommand;
                   break;
                }
 
             case Command::CN_CPEERSRSP:
                {
-                  c = new contextPeersResponseCommand();
+                  c = new contextPeersResponseCommand;
                   break;
                }
 
             case Command::CN_CSETFILES:
                {
-                  c = new contextSetFilesCommand();
+                  c = new contextSetFilesCommand;
                   break;
                }
 
             case Command::CN_CGETFILES:
                {
-                  c = new contextGetFilesCommand();
+                  c = new contextGetFilesCommand;
                   break;
                }
 
             case Command::CN_CGETFILESRSP:
                {
-                  c = new contextGetFilesResponseCommand();
+                  c = new contextGetFilesResponseCommand;
                   break;
                }
 
             case Command::CN_CGETTRACKERS:
                {
-                  c = new contextGetTrackersCommand();
+                  c = new contextGetTrackersCommand;
                   break;
                }
 
             case Command::CN_CGETTRACKERSRSP:
                {
-                  c = new contextGetTrackersResponseCommand();
+                  c = new contextGetTrackersResponseCommand;
                   break;
                }
 
             case Command::CN_CMOVE:
                {
-                  c = new contextMoveToSessionCommand();
+                  c = new contextMoveToSessionCommand;
                   break;
                }
 
             case Command::CN_SLIST:
                {
-                  c = new listSessionCommand();
+                  c = new listSessionCommand;
                   break;
                }
 
             case Command::CN_SLISTRSP:
                {
-                  c = new listSessionResponseCommand();
+                  c = new listSessionResponseCommand;
                   break;
                }
 
             case Command::CN_SATTACH:
                {
-                  c = new attachSessionCommand();
+                  c = new attachSessionCommand;
                   break;
                }
 
             case Command::CN_SQUIT:
                {
-                  c = new quitSessionCommand();
+                  c = new quitSessionCommand;
                   break;
                }
 
             case Command::CN_SERROR:
                {
-                  c = new sessionErrorCommand();
+                  c = new sessionErrorCommand;
                   break;
                }
 
             case Command::CN_SINFO:
                {
-                  c = new sessionInfoCommand();
+                  c = new sessionInfoCommand;
                   break;
                }
             case Command::CN_SINFORSP:
                {
-                  c = new sessionInfoResponseCommand();
+                  c = new sessionInfoResponseCommand;
                   break;
                }
             case Command::CN_SDETACH:
                {
-                  c = new detachSessionCommand();
+                  c = new detachSessionCommand;
                   break;
                }
 
             case Command::CN_SNAME:
                {
-                  c = new sessionNameCommand();
+                  c = new sessionNameCommand;
                   break;
                }
 
             case Command::CN_SNAMERSP:
                {
-                  c = new sessionNameResponseCommand();
+                  c = new sessionNameResponseCommand;
                   break;
                }
 
             case Command::CN_SSETNAME:
                {
-                  c = new setSessionNameCommand();
+                  c = new setSessionNameCommand;
                   break;
                }
 
             case Command::CN_GKILL:
                {
-                  c = new killCommand();
+                  c = new killCommand;
                   break;
                }
 
             case Command::CN_GLIMIT:
                {
-                  c = new limitCommand();
+                  c = new limitCommand;
                   break;
                }
 
             case Command::CN_GLIMITSTAT:
                {
-                  c = new limitStatusCommand();
+                  c = new limitStatusCommand;
                   break;
                }
 
             case Command::CN_GLIMITSTATRSP:
                {
-                  c = new limitStatusResponseCommand();
+                  c = new limitStatusResponseCommand;
                   break;
                }
 
             case Command::CN_GUPTIME:
                {
-                  c = new uptimeCommand();
+                  c = new uptimeCommand;
                   break;
                }
 
             case Command::CN_GUPTIMERSP:
                {
-                  c = new uptimeResponseCommand();
+                  c = new uptimeResponseCommand;
                   break;
                }
 
             case Command::CN_GINITCONNECTION:
                {
-                  c = new initConnectionCommand();
+                  c = new initConnectionCommand;
                   break;
                }
 
             case Command::CN_MOREAD:
                {
-                  c = new sessionROCommand();
+                  c = new sessionROCommand;
                   break;
                }
 
             case Command::CN_MOWRITE:
                {
-                  c = new sessionRWCommand();
+                  c = new sessionRWCommand;
                   break;
                }
             default:
@@ -448,6 +469,10 @@ namespace btg
             case Command::CN_GSETUP:
             case Command::CN_GSETUPRSP:
             case Command::CN_CCREATEWITHDATA:
+            case Command::CN_CCREATEFROMURL:
+            case Command::CN_CCREATEFROMURLRSP:
+            case Command::CN_CURLSTATUS:
+            case Command::CN_CURLSTATUSRSP:
             case Command::CN_CLAST:
             case Command::CN_CLASTRSP:
             case Command::CN_CSTART:

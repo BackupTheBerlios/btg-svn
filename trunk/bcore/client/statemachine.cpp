@@ -60,6 +60,7 @@
 
 #include <bcore/command/context_last.h>
 #include <bcore/command/context_create.h>
+#include <bcore/command/context_create_url.h>
 #include <bcore/command/context_abort.h>
 
 #include <bcore/command/context_clean.h>
@@ -919,6 +920,29 @@ namespace btg
             SM_REQUEST_LOSS;
          }
 
+         void stateMachine::doCreateFromUrl(std::string const& _filename,
+                                            std::string const& _url,
+                                            bool const _start)
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(
+                                     new contextCreateFromUrlCommand(_filename,
+                                                                     _url,
+                                                                     _start));
+               }
+            SM_REQUEST_LOSS;
+         }
+
+         void stateMachine::doUrlStatus(t_uint const _id)
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(new contextUrlStatusCommand(_id));
+               }
+            SM_REQUEST_LOSS;
+         }
+
          void stateMachine::doLast()
          {
             if (checkState(SM_COMMAND))
@@ -1110,7 +1134,18 @@ namespace btg
                      expectedReply[1] = Command::CN_UNDEFINED;
                      break;
                   }
-                     
+               case Command::CN_CCREATEFROMURL:
+                  {
+                     expectedReply[0] = Command::CN_CCREATEFROMURLRSP;
+                     expectedReply[1] = Command::CN_UNDEFINED;
+                     break;
+                  }
+               case Command::CN_CURLSTATUS:
+                  {
+                     expectedReply[0] = Command::CN_CURLSTATUSRSP;
+                     expectedReply[1] = Command::CN_UNDEFINED;
+                     break;
+                  }
                case Command::CN_CCREATEWITHDATA:
                case Command::CN_CSTART:
                case Command::CN_CSTOP:
@@ -1248,7 +1283,7 @@ namespace btg
                   return;
                }
 
-            switch(currentCommand)
+            switch (currentCommand)
                {
                case Command::CN_GLIST:
                   {
@@ -1320,6 +1355,17 @@ namespace btg
                      cb_CN_SINFO(_command);
                      break;
                   }
+               case Command::CN_CCREATEFROMURL:
+                  {
+                     cb_CN_CCREATEFROMURL(_command);
+                     break;
+                  }
+               case Command::CN_CURLSTATUS:
+                  {
+                     cb_CN_CURLSTATUS(_command);
+                     break;
+                  }
+
                default:
                   {
                      BTG_ERROR_LOG(logWrapper(), "callCallback(), unexpected command, " << Command::getName(currentCommand) << ".");
@@ -1336,7 +1382,7 @@ namespace btg
                      errorCommand* errcmd   = dynamic_cast<errorCommand*>(_command);
                      std::string errmessage = errcmd->getMessage();
 
-                     switch(currentCommand)
+                     switch (currentCommand)
                         {
                            // Listing failed.
                         case Command::CN_GLIST:
@@ -1385,6 +1431,16 @@ namespace btg
                         case Command::CN_GLIMITSTAT:
                            {
                               clientcallback->onGlobalLimitResponseError(errmessage);
+                              break;
+                           }
+                        case Command::CN_CCREATEFROMURL:
+                           {
+                              clientcallback->onCreateFromUrlError(errmessage);
+                              break;
+                           }
+                        case Command::CN_CURLSTATUS:
+                           {
+                              clientcallback->onUrlStatusError(errmessage);
                               break;
                            }
                            // General error callback to fallback on.

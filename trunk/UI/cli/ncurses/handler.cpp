@@ -315,6 +315,27 @@ namespace btg
             encryption_enabled_ = _encryption;
          }
 
+         void Handler::onCreateFromUrl(t_uint const _id)
+         {
+
+         }
+
+         void Handler::onCreateFromUrlError(std::string const& _message)
+         {
+
+         }
+
+         void Handler::onUrlStatus(t_uint const _id, 
+                                   btg::core::urlStatus const _status)
+         {
+
+         }
+
+         void Handler::onUrlStatusError(std::string const& _message)
+         {
+
+         }
+
          Handler::~Handler()
          {
          }

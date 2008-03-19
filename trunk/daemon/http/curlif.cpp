@@ -28,8 +28,7 @@ extern "C"
 #include <stdio.h>
 }
 
-#include <iostream>
-
+#include <bcore/os/sleep.h>
 #include <daemon/modulelog.h>
 
 namespace btg
@@ -72,8 +71,6 @@ namespace btg
                {
                   throw curlException("curl_easy_init failed.");
                }
-
-            
          }
          
          bool curlInterface::Get(std::string const& _url,
@@ -105,26 +102,29 @@ namespace btg
                   switch (code)
                      {
                      case CURLM_CALL_MULTI_PERFORM:
-                        std::cout << "CURLM_CALL_MULTI_PERFORM" << std::endl;
-                        break;
                      case CURLM_OK:
-                        std::cout << "CURLM_OK" << std::endl;
+                        // Give curl a chance to download something.
+                        btg::core::os::Sleep::sleepMiliSeconds(50);
                         break;
                      default:
-                        std::cout << "CURLM code:" << code << std::endl;
+                        BTG_MNOTICE(logWrapper(), "CURLM code:" << code);
                         break;
                      }
                   
                   if (running_handles == 0)
                      {
-                        std::cout << "No more curl handles." << std::endl;
+                        BTG_MNOTICE(logWrapper(), "No more curl handles." << code);
                         done = true;
                      }
-                  else
-                     {
-                        std::cout << "CURL handles:" << running_handles << std::endl;
-                     }
+               }
 
+            if (abortIf.AbortTransfer())
+               {
+                  BTG_MNOTICE(logWrapper(), "Transfer aborted.");
+
+                  curl_multi_remove_handle(curlm, curl);
+                  fclose(f);
+                  return status;
                }
 
             long httpcode = 404;
@@ -132,8 +132,6 @@ namespace btg
 
             if ((rcode != CURLE_OK) || (httpcode >= 400))
                {
-                  std::cout << "Got error response: " << httpcode << std::endl;
-
                   BTG_MNOTICE(logWrapper(), "Got error " << httpcode << " while loading '" << _url << "'.");
                   status = false;
                }
@@ -155,11 +153,11 @@ namespace btg
          {
             if (!status)
                {
-                  std::cout << "Not reading file" << std::endl;
+                  BTG_MNOTICE(logWrapper(), "Not reading file");
                   return status;
                }
 
-            std::cout << "Reading " << filename << std::endl;
+            BTG_MNOTICE(logWrapper(), "reading file '" << filename << "'");
 
             status = _buffer.read(filename);
             filename = "";

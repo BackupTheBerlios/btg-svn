@@ -29,6 +29,8 @@
 #include <bcore/trackerstatus.h>
 #include <bcore/file_info.h>
 
+#include <bcore/urlstatus.h>
+
 #include <string>
 
 namespace btg
@@ -79,6 +81,17 @@ namespace btg
 
                      /// The client managed to create a new context with data.
                      virtual void onCreateWithData() = 0;
+
+                     /// The daemon started downloading a torrent.
+                     virtual void onCreateFromUrl(t_uint const _id) = 0;
+
+                     /// The daemon could not start downloading a torrent.
+                     virtual void onCreateFromUrlError(std::string const& _errorDescription) = 0;
+
+                     virtual void onUrlStatus(t_uint const _id, 
+                                              btg::core::urlStatus const _status) = 0;
+
+                     virtual void onUrlStatusError(std::string const& _errorDescription) = 0;
 
                      /// The client got the Id of the last context it created.
                      /// Note that implementing this callback is optional.
