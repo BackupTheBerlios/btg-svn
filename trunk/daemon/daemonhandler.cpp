@@ -43,7 +43,6 @@
 #include "modulelog.h"
 
 #include <bcore/btg_assert.h>
-#include "filetrack.h"
 
 extern int global_btg_run;
 
@@ -55,8 +54,6 @@ namespace btg
       using namespace btg::core;
 
       const std::string moduleName("hdl");
-      const t_uint max_url_age = 30;
-      const t_uint url_expired = 31;
 
       typedef std::map<t_long, eventHandler*> handlerMap;
 
@@ -122,12 +119,12 @@ namespace btg
                   {
                      if(btg::core::os::fileOperation::check(dd_->ss_filename))
                         {
-                           MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Loading sessions from " << dd_->ss_filename << ".");
+                           MVERBOSE_LOG(logWrapper(), verboseFlag_, "Loading sessions from " << dd_->ss_filename << ".");
                            BTG_MNOTICE(logWrapper(), "loading sessions from " << dd_->ss_filename);
 
                            t_int numberOfSessions = sessionsaver_.loadSessions(dd_->ss_filename);
 
-                           MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Loaded " << numberOfSessions << " sesssion(s).");
+                           MVERBOSE_LOG(logWrapper(), verboseFlag_, "Loaded " << numberOfSessions << " sesssion(s).");
                         }
                      else
                         {
@@ -141,7 +138,7 @@ namespace btg
             }
          else
             {
-               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Sesssion saving disabled.");
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Sesssion saving disabled.");
                BTG_MNOTICE(logWrapper(), "sesssion saving disabled");
             }
 #endif // BTG_OPTION_SAVESESSIONS
@@ -312,7 +309,7 @@ namespace btg
                         {
                            // User is not authorized to do attach/list/setup.
 
-                           MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Client (" << connectionID_ << ") is not authorized.");
+                           MVERBOSE_LOG(logWrapper(), verboseFlag_, "Client (" << connectionID_ << ") is not authorized.");
 
                            sendError(command_->getType(), "Not authorized.");
                         }
@@ -380,7 +377,7 @@ namespace btg
             {
                BTG_MNOTICE(logWrapper(), "terminating session " << session_);
 
-               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
 
                // Remove the session data.
                sessionlist_.erase(session_);
@@ -399,7 +396,7 @@ namespace btg
          _eventhandler->decClients();
 
          // Send an ack message back, as the session was detached.
-         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
          sendAck(Command::CN_SDETACH);
          connection_->setSession(0);
          dd_->transport->endConnection(connectionID_);
@@ -446,7 +443,7 @@ namespace btg
       void daemonHandler::handleKill()
       {
          BTG_MNOTICE(logWrapper(), "killing the daemon");
-         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
 
          sendAck(Command::CN_GKILL);
          dd_->transport->endConnection(connectionID_);
@@ -468,7 +465,7 @@ namespace btg
       void daemonHandler::handleGlobalLimit()
       {
          BTG_MNOTICE(logWrapper(), "Setting global limits");
-         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
 
          limitCommand* lc = dynamic_cast<limitCommand*>(command_);
 
@@ -489,7 +486,7 @@ namespace btg
       {
          BTG_MNOTICE(logWrapper(), "Global limits request");
 
-         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
 
          t_int limitBytesUpld  = btg::core::limitBase::LIMIT_DISABLED;
          t_int limitBytesDwnld = btg::core::limitBase::LIMIT_DISABLED;
@@ -512,7 +509,7 @@ namespace btg
 
       void daemonHandler::handleUptime()
       {
-         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
          buffer_.erase();
 
          time_t now;
@@ -528,7 +525,7 @@ namespace btg
 
       void daemonHandler::handleSessionName(eventHandler* _eventhandler)
       {
-         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
 
          sendCommand(dd_->externalization, 
                      dd_->transport,
@@ -539,7 +536,7 @@ namespace btg
       void daemonHandler::handleSessionSetName(eventHandler* _eventhandler, 
                                                Command* _command)
       {
-         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
 
          setSessionNameCommand* ssnc = dynamic_cast<setSessionNameCommand*>(_command);
 
@@ -566,7 +563,7 @@ namespace btg
       void daemonHandler::handleMoveContext(eventHandler* _eventhandler, 
                                             btg::core::Command* _command)
       {
-         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
 
          contextMoveToSessionCommand* cmtsc = dynamic_cast<contextMoveToSessionCommand*>(_command);
 
@@ -597,7 +594,7 @@ namespace btg
       void daemonHandler::handleSessionInfo(eventHandler* _eventhandler, 
                                             btg::core::Command* _command)
       {
-         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
 
          sendCommand(dd_->externalization, 
                      dd_->transport,
@@ -609,7 +606,7 @@ namespace btg
 
       void daemonHandler::handleSessionInInvalidState(t_int const _id)
       {
-         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): Message not supported.");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): Message not supported.");
 
          sendError(_id, "Not supported in this state.");
       }
@@ -627,7 +624,7 @@ namespace btg
                BTG_MNOTICE(logWrapper(), connection_->toString() <<
                            " is authorized with username " << icc->getUsername());
 
-               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
 
                if (!sendAck(Command::CN_GINITCONNECTION))
                   {
@@ -639,9 +636,9 @@ namespace btg
                // Failure.
 
                BTG_MNOTICE(logWrapper(), "connection " << connection_->toString() << " used incorrect username '" << icc->getUsername() << "', password hash = '" << icc->getPassword() << "'");
-               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << " failed.");
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << " failed.");
 
-               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Client (" << connectionID_ << "): Rejecting connection from user '" <<
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Client (" << connectionID_ << "): Rejecting connection from user '" <<
                             icc->getUsername() << "'.");
 
                sendError(Command::CN_GINITCONNECTION, "Failed to authorize user.");
@@ -650,7 +647,7 @@ namespace btg
 
       void daemonHandler::handleSessionList()
       {
-         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
 
          std::vector<t_long> sessions;
          std::vector<std::string> session_names;
@@ -758,7 +755,7 @@ namespace btg
          connection_->setSession(attachTo);
 
          // Send an ack message back with the new session. Everything is OK.
-         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
          sendAck(Command::CN_SATTACH);
       }
 
@@ -835,7 +832,7 @@ namespace btg
                      sendError(command_->getType(), 
                                "Failed to setup session (all ports used)."); 
 
-                     MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << " failed.");
+                     MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << " failed.");
                      return;
                   }
 
@@ -897,7 +894,7 @@ namespace btg
                            setupInfoMessage += " Encryption: OFF.";
                         }
                      
-                     MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << "(" << setupInfoMessage << ").");
+                     MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << "(" << setupInfoMessage << ").");
 
                      // Write a response:
                      sendCommand(dd_->externalization,
@@ -910,7 +907,7 @@ namespace btg
                      delete eh;
                      sendError(command_->getType(), 
                                "Failed to setup session."); 
-                     MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << " failed.");
+                     MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << " failed.");
                   }
             }
       }
@@ -975,7 +972,7 @@ namespace btg
       {
          // Messages which download from URL or which get the status
          // of a download.
-         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
       
          switch (_command->getType())
             {
@@ -995,7 +992,7 @@ namespace btg
       void daemonHandler::handleOther(eventHandler* _eventhandler, Command* _command)
       {
          // All other events.
-         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
          _eventhandler->event(_command, connectionID_);
       }
 
@@ -1006,7 +1003,6 @@ namespace btg
          if (err->messagePresent())
             {
                MVERBOSE_LOG(logWrapper(), 
-                            moduleName, 
                             verboseFlag_, "Sending error to client (" << connectionID_ << 
                             "): '" << err->getMessage() << "'.");
             }
@@ -1046,12 +1042,12 @@ namespace btg
                                                              dynamic_cast<errorCommand*>(_command)->getErrorCommand()
                                                              );
 
-                     MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "daemon (" << _connectionID << "): " <<
+                     MVERBOSE_LOG(logWrapper(), verboseFlag_, "daemon (" << _connectionID << "): " <<
                                   _command->getName() << " (caused by " << causedBy << ").");
                   }
                else
                   {
-                     MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "daemon (" << _connectionID << "): " <<
+                     MVERBOSE_LOG(logWrapper(), verboseFlag_, "daemon (" << _connectionID << "): " <<
                                   _command->getName() << ".");
                   }
 
@@ -1160,7 +1156,7 @@ namespace btg
                      _type << ": directory '" << _value << "' not found");
 
          MVERBOSE_LOG(logWrapper(), 
-                      moduleName, verboseFlag_, "daemon (" << connectionID_ << "): " <<
+                      verboseFlag_, "daemon (" << connectionID_ << "): " <<
                       _type << ", directory '" << _value << "' not found.");
       }
 
@@ -1172,14 +1168,14 @@ namespace btg
                url_timer_.Reset();
                if (UrlIdSessions.size() > 0)
                   {
-                     MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Checking url downloads.");
+                     MVERBOSE_LOG(logWrapper(), verboseFlag_, "Checking url downloads.");
                      handleUrlDownloads();
                   }
             }
 
          if (session_timer_trigger_)
             {
-               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Checking limits and alerts.");
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Checking limits and alerts.");
                sessionlist_.checkLimitsAndAlerts();
                session_timer_trigger_ = false;
                session_timer_.Reset();
@@ -1192,7 +1188,7 @@ namespace btg
                if (dd_->ss_enable)
                   {
                      BTG_MNOTICE(logWrapper(), "Periodically saving sessions");
-                     MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Periodically saving sessions.");
+                     MVERBOSE_LOG(logWrapper(), verboseFlag_, "Periodically saving sessions.");
                      sessionsaver_.saveSessions(dd_->ss_filename, false);
                   }
 #endif
@@ -1203,7 +1199,7 @@ namespace btg
 
          if (limit_timer_trigger_)
             {
-               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Updating limits.");
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Updating limits.");
                limitManager_.update();
                limit_timer_.Reset();
                limit_timer_trigger_ = false;
@@ -1212,7 +1208,7 @@ namespace btg
 
          if (elapsed_timer_trigger_)
             {
-               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Updating seed counters.");
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Updating seed counters.");
                sessionlist_.updateElapsedOrSeedCounter();
                elapsed_timer_trigger_ = false;
                elapsed_seed_timer_.Reset();
@@ -1255,13 +1251,13 @@ namespace btg
          if(dd_->ss_enable)
             {
                BTG_MNOTICE(logWrapper(), "saving sessions to '" << dd_->ss_filename << "'");
-               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Saving sessions to '" << dd_->ss_filename << "'.");
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Saving sessions to '" << dd_->ss_filename << "'.");
                sessionsaver_.saveSessions(dd_->ss_filename, true);
             }
          else
             {
                BTG_MNOTICE(logWrapper(), "sesssion saving disabled");
-               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Sesssion saving disabled.");
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Sesssion saving disabled.");
             }
 #endif // BTG_OPTION_SAVESESSIONS
 
@@ -1269,241 +1265,6 @@ namespace btg
 
          // Delete all sessions/eventhandlers.
          sessionlist_.deleteAll();
-      }
-
-      std::vector<UrlIdSessionMapping>::iterator daemonHandler::getMapping(t_uint _hid)
-      {
-         std::vector<UrlIdSessionMapping>::iterator i;
-         for (i = UrlIdSessions.begin();
-              i != UrlIdSessions.end();
-              i++)
-            {
-               if (i->hid == _hid)
-                  {
-                     return i;
-                  }
-            }
-
-         return UrlIdSessions.end();
-      }
-
-      void daemonHandler::handleUrlDownload(t_uint _hid)
-      {
-         std::vector<UrlIdSessionMapping>::iterator i = getMapping(_hid);
-
-         if (i != UrlIdSessions.end())
-            {
-               if (i->valid)
-                  {
-                     addUrl(*i);
-                     UrlIdSessions.erase(i);
-                  }
-            }
-      }
-
-      void daemonHandler::handleUrlDownloads()
-      {
-         std::vector<UrlIdSessionMapping>::iterator i;
-         for (i = UrlIdSessions.begin();
-              i != UrlIdSessions.end();
-              i++)
-            {
-               if ((i->age > max_url_age) || (!i->valid))
-                  {
-                     continue;
-                  }
-
-               i->age++;
-
-               btg::daemon::http::httpInterface::Status s = httpmgr.getStatus(i->hid);
-               if (s == btg::daemon::http::httpInterface::FINISH)
-                  {
-                     // Dl finished, now create the context.
-                     addUrl(*i);
-                  }
-
-               if (s == btg::daemon::http::httpInterface::ERROR)
-                  {
-                     // Expire this download.
-                     i->valid = false;
-                     // i->age += url_expired;
-                  }
-            }
-
-         // Remove expired downloads.
-         i = UrlIdSessions.begin();
-         while (i != UrlIdSessions.end())
-            {
-               if (i->age > max_url_age)
-                  {
-                     httpmgr.Terminate(i->hid);
-                     dd_->filetrack->remove(i->userdir,
-                                            i->filename);
-                     i = UrlIdSessions.erase(i);
-                  }
-               else
-                  {
-                     i++;
-                  }
-            }
-      }
-
-      void daemonHandler::addUrl(UrlIdSessionMapping & _mapping)
-      {
-         // Find the required event handler.
-         eventHandler* eh = 0;
-         if (!sessionlist_.get(_mapping.session, eh))
-            {
-               // No session, expire.
-               // _mapping.age += url_expired;
-               _mapping.valid = false;
-               return;
-            }
-
-         btg::core::sBuffer sbuf;
-         if (!sbuf.read(_mapping.userdir + GPD->sPATH_SEPARATOR() + _mapping.filename))
-            {
-               // No data, expire.
-               _mapping.valid = false;
-               // _mapping.age += url_expired;
-               return;
-            }
-
-         // Remove the file from filetrack, as it will be added when
-         // creating the torrent.
-         dd_->filetrack->remove(_mapping.userdir,
-                                _mapping.filename);
-
-         btg::core::contextCreateWithDataCommand* ccwdc = 
-            new btg::core::contextCreateWithDataCommand(_mapping.filename, sbuf, _mapping.start);
-
-         // Do not use a connection id.
-         if (!eh->createWithData(ccwdc))
-            {
-               BTG_MERROR(logWrapper(), 
-                          "Adding '" << _mapping.filename << "' from URL failed");
-               _mapping.status = UCS_CREATE_FAILED;
-               _mapping.valid  = false;
-               // _mapping.age += url_expired;
-            }
-         else
-            {
-               _mapping.status = UCS_CREATED;
-               _mapping.valid  = false;
-               MVERBOSE_LOG(logWrapper(), 
-                            moduleName, 
-                            verboseFlag_, "Added '" << _mapping.filename << "' from URL");
-            }
-         
-         delete ccwdc;
-         ccwdc = 0;
-      }
-
-      void daemonHandler::handle_CN_CURLSTATUS(eventHandler* _eventhandler, 
-                                               btg::core::Command* _command)
-      {
-         contextUrlStatusCommand* cusc = dynamic_cast<contextUrlStatusCommand*>(_command);
-         t_uint hid = cusc->id();
-
-         std::vector<UrlIdSessionMapping>::iterator mapping = getMapping(hid);
-
-         if (mapping == UrlIdSessions.end())
-            {
-               sendError(_command->getType(), "Unknown URL id.");
-               return;
-            }
-
-         btg::daemon::http::httpInterface::Status httpstat = httpmgr.getStatus(hid);
-         
-         btg::core::urlStatus urlstat = URLS_UNDEF;
-         
-         switch (httpstat)
-            {
-            case btg::daemon::http::httpInterface::ERROR:
-               urlstat = URLS_ERROR;
-               break;
-            case btg::daemon::http::httpInterface::INIT:
-               urlstat = URLS_WORKING;
-               break;
-            case btg::daemon::http::httpInterface::WAIT:
-               urlstat = URLS_WORKING;
-               break;
-            case btg::daemon::http::httpInterface::FINISH:
-               {
-                  urlstat = URLS_FINISHED;
-
-                  // The http download finished, add the torrent.
-                  handleUrlDownload(hid);
-
-                  if (mapping->status == UCS_CREATED)
-                  {
-                     urlstat = URLS_CREATE;
-                  }
-
-                  if (mapping->status == UCS_CREATE_FAILED)
-                  {
-                     urlstat = URLS_CREATE_ERR;
-                  }
-
-                  break;
-               }
-            }
-         
-         sendCommand(dd_->externalization,
-                     dd_->transport,
-                     connectionID_,
-                     new contextUrlStatusResponseCommand(hid, urlstat));
-      }
-
-      void daemonHandler::handle_CN_CCREATEFROMURL(eventHandler* _eventhandler, 
-                                                   btg::core::Command* _command)
-      {
-         contextCreateFromUrlCommand* ccful = dynamic_cast<contextCreateFromUrlCommand*>(_command);
-
-         std::string userdir  = _eventhandler->getTempDir();
-         std::string filename = ccful->getFilename();
-
-         if (!dd_->filetrack->add(userdir,
-                                 filename))
-            {
-               // File already exists.
-               sendError(_command->getType(), "Torrent file already exists.");
-               return;
-            }
-
-         bool unique = true;
-         std::vector<UrlIdSessionMapping>::iterator i;
-         for (i = UrlIdSessions.begin();
-              i != UrlIdSessions.end();
-              i++)
-            {
-               if ((i->filename == filename) && (i->userdir == userdir))
-                  {
-                     unique = false;
-                     break;
-                  }
-            }
-
-         if (!unique)
-            {
-               dd_->filetrack->remove(userdir,
-                                      filename);
-
-               sendError(_command->getType(), "Torrent file already exists.");
-               return;
-            }
-
-         t_uint hid = httpmgr.Fetch(ccful->getUrl(), 
-                                    userdir + GPD->sPATH_SEPARATOR() + filename);
-         UrlIdSessionMapping usmap(hid, _eventhandler->getSession(), userdir, filename, ccful->getStart());
-         UrlIdSessions.push_back(usmap);
-         
-         BTG_MNOTICE(logWrapper(), "Added mapping: HID " << usmap.hid << " -> " << usmap.session << " -> " << usmap.filename);
-         
-         sendCommand(dd_->externalization,
-                     dd_->transport,
-                     connectionID_,
-                     new contextCreateFromUrlResponseCommand(hid));
       }
 
       daemonHandler::~daemonHandler()

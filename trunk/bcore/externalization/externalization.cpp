@@ -81,7 +81,8 @@ namespace btg
                t_IdToNameElem(Command::CN_CGETTRACKERS,    "context.gettrackers"),
                t_IdToNameElem(Command::CN_CGETTRACKERSRSP, "context.gettrackersrsp"),
                t_IdToNameElem(Command::CN_CMOVE,           "context.move"),
-               t_IdToNameElem(Command::CN_CCREATEFROMURL,  "context.createfromurl"),
+               t_IdToNameElem(Command::CN_CCREATEFROMURL,    "context.createfromurl"),
+               t_IdToNameElem(Command::CN_CCREATEFROMURLRSP, "context.createfromurlrsp"),
                t_IdToNameElem(Command::CN_CURLSTATUS,      "context.urlstatus"),
                t_IdToNameElem(Command::CN_CURLSTATUSRSP,   "context.urlstatusrsp"),
 

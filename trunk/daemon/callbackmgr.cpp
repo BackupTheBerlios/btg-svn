@@ -201,7 +201,7 @@ namespace btg
                      if (btg::core::os::Exec::execFile(callback, arguments))
                         {
                            MVERBOSE_LOG(logWrapper(), 
-                                        moduleName, verboseFlag, "Executed " << 
+                                        verboseFlag, "Executed " << 
                                         eventname << " for user " << td.username << ".");
                         }
                      else

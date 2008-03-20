@@ -45,7 +45,7 @@
 #define BTG_MEXIT(_LOGW, _FUNCTION_NAME, _RETURN_VALUE) { BTG_MNOTICE(_LOGW, "ex:" << _FUNCTION_NAME << ", ret: " << _RETURN_VALUE); }
 
 /// Verbose log for a certain module.
-#define MVERBOSE_LOG(_LOGW, _moduleName, _flag, _text) { VERBOSE_LOG(_LOGW, _flag, _moduleName << ": " << _text); }
+#define MVERBOSE_LOG(_LOGW, _flag, _text) { VERBOSE_LOG(_LOGW, _flag, moduleName << ": " << _text); }
 
 #endif // MODULELOG_H
 

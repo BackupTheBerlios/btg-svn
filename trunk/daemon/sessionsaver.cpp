@@ -198,22 +198,22 @@ namespace btg
                
                bool r = _e->bytesToInt(&upload_rate_limit);
                DESERIALIZE_CHECK(!r, "Unable to load global limit, upload", 0);
-               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Upload limit: " << 
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Upload limit: " << 
                             upload_rate_limit << ".");
 
                r = _e->bytesToInt(&download_rate_limit);
                DESERIALIZE_CHECK(!r, "Unable to load global limit, download", 0);
-               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Download limit: " << 
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Download limit: " << 
                             download_rate_limit << ".");
 
                r = _e->bytesToInt(&max_uploads);
                DESERIALIZE_CHECK(!r, "Unable to load global limit, max uploads", 0);
-               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Max uploads: " << 
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Max uploads: " << 
                             max_uploads << ".");
                
                r = _e->bytesToLong(&max_connections);
                DESERIALIZE_CHECK(!r, "Unable to load global limit, max connections", 0);
-               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Max connections: " << 
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Max connections: " << 
                             max_connections << ".");
                
                limitManager_.set(upload_rate_limit, 
@@ -307,13 +307,13 @@ namespace btg
                            max_uploads,
                            max_connections);
 
-         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Upload limit: " << 
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "Upload limit: " << 
                       upload_rate_limit << ".");
-         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Download limit: " << 
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "Download limit: " << 
                       download_rate_limit << ".");
-         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Max uploads: " << 
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "Max uploads: " << 
                       max_uploads << ".");
-         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Max connections: " << 
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "Max connections: " << 
                       max_connections << ".");
 
          ext->intToBytes(&upload_rate_limit);

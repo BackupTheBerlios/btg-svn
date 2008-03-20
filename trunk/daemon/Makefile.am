@@ -32,7 +32,7 @@ libdaemon_la_SOURCES = dconfig.cpp darg.cpp \
                        filetrackdata.cpp filetrack.cpp connectionhandler.cpp \
                        session_list.cpp portmgr.cpp \
                        limitval.cpp limitmgr.cpp daemondata.cpp \
-                       daemonhandler.cpp progress.cpp \
+                       daemonhandler.cpp daemonhandler_url.cpp progress.cpp \
                        context_alert.cpp context_file.cpp context_session.cpp context.cpp \
                        eventhandler.cpp connectionextrastate.cpp $(SSSOURCES) $(CALLBACKSOURCES)
 

@@ -92,6 +92,7 @@ namespace btg
 
          void httpProcess::Terminate()
          {
+            BTG_MNOTICE(logWrapper(), "terminate transfer");
             terminate = true;
          }
          

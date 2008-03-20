@@ -122,12 +122,19 @@ namespace btg
 
          void httpManager::TerminateAll()
          {
-            
+            std::map<t_uint, boost::shared_ptr<httpProcess> >::const_iterator i; 
+            for (i = processes.begin();
+                 i != processes.end();
+                 i++)
+               {
+                  Terminate(i->first);
+               }
          }
 
          httpManager::~httpManager()
          {
-            
+            TerminateAll();
+            processes.erase(processes.begin(), processes.end());
          }
 
       } // namespace http

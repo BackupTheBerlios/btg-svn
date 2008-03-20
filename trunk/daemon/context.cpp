@@ -234,7 +234,7 @@ namespace btg
 
          if (peerid.size() < minPeerIdSize)
             {
-               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, 
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, 
                             "Peer ID: '" << peerid << "' must be at least " << 
                             minPeerIdSize << " characters.");
                return;
@@ -271,7 +271,7 @@ namespace btg
 
          libtorrent::peer_id pid = btg::core::convertStringTo<libtorrent::peer_id>(oss.str());
 
-         MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, 
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, 
                       "Overriding libtorrent peer ID with: '" << peerid << "'.");
          torrent_session->set_peer_id(pid);
       }
@@ -2067,7 +2067,7 @@ namespace btg
          std::string userAgent = config_->getUserAgent();
          if (userAgent.size() > 0)
             {
-               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, 
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, 
                             "Overriding user agent with: '" << userAgent << "'.");
                session_settings_.user_agent = userAgent;
             }

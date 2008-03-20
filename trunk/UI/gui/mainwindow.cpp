@@ -104,7 +104,9 @@ namespace btg
               m_clientDynConfig(dc),
               m_bMultipleContinue(false), // actually not necessary
               m_limitDialog(new limitDialog()),
-              m_sessionSelectionDialog(0)
+              m_sessionSelectionDialog(0),
+              last_url(),
+              last_url_file()
          {
             mmb                       = Gtk::manage(new mainMenubar(this));
             mtw                       = Gtk::manage(new mainTreeview);
@@ -129,13 +131,20 @@ namespace btg
             Gtk::Toolbar *tbar = Gtk::manage(new Gtk::Toolbar);
             Gtk::ToolButton *tbutton;
 
+            // Open file.
             tbutton = Gtk::manage(new Gtk::ToolButton);
             tbutton->set_label("Open");
             tbutton->set_stock_id(Gtk::Stock::NEW);
             tbar->append(*tbutton,sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*this, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LOAD ));
             
-            tbar->append(*Gtk::manage(new Gtk::SeparatorToolItem));
+            // Open URL.
+            tbutton = Gtk::manage(new Gtk::ToolButton);
+            tbutton->set_label("Open URL");
+            tbutton->set_stock_id(Gtk::Stock::NEW);
+            tbar->append(*tbutton,sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*this, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LOAD_URL ));
             
+            tbar->append(*Gtk::manage(new Gtk::SeparatorToolItem));
+
             tbutton = Gtk::manage(new Gtk::ToolButton);
             tbutton->set_label("Start");
             tbutton->set_stock_id(Gtk::Stock::MEDIA_PLAY);
@@ -590,17 +599,18 @@ namespace btg
          void mainWindow::handle_btn_load_url()
          {
             // Show a dialog where one can input the URL and filename.
-
-            std::string filename("fromurl.torrent");
-            std::string url("http://127.0.0.1/test2.torrent");
-
-            urlDialog ud(url, filename);
+            urlDialog ud(last_url, last_url_file);
             if (ud.run() != Gtk::RESPONSE_APPLY)
                {
+                  ud.hide();
                   msb->set("Loading URL aborted.");
                   logVerboseMessage("Loading URL aborted.");
                   return;
                }
+            ud.hide();
+
+            std::string filename;
+            std::string url;
 
             if (!ud.GetResult(url, filename))
                {
@@ -618,6 +628,9 @@ namespace btg
 
             if (handler->commandSuccess())
                {
+                  last_url      = url;
+                  last_url_file = filename;
+
                   t_uint hid = handler->UrlId();
 
                   progressDialog pd("Adding URL");

@@ -135,7 +135,7 @@ namespace btg
 #endif
                std::string peerid = btg::core::convertToString<libtorrent::peer_id>(pid);
 
-               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Peer ID used: '" << peerid << "'.");
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Peer ID used: '" << peerid << "'.");
                _e->stringToBytes(&peerid);
             }
 
@@ -290,7 +290,7 @@ namespace btg
 
                      BTG_CDC(!_e->bytesToString(&peerid), "Peer ID");
 
-                     MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Using peer ID: '" << peerid << "'.");
+                     MVERBOSE_LOG(logWrapper(), verboseFlag_, "Using peer ID: '" << peerid << "'.");
 
                      libtorrent::peer_id pid = btg::core::convertStringTo<libtorrent::peer_id>(peerid);
                      torrent_session->set_peer_id(pid);

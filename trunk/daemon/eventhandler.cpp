@@ -300,13 +300,13 @@ namespace btg
                                                                             );
 
                                     MVERBOSE_LOG(logWrapper(), 
-                                                 moduleName, verboseFlag_, "daemon (" << _connectionID << "): " <<
+                                                 verboseFlag_, "daemon (" << _connectionID << "): " <<
                                                  _command->getName() << " (caused by " << causedBy << ").");
                                  }
                               else
                                  {
                                     MVERBOSE_LOG(logWrapper(), 
-                                                 moduleName, verboseFlag_, "daemon (" << _connectionID << "): " <<
+                                                 verboseFlag_, "daemon (" << _connectionID << "): " <<
                                                  _command->getName() << ".");
                                  }
                            }

@@ -141,7 +141,7 @@ int main(int argc, char* argv[])
 
    VERBOSE_LOG(logwrapper, verboseFlag, "Verbose logging enabled.");
 
-   MVERBOSE_LOG(logwrapper, moduleName, verboseFlag, "config: '" << dd.configFile << "'.");
+   MVERBOSE_LOG(logwrapper, verboseFlag, "config: '" << dd.configFile << "'.");
 
    if (!checkFile(logwrapper, "configuration file", dd.configFile))
       {
@@ -161,7 +161,7 @@ int main(int argc, char* argv[])
          return BTG_ERROR_EXIT;
       }
 
-   MVERBOSE_LOG(logwrapper, moduleName, verboseFlag, "config read from '" << dd.configFile << "'.");
+   MVERBOSE_LOG(logwrapper, verboseFlag, "config read from '" << dd.configFile << "'.");
 
    if (dd.config->getUseTorrentName())
      {

@@ -29,6 +29,8 @@ extern "C"
 }
 
 #include <bcore/os/sleep.h>
+#include <bcore/os/fileop.h>
+
 #include <daemon/modulelog.h>
 
 namespace btg
@@ -124,6 +126,9 @@ namespace btg
 
                   curl_multi_remove_handle(curlm, curl);
                   fclose(f);
+                  // Remove the filename used.
+                  btg::core::os::fileOperation::remove(_filename);
+
                   return status;
                }
 

@@ -245,6 +245,9 @@ namespace btg
                limitDialog                *m_limitDialog;
                /// sessionSelectionDialog used by handle_btn_move
                sessionSelectionDialog     *m_sessionSelectionDialog;
+
+               std::string last_url;
+               std::string last_url_file;
             private:
                /// Copy constructor.
                mainWindow(mainWindow const& _mw);
