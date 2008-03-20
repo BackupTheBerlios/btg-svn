@@ -57,272 +57,285 @@
 namespace btg
 {
    namespace daemon
+   {
+      enum UrlCreateStatus
       {
-         /// Handler class used by the daemon.
-         class daemonHandler: public btg::core::Logable
-            {
-            public:
-               /// Construct the daemon handler.
-               /// 
-               /// Note: the pointer _must_ point at initialized daemon data.
-               daemonHandler(btg::core::LogWrapperType _logwrapper,
-                             daemonData* _dd, 
-                             bool const _verboseFlag);
+         UCS_UNDEF         = 0,
+         UCS_CREATED       = 1,
+         UCS_CREATE_FAILED = 2
+      };
 
-               /// Read data from the transport used.
-               void readFromTransport();
+      struct UrlIdSessionMapping
+      {
+      UrlIdSessionMapping(t_uint _hid, 
+                          long _session, 
+                          std::string const& _userdir,
+                          std::string const& _filename,
+                          bool const _start)
+      : hid(_hid),
+            valid(true),
+            session(_session),
+            userdir(_userdir),
+            filename(_filename),
+            start(_start),
+            status(UCS_UNDEF),
+            age(0)
+         {
+         }
 
-               /// Check if timer used expired.
-               /// If so, execute an action for each eventhandler which is present.
-               void checkTimeout();
+         t_uint          hid;
+         bool            valid;
+         long            session;
+         std::string     userdir;
+         std::string     filename;
+         bool            start;
+         UrlCreateStatus status;
+         t_uint          age;
+      };
 
-               /// Shutdown all eventhandlers.
-               void shutdown();
+      /// Handler class used by the daemon.
+      class daemonHandler: public btg::core::Logable
+         {
+         public:
+            /// Construct the daemon handler.
+            /// 
+            /// Note: the pointer _must_ point at initialized daemon data.
+            daemonHandler(btg::core::LogWrapperType _logwrapper,
+                          daemonData* _dd, 
+                          bool const _verboseFlag);
 
-               /// Destructor.
-               ~daemonHandler();
-            private:
-               /// Handle quit request.
-               void handleQuit(eventHandler* _eventhandler);
+            /// Read data from the transport used.
+            void readFromTransport();
 
-               /// Handle detach request.
-               void handleDetach(eventHandler* _eventhandler);
+            /// Check if timer used expired.
+            /// If so, execute an action for each eventhandler which is present.
+            void checkTimeout();
 
-               /// Handle commands that require the authorized user
-               /// with a control flag set.
-               ///
-               /// The commands are kill and set global limits.
-               /// @param [in] _id The ID of the command to handle.
-               void handleControlCommand(t_int const _id);
+            /// Shutdown all eventhandlers.
+            void shutdown();
 
-               /// Handle daemon kill requested by the client.
-               void handleKill();
+            /// Destructor.
+            ~daemonHandler();
+         private:
+            /// Handle quit request.
+            void handleQuit(eventHandler* _eventhandler);
 
-               /// Handle setting of global limits.
-               void handleGlobalLimit();
+            /// Handle detach request.
+            void handleDetach(eventHandler* _eventhandler);
 
-               /// Validate global limits.
-               void validateGlobalLimits(t_int & _limitBytesUpld,
-                                         t_int & _limitBytesDwnld,
-                                         t_int & _maxUplds,
-                                         t_long & _maxConnections) const;
+            /// Handle commands that require the authorized user
+            /// with a control flag set.
+            ///
+            /// The commands are kill and set global limits.
+            /// @param [in] _id The ID of the command to handle.
+            void handleControlCommand(t_int const _id);
 
-               /// Template used to validate limits.
-               template<typename T> void validateLimit(T& _limit) const
-                  {
-                     if ((_limit == 0) || (_limit < btg::core::limitBase::LIMIT_DISABLED))
-                        {
-                           _limit = btg::core::limitBase::LIMIT_DISABLED;
-                        }
-                  }
+            /// Handle daemon kill requested by the client.
+            void handleKill();
 
-               /// Handle sending the current global limit to client.
-               void handleGlobalStatus();
+            /// Handle setting of global limits.
+            void handleGlobalLimit();
 
-               /// Handle uptime request.
-               void handleUptime();
+            /// Validate global limits.
+            void validateGlobalLimits(t_int & _limitBytesUpld,
+                                      t_int & _limitBytesDwnld,
+                                      t_int & _maxUplds,
+                                      t_long & _maxConnections) const;
 
-               /// Handle session name request.
-               void handleSessionName(eventHandler* _eventhandler);
+            /// Template used to validate limits.
+            template<typename T> void validateLimit(T& _limit) const
+               {
+                  if ((_limit == 0) || (_limit < btg::core::limitBase::LIMIT_DISABLED))
+                     {
+                        _limit = btg::core::limitBase::LIMIT_DISABLED;
+                     }
+               }
 
-               /// Handle setting session name.
-               void handleSessionSetName(eventHandler* _eventhandler, 
-                                         btg::core::Command* _command);
+            /// Handle sending the current global limit to client.
+            void handleGlobalStatus();
 
-               /// Handle getting information about a session.
-               void handleSessionInfo(eventHandler* _eventhandler, 
+            /// Handle uptime request.
+            void handleUptime();
+
+            /// Handle session name request.
+            void handleSessionName(eventHandler* _eventhandler);
+
+            /// Handle setting session name.
+            void handleSessionSetName(eventHandler* _eventhandler, 
                                       btg::core::Command* _command);
 
-               /// Handle session messages in invalid state.
-               void handleSessionInInvalidState(t_int const _id);
+            /// Handle getting information about a session.
+            void handleSessionInfo(eventHandler* _eventhandler, 
+                                   btg::core::Command* _command);
 
-               /// Handle initialization of a connection from a client.
-               void handleInitConnection(btg::core::Command* _command);
+            /// Handle session messages in invalid state.
+            void handleSessionInInvalidState(t_int const _id);
 
-               /// Handle attach request.
-               void handleAttach(btg::core::Command* _command);
+            /// Handle initialization of a connection from a client.
+            void handleInitConnection(btg::core::Command* _command);
 
-               /// Handle list session request.
-               void handleSessionList();
+            /// Handle attach request.
+            void handleAttach(btg::core::Command* _command);
 
-               /// Handle setup request.
-               void handleSetup(btg::core::Command* _command);
+            /// Handle list session request.
+            void handleSessionList();
+
+            /// Handle setup request.
+            void handleSetup(btg::core::Command* _command);
                
-               /// Move a context from one session to another.
-               void handleMoveContext(eventHandler* _eventhandler, 
-                                      btg::core::Command* _command);
+            /// Move a context from one session to another.
+            void handleMoveContext(eventHandler* _eventhandler, 
+                                   btg::core::Command* _command);
 
-               void handleUrlMessages(eventHandler* _eventhandler, btg::core::Command* _command);
+            void handleUrlMessages(eventHandler* _eventhandler, btg::core::Command* _command);
 
-               void handle_CN_CCREATEFROMURL(eventHandler* _eventhandler, btg::core::Command* _command);
+            void handle_CN_CURLSTATUS(eventHandler* _eventhandler, btg::core::Command* _command);
+            void handle_CN_CCREATEFROMURL(eventHandler* _eventhandler, btg::core::Command* _command);
 
-               /// Handle any other request.
-               void handleOther(eventHandler* _eventhandler, btg::core::Command* _command);
+            /// Handle any other request.
+            void handleOther(eventHandler* _eventhandler, btg::core::Command* _command);
 
-               /// Send a command to a connection.
-               bool sendCommand(btg::core::externalization::Externalization* _e,
-                                btg::core::messageTransport* _transport,
-                                t_int _connectionID,
-                                btg::core::Command* _command);
+            /// Send a command to a connection.
+            bool sendCommand(btg::core::externalization::Externalization* _e,
+                             btg::core::messageTransport* _transport,
+                             t_int _connectionID,
+                             btg::core::Command* _command);
 
-               /// Send an error back to the client.
-               /// @param [in] _cmdId       The ID of the command this error was caused by.
-               /// @param [in] _description Textual error description.
-               void sendError(t_int const _cmdId, std::string const& _description);
+            /// Send an error back to the client.
+            /// @param [in] _cmdId       The ID of the command this error was caused by.
+            /// @param [in] _description Textual error description.
+            void sendError(t_int const _cmdId, std::string const& _description);
 
-               /// Send an ACK back to the client.
-               /// @param [in] _cmdId The ID of the command this the ACK is a response to.
-               bool sendAck(t_int const _cmdId);
+            /// Send an ACK back to the client.
+            /// @param [in] _cmdId The ID of the command this the ACK is a response to.
+            bool sendAck(t_int const _cmdId);
 
-               /// Check for dead clients/connections.
-               void checkDeadConnections();
+            /// Check for dead clients/connections.
+            void checkDeadConnections();
 
-               /// Get all the user directories from the auth interface.
-               bool getDirectories(std::string & _userTempDir,
-                                   std::string & _userWorkDir,
-                                   std::string & _userSeedDir,
-                                   std::string & _userDestDir,
-                                   std::string & _errorDescription);
+            /// Get all the user directories from the auth interface.
+            bool getDirectories(std::string & _userTempDir,
+                                std::string & _userWorkDir,
+                                std::string & _userSeedDir,
+                                std::string & _userDestDir,
+                                std::string & _errorDescription);
 
-               /// Called when a deserialization fails.
-               void handleDeserializationError(btg::core::commandFactory::decodeStatus const& _decodestatus);
+            /// Called when a deserialization fails.
+            void handleDeserializationError(btg::core::commandFactory::decodeStatus const& _decodestatus);
 
-               /// Called to log a directory that was not found. Like
-               /// during setup.
-               void logDirectoryNotFound(std::string const& _type, std::string const& _value);
+            /// Called to log a directory that was not found. Like
+            /// during setup.
+            void logDirectoryNotFound(std::string const& _type, std::string const& _value);
 
-               /*       */
-               /* Data. */
-               /*       */
+            /*       */
+            /* Data. */
+            /*       */
 
-               /// Pointer to daemon data.
-               daemonData*                     dd_;
+            /// Pointer to daemon data.
+            daemonData*                     dd_;
 
-               /// Indicates if the daemon should be verbose.
-               bool const                      verboseFlag_;
+            /// Indicates if the daemon should be verbose.
+            bool const                      verboseFlag_;
 
-               /// List of contained sessions.
-               sessionList                     sessionlist_;
+            /// List of contained sessions.
+            sessionList                     sessionlist_;
 
-               /// Pointer to the current command.
-               btg::core::Command*             command_;
+            /// Pointer to the current command.
+            btg::core::Command*             command_;
 
-               /// Current Session.
-               long                            session_;
+            /// Current Session.
+            long                            session_;
 
-               /// The number of bytes read from the transport.
-               t_int                           readBytes_;
+            /// The number of bytes read from the transport.
+            t_int                           readBytes_;
 
-               /// The current connection ID.
-               t_int                           connectionID_;
+            /// The current connection ID.
+            t_int                           connectionID_;
 
-               /// Pointer to the current connection.
-               Connection*                     connection_;
+            /// Pointer to the current connection.
+            Connection*                     connection_;
 
-               /// The number of event handlers.
-               t_int                           handlerCount_;
+            /// The number of event handlers.
+            t_int                           handlerCount_;
 
-               /// Buffer used by the externalization i/f.
-               btg::core::dBuffer              buffer_;
+            /// Buffer used by the externalization i/f.
+            btg::core::dBuffer              buffer_;
 
-               /// The timer used for checking limits and alerts for
-               /// the contained sessions.
-               btg::core::os::Timer            session_timer_;
+            /// The timer used for checking limits and alerts for
+            /// the contained sessions.
+            btg::core::os::Timer            session_timer_;
 
-               /// Indicates that the session timer has expired.
-               bool                            session_timer_trigger_;
+            /// Indicates that the session timer has expired.
+            bool                            session_timer_trigger_;
 
-               btg::core::os::Timer            url_timer_;
-               bool                            url_timer_trigger_;
+            btg::core::os::Timer            url_timer_;
+            bool                            url_timer_trigger_;
 
-               /// Timer used for setting global limits.
-               btg::core::os::Timer            limit_timer_;
+            /// Timer used for setting global limits.
+            btg::core::os::Timer            limit_timer_;
 
-               /// Indicates that the limit timer has expired.
-               bool                            limit_timer_trigger_;
+            /// Indicates that the limit timer has expired.
+            bool                            limit_timer_trigger_;
 
-               /// Timer used for increasing the elapsed or seed time
-               /// for torrents.
-               btg::core::os::Timer            elapsed_seed_timer_;
+            /// Timer used for increasing the elapsed or seed time
+            /// for torrents.
+            btg::core::os::Timer            elapsed_seed_timer_;
 
-               /// Indicates that the elapsed/seed timer has expired.
-               bool                            elapsed_timer_trigger_;
+            /// Indicates that the elapsed/seed timer has expired.
+            bool                            elapsed_timer_trigger_;
 
-               /// Timer used for timed session saving.
-               btg::core::os::Timer            periodic_ssave_timer_;
+            /// Timer used for timed session saving.
+            btg::core::os::Timer            periodic_ssave_timer_;
 
-               /// Indicates that the periodic session save timer has
-               /// expired.
-               bool                            periodic_ssave_timer_trigger_;
+            /// Indicates that the periodic session save timer has
+            /// expired.
+            bool                            periodic_ssave_timer_trigger_;
 #if BTG_DEBUG
-               /// Debug: alive counter used for logging.
-               t_int                           aliveCounter_;
-               /// Debug: alive counter max used for logging.
-               t_int const                     aliveCounterMax_;
+            /// Debug: alive counter used for logging.
+            t_int                           aliveCounter_;
+            /// Debug: alive counter max used for logging.
+            t_int const                     aliveCounterMax_;
 #endif // BTG_DEBUG
 
-               /// Entity used for accessing/monitoring tcp/ip ports.
-               portManager                     portManager_;
+            /// Entity used for accessing/monitoring tcp/ip ports.
+            portManager                     portManager_;
 
-               /// Entity used for setting global limits.
-               limitManager                    limitManager_;
+            /// Entity used for setting global limits.
+            limitManager                    limitManager_;
 
 #if BTG_OPTION_SAVESESSIONS
-               /// Instance of the class used for saving sessions to a file.
-               SessionSaver                    sessionsaver_;
+            /// Instance of the class used for saving sessions to a file.
+            SessionSaver                    sessionsaver_;
 
-               /// The timer used for periodicly save sessions
-               btg::core::os::Timer            sessiontimer_;
+            /// The timer used for periodicly save sessions
+            btg::core::os::Timer            sessiontimer_;
 #endif // BTG_OPTION_SAVESESSIONS
 
-               /// The buffer used to send commands back to the
-               /// clients.
-               btg::core::dBuffer              sendBuffer_;
+            /// The buffer used to send commands back to the
+            /// clients.
+            btg::core::dBuffer              sendBuffer_;
 
-               /// Command factory used by this instance.
-               btg::core::commandFactory       cf_;
+            /// Command factory used by this instance.
+            btg::core::commandFactory       cf_;
 
-               btg::daemon::http::httpManager  httpmgr;
+            btg::daemon::http::httpManager  httpmgr;
 
-               struct UrlIdSessionMapping
-               {
-               UrlIdSessionMapping(t_uint _hid, 
-                                   long _session, 
-                                   std::string const& _userdir,
-                                   std::string const& _filename,
-                                   bool const _start)
-               : hid(_hid),
-                 session(_session),
-                 userdir(_userdir),
-                 filename(_filename),
-                 start(_start),
-                 age(0)
-                 {
-                 }
+            std::vector<UrlIdSessionMapping> UrlIdSessions;
 
-                  t_uint hid;
-                  long   session;
-                  std::string userdir;
-                  std::string filename;
-                  bool   start;
-                  t_uint age;
-               };
+            std::vector<UrlIdSessionMapping>::iterator getMapping(t_uint _hid);
+            void handleUrlDownloads();
+            void handleUrlDownload(t_uint _hid);
 
-               std::vector<UrlIdSessionMapping> UrlIdSessions;
+            void addUrl(UrlIdSessionMapping & _mapping);
 
-               void handleUrlDownloads();
-               void handleUrlDownload(t_uint _hid);
+         private:
+            /// Copy constructor.
+            daemonHandler(daemonHandler const& _dh);
+            /// Assignment operator.
+            daemonHandler& operator=(daemonHandler const& _dh);
+         };
 
-               void addUrl(UrlIdSessionMapping & _mapping);
-
-            private:
-               /// Copy constructor.
-               daemonHandler(daemonHandler const& _dh);
-               /// Assignment operator.
-               daemonHandler& operator=(daemonHandler const& _dh);
-            };
-
-      } // namespace daemon
+   } // namespace daemon
 } // namespace btg
 
 #endif // DAEMONHANDLER_H

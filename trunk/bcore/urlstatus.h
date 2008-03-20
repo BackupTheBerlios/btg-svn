@@ -38,10 +38,12 @@ namespace btg
          /// Status of a download.
          enum urlStatus
          {
-            URLS_UNDEF     = 0, // Unknown.
-            URLS_WORKING   = 1, // Download in progress.
-            URLS_FINISHED  = 2, // Download finished.
-            URLS_ERROR     = 3  // Unable to download.
+            URLS_UNDEF      = 0, // Unknown.
+            URLS_WORKING    = 1, // Download in progress.
+            URLS_FINISHED   = 2, // Download finished.
+            URLS_ERROR      = 3, // Unable to download.
+            URLS_CREATE     = 4, // Context created.
+            URLS_CREATE_ERR = 5  // Context not created.
          };
 
          /** @} */

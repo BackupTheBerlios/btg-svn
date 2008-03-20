@@ -986,42 +986,7 @@ namespace btg
                }
             case Command::CN_CURLSTATUS:
                {
-                  contextUrlStatusCommand* cusc = dynamic_cast<contextUrlStatusCommand*>(_command);
-                  t_uint hid = cusc->id();
-                  btg::daemon::http::httpInterface::Status httpstat = httpmgr.getStatus(hid);
-
-                  btg::core::urlStatus urlstat = URLS_UNDEF;
-                  
-                  switch (httpstat)
-                     {
-                     case btg::daemon::http::httpInterface::ERROR:
-                        urlstat = URLS_ERROR;
-                        break;
-                     case btg::daemon::http::httpInterface::INIT:
-                        urlstat = URLS_WORKING;
-                        break;
-                     case btg::daemon::http::httpInterface::WAIT:
-                        urlstat = URLS_WORKING;
-                        break;
-                     case btg::daemon::http::httpInterface::FINISH:
-                        {
-                           // TODO: Finished downloading. Add it.
-                           urlstat = URLS_FINISHED;
-                           break;
-                        }
-                     }
-
-                  sendCommand(dd_->externalization,
-                              dd_->transport,
-                              connectionID_,
-                              new contextUrlStatusResponseCommand(hid, urlstat));
-
-                  if (httpstat == btg::daemon::http::httpInterface::FINISH)
-                     {
-                        // The http download finished, add the torrent.
-                        handleUrlDownload(hid);
-                     }
-
+                  handle_CN_CURLSTATUS(_eventhandler, _command);
                   break;
                }
             }
@@ -1306,7 +1271,7 @@ namespace btg
          sessionlist_.deleteAll();
       }
 
-      void daemonHandler::handleUrlDownload(t_uint _hid)
+      std::vector<UrlIdSessionMapping>::iterator daemonHandler::getMapping(t_uint _hid)
       {
          std::vector<UrlIdSessionMapping>::iterator i;
          for (i = UrlIdSessions.begin();
@@ -1315,9 +1280,23 @@ namespace btg
             {
                if (i->hid == _hid)
                   {
+                     return i;
+                  }
+            }
+
+         return UrlIdSessions.end();
+      }
+
+      void daemonHandler::handleUrlDownload(t_uint _hid)
+      {
+         std::vector<UrlIdSessionMapping>::iterator i = getMapping(_hid);
+
+         if (i != UrlIdSessions.end())
+            {
+               if (i->valid)
+                  {
                      addUrl(*i);
                      UrlIdSessions.erase(i);
-                     break;
                   }
             }
       }
@@ -1329,7 +1308,7 @@ namespace btg
               i != UrlIdSessions.end();
               i++)
             {
-               if (i->age > max_url_age)
+               if ((i->age > max_url_age) || (!i->valid))
                   {
                      continue;
                   }
@@ -1346,7 +1325,8 @@ namespace btg
                if (s == btg::daemon::http::httpInterface::ERROR)
                   {
                      // Expire this download.
-                     i->age += url_expired;
+                     i->valid = false;
+                     // i->age += url_expired;
                   }
             }
 
@@ -1375,7 +1355,8 @@ namespace btg
          if (!sessionlist_.get(_mapping.session, eh))
             {
                // No session, expire.
-               _mapping.age += url_expired;
+               // _mapping.age += url_expired;
+               _mapping.valid = false;
                return;
             }
 
@@ -1383,7 +1364,8 @@ namespace btg
          if (!sbuf.read(_mapping.userdir + GPD->sPATH_SEPARATOR() + _mapping.filename))
             {
                // No data, expire.
-               _mapping.age += url_expired;
+               _mapping.valid = false;
+               // _mapping.age += url_expired;
                return;
             }
 
@@ -1400,10 +1382,14 @@ namespace btg
             {
                BTG_MERROR(logWrapper(), 
                           "Adding '" << _mapping.filename << "' from URL failed");
-               _mapping.age += url_expired;
+               _mapping.status = UCS_CREATE_FAILED;
+               _mapping.valid  = false;
+               // _mapping.age += url_expired;
             }
          else
             {
+               _mapping.status = UCS_CREATED;
+               _mapping.valid  = false;
                MVERBOSE_LOG(logWrapper(), 
                             moduleName, 
                             verboseFlag_, "Added '" << _mapping.filename << "' from URL");
@@ -1411,6 +1397,62 @@ namespace btg
          
          delete ccwdc;
          ccwdc = 0;
+      }
+
+      void daemonHandler::handle_CN_CURLSTATUS(eventHandler* _eventhandler, 
+                                               btg::core::Command* _command)
+      {
+         contextUrlStatusCommand* cusc = dynamic_cast<contextUrlStatusCommand*>(_command);
+         t_uint hid = cusc->id();
+
+         std::vector<UrlIdSessionMapping>::iterator mapping = getMapping(hid);
+
+         if (mapping == UrlIdSessions.end())
+            {
+               sendError(_command->getType(), "Unknown URL id.");
+               return;
+            }
+
+         btg::daemon::http::httpInterface::Status httpstat = httpmgr.getStatus(hid);
+         
+         btg::core::urlStatus urlstat = URLS_UNDEF;
+         
+         switch (httpstat)
+            {
+            case btg::daemon::http::httpInterface::ERROR:
+               urlstat = URLS_ERROR;
+               break;
+            case btg::daemon::http::httpInterface::INIT:
+               urlstat = URLS_WORKING;
+               break;
+            case btg::daemon::http::httpInterface::WAIT:
+               urlstat = URLS_WORKING;
+               break;
+            case btg::daemon::http::httpInterface::FINISH:
+               {
+                  urlstat = URLS_FINISHED;
+
+                  // The http download finished, add the torrent.
+                  handleUrlDownload(hid);
+
+                  if (mapping->status == UCS_CREATED)
+                  {
+                     urlstat = URLS_CREATE;
+                  }
+
+                  if (mapping->status == UCS_CREATE_FAILED)
+                  {
+                     urlstat = URLS_CREATE_ERR;
+                  }
+
+                  break;
+               }
+            }
+         
+         sendCommand(dd_->externalization,
+                     dd_->transport,
+                     connectionID_,
+                     new contextUrlStatusResponseCommand(hid, urlstat));
       }
 
       void daemonHandler::handle_CN_CCREATEFROMURL(eventHandler* _eventhandler, 

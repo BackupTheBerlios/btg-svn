@@ -63,6 +63,7 @@
 #include <bcore/client/clientdynconfig.h>
 #include <bcore/project.h>
 #include <bcore/btg_assert.h>
+#include <bcore/os/sleep.h>
 
 #define GET_HANDLER_INST \
    boost::shared_ptr<boost::mutex> ptr = handlerthread->mutex(); \
@@ -647,8 +648,7 @@ namespace btg
                               }
                            case btg::core::URLS_FINISHED:
                               {
-                                 pd.updateProgress(100, "Loaded URL.");
-                                 cont = false;
+                                 pd.updateProgress(80, "Loaded URL.");
                                  break;
                               }
                            case btg::core::URLS_ERROR:
@@ -657,7 +657,20 @@ namespace btg
                                  cont = false;
                                  break;
                               }
+                           case btg::core::URLS_CREATE:
+                              {
+                                 pd.updateProgress(100, "Torrent created.");
+                                 cont = false;
+                                 break;
+                              }
+                           case btg::core::URLS_CREATE_ERR:
+                              {
+                                 pd.updateProgress(100, "Unable to create torrent.");
+                                 cont = false;
+                                 break;
+                              }
                            }
+                        btg::core::os::Sleep::sleepMiliSeconds(500);
                      }
 
                   msb->set("Added: " + filename);
