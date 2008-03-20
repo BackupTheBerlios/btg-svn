@@ -454,6 +454,8 @@ namespace btg
                /// Indicates if encryption is enabled.
                bool encryptionEnabled() const;
 
+               std::string getTempDir() const;
+
                /// Destructor.
                ~Context();
             private:

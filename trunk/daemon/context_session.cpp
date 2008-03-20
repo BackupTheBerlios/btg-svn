@@ -160,7 +160,7 @@ namespace btg
 
       bool Context::deserialize(btg::core::externalization::Externalization* _e, t_uint _version)
       {
-         BTG_MENTER(logWrapper(), "deserialize", "version = " << std::hex << _version);
+         BTG_MENTER(logWrapper(), "deserialize", "version = " << std::hex << _version << std::dec);
          bool status = true;
          std::string filename;
          bool paused;

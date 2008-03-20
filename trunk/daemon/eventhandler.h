@@ -175,7 +175,10 @@ namespace btg
                          eventHandler* _eventhandler);
 
                /// Create a new context.
-               bool createWithData(btg::core::Command* _command, t_int _connectionID);
+               bool createWithData(btg::core::Command* _command, 
+                                   t_int _connectionID = btg::core::messageTransport::NO_CONNECTION_ID);
+
+               std::string getTempDir() const;
 
                /// Destructor.
                ~eventHandler();

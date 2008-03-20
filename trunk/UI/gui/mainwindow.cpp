@@ -47,6 +47,8 @@
 #include "sndialog.h"
 #include "sessionselection.h"
 #include "logtextview.h"
+#include "progressdialog.h"
+#include "urldialog.h"
 
 #include "usermessage.h"
 
@@ -408,7 +410,12 @@ namespace btg
                case buttonMenuIds::BTN_LOAD:
                   {
                      handle_btn_load();
-                     // BTG_NOTICE("(global) mainToolbar::BTN_LOAD");
+                     non_context = true;
+                     break;
+                  }
+               case buttonMenuIds::BTN_LOAD_URL:
+                  {
+                     handle_btn_load_url();
                      non_context = true;
                      break;
                   }
@@ -577,6 +584,90 @@ namespace btg
                      break;
                   }
                } // switch
+         }
+
+         void mainWindow::handle_btn_load_url()
+         {
+            // Show a dialog where one can input the URL and filename.
+
+            std::string filename("fromurl.torrent");
+            std::string url("http://127.0.0.1/test2.torrent");
+
+            urlDialog ud(url, filename);
+            if (ud.run() != Gtk::RESPONSE_APPLY)
+               {
+                  msb->set("Loading URL aborted.");
+                  logVerboseMessage("Loading URL aborted.");
+                  return;
+               }
+
+            if (!ud.GetResult(url, filename))
+               {
+                  msb->set("Loading URL aborted.");
+                  logVerboseMessage("Loading URL aborted.");
+                  return;
+               }
+
+            msb->set("Loading URL: " + url);
+            logVerboseMessage("Loading URL: " + url);
+
+            GET_HANDLER_INST;
+
+            handler->reqCreateFromUrl(filename, url);
+
+            if (handler->commandSuccess())
+               {
+                  t_uint hid = handler->UrlId();
+
+                  progressDialog pd("Adding URL");
+
+                  bool cont = true;
+                  while (cont)
+                     {
+                        handler->reqUrlStatus(hid);
+                        if (!handler->commandSuccess())
+                           {
+                              return;
+                           }
+                        t_uint id = 0;
+                        btg::core::urlStatus status;
+
+                        handler->UrlStatusResponse(id, status);
+
+                        switch (status)
+                           {
+                           case btg::core::URLS_UNDEF:
+                              {
+                                 break;
+                              }
+                           case btg::core::URLS_WORKING:
+                              {
+                                 pd.updateProgress(50, "Working.");
+                                 break;
+                              }
+                           case btg::core::URLS_FINISHED:
+                              {
+                                 pd.updateProgress(100, "Loaded URL.");
+                                 cont = false;
+                                 break;
+                              }
+                           case btg::core::URLS_ERROR:
+                              {
+                                 pd.updateProgress(100, "Error loading URL.");
+                                 cont = false;
+                                 break;
+                              }
+                           }
+                     }
+
+                  msb->set("Added: " + filename);
+                  logVerboseMessage("Added: " + filename);
+               }
+            else
+               {
+                  msb->set("Unable to load: " + filename);
+                  logVerboseMessage("Unable to load: " + filename);
+               }
          }
 
          void mainWindow::openFile(std::string const& _filename)

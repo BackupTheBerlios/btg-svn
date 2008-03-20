@@ -6,7 +6,7 @@ if BUILDGUI
 
 bin_PROGRAMS = btgui
 
-btgui_SOURCES = initwindow.cpp \
+btgui_SOURCES = initwindow.cpp progressdialog.cpp urldialog.cpp \
 errordialog.cpp questiondialog.cpp prefdialog.cpp aboutdialog.cpp limitdialog.cpp sessiondialog.cpp \
 sessionselection.cpp authdialog.cpp sndialog.cpp \
 gtkmm_log.cpp guihandler.cpp traficmodel.cpp traficplot.cpp logtextview.cpp mainfiletreeview.cpp selectfiletreeview.cpp mainnotebook.cpp mainmodel.cpp filemodel.cpp fipixbox.cpp mainstatusbar.cpp mainmenubar.cpp maintreeview.cpp \
@@ -14,7 +14,7 @@ peermodel.cpp peertreeview.cpp \
 detailsmodel.cpp detailstreeview.cpp \
 mainwindow.cpp btgui.cpp
 
-noinst_HEADERS = initwindow.h \
+noinst_HEADERS = initwindow.h progressdialog.h urldialog.h \
 errordialog.h questiondialog.h prefdialog.h aboutdialog.h aboutimage.h \
 limitdialog.h sessiondialog.h \
 sessionselection.h authdialog.h sndialog.h \

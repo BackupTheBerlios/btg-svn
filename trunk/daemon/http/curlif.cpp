@@ -113,7 +113,7 @@ namespace btg
                   
                   if (running_handles == 0)
                      {
-                        BTG_MNOTICE(logWrapper(), "No more curl handles." << code);
+                        BTG_MNOTICE(logWrapper(), "No more curl handles.");
                         done = true;
                      }
                }

@@ -43,6 +43,7 @@ namespace btg
                      enum MENUID
                         {
                            BTN_LOAD        = 100,  //!< Open a file.
+                           BTN_LOAD_URL,
                            BTN_START,              //!< Start a context.
                            BTN_STOP,               //!< Start a context.
                            BTN_ABORT,              //!< Abort a context.

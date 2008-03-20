@@ -54,7 +54,7 @@ namespace btg
               preferencesMenuitem(0)
          {
             Gtk::MenuBar *mainMenubar          = this;
-            Gtk::MenuItem *load_menuitem       = 0;
+            
             Gtk::MenuItem *detachMenuitem      = 0;
             Gtk::Menu *fileMenu                = Gtk::manage(new class Gtk::Menu());
 
@@ -93,9 +93,13 @@ namespace btg
              * File menu
              */
             
-            load_menuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::NEW, Gtk::ICON_SIZE_MENU)), "_Open", true);
+            Gtk::MenuItem* load_menuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::NEW, Gtk::ICON_SIZE_MENU)), "_Open", true);
             load_menuitem->signal_activate().connect( sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LOAD ) );
             fileMenu->items().push_back(*load_menuitem);
+
+            Gtk::MenuItem* loadurl_menuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::NEW, Gtk::ICON_SIZE_MENU)), "Open _URL", true);
+            loadurl_menuitem->signal_activate().connect( sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LOAD_URL ) );
+            fileMenu->items().push_back(*loadurl_menuitem);
 
             fileMenu->items().push_back(Gtk::Menu_Helpers::SeparatorElem());
 

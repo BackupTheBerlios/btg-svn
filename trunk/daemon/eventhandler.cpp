@@ -347,12 +347,12 @@ namespace btg
             {
             case true:
                {
-                  this->sendAck(_connectionID, _type);
+                  sendAck(_connectionID, _type);
                   break;
                }
             case false:
                {
-                  this->sendError(_connectionID, _type, _errorDescription);
+                  sendError(_connectionID, _type, _errorDescription);
                   break;
                }
             }
@@ -470,9 +470,12 @@ namespace btg
                                                      ccwdc->getFile(),
                                                      handle_id);
 
-         ConnectionExtraState& extraState = this->connHandler->getConnection(_connectionID)->ExtraState();
-         extraState.setLastCreatedContextId(handle_id);
-         
+         if (_connectionID != btg::core::messageTransport::NO_CONNECTION_ID)
+            {
+               ConnectionExtraState& extraState = connHandler->getConnection(_connectionID)->ExtraState();
+               extraState.setLastCreatedContextId(handle_id);
+            }
+
          if (!ccwdc->getStart())
             {
                // Not starting torrents automagically after adding.
@@ -507,7 +510,7 @@ namespace btg
                                                      ccwdc->getFile(),
                                                      handle_id);
 
-         ConnectionExtraState& extraState = this->connHandler->getConnection(_connectionID)->ExtraState();
+         ConnectionExtraState& extraState = connHandler->getConnection(_connectionID)->ExtraState();
          extraState.setLastCreatedContextId(handle_id);
          
          if (!ccwdc->getStart())
@@ -519,7 +522,7 @@ namespace btg
                   }
             }
          
-         switch(res)
+         switch (res)
             {
             case Context::ERR_OK:
                {
@@ -551,7 +554,7 @@ namespace btg
 
       void eventHandler::handle_CN_CLAST(btg::core::Command* _command, t_int _connectionID)
       {
-         ConnectionExtraState& extraState = this->connHandler->getConnection(_connectionID)->ExtraState();
+         ConnectionExtraState& extraState = connHandler->getConnection(_connectionID)->ExtraState();
          t_int last_context_id = extraState.getLastCreatedContextId();
          sendCommand(_connectionID, new btg::core::lastCIDResponseCommand(last_context_id));
       }
@@ -1136,6 +1139,11 @@ namespace btg
          ccwdc = 0;
 
          return status;
+      }
+
+      std::string eventHandler::getTempDir() const
+      {
+         return daemoncontext->getTempDir();
       }
 
       eventHandler::~eventHandler()

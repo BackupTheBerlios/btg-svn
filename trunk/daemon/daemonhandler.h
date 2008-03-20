@@ -154,6 +154,8 @@ namespace btg
 
                void handleUrlMessages(eventHandler* _eventhandler, btg::core::Command* _command);
 
+               void handle_CN_CCREATEFROMURL(eventHandler* _eventhandler, btg::core::Command* _command);
+
                /// Handle any other request.
                void handleOther(eventHandler* _eventhandler, btg::core::Command* _command);
 
@@ -284,21 +286,35 @@ namespace btg
 
                struct UrlIdSessionMapping
                {
-                  UrlIdSessionMapping(t_uint _hid, long _session)
-                  : hid(_hid),
-                     session(_session),
-                     age(0)
-                  {
-                  }
+               UrlIdSessionMapping(t_uint _hid, 
+                                   long _session, 
+                                   std::string const& _userdir,
+                                   std::string const& _filename,
+                                   bool const _start)
+               : hid(_hid),
+                 session(_session),
+                 userdir(_userdir),
+                 filename(_filename),
+                 start(_start),
+                 age(0)
+                 {
+                 }
 
                   t_uint hid;
                   long   session;
+                  std::string userdir;
+                  std::string filename;
+                  bool   start;
                   t_uint age;
                };
 
                std::vector<UrlIdSessionMapping> UrlIdSessions;
 
                void handleUrlDownloads();
+               void handleUrlDownload(t_uint _hid);
+
+               void addUrl(UrlIdSessionMapping & _mapping);
+
             private:
                /// Copy constructor.
                daemonHandler(daemonHandler const& _dh);

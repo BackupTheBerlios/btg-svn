@@ -149,6 +149,8 @@ namespace btg
                /// daemon that it should be created.
                void handle_btn_load();
 
+               void handle_btn_load_url();
+
                /// Handle detach.
                void handle_btn_detach();
 

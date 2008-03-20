@@ -36,12 +36,14 @@
 #include <bcore/command/uptime.h>
 #include <bcore/command/limit.h>
 #include <bcore/command/context_move.h>
+#include <bcore/command/context_create.h>
 #include <bcore/command/context_create_url.h>
 
 #include <bcore/verbose.h>
 #include "modulelog.h"
 
 #include <bcore/btg_assert.h>
+#include "filetrack.h"
 
 extern int global_btg_run;
 
@@ -53,6 +55,8 @@ namespace btg
       using namespace btg::core;
 
       const std::string moduleName("hdl");
+      const t_uint max_url_age = 30;
+      const t_uint url_expired = 31;
 
       typedef std::map<t_long, eventHandler*> handlerMap;
 
@@ -66,7 +70,7 @@ namespace btg
            command_(0),
            session_(0),
            readBytes_(0),
-           connectionID_(-1),
+           connectionID_(btg::core::messageTransport::NO_CONNECTION_ID),
            connection_(0),
            handlerCount_(0),
            buffer_(),
@@ -147,7 +151,7 @@ namespace btg
       {
          command_      = 0;
          session_      = 0;
-         connectionID_ = messageTransport::NO_CONNECTION_ID;
+         connectionID_ = btg::core::messageTransport::NO_CONNECTION_ID;
 
          checkDeadConnections();
 
@@ -310,10 +314,7 @@ namespace btg
 
                            MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Client (" << connectionID_ << ") is not authorized.");
 
-                           sendCommand(dd_->externalization,
-                                       dd_->transport,
-                                       connectionID_,
-                                       new errorCommand(command_->getType(), "Not authorized."));
+                           sendError(command_->getType(), "Not authorized.");
                         }
                      else
                         {
@@ -373,11 +374,7 @@ namespace btg
          // Dont allow detach if we have more clients than this one.
          if(_eventhandler->getNumClients() > 1)
             {
-               sendCommand(
-                           dd_->externalization,
-                           dd_->transport,
-                           connectionID_,
-                           new errorCommand(command_->getType(), "Cannot quit, other clients attached."));
+               sendError(command_->getType(), "Cannot quit, other clients attached.");
             }
          else
             {
@@ -647,16 +644,7 @@ namespace btg
                MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Client (" << connectionID_ << "): Rejecting connection from user '" <<
                             icc->getUsername() << "'.");
 
-               if (!sendCommand(dd_->externalization,
-                                dd_->transport,
-                                connectionID_,
-                                new errorCommand(
-                                                 Command::CN_GINITCONNECTION,
-                                                 "Failed to authorize user.")
-                                ))
-                  {
-                     BTG_MNOTICE(logWrapper(), "sending of error(initConnectionCommand) failed");
-                  }
+               sendError(Command::CN_GINITCONNECTION, "Failed to authorize user.");
             }
       }
 
@@ -699,10 +687,7 @@ namespace btg
             }
          else
             {
-               sendCommand(dd_->externalization,
-                           dd_->transport,
-                           connectionID_,
-                           new errorCommand(command_->getType(), "No sessions to list."));
+               sendError(command_->getType(), "No sessions to list.");
             }
       }
 
@@ -726,24 +711,16 @@ namespace btg
          t_long attachTo    = asc->getSession();
          if (connection_->getSession() != 0)
             {
-               sendCommand(dd_->externalization,
-                           dd_->transport,
-                           connectionID_,
-                           new errorCommand(
-                                            command_->getType(),
-                                            "Could not attach to session, already attached to another session."));
+               sendError(command_->getType(), 
+                         "Could not attach to session, already attached to another session.");
                return;
 
             }
 
          if (attachTo == Command::INVALID_SESSION)
             {
-               sendCommand(dd_->externalization,
-                           dd_->transport,
-                           connectionID_,
-                           new errorCommand(
-                                            command_->getType(),
-                                            "Could not attach to session, invalid session id."));
+               sendError(command_->getType(), 
+                         "Could not attach to session, invalid session id.");
                return;
             }
 
@@ -751,12 +728,8 @@ namespace btg
 
          if (!sessionlist_.get(attachTo, eventhandler))
             {
-               sendCommand(dd_->externalization,
-                           dd_->transport,
-                           connectionID_,
-                           new errorCommand(
-                                            command_->getType(),
-                                            "Could not attach to session, unknown session id."));
+               sendError(command_->getType(), 
+                         "Could not attach to session, unknown session id.");
                return;
             }
 
@@ -773,12 +746,8 @@ namespace btg
          if ((!controlFlag) && 
              (eventhandler->getUsername() != connection_->getUsername()))
             {
-               sendCommand(dd_->externalization,
-                           dd_->transport,
-                           connectionID_,
-                           new errorCommand(
-                                            command_->getType(),
-                                            "Could not attach to session, wrong username."));
+               sendError(command_->getType(), 
+                         "Could not attach to session, wrong username.");
                return;
             }
 
@@ -800,10 +769,8 @@ namespace btg
          if (sc->getRequiredData().getBuildID() != GPD->sBUILD())
             {
                BTG_ERROR_LOG(logWrapper(), "Setup, unexpected build id '" << sc->getRequiredData().getBuildID() << "', expected '" << GPD->sBUILD() << "'");
-               sendCommand(dd_->externalization,
-                           dd_->transport,
-                           connectionID_,
-                           new errorCommand(command_->getType(), "Wrong build ID"));
+               sendError(command_->getType(), 
+                         "Wrong build ID");
             }
          else
             {
@@ -826,24 +793,16 @@ namespace btg
                if (!getDirectories(userTempDir, userWorkDir, userSeedDir, userDestDir, errorDescription))
                   {
                      // Error handling.
-                     sendCommand(dd_->externalization,
-                                 dd_->transport,
-                                 connectionID_,
-                                 new errorCommand(command_->getType(), errorDescription));
-
+                     sendError(command_->getType(), errorDescription);
                      return;
                   }
 
 #if BTG_OPTION_EVENTCALLBACK
                if (!dd_->auth->getCallbackFile(connection_->getUsername(), userCallback))
                   {
-                     errorDescription = "Missing callback.";
                      // Error handling.
-                     sendCommand(dd_->externalization,
-                                 dd_->transport,
-                                 connectionID_,
-                                 new errorCommand(command_->getType(), errorDescription));
-
+                     errorDescription = "Missing callback.";
+                     sendError(command_->getType(), errorDescription); 
                      return;
                   }
 #endif // BTG_OPTION_EVENTCALLBACK
@@ -873,10 +832,8 @@ namespace btg
 
                if (!portManager_.available())
                   {
-                     sendCommand(dd_->externalization,
-                                 dd_->transport,
-                                 connectionID_,
-                                 new errorCommand(command_->getType(), "Failed to setup session (all ports used)."));
+                     sendError(command_->getType(), 
+                               "Failed to setup session (all ports used)."); 
 
                      MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << " failed.");
                      return;
@@ -951,11 +908,8 @@ namespace btg
                else
                   {
                      delete eh;
-                     sendCommand(dd_->externalization,
-                                 dd_->transport,
-                                 connectionID_,
-                                 new errorCommand(command_->getType(), "Failed to setup session."));
-
+                     sendError(command_->getType(), 
+                               "Failed to setup session."); 
                      MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << " failed.");
                   }
             }
@@ -1027,20 +981,7 @@ namespace btg
             {
             case Command::CN_CCREATEFROMURL:
                {
-                  contextCreateFromUrlCommand* ccful = dynamic_cast<contextCreateFromUrlCommand*>(_command);
-                  t_uint hid = httpmgr.Fetch(ccful->getUrl(), ccful->getFilename());
-
-                  UrlIdSessionMapping usmap(hid, _eventhandler->getSession());
-                  UrlIdSessions.push_back(usmap);
-
-                  BTG_MNOTICE(logWrapper(), "Added mapping: HID " << hid << " -> " << _eventhandler->getSession());
-      
-                  // TODO: Start a timer.
-
-                  sendCommand(dd_->externalization,
-                              dd_->transport,
-                              connectionID_,
-                              new contextCreateFromUrlResponseCommand(hid));
+                  handle_CN_CCREATEFROMURL(_eventhandler, _command);
                   break;
                }
             case Command::CN_CURLSTATUS:
@@ -1074,6 +1015,13 @@ namespace btg
                               dd_->transport,
                               connectionID_,
                               new contextUrlStatusResponseCommand(hid, urlstat));
+
+                  if (httpstat == btg::daemon::http::httpInterface::FINISH)
+                     {
+                        // The http download finished, add the torrent.
+                        handleUrlDownload(hid);
+                     }
+
                   break;
                }
             }
@@ -1088,10 +1036,20 @@ namespace btg
 
       void daemonHandler::sendError(t_int const _cmdId, std::string const& _description)
       {
+         errorCommand* err = new errorCommand(_cmdId, _description);
+
+         if (err->messagePresent())
+            {
+               MVERBOSE_LOG(logWrapper(), 
+                            moduleName, 
+                            verboseFlag_, "Sending error to client (" << connectionID_ << 
+                            "): '" << err->getMessage() << "'.");
+            }
+
          sendCommand(dd_->externalization,
                      dd_->transport,
                      connectionID_,
-                     new errorCommand(_cmdId, _description));
+                     err);
       }
 
       bool daemonHandler::sendAck(t_int const _cmdId)
@@ -1103,7 +1061,7 @@ namespace btg
       }
 
       bool daemonHandler::sendCommand(btg::core::externalization::Externalization* _e,
-                                      messageTransport* _transport,
+                                      btg::core::messageTransport* _transport,
                                       t_int _connectionID,
                                       Command* _command)
       {
@@ -1151,7 +1109,7 @@ namespace btg
 
          BTG_MNOTICE(logWrapper(), "data (out): " << sendBuffer_.size() << " bytes");
 
-         if (_transport->write(sendBuffer_, _connectionID) != messageTransport::OPERATION_FAILED)
+         if (_transport->write(sendBuffer_, _connectionID) != btg::core::messageTransport::OPERATION_FAILED)
             {
                status = true;
             }
@@ -1214,18 +1172,14 @@ namespace btg
             {
             case btg::core::commandFactory::DS_UNKNOWN:
                {
-                  sendCommand(dd_->externalization,
-                              dd_->transport,
-                              connectionID_,
-                              new errorCommand(Command::CN_UNDEFINED, "Unknown command."));
+                  sendError(Command::CN_UNDEFINED, 
+                               "Unknown command."); 
                   break;
                }
             case btg::core::commandFactory::DS_FAILED:
                {
-                  sendCommand(dd_->externalization,
-                              dd_->transport,
-                              connectionID_,
-                              new errorCommand(Command::CN_UNDEFINED, "Failed to deserialize command."));
+                  sendError(Command::CN_UNDEFINED,
+                            "Failed to deserialize command."); 
                   break;
                }
             default:
@@ -1352,27 +1306,47 @@ namespace btg
          sessionlist_.deleteAll();
       }
 
-      void daemonHandler::handleUrlDownloads()
+      void daemonHandler::handleUrlDownload(t_uint _hid)
       {
-         const t_uint max_age = 30;
-
          std::vector<UrlIdSessionMapping>::iterator i;
          for (i = UrlIdSessions.begin();
               i != UrlIdSessions.end();
               i++)
             {
+               if (i->hid == _hid)
+                  {
+                     addUrl(*i);
+                     UrlIdSessions.erase(i);
+                     break;
+                  }
+            }
+      }
+
+      void daemonHandler::handleUrlDownloads()
+      {
+         std::vector<UrlIdSessionMapping>::iterator i;
+         for (i = UrlIdSessions.begin();
+              i != UrlIdSessions.end();
+              i++)
+            {
+               if (i->age > max_url_age)
+                  {
+                     continue;
+                  }
+
                i->age++;
 
                btg::daemon::http::httpInterface::Status s = httpmgr.getStatus(i->hid);
                if (s == btg::daemon::http::httpInterface::FINISH)
                   {
                      // Dl finished, now create the context.
+                     addUrl(*i);
                   }
 
                if (s == btg::daemon::http::httpInterface::ERROR)
                   {
                      // Expire this download.
-                     i->age = max_age;
+                     i->age += url_expired;
                   }
             }
 
@@ -1380,15 +1354,114 @@ namespace btg
          i = UrlIdSessions.begin();
          while (i != UrlIdSessions.end())
             {
-               if (i->age > max_age)
+               if (i->age > max_url_age)
                   {
-                     UrlIdSessions.erase(i++);
+                     httpmgr.Terminate(i->hid);
+                     dd_->filetrack->remove(i->userdir,
+                                            i->filename);
+                     i = UrlIdSessions.erase(i);
                   }
                else
                   {
                      i++;
                   }
             }
+      }
+
+      void daemonHandler::addUrl(UrlIdSessionMapping & _mapping)
+      {
+         // Find the required event handler.
+         eventHandler* eh = 0;
+         if (!sessionlist_.get(_mapping.session, eh))
+            {
+               // No session, expire.
+               _mapping.age += url_expired;
+               return;
+            }
+
+         btg::core::sBuffer sbuf;
+         if (!sbuf.read(_mapping.userdir + GPD->sPATH_SEPARATOR() + _mapping.filename))
+            {
+               // No data, expire.
+               _mapping.age += url_expired;
+               return;
+            }
+
+         // Remove the file from filetrack, as it will be added when
+         // creating the torrent.
+         dd_->filetrack->remove(_mapping.userdir,
+                                _mapping.filename);
+
+         btg::core::contextCreateWithDataCommand* ccwdc = 
+            new btg::core::contextCreateWithDataCommand(_mapping.filename, sbuf, _mapping.start);
+
+         // Do not use a connection id.
+         if (!eh->createWithData(ccwdc))
+            {
+               BTG_MERROR(logWrapper(), 
+                          "Adding '" << _mapping.filename << "' from URL failed");
+               _mapping.age += url_expired;
+            }
+         else
+            {
+               MVERBOSE_LOG(logWrapper(), 
+                            moduleName, 
+                            verboseFlag_, "Added '" << _mapping.filename << "' from URL");
+            }
+         
+         delete ccwdc;
+         ccwdc = 0;
+      }
+
+      void daemonHandler::handle_CN_CCREATEFROMURL(eventHandler* _eventhandler, 
+                                                   btg::core::Command* _command)
+      {
+         contextCreateFromUrlCommand* ccful = dynamic_cast<contextCreateFromUrlCommand*>(_command);
+
+         std::string userdir  = _eventhandler->getTempDir();
+         std::string filename = ccful->getFilename();
+
+         if (!dd_->filetrack->add(userdir,
+                                 filename))
+            {
+               // File already exists.
+               sendError(_command->getType(), "Torrent file already exists.");
+               return;
+            }
+
+         bool unique = true;
+         std::vector<UrlIdSessionMapping>::iterator i;
+         for (i = UrlIdSessions.begin();
+              i != UrlIdSessions.end();
+              i++)
+            {
+               if ((i->filename == filename) && (i->userdir == userdir))
+                  {
+                     unique = false;
+                     break;
+                  }
+            }
+
+         if (!unique)
+            {
+               dd_->filetrack->remove(userdir,
+                                      filename);
+
+               sendError(_command->getType(), "Torrent file already exists.");
+               return;
+            }
+
+         t_uint hid = httpmgr.Fetch(ccful->getUrl(), 
+                                    userdir + GPD->sPATH_SEPARATOR() + filename);
+         UrlIdSessionMapping usmap(hid, _eventhandler->getSession(), userdir, filename, ccful->getStart());
+         UrlIdSessions.push_back(usmap);
+         
+         BTG_MNOTICE(logWrapper(), "Added mapping: HID " << usmap.hid << " -> " << usmap.session << " -> " << usmap.filename);
+         
+         sendCommand(dd_->externalization,
+                     dd_->transport,
+                     connectionID_,
+                     new contextCreateFromUrlResponseCommand(hid));
       }
 
       daemonHandler::~daemonHandler()

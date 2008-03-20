@@ -2300,6 +2300,11 @@ namespace btg
 #endif // BTG_LT_0_13      
       }
 
+      std::string Context::getTempDir() const
+      {
+         return tempDir_;
+      }
+
       Context::~Context()
       {
          portMgr->giveBack(listen_port_range_);
