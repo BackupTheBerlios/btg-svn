@@ -24,6 +24,7 @@
 #define BTG_STDIN_H
 
 #include <string>
+#include <cstring>
 
 namespace btg
 {

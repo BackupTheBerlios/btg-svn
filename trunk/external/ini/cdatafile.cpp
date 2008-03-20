@@ -37,6 +37,9 @@
 
 #include <vector>
 #include <string>
+#include <cstring>
+#include <cstdlib>
+#include <climits>
 #include <ctype.h>
 #include <stdio.h>
 #include <stdarg.h>

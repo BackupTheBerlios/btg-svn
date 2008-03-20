@@ -23,6 +23,7 @@
 #include "hash.h"
 
 #include <sstream>
+#include <cstring>
 #include <iomanip>
 
 #include <bcore/helpermacro.h>
