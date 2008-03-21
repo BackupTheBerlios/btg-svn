@@ -47,12 +47,17 @@ namespace btg
           */
          /** @{ */
 
+         /// Interface used to abort URL download.
          class httpAbortIf
          {
          public:
+            /// Abort a download.
+            /// @return True - abort download. False - continue download.
             virtual bool AbortTransfer() const = 0;
          };
 
+         /// Thread used to download an URL. This thread can be
+         /// aborted.
          class httpProcess: public btg::core::Logable, public httpAbortIf
          {
          public:
@@ -61,10 +66,13 @@ namespace btg
                         std::string _URL, 
                         std::string _filename);
 
+            /// Get the status of the download.
             httpInterface::Status Status();
 
+            /// Get the result of the download.
             bool Result(btg::core::sBuffer & _buffer);
 
+            /// Terminate the download.
             void Terminate();
 
             /// Destructor.
@@ -73,15 +81,24 @@ namespace btg
             /// Function used for the thread.
             void work();
 
+            /// Indicate if the transfer should be aborted.
             bool AbortTransfer() const;
 
+            /// The URL to download.
             std::string           URL;
+
+            /// The filename to write the result to.
             std::string           filename;
+
+            /// The status of the download.
             httpInterface::Status status;
 
+            /// The CURL interface used.
             curlInterface         ci;
 
+            /// Indicates if the download should terminate.
             bool                  terminate;
+
             /// Mutex used to control access to the members
             /// of this class from the outside.
             boost::mutex          interfaceMutex;

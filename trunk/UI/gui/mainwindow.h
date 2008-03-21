@@ -149,6 +149,7 @@ namespace btg
                /// daemon that it should be created.
                void handle_btn_load();
 
+               /// Download an URL.
                void handle_btn_load_url();
 
                /// Handle detach.
@@ -246,7 +247,9 @@ namespace btg
                /// sessionSelectionDialog used by handle_btn_move
                sessionSelectionDialog     *m_sessionSelectionDialog;
 
+               /// Last downloaded URL.
                std::string last_url;
+               /// Last downloaded URL - the filename used.
                std::string last_url_file;
             private:
                /// Copy constructor.

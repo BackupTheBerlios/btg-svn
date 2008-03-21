@@ -124,6 +124,7 @@ namespace btg
             virtual void reqCreateFromUrl(std::string const& _filename,
                                           std::string const& _url);
 
+            /// Get the status of a download.
             virtual void reqUrlStatus(t_uint _id);
 
             /// Get status from the daemon.
@@ -287,12 +288,17 @@ namespace btg
             /// Indicates that was transport init error from the server side. (auth failure)
             virtual bool transinitwaitError() const { return m_bTransinitwaitError; };
             
+            /// Get the last received URL id.
             virtual t_uint UrlId() const;
+
+            /// Set URL id.
             virtual void setUrlId(t_uint const _id);
 
+            /// Set URL status response.
             virtual void setUrlStatusResponse(t_uint const _id, 
                                               btg::core::urlStatus const _status);
 
+            /// Get last received URL status.
             virtual void UrlStatusResponse(t_uint & _id, 
                                            btg::core::urlStatus & _status) const;
 
@@ -417,9 +423,12 @@ namespace btg
             /// Trainport init error from the server side. Auth failure.
             bool                              m_bTransinitwaitError;
 
+            /// Last received URL id.
             t_uint                            last_url_id;
 
+            /// Last received URL status id.
             t_uint                            last_surl_id; 
+            /// Last received URL status.
             btg::core::urlStatus              last_surl_status;
          private:
             /// Copy constructor.

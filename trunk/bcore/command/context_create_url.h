@@ -115,6 +115,7 @@ namespace btg
          t_uint id_;
       };
 
+      /// Get the status of a URL download.
       class contextUrlStatusCommand: public Command
       {
       public:
@@ -122,6 +123,7 @@ namespace btg
          contextUrlStatusCommand();
 
          /// Constructor.
+         /// @param [in] _id The id of the URL the daemon is downloading.
          contextUrlStatusCommand(t_uint const _id);
 
          bool serialize(btg::core::externalization::Externalization* _e) const;
@@ -140,6 +142,7 @@ namespace btg
          t_uint id_;
       };
 
+      /// Status of a URL download.
       class contextUrlStatusResponseCommand: public Command
       {
       public:
@@ -147,7 +150,8 @@ namespace btg
          contextUrlStatusResponseCommand();
 
          /// Constructor.
-         /// @param [in] _id The ID of the ..
+         /// @param [in] _id     The ID of the URL the daemon is downloading.
+         /// @param [in] _status The status.
          contextUrlStatusResponseCommand(t_uint _id, 
                                          btg::core::urlStatus const _status);
 
@@ -160,6 +164,7 @@ namespace btg
             return id_;
          }
          
+         /// Get the contained status.
          btg::core::urlStatus status() const
          {
             return status_;

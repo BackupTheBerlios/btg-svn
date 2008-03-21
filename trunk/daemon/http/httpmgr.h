@@ -56,14 +56,18 @@ namespace btg
             /// Constructor.
             httpManager(btg::core::LogWrapperType _logwrapper);
 
+            /// Download an URL.
             t_uint Fetch(std::string const& _url,
                          std::string const& _filename);
 
+            /// Get status of a download.
             httpInterface::Status getStatus(const t_uint _id);
 
+            /// Get the downloaded file.
             bool Result(const t_uint _id, 
                         btg::core::sBuffer & _buffer);
 
+            /// Terminate a download.
             void Terminate(const t_uint _id);
 
             /// Destructor.
@@ -72,11 +76,16 @@ namespace btg
             /// Terminate all downloads.
             void TerminateAll();
 
+            /// Get the current ID - Fetch returns this ID each time
+            /// its called.
             t_uint getCurrentId();
 
+            /// The current ID.
             t_uint         current_id;
+            /// The max ID - used to decide when to wrap.
             const t_uint   max_id;
 
+            /// Threads used to download.
             std::map<t_uint, boost::shared_ptr<httpProcess> > processes;
          };
 

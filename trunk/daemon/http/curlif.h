@@ -43,13 +43,17 @@ namespace btg
           */
          /** @{ */
 
+         /// Exception thown by the curl interface constructor.
          class curlException
          {
          public:
+            /// Constructor.
             curlException(std::string const& _message);
 
+            /// Get the contained message.
             std::string message() const;
          private:
+            /// The contained message.
             const std::string message_;
          };
 
@@ -63,18 +67,27 @@ namespace btg
             curlInterface(btg::core::LogWrapperType _logwrapper,
                           httpAbortIf const& _abortIf);
 
+            /// Download _url into _filename.
+            /// @return true - downloaded, false - not downloaded.
             bool Get(std::string const& _url, 
                      std::string const& _filename);
 
+            /// Get the contents of the downloaded file.
             bool Result(btg::core::sBuffer & _buffer);
             
             /// Destructor.
             ~curlInterface();
          protected:
+            /// Reference to the interface used for quering if the
+            /// download should terminate.
             httpAbortIf const& abortIf;
+            /// Pointer to curl structure.
             CURLM*      curlm;
+            /// Pointer to curl structure.
             CURL*       curl;
+            /// Download status.
             bool        status;
+            /// Filename used.
             std::string filename;
          private:
             /// Copy constructor.

@@ -41,6 +41,7 @@ namespace btg
                 */
                /** @{ */
 
+               /// Generic dialog used for showing progress.
                class progressDialog : public Gtk::Dialog
                   {
 
@@ -48,6 +49,9 @@ namespace btg
                      /// Constructor.
                      progressDialog(std::string _title);
 
+                     /// Update progress.
+                     /// @param _percent Percent.
+                     /// @param _text    Text to display.
                      void updateProgress(t_uint const _percent, 
                                          std::string const& _text);
 

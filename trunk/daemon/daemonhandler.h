@@ -58,15 +58,18 @@ namespace btg
 {
    namespace daemon
    {
+      /// Creation status when adding torrent from URL.
       enum UrlCreateStatus
       {
-         UCS_UNDEF         = 0,
-         UCS_CREATED       = 1,
-         UCS_CREATE_FAILED = 2
+         UCS_UNDEF         = 0, //!< Not defined.
+         UCS_CREATED       = 1, //!< Created sucessfuly.
+         UCS_CREATE_FAILED = 2  //!< Not created.
       };
 
+      /// Mapping between session and URL download.
       struct UrlIdSessionMapping
       {
+      /// Contructor.
       UrlIdSessionMapping(t_uint _hid, 
                           long _session, 
                           std::string const& _userdir,
@@ -83,13 +86,21 @@ namespace btg
          {
          }
 
+         /// Download id.
          t_uint          hid;
+         /// Indicates if this download is valid.
          bool            valid;
+         /// Session id.
          long            session;
+         /// The destination directory.
          std::string     userdir;
+         /// The destianation file name.
          std::string     filename;
+         /// Should the context be started after adding.
          bool            start;
+         /// Status.
          UrlCreateStatus status;
+         /// Age in (x * url timer duration).
          t_uint          age;
       };
 
@@ -187,9 +198,13 @@ namespace btg
             void handleMoveContext(eventHandler* _eventhandler, 
                                    btg::core::Command* _command);
 
+            /// Handle URL messages - download and status.
             void handleUrlMessages(eventHandler* _eventhandler, btg::core::Command* _command);
 
+            /// Handle URL status mesasge.
             void handle_CN_CURLSTATUS(eventHandler* _eventhandler, btg::core::Command* _command);
+
+            /// Handle URL create message.
             void handle_CN_CCREATEFROMURL(eventHandler* _eventhandler, btg::core::Command* _command);
 
             /// Handle any other request.
@@ -268,7 +283,9 @@ namespace btg
             /// Indicates that the session timer has expired.
             bool                            session_timer_trigger_;
 
+            /// Timer used to check for completed URL downloads.
             btg::core::os::Timer            url_timer_;
+            /// Indicates that the URL timer timed out.
             bool                            url_timer_trigger_;
 
             /// Timer used for setting global limits.
@@ -318,14 +335,22 @@ namespace btg
             /// Command factory used by this instance.
             btg::core::commandFactory       cf_;
 
+            /// Http manager used for all downloads.
             btg::daemon::http::httpManager  httpmgr;
 
+            /// Mapping between URL id session.
             std::vector<UrlIdSessionMapping> UrlIdSessions;
 
+            /// Get a mapping when having a URL id.
             std::vector<UrlIdSessionMapping>::iterator getMapping(t_uint _hid);
+
+            /// Handle downloads - called by timer.
             void handleUrlDownloads();
+
+            /// Handle a single download.
             void handleUrlDownload(t_uint _hid);
 
+            /// Create torrent from the file which was downloaded.
             void addUrl(UrlIdSessionMapping & _mapping);
 
          private:

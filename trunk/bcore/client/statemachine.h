@@ -391,6 +391,7 @@ namespace btg
             void cb_CN_SINFO(btg::core::Command* _command);
             /// Call a callback. URL downloading.
             void cb_CN_CCREATEFROMURL(btg::core::Command* _command);
+            /// Call a callback. URL status.
             void cb_CN_CURLSTATUS(btg::core::Command* _command);
          private:
             /// Copy constructor.

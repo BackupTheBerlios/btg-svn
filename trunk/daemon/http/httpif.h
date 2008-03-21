@@ -72,6 +72,7 @@ namespace btg
             /// Destructor.
             virtual ~httpInterface();
          protected:
+            /// Status of the URL download.
             httpInterface::Status status;
          };
 

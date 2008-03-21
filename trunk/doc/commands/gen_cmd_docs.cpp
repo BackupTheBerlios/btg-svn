@@ -30,6 +30,7 @@
 #include <bcore/command/context_clean.h>
 #include <bcore/command/context_clean_rsp.h>
 #include <bcore/command/context_create.h>
+#include <bcore/command/context_create_url.h>
 #include <bcore/command/context_last.h>
 #include <bcore/command/context_fi.h>
 #include <bcore/command/context_fi_rsp.h>
@@ -53,6 +54,7 @@
 #include <bcore/command/session_list.h>
 #include <bcore/command/session_list_rsp.h>
 #include <bcore/command/session_quit.h>
+#include <bcore/command/session_rw.h>
 #include <bcore/command/setup.h>
 #include <bcore/command/uptime.h>
 
@@ -251,10 +253,34 @@ int main(int argc, char* argv[])
    printCommand(cf, e, new listSessionResponseCommand(sessions, sessionNames));
 
    // Command::CN_MOREAD
-   // Above is not implemented.
+   printCommand(cf, e, new sessionROCommand());
 
    // Command::CN_MOWRITE
-   // Above is not implemented.
+   printCommand(cf, e, new sessionRWCommand());
+
+   // Command::CN_CCREATEFROMURL
+   t_uint urlId = 1;
+   printCommand(cf, e, 
+                new contextCreateFromUrlCommand("filename",
+                                                "http://url",
+                                                true)
+                );
+
+   // Command::CN_CCREATEFROMURLRSP
+   printCommand(cf, e, 
+                new contextCreateFromUrlResponseCommand(urlId)
+                );
+
+   // Command::CN_CURLSTATUS
+   printCommand(cf, e, 
+                new contextUrlStatusCommand(urlId)
+                );
+
+   // Command::CN_CURLSTATUSRSP
+   btg::core::urlStatus urlstatus = URLS_WORKING;
+   printCommand(cf, e, 
+             new contextUrlStatusResponseCommand(urlId, urlstatus)
+                );
 
    delete e;
    e = 0;

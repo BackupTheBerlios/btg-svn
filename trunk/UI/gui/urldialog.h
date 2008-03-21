@@ -44,32 +44,50 @@ namespace btg
           */
          /** @{ */
 
+         /// Dialog used to input URL and file name.
          class urlDialog : public Gtk::Dialog
             {  
             public:
+               /// Constructor.
                urlDialog(std::string const& _url = "",
                          std::string const& _filename = "");
 
+               /// Get the input.
                bool GetResult(std::string & _url,
                               std::string & _filename);
 
+               /// Destructor.
                virtual ~urlDialog();
 
             protected:
+               /// Called when the file input was changed.
                void file_changed();
+               /// Called when the url input was changed.
                void url_changed();
+
+               /// Called to check the contents of both inputs.
                void check_contents();
 
+               /// Label.
                class Gtk::Label*  label1;
+               /// File input.
                class Gtk::Entry*  file_entry;
+               /// Url input.
                class Gtk::Entry*  url_entry;
+               /// Label.
                class Gtk::Label*  fn_label;
+               /// Label.
                class Gtk::Label*  url_label;
+               /// Table used for layout.
                class Gtk::Table*  table1;
+               /// Box used for layout.
                class Gtk::VBox*   vbox1;
+               /// Button.
                class Gtk::Button* cancelbutton;
+               /// Button.
                class Gtk::Button* applybutton;
 
+               /// Indicates if both inputs contain text.
                bool url_filename_filled;
             };
 

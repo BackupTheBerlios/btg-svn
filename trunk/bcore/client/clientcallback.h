@@ -88,9 +88,11 @@ namespace btg
                      /// The daemon could not start downloading a torrent.
                      virtual void onCreateFromUrlError(std::string const& _errorDescription) = 0;
 
+                     /// Received status for a download.
                      virtual void onUrlStatus(t_uint const _id, 
                                               btg::core::urlStatus const _status) = 0;
 
+                     /// Could not receive status for a download.
                      virtual void onUrlStatusError(std::string const& _errorDescription) = 0;
 
                      /// The client got the Id of the last context it created.
