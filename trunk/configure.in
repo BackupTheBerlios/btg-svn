@@ -135,7 +135,7 @@ fi
 
 AM_LIBGNUTLS_VERSION
 
-LIBCURL_CHECK_CONFIG([], [7.16.0], [libcurlfound=true], [libcurlfound=false])
+LIBCURL_CHECK_CONFIG([], [7.15.5], [libcurlfound=true], [libcurlfound=false])
 if test "$libcurlfound" == "false"; then
         AC_MSG_ERROR([unable to find libcurl, currently this is required.])
 fi
