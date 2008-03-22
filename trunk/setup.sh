@@ -104,7 +104,7 @@ case "$1" in
     echo "Using $CONFIGURE";
     $CONFIGURE --with-rblibtorrent=$ROOT/$1
     ;;
-  0.13rc2)
+  0.13rc3)
     export LIBTORRENT_CFLAGS="-I$ROOT/$1/include -I$ROOT/$1/include/libtorrent" && \
     export LIBTORRENT_LIBS="-L$ROOT/$1/lib -ltorrent" && \
     echo "Using $CONFIGURE";
