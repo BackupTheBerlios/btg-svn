@@ -96,6 +96,8 @@ namespace btg
                      /// Show a dialog used to choose torrent files.
                      void handleLoad();
 
+                     void handleLoadUrl();
+
                      /// Load a number of files, by using a list of filenames.
                      /// 
                      /// Used for handling loading torrents using

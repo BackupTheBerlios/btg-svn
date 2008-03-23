@@ -46,6 +46,8 @@ class testBcoreClient : public CppUnit::TestFixture
    CPPUNIT_TEST( testConfigurationLastOpenFiles );
    CPPUNIT_TEST( testCommandLineHandler );
 
+   CPPUNIT_TEST( testUrlFunctions );
+
    CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -59,6 +61,7 @@ class testBcoreClient : public CppUnit::TestFixture
    void testConfiguration();
    void testConfigurationLastOpenFiles();
    void testCommandLineHandler();
+   void testUrlFunctions();
 
  private:
    int                       contextId;

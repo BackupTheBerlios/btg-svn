@@ -1,5 +1,5 @@
 /*
- * btg Copyright (C) 2005 Michael Wojciechowski.
+ * btg Copyright (C) 2008 Michael Wojciechowski.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,20 +20,34 @@
  * $Id$
  */
 
-// Use 1 to enable and 0 to disable.
+#ifndef URLHELPER_H
+#define URLHELPER_H
 
-// Enable printing of status of each test.
-#define BTG_UTEST_VERBOSE 1
-// Run bcore tests.
-#define BTG_UTEST_BCORE   0
-// Run bcore/client tests.
-#define BTG_UTEST_CLIENT  1
-// Run TCP/IP transport tests.
-#define BTG_UTEST_TCPIP   0
-// Run HTTP transport tests.
-#define BTG_UTEST_HTTP    0
-// Run daemon tests.
-#define BTG_UTEST_DAEMON  0
-// Run os specific tests.
-#define BTG_UTEST_OS      0
+#include <string>
+
+namespace btg
+{
+   namespace core
+   {
+      namespace client
+      {
+         /**
+          * \addtogroup gencli
+          */
+         /** @{ */
+
+         /// Return true if the URL is valid.
+         bool isUrlValid(std::string const& _url);
+
+         /// Return true and update _filename, if the url ends with a
+         /// file name.
+         bool getFilenameFromUrl(std::string const& _url, std::string & _filename);
+
+         /** @} */
+
+      } // client
+   } // core
+} // btg
+
+#endif // URLHELPER_H
 

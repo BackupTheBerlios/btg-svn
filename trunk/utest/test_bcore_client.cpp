@@ -32,6 +32,7 @@
 #include <bcore/client/lastfiles.h>
 #include <bcore/client/clientdynconfig.h>
 #include <bcore/client/carg.h>
+#include <bcore/client/urlhelper.h>
 
 #if BTG_UTEST_CLIENT
 CPPUNIT_TEST_SUITE_REGISTRATION( testBcoreClient );
@@ -239,4 +240,31 @@ void testBcoreClient::testCommandLineHandler()
 
    delete clah;
    clah = 0;
+}
+
+void testBcoreClient::testUrlFunctions()
+{
+   std::string invalid_url("hostname.com/blah.torrent");
+   CPPUNIT_ASSERT(!btg::core::client::isUrlValid(invalid_url));
+
+   std::string valid_url("http://hostname.com/blah.torrent");
+   CPPUNIT_ASSERT(btg::core::client::isUrlValid(valid_url));
+
+   std::string valid_url2("https://hostname.com/blah.torrent");
+   CPPUNIT_ASSERT(btg::core::client::isUrlValid(valid_url2));
+
+   std::string valid_file("http://hostname.com/torrents/blah.torrent");
+   std::string valid_file_output("blah.torrent");
+
+   std::string output;
+   CPPUNIT_ASSERT(btg::core::client::getFilenameFromUrl(valid_file, output));
+   CPPUNIT_ASSERT(output == valid_file_output);
+
+   valid_file = "http://hostname.com/blah.torrent";
+   output = "";
+   CPPUNIT_ASSERT(btg::core::client::getFilenameFromUrl(valid_file, output));
+   CPPUNIT_ASSERT(output == valid_file_output);
+
+   std::string invalid_file("http://hostname.com/?torrentind=1");
+   CPPUNIT_ASSERT(!btg::core::client::getFilenameFromUrl(invalid_file, output));
 }

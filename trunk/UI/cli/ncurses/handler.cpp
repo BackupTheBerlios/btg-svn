@@ -317,23 +317,25 @@ namespace btg
 
          void Handler::onCreateFromUrl(t_uint const _id)
          {
-
+            commandStatus = true;
+            setUrlId(_id);
          }
 
          void Handler::onCreateFromUrlError(std::string const& _message)
          {
-
+            commandStatus = false;
          }
 
          void Handler::onUrlStatus(t_uint const _id, 
                                    btg::core::urlStatus const _status)
          {
-
+            commandStatus = true;
+            setUrlStatusResponse(_id, _status);
          }
 
          void Handler::onUrlStatusError(std::string const& _message)
          {
-
+            commandStatus = false;
          }
 
          Handler::~Handler()

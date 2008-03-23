@@ -34,8 +34,10 @@
 #include "basemenu.h"
 #include "limitwindow.h"
 #include "snwindow.h"
+#include "textinput.h"
 
 #include <bcore/client/handlerthr.h>
+#include <bcore/client/urlhelper.h>
 #include "handler.h"
 
 #include <bcore/command/limit_base.h>
@@ -170,6 +172,12 @@ namespace btg
                case keyMapping::K_LOAD:
                   {
                      handleLoad();
+                     refresh();
+                     break;
+                  }
+               case keyMapping::K_LOAD_URL:
+                  {
+                     handleLoadUrl();
                      refresh();
                      break;
                   }
@@ -508,6 +516,16 @@ namespace btg
                }
 
             if (helpWindow::generateHelpForKey(keymap_,
+                                               keyMapping::K_LOAD_URL,
+                                               "",
+                                               keyDescr,
+                                               false))
+               {
+                  helpText.push_back(keyDescr);
+                  helpText.push_back("  to load a torrent from URL");
+               }
+
+            if (helpWindow::generateHelpForKey(keymap_,
                                                keyMapping::K_DOWN,
                                                "",
                                                keyDescr,
@@ -633,6 +651,95 @@ namespace btg
             helpWindow hw(keymap_, helpText);
 
             return hw.run();
+         }
+
+         void UI::handleLoadUrl()
+         {
+            std::string helpText;
+            genHelpText(helpText);
+
+            statuswindow_.setStatus("Loading URL. " + helpText);
+
+            windowSize dimensions;
+            mainwindow_.getSize(dimensions);
+
+            textInput ti_url(keymap_, dimensions, "URL", "");
+
+            if (ti_url.run() == dialog::R_RESIZE)
+               {
+                  // the window was resized.
+                  handleResizeMainWindow();
+
+                  statuswindow_.setStatus("Loading URL aborted.");
+
+                  return;
+               }
+
+            std::string url;
+
+            if (!ti_url.getText(url))
+               {
+                  statuswindow_.setStatus("Loading URL aborted.");
+                  return;
+               }
+
+            if (!btg::core::client::isUrlValid(url))
+               {
+                  statuswindow_.setStatus("Invalid URL entered.");
+                  return;
+               }
+
+            bool gotFilename = true;
+            std::string url_filename;
+            if (!btg::core::client::getFilenameFromUrl(url, url_filename))
+               {
+                  gotFilename = false;
+               }
+            
+
+            if (!gotFilename)
+               {
+                  textInput ti_fn(keymap_, dimensions, "Filename", "url.torrent");
+
+                  if (ti_fn.run() == dialog::R_RESIZE)
+                     {
+                        // the window was resized.
+                        handleResizeMainWindow();
+                        
+                        statuswindow_.setStatus("Loading URL aborted.");
+                        
+                        return;
+                     }
+
+                  if (!ti_fn.getText(url_filename))
+                     {
+                        statuswindow_.setStatus("Loading URL aborted.");
+                        return;
+                     }
+
+                  if (url_filename.size() == 0)
+                     {
+                        statuswindow_.setStatus("Invalid URL entered.");
+                        return;
+                     }
+               }
+
+            // Got both URL and filename.
+            {
+               GET_HANDLER_INST;
+
+               handler->reqCreateFromUrl(url_filename, url);
+               
+               if (handler->commandSuccess())
+                  {
+                     actionSuccess("Load URL", url_filename);
+                  }
+               else
+                  {
+                     actionFailture("Load URL", url_filename);
+                  }
+            }
+
          }
 
          void UI::handleLoad()

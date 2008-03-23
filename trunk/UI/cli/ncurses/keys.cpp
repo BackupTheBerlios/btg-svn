@@ -73,6 +73,11 @@ namespace btg
                   add(keyMapping::K_LOAD, 'l');
                }
 
+            if (!exists(keyMapping::K_LOAD_URL))
+               {
+                  add(keyMapping::K_LOAD_URL, 'u');
+               }
+
             if (!exists(keyMapping::K_GLIMIT))
                {
                   add(keyMapping::K_GLIMIT, 'g');

@@ -129,6 +129,8 @@ namespace btg
                      /// Key.
                      t_int loadKey;
                      /// Key.
+                     t_int loadUrlKey;
+                     /// Key.
                      t_int menuKey;
                      /// Key.
                      t_int limitKey;

@@ -57,6 +57,7 @@ namespace btg
                K_QUIT,       //!< Quit the application.
                K_QUITSCREEN, //!< Quit an entry display.
                K_LOAD,       //!< Load a torrent.
+               K_LOAD_URL,   //!< Load a torrent from an URL.
                K_MENU,       //!< Show a menu.
                K_GLIMIT,     //!< Show a dialog allowing one to set global limits.
                K_SESNAME,    //!< Name the current session.
