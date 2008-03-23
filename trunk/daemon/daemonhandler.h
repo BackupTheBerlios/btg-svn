@@ -353,6 +353,9 @@ namespace btg
             /// Create torrent from the file which was downloaded.
             void addUrl(UrlIdSessionMapping & _mapping);
 
+            /// Clean up, if the torrent could not be downloaded.
+            void removeUrl(UrlIdSessionMapping & _mapping);
+
          private:
             /// Copy constructor.
             daemonHandler(daemonHandler const& _dh);

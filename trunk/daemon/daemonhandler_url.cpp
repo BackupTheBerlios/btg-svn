@@ -90,6 +90,11 @@ namespace btg
 
                if (s == btg::daemon::http::httpInterface::ERROR)
                   {
+                     // Unable to download torrent, clean up.
+                     removeUrl(*i);
+
+                     dd_->filetrack->remove(i->userdir,
+                                            i->filename);
                      // Expire this download.
                      i->valid = false;
                   }
@@ -111,6 +116,14 @@ namespace btg
                      i++;
                   }
             }
+      }
+
+      void daemonHandler::removeUrl(UrlIdSessionMapping & _mapping)
+      {
+         dd_->filetrack->remove(_mapping.userdir,
+                                _mapping.filename);
+         // Expire this download.
+         _mapping.valid = false;
       }
 
       void daemonHandler::addUrl(UrlIdSessionMapping & _mapping)
@@ -181,8 +194,11 @@ namespace btg
          switch (httpstat)
             {
             case btg::daemon::http::httpInterface::ERROR:
-               urlstat = URLS_ERROR;
-               break;
+               {
+                  removeUrl(*mapping);
+                  urlstat = URLS_ERROR;
+                  break;
+               }
             case btg::daemon::http::httpInterface::INIT:
                urlstat = URLS_WORKING;
                break;
@@ -238,7 +254,9 @@ namespace btg
               i != UrlIdSessions.end();
               i++)
             {
-               if ((i->filename == filename) && (i->userdir == userdir))
+               if ((i->valid) && 
+                   (i->filename == filename) && 
+                   (i->userdir == userdir))
                   {
                      unique = false;
                      break;

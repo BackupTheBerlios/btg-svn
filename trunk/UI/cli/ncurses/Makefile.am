@@ -12,6 +12,7 @@ btgncli_SOURCES = nconfig.cpp \
                   fileselect.cpp \
                   numinput.cpp textinput.cpp \
                   mainwindow.cpp \
+                  progress.cpp \
                   ui.cpp ui_menu.cpp ui_handler.cpp \
                   handler.cpp \
                   btgncli.cpp
@@ -28,6 +29,7 @@ noinst_HEADERS = nconfig.h \
                  fileselect.h \
                  numinput.h textinput.h \
                  mainwindow.h \
+                 progress.h \
                  ui.h \
                  handler.h
 

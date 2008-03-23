@@ -98,6 +98,8 @@ namespace btg
 
                      void handleLoadUrl();
 
+                     bool handleUrlProgress(t_uint _hid);
+
                      /// Load a number of files, by using a list of filenames.
                      /// 
                      /// Used for handling loading torrents using

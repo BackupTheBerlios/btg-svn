@@ -35,6 +35,7 @@
 #include "limitwindow.h"
 #include "snwindow.h"
 #include "textinput.h"
+#include "progress.h"
 
 #include <bcore/client/handlerthr.h>
 #include <bcore/client/urlhelper.h>
@@ -42,11 +43,12 @@
 
 #include <bcore/command/limit_base.h>
 #include <bcore/hrr.h>
+#include <bcore/os/sleep.h>
 #include "sessionselect.h"
 
-#define GET_HANDLER_INST \
-   boost::shared_ptr<boost::mutex> ptr = handlerthread_->mutex(); \
-   boost::mutex::scoped_lock interface_lock(*ptr); \
+#define GET_HANDLER_INST                                                \
+   boost::shared_ptr<boost::mutex> ptr = handlerthread_->mutex();       \
+   boost::mutex::scoped_lock interface_lock(*ptr);                      \
    Handler* handler = dynamic_cast<Handler*>(handlerthread_->handler());
 
 namespace btg
@@ -696,7 +698,6 @@ namespace btg
                   gotFilename = false;
                }
             
-
             if (!gotFilename)
                {
                   textInput ti_fn(keymap_, dimensions, "Filename", "url.torrent");
@@ -732,7 +733,16 @@ namespace btg
                
                if (handler->commandSuccess())
                   {
-                     actionSuccess("Load URL", url_filename);
+                     t_uint hid = handler->UrlId();
+
+                     if (handleUrlProgress(hid))
+                        {
+                           actionSuccess("Load URL", url_filename);
+                        }
+                     else
+                        {
+                           actionFailture("Load URL", url_filename);
+                        }
                   }
                else
                   {
@@ -740,6 +750,75 @@ namespace btg
                   }
             }
 
+            refresh();
+         }
+
+         bool UI::handleUrlProgress(t_uint _hid)
+         {
+            bool res = false;
+
+            windowSize dimensions;
+            mainwindow_.getSize(dimensions);
+
+            progressWindow pwin(dimensions, keymap_);
+
+            bool cont = true;
+
+            Handler* handler = dynamic_cast<Handler*>(handlerthread_->handler());
+
+            while (cont)
+               {
+                  handler->reqUrlStatus(_hid);
+                  if (!handler->commandSuccess())
+                     {
+                        return res;
+                     }
+                  t_uint id = 0;
+                  btg::core::urlStatus status;
+
+                  handler->UrlStatusResponse(id, status);
+                  
+                  switch (status)
+                     {
+                     case btg::core::URLS_UNDEF:
+                        {
+                           break;
+                        }
+                     case btg::core::URLS_WORKING:
+                        {
+                           pwin.updateProgress(50, "Working.");
+                           break;
+                        }
+                     case btg::core::URLS_FINISHED:
+                        {
+                           pwin.updateProgress(80, "Loaded URL.");
+                           break;
+                        }
+                     case btg::core::URLS_ERROR:
+                        {
+                           pwin.updateProgress(100, "Error loading URL.");
+                           cont = false;
+                           break;
+                        }
+                     case btg::core::URLS_CREATE:
+                        {
+                           pwin.updateProgress(100, "Torrent created.");
+                           res  = true;
+                           cont = false;
+                           break;
+                        }
+                     case btg::core::URLS_CREATE_ERR:
+                        {
+                           pwin.updateProgress(100, "Unable to create torrent.");
+                           res  = false;
+                           cont = false;
+                           break;
+                        }
+                     }
+                  btg::core::os::Sleep::sleepMiliSeconds(500);
+               }
+
+            return res;
          }
 
          void UI::handleLoad()
@@ -940,10 +1019,10 @@ namespace btg
                   std::vector<menuEntry> contents;
 
                   enum
-                     {
-                        QUIT_YES = 1,
-                        QUIT_NO  = 2
-                     };
+                  {
+                     QUIT_YES = 1,
+                     QUIT_NO  = 2
+                  };
 
                   contents.push_back(menuEntry(QUIT_NO,  "No",  "Quit"));
                   contents.push_back(menuEntry(QUIT_YES, "Yes", "Do not quit"));
