@@ -58,6 +58,7 @@ namespace btg
                            cmd_uptime,        //!< Request daemon uptime.
                            cmd_list,          //!< List.
                            cmd_create,        //!< Create.
+                           cmd_url,           //!< Create from URL.
                            cmd_start,         //!< Start.
                            cmd_stop,          //!< Stop.
                            cmd_abort,         //!< Abort.
@@ -221,6 +222,10 @@ namespace btg
                      /// Get an error message.
                      std::string getError();
 
+                     /// Wait for URL loading to complete.
+                     /// @return true - success, URL loaded. false - URL not loaded.
+                     bool handleUrlProgress(t_uint _hid);
+
                      /// Destructor.
                      virtual ~cliHandler();
                   private:
@@ -286,6 +291,8 @@ namespace btg
 
                      /// Global limit handling.
                      void handleGlobalLimitStatus(cliResponse & _result);
+
+                     cliHandler::cliResponse handleLoadUrl(std::string const& _url);
 
                      void onTransportInit();
                      void onTransinitwaitError(std::string const& _message);
@@ -393,9 +400,6 @@ namespace btg
                      CLICommand::ID findCommand(std::string const& _input) const;
 
                   private:
-                     /// Command history.
-                     t_strList      history;
-
                      /// Set if there is output that should be written to the user.
                      bool           isOutputAvailable;
 

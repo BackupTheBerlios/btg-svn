@@ -88,6 +88,12 @@ namespace btg
                      /// Returns a list of filenames or an empty list.
                      t_strList getInputFilenames() const;
 
+                     /// Returns true if urls are present.
+                     bool urlsPresent() const;
+
+                     /// Returns a list of filenames or an empty list.
+                     t_strList getUrls() const;
+
                      /// Indicates if torrents (uploaded to the
                      /// daemon) should be started after creation.
                      bool automaticStart() const;
@@ -158,6 +164,12 @@ namespace btg
 
                      /// True, if any filenames given as arguments.
                      bool                         input_present;
+
+                     /// List of URLs to open.
+                     t_strList                    input_urls;
+
+                     /// True, if any filenames given as arguments.
+                     bool                         urls_present;
 
                      /// Indicates if opened torrents should be
                      /// started automatically.

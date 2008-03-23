@@ -58,6 +58,7 @@ extern "C"
 #include "cli.h"
 
 #include <bcore/client/helper.h>
+#include <bcore/client/urlhelper.h>
 #include <bcore/logger/file_log.h>
 
 #include <bcore/logable.h>
@@ -68,7 +69,19 @@ using namespace btg::core::logger;
 using namespace btg::core::client;
 using namespace btg::UI::cli;
 
-void handleInput(std::string const& _line, cliHandler* _clihandler, ncursesScreen* _nscr, bool const _neverAskFlag);
+void handleInput(std::string const& _line, 
+                 cliHandler* _clihandler, 
+                 ncursesScreen* _nscr, 
+                 bool const _neverAskFlag);
+
+void OpenUrls(ncursesScreen* _nscr, 
+              cliHandler* _clihandler, 
+              t_strList const& _filelist);
+
+void OpenFiles(ncursesScreen* _nscr, 
+               cliHandler* _clihandler, 
+               lastFiles* _lastfiles,
+               t_strList const& _filelist);
 
 // Main file for the client.
 int main(int argc, char* argv[])
@@ -520,23 +533,14 @@ int main(int argc, char* argv[])
    if (cla->inputFilenamesPresent())
       {
          t_strList filelist = cla->getInputFilenames();
-         t_strListCI iter;
-         for (iter = filelist.begin(); iter != filelist.end(); iter++)
-            {
-               nscr->setOutput("Creating '" + *iter + "'");
-               clihandler->reqCreate(*iter);
-               // Check if the remote command produced a response.
-               if (clihandler->outputAvailable())
-                  {
-                     nscr->setOutput("Response: " + clihandler->getOutput());
-                     // Update the list of last opened files.
-                     lastfiles->addLastFile(*iter);
-                  }
-               else if (clihandler->errorAvailable())
-                  {
-                     nscr->setOutput("Response: " + clihandler->getError());
-                  }
-            }
+         OpenFiles(nscr, clihandler, lastfiles, filelist);
+      }
+
+   // Open URLs.
+   if (cla->urlsPresent())
+      {
+         t_strList filelist = cla->getUrls();
+         OpenUrls(nscr, clihandler, filelist);
       }
 
    // One or more commands to execute are present.
@@ -689,5 +693,74 @@ void handleInput(std::string const& _line, cliHandler* _clihandler, ncursesScree
             _nscr->setOutput("Undefined message. Something is really wrong.");
             break;
          }
+      }
+}
+
+void OpenFiles(ncursesScreen* _nscr, 
+               cliHandler* _clihandler, 
+               lastFiles* _lastfiles,
+               t_strList const& _filelist)
+{
+   for (t_strListCI iter = _filelist.begin(); 
+        iter != _filelist.end(); 
+        iter++)
+      {
+         _nscr->setOutput("Creating '" + *iter + "'");
+         _clihandler->reqCreate(*iter);
+         // Check if the remote command produced a response.
+         if (_clihandler->outputAvailable())
+            {
+               _nscr->setOutput("Response: " + _clihandler->getOutput());
+               // Update the list of last opened files.
+               _lastfiles->addLastFile(*iter);
+            }
+         else if (_clihandler->errorAvailable())
+            {
+               _nscr->setOutput("Response: " + _clihandler->getError());
+            }
+      }
+}
+
+void OpenUrls(ncursesScreen* _nscr, 
+              cliHandler* _clihandler, 
+              t_strList const& _filelist)
+{
+   for (t_strListCI iter = _filelist.begin(); 
+        iter != _filelist.end(); 
+        iter++)
+      {
+         if (!btg::core::client::isUrlValid(*iter))
+            {
+               _nscr->setOutput("Response: Invalid URL.");
+               continue;
+            }
+         
+         // Get a file name.
+         std::string filename;
+
+         if (!btg::core::client::getFilenameFromUrl(*iter, filename))
+            {
+               _nscr->setOutput("Response: Unable to find a file name in URL.");
+               continue;
+            }
+
+         _nscr->setOutput("Creating '" + filename + "' from URL '" + *iter + "'.");
+
+         _clihandler->reqCreateFromUrl(filename, *iter);
+         if (_clihandler->commandSuccess())
+            {
+               if (_clihandler->handleUrlProgress(_clihandler->UrlId()))
+                  {
+                     _nscr->setOutput("Response: created " + filename + ".");
+                  }
+               else
+                  {
+                     _nscr->setOutput("Response: unable to create " + filename + ".");
+                  }
+            }
+         else
+            {
+               _nscr->setOutput("Response: unable to create " + filename + ".");
+            }
       }
 }

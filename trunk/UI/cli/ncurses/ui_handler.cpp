@@ -753,6 +753,53 @@ namespace btg
             refresh();
          }
 
+         void UI::handleUrl(t_strList const& _filelist)
+         {
+            t_strListCI iter;
+            for (iter = _filelist.begin(); iter != _filelist.end(); iter++)
+               {
+                  std::string url = *iter;
+
+                  if (!btg::core::client::isUrlValid(url))
+                     {
+                        continue;
+                     }
+
+                  std::string url_filename;
+                  if (!btg::core::client::getFilenameFromUrl(url, url_filename))
+                     {
+                        continue;
+                     }
+
+                  // Got both URL and filename.
+                  {
+                     GET_HANDLER_INST;
+
+                     handler->reqCreateFromUrl(url_filename, url);
+               
+                     if (handler->commandSuccess())
+                        {
+                           t_uint hid = handler->UrlId();
+                              
+                           if (handleUrlProgress(hid))
+                              {
+                                 actionSuccess("Load URL", url_filename);
+                              }
+                           else
+                              {
+                                 actionFailture("Load URL", url_filename);
+                              }
+                        }
+                     else
+                        {
+                           actionFailture("Load URL", url_filename);
+                        }
+                  }
+               }
+            // Force updating of contexts.
+            handlerthread_->forceUpdate();
+         }
+
          bool UI::handleUrlProgress(t_uint _hid)
          {
             bool res = false;

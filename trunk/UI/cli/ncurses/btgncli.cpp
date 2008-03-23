@@ -586,6 +586,14 @@ int main(int argc, char* argv[])
          ui.handleLoad(filelist);
       }
 
+   // Open URLs.
+   if (cla->urlsPresent())
+      {
+         t_strList filelist = cla->getUrls();
+         ui.handleUrl(filelist);
+      }
+
+
    ui.refresh();
 
    // Main event loop.

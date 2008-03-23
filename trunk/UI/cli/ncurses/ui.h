@@ -96,15 +96,19 @@ namespace btg
                      /// Show a dialog used to choose torrent files.
                      void handleLoad();
 
-                     void handleLoadUrl();
-
-                     bool handleUrlProgress(t_uint _hid);
-
                      /// Load a number of files, by using a list of filenames.
                      /// 
                      /// Used for handling loading torrents using
                      /// command line arguments.
                      void handleLoad(t_strList const& _filelist);
+
+                     void handleLoadUrl();
+
+                     void handleUrl(t_strList const& _filelist);
+
+                     bool handleUrlProgress(t_uint _hid);
+
+
 
                      /// Show a dialog that allows one to set global
                      /// limits.

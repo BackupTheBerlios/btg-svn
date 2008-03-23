@@ -52,6 +52,8 @@ extern t_int global_btg_run;
 #include <bcore/command/error.h>
 
 #include <bcore/client/ratio.h>
+#include <bcore/client/urlhelper.h>
+#include <bcore/os/sleep.h>
 
 #include "runstate.h"
 
@@ -254,7 +256,6 @@ namespace btg
                             _lastfiles,
                             _verboseFlag,
                             _autoStartFlag),
-              history(0),
               isOutputAvailable(false),
               output(""),
               isErrorAvailable(false),
@@ -327,6 +328,14 @@ namespace btg
                                                   "cr",
                                                   "Create a new download.",
                                                   "<filename> or last: <filename> - path to a torrent file, last - create all last torrents (see last).",
+                                                  1)
+                                   );
+            commandlist.addCommand(
+                                   new CLICommand(CLICommand::cmd_url,
+                                                  "url",
+                                                  "ur",
+                                                  "Create a new download from URL.",
+                                                  "<URL> - URL which points to a torrent file.",
                                                   1)
                                    );
             commandlist.addCommand(
@@ -570,6 +579,22 @@ namespace btg
                   {
                      result = INPUT_OK;
                      this->reqList();
+                     break;
+                  }
+               case CLICommand::cmd_url:
+                  {
+                     // url http://url/file.torrent
+                     t_strList parts = Util::splitLine(_input, " ");
+                     if (parts.size() > 1)
+                        {
+                           std::string url = parts.at(1);
+                           result = handleLoadUrl(url);
+                        }
+                     else
+                        {
+                           setError("Missing parameter.");
+                           result = INPUT_ERROR;
+                        }
                      break;
                   }
                case CLICommand::cmd_create:
@@ -1201,23 +1226,27 @@ namespace btg
 
          void cliHandler::onCreateFromUrl(t_uint const _id)
          {
-
+            commandStatus = true;
+            // setOutput("Created (from URL).");
+            setUrlId(_id);
          }
 
          void cliHandler::onCreateFromUrlError(std::string const& _message)
          {
-
+            commandStatus = false;
+            // setError("Unable to create context (from URL).");
          }
 
          void cliHandler::onUrlStatus(t_uint const _id, 
                                       btg::core::urlStatus const _status)
          {
-
+            commandStatus = true;
+            setUrlStatusResponse(_id, _status);
          }
 
          void cliHandler::onUrlStatusError(std::string const& _message)
          {
-
+            commandStatus = false;
          }
 
          void cliHandler::onAbort()
@@ -1978,6 +2007,102 @@ namespace btg
          {
             dht_enabled_        = _encryption;
             encryption_enabled_ = _dht;
+         }
+
+         cliHandler::cliResponse cliHandler::handleLoadUrl(std::string const& _url)
+         {
+            cliHandler::cliResponse result = INPUT_OK;
+
+            if (!btg::core::client::isUrlValid(_url))
+               {
+                  result = INPUT_ERROR;
+                  setError("Invalid URL.");
+                  return result;
+               }
+         
+            // Get a file name.
+            std::string filename;
+            
+            if (!btg::core::client::getFilenameFromUrl(_url, filename))
+               {
+                  result = INPUT_ERROR;
+                  setError("Unable to find a file name in URL.");
+                  return result;
+               }
+
+            reqCreateFromUrl(filename, _url);
+            
+            if (commandSuccess())
+               {
+                  t_uint hid = UrlId();
+                  
+                  if (handleUrlProgress(hid))
+                     {
+                        setOutput("Created " + filename + ".");
+                     }
+                  else
+                     {
+                        setError("Unable to create " + filename + ".");
+                     }
+               }
+            else
+               {
+                  setError("Unable to create " + filename + ".");
+               }
+            
+            return result;
+         }
+
+         bool cliHandler::handleUrlProgress(t_uint _hid)
+         {
+            bool res  = false;
+            bool cont = true;
+
+            while (cont)
+               {
+                  reqUrlStatus(_hid);
+                  if (!commandSuccess())
+                     {
+                        return res;
+                     }
+                  t_uint id = 0;
+                  btg::core::urlStatus status;
+
+                  UrlStatusResponse(id, status);
+                  
+                  switch (status)
+                     {
+                     case btg::core::URLS_UNDEF:
+                        {
+                           break;
+                        }
+                     case btg::core::URLS_WORKING:
+                     case btg::core::URLS_FINISHED:
+                        {
+                           break;
+                        }
+                     case btg::core::URLS_ERROR:
+                        {
+                           cont = false;
+                           break;
+                        }
+                     case btg::core::URLS_CREATE:
+                        {
+                           res  = true;
+                           cont = false;
+                           break;
+                        }
+                     case btg::core::URLS_CREATE_ERR:
+                        {
+                           res  = false;
+                           cont = false;
+                           break;
+                        }
+                     }
+                  btg::core::os::Sleep::sleepMiliSeconds(500);
+               }
+
+            return res;
          }
 
          cliHandler::~cliHandler()

@@ -43,6 +43,8 @@ namespace btg
 #define daemonLabelKey      "daemon"
 #define openLabel           "open,o"
 #define openLabelKey        "open"
+#define openUrlLabel        "url,u"
+#define openUrlLabelKey     "url"
 #define nostartLabel        "nostart"
 #define nostartLabelKey     "nostart"
 #define listLabel           "list,l"
@@ -78,6 +80,8 @@ namespace btg
               attachFirst_present(false),
               input_filenames(0),
               input_present(false),
+              input_urls(0),
+              urls_present(false),
               automaticStart_(true),
               commandToExecute_present(false),
               noOutput_present(false),
@@ -102,6 +106,7 @@ namespace btg
                (sessionLabel, boost::program_options::value<t_long>(), "Session ID.")
                (daemonLabel, boost::program_options::value<std::string>(), "IPv4 address and port to remote daemon (for socket transports).")
                (openLabel, boost::program_options::value<std::vector<std::string> >(), "Filename(s) to open.")
+               (openUrlLabel, boost::program_options::value<std::vector<std::string> >(), "URL(s) to open.")
                (nostartLabel, "Do not automatically start openend torrents.")
                (listLabel, "List already running sessions.")
                (attachLabel, "Let user select which session to attach to.")
@@ -187,6 +192,16 @@ namespace btg
                   if (input_filenames.size() > 0)
                      {
                         input_present = true;
+                     }
+               }
+
+            if (vm.count(openUrlLabelKey))
+               {
+                  input_urls = vm[openUrlLabelKey].as<std::vector<std::string> >();
+
+                  if (input_urls.size() > 0)
+                     {
+                        urls_present = true;
                      }
                }
 
@@ -312,6 +327,16 @@ namespace btg
             return input_filenames;
          }
 
+         bool commandLineArgumentHandler::urlsPresent() const
+         {
+            return urls_present;
+         }
+
+         t_strList commandLineArgumentHandler::getUrls() const
+         {
+            return input_urls;
+         }
+
          bool commandLineArgumentHandler::automaticStart() const
          {
             return automaticStart_;
@@ -363,7 +388,12 @@ namespace btg
 
             if (input_present)
                {
-                  output += " Input.";
+                  output += " filename.";
+               }
+
+            if (urls_present)
+               {
+                  output += " URL.";
                }
 
             if (commandToExecute_present)
