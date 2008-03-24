@@ -132,16 +132,16 @@ namespace btg
             // Paths starting with home.
             std::string begin = _path.substr(0, 1);
 
-            if (begin == GPD->sHOME_CHAR())
+            if (begin == "~")
                {
-                  char* home = getenv(GPD->cpHOME_ENV());
+                  char* home = getenv("HOME");
                   if (home != 0)
                      {
                         _path.erase(_path.begin());
                         std::string shome(home);
                         for (std::string::iterator i = shome.end(); i >= shome.begin(); i--)
                            {
-                              if (*i != GPD->cNULL())
+                              if (*i != 0)
                                  {
                                     _path.insert(_path.begin(), *i);
                                  }

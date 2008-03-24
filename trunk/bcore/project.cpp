@@ -22,6 +22,7 @@
 
 #include "project.h"
 #include <bcore/util.h>
+#include <bcore/os/fileop.h>
 
 #define BTG_STRINGIFY(x) #x
 #define BTG_EXPAND(x)    BTG_STRINGIFY(x)
@@ -55,9 +56,9 @@ namespace btg
       projectDefaults::projectDefaults()
          : project_name("btg"),
            cli_client_name("btg*cli"),
-           config_name(),
-           dynconfig_name(),
            gui_client_name("btgui"),
+           m_client_config("client.ini"),
+           m_client_dynconfig("client.dynconfig"),
            daemon_name("btgdaemon"),
            version(BTG_EXPAND(BTG_VERSION)),
            revision(BTG_EXPAND(BTG_REV)),
@@ -65,15 +66,12 @@ namespace btg
            minorVersion(0),
            revisionVersion(0),
            build(BTG_EXPAND(BTG_BUILD)),
-           nullchar('\0'),
            newline("\n"),
            space(" "),
            path_separator("/"),
            hidden_prefix("."),
-           home_char("~"),
-           home_env("HOME"),
            buffer_size(512),
-           default_deamon_config("~/.btg/daemon.ini"),
+           m_deamon_config("daemon.ini"),
            default_work_dir("~/bt"),
            default_dest_dir("~/bt/finished"),
            default_que("~/.btg/daemon"),
@@ -84,8 +82,46 @@ namespace btg
            temptemplate1("/tmp/btg1"),
            max_last_files(50)
       {
-         config_name = home_char + path_separator + hidden_prefix + project_name + path_separator + "client.ini";
-         dynconfig_name = home_char + path_separator + hidden_prefix + project_name + path_separator + "client.dynconfig";
+         // Paths that can contain *.ini-files
+         static const char * config_paths[] = {
+            // default locations
+            "~/.btg/",
+            PREFIX "/etc/btg/",
+            "/etc/btg/",
+            // extra locations
+            "~/",
+            PREFIX "/etc/",
+            "/etc/",
+            0
+         };
+
+         // Search for daemon config file
+         for (int i = 0; config_paths[i]; ++i)
+         {
+            std::string daemon_config = config_paths[i] + m_deamon_config;
+            btg::core::os::fileOperation::resolvePath(daemon_config);
+            if (btg::core::os::fileOperation::check(daemon_config))
+            {
+               m_deamon_config = daemon_config;
+               break;
+            }
+         }
+         // else in current dir
+         
+         // Search for client config file
+         for (int i = 0; config_paths[i]; ++i)
+         {
+            std::string client_config = config_paths[i] + m_client_config;
+            btg::core::os::fileOperation::resolvePath(client_config);
+            if (btg::core::os::fileOperation::check(client_config))
+            {
+               m_client_config = client_config;
+               break;
+            }
+         }
+         // else in current dir
+         
+         m_client_dynconfig = home_char + path_separator + hidden_prefix + project_name + path_separator + m_client_dynconfig;
 
          // Convert the version string into:
          // majorVersion
@@ -148,18 +184,18 @@ namespace btg
 
       std::string projectDefaults::sCLI_CONFIG() const
       {
-         return config_name;
+         return m_client_config;
       }
 
 
       std::string projectDefaults::sCLI_DYNCONFIG() const
       {
-         return dynconfig_name;
+         return m_client_dynconfig;
       }
 
       std::string projectDefaults::sGUI_CONFIG() const
       {
-         return config_name;
+         return m_client_config;
       }
 
       std::string projectDefaults::sDAEMON() const
@@ -214,11 +250,6 @@ namespace btg
          return hidden_prefix;
       }
 
-      char projectDefaults::cNULL() const
-      {
-         return nullchar;
-      }
-
       std::string projectDefaults::sNEWLINE() const
       {
          return newline;
@@ -244,29 +275,14 @@ namespace btg
          return path_separator;
       }
 
-      std::string projectDefaults::sHOME_CHAR() const
-      {
-         return home_char;
-      }
-
-      std::string projectDefaults::sHOME_ENV() const
-      {
-         return home_env;
-      }
-
-      const char* projectDefaults::cpHOME_ENV() const
-      {
-         return home_env.c_str();
-      }
-
       t_uint projectDefaults::iBufferSize() const
       {
          return buffer_size;
       }
 
-      std::string projectDefaults::sDEFAULT_DAEMON_CONFIG() const
+      std::string projectDefaults::sDAEMON_CONFIG() const
       {
-         return default_deamon_config;
+         return m_deamon_config;
       }
 
       std::string projectDefaults::sDEFAULT_WORK_DIR() const

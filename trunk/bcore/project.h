@@ -89,8 +89,6 @@ namespace btg
                std::string sBUILD()          const;
                /// Hidden file/directory prefix.
                std::string sHiddenPrefix()   const;
-               /// Character used for null termination of C-strings.
-               char        cNULL()           const;
                /// Newline.
                std::string sNEWLINE()        const;
                /// Newline.
@@ -101,12 +99,6 @@ namespace btg
                char        cSPACE()          const;
                /// The character used to separate entities in a path.
                std::string sPATH_SEPARATOR() const;
-               /// For finding the home directory from the enviroment.
-               std::string sHOME_CHAR()      const;
-               /// For finding the home directory from the enviroment.
-               std::string sHOME_ENV()       const;
-               /// For finding the home directory from the enviroment.
-               const char* cpHOME_ENV()      const;
 
                /// Used for generating random filenames.
                std::string sTEMPTEMPLATE0() const;
@@ -119,7 +111,7 @@ namespace btg
                // Defaults:
 
                /// Default daemon config file.
-               std::string sDEFAULT_DAEMON_CONFIG() const;
+               std::string sDAEMON_CONFIG() const;
 
                /// Default work dir.
                std::string sDEFAULT_WORK_DIR()    const;
@@ -150,13 +142,13 @@ namespace btg
                std::string const project_name;
                /// The name of the CLI client.
                std::string const cli_client_name;
-               /// The name of the client config file.
-               std::string       config_name;
-               /// Client dynamic configuration data file name
-               /// @see btg::core::client::clientDynConfig
-               std::string       dynconfig_name;
                /// The name of the GUI client.
                std::string const gui_client_name;
+               /// The name of the client config file.
+               std::string       m_client_config;
+               /// Client dynamic configuration data file name
+               /// @see btg::core::client::clientDynConfig
+               std::string       m_client_dynconfig;
                /// The name of the daemon.
                std::string const daemon_name;
                /// Version of this software.
@@ -172,8 +164,6 @@ namespace btg
 
                /// Build string.
                std::string const build;
-               /// The character used to terminate C-strings.
-               char        const nullchar;
                /// Newline.
                std::string const newline;
                /// Space.
@@ -184,8 +174,6 @@ namespace btg
                std::string const hidden_prefix;
                /// Character used instead of the path to an users home directory.
                std::string const home_char;
-               /// The name of the enviroment variable used to get the home directory.
-               std::string const home_env;
 
                /// The default buffer size used for the messageQue class.
                t_uint      const buffer_size;
@@ -193,7 +181,7 @@ namespace btg
                // Defaults:
 
                /// Default daemon config file.
-               std::string default_deamon_config;
+               std::string m_deamon_config;
 
                /// Default work dir.
                std::string const  default_work_dir;

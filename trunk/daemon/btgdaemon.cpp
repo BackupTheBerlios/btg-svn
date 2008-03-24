@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
    time(&dd.daemonStartTime);
 
    // Parse command line arguments.
-   dd.cla = new commandLineArgumentHandler(GPD->sDEFAULT_DAEMON_CONFIG());
+   dd.cla = new commandLineArgumentHandler(GPD->sDAEMON_CONFIG());
    dd.cla->setup();
 
    if (!dd.cla->parse(argc, argv))
@@ -130,15 +130,18 @@ int main(int argc, char* argv[])
          return BTG_NORMAL_EXIT;
       }
 
-   dd.configFile = GPD->sDEFAULT_DAEMON_CONFIG();
+   dd.configFile = GPD->sDAEMON_CONFIG();
 
    if (dd.cla->configFileSet())
       {
          dd.configFile = dd.cla->configFile();
       }
 
-   bool verboseFlag = dd.cla->beVerbose();
+   if (dd.cla->beVerbose())
+      std::cerr << "Using config in " << dd.configFile << std::endl;
 
+   bool verboseFlag = dd.cla->beVerbose();
+   
    VERBOSE_LOG(logwrapper, verboseFlag, "Verbose logging enabled.");
 
    MVERBOSE_LOG(logwrapper, verboseFlag, "config: '" << dd.configFile << "'.");

@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
 {
    LogWrapperType logwrapper(new btg::core::logger::logWrapper);
 
-   commandLineArgumentHandler* cla = new commandLineArgumentHandler(GPD->sDEFAULT_DAEMON_CONFIG());
+   commandLineArgumentHandler* cla = new commandLineArgumentHandler(GPD->sDAEMON_CONFIG());
    cla->setup();
    if (!cla->parse(argc, argv))
       {
@@ -66,14 +66,18 @@ int main(int argc, char* argv[])
 
    bool verboseFlag = cla->beVerbose();
 
-   std::string configFile = GPD->sDEFAULT_DAEMON_CONFIG();
+   std::string configFile = GPD->sDAEMON_CONFIG();
    if (cla->configFileSet())
       {
          configFile = cla->configFile();
       }
+
 #if BTG_AUTH_DEBUG
    BTG_NOTICE(logwrapper, "Config: '" << configFile << "'");
 #endif //BTG_AUTH_DEBUG
+
+   if (cla->beVerbose())
+      std::cerr << "Using config in " << configFile << std::endl;
 
    std::string errorString;
    if (!btg::core::os::fileOperation::check(configFile, errorString, false))

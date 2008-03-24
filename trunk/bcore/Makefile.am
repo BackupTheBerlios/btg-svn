@@ -234,6 +234,7 @@ AM_CXXFLAGS         = @CXXFLAGS@ @DEBUG_CXXFLAGS@ \
                     -DBTG_DEBUG=@BTG_DEBUG@ \
                     -DBTG_VERSION="@VERSION@" \
                     -DBTG_BUILD="@BTG_BUILD@" \
-                    -DBTG_REV="@BTG_REV@"
+                    -DBTG_REV="@BTG_REV@" \
+                    -DPREFIX=\"@prefix@\"
 
 INCLUDES            = -I$(top_srcdir) 
