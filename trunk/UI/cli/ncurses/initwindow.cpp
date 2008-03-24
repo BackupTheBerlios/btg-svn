@@ -34,7 +34,7 @@ namespace btg
 
          initWindow::initWindow(keyMapping const& _kmap)
             : baseWindow(_kmap),
-              hidden(false),
+              hidden(true),
               middle_x(0),
               middle_y(0)
          {
@@ -54,12 +54,14 @@ namespace btg
             middle_y = ws.height / 2;
 
             init(ws);
+            
+            hidden = false;
          }
 
          void initWindow::hide()
          {
-            hidden = true;
             baseWindow::ncursesDestroy();
+            hidden = true;
          }
 
          void initWindow::setText(std::string const& _text)
@@ -223,7 +225,6 @@ namespace btg
          {
             if (!hidden)
                {
-                  hidden = true;
                   hide();
                }
          }

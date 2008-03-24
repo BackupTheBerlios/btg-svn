@@ -123,9 +123,6 @@ int main(int argc, char* argv[])
          config_filename = cla->configFile();
       }
 
-   if (cla->beVerbose())
-      std::cerr << "Using config in " << config_filename << std::endl;
-
    std::string errorString;
    if (!btg::core::os::fileOperation::check(config_filename, errorString, false))
       {
@@ -532,7 +529,7 @@ int main(int argc, char* argv[])
                iw->showError("Unable to connect to daemon.");
 
                projectDefaults::killInstance();
-
+               
                return BTG_ERROR_EXIT;
             }
       }
