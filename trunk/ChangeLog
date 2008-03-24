@@ -2,7 +2,9 @@ BTG version 0.9.8
 -----------------
 The following bugs were fixed:
 
-013307 btgui, no error message on incorrect login (also btgcli/ncli)
+013399 Merge Miklos Vajna's GCC 4.3 patch.
+013381 URL loading in daemon and non-www clients.
+013307 btgui, no error message on incorrect login (also btgcli/ncli).
 
 BTG version 0.9.7
 -----------------
