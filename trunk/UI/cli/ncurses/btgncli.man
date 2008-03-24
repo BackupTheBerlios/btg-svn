@@ -6,6 +6,9 @@ btgncli \- bittorrent client, part of the btg project.
 [-o 
 .I "<filename>"
 ]
+[-u 
+.I "<URL>"
+]
 [--nostart]
 [-l]
 [--noutput]
@@ -44,6 +47,11 @@ torrents). Press the help key (default /h/) to get help.
 .BI "-o" 
 .I "<filename>"
 \- Name of a torrent file to open after initializing the client.
+
+.TP
+.BI "-u" 
+.I "<URL>"
+\- URL to open after initializing the client. The URL should point to a torrent file.
 
 .TP
 .BI "--nostart" 
