@@ -47,6 +47,14 @@ OSX
 
 Remember to use glibtoolize instead of libtoolize.
 
+List of commands
+================
+
+The list of commands is available `here`_ (generated from sources in the
+trunk of SVN).
+
+.. _here: commands.html
+
 Patches
 =======
 
