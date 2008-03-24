@@ -121,7 +121,7 @@ namespace btg
          }
          // else in current dir
          
-         m_client_dynconfig = home_char + path_separator + hidden_prefix + project_name + path_separator + m_client_dynconfig;
+         m_client_dynconfig = "~/.btg/" + m_client_dynconfig;
 
          // Convert the version string into:
          // majorVersion

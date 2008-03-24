@@ -66,7 +66,7 @@ namespace btg
                /// The default client confiuration file.
                std::string sCLI_CONFIG()     const;
                /// Default client dynamic config file name.
-               std::string sCLI_DYNCONFIG() const;
+               std::string sCLI_DYNCONFIG()  const;
                /// The GUI client name.
                std::string sGUI_CLIENT()     const;
                /// The default confiuration file.
@@ -172,8 +172,6 @@ namespace btg
                std::string const path_separator;
                /// Prefix used for hiding files/directories.
                std::string const hidden_prefix;
-               /// Character used instead of the path to an users home directory.
-               std::string const home_char;
 
                /// The default buffer size used for the messageQue class.
                t_uint      const buffer_size;
