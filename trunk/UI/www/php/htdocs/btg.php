@@ -549,7 +549,7 @@ class BTG
 		return $this->contextCreateWithData($filename, $file['tmp_name']);
 	}
 
-	/// Start a torrent
+	/// Start a torrent, from data
 	public function contextCreateWithData($torrent_filename, $tmpfile="")
 	{
 		$this->attachLast();
@@ -573,6 +573,42 @@ class BTG
 		$output = "";
 		if($r instanceof ackCommand)
 			$output.="<ack/>";
+
+		return $this->addExtraOutput($output);
+	}
+
+	/// Start a torrent, from URL
+	public function contextCreateFromUrl($filename, $torrent_url)
+	{
+		$this->attachLast();
+		if(!$this->sessionAttached)
+			return $this->addExtraOutput("");
+
+		$r = $this->executeCommand(new contextCreateFromUrlCommand($filename, $torrent_url, $this->autostart));
+		if($r == NULL)
+			return $this->addExtraOutput("");
+
+		$output = "";
+		if($r instanceof contextCreateFromUrlResponseCommand)
+			$output.='<url><id>'.$r->getId().'</id></url>';
+
+		return $this->addExtraOutput($output);
+	}
+
+	/// Check createfromURL status
+	public function contextUrlStatus($id)
+	{
+		$this->attachLast();
+		if(!$this->sessionAttached)
+			return $this->addExtraOutput("");
+
+		$r = $this->executeCommand(new contextUrlStatusCommand((int)$id));
+		if($r == NULL)
+			return $this->addExtraOutput("");
+
+		$output = "";
+		if($r instanceof contextUrlStatusResponseCommand)
+			$output.='<url><id>'.$r->getId().'</id><status>'.$r->getStatus().'</status></url>';
 
 		return $this->addExtraOutput($output);
 	}
@@ -945,6 +981,8 @@ try
 	$ajax->register('btg_sessionQuit', array($btg, 'sessionQuit'));
 	$ajax->register('btg_cleanAll', array($btg, 'cleanAll'));
 	$ajax->register('btg_contextStatus', array($btg, 'contextStatus'));
+	$ajax->register('btg_contextCreateFromUrl', array($btg, 'contextCreateFromUrl'));
+	$ajax->register('btg_contextUrlStatus', array($btg, 'contextUrlStatus'));
 	$ajax->register('btg_contextLimit', array($btg, 'contextLimit'));
 	$ajax->register('btg_contextLimitStatus', array($btg, 'contextLimitStatus'));
 	$ajax->register('btg_contextStart', array($btg, 'contextStart'));

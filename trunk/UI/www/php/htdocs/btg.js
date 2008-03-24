@@ -617,6 +617,28 @@ function uploadDone()
 	refreshContextList();
 }
 
+function loadUrl()
+{
+	var f = document.getElementById('loadurl_input');
+	var url = f.value;
+	var filename = url;
+
+	// Extract filename from URL
+	if(filename.indexOf('?') != -1)
+		filename = filename.substr(0, filename.indexOf('?'));
+
+	if(filename.lastIndexOf('/') != -1)
+		filename = filename.substr(filename.lastIndexOf('/') + 1);
+
+	if(filename.length == 0 || filename.indexOf('.torrent') == -1)
+		filename = prompt('Enter filename');
+
+	if(filename == null)
+		return;
+
+	btg_contextCreateFromUrl(cb_contextCreateFromUrl, cb_contextCreateFromUrl_err, filename, url);
+}
+
 /**
  * This function is called every second, is used for misc stuff like refresh, age counter etc.
  */
@@ -731,6 +753,97 @@ function cb_globallimitstatus(response)
 function cb_globallimitstatus_err(error, errStr)
 {
 	setStatus("Unable to get global limit status...");
+}
+
+var pendingDownloadID = -1;
+function cb_contextCreateFromUrl(response)
+{
+	pendingDownloadID = parseInt(getFirstChildValue(response.getElementsByTagName('url')[0], 'id'));
+
+	var i = document.getElementById('loadurl');
+	var f = document.getElementById('loadurl_input');
+	var s = document.getElementById('loadurl_status');
+	f.value = '';
+	i.style.display='none';
+	s.style.display='block';
+	s.innerHTML='Downloading URL...';
+
+	setTimeout('checkUrlStatus();', 1000);
+}
+
+function cb_contextCreateFromUrl_err(error, errStr)
+{
+	pendingDownloadID = -1;
+	alert(errStr);
+}
+
+// Called by timer
+function checkUrlStatus()
+{
+	if(pendingDownloadID == -1)
+		return;
+
+	btg_contextUrlStatus(cb_contextUrlStatus, cb_contextUrlStatus_err, pendingDownloadID);
+}
+
+function cb_contextUrlStatus(response)
+{
+	var ss = parseInt(getFirstChildValue(response.getElementsByTagName('url')[0], 'status'));
+	/*
+	const URLS_UNDEF      = 0; //!<  Unknown.
+	const URLS_WORKING    = 1; //!<  Download in progress.
+	const URLS_FINISHED   = 2; //!<  Download finished.
+	const URLS_ERROR      = 3; //!<  Unable to download.
+	const URLS_CREATE     = 4; //!<  Context created.
+	const URLS_CREATE_ERR = 5; //!<  Context not created.
+	*/
+	var i = document.getElementById('loadurl');
+	var s = document.getElementById('loadurl_status');
+	var done = false;
+	switch(ss)
+	{
+		case 1:
+			s.innerHTML='Downloading URL...';
+			break;
+		case 2:
+			done = true;
+			s.innerHTML = 'Failed to download URL.<br/>(Click here to continue)';
+			break;
+		case 4:
+			done = true;
+			s.innerHTML = 'URL downloaded and created successfull.<br/>(Click here to continue)';
+			refreshContextList();
+			break;
+		case 5:
+			done = true;
+			s.innerHTML = 'Failed to create context from URL.<br/>(Click here to continue)';
+			break;
+		case 0:
+		default:
+			s.innerHTML='Unknown';
+			break;
+	}
+	
+	if(!done)
+		setTimeout('checkUrlStatus();', 1000);
+	else
+		pendingDownloadID = -1;
+}
+
+function resetUrl()
+{
+	if(pendingDownloadID > 0)
+		return;
+
+	var i = document.getElementById('loadurl');
+	var s = document.getElementById('loadurl_status');
+	i.style.display='block';
+	s.style.display='none';
+}
+
+function cb_contextUrlStatus_err(error, errStr)
+{
+	alert(errStr);
 }
 
 /**

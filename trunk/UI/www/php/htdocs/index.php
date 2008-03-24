@@ -51,6 +51,12 @@ for(var i=0;i<t.length;i++) {
 		<input class="btn" type="file" id="upload_input" name="torrent_file"/>
 		<input id="upload_button" type="submit" value="Upload"/>
 		</form>
+		<div id="loadurl">
+			<input class="textinput" type="text" id="loadurl_input"/>
+			<input id="loadurl_button" type="button" value="Load URL" onClick="loadUrl()"/>
+		</div>
+		<div id="loadurl_status" onClick="resetUrl()">
+		</div>
 	</div>
 
 	<input id="logout_button" class="control_buttons" type="button" onClick="deauth();" value="Logout"/>

@@ -31,6 +31,7 @@ require_once(BTG_BCORE_PATH."/command/list.php");
 require_once(BTG_BCORE_PATH."/command/list_rsp.php");
 require_once(BTG_BCORE_PATH."/command/setup.php");
 require_once(BTG_BCORE_PATH."/command/context_create.php");
+require_once(BTG_BCORE_PATH."/command/context_create_url.php");
 require_once(BTG_BCORE_PATH."/command/context_last.php");
 require_once(BTG_BCORE_PATH."/command/context_start.php");
 require_once(BTG_BCORE_PATH."/command/context_stop.php");
@@ -92,6 +93,18 @@ class commandFactory
 			break;
 		case Command::CN_CCREATEWITHDATA:
 			$c = new contextCreateWithDataCommand();
+			break;
+		case Command::CN_CCREATEFROMURL:
+			$c = new contextCreateFromUrlCommand();
+			break;
+		case Command::CN_CCREATEFROMURLRSP:
+			$c = new contextCreateFromUrlResponseCommand();
+			break;
+		case Command::CN_CURLSTATUS:
+			$c = new contextUrlStatusCommand();
+			break;
+		case Command::CN_CURLSTATUSRSP:
+			$c = new contextUrlStatusResponseCommand();
 			break;
 		case Command::CN_CLAST: // last context
 			$c = new lastCIDCommand();

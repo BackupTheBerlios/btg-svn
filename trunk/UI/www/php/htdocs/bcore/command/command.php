@@ -78,6 +78,10 @@ class Command extends BTGSerializable
 	const CN_CGETTRACKERS    = 64;
 	const CN_CGETTRACKERSRSP = 65;
 	const CN_CMOVE           = 66;
+	const CN_CCREATEFROMURL  = 67;
+	const CN_CCREATEFROMURLRSP = 68;
+	const CN_CURLSTATUS        = 69;
+	const CN_CURLSTATUSRSP     = 70;
 
 	const CN_ERROR           = 100;
 	const CN_ACK             = 101;
@@ -141,6 +145,11 @@ class Command extends BTGSerializable
          Command::CN_CGETTRACKERS    => "(c) Get used trackers",
          Command::CN_CGETTRACKERSRSP => "(c) Get used trackers response",
 			Command::CN_CMOVE           => "(c) Move",
+			Command::CN_CCREATEFROMURL  => "(c) Create context from URL",
+			Command::CN_CCREATEFROMURLRSP => "(c) Create context from URL response",
+			Command::CN_CURLSTATUS        => "(c) URL download status",
+			Command::CN_CURLSTATUSRSP     => "(c) URL download status response",
+
          // General:
          Command::CN_ERROR           => "(g) Error",
          Command::CN_ACK             => "(g) Ack",
@@ -206,6 +215,11 @@ class Command extends BTGSerializable
             Command::CN_CGETTRACKERS    => "context.gettrackers",
             Command::CN_CGETTRACKERSRSP => "context.gettrackersrsp",
 				Command::CN_CMOVE           => "context.move",
+				Command::CN_CCREATEFROMURL  => "context.createfromurl",
+				Command::CN_CCREATEFROMURLRSP => "context.createfromurlrsp",
+				Command::CN_CURLSTATUS        => "context.urlstatus",
+				Command::CN_CURLSTATUSRSP     => "context.urlstatusrsp",
+
             // General:
             Command::CN_ERROR           => "general.error",
             Command::CN_ACK             => "general.ack",

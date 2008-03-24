@@ -267,7 +267,15 @@ td.ctx_control
 	margin: 0 10px 0 0;
 	font-family: arial; 
 }
-#upload_button, #glimit_cancel_button, #glimit_set_button, #sesname_cancel_button, #sesname_set_button
+#loadurl_status
+{
+	display: none;
+}
+#loadurl_input
+{
+	width: 220px;
+}
+#upload_button, #glimit_cancel_button, #glimit_set_button, #sesname_cancel_button, #sesname_set_button, #loadurl_button
 {
 	background: url("images/btn2.gif");
 	border: 0;
