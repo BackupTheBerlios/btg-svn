@@ -28,6 +28,8 @@
 #include <bcore/os/fileop.h>
 #include <bcore/os/id.h>
 #include <bcore/auth/hash.h>
+#include <bcore/client/urlhelper.h>
+#include <bcore/os/sleep.h>
 
 #include "clienthandler.h"
 
@@ -500,6 +502,58 @@ namespace btg
          {
             last_surl_id     = _id;
             last_surl_status = _status;
+         }
+
+         bool clientHandler::handleUrlProgress(t_uint _hid)
+         {
+            bool res  = false;
+            bool cont = true;
+
+            while (cont)
+               {
+                  reqUrlStatus(_hid);
+                  if (!commandSuccess())
+                     {
+                        return res;
+                     }
+                  t_uint id = 0;
+                  btg::core::urlStatus status;
+
+                  UrlStatusResponse(id, status);
+                  
+                  switch (status)
+                     {
+                     case btg::core::URLS_UNDEF:
+                        {
+                           break;
+                        }
+                     case btg::core::URLS_WORKING:
+                     case btg::core::URLS_FINISHED:
+                        {
+                           break;
+                        }
+                     case btg::core::URLS_ERROR:
+                        {
+                           cont = false;
+                           break;
+                        }
+                     case btg::core::URLS_CREATE:
+                        {
+                           res  = true;
+                           cont = false;
+                           break;
+                        }
+                     case btg::core::URLS_CREATE_ERR:
+                        {
+                           res  = false;
+                           cont = false;
+                           break;
+                        }
+                     }
+                  btg::core::os::Sleep::sleepMiliSeconds(500);
+               }
+
+            return res;
          }
 
          clientHandler::~clientHandler()

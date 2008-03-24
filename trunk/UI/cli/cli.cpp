@@ -2053,58 +2053,6 @@ namespace btg
             return result;
          }
 
-         bool cliHandler::handleUrlProgress(t_uint _hid)
-         {
-            bool res  = false;
-            bool cont = true;
-
-            while (cont)
-               {
-                  reqUrlStatus(_hid);
-                  if (!commandSuccess())
-                     {
-                        return res;
-                     }
-                  t_uint id = 0;
-                  btg::core::urlStatus status;
-
-                  UrlStatusResponse(id, status);
-                  
-                  switch (status)
-                     {
-                     case btg::core::URLS_UNDEF:
-                        {
-                           break;
-                        }
-                     case btg::core::URLS_WORKING:
-                     case btg::core::URLS_FINISHED:
-                        {
-                           break;
-                        }
-                     case btg::core::URLS_ERROR:
-                        {
-                           cont = false;
-                           break;
-                        }
-                     case btg::core::URLS_CREATE:
-                        {
-                           res  = true;
-                           cont = false;
-                           break;
-                        }
-                     case btg::core::URLS_CREATE_ERR:
-                        {
-                           res  = false;
-                           cont = false;
-                           break;
-                        }
-                     }
-                  btg::core::os::Sleep::sleepMiliSeconds(500);
-               }
-
-            return res;
-         }
-
          cliHandler::~cliHandler()
          {
          }

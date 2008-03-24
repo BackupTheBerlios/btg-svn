@@ -50,11 +50,16 @@
 #include <bcore/client/handlerthr.h>
 #include <bcore/client/clientdynconfig.h>
 #include <bcore/client/loglevel.h>
+#include <bcore/client/urlhelper.h>
+#include <bcore/os/sleep.h>
 
 using namespace btg::core;
 using namespace btg::core::logger;
 using namespace btg::core::client;
 using namespace btg::UI::gui;
+
+void OpenUrls(guiHandler* _handler, 
+              t_strList const& _filelist);
 
 int main(int argc, char **argv)
 {
@@ -660,6 +665,12 @@ int main(int argc, char **argv)
             }
       }
 
+   if (cla->urlsPresent())
+      {
+         t_strList filelist = cla->getUrls();
+         OpenUrls(guihandler, filelist);
+      }
+
    // Done using arguments.
    delete cla;
    cla = 0;
@@ -744,4 +755,32 @@ int main(int argc, char **argv)
    projectDefaults::killInstance();
 
    return BTG_NORMAL_EXIT;
+}
+
+void OpenUrls(guiHandler* _handler, 
+              t_strList const& _filelist)
+{
+   for (t_strListCI iter = _filelist.begin(); 
+        iter != _filelist.end(); 
+        iter++)
+      {
+         if (!btg::core::client::isUrlValid(*iter))
+            {
+               continue;
+            }
+         
+         // Get a file name.
+         std::string filename;
+
+         if (!btg::core::client::getFilenameFromUrl(*iter, filename))
+            {
+               continue;
+            }
+
+         _handler->reqCreateFromUrl(filename, *iter);
+         if (_handler->commandSuccess())
+            {
+               _handler->handleUrlProgress(_handler->UrlId());
+            }
+      }
 }

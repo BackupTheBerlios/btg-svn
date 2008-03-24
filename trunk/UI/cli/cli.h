@@ -222,10 +222,6 @@ namespace btg
                      /// Get an error message.
                      std::string getError();
 
-                     /// Wait for URL loading to complete.
-                     /// @return true - success, URL loaded. false - URL not loaded.
-                     bool handleUrlProgress(t_uint _hid);
-
                      /// Destructor.
                      virtual ~cliHandler();
                   private:

@@ -302,6 +302,10 @@ namespace btg
             virtual void UrlStatusResponse(t_uint & _id, 
                                            btg::core::urlStatus & _status) const;
 
+            /// Wait for URL loading to complete.
+            /// @return true - success, URL loaded. false - URL not loaded.
+            bool handleUrlProgress(t_uint _hid);
+
             /// Destructor.
             virtual ~clientHandler();
 
