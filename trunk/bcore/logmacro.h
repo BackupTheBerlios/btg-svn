@@ -68,7 +68,7 @@
 #define BTG_ERROR_LOG(_LOGW, _ERRORTEXT) { BTG_MESSAGE_LOG(_LOGW, btg::core::logger::logWrapper::PRIO_ERROR, _ERRORTEXT, BTG_DEBUG, true); }
 
 /// Used to write verbose messages.
-#define BTG_VERBOSE(_LOGW, _TEXT) { BTG_MESSAGE_LOG(_LOGW, btg::core::logger::logWrapper::PRIO_VERBOSE, _TEXT, 1 /* always enabled */, false); }
+#define BTG_VERBOSE(_LOGW, _TEXT) { BTG_MESSAGE_LOG(_LOGW, btg::core::logger::logWrapper::PRIO_VERBOSE, _TEXT, 1 /* _BTG_DEBUG, always enabled */, false); }
 
 /// Write a notice to std out or log.
 /// \note Only outputs if BTG_DEBUG is set to 1.
@@ -76,22 +76,27 @@
 
 /// Write a message to logger, update message counter.
 #define BTG_MESSAGE_LOG(_LOGW, _LEVEL, _TEXT, _BTG_DEBUG, _PREPEND_FILELINE) \
-{ \
-  if (_BTG_DEBUG == 1) \
-  { \
-     if (_LOGW->logStreamSet() && _LOGW->logInput(_LEVEL))  \
-     { \
-        boost::posix_time::ptime t(boost::posix_time::second_clock::local_time()); \
-        boost::shared_ptr<btg::core::logger::logStream> logstream = _LOGW->getLogStream(); \
-        *logstream << "[" << boost::posix_time::to_simple_string(t) << "] "; \
-        if (_PREPEND_FILELINE == true)                                  \
-           {                                                            \
-              *logstream << "(" << __FILE__ << ", " << __LINE__ << ") "; \
-           }                                                            \
-        *logstream << _TEXT << std::endl;                               \
-     }                                                                  \
-  }                                                                     \
-}
+   if (_BTG_DEBUG == 1 && _LOGW->logInput(_LEVEL)) \
+      { \
+         std::ostream * logstream = 0; \
+         boost::shared_ptr<btg::core::logger::logStream> sp_logstream; \
+         if (_LOGW->logStreamSet()) \
+            { \
+               sp_logstream = _LOGW->getLogStream(); \
+               logstream = sp_logstream.get(); \
+            } \
+         else \
+            { \
+               logstream = & std::cerr; \
+            } \
+         boost::posix_time::ptime t(boost::posix_time::second_clock::local_time()); \
+         *logstream << "[" << boost::posix_time::to_simple_string(t) << "] "; \
+         if (_PREPEND_FILELINE == true) \
+            { \
+               *logstream << "(" << __FILE__ << ", " << __LINE__ << ") "; \
+            } \
+         *logstream << _TEXT << std::endl; \
+      } \
 
 /** @} */
 

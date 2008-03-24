@@ -37,6 +37,7 @@
 #include <bcore/crashlog.h>
 #include <bcore/client/handlerthr.h>
 #include <bcore/client/loglevel.h>
+#include <bcore/verbose.h>
 
 #include <iostream>
 
@@ -135,6 +136,8 @@ int main(int argc, char **argv)
          config_filename = cla->configFile();
       }
 
+   VERBOSE_LOG(logwrapper, verboseFlag, "config: '" << config_filename << "'.");
+   
    std::string errorString;
    if (!btg::core::os::fileOperation::check(config_filename, errorString, false))
       {

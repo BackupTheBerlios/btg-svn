@@ -62,7 +62,7 @@ namespace btg
             }
             else
             {
-               BTG_NOTICE(logWrapper(), "Cauldn't find file " << m_file_name);
+               BTG_NOTICE(logWrapper(), "Can't find file " << m_file_name);
             }
          }
          

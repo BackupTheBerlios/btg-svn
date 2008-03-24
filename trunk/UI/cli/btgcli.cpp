@@ -32,6 +32,8 @@
 
 #include <bcore/t_string.h>
 
+#include <bcore/verbose.h>
+
 #include "nscreen.h"
 #include "nscreen_log.h"
 
@@ -41,10 +43,10 @@ extern "C"
 
 #include "runstate.h"
 
-   t_int global_btg_run = GR_RUN;
+t_int global_btg_run = GR_RUN;
 
-   /* React on the signals from the outside world. */
-   void global_signal_handler(int _signal_no)
+/* React on the signals from the outside world. */
+void global_signal_handler(int _signal_no)
    {
       if (_signal_no == SIGINT || _signal_no == SIGTERM)
          {
@@ -131,8 +133,7 @@ int main(int argc, char* argv[])
          config_filename = cla->configFile();
       }
 
-   if (cla->beVerbose())
-      std::cerr << "Using config in " << config_filename << std::endl;
+   VERBOSE_LOG(logwrapper, verboseFlag, "config: '" << config_filename << "'.");
 
    std::string errorString;
    if (!btg::core::os::fileOperation::check(config_filename, errorString, false))

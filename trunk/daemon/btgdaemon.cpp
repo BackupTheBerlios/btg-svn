@@ -137,14 +137,11 @@ int main(int argc, char* argv[])
          dd.configFile = dd.cla->configFile();
       }
 
-   if (dd.cla->beVerbose())
-      std::cerr << "Using config in " << dd.configFile << std::endl;
-
    bool verboseFlag = dd.cla->beVerbose();
    
    VERBOSE_LOG(logwrapper, verboseFlag, "Verbose logging enabled.");
 
-   MVERBOSE_LOG(logwrapper, verboseFlag, "config: '" << dd.configFile << "'.");
+   VERBOSE_LOG(logwrapper, verboseFlag, "config: '" << dd.configFile << "'.");
 
    if (!checkFile(logwrapper, "configuration file", dd.configFile))
       {

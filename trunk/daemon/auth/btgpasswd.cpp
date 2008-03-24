@@ -72,12 +72,7 @@ int main(int argc, char* argv[])
          configFile = cla->configFile();
       }
 
-#if BTG_AUTH_DEBUG
-   BTG_NOTICE(logwrapper, "Config: '" << configFile << "'");
-#endif //BTG_AUTH_DEBUG
-
-   if (cla->beVerbose())
-      std::cerr << "Using config in " << configFile << std::endl;
+   VERBOSE_LOG(logwrapper, verboseFlag, "config: '" << configFile << "'.");
 
    std::string errorString;
    if (!btg::core::os::fileOperation::check(configFile, errorString, false))

@@ -53,6 +53,8 @@
 #include <bcore/client/urlhelper.h>
 #include <bcore/os/sleep.h>
 
+#include <bcore/verbose.h>
+
 using namespace btg::core;
 using namespace btg::core::logger;
 using namespace btg::core::client;
@@ -121,8 +123,7 @@ int main(int argc, char **argv)
          config_filename = cla->configFile();
       }
 
-   if (cla->beVerbose())
-      std::cerr << "Using config in " << config_filename << std::endl;
+   VERBOSE_LOG(logwrapper, verboseFlag, "config: '" << config_filename << "'.");
 
    std::string errorString;
    if (!btg::core::os::fileOperation::check(config_filename, errorString, false))
