@@ -61,7 +61,7 @@
 #endif
 
 // stringify defines
-// standard hack to stringify an integer
+// standard hack to stringify integers
 #define _LOGMACRO_STRINGIFY(x) _LOGMACRO_XSTRINGIFY(x)
 #define _LOGMACRO_XSTRINGIFY(x) #x
 

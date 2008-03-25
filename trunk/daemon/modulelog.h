@@ -59,8 +59,8 @@
 #endif
 
 /// Verbose log for a certain module.
-#define MVERBOSE_LOG(_LOGW, _FLAG, _TEXT) \
-   VERBOSE_LOG(_LOGW, _FLAG, moduleName << ": " << _TEXT)
+#define MVERBOSE_LOG(_LOGW, _flag, _text) \
+   VERBOSE_LOG(_LOGW, _flag, moduleName << ": " << _text)
 
 #endif // MODULELOG_H
 
