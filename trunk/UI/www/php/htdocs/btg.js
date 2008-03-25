@@ -623,6 +623,9 @@ function loadUrl()
 	var url = f.value;
 	var filename = url;
 
+	if(!url.match('^http[s]?://(.+)'))
+		return alert("Invalid URL");
+
 	// Extract filename from URL
 	if(filename.indexOf('?') != -1)
 		filename = filename.substr(0, filename.indexOf('?'));
@@ -811,7 +814,7 @@ function cb_contextUrlStatus(response)
 			break;
 		case 4:
 			done = true;
-			s.innerHTML = 'URL downloaded and created successfull.<br/>(Click here to continue)';
+			s.innerHTML = 'URL downloaded and created successfully.<br/>(Click here to continue)';
 			refreshContextList();
 			break;
 		case 5:
