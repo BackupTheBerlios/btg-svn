@@ -76,4 +76,14 @@ $btg_config_autostart = true;
  * The syslog messages produced are also written to syslog.
  */
 $btg_config_debug = 0;
+
+/*
+ * Include system config file.
+ */
+$system_config = "/etc/btg/config.php";
+if (is_readable($system_config))
+{
+	include $system_config;
+}
+
 ?>
