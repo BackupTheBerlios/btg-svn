@@ -22,6 +22,8 @@
 
 #include "mainmodel.h"
 
+#include <UI/gui/guiutils.h>
+
 #include <gtkmm/treeview.h>
 
 #if GTKMM_2_6_OR_BETTER
@@ -66,6 +68,7 @@ namespace btg
          void statusRecord::appendToView(Gtk::TreeView* _treeview)
          {
             _treeview->append_column("Filename", filename);
+            
             _treeview->append_column("Status",   status);
 #if GTKMM_2_6_OR_BETTER
             // Add a progress bar, showing status.
@@ -89,6 +92,8 @@ namespace btg
             _treeview->append_column("Upload",   ul_rate);
             _treeview->append_column("Filesize", filesize);
             _treeview->append_column("Peers l/s", peers);
+            
+            headersSetResizable(*_treeview);
          }
 
          statusRecord::~statusRecord()

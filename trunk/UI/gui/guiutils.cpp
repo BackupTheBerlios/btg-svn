@@ -1,5 +1,5 @@
 /*
- * btg Copyright (C) 2005 Michael Wojciechowski.
+ * btg Copyright (C) 2008 Roman Rybalko.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,7 @@
  * $Id$
  */
 
-#include <gtkmm/treeview.h>
-
-#include "peermodel.h"
-
-#include <UI/gui/guiutils.h>
+#include "guiutils.h"
 
 namespace btg
 {
@@ -32,28 +28,15 @@ namespace btg
    {
       namespace gui
       {
-         peerRecord::peerRecord()
-            : ipv4(),
-              status(),
-              identification()
+         
+         void headersSetResizable(Gtk::TreeView & _tv)
          {
-            add(ipv4);
-            add(status);
-            add(identification);
-         }
-
-         void peerRecord::appendToView(Gtk::TreeView* _treeview)
-         {
-            _treeview->append_column("Address", ipv4);
-            _treeview->append_column("Status",  status);
-            _treeview->append_column("Identification", identification);
-            
-            headersSetResizable(*_treeview);
-         }
-
-         peerRecord::~peerRecord()
-         {
-
+            const Glib::ListHandle<Gtk::TreeViewColumn*> columns = _tv.get_columns();
+            for (Glib::ListHandle<Gtk::TreeViewColumn*>::const_iterator i = columns.begin(); \
+               i != columns.end(); ++i)
+            {
+               (*i)->set_resizable();
+            }
          }
 
       } // namespace gui

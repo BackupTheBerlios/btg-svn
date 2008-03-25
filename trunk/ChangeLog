@@ -2,6 +2,7 @@ BTG version 0.9.8
 -----------------
 The following bugs were fixed:
 
+013436 btgui, resizable headers
 013450 Logging optimization - static conditions
 013434 Log messsages loss when logging not initialized
 013433 Configuration file search paths
