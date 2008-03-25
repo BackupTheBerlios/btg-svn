@@ -24,9 +24,6 @@
 
 /// Macro to do verbose logging.
 #define VERBOSE_LOG(_LOGW, _flag, _text) \
-   if (_flag) \
-      { \
-         BTG_VERBOSE(_LOGW, _text); \
-      } \
-
-// VERBOSE_LOG
+{ \
+   if (_flag) BTG_VERBOSE(_LOGW, _text) \
+} // to not confuse with possible other "else"

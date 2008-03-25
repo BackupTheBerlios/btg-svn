@@ -60,23 +60,43 @@
 #define BTG_AUTH_DEBUG 0
 #endif
 
-/// Used for writing fatal error message to stdout or log.
-#define BTG_FATAL_ERROR(_LOGW, _CLASS, _ERRORTEXT) { BTG_MESSAGE_LOG(_LOGW, btg::core::logger::logWrapper::PRIO_ERROR, _CLASS << ": " << _ERRORTEXT, 1, false); }
+// stringify defines
+// standard hack to stringify an integer
+#define _LOGMACRO_STRINGIFY(x) _LOGMACRO_XSTRINGIFY(x)
+#define _LOGMACRO_XSTRINGIFY(x) #x
+
+
+#if defined(BTG_DEBUG) && BTG_DEBUG
 
 /// Write an error message with the line and file where it occured.
 /// \note Only outputs if BTG_DEBUG is set to 1.
-#define BTG_ERROR_LOG(_LOGW, _ERRORTEXT) { BTG_MESSAGE_LOG(_LOGW, btg::core::logger::logWrapper::PRIO_ERROR, _ERRORTEXT, BTG_DEBUG, true); }
+#define BTG_ERROR_LOG(_LOGW, _ERRORTEXT) \
+   BTG_MESSAGE_LOG(_LOGW, btg::core::logger::logWrapper::PRIO_ERROR, _ERRORTEXT, __FILE__ ":" _LOGMACRO_STRINGIFY(__LINE__) )
+
+/// Write a notice to stderr or log.
+/// \note Only outputs if BTG_DEBUG is set to 1.
+#define BTG_NOTICE(_LOGW, _TEXT) \
+   BTG_MESSAGE_LOG(_LOGW, btg::core::logger::logWrapper::PRIO_NOTICE, _TEXT, __FILE__ ":" _LOGMACRO_STRINGIFY(__LINE__) )
+
+#else
+
+// empty stubs
+#define BTG_ERROR_LOG(_LOGW, _ERRORTEXT)
+#define BTG_NOTICE(_LOGW, _TEXT)
+
+#endif
+
+
+/// Used for writing fatal error message to stdout or log.
+#define BTG_FATAL_ERROR(_LOGW, _CLASS, _ERRORTEXT) BTG_MESSAGE_LOG(_LOGW, btg::core::logger::logWrapper::PRIO_ERROR, _CLASS << ": " << _ERRORTEXT, 0 /* _FILE_LINE */ )
 
 /// Used to write verbose messages.
-#define BTG_VERBOSE(_LOGW, _TEXT) { BTG_MESSAGE_LOG(_LOGW, btg::core::logger::logWrapper::PRIO_VERBOSE, _TEXT, 1 /* _BTG_DEBUG, always enabled */, false); }
-
-/// Write a notice to std out or log.
-/// \note Only outputs if BTG_DEBUG is set to 1.
-#define BTG_NOTICE(_LOGW, _TEXT) { BTG_MESSAGE_LOG(_LOGW, btg::core::logger::logWrapper::PRIO_NOTICE, _TEXT, BTG_DEBUG, true); }
+#define BTG_VERBOSE(_LOGW, _TEXT) BTG_MESSAGE_LOG(_LOGW, btg::core::logger::logWrapper::PRIO_VERBOSE, _TEXT, 0 /* _FILE_LINE */ )
 
 /// Write a message to logger, update message counter.
-#define BTG_MESSAGE_LOG(_LOGW, _LEVEL, _TEXT, _BTG_DEBUG, _PREPEND_FILELINE) \
-   if (_BTG_DEBUG == 1 && _LOGW->logInput(_LEVEL)) \
+#define BTG_MESSAGE_LOG(_LOGW, _LEVEL, _TEXT, _FILE_LINE ) \
+{ \
+   if ( _LOGW->logInput(_LEVEL) ) \
       { \
          std::ostream * logstream = 0; \
          boost::shared_ptr<btg::core::logger::logStream> sp_logstream; \
@@ -91,12 +111,11 @@
             } \
          boost::posix_time::ptime t(boost::posix_time::second_clock::local_time()); \
          *logstream << "[" << boost::posix_time::to_simple_string(t) << "] "; \
-         if (_PREPEND_FILELINE == true) \
-            { \
-               *logstream << "(" << __FILE__ << ", " << __LINE__ << ") "; \
-            } \
+         if (_FILE_LINE) \
+            *logstream << "(" << _FILE_LINE << ") "; \
          *logstream << _TEXT << std::endl; \
       } \
+} // to not confuse with possible other "else"
 
 /** @} */
 

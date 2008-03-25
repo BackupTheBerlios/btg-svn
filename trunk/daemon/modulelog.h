@@ -26,26 +26,41 @@
 #include <bcore/logmacro.h>
 #include <bcore/verbose.h>
 
+#if defined(BTG_DEBUG) && BTG_DEBUG
+
 // The following macros all expect a string, moduleName, to be avaiable.
 
 /// Used to write uniform notices for different modules.
-/// 
 /// \note Adds punctuation character.
-#define BTG_MNOTICE(_LOGW, _TEXT) { BTG_MESSAGE_LOG(_LOGW, btg::core::logger::logWrapper::PRIO_NOTICE, moduleName << ": " << _TEXT << ".", BTG_DEBUG, false); }
+#define BTG_MNOTICE(_LOGW, _TEXT) \
+   BTG_MESSAGE_LOG(_LOGW, btg::core::logger::logWrapper::PRIO_NOTICE, moduleName << ": " << _TEXT << ".", __FILE__ ":" _LOGMACRO_STRINGIFY(__LINE__) )
 
 /// Used to write uniform errors for different modules.
-/// 
 /// \note Adds punctuation character.
-#define BTG_MERROR(_LOGW, _TEXT) { BTG_MESSAGE_LOG(_LOGW, btg::core::logger::logWrapper::PRIO_ERROR, moduleName << ", error: " << _TEXT << ".", BTG_DEBUG, false); }
+#define BTG_MERROR(_LOGW, _TEXT) \
+   BTG_MESSAGE_LOG(_LOGW, btg::core::logger::logWrapper::PRIO_ERROR, moduleName << ", error: " << _TEXT << ".", __FILE__ ":" _LOGMACRO_STRINGIFY(__LINE__) )
 
 /// A function enter.
-#define BTG_MENTER(_LOGW, _FUNCTION_NAME, _ARGUMENTS)   { BTG_MNOTICE(_LOGW, "en:" << _FUNCTION_NAME << ", arg: " << _ARGUMENTS); }
+#define BTG_MENTER(_LOGW, _FUNCTION_NAME, _ARGUMENTS) \
+   BTG_MNOTICE(_LOGW, "en:" << _FUNCTION_NAME << ", arg: " << _ARGUMENTS)
 
 /// A function exit.
-#define BTG_MEXIT(_LOGW, _FUNCTION_NAME, _RETURN_VALUE) { BTG_MNOTICE(_LOGW, "ex:" << _FUNCTION_NAME << ", ret: " << _RETURN_VALUE); }
+#define BTG_MEXIT(_LOGW, _FUNCTION_NAME, _RETURN_VALUE) \
+   BTG_MNOTICE(_LOGW, "ex:" << _FUNCTION_NAME << ", ret: " << _RETURN_VALUE)
+
+#else
+
+// empty stubs
+#define BTG_MNOTICE(_LOGW, _TEXT)
+#define BTG_MERROR(_LOGW, _TEXT)
+#define BTG_MENTER(_LOGW, _FUNCTION_NAME, _ARGUMENTS)
+#define BTG_MEXIT(_LOGW, _FUNCTION_NAME, _RETURN_VALUE)
+
+#endif
 
 /// Verbose log for a certain module.
-#define MVERBOSE_LOG(_LOGW, _flag, _text) { VERBOSE_LOG(_LOGW, _flag, moduleName << ": " << _text); }
+#define MVERBOSE_LOG(_LOGW, _FLAG, _TEXT) \
+   VERBOSE_LOG(_LOGW, _FLAG, moduleName << ": " << _TEXT)
 
 #endif // MODULELOG_H
 
