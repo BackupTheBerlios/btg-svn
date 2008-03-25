@@ -2,6 +2,9 @@ BTG version 0.9.8
 -----------------
 The following bugs were fixed:
 
+013450 Logging optimization - static conditions
+013434 Log messsages loss when logging not initialized
+013433 Configuration file search paths
 013399 Merge Miklos Vajna's GCC 4.3 patch.
 013381 URL loading in daemon and non-www clients.
 013307 btgui, no error message on incorrect login (also btgcli/ncli).
