@@ -1325,12 +1325,13 @@ void testBcore::testVersion()
    vrc.setOption(versionResponseCommand::UPNP);
    vrc.setOption(versionResponseCommand::DHT);
    vrc.setOption(versionResponseCommand::ENCRYPTION);
-   vrc.setOption(versionResponseCommand::OPTION_5);
+   vrc.setOption(versionResponseCommand::URL);
    // vrc.setOption(versionResponseCommand::OPTION_6);
    vrc.setOption(versionResponseCommand::OPTION_7);
    vrc.setOption(versionResponseCommand::OPTION_8);
 
    CPPUNIT_ASSERT( vrc.getOption(versionResponseCommand::SS));
+   CPPUNIT_ASSERT( vrc.getOption(versionResponseCommand::URL));
    CPPUNIT_ASSERT( !vrc.getOption(versionResponseCommand::OPTION_6));
    CPPUNIT_ASSERT( vrc.getOption(versionResponseCommand::OPTION_7));
    CPPUNIT_ASSERT( vrc.getOption(versionResponseCommand::OPTION_8));

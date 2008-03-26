@@ -152,7 +152,7 @@ namespace btg
             case UPNP:
             case DHT:
             case ENCRYPTION:
-            case OPTION_5:
+            case URL:
             case OPTION_6:
             case OPTION_7:
                {
@@ -213,7 +213,7 @@ namespace btg
             case UPNP:
             case DHT:
             case ENCRYPTION:
-            case OPTION_5:
+            case URL:
             case OPTION_6:
             case OPTION_7:
                {
