@@ -119,6 +119,10 @@ namespace btg
                      CN_SSETNAME        = 130, //!< Set current session name.
                      CN_MOREAD          = 131, //!< Only read only access. Usefull for writing monitor applets.
                      CN_MOWRITE         = 132, //!< Default write mode.
+
+                     CN_VERSION         = 133, //!< Get daemon version and settings.
+                     CN_VERSIONRSP      = 134, //!< Get daemon version and settings response.
+
                      CN_UNDEFINED       = 254  //!< Undefined command.
                   };
 

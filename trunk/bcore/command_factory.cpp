@@ -63,6 +63,7 @@
 #include <bcore/command/session_rw.h>
 #include <bcore/command/session_info.h>
 #include <bcore/command/setup.h>
+#include <bcore/command/version.h>
 
 #include <bcore/command/initconnection.h>
 
@@ -425,6 +426,16 @@ namespace btg
                   c = new sessionRWCommand;
                   break;
                }
+            case Command::CN_VERSION:
+               {
+                  c = new versionCommand;
+                  break;
+               }
+            case Command::CN_VERSIONRSP:
+               {
+                  c = new versionResponseCommand;
+                  break;
+               }
             default:
                BTG_ERROR_LOG(logWrapper(), "createFromBytes: wrong command type: " << cmdid << ".");
                _status = commandFactory::DS_UNKNOWN;
@@ -519,6 +530,8 @@ namespace btg
             case Command::CN_GINITCONNECTION:
             case Command::CN_MOREAD:
             case Command::CN_MOWRITE:
+            case Command::CN_VERSION:
+            case Command::CN_VERSIONRSP:
                {
                   status = _command->serialize(e);
                   break;

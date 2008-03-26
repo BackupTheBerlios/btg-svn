@@ -56,6 +56,7 @@
 #include <bcore/command/session_quit.h>
 #include <bcore/command/session_rw.h>
 #include <bcore/command/setup.h>
+#include <bcore/command/version.h>
 #include <bcore/command/uptime.h>
 
 #include "ext_printer.h"
@@ -279,9 +280,15 @@ int main(int argc, char* argv[])
    // Command::CN_CURLSTATUSRSP
    btg::core::urlStatus urlstatus = URLS_WORKING;
    printCommand(cf, e, 
-             new contextUrlStatusResponseCommand(urlId, urlstatus)
+                new contextUrlStatusResponseCommand(urlId, urlstatus)
                 );
 
+   // Command::CN_VERSION
+   printCommand(cf, e, new versionCommand);
+
+   // Command::CN_VERSIONRSP
+   printCommand(cf, e, new versionResponseCommand(1, 2, 3));
+   
    delete e;
    e = 0;
 

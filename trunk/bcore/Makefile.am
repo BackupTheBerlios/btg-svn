@@ -74,6 +74,7 @@ command/session_name.cpp \
 command/session_rw.cpp \
 command/session_info.cpp \
 command/setup.cpp \
+command/version.cpp \
 command/kill.cpp \
 command/limit.cpp \
 command/uptime.cpp \
@@ -185,6 +186,7 @@ command/session_name.h \
 command/session_rw.h \
 command/session_info.h \
 command/setup.h \
+command/version.h \
 command/kill.h \
 command/limit.h \
 command/uptime.h \

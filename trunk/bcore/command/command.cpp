@@ -108,6 +108,8 @@ namespace btg
             t_IdToNameElem(Command::CN_SSETNAME,        "(s) Set session name"),
             t_IdToNameElem(Command::CN_MOREAD,          "(s) RO mode"),
             t_IdToNameElem(Command::CN_MOWRITE,         "(s) RW mode"),
+            t_IdToNameElem(Command::CN_VERSION,         "(s) Version"),
+            t_IdToNameElem(Command::CN_VERSIONRSP,      "(s) Version response"),
             // Undefined.
             t_IdToNameElem(Command::CN_UNDEFINED,       "Undefined")
          };

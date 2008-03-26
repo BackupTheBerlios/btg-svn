@@ -77,6 +77,7 @@ extern "C"
 #include <bcore/command/session_list_rsp.h>
 #include <bcore/command/session_quit.h>
 #include <bcore/command/setup.h>
+#include <bcore/command/version.h>
 
 #include <bcore/command/kill.h>
 #include <bcore/command/limit.h>
@@ -1313,6 +1314,26 @@ void testBcore::testVersion()
    CPPUNIT_ASSERT( (GPD->iMAJORVERSION() >= 0) && (GPD->iMAJORVERSION() <= 9) );
    CPPUNIT_ASSERT( (GPD->iMINORVERSION() >= 0) && (GPD->iMINORVERSION() <= 9) );
    CPPUNIT_ASSERT( (GPD->iREVISIONVERSION() >= 0 ) && (GPD->iREVISIONVERSION() <= 9) );
+
+   // Test the version command.
+   versionResponseCommand vrc(GPD->iMAJORVERSION(), 
+                              GPD->iMINORVERSION(),
+                              GPD->iREVISIONVERSION());
+
+   vrc.setOption(versionResponseCommand::SS);
+   vrc.setOption(versionResponseCommand::PERIODIC_SS);
+   vrc.setOption(versionResponseCommand::UPNP);
+   vrc.setOption(versionResponseCommand::DHT);
+   vrc.setOption(versionResponseCommand::ENCRYPTION);
+   vrc.setOption(versionResponseCommand::OPTION_5);
+   // vrc.setOption(versionResponseCommand::OPTION_6);
+   vrc.setOption(versionResponseCommand::OPTION_7);
+   vrc.setOption(versionResponseCommand::OPTION_8);
+
+   CPPUNIT_ASSERT( vrc.getOption(versionResponseCommand::SS));
+   CPPUNIT_ASSERT( !vrc.getOption(versionResponseCommand::OPTION_6));
+   CPPUNIT_ASSERT( vrc.getOption(versionResponseCommand::OPTION_7));
+   CPPUNIT_ASSERT( vrc.getOption(versionResponseCommand::OPTION_8));
 }
 
 void testBcore::testXmlRpc()
