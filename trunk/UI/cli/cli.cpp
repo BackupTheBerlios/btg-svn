@@ -1988,6 +1988,11 @@ namespace btg
             
          }
 
+         void cliHandler::onVersion(btg::core::OptionBase const& _ob)
+         {
+            setOption(_ob);
+         }
+
          void cliHandler::onSetFilesError(std::string const& _errorDescription)
          {
 

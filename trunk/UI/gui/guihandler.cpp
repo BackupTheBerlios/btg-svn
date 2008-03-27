@@ -408,6 +408,12 @@ namespace btg
             last_id = ILLEGAL_ID;
          }
 
+         void guiHandler::onVersion(btg::core::OptionBase const& _ob)
+         {
+            setOption(_ob);
+            commandStatus = true;
+         }
+
          void guiHandler::onSetFilesError(std::string const& _errorDescription)
          {
             commandStatus = false;

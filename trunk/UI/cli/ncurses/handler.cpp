@@ -281,6 +281,12 @@ namespace btg
             commandStatus = true;
          }
 
+         void Handler::onVersion(btg::core::OptionBase const& _ob)
+         {
+            setOption(_ob);
+            commandStatus = true;
+         }
+
          void Handler::onMove()
          {
             commandStatus = true;

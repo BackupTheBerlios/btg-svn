@@ -135,11 +135,6 @@ fi
 
 AM_LIBGNUTLS_VERSION
 
-LIBCURL_CHECK_CONFIG([], [7.15.5], [libcurlfound=true], [libcurlfound=false])
-if test "$libcurlfound" == "false"; then
-        AC_MSG_ERROR([unable to find libcurl, currently this is required.])
-fi
-
 AX_BOOST_IOSTREAMS
 dnl check that Boost.IOStreams was found:
 if test -z "$BOOST_IOSTREAMS_LIB"; then
@@ -299,6 +294,14 @@ yes) enableupnp=true ;;
 no)  enableupnp=false ;;
 *) AC_MSG_ERROR(bad value ${enableval} for --enable-upnp) ;;
 esac],[enableupnp=false])
+
+AC_ARG_ENABLE(url,
+[  --enable-url            enable URL downloading using CURL.],
+[case "${enableval}" in
+yes) enableurl=true ;;
+no)  enableurl=false ;;
+*) AC_MSG_ERROR(bad value ${enableval} for --enable-event-callback) ;;
+esac],[enableurl=false])
 
 AC_ARG_ENABLE(command-list,
 [  --enable-command-list   enable generating a command list. Internal option.],
@@ -470,6 +473,25 @@ else
         AC_MSG_RESULT([no])
 fi
 
+AC_MSG_CHECKING([whether the daemon should support URL downloading])
+if test "$enableurl" == "true"; then
+   AC_MSG_RESULT([yes])
+
+   LIBCURL_CHECK_CONFIG([], [7.15.5], [libcurlfound=true], [libcurlfound=false])
+   if test "$libcurlfound" == "false"; then
+      AC_MSG_ERROR([unable to find libcurl, currently this is required.])
+   fi
+
+   BTG_OPTION_URL=1
+   AM_CONDITIONAL(BUILDURL, true)
+else
+   AC_MSG_RESULT([no])
+   BTG_OPTION_URL=0
+   AM_CONDITIONAL(BUILDURL, false)
+fi
+
+AC_SUBST(BTG_OPTION_URL)
+
 AC_MSG_CHECKING([whether the a command list should be generated])
 if test "$enablecommandlist" == "true"; then
    AC_MSG_RESULT([yes])
@@ -542,6 +564,12 @@ if test "$enableupnp" == "true"; then
         AC_MSG_NOTICE([UPNP          : enabled])
 else
         AC_MSG_NOTICE([UPNP          : disabled])
+fi
+
+if test "$enableurl" == "true"; then
+        AC_MSG_NOTICE([URL           : enabled])
+else
+        AC_MSG_NOTICE([URL           : disabled])
 fi
 
 if test "$enableunittest" == "true"; then

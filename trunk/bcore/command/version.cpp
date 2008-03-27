@@ -57,29 +57,17 @@ namespace btg
        */
 
       versionResponseCommand::versionResponseCommand()
-         : Command(Command::CN_VERSIONRSP),
-           ver_mayor(0),
-           ver_minor(0),
-           ver_revision(0)
+         : OptionBase(0, 0, 0),
+           Command(Command::CN_VERSIONRSP)
       {
-         bytes[0] = 0;
-         bytes[1] = 0;
-         bytes[2] = 0;
-         bytes[3] = 0;
       }
 
       versionResponseCommand::versionResponseCommand(t_byte const _mayor, 
                                                      t_byte const _minor, 
                                                      t_byte const _revision)
-         : Command(Command::CN_VERSIONRSP),
-           ver_mayor(_mayor),
-           ver_minor(_minor),
-           ver_revision(_revision)
+         : OptionBase(_mayor, _minor, _revision),
+           Command(Command::CN_VERSIONRSP)
       {
-         bytes[0] = 0;
-         bytes[1] = 0;
-         bytes[2] = 0;
-         bytes[3] = 0;
       }
 
       bool versionResponseCommand::serialize(btg::core::externalization::Externalization* _e) const
@@ -134,16 +122,7 @@ namespace btg
          return true;
       }
 
-      void versionResponseCommand::getVersion(t_byte & _mayor,
-                                              t_byte & _minor,
-                                              t_byte & _revision) const
-      {
-         _mayor    = ver_mayor;
-         _minor    = ver_minor;
-         _revision = ver_revision;
-      }
-
-      void versionResponseCommand::setOption(versionResponseCommand::Option const _option)
+      void versionResponseCommand::setOption(OptionBase::Option const _option)
       {
          switch (_option)
             {
@@ -153,7 +132,7 @@ namespace btg
             case DHT:
             case ENCRYPTION:
             case URL:
-            case OPTION_6:
+            case SELECTIVE_DL:
             case OPTION_7:
                {
                   t_int n = _option;
@@ -200,81 +179,6 @@ namespace btg
                   break;
                }
             }
-      }
-
-      bool versionResponseCommand::getOption(versionResponseCommand::Option const _option) const
-      {
-         bool result = false;
-
-         switch (_option)
-            {
-            case SS:
-            case PERIODIC_SS:
-            case UPNP:
-            case DHT:
-            case ENCRYPTION:
-            case URL:
-            case OPTION_6:
-            case OPTION_7:
-               {
-                  t_int n = _option;
-                  if (((bytes[0] >> n) & 1) == 1)
-                     {
-                        result = true;
-                     }
-                  break;
-               }
-            case OPTION_8:
-            case OPTION_9:
-            case OPTION_10:
-            case OPTION_11:
-            case OPTION_12:
-            case OPTION_13:
-            case OPTION_14:
-            case OPTION_15:
-               {
-                  t_int n = _option-8;
-                  if (((bytes[1] >> n) & 1) == 1)
-                     {
-                        result = true;
-                     }
-                  break;
-               }
-            case OPTION_16:
-            case OPTION_17:
-            case OPTION_18:
-            case OPTION_19:
-            case OPTION_20:
-            case OPTION_21:
-            case OPTION_22:
-            case OPTION_23:
-               {
-                  t_int n = _option-16;
-                  if (((bytes[1] >> n) & 1) == 1)
-                     {
-                        result = true;
-                     }
-                  break;
-               }
-            case OPTION_24:
-            case OPTION_25:
-            case OPTION_26:
-            case OPTION_27:
-            case OPTION_28:
-            case OPTION_29:
-            case OPTION_30:
-            case OPTION_31:
-               {
-                  t_int n = _option-24;
-                  if (((bytes[1] >> n) & 1) == 1)
-                     {
-                        result = true;
-                     }
-                  break;
-               }
-            }
-
-         return result;
       }
 
       versionResponseCommand::~versionResponseCommand()

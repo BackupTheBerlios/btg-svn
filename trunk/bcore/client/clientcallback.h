@@ -28,8 +28,8 @@
 
 #include <bcore/trackerstatus.h>
 #include <bcore/file_info.h>
-
 #include <bcore/urlstatus.h>
+#include <bcore/copts.h>
 
 #include <string>
 
@@ -146,6 +146,8 @@ namespace btg
 
                      /// A context was moved to another session.
                      virtual void onMove() = 0;
+
+                     virtual void onVersion(btg::core::OptionBase const& _ob) = 0;
 
                      /// The files requested by the client could not
                      /// be set.

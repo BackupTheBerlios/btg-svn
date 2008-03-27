@@ -36,6 +36,7 @@
 #include "lastfiles.h"
 
 #include <bcore/logable.h>
+#include <bcore/copts.h>
 
 #include <string>
 
@@ -200,6 +201,9 @@ namespace btg
             virtual void reqMoveContext(t_int const _id,
                                         t_long const _toSession);
 
+            /// Request version information.
+            virtual void reqVersion();
+
             /// Returns true if the statemachine thinks that
             /// it completed the setup of the client.
             virtual bool isSetupDone() const;
@@ -305,6 +309,10 @@ namespace btg
             /// Wait for URL loading to complete.
             /// @return true - success, URL loaded. false - URL not loaded.
             bool handleUrlProgress(t_uint _hid);
+
+            virtual void setOption(btg::core::OptionBase const & _options);
+
+            const btg::core::OptionBase& getOption() const;
 
             /// Destructor.
             virtual ~clientHandler();
@@ -434,6 +442,9 @@ namespace btg
             t_uint                            last_surl_id; 
             /// Last received URL status.
             btg::core::urlStatus              last_surl_status;
+
+            /// Received options.
+            btg::core::OptionBase             options;
          private:
             /// Copy constructor.
             clientHandler(clientHandler const& _ch);

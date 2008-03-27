@@ -57,6 +57,7 @@
 #include <bcore/command/session_info.h>
 #include <bcore/command/uptime.h>
 #include <bcore/command/list.h>
+#include <bcore/command/version.h>
 
 #include <bcore/command/context_last.h>
 #include <bcore/command/context_create.h>
@@ -838,6 +839,15 @@ namespace btg
             SM_REQUEST_LOSS;
          }
 
+         void stateMachine::doVersion()
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(new versionCommand());
+               }
+            SM_REQUEST_LOSS;
+         }
+
          void stateMachine::doAttach(attachSessionCommand* _command)
          {
             if (checkState(SM_TRANSPORT_READY))
@@ -1146,6 +1156,12 @@ namespace btg
                      expectedReply[1] = Command::CN_UNDEFINED;
                      break;
                   }
+               case Command::CN_VERSION:
+                  {
+                     expectedReply[0] = Command::CN_VERSIONRSP;
+                     expectedReply[1] = Command::CN_UNDEFINED;
+                     break;
+                  }
                case Command::CN_CCREATEWITHDATA:
                case Command::CN_CSTART:
                case Command::CN_CSTOP:
@@ -1365,7 +1381,11 @@ namespace btg
                      cb_CN_CURLSTATUS(_command);
                      break;
                   }
-
+               case Command::CN_VERSION:
+                  {
+                     cb_CN_VERSION(_command);
+                     break;
+                  }
                default:
                   {
                      BTG_ERROR_LOG(logWrapper(), "callCallback(), unexpected command, " << Command::getName(currentCommand) << ".");

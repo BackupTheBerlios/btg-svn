@@ -100,6 +100,8 @@ namespace btg
             void doMoveContext(t_int const _id,
                                t_long const _toSession);
             /// Action.
+            void doVersion();
+            /// Action.
             void doAttach(attachSessionCommand* _command);
             /// Action.
             void doDetach();
@@ -393,6 +395,8 @@ namespace btg
             void cb_CN_CCREATEFROMURL(btg::core::Command* _command);
             /// Call a callback. URL status.
             void cb_CN_CURLSTATUS(btg::core::Command* _command);
+            /// Call a callback. Version and options.
+            void cb_CN_VERSION(btg::core::Command* _command);
          private:
             /// Copy constructor.
             stateMachine(stateMachine const& _sm);

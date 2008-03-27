@@ -32,6 +32,7 @@ namespace btg
 {
    namespace daemon
    {
+#if BTG_OPTION_URL
       const std::string moduleName("hdl");
       const t_uint max_url_age = 30;
 
@@ -284,6 +285,8 @@ namespace btg
                      connectionID_,
                      new contextCreateFromUrlResponseCommand(hid));
       }
+
+#endif // BTG_OPTION_URL
 
    } // namespace daemon
 } // namespace btg

@@ -388,6 +388,12 @@ namespace btg
                commandStatus = true;
             }
 
+            void viewerHandler::onVersion(btg::core::OptionBase const& _ob)
+            {
+               setOption(_ob);
+               commandStatus = true;
+            }
+
             void viewerHandler::onSetFilesError(std::string const& _errorDescription)
             {
                commandStatus = false;

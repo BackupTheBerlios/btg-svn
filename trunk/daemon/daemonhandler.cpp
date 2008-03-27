@@ -35,6 +35,7 @@
 #include <bcore/command/session_info.h>
 #include <bcore/command/uptime.h>
 #include <bcore/command/limit.h>
+#include <bcore/command/version.h>
 #include <bcore/command/context_move.h>
 #include <bcore/command/context_create.h>
 #include <bcore/command/context_create_url.h>
@@ -275,7 +276,11 @@ namespace btg
                               handleUrlMessages(eventhandler, command_);
                               break;
                            }
-
+                        case Command::CN_VERSION:
+                           {
+                              handleVersion(eventhandler, command_);
+                              break;
+                           }
                         default:
                            {
                               handleOther(eventhandler, command_);
@@ -579,6 +584,38 @@ namespace btg
                   }
                sendAck(command_->getType());
             }
+      }
+
+      void daemonHandler::handleVersion(eventHandler* _eventhandler, 
+                                        btg::core::Command* _command)
+      {
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         
+         versionResponseCommand* vrc = new versionResponseCommand(GPD->iMAJORVERSION(), 
+                                                                  GPD->iMINORVERSION(),
+                                                                  GPD->iREVISIONVERSION());
+         // Set the differnent options, default is off.
+#if BTG_OPTION_SAVESESSIONS
+         vrc->setOption(versionResponseCommand::SS);
+#endif
+         vrc->setOption(versionResponseCommand::PERIODIC_SS);
+#if BTG_OPTION_UPNP
+         vrc->setOption(versionResponseCommand::UPNP);
+#endif
+
+#if BTG_LT_0_13
+         vrc->setOption(versionResponseCommand::DHT);
+         vrc->setOption(versionResponseCommand::ENCRYPTION);
+         vrc->setOption(versionResponseCommand::SELECTIVE_DL);
+#endif
+
+#if BTG_OPTION_URL
+         vrc->setOption(versionResponseCommand::URL);
+#endif
+         sendCommand(dd_->externalization, 
+                     dd_->transport,
+                     connectionID_, 
+                     vrc);
       }
 
       void daemonHandler::handleSessionInfo(eventHandler* _eventhandler, 
@@ -960,10 +997,10 @@ namespace btg
 
       void daemonHandler::handleUrlMessages(eventHandler* _eventhandler, btg::core::Command* _command)
       {
+#if BTG_OPTION_URL
          // Messages which download from URL or which get the status
          // of a download.
          MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
-      
          switch (_command->getType())
             {
             case Command::CN_CCREATEFROMURL:
@@ -977,6 +1014,12 @@ namespace btg
                   break;
                }
             }
+#else
+         // URL loading disabled.
+         sendError(_command->getType(), 
+                   "URL loading not enabled."); 
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "Received unsupported URL command: " << _command->getName() << " from client (" << connectionID_ << ").");
+#endif // BTG_OPTION_URL
       }
 
       void daemonHandler::handleOther(eventHandler* _eventhandler, Command* _command)

@@ -86,7 +86,8 @@ namespace btg
               encryption_enabled_(false),
               last_url_id(URLS_INVALID_URLID),
               last_surl_id(URLS_INVALID_URLID), 
-              last_surl_status(URLS_UNDEF)
+              last_surl_status(URLS_UNDEF),
+              options()
          {
          }
 
@@ -375,6 +376,14 @@ namespace btg
             statemachine.work();
          }
 
+         void clientHandler::reqVersion()
+         {
+            commandStatus = false;
+            
+            statemachine.doVersion();
+            statemachine.work();
+         }
+
          bool clientHandler::isSetupDone() const
          {
             return setupDone;
@@ -554,6 +563,16 @@ namespace btg
                }
 
             return res;
+         }
+
+         void clientHandler::setOption(btg::core::OptionBase const & _options)
+         {
+            options = _options; 
+         }
+
+         const btg::core::OptionBase& clientHandler::getOption() const
+         {
+            return options;
          }
 
          clientHandler::~clientHandler()

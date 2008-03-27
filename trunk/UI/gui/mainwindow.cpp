@@ -225,14 +225,22 @@ namespace btg
             // Start with the torrent controls disabled.
             setControlFunction(false);
             
-            // BTG_NOTICE("Main window created.\n");
+            {
+               // Log the options the daemon uses.
+               GET_HANDLER_INST;
+               handler->reqVersion();
+               if (handler->commandSuccess())
+                  {
+                     const btg::core::OptionBase & o = handler->getOption();
+                     logVerboseMessage(o.toString());
+                  }
+            }
          }
 
          bool mainWindow::on_refresh_timeout(int)
          {
             if (!updateContexts)
                {
-                  // BTG_NOTICE("Not updating contexts");
                   return true;
                }
 
@@ -387,8 +395,6 @@ namespace btg
          void mainWindow::on_menu_item_selected(buttonMenuIds::MENUID _which_item)
          {
             bool non_context = false;
-
-            // BTG_NOTICE("updateContexts = " << updateContexts);
 
             // During execution of this function, no updates of
             // contexts should be done.
@@ -585,12 +591,10 @@ namespace btg
                   }
                case(Gtk::RESPONSE_CANCEL):
                   {
-                     // BTG_NOTICE("Cancel clicked.");
                      break;
                   }
                default:
                   {
-                     // BTG_NOTICE("Unexpected button clicked.");
                      break;
                   }
                } // switch
@@ -1089,7 +1093,6 @@ namespace btg
                   }
                default:
                   {
-                     // BTG_NOTICE("Unexpected button clicked.");
                      break;
                   }
                } // switch
@@ -1186,8 +1189,6 @@ namespace btg
             std::string filename;
             handler->idToFilename(_id, filename);
 
-            // BTG_NOTICE("mainToolbar::BTN_START");
-            
             handler->reqStart(_id);
             if (handler->commandSuccess())
                {
@@ -1208,8 +1209,6 @@ namespace btg
 
             std::string filename;
             handler->idToFilename(_id, filename);
-            
-            // BTG_NOTICE("mainToolbar::BTN_STOP");
             
             handler->reqStop(_id);
             if (handler->commandSuccess())
@@ -1239,8 +1238,6 @@ namespace btg
             std::string filename;
             handler->idToFilename(_id, filename);
 
-            // BTG_NOTICE("mainToolbar::BTN_ERASE");
-            
             handler->reqAbort(_id, true /* erase data */, false);
             if (handler->commandSuccess())
                {
@@ -1270,8 +1267,6 @@ namespace btg
             std::string filename;
             handler->idToFilename(_id, filename);
             
-            // BTG_NOTICE("mainToolbar::BTN_ABORT");
-
             handler->reqAbort(_id, false, false);
             if (handler->commandSuccess())
                {
@@ -1293,8 +1288,6 @@ namespace btg
             
             std::string filename;
             handler->idToFilename(_id, filename);
-
-            // BTG_NOTICE("(global) mainToolbar::BTN_CLEAN");
 
             handler->reqClean(_id, false);
             if (handler->commandSuccess())
@@ -1385,8 +1378,6 @@ namespace btg
                   seed_timeout = m_limitDialog->getParam4();
                }
 
-            // BTG_NOTICE("mainToolbar::BTN_LIMIT");
-
             handler->reqLimit(_id,
                              up_limit, down_limit,
                              seed_percent, seed_timeout,
@@ -1396,10 +1387,6 @@ namespace btg
                {
                   msb->set(USERMESSAGE_LIMIT_B + limit_filename + USERMESSAGE_LIMIT_E);
                   logVerboseMessage(USERMESSAGE_LIMIT_B + limit_filename + USERMESSAGE_LIMIT_E);
-                  // BTG_NOTICE("limit set, upload = " << up_limit
-                  //           << ", download = " << down_limit
-                  //           << ", seed percent = " << seed_percent
-                  //           << ", seed timeout = " << seed_timeout);
                }
             else
                {
@@ -1515,15 +1502,13 @@ namespace btg
          
          bool mainWindow::on_window_state_event (GdkEventWindowState* event)
          {
-            // BTG_NOTICE("Change window state to: " << ((event->new_window_state && Gdk::WINDOW_STATE_MAXIMIZED)?"MAXIMIZED":"unmaximized"));
             m_clientDynConfig.set_gui_window_maximized(event->new_window_state && Gdk::WINDOW_STATE_MAXIMIZED);
             return Gtk::Window::on_window_state_event(event);
          }
          
          bool mainWindow::on_configure_event (GdkEventConfigure* event)
          {
-            // BTG_NOTICE("Resizing to: " << event->x << "x" << event->y << "+" << event->width << "+" << event->height);
-            // ugly hack related to state/configure events order
+            // Ugly hack related to state/configure events order.
             if (event->x)
             {
                m_clientDynConfig.set_gui_window_position(event->x,event->y);

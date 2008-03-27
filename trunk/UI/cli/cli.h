@@ -359,6 +359,8 @@ namespace btg
 
                      void onMove();
 
+                     void onVersion(btg::core::OptionBase const& _ob);
+
                      void onSetFilesError(std::string const& _errorDescription);
 
                      void onSelectedFiles(btg::core::selectedFileEntryList const& _files);

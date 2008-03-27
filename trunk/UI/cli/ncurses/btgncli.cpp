@@ -571,6 +571,9 @@ int main(int argc, char* argv[])
          strSession += " E";
       }
 
+   handler->reqVersion();
+   const btg::core::OptionBase & o = handler->getOption();
+
    // Start a thread that takes care of communicating with the daemon.
    handlerThread* handlerthr = new handlerThread(logwrapper, verboseFlag, handler);
 

@@ -42,6 +42,7 @@
 #include <bcore/command/session_info.h>
 #include <bcore/command/uptime.h>
 #include <bcore/command/list.h>
+#include <bcore/command/version.h>
 
 #include <bcore/command/context_last.h>
 #include <bcore/command/context_create.h>
@@ -202,6 +203,13 @@ namespace btg
 
             clientcallback->onUrlStatus(cusrc->id(), cusrc->status());
          }
+         
+         void stateMachine::cb_CN_VERSION(btg::core::Command* _command)
+         {
+            versionResponseCommand* vrc = dynamic_cast<versionResponseCommand*>(_command);
+            clientcallback->onVersion(*vrc);
+         }
+
       } // namespace client
    } // namespace core
 } // namespace btg

@@ -2,6 +2,13 @@ if BUILDUPNP
   EXTRA_DIR = upnp
 endif
 
+if BUILDURL
+  URL_DEFINES=-DBTG_OPTION_URL=@BTG_OPTION_URL@ @LIBCURL_CPPFLAGS@
+  URL_LIBS=@LIBCURL@
+else
+  URL_DEFINES=-DBTG_OPTION_URL=@BTG_OPTION_URL@
+endif
+
 SUBDIRS = http resource ipfilter auth $(EXTRA_DIR)
 
 if BUILDSESSIONSAVING
@@ -41,14 +48,14 @@ libdaemon_la_CFLAGS   = @CFLAGS@ @DEBUG_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ \
 -DBTG_OPTION_EVENTCALLBACK=@BTG_OPTION_EVENTCALLBACK@ \
 -DBTG_OPTION_UPNP=@BTG_OPTION_UPNP@ \
 -DBTG_OPTION_USECYBERLINK=@BTG_OPTION_USECYBERLINK@ @CYBERLINK_CFLAGS@ \
--DBTG_REV="@BTG_REV@" @LIBCURL_CPPFLAGS@
+-DBTG_REV="@BTG_REV@" $(URL_DEFINES)
 
 libdaemon_la_CXXFLAGS = @CXXFLAGS@ @DEBUG_CXXFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ \
 -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \
 -DBTG_OPTION_EVENTCALLBACK=@BTG_OPTION_EVENTCALLBACK@ \
 -DBTG_OPTION_UPNP=@BTG_OPTION_UPNP@ \
 -DBTG_OPTION_USECYBERLINK=@BTG_OPTION_USECYBERLINK@ @CYBERLINK_CFLAGS@ \
--DBTG_REV="@BTG_REV@" @LIBCURL_CPPFLAGS@
+-DBTG_REV="@BTG_REV@" $(URL_DEFINES)
 
 bin_PROGRAMS = btgdaemon 
 
@@ -58,27 +65,30 @@ if BUILDCYBERLINK
   EXTRA_LDADD=$(top_builddir)/daemon/upnp/libupnp.la @CYBERLINK_LDFLAGS@
 endif
 
+if BUILDURL
+  HTTP_LDADD = $(top_builddir)/daemon/http/libhttp.la 
+endif
+
 btgdaemon_LDADD   = $(top_builddir)/bcore/libbtgcore.la \
                     libdaemon.la \
                     $(top_builddir)/daemon/resource/libresource.la \
                     $(top_builddir)/daemon/ipfilter/libipfilter.la \
-                    $(top_builddir)/daemon/auth/libauth.la \
-                    $(top_builddir)/daemon/http/libhttp.la $(EXTRA_LDADD) \
+                    $(top_builddir)/daemon/auth/libauth.la $(EXTRA_LDADD) $(HTTP_LDADD) \
                     $(top_builddir)/external/ini/libini.la \
                     $(top_builddir)/bcore/libbtgcore.la
 
 btgdaemon_LDFLAGS  = @LIBS@ @LIBTORRENT_LIBS@ -l@BOOST_IOSTREAMS_LIB@ @LIBGNUTLS_LIBS@ \
--l@BOOST_PROGRAM_OPTIONS_LIB@ @LIBCURL@
+-l@BOOST_PROGRAM_OPTIONS_LIB@ $(URL_LIBS)
 
 btgdaemon_CFLAGS   = @CFLAGS@   @DEBUG_CFLAGS@ @LIBGNUTLS_CFLAGS@ \
 -DBTG_DEBUG=@BTG_DEBUG@ -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \
 -DBTG_OPTION_EVENTCALLBACK=@BTG_OPTION_EVENTCALLBACK@ \
--DBTG_OPTION_UPNP=@BTG_OPTION_UPNP@ -DBTG_OPTION_USECYBERLINK=@BTG_OPTION_USECYBERLINK@ @CYBERLINK_CFLAGS@ @LIBCURL_CPPFLAGS@
+-DBTG_OPTION_UPNP=@BTG_OPTION_UPNP@ -DBTG_OPTION_USECYBERLINK=@BTG_OPTION_USECYBERLINK@ @CYBERLINK_CFLAGS@ $(URL_DEFINES)
 
 btgdaemon_CXXFLAGS = @CXXFLAGS@ @DEBUG_CXXFLAGS@ @LIBGNUTLS_CFLAGS@ \
 -DBTG_DEBUG=@BTG_DEBUG@ -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \
 -DBTG_OPTION_EVENTCALLBACK=@BTG_OPTION_EVENTCALLBACK@ \
--DBTG_OPTION_UPNP=@BTG_OPTION_UPNP@ -DBTG_OPTION_USECYBERLINK=@BTG_OPTION_USECYBERLINK@ @CYBERLINK_CPPFLAGS@ @LIBCURL_CPPFLAGS@
+-DBTG_OPTION_UPNP=@BTG_OPTION_UPNP@ -DBTG_OPTION_USECYBERLINK=@BTG_OPTION_USECYBERLINK@ @CYBERLINK_CPPFLAGS@ $(URL_DEFINES)
 
 INCLUDES = @LIBTORRENT_CFLAGS@ -I$(top_srcdir)
 
@@ -89,5 +99,12 @@ $(top_srcdir)/datestamp:
 man1_MANS          = btgdaemon.man
 man5_MANS          = btgcallback.man
 
+if !BUILDURL
+  EXTRA_DIST_HTTP = http/curlif.h http/httpmgr.h http/httpif.h http/httpproc.h \
+                    http/curlif.cpp http/httpmgr.cpp http/httpif.cpp http/httpproc.cpp
+endif
+
 # Since the session saver is optional, and not always compiled, make dist needs this.
-EXTRA_DIST         = sessionsaver.cpp sessionsaver.h btgdaemon.man btgcallback.man
+EXTRA_DIST         = sessionsaver.cpp sessionsaver.h \
+                     btgdaemon.man btgcallback.man $(EXTRA_DIST_HTTP)
+

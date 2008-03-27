@@ -201,11 +201,17 @@ namespace btg
             /// Handle URL messages - download and status.
             void handleUrlMessages(eventHandler* _eventhandler, btg::core::Command* _command);
 
+#if BTG_OPTION_URL
             /// Handle URL status mesasge.
             void handle_CN_CURLSTATUS(eventHandler* _eventhandler, btg::core::Command* _command);
 
             /// Handle URL create message.
             void handle_CN_CCREATEFROMURL(eventHandler* _eventhandler, btg::core::Command* _command);
+#endif // BTG_OPTION_URL
+
+            /// Handle Version request.
+            void handleVersion(eventHandler* _eventhandler, 
+                               btg::core::Command* _command);
 
             /// Handle any other request.
             void handleOther(eventHandler* _eventhandler, btg::core::Command* _command);
