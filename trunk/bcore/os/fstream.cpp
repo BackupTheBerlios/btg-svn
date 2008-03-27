@@ -21,25 +21,43 @@
  * $Id$
  */
 
-#include "guiutils.h"
+#include "fstream.h"
+
+#include <unistd.h>
 
 namespace btg
 {
-   namespace UI
+   namespace core
    {
-      namespace gui
+      namespace os
       {
-         
-         void headersSetResizable(Gtk::TreeView & _tv)
+
+         bool filebuf::truncate()
          {
-            const Glib::ListHandle<Gtk::TreeViewColumn*> columns = _tv.get_columns();
-            for (Glib::ListHandle<Gtk::TreeViewColumn*>::const_iterator i = columns.begin(); \
-               i != columns.end(); ++i)
-            {
-               (*i)->set_resizable();
-            }
+            return truncate( seekoff(0, std::ios_base::cur, std::ios_base::out) );
          }
 
-      } // namespace gui
-   } // namespace UI
+         bool filebuf::truncate(filebuf::pos_type _pos)
+         {
+            return ftruncate(_M_file.fd(), _pos) != -1;
+         }
+
+         fstream::fstream()
+         {
+            
+         }
+
+         fstream::fstream(const char *_fname, std::ios_base::openmode _mode)
+            : std::fstream(_fname,_mode)
+         {
+            
+         }
+         
+         fstream::__filebuf_type* fstream::rdbuf() const
+         {
+            return static_cast<__filebuf_type*>(std::fstream::rdbuf());
+         }
+      
+      } // namespace os
+   } // namespace core
 } // namespace btg

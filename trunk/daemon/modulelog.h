@@ -33,12 +33,12 @@
 /// Used to write uniform notices for different modules.
 /// \note Adds punctuation character.
 #define BTG_MNOTICE(_LOGW, _TEXT) \
-   BTG_MESSAGE_LOG(_LOGW, btg::core::logger::logWrapper::PRIO_NOTICE, moduleName << ": " << _TEXT << ".", __FILE__ ":" _LOGMACRO_STRINGIFY(__LINE__) )
+   BTG_MESSAGE_LOG(_LOGW, btg::core::logger::logWrapper::PRIO_NOTICE, moduleName << ": " << _TEXT, __FILE__ ":" _LOGMACRO_STRINGIFY(__LINE__) )
 
 /// Used to write uniform errors for different modules.
 /// \note Adds punctuation character.
 #define BTG_MERROR(_LOGW, _TEXT) \
-   BTG_MESSAGE_LOG(_LOGW, btg::core::logger::logWrapper::PRIO_ERROR, moduleName << ", error: " << _TEXT << ".", __FILE__ ":" _LOGMACRO_STRINGIFY(__LINE__) )
+   BTG_MESSAGE_LOG(_LOGW, btg::core::logger::logWrapper::PRIO_ERROR, moduleName << ", error: " << _TEXT, __FILE__ ":" _LOGMACRO_STRINGIFY(__LINE__) )
 
 /// A function enter.
 #define BTG_MENTER(_LOGW, _FUNCTION_NAME, _ARGUMENTS) \

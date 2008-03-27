@@ -78,7 +78,7 @@ namespace btg
       {
       }
 
-      t_int SessionSaver::loadSessions(std::string const& _filename
+      t_int SessionSaver::loadSessions(btg::core::os::fstream & _file
 #ifdef OLD_FORMAT
             , bool useBinaryFormat
 #endif
@@ -86,44 +86,36 @@ namespace btg
       {
          t_int handler_count = 0;
 
-         std::ifstream file;
-         BTG_MNOTICE(logWrapper(), "loadSessions(), Loading sessions from file " << _filename);
+         BTG_MNOTICE(logWrapper(), "loadSessions(), Loading sessions from stream.");
 
-#if HAVE_IOS_BASE
-         file.open(_filename.c_str(), std::ios_base::in | std::ios_base::binary);
-#else
-         file.open(_filename.c_str(), std::ios::in | std::ios::binary);
-#endif
-         if (!file.is_open())
+         if (!_file.is_open())
             {
-               BTG_ERROR_LOG(logWrapper(), "loadSessions(), Failed to open " << _filename << " to restore sessions.");
+               BTG_ERROR_LOG(logWrapper(), "loadSessions(), Stream is closed. Failed to restore sessions.");
                return 0;
             }
 
          // Find out the size of the file.
          t_int size = 0;
 #if HAVE_IOS_BASE
-         file.seekg (0, std::ios_base::end);
-         size = file.tellg();
-         file.seekg (0, std::ios_base::beg);
+         _file.seekg (0, std::ios_base::end);
+         size = _file.tellg();
+         _file.seekg (0, std::ios_base::beg);
 #else
-         file.seekg (0, std::ios::end);
-         size = file.tellg();
-         file.seekg (0, ios::beg);
+         _file.seekg (0, std::ios::end);
+         size = _file.tellg();
+         _file.seekg (0, ios::beg);
 #endif
 
          if (size <= 0)
             {
-               BTG_ERROR_LOG(logWrapper(), "loadSessions(), " << _filename << " is empty.");
-               file.close();
+               BTG_ERROR_LOG(logWrapper(), "loadSessions(), stream is empty.");
                return 0;
             }
 
          t_byteP buffer = new t_byte[size];
          memset(buffer, size, 0);
          
-         file.read(reinterpret_cast<char*>(buffer), size);
-         file.close();
+         _file.read(reinterpret_cast<char*>(buffer), size);
 
          btg::core::externalization::Externalization* ext = 0;
          
@@ -149,8 +141,9 @@ namespace btg
          if ((!ext->bytesToUint(&sig0)) || (!ext->bytesToUint(&sig1)))
             {
                BTG_ERROR_LOG(logWrapper(), 
-                             "SessionSaver::loadSessions(), failed to parse " << _filename 
-                             << ", unable to read signature byte(s).");
+                             "SessionSaver::loadSessions(), "
+                             "failed to parse stream, "
+                             "unable to read signature byte(s).");
                delete ext;
                ext = 0;
 
@@ -158,8 +151,9 @@ namespace btg
                if (!useBinaryFormat)
                {
                   BTG_ERROR_LOG(logWrapper(),
-                                "SesssionSaver::loadSessions(), trying old binary format..");
-                  return loadSessions(_filename, true);
+                                "SesssionSaver::loadSessions(), "
+                                "trying old binary format.");
+                  return loadSessions(_file, true);
                }
 #endif
                return 0;
@@ -168,7 +162,8 @@ namespace btg
          if ((sig0 != ~((t_uint)sig1)))
             {
                BTG_ERROR_LOG(logWrapper(),
-                             "SesssionSaver::loadSessions(), bad signature bytes");
+                             "SesssionSaver::loadSessions(), "
+                             "bad signature bytes");
                // Unknown signature.
                delete ext;
                ext = 0;
@@ -176,7 +171,7 @@ namespace btg
                return 0;
             }
 
-         handler_count = handleSaved(_filename, ext, sig0);
+         handler_count = handleSaved(ext, sig0);
 
          delete ext;
          ext = 0;
@@ -184,8 +179,7 @@ namespace btg
          return handler_count;
       }
 
-      t_int SessionSaver::handleSaved(std::string const& _filename,
-                                      btg::core::externalization::Externalization* _e, 
+      t_int SessionSaver::handleSaved(btg::core::externalization::Externalization* _e,
                                       t_uint _version)
       {
          // Global limits.
@@ -228,8 +222,7 @@ namespace btg
          t_int handler_count_tmp;
 
          DESERIALIZE_CHECK(!_e->bytesToInt(&handler_count_tmp),
-                           "SessionSaver::loadSessions(), failed to parse " << 
-                           _filename << ". Improper format.",
+                           "SessionSaver::loadSessions(), failed to parse stream. Improper format.",
                            0);
 
          for (t_int x=0;
@@ -242,11 +235,11 @@ namespace btg
                t_int       seedLimit;
                t_long      seedTimeout;
 
-               DESERIALIZE_CHECK(!_e->bytesToLong(&session), "SessionSaver::loadSessions(), failed to parse " << _filename << ". Missing session id for session no " << handler_count, handler_count);
-               DESERIALIZE_CHECK(!_e->bytesToString(&sessionName), "SessionSaver::loadSessions(), failed to parse " << _filename << ". Missing session name for session no " << handler_count, handler_count);
-               DESERIALIZE_CHECK(!_e->bytesToString(&username), "SessionSaver::loadSessions(), failed to parse " << _filename << ". Missing username for session no " << handler_count, handler_count);
-               DESERIALIZE_CHECK(!_e->bytesToInt(&seedLimit), "SessionSaver::loadSessions(), failed to parse " << _filename << ". Missing seed limit for session " << session, handler_count);
-               DESERIALIZE_CHECK(!_e->bytesToLong(&seedTimeout), "SessionSaver::loadSessions(), failed to parse " << _filename << ". Missing seed timeout for session " << session, handler_count);
+               DESERIALIZE_CHECK(!_e->bytesToLong(&session), "SessionSaver::loadSessions(), failed to parse stream. Missing session id for session no " << handler_count, handler_count);
+               DESERIALIZE_CHECK(!_e->bytesToString(&sessionName), "SessionSaver::loadSessions(), failed to parse stream. Missing session name for session no " << handler_count, handler_count);
+               DESERIALIZE_CHECK(!_e->bytesToString(&username), "SessionSaver::loadSessions(), failed to parse stream. Missing username for session no " << handler_count, handler_count);
+               DESERIALIZE_CHECK(!_e->bytesToInt(&seedLimit), "SessionSaver::loadSessions(), failed to parse stream. Missing seed limit for session " << session, handler_count);
+               DESERIALIZE_CHECK(!_e->bytesToLong(&seedTimeout), "SessionSaver::loadSessions(), failed to parse stream. Missing seed timeout for session " << session, handler_count);
 
                std::vector<btg::core::addressPort> nodes;
 
@@ -282,7 +275,7 @@ namespace btg
          return handler_count;
       }
 
-      bool SessionSaver::saveSessions(std::string const& _filename, bool const _dumpFastResume)
+      bool SessionSaver::saveSessions(btg::core::os::fstream & _file, bool const _dumpFastResume)
       {
          BTG_MNOTICE(logWrapper(),
                      "saveSessions(), Writing sessions to file");
@@ -332,26 +325,25 @@ namespace btg
          delete ext;
          ext = 0;
 
-         std::ofstream file;
-#if HAVE_IOS_BASE
-         file.open(_filename.c_str(), std::ios_base::out);
-#else
-         file.open(_filename.c_str(), std::ios::out);
-#endif
-
-         if (!file.is_open())
+         if (!_file.is_open())
             {
                BTG_ERROR_LOG(logWrapper(),
-                             "saveSessions(), Failed to open " << _filename << " to write active sessions.");
+                             "saveSessions(), Stream is closed.");
                return false;
             }
+
+#if HAVE_IOS_BASE
+         _file.seekp (0, std::ios_base::beg);
+#else
+         _file.seekp (0, std::ios::beg);
+#endif
 
          t_int size     = db.size();
          t_byteP buffer = new t_byte[size];
          db.getBytes(buffer, size);
 
-         file.write(reinterpret_cast<char*>(buffer), size);
-         file.close();
+         _file.write(reinterpret_cast<char*>(buffer), size);
+         _file.rdbuf()->truncate(); // also flush
 
          delete [] buffer;
          buffer = 0;

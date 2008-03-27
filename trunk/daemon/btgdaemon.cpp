@@ -172,6 +172,30 @@ int main(int argc, char* argv[])
        VERBOSE_LOG(logwrapper, verboseFlag, "Sending status using file names.");
      }
 
+#if BTG_OPTION_SAVESESSIONS
+   dd.ss_enable        = dd.config->getSSEnable();
+   dd.ss_timeout       = dd.config->getSSTimeout();
+   
+   dd.ss_file.open(dd.config->getSSFilename().c_str());
+   if (!dd.ss_file.is_open())
+   {
+      // file not exists (or something else but don't care for now)
+      dd.ss_file.clear();
+      dd.ss_file.open(dd.config->getSSFilename().c_str(), std::ios_base::out); // try to create a new
+      if (!dd.ss_file.is_open())
+      {
+         BTG_FATAL_ERROR(logwrapper, 
+                         "btgdaemon", "Could not open/create session file '"
+                         << dd.config->getSSFilename() << "'");
+         dd.destroy();
+         return BTG_ERROR_EXIT;
+      }
+      dd.ss_file.close();
+      dd.ss_file.open(dd.config->getSSFilename().c_str()); // open in read/write mode
+   }
+#endif // BTG_OPTION_SAVESESSIONS
+
+   // change EUID
    if ((dd.config->getRunAsUser().size() > 0) &&
        (dd.config->getRunAsGroup().size() > 0) )
       {
@@ -202,15 +226,6 @@ int main(int argc, char* argv[])
          dd.destroy();
          return BTG_ERROR_EXIT;
       }
-
-   // Determine if the directories specified in the config file are
-   // valid.
-
-#if BTG_OPTION_SAVESESSIONS
-   dd.ss_enable        = dd.config->getSSEnable();
-   dd.ss_timeout       = dd.config->getSSTimeout();
-   dd.ss_filename      = dd.config->getSSFilename();
-#endif // BTG_OPTION_SAVESESSIONS
 
    // Daemonize.
    if (!dd.cla->doNotDetach())

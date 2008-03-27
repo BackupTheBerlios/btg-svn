@@ -27,7 +27,8 @@ os/stdin.cpp \
 os/exec.cpp \
 os/timer.cpp \
 os/gzipif.cpp \
-os/gzip.cpp
+os/gzip.cpp \
+os/fstream.cpp
 
 TRANSPORT_SOURCES=transport/transport.cpp \
 transport/tcpipbase.cpp \
@@ -138,7 +139,8 @@ os/stdin.h \
 os/exec.h \
 os/timer.h \
 os/gzipif.h \
-os/gzip.h
+os/gzip.h \
+os/fstream.h
 
 TRANSPORT_HEADER=transport/transport.h \
 transport/direction.h \

@@ -193,14 +193,16 @@ void testDaemon::testSessionSaver()
       dd.filter = ;
    */
 
+   btg::core::os::fstream sf(TESTFILE_DAEMON_SESSIONSAVE, std::ios_base::out);
+
    SessionSaver *ss = new SessionSaver(logwrapper, false, *portMgr, *limitMgr, sessionlist, dd);
-   CPPUNIT_ASSERT(ss->saveSessions(TESTFILE_DAEMON_SESSIONSAVE, false) == 1);
+   CPPUNIT_ASSERT(ss->saveSessions(sf, false) == 1);
 
    delete ss;
    ss=0;
 
    ss = new SessionSaver(logwrapper, false, *portMgr, *limitMgr, sessionlist, dd);
-   CPPUNIT_ASSERT(ss->loadSessions(TESTFILE_DAEMON_SESSIONSAVE) == 0);
+   CPPUNIT_ASSERT(ss->loadSessions(sf) == 0);
 
    std::vector<t_long> sessions;
 

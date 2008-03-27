@@ -107,7 +107,7 @@
             } \
          else \
             { \
-               logstream = & std::cerr; \
+               logstream = & std::clog; \
             } \
          boost::posix_time::ptime t(boost::posix_time::second_clock::local_time()); \
          *logstream << "[" << boost::posix_time::to_simple_string(t) << "] "; \

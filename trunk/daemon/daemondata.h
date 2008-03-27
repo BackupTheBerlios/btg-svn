@@ -29,6 +29,7 @@
 #include <bcore/transport/http.h>
 #include <bcore/transport/shttp.h>
 #include <bcore/os/gnutlsif.h>
+#include <bcore/os/fstream.h>
 
 #include <bcore/externalization/externalization.h>
 
@@ -113,11 +114,11 @@ namespace btg
                /// Sesson saving: Indicates if session saving is enabled.
                bool                                         ss_enable;
 
-               /// Sesson saving: filename used to save sessions.
-               std::string                                  ss_filename;
+               /// Sesson saving: filestream used to save sessions.
+               btg::core::os::fstream                       ss_file;
 
                /// Sesson saving: Periodic timeout
-	       t_int                                        ss_timeout;
+               t_int                                        ss_timeout;
 #endif // BTG_OPTION_SAVESESSIONS
                /// Pointer to the auth interface to use.
                btg::daemon::auth::Auth*                     auth;

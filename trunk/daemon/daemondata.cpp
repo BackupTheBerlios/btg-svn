@@ -57,7 +57,6 @@ namespace btg
          logfilename()
 #if BTG_OPTION_SAVESESSIONS
          , ss_enable(0),
-         ss_filename(""),
 			ss_timeout(60)
 #endif // BTG_OPTION_SAVESESSIONS
        , auth(0)
@@ -103,6 +102,10 @@ namespace btg
          delete callbackmgr;
          callbackmgr = 0;
 #endif // BTG_OPTION_EVENTCALLBACK
+         
+#if BTG_OPTION_SAVESESSIONS
+         ss_file.close();
+#endif         
       };
 
    } // namespace daemon

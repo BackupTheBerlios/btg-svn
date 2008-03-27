@@ -76,7 +76,7 @@ namespace btg
             void Terminate();
 
             /// Destructor.
-            ~httpProcess();
+            virtual ~httpProcess();
          protected:
             /// Function used for the thread.
             void work();

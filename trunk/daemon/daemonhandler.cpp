@@ -117,19 +117,9 @@ namespace btg
             {
                if(!dd_->cla->doNotReloadSessions())
                   {
-                     if(btg::core::os::fileOperation::check(dd_->ss_filename))
-                        {
-                           MVERBOSE_LOG(logWrapper(), verboseFlag_, "Loading sessions from " << dd_->ss_filename << ".");
-                           BTG_MNOTICE(logWrapper(), "loading sessions from " << dd_->ss_filename);
-
-                           t_int numberOfSessions = sessionsaver_.loadSessions(dd_->ss_filename);
-
-                           MVERBOSE_LOG(logWrapper(), verboseFlag_, "Loaded " << numberOfSessions << " sesssion(s).");
-                        }
-                     else
-                        {
-                           BTG_MNOTICE(logWrapper(), "session file " << dd_->ss_filename << " not found. Not loading");
-                        }
+                     MVERBOSE_LOG(logWrapper(), verboseFlag_, "Loading sessions from stream.");
+                     BTG_MNOTICE(logWrapper(), "loading sessions from stream.");
+                     t_int numberOfSessions = sessionsaver_.loadSessions(dd_->ss_file);
                   }
                else
                   {
@@ -1189,7 +1179,7 @@ namespace btg
                   {
                      BTG_MNOTICE(logWrapper(), "Periodically saving sessions");
                      MVERBOSE_LOG(logWrapper(), verboseFlag_, "Periodically saving sessions.");
-                     sessionsaver_.saveSessions(dd_->ss_filename, false);
+                     sessionsaver_.saveSessions(dd_->ss_file, false);
                   }
 #endif
                periodic_ssave_timer_trigger_ = false;
@@ -1250,13 +1240,11 @@ namespace btg
 #if BTG_OPTION_SAVESESSIONS
          if(dd_->ss_enable)
             {
-               BTG_MNOTICE(logWrapper(), "saving sessions to '" << dd_->ss_filename << "'");
-               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Saving sessions to '" << dd_->ss_filename << "'.");
-               sessionsaver_.saveSessions(dd_->ss_filename, true);
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Saving sessions.");
+               sessionsaver_.saveSessions(dd_->ss_file, true);
             }
          else
             {
-               BTG_MNOTICE(logWrapper(), "sesssion saving disabled");
                MVERBOSE_LOG(logWrapper(), verboseFlag_, "Sesssion saving disabled.");
             }
 #endif // BTG_OPTION_SAVESESSIONS
