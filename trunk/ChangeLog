@@ -2,12 +2,13 @@ BTG version 0.9.8
 -----------------
 The following bugs were fixed:
 
-013454 Writing PID-file (daemon)
-013435 Open all necessary files before switching EUID (daemon)
+013454 Writing PID-file (daemon).
+013435 Open all necessary files before switching EUID (daemon).
 013450 Logging optimization - static conditions.
 013436 btgui, resizable headers.
 013434 Log messsages loss when logging not initialized.
 013433 Configuration file search paths.
+013412 Additional command: supported options.
 013411 BTGWWW, load a torrent from an URL.
 013399 Merge Miklos Vajna's GCC 4.3 patch.
 013381 URL loading in daemon and non-www clients.
