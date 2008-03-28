@@ -92,6 +92,8 @@ namespace btg
                      Gtk::MenuItem*              limitMenuitem;
                      /// Item in the control menu.
                      Gtk::MenuItem*              moveMenuitem;
+
+                     bool                        urlDlEnabled;
                   private:
                      /// Copy constructor.
                      mainMenubar(mainMenubar const& _mm);

@@ -75,6 +75,8 @@ namespace btg
                /// Used when a menu item is selected.
                void on_menu_item_selected(buttonMenuIds::MENUID _which_item);
 
+               bool isUrlDlEnabled() const;
+
                /// Destructor.
                virtual ~mainWindow();
             private:
@@ -251,6 +253,8 @@ namespace btg
                std::string last_url;
                /// Last downloaded URL - the filename used.
                std::string last_url_file;
+
+               bool        urlDlEnabled;
             private:
                /// Copy constructor.
                mainWindow(mainWindow const& _mw);

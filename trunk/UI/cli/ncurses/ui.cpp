@@ -55,11 +55,13 @@ namespace btg
 
          UI::UI(std::string const& _session,
                 bool _neverAskQuestions,
+                bool _urlDlEnabled,
                 keyMapping const& _keymap,
                 Colors & _colors,
                 btg::core::client::handlerThread* _handlerthread)
             : session_(_session),
               neverAskQuestions_(_neverAskQuestions),
+              urlDlEnabled_(_urlDlEnabled),
               keymap_(_keymap),
               colors_(_colors),
               mainwindow_(_keymap),

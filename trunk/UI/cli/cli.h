@@ -222,6 +222,8 @@ namespace btg
                      /// Get an error message.
                      std::string getError();
 
+                     void DisableUrlDownload();
+
                      /// Destructor.
                      virtual ~cliHandler();
                   private:
@@ -424,6 +426,8 @@ namespace btg
                      /// about executing a command, this member
                      /// contains the ID of the command to execute.
                      CLICommand::ID savedId;
+
+                     bool           url_enabled;
                   };
 
                /** @} */

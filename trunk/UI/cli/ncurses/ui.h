@@ -56,6 +56,7 @@ namespace btg
                      /// Constructor.
                      UI(std::string const& _session,
                         bool _neverAskQuestions,
+                        bool _urlDlEnabled,
                         keyMapping const& _keymap,
                         Colors & _colors,
                         btg::core::client::handlerThread* _handlerthread);
@@ -154,6 +155,8 @@ namespace btg
 
                      /// Flag: if true, no questions are asked. Ever.
                      bool           neverAskQuestions_;
+
+                     bool           urlDlEnabled_;
 
                      /// The keys used by the UI.
                      keyMapping     keymap_;

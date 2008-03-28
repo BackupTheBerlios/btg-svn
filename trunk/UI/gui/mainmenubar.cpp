@@ -51,7 +51,8 @@ namespace btg
               cleanMenuitem(0),
               limitMenuitem(0),
               moveMenuitem(0),
-              preferencesMenuitem(0)
+              preferencesMenuitem(0),
+              urlDlEnabled(_mainwindow->isUrlDlEnabled())
          {
             Gtk::MenuBar *mainMenubar          = this;
             
@@ -97,11 +98,14 @@ namespace btg
             load_menuitem->signal_activate().connect( sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LOAD ) );
             fileMenu->items().push_back(*load_menuitem);
 
-            Gtk::MenuItem* loadurl_menuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::NEW, Gtk::ICON_SIZE_MENU)), "Open _URL", true);
-            loadurl_menuitem->signal_activate().connect( sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LOAD_URL ) );
-            fileMenu->items().push_back(*loadurl_menuitem);
-
-            fileMenu->items().push_back(Gtk::Menu_Helpers::SeparatorElem());
+            if (urlDlEnabled)
+               {
+                  Gtk::MenuItem* loadurl_menuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::NEW, Gtk::ICON_SIZE_MENU)), "Open _URL", true);
+                  loadurl_menuitem->signal_activate().connect( sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LOAD_URL ) );
+                  fileMenu->items().push_back(*loadurl_menuitem);
+                  
+                  fileMenu->items().push_back(Gtk::Menu_Helpers::SeparatorElem());
+               }
 
             preferencesMenuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::PROPERTIES, Gtk::ICON_SIZE_MENU)), "_Preferences", true);
             preferencesMenuitem->signal_activate().connect( sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_PREFERENCES ) );

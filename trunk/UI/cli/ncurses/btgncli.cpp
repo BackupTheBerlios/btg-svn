@@ -577,7 +577,12 @@ int main(int argc, char* argv[])
    // Start a thread that takes care of communicating with the daemon.
    handlerThread* handlerthr = new handlerThread(logwrapper, verboseFlag, handler);
 
-   UI ui(strSession, neverAskFlag, kmap, colors, handlerthr);
+   UI ui(strSession, 
+         neverAskFlag, 
+         o.getOption(btg::core::OptionBase::URL), 
+         kmap, 
+         colors, 
+         handlerthr);
 
    // Init the ui.
    ui.init();

@@ -263,7 +263,8 @@ namespace btg
               commandlist(),
               currentID(cliHandler::WRONG_CONTEXT_ID),
               useCurrentID(false),
-              savedId(CLICommand::cmd_undefined)
+              savedId(CLICommand::cmd_undefined),
+              url_enabled(true)
          {
             commandlist.addCommand(
                                    new CLICommand(CLICommand::cmd_help,
@@ -583,6 +584,12 @@ namespace btg
                   }
                case CLICommand::cmd_url:
                   {
+                     if (!url_enabled)
+                        {
+                           result = INPUT_ERROR;
+                           setError("URL downloading not supported by daemon.");
+                           break;
+                        }
                      // url http://url/file.torrent
                      t_strList parts = Util::splitLine(_input, " ");
                      if (parts.size() > 1)
@@ -1990,6 +1997,7 @@ namespace btg
 
          void cliHandler::onVersion(btg::core::OptionBase const& _ob)
          {
+            commandStatus = true;
             setOption(_ob);
          }
 
@@ -2056,6 +2064,11 @@ namespace btg
                }
             
             return result;
+         }
+
+         void cliHandler::DisableUrlDownload()
+         {
+            url_enabled = false;
          }
 
          cliHandler::~cliHandler()

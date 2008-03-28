@@ -106,8 +106,19 @@ namespace btg
               m_limitDialog(new limitDialog()),
               m_sessionSelectionDialog(0),
               last_url(),
-              last_url_file()
+              last_url_file(),
+              urlDlEnabled(true)
          {
+            {
+               GET_HANDLER_INST;
+               handler->reqVersion();
+               if (handler->commandSuccess())
+                  {
+                     const btg::core::OptionBase & o = handler->getOption();
+                     urlDlEnabled = o.getOption(btg::core::OptionBase::URL); 
+                  }
+            }
+
             mmb                       = Gtk::manage(new mainMenubar(this));
             mtw                       = Gtk::manage(new mainTreeview);
             Gtk::ScrolledWindow* mtsw = Gtk::manage(new Gtk::ScrolledWindow);
@@ -136,14 +147,17 @@ namespace btg
             tbutton->set_label("Open");
             tbutton->set_stock_id(Gtk::Stock::NEW);
             tbar->append(*tbutton,sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*this, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LOAD ));
-            
-            // Open URL.
-            tbutton = Gtk::manage(new Gtk::ToolButton);
-            tbutton->set_label("Open URL");
-            tbutton->set_stock_id(Gtk::Stock::NEW);
-            tbar->append(*tbutton,sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*this, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LOAD_URL ));
-            
-            tbar->append(*Gtk::manage(new Gtk::SeparatorToolItem));
+
+            if (urlDlEnabled)
+               {
+                  // Open URL.
+                  tbutton = Gtk::manage(new Gtk::ToolButton);
+                  tbutton->set_label("Open URL");
+                  tbutton->set_stock_id(Gtk::Stock::NEW);
+                  tbar->append(*tbutton,sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*this, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LOAD_URL ));
+                  
+                  tbar->append(*Gtk::manage(new Gtk::SeparatorToolItem));
+               }
 
             tbutton = Gtk::manage(new Gtk::ToolButton);
             tbutton->set_label("Start");
@@ -228,12 +242,8 @@ namespace btg
             {
                // Log the options the daemon uses.
                GET_HANDLER_INST;
-               handler->reqVersion();
-               if (handler->commandSuccess())
-                  {
-                     const btg::core::OptionBase & o = handler->getOption();
-                     logVerboseMessage(o.toString());
-                  }
+               const btg::core::OptionBase & o = handler->getOption();
+               logVerboseMessage(o.toString());
             }
          }
 
@@ -1515,6 +1525,11 @@ namespace btg
                m_clientDynConfig.set_gui_window_dimensions(event->width,event->height);
             }
             return Gtk::Window::on_configure_event(event);
+         }
+
+         bool mainWindow::isUrlDlEnabled() const
+         {
+            return urlDlEnabled;
          }
 
       } // namespace gui

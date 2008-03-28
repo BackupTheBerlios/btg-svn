@@ -179,8 +179,16 @@ namespace btg
                   }
                case keyMapping::K_LOAD_URL:
                   {
-                     handleLoadUrl();
-                     refresh();
+                     if (urlDlEnabled_)
+                        {
+                           handleLoadUrl();
+                           refresh();
+                        }
+                     else
+                        {
+                           statuswindow_.setError("URL downloading not supported by daemon.");
+                           refresh();
+                        }
                      break;
                   }
                case keyMapping::K_GLIMIT:

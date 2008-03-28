@@ -507,6 +507,18 @@ int main(int argc, char* argv[])
    nscr->setOutput(GPD->sCLI_CLIENT() +" version " + GPD->sFULLVERSION() + ", build " + GPD->sBUILD() + " initializing ..");
    nscr->setOutput(initialStatusMessage);
 
+   clihandler->reqVersion();
+   if (clihandler->commandSuccess())
+      {
+         const btg::core::OptionBase & o = clihandler->getOption();
+         nscr->setOutput(o.toString());
+
+         if (!o.getOption(btg::core::OptionBase::URL))
+            {
+               clihandler->DisableUrlDownload();
+            }
+      }
+
    // Get some info about the current session, so it can be displayed
    // to the user.
    clihandler->reqSessionInfo();
