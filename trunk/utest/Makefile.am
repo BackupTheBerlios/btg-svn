@@ -64,6 +64,7 @@ endif
 if BUILDURL
   URL_DEFINES=-DBTG_OPTION_URL=@BTG_OPTION_URL@ @LIBCURL_CPPFLAGS@
   URL_LIBS=@LIBCURL@
+  URL_LDADD=$(top_builddir)/daemon/http/libhttp.la
 else
   URL_DEFINES=-DBTG_OPTION_URL=@BTG_OPTION_URL@
 endif
@@ -75,8 +76,7 @@ noinst_HEADERS     = listener.h testrunner.h test_daemon.h test_os.h test_gen_tr
 noinst_PROGRAMS     = testrunner
 
 testrunner_LDADD   = $(top_builddir)/bcore/libbtgcore.la $(BCORE_CLIENT_TEST_LIB) \
-                     $(top_builddir)/daemon/libdaemon.la \
-                     $(top_builddir)/daemon/http/libhttp.la \
+                     $(top_builddir)/daemon/libdaemon.la $(URL_LDADD) \
                      $(top_builddir)/daemon/resource/libresource.la \
                      $(top_builddir)/external/ini/libini.la \
                      $(top_builddir)/bcore/libbtgcore.la

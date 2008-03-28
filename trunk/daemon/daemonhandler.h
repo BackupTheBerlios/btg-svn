@@ -50,7 +50,9 @@
 #include "portmgr.h"
 #include "limitmgr.h"
 
-#include <daemon/http/httpmgr.h>
+#if BTG_OPTION_URL
+#  include <daemon/http/httpmgr.h>
+#endif 
 
 #include <bcore/logable.h>
 
@@ -58,6 +60,7 @@ namespace btg
 {
    namespace daemon
    {
+#if BTG_OPTION_URL
       /// Creation status when adding torrent from URL.
       enum UrlCreateStatus
       {
@@ -103,6 +106,7 @@ namespace btg
          /// Age in (x * url timer duration).
          t_uint          age;
       };
+#endif // BTG_OPTION_URL
 
       /// Handler class used by the daemon.
       class daemonHandler: public btg::core::Logable
@@ -288,12 +292,12 @@ namespace btg
 
             /// Indicates that the session timer has expired.
             bool                            session_timer_trigger_;
-
+#if BTG_OPTION_URL
             /// Timer used to check for completed URL downloads.
             btg::core::os::Timer            url_timer_;
             /// Indicates that the URL timer timed out.
             bool                            url_timer_trigger_;
-
+#endif // BTG_OPTION_URL
             /// Timer used for setting global limits.
             btg::core::os::Timer            limit_timer_;
 
@@ -341,6 +345,7 @@ namespace btg
             /// Command factory used by this instance.
             btg::core::commandFactory       cf_;
 
+#if BTG_OPTION_URL
             /// Http manager used for all downloads.
             btg::daemon::http::httpManager  httpmgr;
 
@@ -361,6 +366,7 @@ namespace btg
 
             /// Clean up, if the torrent could not be downloaded.
             void removeUrl(UrlIdSessionMapping & _mapping);
+#endif // BTG_OPTION_URL
 
          private:
             /// Copy constructor.

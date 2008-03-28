@@ -50,8 +50,10 @@ extern "C"
 #include <bcore/logger/logger.h>
 #include <bcore/logger/console_log.h>
 
-#include <daemon/http/httpmgr.h>
-#include <bcore/os/sleep.h>
+#if BTG_OPTION_URL
+#  include <daemon/http/httpmgr.h>
+#  include <bcore/os/sleep.h>
+#endif // BTG_OPTION_URL
 
 #if BTG_UTEST_DAEMON
 CPPUNIT_TEST_SUITE_REGISTRATION( testDaemon );
@@ -409,6 +411,7 @@ void testDaemon::testCommandLineHandler()
    clah = 0;
 }
 
+#if BTG_OPTION_URL
 // Note: these tests can fail if the required files are not present on
 // the http server they are downloaded from.
 void testDaemon::testHttpDownload()
@@ -461,3 +464,4 @@ void testDaemon::testHttpDownload()
 
    std::cout << "Got bytes: " << buffer2.size() << std::endl;
 }
+#endif // BTG_OPTION_URL

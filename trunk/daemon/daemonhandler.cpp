@@ -74,8 +74,10 @@ namespace btg
            buffer_(),
            session_timer_(10), /* 10 seconds. */
            session_timer_trigger_(false),
+#if BTG_OPTION_URL
            url_timer_(5),
            url_timer_trigger_(false),
+#endif
            limit_timer_(30), /* 30 seconds. */
            limit_timer_trigger_(false),
            elapsed_seed_timer_(60), /* 1 minute. */
@@ -102,9 +104,11 @@ namespace btg
            sessiontimer_(dd_->ss_timeout),
 #endif // BTG_OPTION_SAVESESSIONS
            sendBuffer_(),
-           cf_(_logwrapper, _dd->externalization),
-           httpmgr(_logwrapper),
+           cf_(_logwrapper, _dd->externalization)
+#if BTG_OPTION_URL
+           ,httpmgr(_logwrapper),
            UrlIdSessions()
+#endif // BTG_OPTION_URL
       {
          /// Set the initial limits.
          limitManager_.set(_dd->config->getUploadRateLimit(),
@@ -1195,6 +1199,7 @@ namespace btg
 
       void daemonHandler::checkTimeout()
       {
+#if BTG_OPTION_URL
          if (url_timer_trigger_)
             {
                url_timer_trigger_ = false;
@@ -1205,7 +1210,7 @@ namespace btg
                      handleUrlDownloads();
                   }
             }
-
+#endif
          if (session_timer_trigger_)
             {
                MVERBOSE_LOG(logWrapper(), verboseFlag_, "Checking limits and alerts.");
@@ -1247,12 +1252,12 @@ namespace btg
                elapsed_seed_timer_.Reset();
                return;
             }
-
+#if BTG_OPTION_URL
          if (url_timer_.Timeout())
             {
                url_timer_trigger_ = true;
             }
-
+#endif
          if (session_timer_.Timeout())
             {
                session_timer_trigger_ = true;
