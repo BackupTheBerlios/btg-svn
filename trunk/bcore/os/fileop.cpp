@@ -22,7 +22,6 @@
 
 #include "fileop.h"
 
-#include <bcore/project.h>
 #include <bcore/logmacro.h>
 
 extern "C"

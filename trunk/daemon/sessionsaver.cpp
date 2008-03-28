@@ -343,7 +343,7 @@ namespace btg
          db.getBytes(buffer, size);
 
          _file.write(reinterpret_cast<char*>(buffer), size);
-         _file.rdbuf()->truncate(); // also flush
+         _file.truncate(); // also flush
 
          delete [] buffer;
          buffer = 0;

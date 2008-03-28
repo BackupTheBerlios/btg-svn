@@ -96,6 +96,9 @@ namespace btg
       std::string const KEY_MISC_USERAGENT("user-agent");
       std::string const DESCR_MISC_USERAGENT("user agent string");
 
+      std::string const KEY_MISC_PIDFILE("pidfile");
+      std::string const DESCR_MISC_PIDFILE("PID-file");
+      
       std::string const SECTION_LIMIT("limit");
       std::string const KEY_LIMIT_UPLOAD_RATE_LIMIT("upload_rate_limit");
       std::string const KEY_LIMIT_DOWNLOAD_RATE_LIMIT("download_rate_limit");
@@ -136,7 +139,7 @@ namespace btg
            def_TLS_cert(),
            def_TLS_privkey(),
            def_logType(logBuffer::UNDEF),
-           def_logFilename("/non/existing"),
+           def_logFilename("/var/log/btgdaemon.log"),
            def_proxy(0,0,0,0,0),
            def_filterFilename("/non/existing"),
            def_filterType(IpFilterIf::IPF_UNDEF),
@@ -148,9 +151,9 @@ namespace btg
            def_max_uploads(limitBase::LIMIT_DISABLED),
            def_max_connections(limitBase::LIMIT_DISABLED),
            def_ss_enable(false),
-           def_ss_filename("/non/existing"),
+           def_ss_filename("/ver/lib/btg/sessions"),
            def_ss_timeout(60),
-           def_authFile("/non/existing"),
+           def_authFile("/var/lib/btg/auth"),
            def_runAsUser(),
            def_runAsGroup(),
            def_use_torrent_name(false),
@@ -159,7 +162,8 @@ namespace btg
            def_enc_level(daemonConfiguration::plaintext),
            def_prefer_rc4(false),
            def_peerId(""),
-           def_userAgent("")
+           def_userAgent(""),
+           def_pidfname("/var/run/btgdaemon.pid")
       {
       }
 
@@ -283,15 +287,24 @@ namespace btg
                      if (loggerStr.size() > 0)
                         {
                            def_logFilename = loggerStr;
+                           btg::core::os::fileOperation::resolvePath(def_logFilename);
                         }
                   }
 
                /* Misc */
                /* Proxy */
-               std::string proxyStr = inifile->GetValue(KEY_MISC_PROXY, SECTION_MISC);
-               if (proxyStr.size() > 0)
+               std::string miscStr;
+               miscStr = inifile->GetValue(KEY_MISC_PROXY, SECTION_MISC);
+               if (miscStr.size() > 0)
                   {
-                     def_proxy.fromString(proxyStr);
+                     def_proxy.fromString(miscStr);
+                  }
+               /* PID-file */
+               miscStr = inifile->GetValue(KEY_MISC_PIDFILE, SECTION_MISC);
+               if (miscStr.size() > 0)
+                  {
+                     def_pidfname = miscStr;
+                     btg::core::os::fileOperation::resolvePath(def_pidfname);
                   }
 
                /* Use torrent name instead of file names. */
@@ -1243,6 +1256,11 @@ namespace btg
          return def_proxy;
       }
 
+      const std::string & daemonConfiguration::getPIDFile() const
+      {
+         return def_pidfname;
+      }
+      
       void daemonConfiguration::getFilterFilename(std::string & _filename)
       {
          _filename = def_filterFilename;

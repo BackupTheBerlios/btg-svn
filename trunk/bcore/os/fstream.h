@@ -1,6 +1,5 @@
 /*
  * btg Copyright (C) 2005 Michael Wojciechowski.
- *     Copyright (C) 2008 Roman Rybalko.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,6 +66,15 @@ namespace btg
 
                      /// returns aggregated filebuf object
                      __filebuf_type* rdbuf() const;
+
+                     /// Truncate file in current tellp() position
+                     /// @note will flush stream (seekp called)
+                     bool truncate();
+                     
+                     /// Truncate file
+                     /// @param _pos position from beginning of file
+                     /// @see truncate(2)
+                     bool truncate(pos_type _pos);
                   };
 
                /** @} */

@@ -28,6 +28,7 @@
 #include <bcore/transport/transport.h>
 #include <bcore/addrport.h>
 #include <bcore/logger/logger.h>
+#include <bcore/os/fileop.h>
 
 #include "ipfilter/ipfilterif.h"
 
@@ -109,6 +110,9 @@ namespace btg
 
                /// Get the proxy IPv4:port to be used.
                btg::core::addressPort getProxy() const;
+               
+               /// Get PID-file name (file to write the PID to)
+               const std::string & getPIDFile() const;
 
                /// Set the filename of the file used for IPv4 filtering.
                void setFilterFilename(std::string const& _filename);
@@ -378,6 +382,9 @@ namespace btg
 
                /// User agent used.
                std::string                                 def_userAgent;
+               
+               /// PID-file name
+               std::string                                 def_pidfname;
             };
 
       } // namespace daemon

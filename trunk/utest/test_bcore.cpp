@@ -47,6 +47,7 @@ extern "C"
 #include <bcore/auth/hash.h>
 
 #include <bcore/os/fileop.h>
+#include <bcore/os/pidfile.h>
 
 #include <bcore/project.h>
 
@@ -1588,6 +1589,64 @@ void testBcore::stressTestXmlRpcCommands()
 
    delete eDestin;
    eDestin = 0;
+}
+
+// also tests btg::core::os::fstream
+void testBcore::testPIDFile()
+{
+   char fname[] = "/tmp/testPIDFileXXXXXX";
+   CPPUNIT_ASSERT(mkstemp(fname) != -1);
+   
+   {
+      btg::core::os::PIDFile pf(fname);
+      CPPUNIT_ASSERT(pf.error() == false);
+      CPPUNIT_ASSERT(pf.exists() == false);
+      
+      pf.write();
+      
+      {
+         btg::core::os::PIDFile pf(fname);
+         CPPUNIT_ASSERT(pf.error() == false);
+         CPPUNIT_ASSERT(pf.exists() == true);
+      }
+      
+      {
+         // test that file isn't deleted
+         std::ifstream ifs(fname);
+         CPPUNIT_ASSERT(ifs.is_open() == true);
+      }
+      int a = 1;
+   }
+
+   {
+      // test that file is deleted
+      std::ifstream ifs(fname);
+      CPPUNIT_ASSERT(ifs.is_open() == false);
+   }
+   
+   {
+      btg::core::os::PIDFile pf(fname);
+      pf.clear();
+   }
+
+   {
+      // test that file isn't deleted
+      std::ifstream ifs(fname);
+      CPPUNIT_ASSERT(ifs.is_open() == true);
+   }
+   
+   {
+      // empty file, should be OK
+      btg::core::os::PIDFile pf(fname);
+      CPPUNIT_ASSERT(pf.error() == false);
+      CPPUNIT_ASSERT(pf.exists() == false);
+      pf.write();
+      
+      int pid;
+      std::ifstream ifs(fname);
+      ifs >> pid;
+      CPPUNIT_ASSERT(pid == getpid());
+   }
 }
 
 void testBcore::XmlRpcSerializeDeserialize(btg::core::externalization::Externalization* _eSource,

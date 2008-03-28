@@ -63,14 +63,11 @@ namespace btg
 #if BTG_OPTION_EVENTCALLBACK
        , callbackmgr(0)
 #endif // BTG_OPTION_EVENTCALLBACK
-      {}
+      {
+         
+      }
 
       daemonData::~daemonData()
-      {
-
-      };
-
-      void daemonData::destroy()
       {
          delete filter;
          filter = 0;

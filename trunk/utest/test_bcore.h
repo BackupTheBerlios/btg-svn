@@ -87,6 +87,8 @@ class testBcore : public CppUnit::TestFixture
 
    CPPUNIT_TEST( stressTestXmlRpcCommands );
 
+   CPPUNIT_TEST( testPIDFile );
+
    CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -147,6 +149,9 @@ class testBcore : public CppUnit::TestFixture
 
    // Stress test the encoding/decoding of commands using XML-RPC.
    void stressTestXmlRpcCommands();
+   
+   // test btg::core::os::PIDFile
+   void testPIDFile();
  private:
    void createCommands(std::vector<btg::core::Command*> & commands);
    void destroyCommands(std::vector<btg::core::Command*> & commands);

@@ -64,10 +64,7 @@ namespace btg
                daemonData();
 
                /// Destructor.
-               ~daemonData();
-
-               /// Destroy the contained data.
-               void destroy();
+               virtual ~daemonData();
 
                /// The start time of the daemon.
                time_t                                       daemonStartTime;

@@ -1,6 +1,5 @@
 /*
  * btg Copyright (C) 2005 Michael Wojciechowski.
- *     Copyright (C) 2008 Roman Rybalko.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +55,16 @@ namespace btg
          fstream::__filebuf_type* fstream::rdbuf() const
          {
             return static_cast<__filebuf_type*>(std::fstream::rdbuf());
+         }
+         
+         bool fstream::truncate()
+         {
+            return rdbuf()->truncate();
+         }
+         
+         bool fstream::truncate(pos_type _pos)
+         {
+            return rdbuf()->truncate(_pos);
          }
       
       } // namespace os

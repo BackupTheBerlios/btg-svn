@@ -83,6 +83,8 @@ use-torrent-name \- True/false. Enable/disable using torrent names (as stored in
 peer-id          \- String. Override the Peer ID.
 .TP
 user-agent       \- String. Override the user agent sent to tracker.
+.TP
+pidfile          \- String. PID-file name (file to write the PID to)
 
 .SS
 Section "auth"
@@ -130,10 +132,11 @@ torrent-range=10024:11240
 
 [logging]
 type=file
-filename=/tmp/btgd.log
+filename=/var/log/btgdaemon.log
 
 [misc]
 proxy=192.168.0.1:8118
+pidfile=/var/run/btgdaemon.pid
 
 [savesessions]
 enable=true
