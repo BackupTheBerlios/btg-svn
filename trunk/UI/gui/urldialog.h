@@ -89,6 +89,8 @@ namespace btg
 
                /// Indicates if both inputs contain text.
                bool url_filename_filled;
+
+               bool filename_filled;
             };
 
          /** @} */

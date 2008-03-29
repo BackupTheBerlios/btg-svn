@@ -21,6 +21,8 @@
  */
 
 #include "urldialog.h"
+#include <bcore/project.h>
+#include <bcore/client/urlhelper.h>
 
 namespace btg
 {
@@ -31,7 +33,8 @@ namespace btg
 
          urlDialog::urlDialog(std::string const& _url,
                               std::string const& _filename)
-            : url_filename_filled(false)
+            : url_filename_filled(false),
+              filename_filled(false)
          {  
             label1 = Gtk::manage(new class Gtk::Label("Enter URL and filename"));
             file_entry = Gtk::manage(new class Gtk::Entry());
@@ -100,6 +103,11 @@ namespace btg
             file_entry->signal_changed().connect(sigc::mem_fun(*this, &urlDialog::file_changed));
             url_entry->signal_changed().connect(sigc::mem_fun(*this, &urlDialog::url_changed));
 
+            set_title( GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() + " / URL" );
+            set_modal(true);
+            property_window_position().set_value(Gtk::WIN_POS_CENTER);
+            set_resizable(true);
+
             check_contents();
 
             show();
@@ -116,6 +124,7 @@ namespace btg
 
          void urlDialog::file_changed()
          {
+            filename_filled = true;
             check_contents();
          }
 
@@ -126,8 +135,25 @@ namespace btg
             
          void urlDialog::check_contents()
          {
-            const std::string f  = file_entry->get_text();
             const std::string u  = url_entry->get_text();
+            std::string f        = file_entry->get_text();
+
+            if (!btg::core::client::isUrlValid(u))
+               {
+                  url_filename_filled = false;
+                  applybutton->hide();
+                  return;
+               }
+
+            if (!filename_filled)
+               {
+                  std::string url_filename;
+                  if (btg::core::client::getFilenameFromUrl(u, url_filename))
+                     {
+                        file_entry->set_text(url_filename);
+                        f = file_entry->get_text();
+                     }
+               }
 
             if ((f.size() > 0) && (u.size() > 0))
                {
