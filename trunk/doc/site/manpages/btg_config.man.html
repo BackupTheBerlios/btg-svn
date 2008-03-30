@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.18.1 -->
-<!-- CreationDate: Mon Mar 24 22:05:56 2008 -->
+<!-- CreationDate: Sun Mar 30 12:26:03 2008 -->
 <html>
 <head>
 <meta name="generator" content="groff -Thtml, see www.gnu.org">
@@ -320,6 +320,15 @@ to tracker.</p></td>
 <table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>pidfile &minus; String. PID-file name (file to write the
+PID to)</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
 <td width="4%"></td>
 <td width="95%">
 <p><b>Section &quot;auth&quot;</b></p></td>
@@ -497,10 +506,11 @@ torrent-range=10024:11240
 
 [logging]
 type=file
-filename=/tmp/btgd.log
+filename=/var/log/btgdaemon.log
 
 [misc]
 proxy=192.168.0.1:8118
+pidfile=/var/run/btgdaemon.pid
 
 [savesessions]
 enable=true

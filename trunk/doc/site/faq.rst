@@ -91,6 +91,17 @@ Link Check: error: libtorrent/session.hpp: No such file or directory
 Make sure the `Rasterbar Libtorrent`_ library is installed.
 Using `Rakshasa Libtorrent`_ is NOT supported.
 
+Error while loading shared libraries
+------------------------------------
+If you see errors like 
+
+::
+
+ btgpasswd: error while loading shared libraries: libtorrent-0.12.1.so: 
+ cannot open shared object file: No such file or directory
+
+You should really read the ld.so man page.
+
 Feature X does not work, what now?
 ----------------------------------
 
@@ -100,13 +111,19 @@ Feature X does not work, what now?
 Libtorrent asserts
 ------------------
 
-Libtorrent _will_ assert if its compiled with debug. Build a release,
-unless you want to test libtorrent.
+`Rasterbar Libtorrent`_ _will_ assert if its compiled with
+debug. Build a release, unless you want to test `Rasterbar Libtorrent`_.
 
-Kindly report libtorrent bugs to the libtorrent mailing list or bug
-tracker. The asserts, unless triggered by BTG will not be handled as
-BTG bugs.
- 
+Kindly report `Rasterbar Libtorrent`_ bugs to the `Rasterbar
+Libtorrent`_ mailing list or bug tracker. The asserts, unless
+triggered by BTG will not be handled as BTG bugs.
+
+Can I expect SVN trunk to work?
+-------------------------------
+
+No. Trunk is being used for active development. Use a release or
+release candidate.
+
 How about adding feature X?
 ---------------------------
 
