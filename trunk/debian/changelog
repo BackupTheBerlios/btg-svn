@@ -1,0 +1,26 @@
+btg (0.9.6-p1-1) unstable; urgency=low
+
+  * New upstream release 
+
+ -- Felipe Sateler <fsateler@gmail.com>  Fri, 05 Oct 2007 23:17:00 -0400
+
+btg (0.9.5-1) unstable; urgency=low
+
+  * New upstream release:
+  	manpage sections were fixed.
+  	upstream removed the debian/ subdirectory.
+  * Build with event callbacks.
+
+ -- Felipe Sateler <fsateler@gmail.com>  Wed, 09 May 2007 23:21:37 -0400
+
+btg (0.9.0-1) UNRELEASED; urgency=low
+
+  * Initial release (Closes: #402466)
+  * Move config.php to /etc to comply with the FHS and put dummy
+    file in it's place which includes the real one.
+  * Include a lintian warning for libplotmm (if someone decides to
+    package it for debian, we remove the library and the override).
+  * Fix manpage section for btgcallback, btg_config and btg.
+  * Add menu items for btgcli and btgui.
+
+ -- Felipe Sateler <fsateler@gmail.com>  Tue, 17 Apr 2007 19:11:48 -0400

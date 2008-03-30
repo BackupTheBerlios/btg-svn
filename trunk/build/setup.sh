@@ -11,6 +11,7 @@
 # Note: This is for developement use only. Read the howto for
 # information about how to build/setup BTG.
 #
+# $Id$
 # 
 # The root of the path where libtorrent is installed.
 # 
