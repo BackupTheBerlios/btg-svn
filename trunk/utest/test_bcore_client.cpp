@@ -199,27 +199,42 @@ void testBcoreClient::setConfigDefaults(btg::core::client::clientConfiguration* 
 
 void testBcoreClient::testCommandLineHandler()
 {
-   btg::core::client::commandLineArgumentHandler* clah = new btg::core::client::commandLineArgumentHandler("client.ini", false);
+   btg::core::client::commandLineArgumentHandler* clah 
+      = new btg::core::client::commandLineArgumentHandler("client.ini", false);
 
    clah->setup();
 #if BTG_DEBUG
-   int argc = 6;
-   char* args[argc];
-   args[0] = "test_client";
-   args[1] = "-A";
-   args[2] = "-d 127.0.0.1:16001";
-   args[3] = "-o test.torrent";
-   args[4] = "--nostart";
-   args[5] = "-D";
+   const int argc = 6;
+   const char* coarg[argc] = {
+      "test_client", 
+      "-A",
+      "-d 127.0.0.1:16001",
+      "-o test.torrent",
+      "--nostart",
+      "-D"
+   };
+
+   char* args[argc] = {0, 0, 0, 0, 0, 0};
 #else
    int argc = 5;
-   char* args[argc];
-   args[0] = "test_client";
-   args[1] = "-A";
-   args[2] = "-d 127.0.0.1:16001";
-   args[3] = "-o test.torrent";
-   args[4] = "--nostart";
+   const char* coarg[argc] = {
+      "test_client",
+      "-A",
+      "-d 127.0.0.1:16001",
+      "-o test.torrent",
+      "--nostart"
+   };
+   char* args[argc] = {0, 0, 0, 0, 0};
 #endif
+   for (int count = 0;
+        count < argc;
+        count++)
+      {
+         int len = strlen(coarg[count]);
+         args[count] = new char[len + 1];
+         memset(args[count], 0, len+1);
+         strncpy(args[count], coarg[count], len);
+      }
 
    char** argv = &args[0];
 
@@ -240,6 +255,15 @@ void testBcoreClient::testCommandLineHandler()
 
    delete clah;
    clah = 0;
+
+   for (int count = 0;
+        count < argc;
+        count++)
+      {
+         delete [] args[count];
+         args[count] = 0;
+      }
+
 }
 
 void testBcoreClient::testUrlFunctions()
