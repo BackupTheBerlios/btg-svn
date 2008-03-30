@@ -381,19 +381,33 @@ void testDaemon::testCommandLineHandler()
 
    clah->setup();
 #if BTG_DEBUG
-   int argc = 4;
-   char* args[argc];
-   args[0] = "test_daemon";
-   args[1] = "-v";
-   args[2] = "-n";
-   args[3] = "-D";
+   const int argc = 4;
+   const char* coarg[argc] = {
+      "test_daemon",
+      "-v",
+      "-n",
+      "-D"
+   };
+   char* args[argc] = {0, 0, 0, 0};
 #else
-   int argc = 3;
-   char* args[argc];
-   args[0] = "test_daemon";
-   args[1] = "-v";
-   args[2] = "-n";
+   const int argc = 3;
+   const char* coarg[argc] = {
+      "test_daemon",
+      "-v",
+      "-n"
+   };
+   char* args[argc] = {0, 0, 0};
 #endif
+
+   for (int count = 0;
+        count < argc;
+        count++)
+      {
+         int len = strlen(coarg[count]);
+         args[count] = new char[len + 1];
+         memset(args[count], 0, len+1);
+         strncpy(args[count], coarg[count], len);
+      }
 
    char** argv = &args[0];
 
@@ -409,6 +423,14 @@ void testDaemon::testCommandLineHandler()
 
    delete clah;
    clah = 0;
+
+   for (int count = 0;
+        count < argc;
+        count++)
+      {
+         delete [] args[count];
+         args[count] = 0;
+      }
 }
 
 #if BTG_OPTION_URL

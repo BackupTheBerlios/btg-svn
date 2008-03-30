@@ -1,5 +1,5 @@
 /* XPM */
-static char* aboutimage_xpm[] = {
+const char* aboutimage_xpm[] = {
 "103 150 923 2",
 "  	c #F0F0F0",
 ". 	c #EDEDED",
