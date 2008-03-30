@@ -172,25 +172,31 @@ int main(int argc, char* argv[])
     * Creating/check PID-file
     */
    
-   btg::core::os::PIDFile pidfile( dd.config->getPIDFile().c_str() );
+   btg::core::os::PIDFile pidfile;
    
-   if (pidfile.exists())
-      {
-         BTG_FATAL_ERROR(logwrapper, 
-                         "btgdaemon",
-                         "Another instance of btgdaemon with pid "
-                         << pidfile.pid()
-                         << " already running.");
-         return BTG_ERROR_EXIT;
-      }
-   
-   if (pidfile.error())
-      {
-         BTG_FATAL_ERROR(logwrapper, 
-                         "btgdaemon",
-                         "Could not create PIDfile '" << dd.config->getPIDFile() << "'");
-         return BTG_ERROR_EXIT;
-      }
+   if ( dd.config->getPIDFile().size() > 0 )
+   {
+      pidfile.create( dd.config->getPIDFile().c_str() );
+
+      if (pidfile.exists())
+         {
+            BTG_FATAL_ERROR(logwrapper, 
+                            "btgdaemon",
+                            "Another instance of btgdaemon with pid "
+                            << pidfile.pid()
+                            << " already running.");
+            return BTG_ERROR_EXIT;
+         }
+      
+      if (pidfile.error())
+         {
+            BTG_FATAL_ERROR(logwrapper, 
+                            "btgdaemon",
+                            "Could not create PIDfile '" << dd.config->getPIDFile() << "'");
+            return BTG_ERROR_EXIT;
+         }
+      
+   }
    
 #if BTG_OPTION_SAVESESSIONS
 
@@ -198,25 +204,49 @@ int main(int argc, char* argv[])
     * Setup sessionsaving
     */
    
-   dd.ss_enable        = dd.config->getSSEnable();
-   dd.ss_timeout       = dd.config->getSSTimeout();
-   
-   dd.ss_file.open(dd.config->getSSFilename().c_str());
-   if (!dd.ss_file.is_open())
    {
-      // file not exists (or something else but don't care for now)
-      dd.ss_file.clear();
-      dd.ss_file.open(dd.config->getSSFilename().c_str(), std::ios_base::out); // try to create a new
-      if (!dd.ss_file.is_open())
+      std::string ss_fname;
+
+      // try cmdline first
+      if (dd.cla->saveSessionsFileSet())
       {
-         BTG_FATAL_ERROR(logwrapper, 
-                         "btgdaemon", "Could not open/create session file '"
-                         << dd.config->getSSFilename() << "'");
-         return BTG_ERROR_EXIT;
+         dd.ss_enable = true;
+         ss_fname     = dd.cla->saveSessionsFile();
+         VERBOSE_LOG(logwrapper, verboseFlag, "Using session file name from cmdline: '"
+            << ss_fname << "'." );
       }
-      dd.ss_file.close();
-      dd.ss_file.open(dd.config->getSSFilename().c_str()); // reopen in read/write mode
+      // then config file
+      else if (dd.config->getSSEnable())
+      {
+         dd.ss_enable  = dd.config->getSSEnable();
+         dd.ss_timeout = dd.config->getSSTimeout();
+         ss_fname      = dd.config->getSSFilename();
+         dd.ss_file.open( ss_fname.c_str() );
+         VERBOSE_LOG(logwrapper, verboseFlag, "Using session file from config: '"
+            << ss_fname << "'." );
+      }
+      
+      if (dd.ss_enable)
+      {
+         dd.ss_file.open( ss_fname.c_str() );
+         if (!dd.ss_file.is_open())
+         {
+            // file not exists (or something else but don't care for now)
+            dd.ss_file.clear();
+            dd.ss_file.open(ss_fname.c_str(), std::ios_base::out); // try to create a new
+            if (!dd.ss_file.is_open())
+            {
+               BTG_FATAL_ERROR(logwrapper, 
+                               "btgdaemon", "Could not open/create session file '"
+                               << ss_fname << "'");
+               return BTG_ERROR_EXIT;
+            }
+            dd.ss_file.close();
+            dd.ss_file.open(ss_fname.c_str()); // reopen in read/write mode
+         }
+      }
    }
+   
 #endif // BTG_OPTION_SAVESESSIONS
 
    /*

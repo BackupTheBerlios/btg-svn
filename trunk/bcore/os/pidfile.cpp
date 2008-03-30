@@ -42,6 +42,8 @@ namespace btg
          void PIDFile::create(const char * _fname)
          {
             clear();
+            if (!m_fname)
+               return;
             m_fname = _fname;
             m_pidfile.clear();
             m_pidfile.open(_fname);
@@ -86,6 +88,7 @@ namespace btg
          void PIDFile::clear()
          {
             m_pidfile.close();
+            m_pidfile.clear();
             m_error = false;
             m_exists = false;
             m_pid = 0;
@@ -94,6 +97,8 @@ namespace btg
          
          void PIDFile::write()
          {
+            if (!m_fname)
+               return;
             m_pidfile.seekp(0);
             m_pidfile << static_cast<pid_type>(getpid());
             m_pidfile.truncate(); // also do flush

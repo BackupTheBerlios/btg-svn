@@ -1,8 +1,0 @@
-;BTG config file.
-working_dir        = ~/bt
-output_dir         = ~/bt/finished
-torrent_output_dir = ~/bt/finished_torrent
-que_file           = ~/.btg/daemon
-port_range_begin   = 14000
-port_range_end     = 14400
-leech_mode         = 0

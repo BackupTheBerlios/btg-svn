@@ -11,3 +11,5 @@ debfiles.gen.sh - creates symlinks for *.install *.postinst, *.postrm, *.prerm, 
 build.gen.sh - calls all above at once
 
 extra - contains extra installation files. Copyed to destdir after make install.
+
+see also ../build/deb.sh

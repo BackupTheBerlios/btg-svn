@@ -162,8 +162,7 @@ namespace btg
            def_enc_level(daemonConfiguration::plaintext),
            def_prefer_rc4(false),
            def_peerId(""),
-           def_userAgent(""),
-           def_pidfname("/var/run/btgdaemon.pid")
+           def_userAgent("")
       {
       }
 
@@ -1043,6 +1042,14 @@ namespace btg
                    temp,
                    output);
 
+         temp.clear();
+         temp.push_back(std::string("string"));
+
+         formatKey(KEY_MISC_PIDFILE,
+                   "PID-file name",
+                   temp,
+                   output);
+         
          /* */
 
          formatSection(SECTION_LIMIT, output);

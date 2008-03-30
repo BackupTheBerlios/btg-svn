@@ -2,8 +2,8 @@ Source: btg@SUFFIX@
 Section: net
 Priority: extra
 Maintainer: Roman Rybalko <btg@romanr.info>
-Build-Depends: debhelper (>= 5), autotools-dev, libtorrent-0.13-dev, libboost-iostreams-dev, libboost-filesystem-dev, libboost-date-time-dev, libboost-thread-dev, libboost-program-options-dev, libncurses5-dev, libgnutls-dev, libgtkmm-2.4-dev, libcppunit-dev, dialog, automake1.9, autoconf, dpatch
-Standards-Version: 3.7.2
+Build-Depends: debhelper (>= 5), autotools-dev, libtorrent-0.13-dev | libtorrent13-dev | libtorrent-dev (>= 0.12), libboost-iostreams-dev, libboost-filesystem-dev, libboost-date-time-dev, libboost-thread-dev, libboost-program-options-dev, libncurses5-dev, libgnutls-dev, libgtkmm-2.4-dev, libcppunit-dev, automake, autoconf
+Standards-Version: 3.7.3
 
 Package: btg-common@SUFFIX@
 Depends: libboost-date-time1.34.1, libboost-filesystem1.34.1, libboost-thread1.34.1, libboost-iostreams1.34.1, libboost-program-options1.34.1, libgnutls13 (>= 1.6), zlib1g (>= 1:1.2.3), libtorrent-0.13 | libtorrent13 | libtorrent (>= 0.13)
