@@ -174,28 +174,46 @@ int main(int argc, char* argv[])
    
    btg::core::os::PIDFile pidfile;
    
-   if ( dd.config->getPIDFile().size() > 0 )
    {
-      pidfile.create( dd.config->getPIDFile().c_str() );
+      std::string pfname;
+      
+      // try cmdline first
+      if ( dd.cla->PIDFile().size() > 0 )
+      {
+         pfname = dd.cla->PIDFile();
+         VERBOSE_LOG(logwrapper, verboseFlag, "Using PID-file from cmdline: '"
+            << pfname << "'.");
+      }
+      // then config
+      else if ( dd.config->getPIDFile().size() > 0 )
+      {
+         pfname = dd.config->getPIDFile();
+         VERBOSE_LOG(logwrapper, verboseFlag, "Using PID-file from config: '"
+            << pfname << "'.");
+      }
 
-      if (pidfile.exists())
-         {
-            BTG_FATAL_ERROR(logwrapper, 
-                            "btgdaemon",
-                            "Another instance of btgdaemon with pid "
-                            << pidfile.pid()
-                            << " already running.");
-            return BTG_ERROR_EXIT;
-         }
-      
-      if (pidfile.error())
-         {
-            BTG_FATAL_ERROR(logwrapper, 
-                            "btgdaemon",
-                            "Could not create PIDfile '" << dd.config->getPIDFile() << "'");
-            return BTG_ERROR_EXIT;
-         }
-      
+      if ( pfname.size() > 0 )
+      {
+         pidfile.create( pfname.c_str() );
+
+         if (pidfile.exists())
+            {
+               BTG_FATAL_ERROR(logwrapper, 
+                               "btgdaemon",
+                               "Another instance of btgdaemon with pid "
+                               << pidfile.pid()
+                               << " already running.");
+               return BTG_ERROR_EXIT;
+            }
+         
+         if (pidfile.error())
+            {
+               BTG_FATAL_ERROR(logwrapper, 
+                               "btgdaemon",
+                               "Could not create PIDfile '" << dd.config->getPIDFile() << "'");
+               return BTG_ERROR_EXIT;
+            }
+      }
    }
    
 #if BTG_OPTION_SAVESESSIONS

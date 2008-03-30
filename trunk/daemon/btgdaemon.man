@@ -26,7 +26,7 @@ be started before using one of the clients.
 .SH OPTIONS
 
 .TP
-.BI "-h|--help"
+.BI "-h | --help"
 \- Print a short help.
 
 .TP
@@ -42,20 +42,24 @@ be started before using one of the clients.
 \- Output syntax of the configuration file used to standard out.
 
 .TP
-.BI "-c FILE|--config FILE"
+.BI "-c FILE | --config FILE"
 \- Configuration file, FILE, to use.
 
 .TP
-.BI "-n|--nodetach"
+.BI "-n | --nodetach"
 \- Do not detach from TTY.
 
 .TP
-.BI "-s FILE|--session-file FILE"
+.BI "-s FILE | --session-file FILE"
 \- Use session file FILE.
 
 .TP
 .BI "-N"
 \- Do not reload sessions.
+
+.TP
+.BI "-p FILE | --pid-file FILE"
+\- Write PID to file FILE.
 
 .SH FILES
 .TP

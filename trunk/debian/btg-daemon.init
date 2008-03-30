@@ -15,28 +15,31 @@
 # Short-Description: BitTorrent network client daemon.
 ### END INIT INFO
 
+PIDFILE=/var/run/btgdaemon.pid
+
 case $1 in
     start)
-	if pidof btgdaemon ; then
-	    echo "BTG already running."
+    	[ -e $PIDFILE ] && pid=`cat $PIDFILE`
+    	if [ -n "$pid" ] ; then
+	    echo "BTG already running. PID=$pid."
 	    exit 0
 	fi
 	
 	echo "Starting BTG ..."	
-	exec /usr/bin/btgdaemon --verbose
+	exec /usr/bin/btgdaemon --verbose --pid-file $PIDFILE
     ;;
     stop)
-    	if ! pidof btgdaemon ; then
+    	[ -e $PIDFILE ] && pid=`cat $PIDFILE`
+    	if [ -z "$pid" ] ; then
 	    echo "BTG isn't running."
 	    exit 0
 	fi
 	
 	echo -n "Stopping BTG ..."
-	killall btgdaemon
-	pid="some_pid_stub"
+	kill $pid
 	cnt=0
 	while [ -n "$pid" -a $cnt -le 30 ] ; do
-		pid=`pidof btgdaemon`
+		pid=`cat $PIDFILE`
 		sleep 1
 		echo -n "."
 		cnt=$(($cnt+1))

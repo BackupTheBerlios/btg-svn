@@ -42,7 +42,7 @@ namespace btg
          void PIDFile::create(const char * _fname)
          {
             clear();
-            if (!m_fname)
+            if (!_fname)
                return;
             m_fname = _fname;
             m_pidfile.clear();
