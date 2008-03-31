@@ -180,7 +180,7 @@ Authors
 ~~~~~~~
 - Michael Wojciechowski.
 - Johan Ström (XML-RPC_ transport and externalization, WWW UI, session saving, porting).
-- Roman Rybalko (btgui bugfixes).
+- Roman Rybalko (making btgui look pretty, countless bugfixes, packaging).
 - Rodolphe Saugier (bugfix #10588).
 - Gabor Tanka (DHT fixes).
 - Jesper Nyholm Jensen (Testing).
