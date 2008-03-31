@@ -29,6 +29,7 @@
 #include <bcore/command/context_clean.h>
 #include <bcore/command/context_create.h>
 #include <bcore/command/context_create_url.h>
+#include <bcore/command/context_create_file.h>
 #include <bcore/command/context_last.h>
 #include <bcore/command/context_start.h>
 #include <bcore/command/context_status.h>
@@ -162,6 +163,31 @@ namespace btg
             case Command::CN_CURLSTATUSRSP:
                {
                   c = new contextUrlStatusResponseCommand;
+                  break;
+               }
+            case Command::CN_CCREATEFROMFILE:
+               {
+                  c = new contextCreateFromFileCommand;
+                  break;
+               }
+            case Command::CN_CCREATEFROMFILERSP:
+               {
+                  c = new contextCreateFromFileResponseCommand;
+                  break;
+               }
+            case Command::CN_CCREATEFROMFILEPART:
+               {
+                  c = new contextCreateFromFilePartCommand;
+                  break;
+               }
+            case Command::CN_CCRFILESTATUS:
+               {
+                  c = new contextFileStatusCommand;
+                  break;
+               }
+            case Command::CN_CCRFILESTATUSRSP:
+               {
+                  c = new contextFileStatusResponseCommand;
                   break;
                }
             case Command::CN_CLAST:
@@ -484,6 +510,10 @@ namespace btg
             case Command::CN_CCREATEFROMURLRSP:
             case Command::CN_CURLSTATUS:
             case Command::CN_CURLSTATUSRSP:
+            case Command::CN_CCREATEFROMFILE:
+            case Command::CN_CCREATEFROMFILERSP:
+            case Command::CN_CCRFILESTATUS:
+            case Command::CN_CCRFILESTATUSRSP:
             case Command::CN_CLAST:
             case Command::CN_CLASTRSP:
             case Command::CN_CSTART:

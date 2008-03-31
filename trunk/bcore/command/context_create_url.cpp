@@ -100,7 +100,7 @@ namespace btg
       
       contextCreateFromUrlResponseCommand::contextCreateFromUrlResponseCommand()
          : Command(Command::CN_CCREATEFROMURLRSP),
-           id_(0)
+           id_(URLS_INVALID_URLID)
       {}
 
       contextCreateFromUrlResponseCommand::contextCreateFromUrlResponseCommand(t_uint const _id)
@@ -139,7 +139,7 @@ namespace btg
       
       contextUrlStatusCommand::contextUrlStatusCommand()
          : Command(Command::CN_CURLSTATUS),
-           id_(0)
+           id_(URLS_INVALID_URLID)
       {}
 
       contextUrlStatusCommand::contextUrlStatusCommand(t_uint const _id)
@@ -178,7 +178,7 @@ namespace btg
 
       contextUrlStatusResponseCommand::contextUrlStatusResponseCommand()
          : Command(Command::CN_CURLSTATUSRSP),
-           id_(0),
+           id_(URLS_INVALID_URLID),
            status_(URLS_UNDEF)
       {}
 

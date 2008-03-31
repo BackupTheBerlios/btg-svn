@@ -102,6 +102,12 @@ namespace btg
                      CN_CURLSTATUS        = 69, //!< Request URL download status.
                      CN_CURLSTATUSRSP     = 70, //!< URL download status response.
 
+                     CN_CCREATEFROMFILE      = 80, //!< Create context from a file.
+                     CN_CCREATEFROMFILERSP   = 81, //!< Create context from a file, response.
+                     CN_CCREATEFROMFILEPART  = 82, //!< Create context from a file, file part.
+                     CN_CCRFILESTATUS        = 83, //!< Request file download status.
+                     CN_CCRFILESTATUSRSP     = 84, //!< File download status response.
+
                      /* General commands. */ 
                      CN_ERROR           = 100, //!< General error.
                      CN_ACK             = 101, //!< General acknowlegment.
