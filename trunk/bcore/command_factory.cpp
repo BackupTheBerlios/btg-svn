@@ -512,6 +512,7 @@ namespace btg
             case Command::CN_CURLSTATUSRSP:
             case Command::CN_CCREATEFROMFILE:
             case Command::CN_CCREATEFROMFILERSP:
+            case Command::CN_CCREATEFROMFILEPART:
             case Command::CN_CCRFILESTATUS:
             case Command::CN_CCRFILESTATUSRSP:
             case Command::CN_CLAST:
