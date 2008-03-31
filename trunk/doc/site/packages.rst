@@ -9,7 +9,10 @@ The debian packages are currently being maintained by Felipe Sateler.
 They can be found in our `debian repository`_. For easy installation, 
 add the following line to your ``/etc/apt/sources.list``:
 
-        ``deb ftp://ftp.berlios.de/pub/btg/debian unstable main``
+::
+
+ deb ftp://ftp.berlios.de/pub/btg/debian main stable unstable
+ deb ftp://ftp.berlios.de/pub/btg/debian other stable unstable
 
 This repository is gpg-signed. This means apt can check the validity of the
 packages against a gpg signature. You can find more information on gpg-signed 
