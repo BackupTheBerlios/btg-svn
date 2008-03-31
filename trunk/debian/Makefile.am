@@ -10,5 +10,5 @@ EXTRA_DIST = \
 	*.pl \
 	rules \
 	compat \
-	control.in \
+	control* \
 	changelog

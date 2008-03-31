@@ -73,7 +73,7 @@ testrunner_SOURCES = listener.cpp testrunner.cpp test_daemon.cpp test_os.cpp tes
 
 noinst_HEADERS     = listener.h testrunner.h test_daemon.h test_os.h test_gen_transport.h test_tcpip.h test_http.h test_bcore.h files.h $(top_srcdir)/bcore/configuration.h $(BCORE_CLIENT_TEST_HEADER)
 
-noinst_PROGRAMS     = testrunner
+check_PROGRAMS     = testrunner
 
 testrunner_LDADD   = $(top_builddir)/bcore/libbtgcore.la $(BCORE_CLIENT_TEST_LIB) \
                      $(top_builddir)/daemon/libdaemon.la $(URL_LDADD) \
