@@ -7,11 +7,11 @@
 # Uncomment this to turn on verbose mode.
 export DH_VERBOSE=1
 
-CFLAGS=-O3
-CXXFLAGS=-O3
+export CFLAGS=-O3
+export CXXFLAGS=-O3
 
 build: debian/build-stamp
-debian/build-stamp: configure
+debian/build-stamp: debian/configure-stamp
 	dh_testdir
 
 	# Add here commands to compile the package.
@@ -20,7 +20,6 @@ debian/build-stamp: configure
 
 	touch debian/build-stamp
 
-configure: debian/configure-stamp
 debian/configure-stamp:
 	test ! -e Makefile || make distclean
 	test -e Makefile.in || ./autogen.sh

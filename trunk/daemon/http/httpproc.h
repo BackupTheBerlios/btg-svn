@@ -54,6 +54,8 @@ namespace btg
             /// Abort a download.
             /// @return True - abort download. False - continue download.
             virtual bool AbortTransfer() const = 0;
+            
+            virtual ~httpAbortIf();
          };
 
          /// Thread used to download an URL. This thread can be

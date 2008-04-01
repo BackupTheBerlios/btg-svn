@@ -28,8 +28,9 @@ namespace btg
    {
       namespace upnp
       {
-         upnpIf::upnpIf(bool const _verboseFlag)
-            : verboseFlag_(_verboseFlag),
+         upnpIf::upnpIf(btg::core::LogWrapperType _logwrapper, bool const _verboseFlag)
+            : btg::core::Logable(_logwrapper),
+              verboseFlag_(_verboseFlag),
               initialized_(false)
          {
          };
@@ -38,9 +39,15 @@ namespace btg
          {
             return initialized_;
          }
+         
+         void upnpIf::clear()
+         {
+            initialized_ = false;
+         }
 
          upnpIf::~upnpIf()
          {
+            
          }
 
       } // namespace upnp

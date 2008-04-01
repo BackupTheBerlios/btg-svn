@@ -31,6 +31,11 @@ namespace btg
       namespace http
       {
          const std::string moduleName("htpr");
+         
+         httpAbortIf::~httpAbortIf()
+         {
+            
+         }
 
          httpProcess::httpProcess(btg::core::LogWrapperType _logwrapper,
                                   std::string _URL, 

@@ -36,6 +36,7 @@ AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
 dnl AM_PROG_LIBTOOL
+PKG_PROG_PKG_CONFIG(0.15)
 
 dnl FBsd wants special paths
 case "${target}" in
@@ -316,13 +317,13 @@ dnl
 BTG_OPTION_USECYBERLINK=0
 AM_CONDITIONAL(BUILDCYBERLINK, false)
 
+if $enableupnp ; then
+
 AC_ARG_WITH(cyberlink-include,
 [  --with-cyberlink-include=PATH  path to Cyberlink header files],
 [
-	CYBERLINK_CFLAGS="$CFLAGS -I${withval} -DHAVE_SOCKLEN_T"
+   CYBERLINK_CFLAGS="$CFLAGS -I${withval} -DHAVE_SOCKLEN_T"
    AC_SUBST(CYBERLINK_CFLAGS)
-	CYBERLINK_CPPFLAGS="$CPPFLAGS -I${withval} -DHAVE_SOCKLEN_T"
-   AC_SUBST(CYBERLINK_CPPFLAGS)
 
    AM_CONDITIONAL(BUILDCYBERLINK, true)
    BTG_OPTION_USECYBERLINK=1
@@ -332,17 +333,24 @@ AC_ARG_WITH(cyberlink-include,
 AC_ARG_WITH(cyberlink-lib,
 [  --with-cyberlink-lib=PATH  path to Cyberlink libraries],
 [
-   dnl Cyberlink does not build shared libraries ..
-	CYBERLINK_LDFLAGS="$LDFLAGS -L${withval} ${withval}/libclink.a -lxerces-c -lxerces-depdom"
-   AC_SUBST(CYBERLINK_LDFLAGS)
-dnl	if test -n "${need_dash_r}"; then
-dnl		LDFLAGS="$LDFLAGS -R${withval}"
-dnl	fi
+   CYBERLINK_LIBS="-L${withval} ${withval}/libclink.a -lxerces-c -lxerces-depdom"
+   AC_SUBST(CYBERLINK_LIBS)
 
    AM_CONDITIONAL(BUILDCYBERLINK, true)
    BTG_OPTION_USECYBERLINK=1
 ]
 )
+
+if test "$BTG_OPTION_USECYBERLINK" -ne "1" ; then
+dnl try to detect our one
+PKG_CHECK_MODULES(CYBERLINK, [libclinkcc], [
+	AM_CONDITIONAL(BUILDCYBERLINK, true)
+	BTG_OPTION_USECYBERLINK=1
+	CYBERLINK_CFLAGS="$CYBERLINK_CFLAGS -DHAVE_SOCKLEN_T"
+])
+fi
+
+fi dnl if $enableupnp
 
 AC_SUBST(BTG_OPTION_USECYBERLINK)
 

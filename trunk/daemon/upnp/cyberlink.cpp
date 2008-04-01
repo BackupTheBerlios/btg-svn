@@ -28,6 +28,7 @@
 #include <bcore/os/sleep.h>
 #include <bcore/t_string.h>
 #include <bcore/verbose.h>
+#include <daemon/modulelog.h>
 
 namespace btg
 {
@@ -35,6 +36,7 @@ namespace btg
    {
       namespace upnp
       {
+         const std::string moduleName("upnp");
 
          const std::string gatewayDevice("urn:schemas-upnp-org:device:InternetGatewayDevice:1");
          const std::string wanDevice("urn:schemas-upnp-org:device:WANDevice:1");
@@ -49,8 +51,11 @@ namespace btg
          // discovered after 30 seconds, give up.
          const t_uint searchTimeout = 1024 * 30;
 
-         cyberLinkCtrlPoint::cyberLinkCtrlPoint(bool const _verboseFlag, btg::core::Address const& _addr)
-            : verboseFlag_(_verboseFlag),
+         cyberLinkCtrlPoint::cyberLinkCtrlPoint(btg::core::LogWrapperType _logwrapper,
+                                                bool const _verboseFlag,
+                                                btg::core::Address const& _addr)
+            : btg::core::Logable(_logwrapper),
+              verboseFlag_(_verboseFlag),
               addr_(_addr),
               deviceCount_(0),
               portsMapped_(false),
@@ -68,8 +73,6 @@ namespace btg
 
          t_uint cyberLinkCtrlPoint::deviceCount() const
          {
-            // TODO: use a mutex here.
-
             return deviceCount_;
          }
 
@@ -79,9 +82,9 @@ namespace btg
 
             start(gatewayDevice.c_str());
 
-            BTG_NOTICE("cyberLinkCtrlPoint, search started.");
+            BTG_MNOTICE(logWrapper(), "cyberLinkCtrlPoint, search started.");
 
-            BTG_NOTICE("cyberLinkCtrlPoint, initialized.");
+            BTG_MNOTICE(logWrapper(), "cyberLinkCtrlPoint, initialized.");
 
             return status;
          }
@@ -104,12 +107,12 @@ namespace btg
 
          void cyberLinkCtrlPoint::deviceNotifyReceived(CyberLink::SSDPPacket* _ssdpPacket)
          {
-
+            
          }
 
          void cyberLinkCtrlPoint::deviceSearchResponseReceived(CyberLink::SSDPPacket* _ssdpPacket)
          {
-            BTG_NOTICE("cyberLinkCtrlPoint::deviceSearchResponseReceived.");
+            BTG_MNOTICE(logWrapper(), "cyberLinkCtrlPoint::deviceSearchResponseReceived.");
 
             if (_ssdpPacket->isDiscover())
                {
@@ -122,7 +125,7 @@ namespace btg
                   _ssdpPacket->getST(st);
                   _ssdpPacket->getLocation(location);
 
-                  BTG_NOTICE("Root device found: usn = " << usn <<
+                  BTG_MNOTICE(logWrapper(), "Root device found: usn = " << usn <<
                              ", st = " << st <<
                              ", location = " << location << ".");
 
@@ -147,7 +150,7 @@ namespace btg
               std::string iservicetype(service->getServiceType());
               if (iservicetype == serviceType)
               {
-              BTG_NOTICE("Found an usable device/service.");
+              BTG_MNOTICE(logWrapper(), "Found an usable device/service.");
               }
               }
               if (device->getDeviceType() == "InternetGatewayDevice")
@@ -160,16 +163,14 @@ namespace btg
 
          void cyberLinkCtrlPoint::deviceAdded(CyberLink::Device* _dev)
          {
-            // TODO: use a mutex here.
-            BTG_NOTICE("Added device: " << _dev->getFriendlyName());
+            BTG_MNOTICE(logWrapper(), "Added device: " << _dev->getFriendlyName());
 
             deviceCount_++;
          }
 
          void cyberLinkCtrlPoint::deviceRemoved(CyberLink::Device* _dev)
          {
-            // TODO: use a mutex here.
-            BTG_NOTICE("Removed device: " << _dev->getFriendlyName());
+            BTG_MNOTICE(logWrapper(), "Removed device: " << _dev->getFriendlyName());
 
             std::string UDN(_dev->getUDN());
 
@@ -178,7 +179,7 @@ namespace btg
                   portsMapped_ = false;
                   service_     = 0;
 
-                  BTG_NOTICE("Device used for mapping was removed.");
+                  BTG_MNOTICE(logWrapper(), "Device used for mapping was removed.");
                }
 
             deviceCount_--;
@@ -194,7 +195,7 @@ namespace btg
 
             if (numberOfDevices == 0)
                {
-                  BTG_NOTICE("No devices found.");
+                  BTG_MNOTICE(logWrapper(), "No devices found.");
                }
 
             for (t_uint counter = 0;
@@ -208,7 +209,7 @@ namespace btg
                      }
                }
 
-            VERBOSE_LOG(verboseFlag_, "UPNP: Unable to map ports.");
+            VERBOSE_LOG(logWrapper(), verboseFlag_, "UPNP: Unable to map ports.");
             return false;
          }
 
@@ -235,7 +236,7 @@ namespace btg
 
             if (remove_action == 0)
                {
-                  BTG_NOTICE("Port unmapping failed.");
+                  BTG_MNOTICE(logWrapper(), "Port unmapping failed.");
                   return result;
                }
 
@@ -267,7 +268,7 @@ namespace btg
 
                   if (!status)
                      {
-                        BTG_NOTICE("Unable to unmap " << protocol << " port: " << port << ".");
+                        BTG_MNOTICE(logWrapper(), "Unable to unmap " << protocol << " port: " << port << ".");
                         result = false;
                         break;
                      }
@@ -295,13 +296,13 @@ namespace btg
 
             if (ip == 0)
                {
-                  BTG_NOTICE("Unable to get action: " << _req1 << ".");
+                  BTG_MNOTICE(logWrapper(), "Unable to get action: " << _req1 << ".");
                   return status;
                }
 
             if (!ip->postControlAction())
                {
-                  BTG_NOTICE("postControlAction failed.");
+                  BTG_MNOTICE(logWrapper(), "postControlAction failed.");
                   return status;
                }
 
@@ -309,7 +310,7 @@ namespace btg
 
             if (ret == 0)
                {
-                  BTG_NOTICE("Unable to get argument " << _req2 << ".");
+                  BTG_MNOTICE(logWrapper(), "Unable to get argument " << _req2 << ".");
                   return status;
                }
 
@@ -323,7 +324,7 @@ namespace btg
          {
             // Find out if any embedded devices are useful.
 
-            BTG_NOTICE("Examining device: " << _device->getFriendlyName()
+            BTG_MNOTICE(logWrapper(), "Examining device: " << _device->getFriendlyName()
                        << ", type: " << _device->getDeviceType() << ".");
 
             if (_device->getDeviceType() == gatewayDevice)
@@ -338,7 +339,7 @@ namespace btg
                      {
                         CyberLink::Device* device = embdevices->getDevice(counter);
 
-                        BTG_NOTICE("Examining embedded device(1): " << device->getFriendlyName()
+                        BTG_MNOTICE(logWrapper(), "Examining embedded device(1): " << device->getFriendlyName()
                                    << ", type: " << device->getDeviceType() << ".");
 
                         if (device->getDeviceType() == wanDevice)
@@ -353,14 +354,14 @@ namespace btg
                                  {
                                     CyberLink::Device* device2 = embdevices2->getDevice(counter2);
 
-                                    BTG_NOTICE("Examining embedded device(2): " << device2->getFriendlyName()
+                                    BTG_MNOTICE(logWrapper(), "Examining embedded device(2): " << device2->getFriendlyName()
                                                << ", type: " << device2->getDeviceType() << ".");
 
                                     if (device2->getDeviceType() == wanconDevice)
                                        {
                                           // Finally got a device that
                                           // can be used to map ports.
-                                          BTG_NOTICE("Attempting to map ports(2).");
+                                          BTG_MNOTICE(logWrapper(), "Attempting to map ports(2).");
 
                                           CyberLink::Service* service = device2->getService(serviceType.c_str());
 
@@ -371,14 +372,14 @@ namespace btg
                                                 std::string ext_address;
                                                 if (getExternalIp(service, ext_address))
                                                    {
-                                                      BTG_NOTICE("External IP: " << ext_address);
+                                                      BTG_MNOTICE(logWrapper(), "External IP: " << ext_address);
                                                    }
                                                 else
                                                    {
-                                                      BTG_NOTICE("Unable to obtain external IP.");
+                                                      BTG_MNOTICE(logWrapper(), "Unable to obtain external IP.");
                                                    }
 
-                                                BTG_NOTICE("Internal address: " << addr_.toString());
+                                                BTG_MNOTICE(logWrapper(), "Internal address: " << addr_.toString());
 
                                                 // 2. Map ports, both TCP and UDP.
 
@@ -405,13 +406,13 @@ namespace btg
                                                       service_  = service;
                                                       deviceId_ = std::string(_device->getUDN());
 
-                                                      BTG_NOTICE("Ports mapped.");
+                                                      BTG_MNOTICE(logWrapper(), "Ports mapped.");
                                                       return true;
                                                    }
                                              }
                                           else
                                              {
-                                                BTG_NOTICE("No service.");
+                                                BTG_MNOTICE(logWrapper(), "No service.");
                                              }
                                        }
                                  }
@@ -420,7 +421,7 @@ namespace btg
                }
             else
                {
-                  BTG_NOTICE("Not a WAN device.");
+                  BTG_MNOTICE(logWrapper(), "Not a WAN device.");
                }
 
             return false;
@@ -434,7 +435,7 @@ namespace btg
 
             if (add_action == 0)
                {
-                  BTG_NOTICE("Port mapping failed.");
+                  BTG_MNOTICE(logWrapper(), "Port mapping failed.");
                   return result;
                }
 
@@ -471,7 +472,7 @@ namespace btg
 
                   if (!status)
                      {
-                        BTG_NOTICE("Unable to map " << protocol << " port: " << port << ".");
+                        BTG_MNOTICE(logWrapper(), "Unable to map " << protocol << " port: " << port << ".");
                         result = false;
                         break;
                      }
@@ -486,19 +487,30 @@ namespace btg
 
          }
 
-         cyberlinkUpnpIf::cyberlinkUpnpIf(bool const _verboseFlag,
+         cyberlinkUpnpIf::cyberlinkUpnpIf(btg::core::LogWrapperType _logwrapper,
+                                          bool const _verboseFlag,
                                           btg::core::Address const& _addr)
-            : upnpIf(_verboseFlag),
+            : upnpIf(_logwrapper, _verboseFlag),
               addr_(_addr),
               die_(false),
               result_ready_(false),
-              thread_(
-                      boost::bind(&cyberlinkUpnpIf::work, boost::ref(*this))
-                      ),
               range_status_(false),
-              count_(0)
+              count_(0),
+              ctrl(_logwrapper, verboseFlag_, _addr)
          {
-            BTG_NOTICE("cyberlinkUpnpIf, constructed.");
+            BTG_MNOTICE(logWrapper(), "cyberlinkUpnpIf, constructed.");
+
+            initialized_ = ctrl.init();
+
+            if (!initialized_)
+               {
+                  BTG_MNOTICE(logWrapper(), "Unable to initialize cyberlink UPNP.");
+                  return;
+               }
+
+            ctrl.search();
+            
+            pthread_.reset( new boost::thread( boost::bind(&cyberlinkUpnpIf::work, boost::ref(*this)) ) );
          }
 
          void cyberlinkUpnpIf::setAction(cyberlinkUpnpIf::ACTION _action)
@@ -531,14 +543,14 @@ namespace btg
 
                      if (count_ >= 1)
                         {
-                           BTG_NOTICE("Found a device");
+                           BTG_MNOTICE(logWrapper(), "Found a device");
 
                            deviceFound = true;
                            break;
                         }
                      else
                         {
-                           BTG_NOTICE("Waiting for a device (" << waitAmount << ").");
+                           BTG_MNOTICE(logWrapper(), "Waiting for a device (" << waitAmount << ").");
 
                            waitAmount += waitStep;
                            btg::core::os::Sleep::sleepMiliSeconds(waitStep);
@@ -553,8 +565,8 @@ namespace btg
          {
             if (!waitForDevice())
                {
-                  VERBOSE_LOG(verboseFlag_, "UPnP: No UPnP devices discovered.");
-                  BTG_NOTICE("Waited, but no devices were discovered.");
+                  VERBOSE_LOG(logWrapper(), verboseFlag_, "UPnP: No UPnP devices discovered.");
+                  BTG_MNOTICE(logWrapper(), "Waited, but no devices were discovered.");
                   return false;
                }
 
@@ -563,7 +575,7 @@ namespace btg
             {
                boost::mutex::scoped_lock scoped_lock(interfaceMutex_);
 
-               BTG_NOTICE("Attempting to map ports(1).");
+               BTG_MNOTICE(logWrapper(), "Attempting to map ports(1).");
 
                action_ = cyberlinkUpnpIf::MAP;
                range_  = _range;
@@ -581,7 +593,7 @@ namespace btg
             {
                boost::mutex::scoped_lock scoped_lock(interfaceMutex_);
 
-               BTG_NOTICE("Attempting to unmap ports.");
+               BTG_MNOTICE(logWrapper(), "Attempting to unmap ports.");
 
                action_ = cyberlinkUpnpIf::UNMAP;
             }
@@ -590,22 +602,32 @@ namespace btg
 
             return range_status_;
          }
+         
+         void cyberlinkUpnpIf::start_thread()
+         {
+            if (!die_)
+               return;
+            die_ = false;
+            pthread_.reset( new boost::thread( boost::bind(&cyberlinkUpnpIf::work, boost::ref(*this)) ) ); 
+         }
+         
+         void cyberlinkUpnpIf::stop_thread()
+         {
+            if (die_)
+               return;
+            die_ = true;
+            pthread_->join();
+         }
 
          void cyberlinkUpnpIf::work()
          {
-            BTG_NOTICE("cyberlinkUpnpIf, thread started.");
-
-            cyberLinkCtrlPoint ctrl(verboseFlag_, addr_);
-
-            initialized_ = ctrl.init();
+            BTG_MNOTICE(logWrapper(), "cyberlinkUpnpIf, thread started.");
 
             if (!initialized_)
                {
-                  BTG_NOTICE("Unable to initialize cyberlink UPNP.");
+                  BTG_MNOTICE(logWrapper(), "Unable to initialize cyberlink UPNP.");
                   return;
                }
-
-            ctrl.search();
 
             while(!die_)
                {
@@ -622,7 +644,7 @@ namespace btg
                            }
                         case cyberlinkUpnpIf::MAP:
                            {
-                              BTG_NOTICE("cyberlinkUpnpIf::MAP");
+                              BTG_MNOTICE(logWrapper(), "cyberlinkUpnpIf::MAP");
 
                               {
                                  boost::mutex::scoped_lock scoped_lock(resultMutex_);
@@ -652,12 +674,12 @@ namespace btg
 
                                  if (ctrl.portsMapped())
                                     {
-                                       BTG_NOTICE("Unmapping ports.");
+                                       BTG_MNOTICE(logWrapper(), "Unmapping ports.");
                                        range_status_ = ctrl.unMapPorts();
                                     }
                                  else
                                     {
-                                       BTG_NOTICE("Ports not mapped, so not unmapping.");
+                                       BTG_MNOTICE(logWrapper(), "Ports not mapped, so not unmapping.");
                                        range_status_ = false;
                                     }
                                  interfaceCondition_.notify_one();
@@ -668,7 +690,7 @@ namespace btg
                            }
                         case cyberlinkUpnpIf::DEVCOUNT:
                            {
-                              BTG_NOTICE("cyberlinkUpnpIf::DEVCOUNT");
+                              BTG_MNOTICE(logWrapper(), "cyberlinkUpnpIf::DEVCOUNT");
 
                               {
                                  boost::mutex::scoped_lock scoped_lock(resultMutex_);
@@ -686,33 +708,31 @@ namespace btg
                   } // lock
                }
 
-            // Before terminating, close a mapping, if one exists.
-            // Only lock the interface.
-            {
-               boost::mutex::scoped_lock scoped_lock(interfaceMutex_);
-
-               if (ctrl.portsMapped())
-                  {
-                     BTG_NOTICE("Unmapping ports.");
-                     ctrl.unMapPorts();
-                  }
-            }
-
-            if (initialized_)
-               {
-                  ctrl.deInit();
-                  initialized_ = false;
-               }
-
-            BTG_NOTICE("cyberlinkUpnpIf, thread finished.");
+            BTG_MNOTICE(logWrapper(), "cyberlinkUpnpIf, thread finished.");
          }
 
          cyberlinkUpnpIf::~cyberlinkUpnpIf()
          {
-            die_ = true;
-            thread_.join();
+            if (!die_)
+            {
+               die_ = true;
+               pthread_->join();
+            }
 
-            BTG_NOTICE("cyberlinkUpnpIf, destructed.");
+            if (initialized_)
+            {
+               // Before destructing, close a mapping, if one exists.
+               if (ctrl.portsMapped())
+                  {
+                     BTG_MNOTICE(logWrapper(), "Unmapping ports.");
+                     ctrl.unMapPorts();
+                  }
+
+               ctrl.deInit();
+               initialized_ = false;
+
+               BTG_MNOTICE(logWrapper(), "cyberlinkUpnpIf, destructed.");
+            }
          }
 
       } // namespace upnp

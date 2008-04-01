@@ -24,6 +24,7 @@
 #define UPNPIF_H
 
 #include <bcore/type.h>
+#include <bcore/logable.h>
 #include <utility>
 
 namespace btg
@@ -38,12 +39,12 @@ namespace btg
                /** @{ */
 
                /// Interface: UPNP.
-               class upnpIf
+               class upnpIf: public btg::core::Logable
                   {
                   public:
                      /// Constructor.
                      /// @param [in] verboseFlag_ Indicates if this interface should do verbose logging.
-                     upnpIf(bool const verboseFlag_);
+                     upnpIf(btg::core::LogWrapperType _logwrapper, bool const verboseFlag_);
 
                      /// Return true if the interface is initialized.
                      bool initialized() const;
@@ -55,6 +56,9 @@ namespace btg
 
                      /// Close an already opened port range.
                      virtual bool close() = 0;
+                     
+                     /// Clear internal state - disable destruction
+                     void clear();
 
                      /// Destructor.
                      virtual ~upnpIf();

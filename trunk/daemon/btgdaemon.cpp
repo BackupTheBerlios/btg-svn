@@ -129,16 +129,50 @@ int main(int argc, char* argv[])
          return BTG_NORMAL_EXIT;
       }
 
+
+   bool verboseFlag = dd.cla->beVerbose();
+   
+   VERBOSE_LOG(logwrapper, verboseFlag, "Verbose logging enabled.");
+
+   /*
+    * Set debug level
+    */
+   
+#if BTG_DEBUG
+   // Set debug logging, if requested.
+   if (dd.cla->doDebug())
+      {
+         logwrapper->setMinMessagePriority(logWrapper::PRIO_DEBUG);
+      }
+   else if (verboseFlag)
+      {
+         logwrapper->setMinMessagePriority(logWrapper::PRIO_VERBOSE);
+      }
+   else
+      {
+         // Default: only report errors.
+         logwrapper->setMinMessagePriority(logWrapper::PRIO_ERROR);
+      }
+#else
+   // No debug enabled, check for verbose flag.
+   if (verboseFlag)
+      {
+         logwrapper->setMinMessagePriority(logWrapper::PRIO_VERBOSE);
+      }
+   else
+      {
+         // Default: only report errors.
+         logwrapper->setMinMessagePriority(logWrapper::PRIO_ERROR);
+      }
+#endif // BTG_DEBUG
+
+   
    dd.configFile = GPD->sDAEMON_CONFIG();
 
    if (dd.cla->configFileSet())
       {
          dd.configFile = dd.cla->configFile();
       }
-
-   bool verboseFlag = dd.cla->beVerbose();
-   
-   VERBOSE_LOG(logwrapper, verboseFlag, "Verbose logging enabled.");
 
    VERBOSE_LOG(logwrapper, verboseFlag, "config: '" << dd.configFile << "'.");
 
@@ -174,7 +208,7 @@ int main(int argc, char* argv[])
    
    btg::core::os::PIDFile pidfile;
    
-   {
+   { // create PID-file
       std::string pfname;
       
       // try cmdline first
@@ -214,7 +248,7 @@ int main(int argc, char* argv[])
                return BTG_ERROR_EXIT;
             }
       }
-   }
+   } // end create PID-file
    
 #if BTG_OPTION_SAVESESSIONS
 
@@ -222,7 +256,7 @@ int main(int argc, char* argv[])
     * Setup sessionsaving
     */
    
-   {
+   { // sessionsaving
       std::string ss_fname;
 
       // try cmdline first
@@ -263,7 +297,7 @@ int main(int argc, char* argv[])
             dd.ss_file.open(ss_fname.c_str()); // reopen in read/write mode
          }
       }
-   }
+   } // end sessionsaving
    
 #endif // BTG_OPTION_SAVESESSIONS
 
@@ -614,16 +648,20 @@ int main(int argc, char* argv[])
 #if BTG_OPTION_UPNP
 
    /*
-    * Init upnp.
+    * init upnp.
     */
    
    bool const upnpEnabled = dd.config->getUseUPnP();
-   btg::daemon::upnp::upnpIf* upnpif = 0;
+   std::auto_ptr<btg::daemon::upnp::upnpIf> upnpif;
+   
 #  if BTG_OPTION_USECYBERLINK
-   upnpif = new btg::daemon::upnp::cyberlinkUpnpIf(verboseFlag, dd.config->getLTListenTo());
+   upnpif.reset(
+      /* creates a thread */
+      new btg::daemon::upnp::cyberlinkUpnpIf(logwrapper, verboseFlag, dd.config->getLTListenTo())
+   );
 #  endif // BTG_OPTION_USECYBERLINK
 
-   if (upnpif != 0)
+   if (upnpif.get())
       {
          if (upnpEnabled)
             {
@@ -647,6 +685,7 @@ int main(int argc, char* argv[])
                            verboseFlag, "Not using UPnP.");
             }
       }
+
 #endif // BTG_OPTION_UPNP
    
    
@@ -664,34 +703,6 @@ int main(int argc, char* argv[])
    /*
     * Initializing logging
     */
-
-#if BTG_DEBUG
-   // Set debug logging, if requested.
-   if (dd.cla->doDebug())
-      {
-         logwrapper->setMinMessagePriority(logWrapper::PRIO_DEBUG);
-      }
-   else if (verboseFlag)
-      {
-         logwrapper->setMinMessagePriority(logWrapper::PRIO_VERBOSE);
-      }
-   else
-      {
-         // Default: only report errors.
-         logwrapper->setMinMessagePriority(logWrapper::PRIO_ERROR);
-      }
-#else
-   // No debug enabled, check for verbose flag.
-   if (verboseFlag)
-      {
-         logwrapper->setMinMessagePriority(logWrapper::PRIO_VERBOSE);
-      }
-   else
-      {
-         // Default: only report errors.
-         logwrapper->setMinMessagePriority(logWrapper::PRIO_ERROR);
-      }
-#endif // BTG_DEBUG
 
    switch (dd.config->getLog())
       {
@@ -745,7 +756,7 @@ int main(int argc, char* argv[])
             break;
          }
       }
-
+   
    /*
     * change EUID
     */
@@ -786,11 +797,21 @@ int main(int argc, char* argv[])
    
    if (!dd.cla->doNotDetach())
       {
+         btg::daemon::upnp::cyberlinkUpnpIf * pCLUPnPIf = dynamic_cast<btg::daemon::upnp::cyberlinkUpnpIf*>(upnpif.get());
+
+         // stop existing threads
+         if (pCLUPnPIf)
+         {
+            // cyberlinkif thread
+            pCLUPnPIf->stop_thread();
+         }
+         
          switch (do_daemonize())
             {
             case PID_OK:
                {
                   pidfile.clear(); // prevent file truncation in destructor
+                  upnpif->clear(); // prevent port closing in destructor
                   BTG_MNOTICE(logwrapper, 
                               "parent exiting, child daemonizing");
                   return BTG_NORMAL_EXIT;
@@ -815,6 +836,13 @@ int main(int argc, char* argv[])
                }
                break;
             }
+
+         // re-start needed threads
+         if (pCLUPnPIf)
+         {
+            // cyberlinkif thread
+            pCLUPnPIf->start_thread();
+         }
       }
    else
       {
@@ -880,29 +908,6 @@ int main(int argc, char* argv[])
                      "saving config");
          dd.config->write();
       }
-
-#if BTG_OPTION_UPNP
-   if (upnpif != 0)
-      {
-         if (upnpEnabled)
-            {
-               switch (upnpif->close())
-                  {
-                  case true:
-                     VERBOSE_LOG(logwrapper, 
-                                 verboseFlag, "UPnP: port forwarding removed.");
-                     break;
-                  case false:
-                     VERBOSE_LOG(logwrapper, 
-                                 verboseFlag, "UPnP: attempt to remove port forwarding failed.");
-                     break;
-                  }
-            }
-      }
-
-   delete upnpif;
-   upnpif = 0;
-#endif // BTG_OPTION_UPNP
 
    projectDefaults::killInstance();
 
