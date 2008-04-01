@@ -811,7 +811,7 @@ int main(int argc, char* argv[])
             case PID_OK:
                {
                   pidfile.clear(); // prevent file truncation in destructor
-                  upnpif->clear(); // prevent port closing in destructor
+                  if (upnpif.get()) upnpif->clear(); // prevent port closing in destructor
                   BTG_MNOTICE(logwrapper, 
                               "parent exiting, child daemonizing");
                   return BTG_NORMAL_EXIT;
