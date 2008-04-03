@@ -94,7 +94,7 @@ namespace btg
                      
                      btg::core::stringToNumber<t_int>(ip_lst[i], ip_part);
                      
-                     if ((ip_part >= 0) && (ip_part <= 254))
+                     if ((ip_part >= 0) && (ip_part <= 255))
                         {
                            temp_ip[i] = ip_part;
                         }

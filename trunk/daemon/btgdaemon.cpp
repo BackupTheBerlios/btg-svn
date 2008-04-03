@@ -849,7 +849,10 @@ int main(int argc, char* argv[])
          VERBOSE_LOG(logwrapper, verboseFlag, "Not detaching from TTY.");
       }
    
-   VERBOSE_LOG(logwrapper, verboseFlag, "Writing PID-file.");
+   /*
+    * Write pidfile, if was set
+    */
+
    pidfile.write();
 
    /*

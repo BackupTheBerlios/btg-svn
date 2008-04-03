@@ -64,7 +64,7 @@ namespace btg
                std::string getIp() const;
 
                /// Setup an instance of this class with information
-               /// contained in a string. The string should contain "a.b.c.d:port".
+               /// contained in a string. The string should contain "a.b.c.d".
                /// @return True if successful, false otherwise.
                bool fromString(std::string const& _input);
 
