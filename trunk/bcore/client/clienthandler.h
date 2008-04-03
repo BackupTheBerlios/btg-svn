@@ -125,6 +125,13 @@ namespace btg
             virtual void reqCreateFromUrl(std::string const& _filename,
                                           std::string const& _url);
 
+            virtual void reqCreateFromFile(std::string const& _filename,
+                                           t_uint const _numberOfParts);
+
+            virtual void reqTransmitFilePart(t_uint const _id, 
+                                             t_uint const _part,
+                                             sBuffer const& _buffer);
+
             /// Get the status of a download.
             virtual void reqUrlStatus(t_uint _id);
 
@@ -314,6 +321,9 @@ namespace btg
 
             const btg::core::OptionBase& getOption() const;
 
+            void setFileId(t_uint const _id);
+            t_uint getFileId() const;
+
             /// Destructor.
             virtual ~clientHandler();
 
@@ -445,6 +455,9 @@ namespace btg
 
             /// Received options.
             btg::core::OptionBase             options;
+
+            t_uint                            last_file_id;
+
          private:
             /// Copy constructor.
             clientHandler(clientHandler const& _ch);

@@ -30,6 +30,8 @@
 #include <bcore/auth/hash.h>
 #include <bcore/client/urlhelper.h>
 #include <bcore/os/sleep.h>
+#include <bcore/sbuf.h>
+#include <bcore/filestatus.h>
 
 #include "clienthandler.h"
 
@@ -87,7 +89,8 @@ namespace btg
               last_url_id(URLS_INVALID_URLID),
               last_surl_id(URLS_INVALID_URLID), 
               last_surl_status(URLS_UNDEF),
-              options()
+              options(),
+              last_file_id(FILES_INVALID_FILEID)
          {
          }
 
@@ -144,6 +147,33 @@ namespace btg
             statemachine.work();
          }
 
+         void clientHandler::reqCreateFromFile(std::string const& _filename, 
+                                               t_uint const _numberOfParts)
+         {
+            commandStatus = false;
+            last_id       = clientHandler::ILLEGAL_ID;
+            last_filename = _filename;
+
+            // Before creating the file, resolve relative paths.
+            std::string filename = _filename;
+            btg::core::os::fileOperation::resolvePath(filename);
+
+            statemachine.doCreateFromFile(filename, 
+                                          _numberOfParts, 
+                                          autoStartFlag_);
+            statemachine.work();
+         }
+
+         void clientHandler::reqTransmitFilePart(t_uint const _id, 
+                                                 t_uint const _part,
+                                                 sBuffer const& _buffer)
+         {
+            commandStatus = false;
+
+            statemachine.doTransmitFilePart(_id, _part, _buffer);
+            statemachine.work();
+         }
+         
          void clientHandler::reqCreate(t_strList const& _filenames)
          {
             t_strListCI iter;
@@ -573,6 +603,16 @@ namespace btg
          const btg::core::OptionBase& clientHandler::getOption() const
          {
             return options;
+         }
+
+         void clientHandler::setFileId(t_uint const _id)
+         {
+            last_file_id = _id;
+         }
+
+         t_uint clientHandler::getFileId() const
+         {
+            return last_file_id;
          }
 
          clientHandler::~clientHandler()

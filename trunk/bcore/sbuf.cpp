@@ -39,17 +39,22 @@ namespace btg
       {
       }
 
+      sBuffer::sBuffer(const t_byteP _buffer, const t_uint _size)
+         : size_(_size),
+           buffer_(0)
+      {
+         if (size_ > 0)
+            {
+               buffer_ = new t_byte[size_];
+               memcpy(buffer_, _buffer, _size);
+            }
+      }
+
       sBuffer::sBuffer(dBuffer & _dbuffer)
          : size_(_dbuffer.size()),
            buffer_(new t_byte[size_])
       {
-         t_byte b;
-         for (t_uint i = 0; i < size_; i++)
-            {
-               _dbuffer.getByte(&b);
-               buffer_[i] = b;
-            }
-
+         _dbuffer.getBytes(buffer_, size_);
       }
 
       sBuffer::sBuffer(sBuffer const& _sbuffer)
@@ -58,9 +63,35 @@ namespace btg
            size_(_sbuffer.size_),
            buffer_(new t_byte[size_])
       {
-         for (t_uint i = 0; i < size_; i++)
+         memcpy(buffer_, _sbuffer.buffer_, size_);
+      }
+
+      sBuffer::sBuffer(std::vector<sBuffer> const& _source)
+         : size_(0),
+           buffer_(0)
+      {
+         t_uint totalSize = 0; 
+         std::vector<sBuffer>::const_iterator iter;
+         for (iter = _source.begin();
+              iter != _source.end();
+              iter++)
             {
-               buffer_[i] = _sbuffer.buffer_[i];
+               totalSize += iter->size();
+            }
+
+         if (totalSize > 0)
+            {
+               buffer_    = new t_byte[totalSize];
+               t_uint pos = 0;
+
+               for (iter = _source.begin();
+                    iter != _source.end();
+                    iter++)
+                  {
+                     memcpy(&buffer_[pos], iter->buffer_, iter->size());
+                     pos += iter->size();
+                  }
+               size_ = totalSize;
             }
       }
 
@@ -112,7 +143,7 @@ namespace btg
          else
             {
                size_   = 0;
-               delete buffer_;
+               delete [] buffer_;
                buffer_ = 0;
                status  = false;
             }
@@ -154,13 +185,15 @@ namespace btg
       {
          delete [] buffer_;
          buffer_ = 0;
+         size_   = 0;
       }
 
       bool sBuffer::serialize(btg::core::externalization::Externalization* _e) const
       {
          if(!_e->addBytes(buffer_, size_))
-            return false;
-
+            {
+               return false;
+            }
          return true;
       }
 
@@ -173,7 +206,9 @@ namespace btg
             }
 
          if(!_e->getBytes(&buffer_, size_))
-            return false;
+            {
+               return false;
+            }
 
          return true;
       }
@@ -206,10 +241,7 @@ namespace btg
                size_   = _sbuffer.size_;
                buffer_ = new t_byte[size_];
 
-               for (t_uint i = 0; i < size_; i++)
-                  {
-                     buffer_[i] = _sbuffer.buffer_[i];
-                  }
+               memcpy(buffer_, _sbuffer.buffer_, size_);
             }
 
          return *this;
@@ -240,6 +272,42 @@ namespace btg
             }
 
          return false;
+      }
+
+      bool sBuffer::split(t_uint const _pieceSize, 
+                          std::vector<sBuffer> & _destination)
+      {
+         if (size_ == 0)
+            {
+               return false;
+            }
+
+         if (size_ == _pieceSize)
+            {
+               _destination.push_back(sBuffer(*this));
+               return true;
+            }
+
+         t_uint pos = 0;
+         while (pos < size_)
+            {
+               if ((pos + _pieceSize) < size_)
+                  {
+                     _destination.push_back(sBuffer(&buffer_[pos], _pieceSize));
+                     pos += _pieceSize;
+                  }
+               else
+                  { 
+                     if ((size_ - pos) > 0)
+                        {
+                           t_uint remainder = size_ - pos;
+                           _destination.push_back(sBuffer(&buffer_[pos], remainder));
+                           pos += remainder;
+                        }
+                  }
+            }
+         
+         return true;
       }
 
       sBuffer::~sBuffer()

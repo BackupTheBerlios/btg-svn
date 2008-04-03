@@ -38,11 +38,27 @@ namespace btg
 
       using namespace btg::core;
 
-      std::vector<UrlIdSessionMapping>::iterator daemonHandler::getMapping(t_uint _hid)
+      UrlIdSessionMapping::UrlIdSessionMapping(t_uint _hid, 
+                                               long _session, 
+                                               std::string const& _userdir,
+                                               std::string const& _filename,
+                                               bool const _start)
+         : hid(_hid),
+           valid(true),
+           session(_session),
+           userdir(_userdir),
+           filename(_filename),
+           start(_start),
+           status(UCS_UNDEF),
+           age(0)
+      {
+      }
+      
+      std::vector<UrlIdSessionMapping>::iterator daemonHandler::getUrlMapping(t_uint _hid)
       {
          std::vector<UrlIdSessionMapping>::iterator i;
-         for (i = UrlIdSessions.begin();
-              i != UrlIdSessions.end();
+         for (i = urlIdSessions.begin();
+              i != urlIdSessions.end();
               i++)
             {
                if (i->hid == _hid)
@@ -51,19 +67,19 @@ namespace btg
                   }
             }
 
-         return UrlIdSessions.end();
+         return urlIdSessions.end();
       }
 
       void daemonHandler::handleUrlDownload(t_uint _hid)
       {
-         std::vector<UrlIdSessionMapping>::iterator i = getMapping(_hid);
+         std::vector<UrlIdSessionMapping>::iterator i = getUrlMapping(_hid);
 
-         if (i != UrlIdSessions.end())
+         if (i != urlIdSessions.end())
             {
                if (i->valid)
                   {
                      addUrl(*i);
-                     UrlIdSessions.erase(i);
+                     urlIdSessions.erase(i);
                   }
             }
       }
@@ -71,8 +87,8 @@ namespace btg
       void daemonHandler::handleUrlDownloads()
       {
          std::vector<UrlIdSessionMapping>::iterator i;
-         for (i = UrlIdSessions.begin();
-              i != UrlIdSessions.end();
+         for (i = urlIdSessions.begin();
+              i != urlIdSessions.end();
               i++)
             {
                if ((i->age > max_url_age) || (!i->valid))
@@ -102,15 +118,15 @@ namespace btg
             }
 
          // Remove expired downloads.
-         i = UrlIdSessions.begin();
-         while (i != UrlIdSessions.end())
+         i = urlIdSessions.begin();
+         while (i != urlIdSessions.end())
             {
                if (i->age > max_url_age)
                   {
                      httpmgr.Terminate(i->hid);
                      dd_->filetrack->remove(i->userdir,
                                             i->filename);
-                     i = UrlIdSessions.erase(i);
+                     i = urlIdSessions.erase(i);
                   }
                else
                   {
@@ -180,9 +196,9 @@ namespace btg
          contextUrlStatusCommand* cusc = dynamic_cast<contextUrlStatusCommand*>(_command);
          t_uint hid = cusc->id();
 
-         std::vector<UrlIdSessionMapping>::iterator mapping = getMapping(hid);
+         std::vector<UrlIdSessionMapping>::iterator mapping = getUrlMapping(hid);
 
-         if (mapping == UrlIdSessions.end())
+         if (mapping == urlIdSessions.end())
             {
                sendError(_command->getType(), "Unknown URL id.");
                return;
@@ -251,8 +267,8 @@ namespace btg
 
          bool unique = true;
          std::vector<UrlIdSessionMapping>::iterator i;
-         for (i = UrlIdSessions.begin();
-              i != UrlIdSessions.end();
+         for (i = urlIdSessions.begin();
+              i != urlIdSessions.end();
               i++)
             {
                if ((i->valid) && 
@@ -276,7 +292,7 @@ namespace btg
          t_uint hid = httpmgr.Fetch(ccful->getUrl(), 
                                     userdir + GPD->sPATH_SEPARATOR() + filename);
          UrlIdSessionMapping usmap(hid, _eventhandler->getSession(), userdir, filename, ccful->getStart());
-         UrlIdSessions.push_back(usmap);
+         urlIdSessions.push_back(usmap);
          
          BTG_MNOTICE(logWrapper(), "Added mapping: HID " << usmap.hid << " -> " << usmap.session << " -> " << usmap.filename);
          

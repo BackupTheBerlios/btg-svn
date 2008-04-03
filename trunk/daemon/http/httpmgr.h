@@ -29,11 +29,6 @@
 #include <bcore/sbuf.h>
 #include <bcore/logable.h>
 
-#include <boost/shared_ptr.hpp>
-#include <boost/thread/thread.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/condition.hpp>
-
 #include "httpif.h"
 #include "curlif.h"
 #include "httpproc.h"

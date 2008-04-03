@@ -88,6 +88,11 @@ namespace btg
                      /// The daemon could not start downloading a torrent.
                      virtual void onCreateFromUrlError(std::string const& _errorDescription) = 0;
 
+                     virtual void onCreateFromFile(t_uint const _id) = 0;
+                     virtual void onCreateFromFileError(std::string const& _errorDescription) = 0;
+
+                     virtual void OnCreateFromFilePart() = 0;
+                     virtual void OnCreateFromFilePartError(std::string const& _errorDescription) = 0;
                      /// Received status for a download.
                      virtual void onUrlStatus(t_uint const _id, 
                                               btg::core::urlStatus const _status) = 0;

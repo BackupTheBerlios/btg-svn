@@ -47,6 +47,7 @@
 #include <bcore/command/context_last.h>
 #include <bcore/command/context_create.h>
 #include <bcore/command/context_create_url.h>
+#include <bcore/command/context_create_file.h>
 #include <bcore/command/context_abort.h>
 
 #include <bcore/command/context_clean.h>
@@ -203,7 +204,14 @@ namespace btg
 
             clientcallback->onUrlStatus(cusrc->id(), cusrc->status());
          }
-         
+
+         void stateMachine::cb_CN_CCREATEFROMFILERSP(btg::core::Command* _command)
+         {
+            contextCreateFromFileResponseCommand* ccffrc = dynamic_cast<contextCreateFromFileResponseCommand*>(_command);
+
+            clientcallback->onCreateFromFile(ccffrc->id());
+         }
+
          void stateMachine::cb_CN_VERSION(btg::core::Command* _command)
          {
             versionResponseCommand* vrc = dynamic_cast<versionResponseCommand*>(_command);

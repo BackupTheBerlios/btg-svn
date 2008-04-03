@@ -165,6 +165,31 @@ namespace btg
             commandStatus = false;
          }
 
+         void guiHandler::onCreateFromFile(t_uint const _id)
+         {
+            commandStatus = true;
+            setFileId(_id);
+         }
+
+         void guiHandler::onCreateFromFileError(std::string const& _errorDescription)
+         {
+            commandStatus = false;
+            BTG_NOTICE(logWrapper(), 
+                       "Error: " << _errorDescription);
+         }
+
+         void guiHandler::OnCreateFromFilePart()
+         {
+            commandStatus = true;
+         }
+
+         void guiHandler::OnCreateFromFilePartError(std::string const& _errorDescription)
+         {
+            commandStatus = false;
+            BTG_NOTICE(logWrapper(), 
+                       "Error: " << _errorDescription);
+         }
+         
          void guiHandler::onAbort()
          {
             BTG_NOTICE(logWrapper(), 

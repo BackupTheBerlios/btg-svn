@@ -1268,6 +1268,27 @@ namespace btg
                }
          }
 
+         void cliHandler::onCreateFromFile(t_uint const _id)
+         {
+            commandStatus = true;
+            setFileId(_id);
+         }
+
+         void cliHandler::onCreateFromFileError(std::string const& _errorDescription)
+         {
+            commandStatus = false;
+         }
+
+         void cliHandler::OnCreateFromFilePart()
+         {
+            commandStatus = true;
+         }
+
+         void cliHandler::OnCreateFromFilePartError(std::string const& _errorDescription)
+         {
+            commandStatus = false;
+         }
+
          void cliHandler::onStart()
          {
             setOutput("Started.");

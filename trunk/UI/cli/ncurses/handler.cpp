@@ -344,6 +344,27 @@ namespace btg
             commandStatus = false;
          }
 
+         void Handler::onCreateFromFile(t_uint const _id)
+         {
+            commandStatus = true;
+            setFileId(_id);
+         }
+
+         void Handler::onCreateFromFileError(std::string const& _errorDescription)
+         {
+            commandStatus = false;
+         }
+
+         void Handler::OnCreateFromFilePart()
+         {
+            commandStatus = true;
+         }
+
+         void Handler::OnCreateFromFilePartError(std::string const& _errorDescription)
+         {
+            commandStatus = false;
+         }
+
          Handler::~Handler()
          {
          }

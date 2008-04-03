@@ -162,6 +162,26 @@ namespace btg
                
             }
             
+            void viewerHandler::onCreateFromFile(t_uint const _id)
+            {
+
+            }
+
+            void viewerHandler::onCreateFromFileError(std::string const& _errorDescription)
+            {
+
+            }
+
+            void viewerHandler::OnCreateFromFilePart()
+            {
+
+            }
+
+            void viewerHandler::OnCreateFromFilePartError(std::string const& _errorDescription)
+            {
+
+            }
+            
             void viewerHandler::onAbort()
             {
                BTG_NOTICE(logWrapper(),

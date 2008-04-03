@@ -61,6 +61,7 @@
 
 #include <bcore/command/context_last.h>
 #include <bcore/command/context_create.h>
+#include <bcore/command/context_create_file.h>
 #include <bcore/command/context_create_url.h>
 #include <bcore/command/context_abort.h>
 
@@ -930,6 +931,34 @@ namespace btg
             SM_REQUEST_LOSS;
          }
 
+         void stateMachine::doCreateFromFile(std::string const& _filename,
+                                             t_uint const _numberOfParts,
+                                             bool const _start)
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(new contextCreateFromFileCommand(_filename,
+                                                                      _numberOfParts,
+                                                                      _start));
+               }
+            SM_REQUEST_LOSS;
+         }
+
+         void stateMachine::doTransmitFilePart(t_uint const _id, 
+                                               t_uint const _part,
+                                               btg::core::sBuffer const& _buffer)
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(
+                                     new contextCreateFromFilePartCommand(_id, 
+                                                                          _part, 
+                                                                          _buffer)
+                                     );
+               }
+            SM_REQUEST_LOSS;
+         }
+
          void stateMachine::doCreateFromUrl(std::string const& _filename,
                                             std::string const& _url,
                                             bool const _start)
@@ -1150,6 +1179,12 @@ namespace btg
                      expectedReply[1] = Command::CN_UNDEFINED;
                      break;
                   }
+               case Command::CN_CCREATEFROMFILE:
+                  {
+                     expectedReply[0] = Command::CN_CCREATEFROMFILERSP;
+                     expectedReply[1] = Command::CN_UNDEFINED;
+                     break;
+                  }
                case Command::CN_CURLSTATUS:
                   {
                      expectedReply[0] = Command::CN_CURLSTATUSRSP;
@@ -1169,6 +1204,7 @@ namespace btg
                case Command::CN_CLIMIT:
                case Command::CN_CSETFILES:
                case Command::CN_CMOVE:
+               case Command::CN_CCREATEFROMFILEPART:
                   {
                      ackForCommand = static_cast<Command::commandType>(_type);
                      expectedReply[0] = Command::CN_ACK;
@@ -1280,6 +1316,11 @@ namespace btg
                      clientcallback->onSetSessionName();
                      break;
                   }
+               case Command::CN_CCREATEFROMFILEPART:
+                  {
+                     clientcallback->OnCreateFromFilePart();
+                     break;
+                  }
                default:
                   {
                      BTG_ERROR_LOG(logWrapper(), "No callback defined.");
@@ -1376,6 +1417,11 @@ namespace btg
                      cb_CN_CCREATEFROMURL(_command);
                      break;
                   }
+               case Command::CN_CCREATEFROMFILERSP:
+                  {
+                     cb_CN_CCREATEFROMFILERSP(_command);
+                     break;
+                  }
                case Command::CN_CURLSTATUS:
                   {
                      cb_CN_CURLSTATUS(_command);
@@ -1456,6 +1502,16 @@ namespace btg
                         case Command::CN_CCREATEFROMURL:
                            {
                               clientcallback->onCreateFromUrlError(errmessage);
+                              break;
+                           }
+                        case Command::CN_CCREATEFROMFILE:
+                           {
+                              clientcallback->onCreateFromFileError(errmessage);
+                              break;
+                           }
+                        case Command::CN_CCREATEFROMFILEPART:
+                           {
+                              clientcallback->OnCreateFromFilePartError(errmessage);
                               break;
                            }
                         case Command::CN_CURLSTATUS:

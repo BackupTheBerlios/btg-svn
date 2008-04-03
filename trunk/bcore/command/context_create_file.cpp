@@ -31,13 +31,16 @@ namespace btg
       contextCreateFromFileCommand::contextCreateFromFileCommand()
          : Command(Command::CN_CCREATEFROMFILE),
            filename(),
+           numberOfParts_(0),
            start(false)
       {}
 
       contextCreateFromFileCommand::contextCreateFromFileCommand(std::string const& _filename,
+                                                                 t_uint _numberOfParts,
                                                                  bool const _start)
          : Command(Command::CN_CCREATEFROMFILE),
            filename(_filename),
+           numberOfParts_(_numberOfParts),
            start(_start)
       {}
 
@@ -48,6 +51,10 @@ namespace btg
 
          _e->setParamInfo("torrent filename", true);
          _e->stringToBytes(&filename);
+         BTG_RCHECK(_e->status());
+
+         _e->setParamInfo("number of parts", true);
+         _e->uintToBytes(&numberOfParts_);
          BTG_RCHECK(_e->status());
 
          _e->setParamInfo("flag: start torrent", true);
@@ -63,6 +70,10 @@ namespace btg
 
          _e->setParamInfo("torrent filename", true);
          _e->bytesToString(&filename);
+         BTG_RCHECK(_e->status());
+
+         _e->setParamInfo("number of parts", true);
+         _e->bytesToUint(&numberOfParts_);
          BTG_RCHECK(_e->status());
 
          _e->setParamInfo("flag: start torrent", true);
@@ -119,19 +130,16 @@ namespace btg
          : Command(Command::CN_CCREATEFROMFILEPART),
            id_(FILES_INVALID_FILEID),
            part_(0),
-           numberOfParts_(0),
            data_()
       {
       }
 
       contextCreateFromFilePartCommand::contextCreateFromFilePartCommand(t_uint _id,
                                                                          t_uint _part,
-                                                                         t_uint _numberOfParts,
                                                                          sBuffer const& _data)
          : Command(Command::CN_CCREATEFROMFILEPART),
            id_(_id),
            part_(_part),
-           numberOfParts_(_numberOfParts),
            data_(_data)
       {
 
@@ -148,10 +156,6 @@ namespace btg
 
          _e->setParamInfo("part", true);
          _e->uintToBytes(&part_);
-         BTG_RCHECK(_e->status());
-
-         _e->setParamInfo("number of parts", true);
-         _e->uintToBytes(&numberOfParts_);
          BTG_RCHECK(_e->status());
 
          _e->setParamInfo("data", true);
@@ -171,10 +175,6 @@ namespace btg
 
          _e->setParamInfo("part", true);
          _e->bytesToUint(&part_);
-         BTG_RCHECK(_e->status());
-
-         _e->setParamInfo("number of parts", true);
-         _e->bytesToUint(&numberOfParts_);
          BTG_RCHECK(_e->status());
 
          _e->setParamInfo("data", true);

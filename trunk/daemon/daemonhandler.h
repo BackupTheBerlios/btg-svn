@@ -54,6 +54,7 @@
 #  include <daemon/http/httpmgr.h>
 #endif 
 
+#include "filemgr.h"
 #include <bcore/logable.h>
 
 namespace btg
@@ -72,23 +73,13 @@ namespace btg
       /// Mapping between session and URL download.
       struct UrlIdSessionMapping
       {
-      /// Contructor.
-      UrlIdSessionMapping(t_uint _hid, 
-                          long _session, 
-                          std::string const& _userdir,
-                          std::string const& _filename,
-                          bool const _start)
-      : hid(_hid),
-            valid(true),
-            session(_session),
-            userdir(_userdir),
-            filename(_filename),
-            start(_start),
-            status(UCS_UNDEF),
-            age(0)
-         {
-         }
-
+         /// Contructor.
+         UrlIdSessionMapping(t_uint _hid, 
+                             long _session, 
+                             std::string const& _userdir,
+                             std::string const& _filename,
+                             bool const _start);
+         
          /// Download id.
          t_uint          hid;
          /// Indicates if this download is valid.
@@ -203,15 +194,29 @@ namespace btg
                                    btg::core::Command* _command);
 
             /// Handle URL messages - download and status.
-            void handleUrlMessages(eventHandler* _eventhandler, btg::core::Command* _command);
+            void handleUrlMessages(eventHandler* _eventhandler, 
+                                   btg::core::Command* _command);
 
+            void handleCreateFileMessages(eventHandler* _eventhandler, 
+                                          btg::core::Command* _command);
 #if BTG_OPTION_URL
             /// Handle URL status mesasge.
-            void handle_CN_CURLSTATUS(eventHandler* _eventhandler, btg::core::Command* _command);
+            void handle_CN_CURLSTATUS(eventHandler* _eventhandler, 
+                                      btg::core::Command* _command);
 
             /// Handle URL create message.
-            void handle_CN_CCREATEFROMURL(eventHandler* _eventhandler, btg::core::Command* _command);
+            void handle_CN_CCREATEFROMURL(eventHandler* _eventhandler, 
+                                          btg::core::Command* _command);
 #endif // BTG_OPTION_URL
+
+            void handle_CN_CCREATEFROMFILE(eventHandler* _eventhandler, 
+                                           btg::core::Command* _command);
+
+            void handle_CN_CCREATEFROMFILEPART(eventHandler* _eventhandler, 
+                                               btg::core::Command* _command);
+
+            void handle_CN_CCRFILESTATUS(eventHandler* _eventhandler, 
+                                         btg::core::Command* _command);
 
             /// Handle Version request.
             void handleVersion(eventHandler* _eventhandler, 
@@ -349,11 +354,11 @@ namespace btg
             /// Http manager used for all downloads.
             btg::daemon::http::httpManager  httpmgr;
 
-            /// Mapping between URL id session.
-            std::vector<UrlIdSessionMapping> UrlIdSessions;
+            /// Mapping between URL id and session.
+            std::vector<UrlIdSessionMapping> urlIdSessions;
 
             /// Get a mapping when having a URL id.
-            std::vector<UrlIdSessionMapping>::iterator getMapping(t_uint _hid);
+            std::vector<UrlIdSessionMapping>::iterator getUrlMapping(t_uint _hid);
 
             /// Handle downloads - called by timer.
             void handleUrlDownloads();
@@ -367,7 +372,7 @@ namespace btg
             /// Clean up, if the torrent could not be downloaded.
             void removeUrl(UrlIdSessionMapping & _mapping);
 #endif // BTG_OPTION_URL
-
+            btg::daemon::fileManager filemgr;
          private:
             /// Copy constructor.
             daemonHandler(daemonHandler const& _dh);

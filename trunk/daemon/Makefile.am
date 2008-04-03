@@ -27,6 +27,7 @@ noinst_HEADERS = $(CALLBACKHEADERS) $(SSHEADERS) filetrackdata.h filetrack.h con
                  eventhandler.h darg.h \
                  dconfig.h daemon.h daemondata.h \
                  daemonhandler.h \
+                 filemgr.h \
                  btgdaemon.h \
                  progress.h \
                  lt_version.h \
@@ -39,7 +40,8 @@ libdaemon_la_SOURCES = dconfig.cpp darg.cpp \
                        filetrackdata.cpp filetrack.cpp connectionhandler.cpp \
                        session_list.cpp portmgr.cpp \
                        limitval.cpp limitmgr.cpp daemondata.cpp \
-                       daemonhandler.cpp daemonhandler_url.cpp progress.cpp \
+                       daemonhandler_url.cpp daemonhandler_file.cpp daemonhandler.cpp progress.cpp \
+                       filemgr.cpp \
                        context_alert.cpp context_file.cpp context_session.cpp context.cpp \
                        eventhandler.cpp connectionextrastate.cpp $(SSSOURCES) $(CALLBACKSOURCES)
 

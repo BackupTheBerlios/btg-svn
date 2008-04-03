@@ -104,11 +104,12 @@ namespace btg
            sessiontimer_(dd_->ss_timeout),
 #endif // BTG_OPTION_SAVESESSIONS
            sendBuffer_(),
-           cf_(_logwrapper, _dd->externalization)
+           cf_(_logwrapper, _dd->externalization),
 #if BTG_OPTION_URL
-           ,httpmgr(_logwrapper),
-           UrlIdSessions()
+           httpmgr(_logwrapper),
+           urlIdSessions(),
 #endif // BTG_OPTION_URL
+           filemgr(_logwrapper)
       {
          /// Set the initial limits.
          limitManager_.set(_dd->config->getUploadRateLimit(),
@@ -118,13 +119,13 @@ namespace btg
 
          limitManager_.update();
 #if BTG_OPTION_SAVESESSIONS
-         if(dd_->ss_enable)
+         if (dd_->ss_enable)
             {
-               if(!dd_->cla->doNotReloadSessions())
+               if (!dd_->cla->doNotReloadSessions())
                   {
                      MVERBOSE_LOG(logWrapper(), verboseFlag_, "Loading sessions from stream.");
                      BTG_MNOTICE(logWrapper(), "loading sessions from stream.");
-                     t_int numberOfSessions = sessionsaver_.loadSessions(dd_->ss_file);
+                     sessionsaver_.loadSessions(dd_->ss_file);
                   }
                else
                   {
@@ -280,6 +281,15 @@ namespace btg
                               handleUrlMessages(eventhandler, command_);
                               break;
                            }
+
+                        case Command::CN_CCREATEFROMFILE:
+                        case Command::CN_CCREATEFROMFILEPART:
+                        case Command::CN_CCRFILESTATUS:
+                           {
+                              handleCreateFileMessages(eventhandler, command_);
+                              break;
+                           }
+
                         case Command::CN_VERSION:
                            {
                               handleVersion(eventhandler, command_);
@@ -1026,6 +1036,29 @@ namespace btg
 #endif // BTG_OPTION_URL
       }
 
+      void daemonHandler::handleCreateFileMessages(eventHandler* _eventhandler, 
+                                                   btg::core::Command* _command)
+      {
+         switch (_command->getType())
+            {
+            case Command::CN_CCREATEFROMFILE:
+               {
+                  handle_CN_CCREATEFROMFILE(_eventhandler, _command);
+                  break;
+               }
+            case Command::CN_CCREATEFROMFILEPART:
+               {
+                  handle_CN_CCREATEFROMFILEPART(_eventhandler, _command);
+                  break;
+               }
+            case Command::CN_CCRFILESTATUS:
+               {
+                  handle_CN_CCRFILESTATUS(_eventhandler, _command);
+                  break;
+               }
+            }
+      }
+
       void daemonHandler::handleOther(eventHandler* _eventhandler, Command* _command)
       {
          // All other events.
@@ -1204,7 +1237,7 @@ namespace btg
             {
                url_timer_trigger_ = false;
                url_timer_.Reset();
-               if (UrlIdSessions.size() > 0)
+               if (urlIdSessions.size() > 0)
                   {
                      MVERBOSE_LOG(logWrapper(), verboseFlag_, "Checking url downloads.");
                      handleUrlDownloads();

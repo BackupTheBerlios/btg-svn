@@ -47,6 +47,7 @@ namespace btg
                /// @param [in] _filename     The filename of the torrent file to create.
                /// @param [in] _start        Indicates if the torrent will be started after creation.
                contextCreateFromFileCommand(std::string const& _filename,
+                                            t_uint _numberOfParts,
                                             bool const _start);
 
                bool serialize(btg::core::externalization::Externalization* _e) const;
@@ -57,6 +58,11 @@ namespace btg
                   {
                      return filename;
                   }
+               
+               t_uint numberOfParts() const
+               {
+                  return numberOfParts_;
+               }
 
                /// Indicates if the torrent should be started after
                /// loading.
@@ -70,6 +76,8 @@ namespace btg
             private:
                /// The filename of the torrent file to create.
                std::string filename;
+
+               t_uint numberOfParts_;
 
                /// Indicates if the torrent should be started after
                /// creation.
@@ -109,7 +117,6 @@ namespace btg
 
                contextCreateFromFilePartCommand(t_uint _id,
                                                 t_uint _part,
-                                                t_uint _numberOfParts,
                                                 sBuffer const& _data);
 
                bool serialize(btg::core::externalization::Externalization* _e) const;
@@ -130,17 +137,11 @@ namespace btg
                      return data_;
                   }
 
-               t_uint numberOfParts() const
-                  {
-                     return numberOfParts_;
-                  }
-
                /// Destructor.
                virtual ~contextCreateFromFilePartCommand();
             private:
                t_uint  id_;
                t_uint  part_;
-               t_uint  numberOfParts_;
                sBuffer data_;
             };
 

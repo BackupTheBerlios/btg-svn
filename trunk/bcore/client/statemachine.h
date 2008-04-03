@@ -32,8 +32,9 @@
 #include <bcore/command/session_attach.h>
 
 #include <bcore/auth/hash.h>
-#include <bcore/logable.h>
+ #include <bcore/logable.h>
 #include <bcore/command_factory.h>
+#include <bcore/sbuf.h>
 
 namespace btg
 {
@@ -116,6 +117,16 @@ namespace btg
             void doCreateFromUrl(std::string const& _filename,
                                  std::string const& _url,
                                  bool const _start = true);
+            /// Action.
+            void doCreateFromFile(std::string const& _filename,
+                                  t_uint const _numberOfParts,
+                                  bool const _start = true);
+
+            /// Action.
+            void doTransmitFilePart(t_uint const _id, 
+                                    t_uint const _part,
+                                    btg::core::sBuffer const& _buffer);
+
             /// Action.
             void doUrlStatus(t_uint const _id);
             /// Action.
@@ -395,6 +406,9 @@ namespace btg
             void cb_CN_CCREATEFROMURL(btg::core::Command* _command);
             /// Call a callback. URL status.
             void cb_CN_CURLSTATUS(btg::core::Command* _command);
+
+            void cb_CN_CCREATEFROMFILERSP(btg::core::Command* _command);
+
             /// Call a callback. Version and options.
             void cb_CN_VERSION(btg::core::Command* _command);
          private:

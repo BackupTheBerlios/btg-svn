@@ -797,6 +797,7 @@ int main(int argc, char* argv[])
    
    if (!dd.cla->doNotDetach())
       {
+#if BTG_OPTION_USECYBERLINK
          btg::daemon::upnp::cyberlinkUpnpIf * pCLUPnPIf = dynamic_cast<btg::daemon::upnp::cyberlinkUpnpIf*>(upnpif.get());
 
          // stop existing threads
@@ -805,13 +806,15 @@ int main(int argc, char* argv[])
             // cyberlinkif thread
             pCLUPnPIf->stop_thread();
          }
-         
+#endif // BTG_OPTION_USECYBERLINK        
          switch (do_daemonize())
             {
             case PID_OK:
                {
                   pidfile.clear(); // prevent file truncation in destructor
+#if BTG_OPTION_USECYBERLINK
                   if (upnpif.get()) upnpif->clear(); // prevent port closing in destructor
+#endif // BTG_OPTION_USECYBERLINK
                   BTG_MNOTICE(logwrapper, 
                               "parent exiting, child daemonizing");
                   return BTG_NORMAL_EXIT;
@@ -836,13 +839,14 @@ int main(int argc, char* argv[])
                }
                break;
             }
-
+#if BTG_OPTION_USECYBERLINK
          // re-start needed threads
          if (pCLUPnPIf)
          {
             // cyberlinkif thread
             pCLUPnPIf->start_thread();
          }
+#endif // BTG_OPTION_USECYBERLINK
       }
    else
       {

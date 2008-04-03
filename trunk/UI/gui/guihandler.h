@@ -133,6 +133,12 @@ namespace btg
                      void onCreateWithData();
                      void onCreateFromUrl(t_uint const _id);
                      void onCreateFromUrlError(std::string const& _message);
+                     
+                     void onCreateFromFile(t_uint const _id);
+                     void onCreateFromFileError(std::string const& _errorDescription);
+                     void OnCreateFromFilePart();
+                     void OnCreateFromFilePartError(std::string const& _errorDescription);
+                     
                      void onUrlStatus(t_uint const _id, 
                                       btg::core::urlStatus const _status);
                      void onUrlStatusError(std::string const& _message);
