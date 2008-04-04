@@ -39,6 +39,8 @@ torrent-range  \- integer:integer. Which ports to use use for torrent communicat
 torrent-ip     \- IPv4 address. Libtorrent listens to this address.
 .TP
 use-upnp       \- True/false. Enable/disable UPnP (if support for it was selected at compile time).
+.TP
+upnp-ip        \- IPv4 address. Issued to the UPnP-capable gateway as internal address.
 
 .SS
 Section "tls"

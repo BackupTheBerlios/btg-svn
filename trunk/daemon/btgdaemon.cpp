@@ -657,7 +657,7 @@ int main(int argc, char* argv[])
 #  if BTG_OPTION_USECYBERLINK
    upnpif.reset(
       /* creates a thread */
-      new btg::daemon::upnp::cyberlinkUpnpIf(logwrapper, verboseFlag, dd.config->getLTListenTo())
+      new btg::daemon::upnp::cyberlinkUpnpIf(logwrapper, verboseFlag, dd.config->getUPNPInternalIP())
    );
 #  endif // BTG_OPTION_USECYBERLINK
 

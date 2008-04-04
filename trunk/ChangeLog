@@ -2,6 +2,7 @@ BTG version 0.9.8
 -----------------
 The following bugs were fixed:
 
+013555 UPnP, added separate config-file parameter for internal-ip
 013454 Writing PID-file (daemon).
 013435 Open all necessary files before switching EUID (daemon).
 013450 Logging optimization - static conditions.

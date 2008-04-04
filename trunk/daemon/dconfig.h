@@ -137,6 +137,9 @@ namespace btg
                /// Get the IPv4 used by libtorrent.
                btg::core::Address getLTListenTo() const;
 
+               /// Get the IPv4 set as internal-IP to UPnP gateway
+               btg::core::Address getUPNPInternalIP() const;
+               
                /* Limit */
                /// Set the upload rate limit
                void setUploadRateLimit(t_int const _value);
@@ -385,6 +388,9 @@ namespace btg
                
                /// PID-file name
                std::string                                 def_pidfname;
+               
+               /// Internal IP for UPnP gateway
+               btg::core::Address                          def_upnp_ip;
             };
 
       } // namespace daemon

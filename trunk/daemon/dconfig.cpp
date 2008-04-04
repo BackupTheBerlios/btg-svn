@@ -12,6 +12,7 @@ namespace btg
       using namespace btg::core;
 
       std::string const SECTION_TRANSPORT("transport");
+      
       std::string const KEY_TRANSPORT_DEFAULT("default");
       std::string const DESCR_TRANSPORT_DEFAULT("default transport");
 
@@ -20,9 +21,24 @@ namespace btg
       std::string const VALUE_TRANSPORT_XMLRPC("xml-rpc");
       std::string const VALUE_TRANSPORT_SXMLRPC("sxml-rpc");
 
+      
       std::string const SECTION_NETWORK("network");
+      
       std::string const KEY_LISTEN_TO("listen-to");
       std::string const DESCR_LISTEN_TO("listen to IPv4:port");
+
+      std::string const KEY_LT_PORTRANGE("torrent-range");
+      std::string const DESCR_LT_PORTRANGE("libtorrent port range used");
+
+      std::string const KEY_LT_IP("torrent-ip");
+      std::string const DESCR_LT_IP("libtorrent listens to IPv4");
+
+      std::string const KEY_USE_UPNP("use-upnp");
+      std::string const DESCR_USE_UPNP("enable/disable UPnP");
+
+      std::string const KEY_UPNP_IP("upnp-ip");
+      std::string const DESCR_UPNP_IP("IPv4, internal IP for UPnP-capable gateway");
+
 
       std::string const SECTION_ENC("encryption");
 
@@ -46,15 +62,7 @@ namespace btg
       std::string const VALUE_LEVEL_ENABLE("enable");
       std::string const VALUE_LEVEL_DISABLE("disable");
 
-      std::string const KEY_LT_PORTRANGE("torrent-range");
-      std::string const DESCR_LT_PORTRANGE("libtorrent port range used");
-
-      std::string const KEY_LT_IP("torrent-ip");
-      std::string const DESCR_LT_IP("libtorrent listens to IPv4");
-
-      std::string const KEY_USE_UPNP("use-upnp");
-      std::string const DESCR_USE_UPNP("enable/disable UPnP");
-
+      
       std::string const SECTION_TLS("tls");
 
       std::string const KEY_TLS_CACERT("ca-cert");
@@ -64,9 +72,11 @@ namespace btg
       std::string const DESCR_TLS_CERT("daemon certificate");
       std::string const KEY_TLS_PRIVKEY("cert-privkey");
 
+      
       std::string const SECTION_LOGGING("logging");
-      std::string const DESCR_LOGGING_TYPE("log type");
+      
       std::string const KEY_LOGGING_TYPE("type");
+      std::string const DESCR_LOGGING_TYPE("log type");
 
       std::string const VALUE_LOGGING_STDOUT("stdout");
       std::string const VALUE_LOGGING_FILE("file");
@@ -75,7 +85,9 @@ namespace btg
       std::string const KEY_LOGGING_FILE("filename");
       std::string const DESCR_LOGGING_FILE("log filename");
 
+
       std::string const SECTION_MISC("misc");
+      
       std::string const KEY_MISC_PROXY("proxy");
       std::string const DESCR_MISC_PROXY("proxy IPv4:port");
 
@@ -99,7 +111,9 @@ namespace btg
       std::string const KEY_MISC_PIDFILE("pidfile");
       std::string const DESCR_MISC_PIDFILE("PID-file");
       
+      
       std::string const SECTION_LIMIT("limit");
+      
       std::string const KEY_LIMIT_UPLOAD_RATE_LIMIT("upload_rate_limit");
       std::string const KEY_LIMIT_DOWNLOAD_RATE_LIMIT("download_rate_limit");
       std::string const KEY_LIMIT_MAX_UPLOADS("max_uploads");
@@ -118,15 +132,19 @@ namespace btg
       std::string const VALUE_ENABLE_NO("no");
       std::string const VALUE_ENABLE_ZERO("0");
 
+      
       std::string const SECTION_AUTH("auth");
+      
       std::string const KEY_AUTH_PASSWDFILE("passwd-file");
 
       std::string const SECTION_RUNAS("runas");
       std::string const KEY_RUNAS_USER("user");
       std::string const KEY_RUNAS_GROUP("group");
 
+      
       std::string const writeOperation("write");
 
+      
       using namespace btg::core;
       using namespace btg::core::logger;
 
@@ -221,10 +239,18 @@ namespace btg
                      def_port_range.second = port1;
                   }
 
-               std::string lt_ip = inifile->GetValue(KEY_LT_IP, SECTION_NETWORK);
-               if (lt_ip.size() > 0)
+               std::string ip;
+               
+               ip = inifile->GetValue(KEY_LT_IP, SECTION_NETWORK);
+               if (ip.size() > 0)
                   {
-                     def_lt_ip.fromString(lt_ip);
+                     def_lt_ip.fromString(ip);
+                  }
+               
+               ip = inifile->GetValue(KEY_UPNP_IP, SECTION_NETWORK);
+               if (ip.size() > 0)
+                  {
+                     def_upnp_ip.fromString(ip);
                   }
 
                /* Encryption */
@@ -878,6 +904,14 @@ namespace btg
                    output);
 
          temp.clear();
+         temp.push_back(std::string("IPv4 address"));
+
+         formatKey(KEY_UPNP_IP,
+                   "this IPv4 address issued to the UPnP-capable gateway as internal",
+                   temp,
+                   output);
+         
+         temp.clear();
          temp.push_back(std::string(VALUE_ENABLE_TRUE));
          temp.push_back(std::string(VALUE_ENABLE_YES));
          temp.push_back(std::string(VALUE_ENABLE_ONE));
@@ -1286,6 +1320,11 @@ namespace btg
       btg::core::Address daemonConfiguration::getLTListenTo() const
       {
          return def_lt_ip;
+      }
+
+      btg::core::Address daemonConfiguration::getUPNPInternalIP() const
+      {
+         return def_upnp_ip;
       }
 
       void daemonConfiguration::setUploadRateLimit(t_int const _value)
