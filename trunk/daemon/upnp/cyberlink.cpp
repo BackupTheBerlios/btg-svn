@@ -49,7 +49,7 @@ namespace btg
 
          // Timeout used for searching for devices. If no device is
          // discovered after 30 seconds, give up.
-         const t_uint searchTimeout = 1024 * 30;
+         const t_uint searchTimeout = 1000 * 30;
 
          cyberLinkCtrlPoint::cyberLinkCtrlPoint(btg::core::LogWrapperType _logwrapper,
                                                 bool const _verboseFlag,
@@ -114,22 +114,35 @@ namespace btg
          {
             BTG_MNOTICE(logWrapper(), "cyberLinkCtrlPoint::deviceSearchResponseReceived.");
 
+            std::string usn;
+            _ssdpPacket->getUSN(usn);
+            
+            /*
+             * UDN = uuid:UUID
+             * USN = UDN::device_description...
+             * USN e.g.: uuid:75802409-bccb-40e7-8e6c-fa095ecce13e::upnp:rootdevice
+             */
+            std::string uuid = usn.substr(5, 36 /* fixed lenght */);
+            UUID2localAddr_[uuid].fromString(_ssdpPacket->getLocalAddress());
+            
+            BTG_MNOTICE(logWrapper(), "map: UUID=" << uuid << "->localAddr=" << _ssdpPacket->getLocalAddress() );
+            
             if (_ssdpPacket->isDiscover())
                {
                   // Got at least one root device.
-                  std::string usn;
                   std::string st;
                   std::string location;
 
-                  _ssdpPacket->getUSN(usn);
                   _ssdpPacket->getST(st);
                   _ssdpPacket->getLocation(location);
-
-                  BTG_MNOTICE(logWrapper(), "Root device found: usn = " << usn <<
-                             ", st = " << st <<
-                             ", location = " << location << ".");
+                   
+                  BTG_MNOTICE(logWrapper(), "Root device found: usn = " << usn
+                             << ", st = " << st
+                             << ", location = " << location
+                             << ".");
 
                }
+
             /*
               std::string name = usn.substr( 0, usn.find( "::" ) );
 
@@ -372,20 +385,37 @@ namespace btg
                                                 std::string ext_address;
                                                 if (getExternalIp(service, ext_address))
                                                    {
-                                                      BTG_MNOTICE(logWrapper(), "External IP: " << ext_address);
+                                                      BTG_MNOTICE(logWrapper(), "External address: " << ext_address);
                                                    }
                                                 else
                                                    {
-                                                      BTG_MNOTICE(logWrapper(), "Unable to obtain external IP.");
+                                                      BTG_MNOTICE(logWrapper(), "Unable to obtain external address.");
                                                    }
-
-                                                BTG_MNOTICE(logWrapper(), "Internal address: " << addr_.toString());
+                                                
+                                                // Select internal addr
+                                                std::string addr;
+                                                if (addr_.valid())
+                                                {
+                                                   addr = addr_.toString();
+                                                   BTG_MNOTICE(logWrapper(), "Internal address: " << addr << " (config)");
+                                                }
+                                                else
+                                                {
+                                                   /*
+                                                    * UDN = uuid:UUID
+                                                    * USN = UDN::device_desc...
+                                                    * USN e.g.: uuid:75802409-bccb-40e7-8e6c-fa095ecce13e::upnp:rootdevice
+                                                    */
+                                                   std::string udn = _device->getUDN();
+                                                   addr = UUID2localAddr_[udn.substr(5) /* UUID */ ].toString();
+                                                   BTG_MNOTICE(logWrapper(), "Internal address: " << addr << " (auto,UUID=" << udn.substr(5) << ")" );
+                                                }
 
                                                 // 2. Map ports, both TCP and UDP.
 
                                                 tcp_pml_ = portMappingList(_range,
                                                                            ext_address,
-                                                                           addr_.toString(),
+                                                                           addr,
                                                                            portMappingList::TCP
                                                                            );
 
@@ -528,34 +558,32 @@ namespace btg
 
          bool cyberlinkUpnpIf::waitForDevice()
          {
-            const t_int waitStep = 512;
+            const t_int waitStep = 500;
             t_uint waitAmount    = 0;
             bool deviceFound     = false;
 
             while((waitAmount < searchTimeout) || deviceFound)
                {
-                  {
-                     boost::mutex::scoped_lock scoped_lock(resultMutex_);
+                  boost::mutex::scoped_lock scoped_lock(resultMutex_);
+   
+                  setAction(cyberlinkUpnpIf::DEVCOUNT);
 
-                     setAction(cyberlinkUpnpIf::DEVCOUNT);
+                  interfaceCondition_.wait(scoped_lock);
 
-                     interfaceCondition_.wait(scoped_lock);
-
-                     if (count_ >= 1)
-                        {
-                           BTG_MNOTICE(logWrapper(), "Found a device");
-
-                           deviceFound = true;
-                           break;
-                        }
-                     else
-                        {
-                           BTG_MNOTICE(logWrapper(), "Waiting for a device (" << waitAmount << ").");
-
-                           waitAmount += waitStep;
-                           btg::core::os::Sleep::sleepMiliSeconds(waitStep);
-                        }
-                  }
+                  if (count_ >= 1)
+                     {
+                        BTG_MNOTICE(logWrapper(), "Found a device");
+   
+                        deviceFound = true;
+                        break;
+                     }
+                  else
+                     {
+                        BTG_MNOTICE(logWrapper(), "Waiting for a device (" << waitAmount << ").");
+   
+                        waitAmount += waitStep;
+                        btg::core::os::Sleep::sleepMiliSeconds(waitStep);
+                     }
                }
 
             return deviceFound;
@@ -631,81 +659,95 @@ namespace btg
 
             while(!die_)
                {
-                  {
+                  bool sleep_flag = false;
+
+                  { // interfaceMutex_ lock
                      boost::mutex::scoped_lock scoped_lock(interfaceMutex_);
 
                      // React on interface calls.
                      switch(action_)
                         {
                         case cyberlinkUpnpIf::UNDEF:
-                           {
-                              btg::core::os::Sleep::sleepMiliSeconds(64);
-                              break;
-                           }
+
+                           /*
+                            * we have to strongly switch the thread after releasing the mutex
+                            * to catch it by another thread
+                            * -> sleep() effectively switches the thread
+                            * so strongly sleep outside the locking block
+                            */
+                           
+                           sleep_flag = true;
+                           
+                           break;
                         case cyberlinkUpnpIf::MAP:
-                           {
-                              BTG_MNOTICE(logWrapper(), "cyberlinkUpnpIf::MAP");
+                           BTG_MNOTICE(logWrapper(), "cyberlinkUpnpIf::MAP");
 
-                              {
-                                 boost::mutex::scoped_lock scoped_lock(resultMutex_);
+                           { // resultMutex_ lock
+                              boost::mutex::scoped_lock scoped_lock(resultMutex_);
 
-                                 if (!ctrl.portsMapped())
-                                    {
-                                       range_status_ = ctrl.mapPorts(range_);
-                                       result_ready_ = true;
-                                    }
-                                 else
-                                    {
-                                       // Lets not map the same ports
-                                       // more than once.
-                                       range_status_ = ctrl.portsMapped();
-                                       result_ready_ = true;
-                                    }
-                                 interfaceCondition_.notify_one();
+                              if (!ctrl.portsMapped())
+                                 {
+                                    range_status_ = ctrl.mapPorts(range_);
+                                    result_ready_ = true;
+                                 }
+                              else
+                                 {
+                                    // Lets not map the same ports
+                                    // more than once.
+                                    range_status_ = ctrl.portsMapped();
+                                    result_ready_ = true;
+                                 }
+                              interfaceCondition_.notify_one();
 
-                                 action_ = cyberlinkUpnpIf::UNDEF;
-                              }
-                              break;
-                           }
+                              action_ = cyberlinkUpnpIf::UNDEF;
+                           } // end resultMutex_ lock
+                           
+                           break;
                         case cyberlinkUpnpIf::UNMAP:
-                           {
-                              {
-                                 boost::mutex::scoped_lock scoped_lock(resultMutex_);
-
-                                 if (ctrl.portsMapped())
-                                    {
-                                       BTG_MNOTICE(logWrapper(), "Unmapping ports.");
-                                       range_status_ = ctrl.unMapPorts();
-                                    }
-                                 else
-                                    {
-                                       BTG_MNOTICE(logWrapper(), "Ports not mapped, so not unmapping.");
-                                       range_status_ = false;
-                                    }
-                                 interfaceCondition_.notify_one();
-
-                                 action_  = cyberlinkUpnpIf::UNDEF;
-                              }
-                              break;
-                           }
+                           BTG_MNOTICE(logWrapper(), "cyberlinkUpnpIf::UNMAP");
+                           
+                           { // resultMutex_ lock
+                              boost::mutex::scoped_lock scoped_lock(resultMutex_);
+   
+                              if (ctrl.portsMapped())
+                                 {
+                                    BTG_MNOTICE(logWrapper(), "Unmapping ports.");
+                                    range_status_ = ctrl.unMapPorts();
+                                 }
+                              else
+                                 {
+                                    BTG_MNOTICE(logWrapper(), "Ports not mapped, so not unmapping.");
+                                    range_status_ = false;
+                                 }
+                              interfaceCondition_.notify_one();
+   
+                              action_  = cyberlinkUpnpIf::UNDEF;
+                           } // end resultMutex_ lock
+                           
+                           break;
                         case cyberlinkUpnpIf::DEVCOUNT:
-                           {
-                              BTG_MNOTICE(logWrapper(), "cyberlinkUpnpIf::DEVCOUNT");
+                           BTG_MNOTICE(logWrapper(), "cyberlinkUpnpIf::DEVCOUNT");
 
-                              {
-                                 boost::mutex::scoped_lock scoped_lock(resultMutex_);
+                           { // resultMutex_ lock
+                              boost::mutex::scoped_lock scoped_lock(resultMutex_);
 
-                                 count_        = ctrl.deviceCount();
-                                 result_ready_ = true;
+                              count_        = ctrl.deviceCount();
+                              result_ready_ = true;
 
-                                 interfaceCondition_.notify_one();
+                              interfaceCondition_.notify_one();
 
-                                 action_  = cyberlinkUpnpIf::UNDEF;
-                              }
-                              break;
-                           }
+                              action_  = cyberlinkUpnpIf::UNDEF;
+                           } // end resultMutex_ lock
+                           
+                           break;
                         }
-                  } // lock
+                  } // end interfaceMutex_ lock
+                  
+                  // sleeping outside locking block
+                  if (sleep_flag)
+                  {
+                     btg::core::os::Sleep::sleepMiliSeconds(64);
+                  }
                }
 
             BTG_MNOTICE(logWrapper(), "cyberlinkUpnpIf, thread finished.");
@@ -713,12 +755,6 @@ namespace btg
 
          cyberlinkUpnpIf::~cyberlinkUpnpIf()
          {
-            if (!die_)
-            {
-               die_ = true;
-               pthread_->join();
-            }
-
             if (initialized_)
             {
                // Before destructing, close a mapping, if one exists.
@@ -730,9 +766,15 @@ namespace btg
 
                ctrl.deInit();
                initialized_ = false;
-
-               BTG_MNOTICE(logWrapper(), "cyberlinkUpnpIf, destructed.");
             }
+
+            if (!die_)
+            {
+               die_ = true;
+               pthread_->join();
+            }
+
+            BTG_MNOTICE(logWrapper(), "cyberlinkUpnpIf, destructed.");
          }
 
       } // namespace upnp

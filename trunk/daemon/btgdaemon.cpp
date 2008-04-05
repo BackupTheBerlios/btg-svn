@@ -667,7 +667,7 @@ int main(int argc, char* argv[])
             {
                VERBOSE_LOG(logwrapper, 
                            verboseFlag, "UPnP: attempting to forward ports.");
-               
+
                if (!upnpif->open(dd.portRange))
                {
                   BTG_FATAL_ERROR(logwrapper,
@@ -812,9 +812,9 @@ int main(int argc, char* argv[])
             case PID_OK:
                {
                   pidfile.clear(); // prevent file truncation in destructor
-#if BTG_OPTION_USECYBERLINK
+#if BTG_OPTION_UPNP
                   if (upnpif.get()) upnpif->clear(); // prevent port closing in destructor
-#endif // BTG_OPTION_USECYBERLINK
+#endif // BTG_OPTION_UPNP
                   BTG_MNOTICE(logwrapper, 
                               "parent exiting, child daemonizing");
                   return BTG_NORMAL_EXIT;

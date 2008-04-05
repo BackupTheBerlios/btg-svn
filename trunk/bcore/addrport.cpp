@@ -57,20 +57,6 @@ namespace btg
          ip_[3] = _address.ip_[3];
       }
 
-      std::string Address::getIp() const
-      {
-         std::string output;
-         output += convertToString<t_int>(ip_[0]);
-         output += ".";
-         output += convertToString<t_int>(ip_[1]);
-         output += ".";
-         output += convertToString<t_int>(ip_[2]);
-         output += ".";
-         output += convertToString<t_int>(ip_[3]);
-
-         return output;
-      }
-
       bool Address::fromString(std::string const& _input)
       {
          bool status = false;

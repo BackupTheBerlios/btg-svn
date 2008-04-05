@@ -153,6 +153,11 @@ namespace btg
                      /// removed, it will be used to unmap forwarded
                      /// ports.
                      CyberLink::Service* service_;
+                     
+                     /// mapping of UUID to local addres, which (local addr.) is seen by Device.
+                     /// Filled in deviceSearchResponseReceived
+                     /// Used by mapPorts
+                     std::map<std::string /* UUID */, btg::core::Address /* local IP */ > UUID2localAddr_;
                   };
 
                /// Upnp interface using the CyberLink UPnP library.
