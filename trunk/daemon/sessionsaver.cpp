@@ -61,7 +61,7 @@ namespace btg
 {
    namespace daemon
    {
-      const std::string moduleName("ses");
+      const std::string moduleName("sess");
 
       SessionSaver::SessionSaver(btg::core::LogWrapperType _logwrapper,
                                  bool const _verboseFlag,
@@ -96,6 +96,7 @@ namespace btg
 
          // Find out the size of the file.
          t_int size = 0;
+         _file.clear(); // clear possible error flags
 #if HAVE_IOS_BASE
          _file.seekg (0, std::ios_base::end);
          size = _file.tellg();
@@ -332,16 +333,12 @@ namespace btg
                return false;
             }
 
-#if HAVE_IOS_BASE
-         _file.seekp (0, std::ios_base::beg);
-#else
-         _file.seekp (0, std::ios::beg);
-#endif
-
          t_int size     = db.size();
          t_byteP buffer = new t_byte[size];
          db.getBytes(buffer, size);
 
+         _file.clear(); // clear error flags if present
+         _file.seekp(0);
          _file.write(reinterpret_cast<char*>(buffer), size);
          _file.truncate(); // also flush
 

@@ -3,4 +3,4 @@
 # $Id$
 
 cd ..
-fakeroot dpkg-buildpackage -k9277A46E
+fakeroot dpkg-buildpackage -k9277A46E -tc
