@@ -47,6 +47,7 @@ namespace btg
             virtual void CPRI_init(std::string const& _filename) = 0;
             virtual void CPRI_pieceUploaded(t_uint _number, t_uint _parts) = 0;
             virtual void CPRI_error(std::string const& _error) = 0;
+            virtual void CPRI_wait(std::string const& _msg) = 0;
             virtual void CPRI_success(std::string const& _filename) = 0;
 
             virtual bool CPRI_cancel();

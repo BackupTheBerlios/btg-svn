@@ -204,6 +204,7 @@ namespace btg
                void CPRI_init(std::string const& _filename);
                void CPRI_pieceUploaded(t_uint _number, t_uint _parts);
                void CPRI_error(std::string const& _error);
+               void CPRI_wait(std::string const& _msg);
                void CPRI_success(std::string const& _filename);
             private:
                /// Indicates that the client does verbose logging.

@@ -205,6 +205,13 @@ namespace btg
             clientcallback->onUrlStatus(cusrc->id(), cusrc->status());
          }
 
+         void stateMachine::cb_CN_CCRFILESTATUS(btg::core::Command* _command)
+         {
+            contextFileStatusResponseCommand* cfsrc = dynamic_cast<contextFileStatusResponseCommand*>(_command);
+
+            clientcallback->onFileStatus(cfsrc->id(), cfsrc->status());
+         }
+
          void stateMachine::cb_CN_CCREATEFROMFILERSP(btg::core::Command* _command)
          {
             contextCreateFromFileResponseCommand* ccffrc = dynamic_cast<contextCreateFromFileResponseCommand*>(_command);

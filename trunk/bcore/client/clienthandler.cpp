@@ -89,6 +89,8 @@ namespace btg
               last_url_id(URLS_INVALID_URLID),
               last_surl_id(URLS_INVALID_URLID), 
               last_surl_status(URLS_UNDEF),
+              last_sfile_id(FILES_INVALID_FILEID),
+              last_sfile_status(FILES_UNDEF),
               options(),
               last_file_id(FILES_INVALID_FILEID)
          {
@@ -202,6 +204,13 @@ namespace btg
          {
             commandStatus = false;
             statemachine.doUrlStatus(_id);
+            statemachine.work();
+         }
+
+         void clientHandler::reqFileStatus(t_uint _id)
+         {
+            commandStatus = false;
+            statemachine.doFileStatus(_id);
             statemachine.work();
          }
 
@@ -541,6 +550,20 @@ namespace btg
          {
             last_surl_id     = _id;
             last_surl_status = _status;
+         }
+
+         void clientHandler::setFileStatusResponse(t_uint const _id, 
+                                                   btg::core::fileStatus const _status)
+         {
+            last_sfile_id     = _id;
+            last_sfile_status = _status;
+         }
+
+         void clientHandler::fileStatusResponse(t_uint & _id, 
+                                                btg::core::fileStatus & _status) const
+         {
+            _id     = last_sfile_id; 
+            _status = last_sfile_status;
          }
 
          bool clientHandler::handleUrlProgress(t_uint _hid)

@@ -205,7 +205,7 @@ namespace btg
          Command::serialize(_e);
          BTG_RCHECK(_e->status());
 
-         _e->setParamInfo("url id", true);
+         _e->setParamInfo("file id", true);
          _e->uintToBytes(&id_);
          BTG_RCHECK(_e->status());
 
@@ -217,7 +217,7 @@ namespace btg
          Command::deserialize(_e);
          BTG_RCHECK(_e->status());
 
-         _e->setParamInfo("url id", true);
+         _e->setParamInfo("file id", true);
          _e->bytesToUint(&id_);
          BTG_RCHECK(_e->status());
 

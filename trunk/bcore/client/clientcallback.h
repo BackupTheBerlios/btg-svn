@@ -29,6 +29,7 @@
 #include <bcore/trackerstatus.h>
 #include <bcore/file_info.h>
 #include <bcore/urlstatus.h>
+#include <bcore/filestatus.h>
 #include <bcore/copts.h>
 
 #include <string>
@@ -99,6 +100,13 @@ namespace btg
 
                      /// Could not receive status for a download.
                      virtual void onUrlStatusError(std::string const& _errorDescription) = 0;
+
+                     /// Received status for a download.
+                     virtual void onFileStatus(t_uint const _id, 
+                                              btg::core::fileStatus const _status) = 0;
+
+                     /// Could not receive status for a download.
+                     virtual void onFileStatusError(std::string const& _errorDescription) = 0;
 
                      /// The client got the Id of the last context it created.
                      /// Note that implementing this callback is optional.

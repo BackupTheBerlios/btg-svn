@@ -1244,6 +1244,18 @@ namespace btg
             // setError("Unable to create context (from URL).");
          }
 
+         void cliHandler::onFileStatus(t_uint const _id, 
+                                    btg::core::fileStatus const _status)
+         {
+            commandStatus = true;
+            setFileStatusResponse(_id, _status);
+         }
+
+         void cliHandler::onFileStatusError(std::string const& _errorDescription)
+         {
+            commandStatus = false;
+         }
+
          void cliHandler::onUrlStatus(t_uint const _id, 
                                       btg::core::urlStatus const _status)
          {

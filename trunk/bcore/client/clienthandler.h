@@ -132,8 +132,11 @@ namespace btg
                                              t_uint const _part,
                                              sBuffer const& _buffer);
 
-            /// Get the status of a download.
+            /// Get the status of an URL download.
             virtual void reqUrlStatus(t_uint _id);
+
+            /// Get the status of a file download.
+            virtual void reqFileStatus(t_uint _id);
 
             /// Get status from the daemon.
             virtual void reqStatus(t_int const _id, bool const _allContexts = false);
@@ -313,6 +316,14 @@ namespace btg
             virtual void UrlStatusResponse(t_uint & _id, 
                                            btg::core::urlStatus & _status) const;
 
+            /// Set File status response.
+            virtual void setFileStatusResponse(t_uint const _id, 
+                                              btg::core::fileStatus const _status);
+
+            /// Get last received file status.
+            virtual void fileStatusResponse(t_uint & _id, 
+                                           btg::core::fileStatus & _status) const;
+
             /// Wait for URL loading to complete.
             /// @return true - success, URL loaded. false - URL not loaded.
             bool handleUrlProgress(t_uint _hid);
@@ -452,6 +463,10 @@ namespace btg
             t_uint                            last_surl_id; 
             /// Last received URL status.
             btg::core::urlStatus              last_surl_status;
+
+            t_uint                            last_sfile_id;
+
+            btg::core::fileStatus             last_sfile_status;
 
             /// Received options.
             btg::core::OptionBase             options;

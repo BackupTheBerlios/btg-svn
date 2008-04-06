@@ -153,6 +153,18 @@ namespace btg
             commandStatus = false;
          }
          
+         void guiHandler::onFileStatus(t_uint const _id, 
+                                       btg::core::fileStatus const _status)
+         {
+            commandStatus = true;
+            setFileStatusResponse(_id, _status);
+         }
+         
+         void guiHandler::onFileStatusError(std::string const& _errorDescription)
+         {
+            commandStatus = false;
+         }
+
          void guiHandler::onUrlStatus(t_uint const _id, 
                                       btg::core::urlStatus const _status)
          {

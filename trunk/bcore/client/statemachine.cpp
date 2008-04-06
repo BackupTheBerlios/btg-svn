@@ -973,6 +973,15 @@ namespace btg
             SM_REQUEST_LOSS;
          }
 
+         void stateMachine::doFileStatus(t_uint const _id)
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(new contextFileStatusCommand(_id));
+               }
+            SM_REQUEST_LOSS;
+         }
+
          void stateMachine::doUrlStatus(t_uint const _id)
          {
             if (checkState(SM_COMMAND))
@@ -1188,6 +1197,12 @@ namespace btg
                case Command::CN_CURLSTATUS:
                   {
                      expectedReply[0] = Command::CN_CURLSTATUSRSP;
+                     expectedReply[1] = Command::CN_UNDEFINED;
+                     break;
+                  }
+               case Command::CN_CCRFILESTATUS:
+                  {
+                     expectedReply[0] = Command::CN_CCRFILESTATUSRSP;
                      expectedReply[1] = Command::CN_UNDEFINED;
                      break;
                   }
@@ -1427,6 +1442,11 @@ namespace btg
                      cb_CN_CURLSTATUS(_command);
                      break;
                   }
+               case Command::CN_CCRFILESTATUS:
+                  {
+                     cb_CN_CCRFILESTATUS(_command);
+                     break;
+                  }
                case Command::CN_VERSION:
                   {
                      cb_CN_VERSION(_command);
@@ -1517,6 +1537,11 @@ namespace btg
                         case Command::CN_CURLSTATUS:
                            {
                               clientcallback->onUrlStatusError(errmessage);
+                              break;
+                           }
+                        case Command::CN_CCRFILESTATUS:
+                           {
+                              clientcallback->onFileStatusError(errmessage);
                               break;
                            }
                            // General error callback to fallback on.

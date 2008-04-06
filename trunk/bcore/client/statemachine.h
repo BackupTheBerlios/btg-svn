@@ -129,6 +129,10 @@ namespace btg
 
             /// Action.
             void doUrlStatus(t_uint const _id);
+
+            /// Action.
+            void doFileStatus(t_uint const _id);
+
             /// Action.
             void doLast();
             /// Action.
@@ -406,6 +410,8 @@ namespace btg
             void cb_CN_CCREATEFROMURL(btg::core::Command* _command);
             /// Call a callback. URL status.
             void cb_CN_CURLSTATUS(btg::core::Command* _command);
+            /// Call a callback, file status.
+            void cb_CN_CCRFILESTATUS(btg::core::Command* _command);
 
             void cb_CN_CCREATEFROMFILERSP(btg::core::Command* _command);
 

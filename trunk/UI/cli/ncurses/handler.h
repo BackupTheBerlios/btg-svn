@@ -99,6 +99,10 @@ namespace btg
                                       btg::core::urlStatus const _status);
                      void onUrlStatusError(std::string const& _message);
 
+                     void onFileStatus(t_uint const _id, 
+                                       btg::core::fileStatus const _status);
+                     void onFileStatusError(std::string const& _errorDescription);
+
                      void onCreateFromFile(t_uint const _id);
                      void onCreateFromFileError(std::string const& _errorDescription);
                      void OnCreateFromFilePart();

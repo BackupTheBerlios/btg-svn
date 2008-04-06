@@ -1542,15 +1542,31 @@ namespace btg
          {
             if (upload_progressdialog)
                {
-                  t_uint p = (_number * 100) / _parts;
+                  t_uint p = ((_number * 100) / _parts) / 2;
+
+                  // Show as 0-50 % while uploading.
                   upload_progressdialog->updateProgress(p, "Uploading pieces..");
                }
          }
 
          void mainWindow::CPRI_error(std::string const& _error)
          {
+            if (upload_progressdialog)
+               {
+                  upload_progressdialog->updateProgress(100, "Upload done.");
+                  btg::core::os::Sleep::sleepMiliSeconds(1000);
+               }
+
             delete upload_progressdialog;
             upload_progressdialog = 0;
+         }
+
+         void mainWindow::CPRI_wait(std::string const& _msg)
+         {
+            if (upload_progressdialog)
+               {
+                  upload_progressdialog->updateProgress(50, _msg);
+               }
          }
 
          void mainWindow::CPRI_success(std::string const& _filename)
@@ -1558,6 +1574,7 @@ namespace btg
             if (upload_progressdialog)
                {
                   upload_progressdialog->updateProgress(100, "Upload done.");
+                  btg::core::os::Sleep::sleepMiliSeconds(1000);
                }
 
             delete upload_progressdialog;
@@ -1576,6 +1593,9 @@ namespace btg
             
             delete m_limitDialog;
             m_limitDialog = 0;
+
+            delete upload_progressdialog;
+            upload_progressdialog = 0;
          }
 
       } // namespace gui

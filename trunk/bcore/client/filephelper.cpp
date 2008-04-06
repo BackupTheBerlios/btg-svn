@@ -26,6 +26,7 @@
 #include <bcore/util.h>
 #include <bcore/filestatus.h>
 #include <bcore/os/fileop.h>
+#include <bcore/os/sleep.h>
 
 #include <iostream>
 
@@ -127,6 +128,7 @@ namespace btg
 
                   if (!_ch->commandSuccess())
                      {
+                        _cpri->CPRI_error("Sending file parts failed.");
                         BTG_NOTICE(_logwrapper, "Sending part failed.");
                         return false;
                      }
@@ -141,9 +143,67 @@ namespace btg
                   part++;
                }
 
-            _cpri->CPRI_success(filename);
             BTG_NOTICE(_logwrapper, "All parts sent.");
-            return true;
+            _cpri->CPRI_wait("File sent.");
+
+            // Wait for the daemon to create the file.
+            bool op_status = true;
+            bool cont = true;
+            while (cont)
+               {
+                  _ch->reqFileStatus(id);
+                  if (!_ch->commandSuccess())
+                     {
+                        _cpri->CPRI_error("Comm error.");
+                        return false;
+                     }
+
+                  t_uint id = 0;
+                  btg::core::fileStatus status;
+
+                  _ch->fileStatusResponse(id, status);
+
+                  switch (status)
+                     {
+                     case btg::core::FILES_UNDEF:
+                        {
+                           break;
+                        }
+                     case btg::core::FILES_WORKING:
+                        {
+                           _cpri->CPRI_wait("Working..");
+                           break;
+                        }
+                     case btg::core::FILES_FINISHED:
+                        {
+                           _cpri->CPRI_wait("Loading finished");
+                           break;
+                        }
+                     case btg::core::FILES_ERROR:
+                        {
+                           op_status = false;
+                           _cpri->CPRI_error("Upload failed.");
+                           cont = false;
+                           break;
+                        }
+                     case btg::core::FILES_CREATE:
+                        {
+                           _cpri->CPRI_success("Torrent created");
+                           cont = false;
+                           break;
+                        }
+                     case btg::core::FILES_CREATE_ERR:
+                        {
+                           op_status = false;
+                           _cpri->CPRI_error("Unable to create torrent.");
+                           cont = false;
+                           break;
+                        }
+                     }
+                  btg::core::os::Sleep::sleepMiliSeconds(500);
+               }
+ 
+           return op_status;
          }
 
       } // client
