@@ -50,7 +50,7 @@ namespace btg
             virtual void CPRI_wait(std::string const& _msg) = 0;
             virtual void CPRI_success(std::string const& _filename) = 0;
 
-            virtual bool CPRI_cancel();
+            virtual void CPRI_cancel();
             virtual bool CPRI_continue() const;
 
             virtual ~createPartsReportInterface();
@@ -63,7 +63,7 @@ namespace btg
                           class clientHandler* _ch,
                           createPartsReportInterface* _cpri,
                           std::string const& _filename,
-                          t_uint const _partSize = (5*1024));
+                          t_uint const _partSize = (64*1024));
 
          /** @} */
 

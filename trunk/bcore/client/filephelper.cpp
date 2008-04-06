@@ -41,7 +41,7 @@ namespace btg
          {
          }
 
-         bool createPartsReportInterface::CPRI_cancel()
+         void createPartsReportInterface::CPRI_cancel()
          {
             continue_ = false;
          }
