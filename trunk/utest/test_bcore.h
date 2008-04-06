@@ -39,6 +39,7 @@ class testBcore : public CppUnit::TestFixture
    CPPUNIT_TEST( testUtil_simple_types );
    CPPUNIT_TEST( testUtil_str_nocasecmp );
    CPPUNIT_TEST( testDbuffer );
+   CPPUNIT_TEST( testSbuffer );
    CPPUNIT_TEST( testStatus );
 
 
@@ -102,6 +103,7 @@ class testBcore : public CppUnit::TestFixture
 
    // Test of dBuf.
    void testDbuffer();
+   void testSbuffer();
    void testStatus();
 
    // Test commands, begin

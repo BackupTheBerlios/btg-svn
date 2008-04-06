@@ -56,6 +56,8 @@ namespace btg
                /// Copy constructor.
                sBuffer(sBuffer const& _sbuffer);
 
+               bool getByte(t_uint _offset, t_byte & _byte) const;
+
                /// Read file from _filename.
                /// @param [in] _filename The file name from which the reading is to be done.
                bool read(std::string const& _filename);

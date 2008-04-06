@@ -37,6 +37,9 @@ extern "C"
 #include <vector>
 #include <string>
 
+#include <bcore/dbuf.h>
+#include <bcore/sbuf.h>
+
 #include <bcore/status.h>
 #include <bcore/file_info.h>
 #include <bcore/hru.h>
@@ -551,6 +554,88 @@ void testBcore::testDbuffer()
    delete [] p;
 }
 
+void testBcore::testSbuffer()
+{
+   {
+      sBuffer sbuf;
+      CPPUNIT_ASSERT(sbuf.size() == 0);
+   }
+
+   // Test reading.
+   {
+      sBuffer read_sbuf;
+      CPPUNIT_ASSERT(read_sbuf.read(TESTFILE_FILLED));
+      CPPUNIT_ASSERT(read_sbuf.size() > 0);
+   }
+
+   const t_int size = 1024;
+   t_byte bytes[size];
+   memset(&bytes[0], 0, size);
+
+   bytes[0] = 1;
+   bytes[1] = 2;
+
+   bytes[511] = 3;
+   bytes[512] = 4;
+
+   bytes[1022] = 5;
+   bytes[1023] = 6;
+   
+   // Test splitting.
+   {
+      const t_int partSize = 510;
+
+      sBuffer sbuf(bytes, size);
+      CPPUNIT_ASSERT(sbuf.size() == size);
+
+      t_byte b = 0;
+      CPPUNIT_ASSERT(sbuf.getByte(0, b));
+      CPPUNIT_ASSERT(b == 1);
+      CPPUNIT_ASSERT(sbuf.getByte(1, b));
+      CPPUNIT_ASSERT(b == 2);
+
+      CPPUNIT_ASSERT(sbuf.getByte(511, b));
+      CPPUNIT_ASSERT(b == 3);
+      CPPUNIT_ASSERT(sbuf.getByte(512, b));
+      CPPUNIT_ASSERT(b == 4);
+
+      CPPUNIT_ASSERT(sbuf.getByte(1022, b));
+      CPPUNIT_ASSERT(b == 5);
+      CPPUNIT_ASSERT(sbuf.getByte(1023, b));
+      CPPUNIT_ASSERT(b == 6);
+
+      std::vector<sBuffer> dest;
+      sbuf.split(partSize, dest);
+      CPPUNIT_ASSERT(dest.size() == 3);
+
+      for (std::vector<sBuffer>::const_iterator iter = dest.begin();
+           iter != dest.end();
+           iter++)
+         {
+            CPPUNIT_ASSERT(iter->size() <= partSize);
+         }
+
+      sBuffer sbuf2(dest);
+      CPPUNIT_ASSERT(sbuf2.size() == size);
+
+      CPPUNIT_ASSERT(sbuf2 == sbuf);
+
+      CPPUNIT_ASSERT(sbuf2.getByte(0, b));
+      CPPUNIT_ASSERT(b == 1);
+      CPPUNIT_ASSERT(sbuf2.getByte(1, b));
+      CPPUNIT_ASSERT(b == 2);
+
+      CPPUNIT_ASSERT(sbuf2.getByte(511, b));
+      CPPUNIT_ASSERT(b == 3);
+      CPPUNIT_ASSERT(sbuf2.getByte(512, b));
+      CPPUNIT_ASSERT(b == 4);
+
+      CPPUNIT_ASSERT(sbuf2.getByte(1022, b));
+      CPPUNIT_ASSERT(b == 5);
+      CPPUNIT_ASSERT(sbuf2.getByte(1023, b));
+      CPPUNIT_ASSERT(b == 6);
+   }
+}
 void testBcore::testStatus()
 {
    btg::core::commandFactory cf(logwrapper, externalization);

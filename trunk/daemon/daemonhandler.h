@@ -303,6 +303,10 @@ namespace btg
             /// Indicates that the URL timer timed out.
             bool                            url_timer_trigger_;
 #endif // BTG_OPTION_URL
+            /// Timer used to check for completed URL downloads.
+            btg::core::os::Timer            file_timer_;
+            /// Indicates that the URL timer timed out.
+            bool                            file_timer_trigger_;
             /// Timer used for setting global limits.
             btg::core::os::Timer            limit_timer_;
 
@@ -372,6 +376,9 @@ namespace btg
             /// Clean up, if the torrent could not be downloaded.
             void removeUrl(UrlIdSessionMapping & _mapping);
 #endif // BTG_OPTION_URL
+
+            void handleFileDownloads();
+
             btg::daemon::fileManager filemgr;
          private:
             /// Copy constructor.

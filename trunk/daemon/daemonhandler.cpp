@@ -78,6 +78,8 @@ namespace btg
            url_timer_(5),
            url_timer_trigger_(false),
 #endif
+           file_timer_(5),
+           file_timer_trigger_(false),
            limit_timer_(30), /* 30 seconds. */
            limit_timer_trigger_(false),
            elapsed_seed_timer_(60), /* 1 minute. */
@@ -109,7 +111,7 @@ namespace btg
            httpmgr(_logwrapper),
            urlIdSessions(),
 #endif // BTG_OPTION_URL
-           filemgr(_logwrapper)
+           filemgr(_logwrapper, _dd->filetrack)
       {
          /// Set the initial limits.
          limitManager_.set(_dd->config->getUploadRateLimit(),
@@ -1232,6 +1234,14 @@ namespace btg
 
       void daemonHandler::checkTimeout()
       {
+         if (file_timer_trigger_)
+            {
+               file_timer_trigger_ = false;
+               file_timer_.Reset();
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Checking file downloads.");
+               handleFileDownloads();
+            }
+         
 #if BTG_OPTION_URL
          if (url_timer_trigger_)
             {
@@ -1284,6 +1294,10 @@ namespace btg
                elapsed_timer_trigger_ = false;
                elapsed_seed_timer_.Reset();
                return;
+            }
+         if (file_timer_.Timeout())
+            {
+               file_timer_trigger_ = true;
             }
 #if BTG_OPTION_URL
          if (url_timer_.Timeout())

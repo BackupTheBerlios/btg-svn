@@ -107,7 +107,8 @@ namespace btg
               m_sessionSelectionDialog(0),
               last_url(),
               last_url_file(),
-              urlDlEnabled(true)
+              urlDlEnabled(true),
+              upload_progressdialog(0)
          {
             {
                GET_HANDLER_INST;
@@ -714,6 +715,18 @@ namespace btg
          {
             GET_HANDLER_INST;
 
+            if (btg::core::client::createParts(logWrapper(), handler, this, _filename))
+               {
+                  msb->set(USERMESSAGE_ADDED_B + _filename + USERMESSAGE_ADDED_E);
+                  logVerboseMessage(USERMESSAGE_ADDED_B + _filename + USERMESSAGE_ADDED_E);
+               }
+            else
+               {
+                  msb->set(USERMESSAGE_ADD_FAILED_B + _filename + USERMESSAGE_ADD_FAILED_E);
+                  logVerboseMessage(USERMESSAGE_ADD_FAILED_B + _filename + USERMESSAGE_ADD_FAILED_E);
+               }
+
+#if 0
             handler->reqCreate(_filename);
 
             if (handler->commandSuccess())
@@ -730,6 +743,7 @@ namespace btg
                   msb->set(USERMESSAGE_ADD_FAILED_B + _filename + USERMESSAGE_ADD_FAILED_E);
                   logVerboseMessage(USERMESSAGE_ADD_FAILED_B + _filename + USERMESSAGE_ADD_FAILED_E);
                }
+#endif
          }
 
          bool mainWindow::onWindowClose(GdkEventAny *)
@@ -943,7 +957,7 @@ namespace btg
                GET_HANDLER_INST;
                filename = handler->getLastFiles().at(_which_item);
             }
-            this->openFile(filename);
+            openFile(filename);
          }
 
          void mainWindow::handle_btn_lastfile_all(buttonMenuIds::MENUID _which_item)
@@ -1495,20 +1509,6 @@ namespace btg
 
             m_bMultipleContinue = false; // discontinue for multiple selection, show the error only once
          }
-
-         mainWindow::~mainWindow()
-         {
-            timeout_connection.disconnect();
-
-            delete aboutdialog;
-            aboutdialog = 0;
-
-            delete preferencesdialog;
-            preferencesdialog = 0;
-            
-            delete m_limitDialog;
-            m_limitDialog = 0;
-         }
          
          bool mainWindow::on_window_state_event (GdkEventWindowState* event)
          {
@@ -1530,6 +1530,52 @@ namespace btg
          bool mainWindow::isUrlDlEnabled() const
          {
             return urlDlEnabled;
+         }
+
+         void mainWindow::CPRI_init(std::string const& _filename)
+         {
+            upload_progressdialog = new progressDialog("Uploading '" + _filename + "' to the daemon.");
+            upload_progressdialog->updateProgress(0, "Initalizing..");
+         }
+
+         void mainWindow::CPRI_pieceUploaded(t_uint _number, t_uint _parts)
+         {
+            if (upload_progressdialog)
+               {
+                  t_uint p = (_number * 100) / _parts;
+                  upload_progressdialog->updateProgress(p, "Uploading pieces..");
+               }
+         }
+
+         void mainWindow::CPRI_error(std::string const& _error)
+         {
+            delete upload_progressdialog;
+            upload_progressdialog = 0;
+         }
+
+         void mainWindow::CPRI_success(std::string const& _filename)
+         {
+            if (upload_progressdialog)
+               {
+                  upload_progressdialog->updateProgress(100, "Upload done.");
+               }
+
+            delete upload_progressdialog;
+            upload_progressdialog = 0;
+         }
+
+         mainWindow::~mainWindow()
+         {
+            timeout_connection.disconnect();
+
+            delete aboutdialog;
+            aboutdialog = 0;
+
+            delete preferencesdialog;
+            preferencesdialog = 0;
+            
+            delete m_limitDialog;
+            m_limitDialog = 0;
          }
 
       } // namespace gui

@@ -40,6 +40,7 @@
 #include <bcore/client/handlerthr.h>
 
 #include <bcore/client/clientdynconfig.h>
+#include <bcore/client/filephelper.h>
 
 namespace btg
 {
@@ -59,9 +60,10 @@ namespace btg
          class limitDialog;
          class preferencesDialog;
          class sessionSelectionDialog;
+         class progressDialog;
 
          /// The main window of the gui client.
-         class mainWindow : public Gtk::Window, public btg::core::Logable
+         class mainWindow : public Gtk::Window, public btg::core::Logable, public btg::core::client::createPartsReportInterface
             {
             public:
                /// Constructor.
@@ -199,6 +201,11 @@ namespace btg
                /// Handle preferences.
                void handle_btn_prefs(t_int const _id);
 
+               void CPRI_init(std::string const& _filename);
+               void CPRI_pieceUploaded(t_uint _number, t_uint _parts);
+               void CPRI_error(std::string const& _error);
+               void CPRI_success(std::string const& _filename);
+            private:
                /// Indicates that the client does verbose logging.
                bool                      verboseFlag;
                /// Indicates that the client should never ask
@@ -243,18 +250,20 @@ namespace btg
                std::list<Gtk::ToolButton*> torrentControlButtons;
                
                /// Flag used by operations witn multiple selected torrents
-               bool                       m_bMultipleContinue;
+               bool                        m_bMultipleContinue;
                /// limitDialog used to set limits
-               limitDialog                *m_limitDialog;
+               limitDialog*                m_limitDialog;
                /// sessionSelectionDialog used by handle_btn_move
-               sessionSelectionDialog     *m_sessionSelectionDialog;
+               sessionSelectionDialog*     m_sessionSelectionDialog;
 
                /// Last downloaded URL.
-               std::string last_url;
+               std::string                 last_url;
                /// Last downloaded URL - the filename used.
-               std::string last_url_file;
+               std::string                 last_url_file;
 
-               bool        urlDlEnabled;
+               bool                        urlDlEnabled;
+               
+               progressDialog*             upload_progressdialog;
             private:
                /// Copy constructor.
                mainWindow(mainWindow const& _mw);

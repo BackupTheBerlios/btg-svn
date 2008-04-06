@@ -95,6 +95,21 @@ namespace btg
             }
       }
 
+      bool sBuffer::getByte(t_uint _offset, t_byte & _byte) const
+      {
+         bool status = false;
+
+         if (_offset > size_)
+            {
+               return status;
+            }
+
+         _byte = buffer_[_offset];
+
+         status = true;
+         return status;
+      }
+
       bool sBuffer::read(std::string const& _filename)
       {
          bool status = true;
@@ -131,7 +146,9 @@ namespace btg
 
                if (size_ > 0)
                   {
+                     t_uint temp = size_;
                      reset();
+                     size_ = temp;
 
                      buffer_ = new t_byte[size_];
 
@@ -253,7 +270,7 @@ namespace btg
 
          if (_sbuffer.size_ != size_)
             {
-               status = false;
+               return false;
             }
 
          if (status)
@@ -266,12 +283,13 @@ namespace btg
                            if (_sbuffer.buffer_[i] != buffer_[i])
                               {
                                  status = false;
+                                 break;
                               }
                         }
                   }
             }
 
-         return false;
+         return status;
       }
 
       bool sBuffer::split(t_uint const _pieceSize, 

@@ -24,6 +24,8 @@
 #define FILEPHELPER_H
 
 #include <bcore/type.h>
+#include <bcore/logable.h>
+
 #include <string>
 
 namespace btg
@@ -37,11 +39,30 @@ namespace btg
           */
          /** @{ */
 
+         class createPartsReportInterface
+         {
+         public:
+            createPartsReportInterface();
+
+            virtual void CPRI_init(std::string const& _filename) = 0;
+            virtual void CPRI_pieceUploaded(t_uint _number, t_uint _parts) = 0;
+            virtual void CPRI_error(std::string const& _error) = 0;
+            virtual void CPRI_success(std::string const& _filename) = 0;
+
+            virtual bool CPRI_cancel();
+            virtual bool CPRI_continue() const;
+
+            virtual ~createPartsReportInterface();
+         protected:
+            bool continue_;
+         };
+
          /// Create a context, sending parts of it.
-         bool createParts(class clientHandler* _ch,
-                          class clientCallback* _cc,
+         bool createParts(btg::core::LogWrapperType _logwrapper,
+                          class clientHandler* _ch,
+                          createPartsReportInterface* _cpri,
                           std::string const& _filename,
-                          t_uint const _partSize = (100*1024));
+                          t_uint const _partSize = (5*1024));
 
          /** @} */
 

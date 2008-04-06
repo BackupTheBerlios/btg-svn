@@ -56,10 +56,15 @@ namespace btg
                CREATE_ERROR = 6, // Unable to create torrent.
             };
          
-         fileData(std::string const& _filename, t_uint _parts);
+         fileData(std::string const& _dir,
+                  std::string const& _filename, 
+                  t_uint _parts,
+                  bool   _start);
          
+         const std::string    dir;
          const std::string    filename;
-         t_uint               parts;
+         const t_uint         parts;
+         const bool           start;
          t_uint               current_part;
          std::vector<btg::core::sBuffer> buffers;
          Status               status;
@@ -67,16 +72,24 @@ namespace btg
          /// Indicates that this download is valid, used to mark
          /// downloads which can be delted.
          bool                 valid;
+
+         /// Age in (x * file timer duration).
+         t_uint               age;
       };
+
+      class fileTrack;
 
       class fileManager: public btg::core::Logable
          {
          public:
             /// Constructor.
-            fileManager(btg::core::LogWrapperType _logwrapper);
+            fileManager(btg::core::LogWrapperType _logwrapper,
+                        fileTrack* _filetrack);
 
-            t_uint addFile(std::string const& _filename,
-                           t_uint const _parts);
+            t_uint addFile(std::string const& _dir,
+                           std::string const& _filename,
+                           t_uint const _parts,
+                           bool const _start);
 
             bool addPiece(const t_uint _id, 
                           const t_uint _num,
@@ -94,9 +107,25 @@ namespace btg
             void setState(const t_uint _id, 
                           fileData::Status const _status);
 
+            void updateAge();
+
+            // bool getDead(std::vector<fileData> & _list) const;
+
+            // bool getDone(std::vector<fileData> & _list);
+
+            void removeData(const t_uint _id);
+
+            void removeDead();
+
+            void getFileInfo(const t_uint _id,
+                             std::string & _dir,
+                             std::string & _filename,
+                             bool        & _start);
+
             /// Destructor.
             virtual ~fileManager();
          protected:
+            fileTrack* filetrack;
             /// Get the current ID - start() returns this ID each time
             /// its called.
             t_uint getCurrentId();

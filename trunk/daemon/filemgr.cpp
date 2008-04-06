@@ -22,19 +22,28 @@
 
 #include "filemgr.h"
 #include <boost/bind.hpp>
-#include <daemon/modulelog.h>
+#include "modulelog.h"
+#include "filetrack.h"
 
 namespace btg
 {
    namespace daemon
    {
-      fileData::fileData(std::string const& _filename, t_uint _parts)
-         : filename(_filename),
+      const t_uint max_file_age = 30;
+
+      fileData::fileData(std::string const& _dir,
+                         std::string const& _filename, 
+                         t_uint _parts,
+                         bool _start)
+         : dir(_dir),
+           filename(_filename),
            parts(_parts),
+           start(_start),
            current_part(0),
            buffers(),
            status(fileData::INIT),
-           valid(true)
+           valid(true),
+           age(0)
       {
       }
 
@@ -43,8 +52,10 @@ namespace btg
       const std::string moduleName("fmgr");
       const t_uint min_id = 1;
 
-      fileManager::fileManager(btg::core::LogWrapperType _logwrapper)
+      fileManager::fileManager(btg::core::LogWrapperType _logwrapper,
+                               fileTrack* _filetrack)
          : btg::core::Logable(_logwrapper),
+           filetrack(_filetrack),
            current_id(min_id),
            max_id(0xFFFFFF)
       {
@@ -64,15 +75,17 @@ namespace btg
          return id;
       }
 
-      t_uint fileManager::addFile(std::string const& _filename, 
-                                  t_uint const _parts)
+      t_uint fileManager::addFile(std::string const& _dir, 
+                                  std::string const& _filename, 
+                                  t_uint const _parts,
+                                  bool const _start)
       {
          t_uint id = getCurrentId();
 
          BTG_MNOTICE(logWrapper(), 
                      "add(" << id << "): " << _filename << " in " << _parts << " parts.");
 
-         fileData fd(_filename, _parts);
+         fileData fd(_dir, _filename, _parts, _start);
          std::pair<t_uint, fileData> pair(id, fd);
 
          files.insert(pair);
@@ -185,6 +198,107 @@ namespace btg
             }
 
          iter->second.status = _status;
+      }
+
+      void fileManager::updateAge()
+      {
+         std::map<t_uint, fileData>::iterator iter;
+         for (iter = files.begin();
+              iter != files.end();
+              iter++)
+            {
+               iter->second.age++;
+               if (iter->second.age > max_file_age)
+                  {
+                     iter->second.valid = false;
+                  }
+            }
+      }
+
+      /*
+      bool fileManager::getDead(std::vector<fileData> & _list) const
+      {
+         bool status = false;
+         std::map<t_uint, fileData>::const_iterator iter;
+         for (iter = files.begin();
+              iter != files.end();
+              iter++)
+            {
+               if (!iter->second.valid)
+                  {
+                     _list.push_back(fileData(iter->second.dir, iter->second.filename, 0));
+                  }
+            }
+         if (_list.size() > 0)
+            {
+               status = true;
+            }
+
+         return status;
+      }
+      */
+
+      void fileManager::removeDead()
+      {
+         std::map<t_uint, fileData>::iterator iter;
+         for (iter = files.begin();
+              iter != files.end();
+              iter++)
+            {
+               if (!iter->second.valid)
+                  {
+                     filetrack->remove(iter->second.dir, iter->second.filename);
+                     files.erase(iter);
+                  }
+            }
+      }
+      
+      void fileManager::removeData(const t_uint _id)
+      {
+         std::map<t_uint, fileData>::iterator iter = files.find(_id);
+
+         if (iter == files.end())
+            {
+               return;
+            }
+
+         iter->second.buffers.clear();
+      }
+
+      /*
+      bool fileManager::getDone(std::vector<fileData> & _list)
+      {
+         bool status = false;
+         std::map<t_uint, fileData>::iterator iter;
+         for (iter = files.begin();
+              iter != files.end();
+              iter++)
+            {
+               if (iter->second.valid && iter->second.status == fileData::DONE)
+                  {
+                     _list.push_back(fileData(iter->second.dir, iter->second.filename, 0));
+                     files.erase(iter);
+                  }
+            }
+
+         if (_list.size() > 0)
+            {
+               status = true;
+            }
+
+         return status;
+      }
+      */
+
+      void fileManager::getFileInfo(const t_uint _id,
+                                    std::string & _dir,
+                                    std::string & _filename,
+                                    bool        & _start)
+      {
+         std::map<t_uint, fileData>::iterator iter = files.find(_id);
+         _dir      = iter->second.dir;
+         _filename = iter->second.filename;
+         _start    = iter->second.start;
       }
 
       fileManager::~fileManager()

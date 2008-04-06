@@ -32,7 +32,7 @@ namespace btg
           */
          /** @{ */
 
-         /// Invalid URL id.
+         /// Invalid file id.
          const t_uint FILES_INVALID_FILEID = 0;
 
          /// Status of a download.

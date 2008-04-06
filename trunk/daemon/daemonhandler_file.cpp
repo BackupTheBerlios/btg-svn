@@ -33,7 +33,6 @@ namespace btg
    namespace daemon
    {
       const std::string moduleName("hdl");
-      const t_uint max_file_age = 30;
 
       using namespace btg::core;
 
@@ -52,7 +51,10 @@ namespace btg
                return;
             }
 
-         t_uint id = filemgr.addFile(userdir + "/" + filename, ccffc->numberOfParts());
+         t_uint id = filemgr.addFile(userdir, 
+                                     filename, 
+                                     ccffc->numberOfParts(), 
+                                     ccffc->getStart());
 
          sendCommand(dd_->externalization,
                      dd_->transport,
@@ -68,28 +70,130 @@ namespace btg
                                                         btg::core::Command* _command)
       {
          contextCreateFromFilePartCommand* ccffpc = dynamic_cast<contextCreateFromFilePartCommand*>(_command);
-         if (!filemgr.addPiece(ccffpc->id(),
+         const t_uint id = ccffpc->id();
+
+         if (!filemgr.addPiece(id,
                                ccffpc->part(),
                                ccffpc->data()))
             {
                sendError(_command->getType(), "Upload of piece failed.");
-
-               // TODO: remove the file from file tracker.
+               filemgr.setState(id, fileData::DLERROR);
+               filemgr.removeData(id);
             }
          else
             {
                sendAck(_command->getType());
                MVERBOSE_LOG(logWrapper(), 
-                            verboseFlag_, "File ID: " << ccffpc->id() << ", added part " << ccffpc->part() << ".");
+                            verboseFlag_, "File ID: " << id << ", added part " << ccffpc->part() << ".");
             }
+         
+         if (filemgr.getStatus(id) == fileData::DONE)
+            {
+               std::string dir;
+               std::string filename;
+               bool start;
+               filemgr.getFileInfo(id, dir, filename, start);
 
-         // TODO: check if this was the last piece and create the context.
+               // Got all pieces.
+               // Remove from file tracker, will be added when adding the torrent.
+               dd_->filetrack->remove(dir, filename);
+
+               btg::core::sBuffer sbuf;
+               if (!filemgr.getResult(id, sbuf))
+                  {
+                     filemgr.setState(id, fileData::DLERROR);
+                     filemgr.removeData(id);
+                     return;  
+                  }
+
+               // Add the torrent.
+               btg::core::contextCreateWithDataCommand* ccwdc = 
+                  new btg::core::contextCreateWithDataCommand(filename, sbuf, start);
+
+               // Do not use a connection id.
+               if (!_eventhandler->createWithData(ccwdc))
+                  {
+                     BTG_MERROR(logWrapper(), 
+                                "Adding '" << filename << "' from file failed.");
+                     filemgr.setState(id, fileData::CREATE_ERROR);
+                  }
+               else
+                  {
+                     MVERBOSE_LOG(logWrapper(), 
+                                  verboseFlag_, "Added '" << filename << "' from file.");
+                     filemgr.setState(id, fileData::CREATED);
+                  }
+         
+               filemgr.removeData(id);
+
+               delete ccwdc;
+               ccwdc = 0;
+            }
       }
 
       void daemonHandler::handle_CN_CCRFILESTATUS(eventHandler* _eventhandler, 
                                                   btg::core::Command* _command)
       {
          contextFileStatusCommand* cfsc = dynamic_cast<contextFileStatusCommand*>(_command);
+
+         t_uint id = cfsc->id();
+         fileData::Status s = filemgr.getStatus(id);
+
+         btg::core::fileStatus status;
+
+         switch (s)
+            {
+            case fileData::UNDEF:
+               {
+                  // Wrong ID.
+                  status = FILES_UNDEF;
+                  break;
+               }
+            case fileData::INIT:
+            case fileData::WORK:
+               {
+                  status = FILES_WORKING;
+                  break;
+               }
+            case fileData::DONE:
+               {
+                  status = FILES_FINISHED;
+                  break;
+               }
+            case fileData::DLERROR:
+               {
+                  status = FILES_ERROR;
+                  break;
+               }
+            case fileData::CREATED:
+               {
+                  status = FILES_CREATE;
+                  break;
+               }
+            case fileData::CREATE_ERROR:
+               {
+                  status = FILES_CREATE_ERR;
+                  break;
+               }
+            }
+         
+         if (status == FILES_UNDEF)
+            {
+               sendError(_command->getType(), "Unknown URL id.");
+            }
+         else
+            {
+               sendCommand(dd_->externalization,
+                           dd_->transport,
+                           connectionID_,
+                           new contextFileStatusResponseCommand(id, status));
+            }
+      }
+
+      void daemonHandler::handleFileDownloads()
+      {
+         filemgr.updateAge();
+         filemgr.removeDead();
       }
 
    } // namespace daemon

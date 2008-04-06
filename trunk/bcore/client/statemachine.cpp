@@ -1417,7 +1417,7 @@ namespace btg
                      cb_CN_CCREATEFROMURL(_command);
                      break;
                   }
-               case Command::CN_CCREATEFROMFILERSP:
+               case Command::CN_CCREATEFROMFILE:
                   {
                      cb_CN_CCREATEFROMFILERSP(_command);
                      break;
