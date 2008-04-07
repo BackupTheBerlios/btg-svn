@@ -907,9 +907,7 @@ namespace btg
                   {
                      GET_HANDLER_INST;
 
-                     handler->reqCreate(filenameToLoad);
-
-                     if (handler->commandSuccess())
+                     if (btg::core::client::createParts(logWrapper(), handler, this, filenameToLoad))
                         {
                            actionSuccess("Load", filenameToLoad);
                         }

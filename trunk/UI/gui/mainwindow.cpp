@@ -725,25 +725,6 @@ namespace btg
                   msb->set(USERMESSAGE_ADD_FAILED_B + _filename + USERMESSAGE_ADD_FAILED_E);
                   logVerboseMessage(USERMESSAGE_ADD_FAILED_B + _filename + USERMESSAGE_ADD_FAILED_E);
                }
-
-#if 0
-            handler->reqCreate(_filename);
-
-            if (handler->commandSuccess())
-               {
-                  // Update the status bar.
-                  msb->set(USERMESSAGE_ADDED_B + _filename + USERMESSAGE_ADDED_E);
-                  logVerboseMessage(USERMESSAGE_ADDED_B + _filename + USERMESSAGE_ADDED_E);
-
-                  // Update the last opened file list in menubar.
-                  mmb->updateLastFileList(handler->getLastFiles());
-               }
-            else
-               {
-                  msb->set(USERMESSAGE_ADD_FAILED_B + _filename + USERMESSAGE_ADD_FAILED_E);
-                  logVerboseMessage(USERMESSAGE_ADD_FAILED_B + _filename + USERMESSAGE_ADD_FAILED_E);
-               }
-#endif
          }
 
          bool mainWindow::onWindowClose(GdkEventAny *)
@@ -1530,55 +1511,6 @@ namespace btg
          bool mainWindow::isUrlDlEnabled() const
          {
             return urlDlEnabled;
-         }
-
-         void mainWindow::CPRI_init(std::string const& _filename)
-         {
-            upload_progressdialog = new progressDialog("Uploading '" + _filename + "' to the daemon.");
-            upload_progressdialog->updateProgress(0, "Initalizing..");
-         }
-
-         void mainWindow::CPRI_pieceUploaded(t_uint _number, t_uint _parts)
-         {
-            if (upload_progressdialog)
-               {
-                  t_uint p = ((_number * 100) / _parts) / 2;
-
-                  // Show as 0-50 % while uploading.
-                  upload_progressdialog->updateProgress(p, "Uploading pieces..");
-               }
-         }
-
-         void mainWindow::CPRI_error(std::string const& _error)
-         {
-            if (upload_progressdialog)
-               {
-                  upload_progressdialog->updateProgress(100, "Upload done.");
-                  btg::core::os::Sleep::sleepMiliSeconds(1000);
-               }
-
-            delete upload_progressdialog;
-            upload_progressdialog = 0;
-         }
-
-         void mainWindow::CPRI_wait(std::string const& _msg)
-         {
-            if (upload_progressdialog)
-               {
-                  upload_progressdialog->updateProgress(50, _msg);
-               }
-         }
-
-         void mainWindow::CPRI_success(std::string const& _filename)
-         {
-            if (upload_progressdialog)
-               {
-                  upload_progressdialog->updateProgress(100, "Upload done.");
-                  btg::core::os::Sleep::sleepMiliSeconds(1000);
-               }
-
-            delete upload_progressdialog;
-            upload_progressdialog = 0;
          }
 
          mainWindow::~mainWindow()

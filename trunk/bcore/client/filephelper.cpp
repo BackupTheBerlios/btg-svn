@@ -81,7 +81,7 @@ namespace btg
             sBuffer tf;
             if (!tf.read(fullfilename))
                {
-                  _cpri->CPRI_error("Unable to read input.");
+                  _cpri->CPRI_error("Unable to read input file.");
                   BTG_NOTICE(_logwrapper, "Error: Unable to read file '" << _filename << "'.");
                   return false;
                }
@@ -188,7 +188,7 @@ namespace btg
                         }
                      case btg::core::FILES_CREATE:
                         {
-                           _cpri->CPRI_success("Torrent created");
+                           _cpri->CPRI_success(filename);
                            cont = false;
                            break;
                         }

@@ -29,14 +29,15 @@
 #include <bcore/project.h>
 #include <bcore/type_btg.h>
 #include <bcore/status.h>
+#include <bcore/file_info.h>
+#include <bcore/logable.h>
+#include <bcore/client/handlerthr.h>
+#include <bcore/client/filephelper.h>
 
 #include "mainwindow.h"
 #include "topwindow.h"
 #include "statuswindow.h"
 #include "keys.h"
-
-#include <bcore/file_info.h>
-#include <bcore/client/handlerthr.h>
 
 namespace btg
 {
@@ -49,12 +50,15 @@ namespace btg
                 */
                /** @{ */
 
+               class progressWindow;
+
                /// Main UI class.
-               class UI
+               class UI: private btg::core::Logable, private btg::core::client::createPartsReportInterface
                   {
                   public:
                      /// Constructor.
-                     UI(std::string const& _session,
+                     UI(btg::core::LogWrapperType _logwrapper,
+                        std::string const& _session,
                         bool _neverAskQuestions,
                         bool _urlDlEnabled,
                         keyMapping const& _keymap,
@@ -122,7 +126,15 @@ namespace btg
                      void resize();
 
                      /// Destructor.
-                     ~UI();
+                     virtual ~UI();
+                  private:
+                     void CPRI_init(std::string const& _filename);
+                     void CPRI_pieceUploaded(t_uint _number, t_uint _parts);
+                     void CPRI_error(std::string const& _error);
+                     void CPRI_wait(std::string const& _msg);
+                     void CPRI_success(std::string const& _filename);
+
+                     progressWindow* progress_;
                   private:
                      /// Menu entries.
                      enum menuEntries

@@ -67,180 +67,6 @@ namespace btg
          using namespace btg::core;
          using namespace btg::core::client;
 
-         CLICommand::CLICommand(ID const           _id,
-                                std::string const& _name,
-                                std::string const& _shortName,
-                                std::string const& _description,
-                                std::string const& _syntax,
-                                t_uint      const  _numberOfParams
-                                )
-            : id(_id),
-              name(_name),
-              shortName(_shortName),
-              description(_description),
-              syntax(_syntax),
-              numberOfParams(_numberOfParams)
-         {
-         }
-
-         CLICommand::CLICommand(CLICommand const& _clicommand)
-            : id(_clicommand.id),
-              name(_clicommand.name),
-              shortName(_clicommand.shortName),
-              description(_clicommand.description),
-              syntax(_clicommand.syntax),
-              numberOfParams(_clicommand.numberOfParams)
-         {
-         }
-
-         CLICommand::ID CLICommand::getId() const
-         {
-            return id;
-         }
-
-         std::string CLICommand::getName() const
-         {
-            return name;
-         }
-
-         std::string CLICommand::getShortName() const
-         {
-            return shortName;
-         }
-
-         std::string CLICommand::getDescription() const
-         {
-            return description;
-         }
-
-         std::string CLICommand::getSyntax() const
-         {
-            return syntax;
-         }
-
-         t_uint CLICommand::getNumberOfParams() const
-         {
-            return numberOfParams;
-         }
-
-         CLICommand::~CLICommand()
-         {
-         }
-
-         /* */
-         /* */
-         /* */
-
-         CLICommandList::CLICommandList()
-            : list(0),
-              cmap()
-         {
-
-         }
-
-         void CLICommandList::addCommand(CLICommand* _clicommand)
-         {
-            list.push_back(_clicommand);
-            cmap[_clicommand->getId()] = _clicommand;
-         }
-
-         CLICommand::ID CLICommandList::resolve(std::string const& _s) const
-         {
-            CLICommand::ID                      found = CLICommand::cmd_undefined;
-            std::vector<CLICommand*>::const_iterator iter;
-            CLICommand*                         cmd;
-            for (iter = list.begin(); iter != list.end(); iter++)
-               {
-                  cmd = *iter;
-                  if ((cmd->getName() == _s) || (cmd->getShortName() == _s))
-                     {
-                        found = cmd->getId();
-                        break;
-                     }
-               }
-            return found;
-         }
-
-         std::string CLICommandList::getName(CLICommand::ID const _id) const
-         {
-            std::map<CLICommand::ID, CLICommand*>::const_iterator iter = cmap.find(_id);
-            if (iter != cmap.end())
-               {
-                  return iter->second->getName();
-               }
-
-            return "Unknown command";
-         }
-
-         std::string CLICommandList::genHelp() const
-         {
-            std::string output;
-
-            std::vector<CLICommand*>::const_iterator iter;
-            CLICommand*                         cmd;
-            for (iter = list.begin(); iter != list.end(); iter++)
-               {
-                  cmd = *iter;
-                  output += cmd->getName() + " (" + cmd->getShortName() + ")\t" + cmd->getDescription() + GPD->sNEWLINE();
-               }
-
-            output += GPD->sNEWLINE();
-            output += "The IDs used with for example the start command are numbers which are greater or equal to zero. The client remembers the last used ID, so the following commands can be used without the ID.";
-            output += GPD->sNEWLINE();
-            output += "The insert key toggles between insert/overwrite mode. Overwrite mode is the default.";
-            output += GPD->sNEWLINE();
-            return output;
-         }
-
-         std::string CLICommandList::genSyntax(CLICommand::ID const _id) const
-         {
-            std::string output = "Unknown command.";
-
-            std::map<CLICommand::ID, CLICommand*>::const_iterator iter = cmap.find(_id);
-            if (iter != cmap.end())
-               {
-                  CLICommand* cmd = iter->second;
-                  if (cmd->getSyntax() != "")
-                     {
-                        output = cmd->getName() + " (" + cmd->getShortName() + ") " + cmd->getSyntax() + GPD->sNEWLINE();
-                     }
-                  else
-                     {
-                        output = cmd->getName() + " (" + cmd->getShortName() + "): no parameters." + GPD->sNEWLINE();
-                     }
-               }
-
-            return output;
-         }
-
-         t_uint CLICommandList::getNumberOfParams(CLICommand::ID const _id) const
-         {
-            std::map<CLICommand::ID, CLICommand*>::const_iterator iter = cmap.find(_id);
-            if (iter != cmap.end())
-               {
-                  return iter->second->getNumberOfParams();
-               }
-            return 0;
-         }
-
-         CLICommandList::~CLICommandList()
-         {
-            std::vector<CLICommand*>::iterator iter;
-            for (iter = list.begin(); iter != list.end(); iter++)
-               {
-                  CLICommand* clic = *iter;
-                  delete clic;
-                  clic = 0;
-               }
-
-            list.clear();
-            cmap.clear();
-         }
-
-         /* */
-         /* */
-         /* */
-
          cliHandler::cliHandler(btg::core::LogWrapperType _logwrapper,
                                 btg::core::externalization::Externalization* _e,
                                 messageTransport* _transport,
@@ -614,11 +440,16 @@ namespace btg
                            if (parts.at(1) == "last")
                               {
                                  t_strList filelist = lastfiles->getLastFiles();
-                                 this->reqCreate(filelist);
+                                 for (t_strListCI iter = filelist.begin();
+                                      iter != filelist.end();
+                                      iter++)
+                                    {
+                                       btg::core::client::createParts(logWrapper(), this, this, *iter);
+                                    }
                               }
                            else
                               {
-                                 this->reqCreate(parts.at(1));
+                                 btg::core::client::createParts(logWrapper(), this, this, parts.at(1));
                               }
                         }
                      else

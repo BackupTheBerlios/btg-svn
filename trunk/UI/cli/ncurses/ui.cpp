@@ -53,13 +53,17 @@ namespace btg
          using namespace btg::core;
          using namespace btg::core::client;
 
-         UI::UI(std::string const& _session,
+         UI::UI(btg::core::LogWrapperType _logwrapper,
+                std::string const& _session,
                 bool _neverAskQuestions,
                 bool _urlDlEnabled,
                 keyMapping const& _keymap,
                 Colors & _colors,
                 btg::core::client::handlerThread* _handlerthread)
-            : session_(_session),
+            : btg::core::Logable(_logwrapper),
+              btg::core::client::createPartsReportInterface(),
+              progress_(0),
+              session_(_session),
               neverAskQuestions_(_neverAskQuestions),
               urlDlEnabled_(_urlDlEnabled),
               keymap_(_keymap),
@@ -408,6 +412,8 @@ namespace btg
 
          UI::~UI()
          {
+            delete progress_;
+            progress_ = 0;
          }
 
       } // namespace cli

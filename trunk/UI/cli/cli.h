@@ -35,8 +35,10 @@
 #include <bcore/client/clientcallback.h>
 #include <bcore/client/clienthandler.h>
 #include <bcore/client/configuration.h>
-
+#include <bcore/client/filephelper.h>
 #include <bcore/client/helper.h>
+
+#include "clicmd.h"
 
 namespace btg
 {
@@ -44,134 +46,18 @@ namespace btg
       {
          namespace cli
             {
-
-               /// Represents a CLI command.
-               class CLICommand
-                  {
-                  public:
-                     /// CLI Command IDs.
-                     enum ID
-                        {
-                           cmd_help = 0,      //!< Help.
-                           cmd_quit,          //!< Quit.
-                           cmd_kill,          //!< Kill the daemon.
-                           cmd_uptime,        //!< Request daemon uptime.
-                           cmd_list,          //!< List.
-                           cmd_create,        //!< Create.
-                           cmd_url,           //!< Create from URL.
-                           cmd_start,         //!< Start.
-                           cmd_stop,          //!< Stop.
-                           cmd_abort,         //!< Abort.
-                           cmd_erase,         //!< Erase.
-                           cmd_status,        //!< Status.
-                           cmd_fileinfo,      //!< File info.
-                           cmd_peers,         //!< List of peers.
-                           cmd_limit,         //!< Per torrent Limit.
-                           cmd_glimit,        //!< Global limit.
-                           cmd_glimitstatus,  //!< Display global limits.
-                           cmd_clean,         //!< Clean.
-                           cmd_last,          //!< Last.
-                           cmd_syntax,        //!< Syntax.
-                           cmd_detach,        //!< Detach.
-                           cmd_sname,         //!< Session name.
-                           cmd_ssname,        //!< Set session name.
-                           cmd_undefined = -1 //!< Undefined.
-                        };
-                  public:
-                     /// Default constructor.
-                     CLICommand(ID const           _id,
-                                std::string const& _name,
-                                std::string const& _shortName,
-                                std::string const& _description,
-                                std::string const& _syntax,
-                                t_uint      const  _numberOfParams
-                                );
-                     /// Copy constructor.
-                     CLICommand(CLICommand const& _clicommand);
-
-                     /// Get the id of a command.
-                     CLICommand::ID getId() const;
-
-                     /// Get the name.
-                     std::string getName() const;
-
-                     /// Get the short name.
-                     std::string getShortName() const;
-
-                     /// Get the description.
-                     std::string getDescription() const;
-
-                     /// Get the syntax.
-                     std::string getSyntax() const;
-
-                     /// Get the number of params.
-                     t_uint      getNumberOfParams() const;
-
-                     /// The destructor.
-                     ~CLICommand();
-                  private:
-                     /// Const members only, assignment is not possible.
-                     CLICommand& operator=(CLICommand const & _rhs);
-
-                     /// The id of a command.
-                     ID          const id;
-                     /// The name.
-                     std::string const name;
-                     /// The short name.
-                     std::string const shortName;
-                     /// The description.
-                     std::string const description;
-                     /// The syntax.
-                     std::string const syntax;
-                     /// The number of parameters.
-                     t_uint      const numberOfParams;
-                  };
-
-               /// Represents a list of commands with methods to resolve strings into commands.
-               class CLICommandList
-                  {
-                  public:
-                     CLICommandList();
-                     /// Add a command to this list.
-                     void addCommand(CLICommand* _clicommand);
-
-                     /// Resolve a string into a command
-                     CLICommand::ID resolve(std::string const& _s) const;
-
-                     /// Returns a string representing a command name.
-                     /// @param [in] _id A command ID.
-                     std::string getName(CLICommand::ID const _id) const;
-
-                     /// Generate help, which is a list of all commands with a short description.
-                     std::string genHelp() const;
-
-                     /// Generate a string which describes the syntax used for a command.
-                     /// @param [in] _id A command ID.
-                     std::string genSyntax(CLICommand::ID const _id) const;
-
-                     /// Get the number of params required by a command.
-                     t_uint getNumberOfParams(CLICommand::ID const _id) const;
-
-                     /// Destructor.
-                     ~CLICommandList();
-                  private:
-                     /// List of commands.
-                     std::vector<CLICommand*>              list;
-                     /// Maps command ID to command pointer.
-                     std::map<CLICommand::ID, CLICommand*> cmap;
-                  };
-
                /**
                 * \addtogroup cli
                 */
                /** @{ */
 
-               class CLICommandList;
+               // class CLICommandList;
 
                /// Client handler class.
                class cliHandler : 
-                  public btg::core::client::clientCallback, 
-                  public btg::core::client::clientHandler
+               public btg::core::client::clientCallback, 
+                  public btg::core::client::clientHandler,
+                  private btg::core::client::createPartsReportInterface
                   {
                   public:
                      /// Used to react to the different kinds of inputs from the user.
@@ -226,6 +112,12 @@ namespace btg
 
                      /// Destructor.
                      virtual ~cliHandler();
+                  private:
+                     void CPRI_init(std::string const& _filename);
+                     void CPRI_pieceUploaded(t_uint _number, t_uint _parts);
+                     void CPRI_error(std::string const& _error);
+                     void CPRI_wait(std::string const& _msg);
+                     void CPRI_success(std::string const& _filename);
                   private:
                      /// Read, deserialize and act on a response for a specific command.
                      /// Responses: specific, ack, error.
@@ -467,4 +359,4 @@ namespace btg
       } // namespace UI
 } // namespace btg
 
-#endif
+#endif // CLI_H

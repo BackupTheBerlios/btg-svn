@@ -13,7 +13,7 @@ btgncli_SOURCES = nconfig.cpp \
                   numinput.cpp textinput.cpp \
                   mainwindow.cpp \
                   progress.cpp \
-                  ui.cpp ui_menu.cpp ui_handler.cpp \
+                  ui.cpp ui_create.cpp ui_menu.cpp ui_handler.cpp \
                   handler.cpp \
                   btgncli.cpp
 
