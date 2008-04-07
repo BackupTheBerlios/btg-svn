@@ -165,6 +165,16 @@ namespace btg
                   c = new contextUrlStatusResponseCommand;
                   break;
                }
+            case Command::CN_CCREATEURLABORT:
+               {
+                  c = new contextUrlAbortCommand;
+                  break;
+               }
+            case Command::CN_CCREATEFFABORT:
+               {
+                  c = new contextFileAbortCommand;
+                  break;
+               }
             case Command::CN_CCREATEFROMFILE:
                {
                   c = new contextCreateFromFileCommand;
@@ -510,8 +520,10 @@ namespace btg
             case Command::CN_CCREATEFROMURLRSP:
             case Command::CN_CURLSTATUS:
             case Command::CN_CURLSTATUSRSP:
+            case Command::CN_CCREATEURLABORT:
             case Command::CN_CCREATEFROMFILE:
             case Command::CN_CCREATEFROMFILERSP:
+            case Command::CN_CCREATEFFABORT:
             case Command::CN_CCREATEFROMFILEPART:
             case Command::CN_CCRFILESTATUS:
             case Command::CN_CCRFILESTATUSRSP:

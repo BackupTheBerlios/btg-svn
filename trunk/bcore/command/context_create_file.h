@@ -31,187 +31,214 @@
 namespace btg
 {
    namespace core
+   {
+      /**
+       * \addtogroup commands
+       */
+      /** @{ */
+
+      class contextCreateFromFileCommand: public Command
       {
-         /**
-          * \addtogroup commands
-          */
-         /** @{ */
+      public:
+         /// Constructor.
+         contextCreateFromFileCommand();
 
-         class contextCreateFromFileCommand: public Command
+         /// Constructor.
+         /// @param [in] _filename     The filename of the torrent file to create.
+         /// @param [in] _start        Indicates if the torrent will be started after creation.
+         contextCreateFromFileCommand(std::string const& _filename,
+                                      t_uint _numberOfParts,
+                                      bool const _start);
+
+         bool serialize(btg::core::externalization::Externalization* _e) const;
+         bool deserialize(btg::core::externalization::Externalization* _e);
+
+         /// Get the contained filename.
+         std::string getFilename() const
             {
-            public:
-               /// Constructor.
-               contextCreateFromFileCommand();
-
-               /// Constructor.
-               /// @param [in] _filename     The filename of the torrent file to create.
-               /// @param [in] _start        Indicates if the torrent will be started after creation.
-               contextCreateFromFileCommand(std::string const& _filename,
-                                            t_uint _numberOfParts,
-                                            bool const _start);
-
-               bool serialize(btg::core::externalization::Externalization* _e) const;
-               bool deserialize(btg::core::externalization::Externalization* _e);
-
-               /// Get the contained filename.
-               std::string getFilename() const
-                  {
-                     return filename;
-                  }
+               return filename;
+            }
                
-               t_uint numberOfParts() const
-               {
-                  return numberOfParts_;
-               }
+         t_uint numberOfParts() const
+         {
+            return numberOfParts_;
+         }
 
-               /// Indicates if the torrent should be started after
-               /// loading.
-               bool getStart() const
-                  {
-                     return start;
-                  }
+         /// Indicates if the torrent should be started after
+         /// loading.
+         bool getStart() const
+         {
+            return start;
+         }
 
-               /// Destructor.
-               virtual ~contextCreateFromFileCommand();
-            private:
-               /// The filename of the torrent file to create.
-               std::string filename;
+         /// Destructor.
+         virtual ~contextCreateFromFileCommand();
+      private:
+         /// The filename of the torrent file to create.
+         std::string filename;
 
-               t_uint numberOfParts_;
+         t_uint numberOfParts_;
 
-               /// Indicates if the torrent should be started after
-               /// creation.
-               bool start;
-            };
+         /// Indicates if the torrent should be started after
+         /// creation.
+         bool start;
+      };
 
-         class contextCreateFromFileResponseCommand: public Command
-            {
-            public:
-               /// Constructor.
-               contextCreateFromFileResponseCommand();
+      class contextCreateFromFileResponseCommand: public Command
+      {
+      public:
+         /// Constructor.
+         contextCreateFromFileResponseCommand();
 
-               /// Constructor.
-               contextCreateFromFileResponseCommand(t_uint const _id);
+         /// Constructor.
+         contextCreateFromFileResponseCommand(t_uint const _id);
 
-               bool serialize(btg::core::externalization::Externalization* _e) const;
-               bool deserialize(btg::core::externalization::Externalization* _e);
+         bool serialize(btg::core::externalization::Externalization* _e) const;
+         bool deserialize(btg::core::externalization::Externalization* _e);
 
-               /// Get the contained id.
-               t_uint id() const
-                  {
-                     return id_;
-                  }
+         /// Get the contained id.
+         t_uint id() const
+         {
+            return id_;
+         }
 
-               /// Destructor.
-               virtual ~contextCreateFromFileResponseCommand();
-            private:
-               /// The id of the file to load.
-               t_uint id_;
-            };
+         /// Destructor.
+         virtual ~contextCreateFromFileResponseCommand();
+      private:
+         /// The id of the file to load.
+         t_uint id_;
+      };
 
-         class contextCreateFromFilePartCommand: public Command
-            {
-            public:
-               /// Constructor.
-               contextCreateFromFilePartCommand();
+      class contextCreateFromFilePartCommand: public Command
+      {
+      public:
+         /// Constructor.
+         contextCreateFromFilePartCommand();
 
-               contextCreateFromFilePartCommand(t_uint _id,
-                                                t_uint _part,
-                                                sBuffer const& _data);
+         contextCreateFromFilePartCommand(t_uint _id,
+                                          t_uint _part,
+                                          sBuffer const& _data);
 
-               bool serialize(btg::core::externalization::Externalization* _e) const;
-               bool deserialize(btg::core::externalization::Externalization* _e);
+         bool serialize(btg::core::externalization::Externalization* _e) const;
+         bool deserialize(btg::core::externalization::Externalization* _e);
 
-               t_uint id() const
-                  {
-                     return id_;
-                  }
+         t_uint id() const
+         {
+            return id_;
+         }
 
-               t_uint part() const
-                  {
-                     return part_;
-                  }
+         t_uint part() const
+         {
+            return part_;
+         }
 
-               sBuffer const& data() const
-                  {
-                     return data_;
-                  }
+         sBuffer const& data() const
+         {
+            return data_;
+         }
 
-               /// Destructor.
-               virtual ~contextCreateFromFilePartCommand();
-            private:
-               t_uint  id_;
-               t_uint  part_;
-               sBuffer data_;
-            };
+         /// Destructor.
+         virtual ~contextCreateFromFilePartCommand();
+      private:
+         t_uint  id_;
+         t_uint  part_;
+         sBuffer data_;
+      };
 
-         /// Get the status of a file download.
-         class contextFileStatusCommand: public Command
-            {
-            public:
-               /// Constructor.
-               contextFileStatusCommand();
+      /// Get the status of a file download.
+      class contextFileStatusCommand: public Command
+      {
+      public:
+         /// Constructor.
+         contextFileStatusCommand();
 
-               /// Constructor.
-               /// @param [in] _id The id of the file the daemon is downloading.
-               contextFileStatusCommand(t_uint const _id);
+         /// Constructor.
+         /// @param [in] _id The id of the file the daemon is downloading.
+         contextFileStatusCommand(t_uint const _id);
 
-               bool serialize(btg::core::externalization::Externalization* _e) const;
-               bool deserialize(btg::core::externalization::Externalization* _e);
+         bool serialize(btg::core::externalization::Externalization* _e) const;
+         bool deserialize(btg::core::externalization::Externalization* _e);
 
-               /// Get the contained id.
-               t_uint id() const
-                  {
-                     return id_;
-                  }
+         /// Get the contained id.
+         t_uint id() const
+         {
+            return id_;
+         }
 
-               /// Destructor.
-               virtual ~contextFileStatusCommand();
-            private:
-               /// The id of the file to load.
-               t_uint id_;
-            };
+         /// Destructor.
+         virtual ~contextFileStatusCommand();
+      private:
+         /// The id of the file to load.
+         t_uint id_;
+      };
 
-         /// Status of a file download.
-         class contextFileStatusResponseCommand: public Command
-            {
-            public:
-               /// Constructor.
-               contextFileStatusResponseCommand();
+      /// Status of a file download.
+      class contextFileStatusResponseCommand: public Command
+      {
+      public:
+         /// Constructor.
+         contextFileStatusResponseCommand();
 
-               /// Constructor.
-               /// @param [in] _id     The ID of the file the daemon is downloading.
-               /// @param [in] _status The status.
-               contextFileStatusResponseCommand(t_uint _id, 
-                                                btg::core::fileStatus const _status);
+         /// Constructor.
+         /// @param [in] _id     The ID of the file the daemon is downloading.
+         /// @param [in] _status The status.
+         contextFileStatusResponseCommand(t_uint _id, 
+                                          btg::core::fileStatus const _status);
 
-               bool serialize(btg::core::externalization::Externalization* _e) const;
-               bool deserialize(btg::core::externalization::Externalization* _e);
+         bool serialize(btg::core::externalization::Externalization* _e) const;
+         bool deserialize(btg::core::externalization::Externalization* _e);
 
-               /// Get the contained id.
-               t_uint id() const
-                  {
-                     return id_;
-                  }
+         /// Get the contained id.
+         t_uint id() const
+         {
+            return id_;
+         }
          
-               /// Get the contained status.
-               btg::core::fileStatus status() const
-                  {
-                     return status_;
-                  }
+         /// Get the contained status.
+         btg::core::fileStatus status() const
+            {
+               return status_;
+            }
 
-               /// Destructor.
-               virtual ~contextFileStatusResponseCommand();
-            private:
-               /// The id of the file to load.
-               t_uint id_;
-               /// Status.
-               btg::core::fileStatus status_;
-            };
+         /// Destructor.
+         virtual ~contextFileStatusResponseCommand();
+      private:
+         /// The id of the file to load.
+         t_uint id_;
+         /// Status.
+         btg::core::fileStatus status_;
+      };
 
-         /** @} */
+      /// Get the status of a URL download.
+      class contextFileAbortCommand: public Command
+      {
+      public:
+         /// Constructor.
+         contextFileAbortCommand();
 
-      } // namespace core
+         /// Constructor.
+         /// @param [in] _id The id of the URL the daemon is downloading.
+         contextFileAbortCommand(t_uint const _id);
+
+         bool serialize(btg::core::externalization::Externalization* _e) const;
+         bool deserialize(btg::core::externalization::Externalization* _e);
+
+         /// Get the contained id.
+         t_uint id() const
+         {
+            return id_;
+         }
+
+         /// Destructor.
+         virtual ~contextFileAbortCommand();
+      private:
+         /// The id of the url to load.
+         t_uint id_;
+      };
+
+      /** @} */
+
+   } // namespace core
 } // namespace btg
 
 #endif // COMMAND_CREATE_CONTEXT_FILE_H

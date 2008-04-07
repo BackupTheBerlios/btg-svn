@@ -273,5 +273,44 @@ namespace btg
       contextUrlStatusResponseCommand::~contextUrlStatusResponseCommand()
       {}
 
+      /* */
+      
+      contextUrlAbortCommand::contextUrlAbortCommand()
+         : Command(Command::CN_CCREATEURLABORT),
+           id_(URLS_INVALID_URLID)
+      {}
+
+      contextUrlAbortCommand::contextUrlAbortCommand(t_uint const _id)
+         : Command(Command::CN_CCREATEURLABORT),
+           id_(_id)
+      {}
+
+      bool contextUrlAbortCommand::serialize(btg::core::externalization::Externalization* _e) const
+      {
+         Command::serialize(_e);
+         BTG_RCHECK(_e->status());
+
+         _e->setParamInfo("url id", true);
+         _e->uintToBytes(&id_);
+         BTG_RCHECK(_e->status());
+
+         return true;
+      }
+
+      bool contextUrlAbortCommand::deserialize(btg::core::externalization::Externalization* _e)
+      {
+         Command::deserialize(_e);
+         BTG_RCHECK(_e->status());
+
+         _e->setParamInfo("url id", true);
+         _e->bytesToUint(&id_);
+         BTG_RCHECK(_e->status());
+
+         return true;
+      }
+
+      contextUrlAbortCommand::~contextUrlAbortCommand()
+      {}
+      
    } // namespace core
 } // namespace btg

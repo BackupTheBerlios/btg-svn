@@ -102,7 +102,7 @@ namespace btg
          Command::serialize(_e);
          BTG_RCHECK(_e->status());
 
-         _e->setParamInfo("url id", true);
+         _e->setParamInfo("file id", true);
          _e->uintToBytes(&id_);
          BTG_RCHECK(_e->status());
 
@@ -114,7 +114,7 @@ namespace btg
          Command::deserialize(_e);
          BTG_RCHECK(_e->status());
 
-         _e->setParamInfo("url id", true);
+         _e->setParamInfo("file id", true);
          _e->bytesToUint(&id_);
          BTG_RCHECK(_e->status());
 
@@ -247,7 +247,7 @@ namespace btg
          Command::serialize(_e);
          BTG_RCHECK(_e->status());
 
-         _e->setParamInfo("url id", true);
+         _e->setParamInfo("file id", true);
          _e->uintToBytes(&id_);
          BTG_RCHECK(_e->status());
 
@@ -274,7 +274,7 @@ namespace btg
                break;
             }
 
-         _e->setParamInfo("url status", true);
+         _e->setParamInfo("file status", true);
          _e->uintToBytes(&temp_status);
          BTG_RCHECK(_e->status());
 
@@ -286,12 +286,12 @@ namespace btg
          Command::deserialize(_e);
          BTG_RCHECK(_e->status());
 
-         _e->setParamInfo("url id", true);
+         _e->setParamInfo("file id", true);
          _e->bytesToUint(&id_);
          BTG_RCHECK(_e->status());
 
          t_uint temp_status = 0;
-         _e->setParamInfo("url status", true);
+         _e->setParamInfo("file status", true);
          _e->bytesToUint(&temp_status);
          BTG_RCHECK(_e->status());
          
@@ -326,5 +326,44 @@ namespace btg
       contextFileStatusResponseCommand::~contextFileStatusResponseCommand()
       {}
 
+      /* */
+
+      contextFileAbortCommand::contextFileAbortCommand()
+         : Command(Command::CN_CCREATEFFABORT),
+           id_(FILES_INVALID_FILEID)
+      {}
+
+      contextFileAbortCommand::contextFileAbortCommand(t_uint const _id)
+         : Command(Command::CN_CCREATEFFABORT),
+           id_(_id)
+      {}
+
+      bool contextFileAbortCommand::serialize(btg::core::externalization::Externalization* _e) const
+      {
+         Command::serialize(_e);
+         BTG_RCHECK(_e->status());
+
+         _e->setParamInfo("file id", true);
+         _e->uintToBytes(&id_);
+         BTG_RCHECK(_e->status());
+
+         return true;
+      }
+
+      bool contextFileAbortCommand::deserialize(btg::core::externalization::Externalization* _e)
+      {
+         Command::deserialize(_e);
+         BTG_RCHECK(_e->status());
+
+         _e->setParamInfo("file id", true);
+         _e->bytesToUint(&id_);
+         BTG_RCHECK(_e->status());
+
+         return true;
+      }
+
+      contextFileAbortCommand::~contextFileAbortCommand()
+      {}
+      
    } // namespace core
 } // namespace btg

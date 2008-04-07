@@ -179,6 +179,33 @@ namespace btg
          btg::core::urlStatus status_;
       };
 
+      /// Get the status of a URL download.
+      class contextUrlAbortCommand: public Command
+      {
+      public:
+         /// Constructor.
+         contextUrlAbortCommand();
+
+         /// Constructor.
+         /// @param [in] _id The id of the URL the daemon is downloading.
+         contextUrlAbortCommand(t_uint const _id);
+
+         bool serialize(btg::core::externalization::Externalization* _e) const;
+         bool deserialize(btg::core::externalization::Externalization* _e);
+
+         /// Get the contained id.
+         t_uint id() const
+         {
+            return id_;
+         }
+
+         /// Destructor.
+         virtual ~contextUrlAbortCommand();
+      private:
+         /// The id of the url to load.
+         t_uint id_;
+      };
+
       /** @} */
 
    } // namespace core
