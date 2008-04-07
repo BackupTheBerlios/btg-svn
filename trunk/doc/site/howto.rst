@@ -39,11 +39,13 @@ Daemon
 - `GNU TLS`_ 1.0 or better.
 - `Expat`_ 1.95.8 or better.
 - `CyberLink`_ 1.7.1 or better for UPnP (optional).
+- `CURL`_ 7.15.5 or better for URL downloading (optional).
 
 .. _Rasterbar Libtorrent: http://www.rasterbar.com/products/libtorrent.html
 .. _GNU TLS: http://www.gnu.org/software/gnutls/
 .. _CyberLink: https://sourceforge.net/projects/clinkcc/
 .. _Expat: http://expat.sourceforge.net/
+.. _CURL: http://curl.haxx.se/
 
 UI
 ~~
@@ -590,6 +592,9 @@ script:
 ::
 
   LDFLAGS="-L/usr/local/lib -lexecinfo"
+
+Notice that the native FreeBSD dialog used by btg-config does not work
+- it does not implement --fselect. So use cdialog from ports instead.
 
 .. _Tcsh: http://www.tcsh.org
 .. _Bash: http://www.gnu.org/software/bash/

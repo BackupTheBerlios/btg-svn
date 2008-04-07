@@ -22,7 +22,7 @@ if [ "$system" = "FreeBSD" ]
 then
   # Default dimensions of a file selection dialog.
   FSEL_DIM_WIDTH=60
-  FSEL_DIM_HEIGHT=20
+  FSEL_DIM_HEIGHT=13
 
   # Default dimenstions of an input box.
   INPUTBOX_WIDTH=60
