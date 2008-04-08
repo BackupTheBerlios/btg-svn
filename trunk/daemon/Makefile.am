@@ -1,5 +1,6 @@
 if BUILDUPNP
   EXTRA_DIR = upnp
+  UPNP_LDADD = $(top_builddir)/daemon/upnp/libupnp.la 
 endif
 
 if BUILDURL
@@ -64,7 +65,7 @@ bin_PROGRAMS = btgdaemon
 btgdaemon_SOURCES = btgdaemon.cpp daemon.c
 
 if BUILDCYBERLINK
-  CYBERLINK_LDADD = $(top_builddir)/daemon/upnp/libupnp.la @CYBERLINK_LIBS@
+  CYBERLINK_LDADD = @CYBERLINK_LIBS@
 endif
 
 if BUILDURL
@@ -78,6 +79,7 @@ btgdaemon_LDADD   = $(top_builddir)/bcore/libbtgcore.la \
                     $(top_builddir)/daemon/auth/libauth.la \
                     $(top_builddir)/external/ini/libini.la \
                     $(top_builddir)/bcore/libbtgcore.la \
+        	    $(UPNP_LDADD) \
         	    $(CYBERLINK_LDADD) \
         	    $(HTTP_LDADD)
 
