@@ -44,9 +44,8 @@ namespace btg
          {
             if (upload_progressdialog)
                {
-                  t_uint p = ((_number * 100) / _parts) / 2;
-
-                  // Show as 0-50 % while uploading.
+                  // Show as 0-95 % while uploading.
+                  t_uint p = ((double)_number / _parts) * 98;
 
                   std::string number = btg::core::convertToString<t_uint>(_number);
                   std::string parts  = btg::core::convertToString<t_uint>(_parts);
@@ -71,7 +70,8 @@ namespace btg
          {
             if (upload_progressdialog)
                {
-                  upload_progressdialog->updateProgress(50, _msg);
+                  // waiting at 95%
+                  upload_progressdialog->updateProgress(98, _msg);
                }
          }
 
