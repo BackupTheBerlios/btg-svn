@@ -42,7 +42,8 @@ namespace btg
          {
             if (progress_)
                {
-                  t_uint p = ((_number * 100) / _parts) / 2;
+                  t_uint p = ((_number * 100) / _parts) * 0.9;
+                  // t_uint p = ((_number * 100) / _parts) / 2;
 
                   std::string number = btg::core::convertToString<t_uint>(_number);
                   std::string parts  = btg::core::convertToString<t_uint>(_parts);
@@ -55,7 +56,7 @@ namespace btg
          {
             if (progress_)
                {
-                  progress_->updateProgress(0, _error);
+                  progress_->updateProgress(100, _error);
                }
 
             delete progress_;
@@ -66,7 +67,7 @@ namespace btg
          {
             if (progress_)
                {
-                  progress_->updateProgress(50, "Wait for daemon..");
+                  progress_->updateProgress(95, "Wait for daemon..");
                }
          }
 
