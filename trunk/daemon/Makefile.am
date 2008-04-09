@@ -4,6 +4,8 @@ if BUILDUPNP
 endif
 
 if BUILDURL
+  URL_HEADER=urlmgr.h
+  URL_SOURCE=urlmgr.cpp
   URL_DEFINES=-DBTG_OPTION_URL=@BTG_OPTION_URL@ @LIBCURL_CPPFLAGS@
   URL_LIBS=@LIBCURL@
 else
@@ -28,7 +30,7 @@ noinst_HEADERS = $(CALLBACKHEADERS) $(SSHEADERS) filetrackdata.h filetrack.h con
                  eventhandler.h darg.h \
                  dconfig.h daemon.h daemondata.h \
                  daemonhandler.h \
-                 filemgr.h \
+                 filemgr.h $(URL_HEADER) \
                  btgdaemon.h \
                  progress.h \
                  lt_version.h \
@@ -42,7 +44,7 @@ libdaemon_la_SOURCES = dconfig.cpp darg.cpp \
                        session_list.cpp portmgr.cpp \
                        limitval.cpp limitmgr.cpp daemondata.cpp \
                        daemonhandler_url.cpp daemonhandler_file.cpp daemonhandler.cpp progress.cpp \
-                       filemgr.cpp \
+                       filemgr.cpp $(URL_SOURCE) \
                        context_alert.cpp context_file.cpp context_session.cpp context.cpp \
                        eventhandler.cpp connectionextrastate.cpp $(SSSOURCES) $(CALLBACKSOURCES)
 
@@ -106,8 +108,9 @@ man1_MANS          = btgdaemon.man
 man5_MANS          = btgcallback.man
 
 if !BUILDURL
-  EXTRA_DIST_HTTP = http/curlif.h http/httpmgr.h http/httpif.h http/httpproc.h \
-                    http/curlif.cpp http/httpmgr.cpp http/httpif.cpp http/httpproc.cpp
+  EXTRA_DIST_HTTP = urlmgr.h http/curlif.h http/httpmgr.h http/httpif.h http/httpproc.h \
+                    urlmgr.cpp http/curlif.cpp http/httpmgr.cpp http/httpif.cpp \
+                    http/httpproc.cpp
 endif
 
 # Since the session saver is optional, and not always compiled, make dist needs this.

@@ -34,7 +34,7 @@ namespace btg
          const std::string moduleName("hmgr");
          const t_uint min_id = 1;
 
-         httpManager::httpManager(btg::core::LogWrapperType _logwrapper)
+         httpDlManager::httpDlManager(btg::core::LogWrapperType _logwrapper)
          : btg::core::Logable(_logwrapper),
            current_id(min_id),
            max_id(0xFFFFFF),
@@ -43,7 +43,7 @@ namespace btg
             BTG_MNOTICE(logWrapper(), "constructed");
          }
 
-         t_uint httpManager::getCurrentId()
+         t_uint httpDlManager::getCurrentId()
          {
             t_uint id = current_id;
             current_id++;
@@ -56,7 +56,7 @@ namespace btg
             return id;
          }
 
-         t_uint httpManager::Fetch(std::string const& _url,
+         t_uint httpDlManager::Fetch(std::string const& _url,
                                    std::string const& _filename)
          {
             t_uint id = getCurrentId();
@@ -73,7 +73,7 @@ namespace btg
             return id;
          }
 
-         httpInterface::Status httpManager::getStatus(const t_uint _id)
+         httpInterface::Status httpDlManager::getStatus(const t_uint _id)
          {
             std::map<t_uint, boost::shared_ptr<httpProcess> >::const_iterator i = 
                processes.find(_id);
@@ -89,7 +89,7 @@ namespace btg
             return httpInterface::ERROR;
          }
 
-         bool httpManager::Result(const t_uint _id, 
+         bool httpDlManager::Result(const t_uint _id, 
                                   btg::core::sBuffer & _buffer)
          {
             std::map<t_uint, boost::shared_ptr<httpProcess> >::iterator i = 
@@ -109,7 +109,7 @@ namespace btg
             return false;
          }
 
-         void httpManager::Terminate(const t_uint _id)
+         void httpDlManager::Terminate(const t_uint _id)
          {
             std::map<t_uint, boost::shared_ptr<httpProcess> >::const_iterator i = 
                processes.find(_id);
@@ -120,7 +120,7 @@ namespace btg
                }
          }
 
-         void httpManager::TerminateAll()
+         void httpDlManager::TerminateAll()
          {
             std::map<t_uint, boost::shared_ptr<httpProcess> >::const_iterator i; 
             for (i = processes.begin();
@@ -131,7 +131,7 @@ namespace btg
                }
          }
 
-         httpManager::~httpManager()
+         httpDlManager::~httpDlManager()
          {
             TerminateAll();
             processes.erase(processes.begin(), processes.end());

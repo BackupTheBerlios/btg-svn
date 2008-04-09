@@ -108,9 +108,8 @@ namespace btg
            sendBuffer_(),
            cf_(_logwrapper, _dd->externalization),
 #if BTG_OPTION_URL
-           httpmgr(_logwrapper),
-           urlIdSessions(),
-#endif // BTG_OPTION_URL
+           urlmgr(_logwrapper, _verboseFlag, _dd->filetrack, &sessionlist_),
+#endif
            filemgr(_logwrapper, _dd->filetrack)
       {
          /// Set the initial limits.
@@ -1247,11 +1246,8 @@ namespace btg
             {
                url_timer_trigger_ = false;
                url_timer_.Reset();
-               if (urlIdSessions.size() > 0)
-                  {
-                     MVERBOSE_LOG(logWrapper(), verboseFlag_, "Checking url downloads.");
-                     handleUrlDownloads();
-                  }
+
+               urlmgr.checkUrlDownloads();
             }
 #endif
          if (session_timer_trigger_)

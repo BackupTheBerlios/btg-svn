@@ -76,9 +76,9 @@ namespace btg
       }
 
       bool sessionList::get(t_long const & _session, 
-                            eventHandler* & _eventhandler)
+                            eventHandler* & _eventhandler) const
       {
-         std::map<t_long, eventHandler*>::iterator iter = eventhandlers_.find(_session);
+         std::map<t_long, eventHandler*>::const_iterator iter = eventhandlers_.find(_session);
 
          if (iter == eventhandlers_.end())
             {

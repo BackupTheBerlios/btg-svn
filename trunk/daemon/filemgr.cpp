@@ -30,6 +30,8 @@ namespace btg
    namespace daemon
    {
       const t_uint max_file_age = 30;
+      const t_uint min_id = 1;
+      const std::string moduleName("fmgr");
 
       fileData::fileData(std::string const& _dir,
                          std::string const& _filename, 
@@ -48,9 +50,6 @@ namespace btg
       }
 
       /* */
-
-      const std::string moduleName("fmgr");
-      const t_uint min_id = 1;
 
       fileManager::fileManager(btg::core::LogWrapperType _logwrapper,
                                fileTrack* _filetrack)
@@ -215,29 +214,6 @@ namespace btg
             }
       }
 
-      /*
-      bool fileManager::getDead(std::vector<fileData> & _list) const
-      {
-         bool status = false;
-         std::map<t_uint, fileData>::const_iterator iter;
-         for (iter = files.begin();
-              iter != files.end();
-              iter++)
-            {
-               if (!iter->second.valid)
-                  {
-                     _list.push_back(fileData(iter->second.dir, iter->second.filename, 0));
-                  }
-            }
-         if (_list.size() > 0)
-            {
-               status = true;
-            }
-
-         return status;
-      }
-      */
-
       void fileManager::removeDead()
       {
          std::map<t_uint, fileData>::iterator iter;
@@ -264,31 +240,6 @@ namespace btg
 
          iter->second.buffers.clear();
       }
-
-      /*
-      bool fileManager::getDone(std::vector<fileData> & _list)
-      {
-         bool status = false;
-         std::map<t_uint, fileData>::iterator iter;
-         for (iter = files.begin();
-              iter != files.end();
-              iter++)
-            {
-               if (iter->second.valid && iter->second.status == fileData::DONE)
-                  {
-                     _list.push_back(fileData(iter->second.dir, iter->second.filename, 0));
-                     files.erase(iter);
-                  }
-            }
-
-         if (_list.size() > 0)
-            {
-               status = true;
-            }
-
-         return status;
-      }
-      */
 
       void fileManager::getFileInfo(const t_uint _id,
                                     std::string & _dir,

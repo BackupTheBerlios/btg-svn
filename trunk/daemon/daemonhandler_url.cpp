@@ -33,221 +33,28 @@ namespace btg
 {
    namespace daemon
    {
-#if BTG_OPTION_URL
       const std::string moduleName("hdl");
-      const t_uint max_url_age = 30;
-
+#if BTG_OPTION_URL
       using namespace btg::core;
-
-      UrlIdSessionMapping::UrlIdSessionMapping(t_uint _hid, 
-                                               long _session, 
-                                               std::string const& _userdir,
-                                               std::string const& _filename,
-                                               bool const _start)
-         : hid(_hid),
-           valid(true),
-           session(_session),
-           userdir(_userdir),
-           filename(_filename),
-           start(_start),
-           status(UCS_UNDEF),
-           age(0)
-      {
-      }
-      
-      std::vector<UrlIdSessionMapping>::iterator daemonHandler::getUrlMapping(t_uint _hid)
-      {
-         std::vector<UrlIdSessionMapping>::iterator i;
-         for (i = urlIdSessions.begin();
-              i != urlIdSessions.end();
-              i++)
-            {
-               if (i->hid == _hid)
-                  {
-                     return i;
-                  }
-            }
-
-         return urlIdSessions.end();
-      }
-
-      void daemonHandler::handleUrlDownload(t_uint _hid)
-      {
-         std::vector<UrlIdSessionMapping>::iterator i = getUrlMapping(_hid);
-
-         if (i != urlIdSessions.end())
-            {
-               if (i->valid)
-                  {
-                     addUrl(*i);
-                     urlIdSessions.erase(i);
-                  }
-            }
-      }
-
-      void daemonHandler::handleUrlDownloads()
-      {
-         std::vector<UrlIdSessionMapping>::iterator i;
-         for (i = urlIdSessions.begin();
-              i != urlIdSessions.end();
-              i++)
-            {
-               if ((i->age > max_url_age) || (!i->valid))
-                  {
-                     continue;
-                  }
-
-               i->age++;
-
-               btg::daemon::http::httpInterface::Status s = httpmgr.getStatus(i->hid);
-               if (s == btg::daemon::http::httpInterface::FINISH)
-                  {
-                     // Dl finished, now create the context.
-                     addUrl(*i);
-                  }
-
-               if (s == btg::daemon::http::httpInterface::ERROR)
-                  {
-                     // Unable to download torrent, clean up.
-                     removeUrl(*i);
-
-                     dd_->filetrack->remove(i->userdir,
-                                            i->filename);
-                     // Expire this download.
-                     i->valid = false;
-                  }
-            }
-
-         // Remove expired downloads.
-         i = urlIdSessions.begin();
-         while (i != urlIdSessions.end())
-            {
-               if (i->age > max_url_age)
-                  {
-                     httpmgr.Terminate(i->hid);
-                     dd_->filetrack->remove(i->userdir,
-                                            i->filename);
-                     i = urlIdSessions.erase(i);
-                  }
-               else
-                  {
-                     i++;
-                  }
-            }
-      }
-
-      void daemonHandler::removeUrl(UrlIdSessionMapping & _mapping)
-      {
-         dd_->filetrack->remove(_mapping.userdir,
-                                _mapping.filename);
-         // Expire this download.
-         _mapping.valid = false;
-      }
-
-      void daemonHandler::addUrl(UrlIdSessionMapping & _mapping)
-      {
-         // Find the required event handler.
-         eventHandler* eh = 0;
-         if (!sessionlist_.get(_mapping.session, eh))
-            {
-               // No session, expire.
-               _mapping.valid = false;
-               return;
-            }
-
-         btg::core::sBuffer sbuf;
-         if (!sbuf.read(_mapping.userdir + GPD->sPATH_SEPARATOR() + _mapping.filename))
-            {
-               // No data, expire.
-               _mapping.valid = false;
-               return;
-            }
-
-         // Remove the file from filetrack, as it will be added when
-         // creating the torrent.
-         dd_->filetrack->remove(_mapping.userdir,
-                                _mapping.filename);
-
-         btg::core::contextCreateWithDataCommand* ccwdc = 
-            new btg::core::contextCreateWithDataCommand(_mapping.filename, sbuf, _mapping.start);
-
-         // Do not use a connection id.
-         if (!eh->createWithData(ccwdc))
-            {
-               BTG_MERROR(logWrapper(), 
-                          "Adding '" << _mapping.filename << "' from URL failed.");
-               _mapping.status = UCS_CREATE_FAILED;
-               _mapping.valid  = false;
-            }
-         else
-            {
-               _mapping.status = UCS_CREATED;
-               _mapping.valid  = false;
-               MVERBOSE_LOG(logWrapper(), 
-                            verboseFlag_, "Added '" << _mapping.filename << "' from URL.");
-            }
-         
-         delete ccwdc;
-         ccwdc = 0;
-      }
 
       void daemonHandler::handle_CN_CURLSTATUS(eventHandler* _eventhandler, 
                                                btg::core::Command* _command)
       {
          contextUrlStatusCommand* cusc = dynamic_cast<contextUrlStatusCommand*>(_command);
-         t_uint hid = cusc->id();
+         t_uint id = cusc->id();
 
-         std::vector<UrlIdSessionMapping>::iterator mapping = getUrlMapping(hid);
+         btg::core::urlStatus urlstat = URLS_UNDEF;
 
-         if (mapping == urlIdSessions.end())
+         if (!urlmgr.getStatus(id, urlstat))
             {
                sendError(_command->getType(), "Unknown URL id.");
                return;
             }
 
-         btg::daemon::http::httpInterface::Status httpstat = httpmgr.getStatus(hid);
-         
-         btg::core::urlStatus urlstat = URLS_UNDEF;
-         
-         switch (httpstat)
-            {
-            case btg::daemon::http::httpInterface::ERROR:
-               {
-                  removeUrl(*mapping);
-                  urlstat = URLS_ERROR;
-                  break;
-               }
-            case btg::daemon::http::httpInterface::INIT:
-               urlstat = URLS_WORKING;
-               break;
-            case btg::daemon::http::httpInterface::WAIT:
-               urlstat = URLS_WORKING;
-               break;
-            case btg::daemon::http::httpInterface::FINISH:
-               {
-                  urlstat = URLS_FINISHED;
-
-                  // The http download finished, add the torrent.
-                  handleUrlDownload(hid);
-
-                  if (mapping->status == UCS_CREATED)
-                     {
-                        urlstat = URLS_CREATE;
-                     }
-
-                  if (mapping->status == UCS_CREATE_FAILED)
-                     {
-                        urlstat = URLS_CREATE_ERR;
-                     }
-
-                  break;
-               }
-            }
-         
          sendCommand(dd_->externalization,
                      dd_->transport,
                      connectionID_,
-                     new contextUrlStatusResponseCommand(hid, urlstat));
+                     new contextUrlStatusResponseCommand(id, urlstat));
       }
 
       void daemonHandler::handle_CN_CCREATEFROMURL(eventHandler* _eventhandler, 
@@ -267,20 +74,7 @@ namespace btg
                return;
             }
 
-         bool unique = true;
-         std::vector<UrlIdSessionMapping>::iterator i;
-         for (i = urlIdSessions.begin();
-              i != urlIdSessions.end();
-              i++)
-            {
-               if ((i->valid) && 
-                   (i->filename == filename) && 
-                   (i->userdir == userdir))
-                  {
-                     unique = false;
-                     break;
-                  }
-            }
+         bool unique = urlmgr.unique(filename, userdir);
 
          if (!unique)
             {
@@ -291,17 +85,16 @@ namespace btg
                return;
             }
 
-         t_uint hid = httpmgr.Fetch(ccful->getUrl(), 
-                                    userdir + GPD->sPATH_SEPARATOR() + filename);
-         UrlIdSessionMapping usmap(hid, _eventhandler->getSession(), userdir, filename, ccful->getStart());
-         urlIdSessions.push_back(usmap);
-         
-         BTG_MNOTICE(logWrapper(), "Added mapping: HID " << usmap.hid << " -> " << usmap.session << " -> " << usmap.filename);
+         t_uint id = urlmgr.addMapping(ccful->getUrl(),
+                                       userdir,
+                                       filename,
+                                       _eventhandler->getSession(),
+                                       ccful->getStart());
          
          sendCommand(dd_->externalization,
                      dd_->transport,
                      connectionID_,
-                     new contextCreateFromUrlResponseCommand(hid));
+                     new contextCreateFromUrlResponseCommand(id));
       }
 
 #endif // BTG_OPTION_URL

@@ -51,8 +51,8 @@
 #include "limitmgr.h"
 
 #if BTG_OPTION_URL
-#  include <daemon/http/httpmgr.h>
-#endif 
+#  include "urlmgr.h"
+#endif
 
 #include "filemgr.h"
 #include <bcore/logable.h>
@@ -61,44 +61,6 @@ namespace btg
 {
    namespace daemon
    {
-#if BTG_OPTION_URL
-      /// Creation status when adding torrent from URL.
-      enum UrlCreateStatus
-      {
-         UCS_UNDEF         = 0, //!< Not defined.
-         UCS_CREATED       = 1, //!< Created sucessfuly.
-         UCS_CREATE_FAILED = 2  //!< Not created.
-      };
-
-      /// Mapping between session and URL download.
-      struct UrlIdSessionMapping
-      {
-         /// Contructor.
-         UrlIdSessionMapping(t_uint _hid, 
-                             long _session, 
-                             std::string const& _userdir,
-                             std::string const& _filename,
-                             bool const _start);
-         
-         /// Download id.
-         t_uint          hid;
-         /// Indicates if this download is valid.
-         bool            valid;
-         /// Session id.
-         long            session;
-         /// The destination directory.
-         std::string     userdir;
-         /// The destianation file name.
-         std::string     filename;
-         /// Should the context be started after adding.
-         bool            start;
-         /// Status.
-         UrlCreateStatus status;
-         /// Age in (x * url timer duration).
-         t_uint          age;
-      };
-#endif // BTG_OPTION_URL
-
       /// Handler class used by the daemon.
       class daemonHandler: public btg::core::Logable
          {
@@ -354,31 +316,9 @@ namespace btg
             /// Command factory used by this instance.
             btg::core::commandFactory       cf_;
 
-#if BTG_OPTION_URL
-            /// Http manager used for all downloads.
-            btg::daemon::http::httpManager  httpmgr;
-
-            /// Mapping between URL id and session.
-            std::vector<UrlIdSessionMapping> urlIdSessions;
-
-            /// Get a mapping when having a URL id.
-            std::vector<UrlIdSessionMapping>::iterator getUrlMapping(t_uint _hid);
-
-            /// Handle downloads - called by timer.
-            void handleUrlDownloads();
-
-            /// Handle a single download.
-            void handleUrlDownload(t_uint _hid);
-
-            /// Create torrent from the file which was downloaded.
-            void addUrl(UrlIdSessionMapping & _mapping);
-
-            /// Clean up, if the torrent could not be downloaded.
-            void removeUrl(UrlIdSessionMapping & _mapping);
-#endif // BTG_OPTION_URL
-
             void handleFileDownloads();
 
+            btg::daemon::urlManager  urlmgr;
             btg::daemon::fileManager filemgr;
          private:
             /// Copy constructor.

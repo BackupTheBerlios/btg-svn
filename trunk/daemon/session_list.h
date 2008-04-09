@@ -59,7 +59,7 @@ namespace btg
                /// @param [in] _session       The session ID to use.
                /// @param [out] _eventhandler Reference to a pointer to an eventhandler.
                /// @return True - success. False otherwise.
-               bool get(t_long const & _session, eventHandler* & _eventhandler);
+               bool get(t_long const & _session, eventHandler* & _eventhandler) const;
 
 #if BTG_OPTION_SAVESESSIONS
                /// Serialize the contents.

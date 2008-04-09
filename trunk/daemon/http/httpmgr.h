@@ -45,11 +45,11 @@ namespace btg
          /** @{ */
 
          /// Http interface.
-         class httpManager: public httpInterface, public btg::core::Logable
+         class httpDlManager: public httpInterface, public btg::core::Logable
          {
          public:
             /// Constructor.
-            httpManager(btg::core::LogWrapperType _logwrapper);
+            httpDlManager(btg::core::LogWrapperType _logwrapper);
 
             /// Download an URL.
             t_uint Fetch(std::string const& _url,
@@ -66,7 +66,7 @@ namespace btg
             void Terminate(const t_uint _id);
 
             /// Destructor.
-            virtual ~httpManager();
+            virtual ~httpDlManager();
          protected:
             /// Terminate all downloads.
             void TerminateAll();
