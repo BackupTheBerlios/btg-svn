@@ -466,7 +466,10 @@ namespace btg
 
          contextCreateWithDataCommand* ccwdc = dynamic_cast<contextCreateWithDataCommand*>(_command);
          t_int handle_id = -1;
-         Context::addResult res = daemoncontext->add(ccwdc->getFilename(),
+         std::string sFileName = ccwdc->getFilename();
+         btg::core::Util::getFileFromPath(sFileName, sFileName);
+         
+         Context::addResult res = daemoncontext->add(sFileName,
                                                      ccwdc->getFile(),
                                                      handle_id);
 
@@ -506,7 +509,20 @@ namespace btg
       {
          contextCreateWithDataCommand* ccwdc = dynamic_cast<contextCreateWithDataCommand*>(_command);
          t_int handle_id = -1;
-         Context::addResult res = daemoncontext->add(ccwdc->getFilename(),
+         std::string sFileName;
+         // cut directories from the path (if they are)
+         if (ccwdc->getFilename().rfind('/') == std::string::npos)
+         {
+            sFileName = ccwdc->getFilename();
+         }
+         else
+         {
+            sFileName = ccwdc->getFilename().substr(ccwdc->getFilename().rfind('/')+1);
+         }
+         
+         std::cerr << "FN: " << sFileName << std::endl;
+         
+         Context::addResult res = daemoncontext->add(sFileName,
                                                      ccwdc->getFile(),
                                                      handle_id);
 
@@ -532,21 +548,21 @@ namespace btg
             case Context::ERR_EXISTS:
                {
                   sendCommand(_connectionID, new errorCommand(Command::CN_CCREATEWITHDATA,
-                                                              "Adding '" + ccwdc->getFilename() +
+                                                              "Adding '" + sFileName +
                                                               "' failed, torrent already exists"));
                   break;
                }
             case Context::ERR_LIBTORRENT:
                {
                   sendCommand(_connectionID, new errorCommand(Command::CN_CCREATEWITHDATA,
-                                                              "Adding '" + ccwdc->getFilename() +
+                                                              "Adding '" + sFileName +
                                                               "' failed, libtorrent didnt like the file."));
                   break;
                }
             default:
                {
                   sendCommand(_connectionID, new errorCommand(Command::CN_CCREATEWITHDATA,
-                                                              "Adding '"+ccwdc->getFilename()+"' failed."));
+                                                              "Adding '"+sFileName+"' failed."));
                   break;
                }
             }

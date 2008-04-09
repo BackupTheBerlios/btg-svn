@@ -24,6 +24,7 @@
 #include <bcore/command/context_create.h>
 #include <bcore/command/context_create_url.h>
 #include <bcore/verbose.h>
+#include <bcore/util.h>
 
 #include "modulelog.h"
 #include "filetrack.h"
@@ -256,6 +257,7 @@ namespace btg
 
          std::string userdir  = _eventhandler->getTempDir();
          std::string filename = ccful->getFilename();
+         btg::core::Util::getFileFromPath(filename, filename);
 
          if (!dd_->filetrack->add(userdir,
                                   filename))

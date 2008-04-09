@@ -65,7 +65,7 @@ namespace btg
          }
 
          /// Get the contained filename.
-         std::string getFilename() const
+         const std::string & getFilename() const
             {
                return filename;
             }

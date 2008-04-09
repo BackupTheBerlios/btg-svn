@@ -24,6 +24,7 @@
 #include <bcore/command/context_create.h>
 #include <bcore/command/context_create_file.h>
 #include <bcore/verbose.h>
+#include <bcore/util.h>
 
 #include "modulelog.h"
 #include "filetrack.h"
@@ -41,7 +42,8 @@ namespace btg
       {
          contextCreateFromFileCommand* ccffc = dynamic_cast<contextCreateFromFileCommand*>(_command);
          std::string userdir  = _eventhandler->getTempDir();
-         std::string filename = ccffc->getFilename();
+         std::string filename=ccffc->getFilename();
+         btg::core::Util::getFileFromPath(filename, filename);
          
          if (!dd_->filetrack->add(userdir,
                                   filename))
