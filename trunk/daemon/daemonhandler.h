@@ -317,8 +317,9 @@ namespace btg
             btg::core::commandFactory       cf_;
 
             void handleFileDownloads();
-
+#if BTG_OPTION_URL
             btg::daemon::urlManager  urlmgr;
+#endif // BTG_OPTION_URL
             btg::daemon::fileManager filemgr;
          private:
             /// Copy constructor.
