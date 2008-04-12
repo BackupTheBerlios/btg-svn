@@ -43,19 +43,19 @@ namespace btg
          using namespace btg::core::client;
 
          guiHandler::guiHandler(btg::core::LogWrapperType _logwrapper,
-                                btg::core::externalization::Externalization* _e,
-                                messageTransport*             _transport,
-                                clientConfiguration*          _config,
-                                btg::core::client::lastFiles* _lastfiles,
+                                btg::core::externalization::Externalization& _e,
+                                messageTransport&             _transport,
+                                clientConfiguration&          _config,
+                                clientDynConfig&              _dynconfig,
                                 bool const                    _verboseFlag,
                                 bool const                    _autoStartFlag,
-                                mainStatusbar*                _status_bar
+                                mainStatusbar*                _pstatus_bar
                                 )
             : handlerThreadIf(_logwrapper,
                               _e,
                               _transport,
                               _config,
-                              _lastfiles,
+                              _dynconfig,
                               _verboseFlag,
                               _autoStartFlag),
               contextIDs(0),
@@ -64,15 +64,13 @@ namespace btg
               idToFilenameMap(),
               fileinfolist(0),
               cleanedFilenames(0),
-              status_bar(_status_bar),
+              pstatus_bar(_pstatus_bar),
               peerlist(0)
          {
-
          }
 
          void guiHandler::onTransportInit()
          {
-
          }
 
          void guiHandler::onSetup(t_long const _session)
@@ -136,7 +134,7 @@ namespace btg
          void guiHandler::onCreateWithData()
          {
             commandStatus = true;
-            lastfiles->addLastFile(last_filename);
+            lastfiles.addLastFile(last_filename);
             BTG_NOTICE(logWrapper(), 
                        "Added a new torrent with data, filename = " << last_filename << ".");
             last_filename.clear();
@@ -303,7 +301,7 @@ namespace btg
                {
                   // Since the torrent finished downloading, remove it
                   // from the list of last opened files.
-                  lastfiles->removeLastFile(*vsci);
+                  lastfiles.removeLastFile(*vsci);
                }
 
             cleanedFilenames = _filenames;
@@ -366,9 +364,9 @@ namespace btg
          void guiHandler::onUptime(t_ulong const _uptime)
          {
             commandStatus = true;
-            if (status_bar != 0)
+            if (pstatus_bar != 0)
                {
-                  status_bar->set("Daemon uptime: " + convertToString<t_ulong>(_uptime) + " sec.");
+                  pstatus_bar->set("Daemon uptime: " + convertToString<t_ulong>(_uptime) + " sec.");
                }
          }
 
@@ -411,7 +409,7 @@ namespace btg
 
          t_strList guiHandler::getLastFiles() const
          {
-            return lastfiles->getLastFiles();
+            return lastfiles.getLastFiles();
          }
 
          t_strList guiHandler::getCleanedFilenames()
@@ -421,9 +419,9 @@ namespace btg
             return temp_cfn;
          }
 
-         void guiHandler::setStatusBar(mainStatusbar* _status_bar)
+         void guiHandler::setStatusBar(mainStatusbar* _pstatus_bar)
          {
-            status_bar = _status_bar;
+            pstatus_bar = _pstatus_bar;
          }
 
          t_peerList guiHandler::getPeers() const
@@ -484,10 +482,10 @@ namespace btg
          }
 
          guiStartupHelper::guiStartupHelper(btg::core::LogWrapperType _logwrapper,
-                                            btg::core::client::clientConfiguration*        _config,
-                                            btg::core::client::commandLineArgumentHandler* _clah,
-                                            btg::core::messageTransport*                   _messageTransport,
-                                            btg::core::client::clientHandler*              _handler)
+                                            btg::core::client::clientConfiguration&        _config,
+                                            btg::core::client::commandLineArgumentHandler& _clah,
+                                            btg::core::messageTransport&                   _messageTransport,
+                                            btg::core::client::clientHandler&              _handler)
             : btg::core::client::startupHelper(_logwrapper,
                                                GPD->sGUI_CLIENT(),
                                                _config,

@@ -66,9 +66,9 @@
 #include <bcore/os/sleep.h>
 
 #define GET_HANDLER_INST \
-   boost::shared_ptr<boost::mutex> ptr = handlerthread->mutex(); \
+   boost::shared_ptr<boost::mutex> ptr = handlerthread.mutex(); \
    boost::mutex::scoped_lock interface_lock(*ptr); \
-   guiHandler* handler = dynamic_cast<guiHandler*>(handlerthread->handler());
+   guiHandler* handler = dynamic_cast<guiHandler*>(&handlerthread.handler());
 
 namespace btg
 {
@@ -82,8 +82,8 @@ namespace btg
                                 std::string const& _session,
                                 bool const _verboseFlag,
                                 bool const _neverAskFlag,
-                                btg::core::client::handlerThread* _handlerthread,
-                                btg::core::client::clientDynConfig & dc)
+                                btg::core::client::handlerThread& _handlerthread,
+                                btg::core::client::clientDynConfig& _CDC)
             : Gtk::Window(Gtk::WINDOW_TOPLEVEL),
               btg::core::Logable(_logwrapper),
               verboseFlag(_verboseFlag),
@@ -101,7 +101,7 @@ namespace btg
               progressCounter(0),
               progressMax(5),
               trackerstatSerial(),
-              m_clientDynConfig(dc),
+              m_clientDynConfig(_CDC),
               m_bMultipleContinue(false), // actually not necessary
               m_limitDialog(new limitDialog()),
               m_sessionSelectionDialog(0),

@@ -20,8 +20,8 @@
  * $Id$
  */
 
-#ifndef LAST_FILES_H
-#define LAST_FILES_H
+#ifndef LAST_URLS_H
+#define LAST_URLS_H
 
 #include <bcore/client/clientdynconfig.h>
 #include <bcore/logable.h>
@@ -33,34 +33,30 @@ namespace btg
          namespace client
             {
 
-               /// Opened files history.
-               class lastFiles: public Logable
+               /// Opened URLs history.
+               class lastURLs: public Logable
                   {
                   public:
                      /// Constructor.
                      /// @param [in] _logwrapper Pointer used to send logs to.
                      /// @param [in] cc          The dynamic client configuration data object
-                     lastFiles(LogWrapperType _logwrapper,
-                               clientDynConfig & _CDC);
+                     lastURLs(LogWrapperType _logwrapper, clientDynConfig & _CDC);
 
                      /// Return true if the list was modified.
-                     bool modified() const { return data_modified_; };
+                     bool modified() const { return modified_; };
 
                      /// Get the list of last opened files.
-                     t_strList getLastFiles() const;
+                     const t_strList & getFiles() const { return Files_; }
 
-                     /// Add a filename to the filename list.
-                     void addLastFile(std::string const& _filename);
+                     /// Get the list of last opened URLs.
+                     const t_strList & getURLs() const { return URLs_; }
 
-                     /// Remove a filename from the filename list.
-                     void removeLastFile(std::string const& _filename);
+                     /// Add an entry to the list.
+                     void add(std::string const& _url, std::string const& _filename);
 
-                     /// Set the list of last opened files.
-                     void setLastFiles(t_strList const& _lastfiles);
+                     /// Remove an entry the list.
+                     void remove(std::string const& _url);
 
-                     /// Destructor.
-                     virtual ~lastFiles();
-                  
                   protected:
                      /// Sets data modification flag
                      /// @param [in] bMod true if data modified
@@ -71,14 +67,16 @@ namespace btg
                      clientDynConfig & CDC_;
 
                      /// Indicates if the list was modified.
-                     bool data_modified_;
+                     bool modified_;
+                     
+                     /// the list of last opened URLs.
+                     t_strList & URLs_;
 
-                     /// List of last opened files.
-                     /// (agregated by clientDynConfig now)
-                     t_strList & lastFiles_;
+                     /// List of last opened files which correspond to URLs.
+                     t_strList & Files_;
                   };
             } // namespace client
       } // namespace core
 } // namespace btg
 
-#endif // LAST_FILES_H
+#endif // LAST_URLS_H

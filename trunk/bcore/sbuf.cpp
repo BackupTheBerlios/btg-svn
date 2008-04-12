@@ -180,18 +180,12 @@ namespace btg
          file.open(_filename.c_str(), std::ios::out | std::ios::binary);
 #endif
          
-         //if (size_ <= 0)
-         //   {
-         //      BTG_NOTICE("Size of buffer is zero.");
-         //   }
-
          if (file.is_open())
             {
                file.write(reinterpret_cast<char*>(buffer_), size_);
             }
          else
             {
-               // BTG_NOTICE("Opening file '" << _filename << "' for reading failed.");
                status = false;
             }
 

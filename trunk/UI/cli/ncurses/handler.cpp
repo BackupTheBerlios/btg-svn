@@ -62,17 +62,17 @@ namespace btg
          using namespace btg::core::client;
 
          Handler::Handler(btg::core::LogWrapperType _logwrapper,
-                          btg::core::externalization::Externalization* _e,
-                          messageTransport*                       _transport,
-                          clientConfiguration*                    _config,
-                          btg::core::client::lastFiles*           _lastfiles,
+                          btg::core::externalization::Externalization& _e,
+                          messageTransport&                       _transport,
+                          clientConfiguration&                    _config,
+                          clientDynConfig&                        _dynconfig,
                           bool const _verboseFlag,
                           bool const _autoStartFlag)
             : handlerThreadIf(_logwrapper,
                               _e,
                               _transport,
                               _config,
-                              _lastfiles,
+                              _dynconfig,
                               _verboseFlag,
                               _autoStartFlag),
               lastSelected_files_()
@@ -87,7 +87,7 @@ namespace btg
          void Handler::onSetup(t_long const _session)
          {
             setSession(_session);
-            this->setupDone = true;
+            setupDone = true;
          }
 
          void Handler::onSetupError(std::string const& _message)
@@ -99,7 +99,7 @@ namespace btg
 
          void Handler::onAttach()
          {
-            this->attachDone = true;
+            attachDone = true;
          }
 
          void Handler::onAttachError(std::string const& _message)
@@ -123,14 +123,14 @@ namespace btg
          void Handler::onListError()
          {
             commandStatus = false;
-            this->cmd_failture++;
+            cmd_failture++;
          }
 
          void Handler::onError(std::string const& _errorDescription)
          {
             commandStatus = false;
 
-            this->cmd_failture++;
+            cmd_failture++;
 
             BTG_NOTICE(logWrapper(), 
                        "On error: " << _errorDescription);
@@ -176,7 +176,7 @@ namespace btg
          {
             commandStatus = true;
 
-            lastfiles->addLastFile(last_filename);
+            lastfiles.addLastFile(last_filename);
             last_filename.clear();
          }
 
@@ -212,7 +212,7 @@ namespace btg
          {
             commandStatus = false;
             statusSize_         = 0;
-            this->cmd_failture++;
+            cmd_failture++;
          }
 
          void Handler::onFileInfo(t_fileInfoList const& _fileinfolist)
@@ -236,7 +236,7 @@ namespace btg
          void Handler::onPeersError(std::string const& _errorDescription)
          {
             commandStatus = false;
-            this->cmd_failture++;
+            cmd_failture++;
          }
 
          void Handler::onListSessions(t_longList const& _sessions,
@@ -250,7 +250,7 @@ namespace btg
          void Handler::onSessionError()
          {
             commandStatus = false;
-            this->cmd_failture++;
+            cmd_failture++;
          }
 
          void Handler::onClean(t_strList const& _filenames, t_intList const& _contextIDs)
@@ -261,7 +261,7 @@ namespace btg
          void Handler::onListSessionsError(std::string const& _errorDescription)
          {
             commandStatus = false;
-            this->cmd_failture++;
+            cmd_failture++;
 
             // std::cout << _errorDescription << std::endl;
          }
@@ -295,7 +295,7 @@ namespace btg
          void Handler::onSetFilesError(std::string const& _errorDescription)
          {
             commandStatus = false;
-            this->cmd_failture++;
+            cmd_failture++;
          }
          
          void Handler::onSelectedFiles(btg::core::selectedFileEntryList const& _files)
@@ -307,7 +307,7 @@ namespace btg
          void Handler::onSelectedFilesError(std::string const& _errorDescription)
          {
             commandStatus = false;
-            this->cmd_failture++;
+            cmd_failture++;
          }
 
          void Handler::getLastSelectedFiles(btg::core::selectedFileEntryList & _selected_files) const
@@ -386,10 +386,10 @@ namespace btg
          /* */
 
          ncliStartupHelper::ncliStartupHelper(btg::core::LogWrapperType _logwrapper,
-                                              btg::core::client::clientConfiguration*        _config,
-                                              btg::core::client::commandLineArgumentHandler* _clah,
-                                              btg::core::messageTransport*                   _messageTransport,
-                                              btg::core::client::clientHandler*              _handler)
+                                              btg::core::client::clientConfiguration&        _config,
+                                              btg::core::client::commandLineArgumentHandler& _clah,
+                                              btg::core::messageTransport&                   _messageTransport,
+                                              btg::core::client::clientHandler&              _handler)
             : btg::core::client::startupHelper(_logwrapper,
                                                GPD->sCLI_CLIENT(),
                                                _config,

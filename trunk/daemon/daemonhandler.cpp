@@ -106,7 +106,7 @@ namespace btg
            sessiontimer_(dd_->ss_timeout),
 #endif // BTG_OPTION_SAVESESSIONS
            sendBuffer_(),
-           cf_(_logwrapper, _dd->externalization),
+           cf_(_logwrapper, *_dd->externalization),
 #if BTG_OPTION_URL
            urlmgr(_logwrapper, _verboseFlag, _dd->filetrack, &sessionlist_),
 #endif

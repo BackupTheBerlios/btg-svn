@@ -81,16 +81,14 @@ namespace btg
    namespace core
    {
       commandFactory::commandFactory(LogWrapperType _logwrapper,
-                                     btg::core::externalization::Externalization* _e)
+                                     btg::core::externalization::Externalization& _e)
          : Logable(_logwrapper),
            e(_e)
       {
-
       }
 
       commandFactory::~commandFactory()
       {
-         
       }
 
       Command* commandFactory::createFromBytes(decodeStatus & _status)
@@ -99,7 +97,7 @@ namespace btg
          _status    = commandFactory::DS_OK;
 
          t_int cmdid;
-         e->determineCommandType(cmdid);
+         e.determineCommandType(cmdid);
 
          // Create the command class
          switch (cmdid)
@@ -481,7 +479,7 @@ namespace btg
 
          if (c != 0)
             {
-               if (!c->deserialize(e))
+               if (!c->deserialize(&e))
                   {
                      BTG_ERROR_LOG(logWrapper(), "commandFactory, unable to deserialize " << 
                                    c->getName() << ".");
@@ -505,7 +503,7 @@ namespace btg
                return status;
             }
 
-         e->reset();
+         e.reset();
 
          switch (_command->getType())
             {
@@ -576,7 +574,7 @@ namespace btg
             case Command::CN_VERSION:
             case Command::CN_VERSIONRSP:
                {
-                  status = _command->serialize(e);
+                  status = _command->serialize(&e);
                   break;
                }
             default:
@@ -591,8 +589,8 @@ namespace btg
 
       void commandFactory::getBytes(btg::core::DIRECTION const _dir, dBuffer & _dbuffer)
       {
-         e->setDirection(_dir);
-         e->getBuffer(_dbuffer);
+         e.setDirection(_dir);
+         e.getBuffer(_dbuffer);
       }
 
    } // namespace core

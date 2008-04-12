@@ -37,6 +37,7 @@
 #include "mainwindow.h"
 #include "topwindow.h"
 #include "statuswindow.h"
+#include "progress.h"
 #include "keys.h"
 
 namespace btg
@@ -50,8 +51,6 @@ namespace btg
                 */
                /** @{ */
 
-               class progressWindow;
-
                /// Main UI class.
                class UI: private btg::core::Logable, private btg::core::client::createPartsReportInterface
                   {
@@ -63,7 +62,7 @@ namespace btg
                         bool _urlDlEnabled,
                         keyMapping const& _keymap,
                         Colors & _colors,
-                        btg::core::client::handlerThread* _handlerthread);
+                        btg::core::client::handlerThread& _handlerthread);
 
                      /// Initialize the UI.
                      bool init();
@@ -202,7 +201,7 @@ namespace btg
                      std::string    load_directory_;
 
                      /// Thread handling updates.
-                     btg::core::client::handlerThread* handlerthread_;
+                     btg::core::client::handlerThread& handlerthread_;
 
                      /// Set statusbar up to communicate that some action went ok.
                      void actionSuccess(std::string const& _action, 

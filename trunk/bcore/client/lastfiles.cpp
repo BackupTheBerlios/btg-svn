@@ -1,9 +1,6 @@
 #include "lastfiles.h"
 
-// #include <bcore/t_string.h>
-#include <bcore/util.h>
-
-#include <fstream>
+#include <bcore/logmacro.h>
 
 namespace btg
 {
@@ -15,11 +12,11 @@ namespace btg
          using namespace btg::core::logger;
 
          lastFiles::lastFiles(LogWrapperType _logwrapper,
-                              clientDynConfig & cc)
+                              clientDynConfig & _CDC)
             : Logable(_logwrapper),
-              m_cc(cc),
+              CDC_(_CDC),
               data_modified_(false),
-              lastFiles_(cc.lastFiles_)
+              lastFiles_(_CDC.lastFiles_)
          {
          }
 
@@ -76,10 +73,9 @@ namespace btg
          void lastFiles::set_modified(bool const bMod)
          {
             data_modified_ = bMod;
-            m_cc.set_modified(bMod);
+            CDC_.set_modified(bMod);
          }
 
       } // namespace client
    } // namespace core
 } // namespace btg
-

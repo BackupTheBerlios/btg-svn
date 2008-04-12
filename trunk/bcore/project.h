@@ -48,6 +48,14 @@ namespace btg
 {
    namespace core
       {
+         /// Allocates projectDefaults instance and kills it when destructing
+         class projectDefaultsKiller
+            {
+            public:
+               projectDefaultsKiller();
+               ~projectDefaultsKiller();
+            };
+      
          /// Singleton for keeping defaults for this project.
          class projectDefaults
             {

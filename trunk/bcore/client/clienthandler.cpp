@@ -45,16 +45,16 @@ namespace btg
          using namespace btg::core;
 
          clientHandler::clientHandler(LogWrapperType _logwrapper,
-                                      btg::core::externalization::Externalization* _e,
-                                      btg::core::client::clientCallback* _callback,
-                                      btg::core::messageTransport*       _transport,
-                                      btg::core::client::clientConfiguration*  _config,
-                                      btg::core::client::lastFiles*            _lastfiles,
+                                      btg::core::externalization::Externalization& _e,
+                                      btg::core::client::clientCallback& _callback,
+                                      btg::core::messageTransport&       _transport,
+                                      clientConfiguration&  _config,
+                                      clientDynConfig&      _dynconfig,
                                       bool const _verboseFlag,
                                       bool const _autoStartFlag)
             : Logable(_logwrapper),
               transport(_transport),
-              statemachine(_logwrapper, _e, transport, _callback, _verboseFlag),
+              statemachine(_logwrapper, _e, _transport, _callback, _verboseFlag),
               setupDone(false),
               attachDone(false),
               commandStatus(false),
@@ -77,7 +77,7 @@ namespace btg
               sessionNames(0),
               currentSessionName(),
               config(_config),
-              lastfiles(_lastfiles),
+              dynconfig(_dynconfig),
               setupFailtureMessage(),
               attachFailtureMessage(),
               fatalerror(false),
@@ -92,7 +92,9 @@ namespace btg
               last_sfile_id(FILES_INVALID_FILEID),
               last_sfile_status(FILES_UNDEF),
               options(),
-              last_file_id(FILES_INVALID_FILEID)
+              last_file_id(FILES_INVALID_FILEID),
+              lastfiles(_logwrapper, _dynconfig),
+              lasturls(_logwrapper, _dynconfig)
          {
          }
 
@@ -493,11 +495,6 @@ namespace btg
             return currentSessionName;
          }
 
-         btg::core::client::clientConfiguration* clientHandler::getConfig() const
-         {
-            return config;
-         }
-
          std::string clientHandler::getSetupFailtureMessage()
          {
             return setupFailtureMessage;
@@ -637,11 +634,9 @@ namespace btg
          {
             return last_file_id;
          }
-
+         
          clientHandler::~clientHandler()
          {
-            delete transport;
-            transport = 0;
          }
 
       } // namespace client

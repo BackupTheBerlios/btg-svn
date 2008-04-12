@@ -47,9 +47,9 @@
 #include "sessionselect.h"
 
 #define GET_HANDLER_INST                                                \
-   boost::shared_ptr<boost::mutex> ptr = handlerthread_->mutex();       \
+   boost::shared_ptr<boost::mutex> ptr = handlerthread_.mutex();       \
    boost::mutex::scoped_lock interface_lock(*ptr);                      \
-   Handler* handler = dynamic_cast<Handler*>(handlerthread_->handler());
+   Handler* handler = dynamic_cast<Handler*>(&handlerthread_.handler());
 
 namespace btg
 {
@@ -805,7 +805,7 @@ namespace btg
                   }
                }
             // Force updating of contexts.
-            handlerthread_->forceUpdate();
+            handlerthread_.forceUpdate();
          }
 
          bool UI::handleUrlProgress(t_uint _hid)
@@ -819,7 +819,7 @@ namespace btg
 
             bool cont = true;
 
-            Handler* handler = dynamic_cast<Handler*>(handlerthread_->handler());
+            Handler* handler = dynamic_cast<Handler*>(&handlerthread_.handler());
 
             while (cont)
                {
@@ -918,7 +918,7 @@ namespace btg
                   }
 
                   // Force updating of contexts.
-                  handlerthread_->forceUpdate();
+                  handlerthread_.forceUpdate();
                }
             else
                {
@@ -951,7 +951,7 @@ namespace btg
                   }
                }
             // Force updating of contexts.
-            handlerthread_->forceUpdate();
+            handlerthread_.forceUpdate();
          }
 
          void UI::handleGlobalLimit()
@@ -1255,7 +1255,7 @@ namespace btg
                   {
                      // Got mutex already - in the calling function,
                      // the menu handling.
-                     Handler* handler = dynamic_cast<Handler*>(handlerthread_->handler());
+                     Handler* handler = dynamic_cast<Handler*>(&handlerthread_.handler());
 
                      btg::core::selectedFileEntryList filesToSet;
                      fs.getFiles(filesToSet);

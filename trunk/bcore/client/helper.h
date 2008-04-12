@@ -55,8 +55,8 @@ namespace btg
                      /// @param [in] _clah       The client command line arguments.
                      Helper(LogWrapperType _logwrapper,
                             std::string const&          _clientName,
-                            clientConfiguration*        _config,
-                            HelperArgIf* _clah);
+                            clientConfiguration&        _config,
+                            HelperArgIf& _clah);
                      /// Get all the saved messages as one string.
                      virtual std::string getMessages();
                      /// Destructor.
@@ -68,9 +68,9 @@ namespace btg
                      /// The name of the client.
                      std::string                                  clientName;
                      /// The client configuration used.
-                     clientConfiguration*                         config;
+                     clientConfiguration&                         config;
                      /// The client command line arguments.
-                     HelperArgIf*                                 clah;
+                     HelperArgIf&                                 clah;
                      /// The session.
                      t_long                                       session;
                      /// A list of saved messages.
@@ -144,10 +144,10 @@ namespace btg
 
                      startupHelper(LogWrapperType _logwrapper,
                                    std::string const&          _clientName,
-                                   clientConfiguration*        _config,
-                                   HelperArgIf*                _clah,
-                                   messageTransport*           _messageTransport,
-                                   clientHandler*              _handler
+                                   clientConfiguration&        _config,
+                                   HelperArgIf&                _clah,
+                                   messageTransport&           _messageTransport,
+                                   clientHandler&              _handler
                                    );
 
                      /// Init this helper.
@@ -212,10 +212,10 @@ namespace btg
 
                   protected:
                      /// The message transport used.
-                     btg::core::messageTransport*                   mtrans;
+                     btg::core::messageTransport&                   mtrans;
 
                      /// The client handler used.
-                     btg::core::client::clientHandler*              handler;
+                     btg::core::client::clientHandler&              handler;
 
                      /// The username used for login.
                      std::string                                    username_;
@@ -243,8 +243,8 @@ namespace btg
                      /// @param [in] _clah       The client command line arguments.
                      transportHelper(LogWrapperType _logwrapper,
                                      std::string const&          _clientName,
-                                     clientConfiguration*        _config,
-                                     HelperArgIf*                _clah);
+                                     clientConfiguration&        _config,
+                                     HelperArgIf&                _clah);
 
                      /// Init the message transport used and the
                      //externalization use to encode/decode commands

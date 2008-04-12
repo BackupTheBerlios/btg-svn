@@ -228,7 +228,13 @@ int main(int argc, char* argv[])
 
       if ( pfname.size() > 0 )
       {
-         pidfile.create( pfname.c_str() );
+         if (!checkFile(logwrapper, "PID-file", pfname))
+            {
+               return BTG_ERROR_EXIT;
+            }
+         // passwd file should be absolute to be able to unlink it after current dir change
+         btg::core::os::fileOperation::resolvePath(pfname);
+         pidfile.create(pfname.c_str());
 
          if (pidfile.exists())
             {
@@ -280,7 +286,11 @@ int main(int argc, char* argv[])
       
       if (dd.ss_enable)
       {
-         dd.ss_file.open( ss_fname.c_str() );
+         if (!checkFile(logwrapper, "session file", ss_fname))
+            {
+               return BTG_ERROR_EXIT;
+            }
+         dd.ss_file.open(ss_fname.c_str());
          if (!dd.ss_file.is_open())
          {
             // file not exists (or something else but don't care for now)

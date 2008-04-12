@@ -41,7 +41,6 @@ namespace btg
 
          clientCallback::~clientCallback()
          {
-
          }
 
          /// Default empty implementations for optional callback.

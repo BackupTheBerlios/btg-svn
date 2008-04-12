@@ -52,8 +52,8 @@ namespace btg
       {
          Helper::Helper(LogWrapperType _logwrapper,
                         std::string const&          _clientName,
-                        clientConfiguration*        _config,
-                        HelperArgIf* _clah)
+                        clientConfiguration&        _config,
+                        HelperArgIf& _clah)
             : Logable(_logwrapper),
               clientName(_clientName),
               config(_config),
@@ -93,10 +93,10 @@ namespace btg
 
          startupHelper::startupHelper(LogWrapperType _logwrapper,
                                       std::string const&          _clientName,
-                                      clientConfiguration*        _config,
-                                      HelperArgIf*                _clah,
-                                      messageTransport*           _mtrans,
-                                      clientHandler*              _handler
+                                      clientConfiguration&        _config,
+                                      HelperArgIf&                _clah,
+                                      messageTransport&           _mtrans,
+                                      clientHandler&              _handler
                                       )
             : Helper(_logwrapper,
                      _clientName,
@@ -114,7 +114,7 @@ namespace btg
          {
             using namespace btg::core;
 
-            if (!mtrans->isInitialized())
+            if (!mtrans.isInitialized())
                {
                   addMessage("Message transport not initialized.");
                   return false;
@@ -135,7 +135,7 @@ namespace btg
 
                      result = or_log_success;
 
-                     switch(config->getLog())
+                     switch(config.getLog())
                         {
                         case logBuffer::STDOUT:
                            {
@@ -145,7 +145,7 @@ namespace btg
                            }
                         case logBuffer::LOGFILE:
                            {
-                              std::string logfilename = config->getLogFile();
+                              std::string logfilename = config.getLogFile();
                               btg::core::os::fileOperation::resolvePath(logfilename);
 
                               fileLogger* fl = new fileLogger(logfilename);
@@ -185,8 +185,8 @@ namespace btg
                   {
                      btg::core::Hash h;
                      h.set(passwordHash());
-                     handler->reqInit(user(), h);
-                     result = handler->transinitwaitError() ? startupHelper::or_init_failure : startupHelper::or_init_success;
+                     handler.reqInit(user(), h);
+                     result = handler.transinitwaitError() ? startupHelper::or_init_failure : startupHelper::or_init_success;
                      break;
                   }
                case startupHelper::op_auth:
@@ -213,17 +213,17 @@ namespace btg
                      // Attach to a certain session, either specified on the
                      // command line or chosen by the user from a list.
 
-                     t_long temp_session = clah->sessionId();
+                     t_long temp_session = clah.sessionId();
                      if (temp_session != Command::INVALID_SESSION)
                         {
                            std::string errorMessage;
-                           handler->reqSetupAttach(temp_session);
+                           handler.reqSetupAttach(temp_session);
 
-                           if (!handler->isAttachDone())
+                           if (!handler.isAttachDone())
                               {
                                  addMessage("Unable to attach to session.");
                                  addMessage("The daemon returned: " +
-                                            handler->getAttachFailtureMessage());
+                                            handler.getAttachFailtureMessage());
                                  result = startupHelper::or_attach_failture;
                                  break;
                               }
@@ -240,10 +240,10 @@ namespace btg
                      else
                         {
                            // Ask user which session he wants to attach to.
-                           handler->reqGetActiveSessions();
+                           handler.reqGetActiveSessions();
 
-                           t_longList sessions   = handler->getSessionList();
-                           t_strList sessionsIDs = handler->getSessionNames();
+                           t_longList sessions   = handler.getSessionList();
+                           t_strList sessionsIDs = handler.getSessionNames();
 
                            // Make sure that sessions are available.
                            if (sessions.size() <= 0)
@@ -254,8 +254,8 @@ namespace btg
                                  break;
                               }
 
-                           t_long temp_session =  this->queryUserAboutSession(sessions, 
-                                                                              sessionsIDs);
+                           t_long temp_session = queryUserAboutSession(sessions, 
+                                                                       sessionsIDs);
 
                            if (temp_session != Command::INVALID_SESSION)
                               {
@@ -263,13 +263,13 @@ namespace btg
 
                                  std::string errorMessage;
 
-                                 handler->reqSetupAttach(temp_session);
+                                 handler.reqSetupAttach(temp_session);
 
-                                 if (!handler->isAttachDone())
+                                 if (!handler.isAttachDone())
                                     {
                                        addMessage("Unable to attach to session.");
                                        addMessage("The daemon returned: " +
-                                                  handler->getAttachFailtureMessage());
+                                                  handler.getAttachFailtureMessage());
 
                                        result = startupHelper::or_attach_failture;
                                        break;
@@ -297,17 +297,17 @@ namespace btg
                   {
                      // Attach to the first available session.
 
-                     handler->reqGetActiveSessions();
+                     handler.reqGetActiveSessions();
 
-                     t_longList sessions = handler->getSessionList();
+                     t_longList sessions = handler.getSessionList();
                      t_longListCI vlci   = sessions.begin();
 
                      if (vlci != sessions.end())
                         {
                            // Got user input, attach to session.
-                           handler->reqSetupAttach(*vlci);
+                           handler.reqSetupAttach(*vlci);
 
-                           if (!handler->isAttachDone())
+                           if (!handler.isAttachDone())
                               {
                                  addMessage("Unable to attach to session.");
 
@@ -331,10 +331,10 @@ namespace btg
                   }
                case startupHelper::op_list:
                   {
-                     handler->reqGetActiveSessions();
+                     handler.reqGetActiveSessions();
 
-                     t_longList sessions   = handler->getSessionList();
-                     t_strList sessionsIDs = handler->getSessionNames();
+                     t_longList sessions   = handler.getSessionList();
+                     t_strList sessionsIDs = handler.getSessionNames();
 
                      if (sessions.size() > 0)
                         {
@@ -353,35 +353,35 @@ namespace btg
                      // If DHT was enabled/disabled using a command
                      // line argument, use that instead of the value
                      // from the config file.
-                     bool useDHT = config->getUseDHT();
-                     if (clah->useDHTSet())
+                     bool useDHT = config.getUseDHT();
+                     if (clah.useDHTSet())
                         {
-                           if (clah->useDHT() != useDHT)
+                           if (clah.useDHT() != useDHT)
                               {
-                                 useDHT = clah->useDHT();
+                                 useDHT = clah.useDHT();
                               }
                         }
 
                      // If encryption was enabled/disabled using a
                      // command line argument, use that instead of the
                      // value from the config file.
-                     bool useEncryption = config->getUseEncryption();
-                     if (clah->useEncryptionSet())
+                     bool useEncryption = config.getUseEncryption();
+                     if (clah.useEncryptionSet())
                         {
-                           if (clah->useEncryption() != useEncryption)
+                           if (clah.useEncryption() != useEncryption)
                               {
-                                 useEncryption = clah->useEncryption();
+                                 useEncryption = clah.useEncryption();
                               }
                         }
 
-                     handler->reqSetup(clientHandler::NO_SEEDLIMIT, 
+                     handler.reqSetup(clientHandler::NO_SEEDLIMIT, 
                                        clientHandler::NO_SEEDTIMEOUT, 
                                        useDHT,
                                        useEncryption);
 
-                     if (!handler->isSetupDone())
+                     if (!handler.isSetupDone())
                         {
-                           addMessage(handler->getSetupFailtureMessage());
+                           addMessage(handler.getSetupFailtureMessage());
                            addMessage("Could not establish a session.");
                            result = startupHelper::or_setup_failture;
                            break;
@@ -440,8 +440,8 @@ namespace btg
 
          transportHelper::transportHelper(LogWrapperType _logwrapper,
                                           std::string const&   _clientName,
-                                          clientConfiguration* _config,
-                                          HelperArgIf*         _clah)
+                                          clientConfiguration& _config,
+                                          HelperArgIf&         _clah)
             : Helper(_logwrapper,
                      _clientName,
                      _config,
@@ -456,7 +456,7 @@ namespace btg
          {
             std::string errorString;
 
-            _ca_cert = config->getCACert();
+            _ca_cert = config.getCACert();
             btg::core::os::fileOperation::resolvePath(_ca_cert);
 
             if (!btg::core::os::fileOperation::check(_ca_cert, errorString, false))
@@ -466,7 +466,7 @@ namespace btg
                }
 
 
-            _cert = config->getCert();
+            _cert = config.getCert();
             btg::core::os::fileOperation::resolvePath(_cert);
 
             if (!btg::core::os::fileOperation::check(_cert, errorString, false))
@@ -475,7 +475,7 @@ namespace btg
                   return false;
                }
 
-            _privkey = config->getPrivKey();
+            _privkey = config.getPrivKey();
             btg::core::os::fileOperation::resolvePath(_privkey);
 
             if (!btg::core::os::fileOperation::check(_privkey, errorString, false))
@@ -492,15 +492,15 @@ namespace btg
          {
             bool status = false;
 
-            switch(config->getTransport())
+            switch(config.getTransport())
                {
                case messageTransport::TCP:
                   {
-                     btg::core::addressPort ap = config->getDaemonAddressPort();
+                     btg::core::addressPort ap = config.getDaemonAddressPort();
 
-                     if (clah->daemonSet())
+                     if (clah.daemonSet())
                         {
-                           ap = clah->getDaemon();
+                           ap = clah.getDaemon();
                         }
 
                      _e = new btg::core::externalization::XMLRPC(logWrapper());
@@ -524,11 +524,11 @@ namespace btg
                   }
                case messageTransport::STCP:
                   {
-                     btg::core::addressPort ap = config->getDaemonAddressPort();
+                     btg::core::addressPort ap = config.getDaemonAddressPort();
 
-                     if (clah->daemonSet())
+                     if (clah.daemonSet())
                         {
-                           ap = clah->getDaemon();
+                           ap = clah.getDaemon();
                         }
 
                      std::string errorString;
@@ -564,11 +564,11 @@ namespace btg
                   }
                case messageTransport::XMLRPC:
                   {
-                     btg::core::addressPort ap = config->getDaemonAddressPort();
+                     btg::core::addressPort ap = config.getDaemonAddressPort();
 
-                     if (clah->daemonSet())
+                     if (clah.daemonSet())
                         {
-                           ap = clah->getDaemon();
+                           ap = clah.getDaemon();
                         }
 
                      _e = new btg::core::externalization::XMLRPC(logWrapper());
@@ -592,11 +592,11 @@ namespace btg
                   }
                case messageTransport::SXMLRPC:
                   {
-                     btg::core::addressPort ap = config->getDaemonAddressPort();
+                     btg::core::addressPort ap = config.getDaemonAddressPort();
 
-                     if (clah->daemonSet())
+                     if (clah.daemonSet())
                         {
-                           ap = clah->getDaemon();
+                           ap = clah.getDaemon();
                         }
 
                      std::string ca_cert;
@@ -641,7 +641,6 @@ namespace btg
 
          transportHelper::~transportHelper()
          {
-            // The contained pointers are deleted elsewhere.
          }
 
       } // namespace client

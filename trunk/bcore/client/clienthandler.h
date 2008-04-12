@@ -33,7 +33,9 @@
 #include "clientcallback.h"
 #include "statemachine.h"
 #include "configuration.h"
+#include "clientdynconfig.h"
 #include "lastfiles.h"
+#include "lasturls.h"
 
 #include <bcore/logable.h>
 #include <bcore/copts.h>
@@ -79,11 +81,11 @@ namespace btg
             /// @param [in] _verboseFlag Instructs this class to do verbose logging.
             /// @param [in] _autoStartFlag Indicates that the handler should start torrents automatically after loading them.
             clientHandler(LogWrapperType _logwrapper,
-                          btg::core::externalization::Externalization* _e,
-                          btg::core::client::clientCallback* _callback,
-                          btg::core::messageTransport*       _transport,
-                          btg::core::client::clientConfiguration*  _config,
-                          btg::core::client::lastFiles*            _lastfiles,
+                          btg::core::externalization::Externalization& _e,
+                          btg::core::client::clientCallback& _callback,
+                          btg::core::messageTransport&       _transport,
+                          clientConfiguration&  _config,
+                          clientDynConfig&      _dynconfig,
                           bool const _verboseFlag,
                           bool const _autoStartFlag);
 
@@ -261,10 +263,6 @@ namespace btg
             /// Get the name of the current session.
             std::string getCurrentSessionName() const;
 
-            /// Get a pointer to the contained client
-            /// configuration object.
-            virtual btg::core::client::clientConfiguration* getConfig() const;
-
             /// If setup fails, this function will return a
             /// textual description of why it failed.
             virtual std::string getSetupFailtureMessage();
@@ -334,8 +332,7 @@ namespace btg
 
             void setFileId(t_uint const _id);
             t_uint getFileId() const;
-
-            /// Destructor.
+            
             virtual ~clientHandler();
 
          protected:
@@ -345,7 +342,7 @@ namespace btg
             };
 
             /// The transport used to communicate with the daemon.
-            btg::core::messageTransport*      transport;
+            btg::core::messageTransport&      transport;
 
             /// The state machine used by this client.
             btg::core::client::stateMachine   statemachine;
@@ -419,10 +416,10 @@ namespace btg
             std::string                       currentSessionName;
 
             /// Pointer to the object holding the client configuration.
-            btg::core::client::clientConfiguration* config;
+            btg::core::client::clientConfiguration& config;
 
-            /// List of last accessed files.
-            btg::core::client::lastFiles*     lastfiles;
+            /// Pointer to the object holding the dynamic client configuration.
+            btg::core::client::clientDynConfig&  dynconfig;
 
             /// If setup fails, this member will contain a
             /// textual description of why it failed.
@@ -472,6 +469,12 @@ namespace btg
             btg::core::OptionBase             options;
 
             t_uint                            last_file_id;
+            
+            /// last opened files history
+            lastFiles                         lastfiles;
+            
+            /// last opened urls history
+            lastURLs                          lasturls;
 
          private:
             /// Copy constructor.

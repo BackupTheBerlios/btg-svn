@@ -17,7 +17,6 @@ then
 	libtoolize -c -f &&
 	automake19 --add-missing --copy --gnu &&
 	autoconf259 &&
-	autoheader259 &&
 	rm -f config.cache
 else 
 	echo "Running autoheader."
@@ -30,8 +29,6 @@ else
 	automake --add-missing --copy --gnu
 	echo "Running autoconf."
 	autoconf
-	echo "Running autoheader."
-	autoheader
 fi
 	
 echo "Done"

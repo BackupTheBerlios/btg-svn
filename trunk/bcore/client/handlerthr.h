@@ -57,7 +57,7 @@ namespace btg
                      /// Constructor.
                      handlerThread(LogWrapperType _logwrapper,
                                    bool const _verboseFlag,
-                                   handlerThreadIf* _handler);
+                                   handlerThreadIf& _handler);
 
                      /// Get the mutex used by this thread, so that
                      /// other threads which wish to access the
@@ -65,7 +65,7 @@ namespace btg
                      boost::shared_ptr<boost::mutex> mutex();
 
                      /// Get a reference to the contained handler.
-                     handlerThreadIf* handler() const;
+                     handlerThreadIf& handler() const;
 
                      /// Force an update of all contexts.
                      /// \note Resets the timer.
@@ -85,7 +85,7 @@ namespace btg
                      bool                   die_;
 
                      /// Pointer to the handler.
-                     handlerThreadIf*       handler_;
+                     handlerThreadIf&       handler_;
 
                      /// Timer used to detect when to do updates.
                      btg::core::os::Timer   timer_;
@@ -106,10 +106,10 @@ namespace btg
                   public:
                      /// Constructor.
                      handlerThreadIf(LogWrapperType _logwrapper,
-                                     btg::core::externalization::Externalization* _e,
-                                     btg::core::messageTransport*            _transport,
-                                     btg::core::client::clientConfiguration* _config,
-                                     btg::core::client::lastFiles*           _lastfiles,
+                                     btg::core::externalization::Externalization& _e,
+                                     btg::core::messageTransport&            _transport,
+                                     btg::core::client::clientConfiguration& _config,
+                                     btg::core::client::clientDynConfig&     _dynconfig,
                                      bool const _verboseFlag,
                                      bool const _autoStartFlag);
 

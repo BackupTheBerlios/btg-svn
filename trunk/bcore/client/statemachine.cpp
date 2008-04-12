@@ -104,9 +104,9 @@ namespace btg
          using namespace btg::core;
 
          stateMachine::stateMachine(LogWrapperType _logwrapper,
-                                    btg::core::externalization::Externalization* _e,
-                                    messageTransport *_transport,
-                                    clientCallback *_clientcallback,
+                                    btg::core::externalization::Externalization& _e,
+                                    messageTransport& _transport,
+                                    clientCallback& _clientcallback,
                                     bool const _verboseFlag)
             : Logable(_logwrapper),
               externalization_(_e),
@@ -291,7 +291,7 @@ namespace btg
             dBuffer dbuffer;
             cf.getBytes(TO_SERVER, dbuffer);
 
-            if (transport->write(dbuffer) == messageTransport::OPERATION_FAILED)
+            if (transport.write(dbuffer) == messageTransport::OPERATION_FAILED)
                {
                   return false;
                }
@@ -318,7 +318,7 @@ namespace btg
                    ((_waitforever) && (!read_status))
                    )
                {
-                  t_int count = transport->read(dbuffer);
+                  t_int count = transport.read(dbuffer);
                   if (count == messageTransport::OPERATION_FAILED)
                      {
                         read_status = false;
@@ -340,7 +340,7 @@ namespace btg
                   return status;
                }
 
-            if (externalization_->setBuffer(dbuffer))
+            if (externalization_.setBuffer(dbuffer))
                {
                   commandFactory::decodeStatus dstatus;
                   c = cf.createFromBytes(dstatus);
@@ -1288,52 +1288,52 @@ namespace btg
                {
                case Command::CN_CCREATEWITHDATA:
                   {
-                     clientcallback->onCreateWithData();
+                     clientcallback.onCreateWithData();
                      break;
                   }
                case Command::CN_CSTART:
                   {
-                     clientcallback->onStart();
+                     clientcallback.onStart();
                      break;
                   }
                case Command::CN_CSTOP:
                   {
-                     clientcallback->onStop();
+                     clientcallback.onStop();
                      break;
                   }
                case Command::CN_CABORT:
                   {
-                     clientcallback->onAbort();
+                     clientcallback.onAbort();
                      break;
                   }
                case Command::CN_CLIMIT:
                   {
-                     clientcallback->onLimit();
+                     clientcallback.onLimit();
                      break;
                   }
                case Command::CN_GLIMIT:
                   {
-                     clientcallback->onGlobalLimit();
+                     clientcallback.onGlobalLimit();
                      break;
                   }
                case Command::CN_CSETFILES:
                   {
-                     clientcallback->onSetFiles();
+                     clientcallback.onSetFiles();
                      break;
                   }
                case Command::CN_CMOVE:
                   {
-                     clientcallback->onMove();
+                     clientcallback.onMove();
                      break;
                   }
                case Command::CN_SSETNAME:
                   {
-                     clientcallback->onSetSessionName();
+                     clientcallback.onSetSessionName();
                      break;
                   }
                case Command::CN_CCREATEFROMFILEPART:
                   {
-                     clientcallback->OnCreateFromFilePart();
+                     clientcallback.OnCreateFromFilePart();
                      break;
                   }
                default:
@@ -1473,81 +1473,81 @@ namespace btg
                            // Listing failed.
                         case Command::CN_GLIST:
                            {
-                              clientcallback->onListError();
+                              clientcallback.onListError();
                               break;
                            }
                            // Status or status for all context failed.
                         case Command::CN_CSTATUS:
                            {
-                              clientcallback->onStatusError(errmessage);
+                              clientcallback.onStatusError(errmessage);
                               break;
                            }
                            // File infor request failed.
                         case Command::CN_CFILEINFO:
                            {
-                              clientcallback->onFileInfoError(errmessage);
+                              clientcallback.onFileInfoError(errmessage);
                               break;
                            }
                            // Peer request failed.
                         case Command::CN_CPEERS:
                            {
-                              clientcallback->onPeersError(errmessage);
+                              clientcallback.onPeersError(errmessage);
                               break;
                            }
                         case Command::CN_CLIMITSTATUS:
                            {
-                              clientcallback->onLimitStatusError(errmessage);
+                              clientcallback.onLimitStatusError(errmessage);
                               break;
                            }
                         case Command::CN_CSETFILES:
                            {
-                              clientcallback->onSetFilesError(errmessage);
+                              clientcallback.onSetFilesError(errmessage);
                               break;
                            }
                         case Command::CN_CGETFILES:
                            {
-                              clientcallback->onSelectedFilesError(errmessage);
+                              clientcallback.onSelectedFilesError(errmessage);
                               break;
                            }
                         case Command::CN_GLIMIT:
                            {
-                              clientcallback->onGlobalLimitError(errmessage);
+                              clientcallback.onGlobalLimitError(errmessage);
                               break;
                            }
                         case Command::CN_GLIMITSTAT:
                            {
-                              clientcallback->onGlobalLimitResponseError(errmessage);
+                              clientcallback.onGlobalLimitResponseError(errmessage);
                               break;
                            }
                         case Command::CN_CCREATEFROMURL:
                            {
-                              clientcallback->onCreateFromUrlError(errmessage);
+                              clientcallback.onCreateFromUrlError(errmessage);
                               break;
                            }
                         case Command::CN_CCREATEFROMFILE:
                            {
-                              clientcallback->onCreateFromFileError(errmessage);
+                              clientcallback.onCreateFromFileError(errmessage);
                               break;
                            }
                         case Command::CN_CCREATEFROMFILEPART:
                            {
-                              clientcallback->OnCreateFromFilePartError(errmessage);
+                              clientcallback.OnCreateFromFilePartError(errmessage);
                               break;
                            }
                         case Command::CN_CURLSTATUS:
                            {
-                              clientcallback->onUrlStatusError(errmessage);
+                              clientcallback.onUrlStatusError(errmessage);
                               break;
                            }
                         case Command::CN_CCRFILESTATUS:
                            {
-                              clientcallback->onFileStatusError(errmessage);
+                              clientcallback.onFileStatusError(errmessage);
                               break;
                            }
                            // General error callback to fallback on.
                         default:
                            {
-                              clientcallback->onError(errmessage);
+                              clientcallback.onError(errmessage);
                               break;
                            }
                         } // switch
@@ -1555,7 +1555,7 @@ namespace btg
                   }
                case Command::CN_SERROR:
                   {
-                     clientcallback->onSessionError();
+                     clientcallback.onSessionError();
                      break;
                   }
                default:
@@ -1670,7 +1670,7 @@ namespace btg
             if (counter_transinit >= counter_transinit_max)
                {
                   // Nothing to be done. This machine is quite dead.
-                  clientcallback->onSetupError("No reply.");
+                  clientcallback.onSetupError("No reply.");
                   changeState(SM_ERROR);
                   _status = true;
                   return;
@@ -1689,7 +1689,7 @@ namespace btg
                                  // Reset the counter.
                                  counter_transinit = 0;
                                  // Call the setup callback.
-                                 clientcallback->onTransportInit();
+                                 clientcallback.onTransportInit();
                                  // Change state, ready to accept commands.
                                  changeState(SM_TRANSPORT_READY);
                                  _status = true;
@@ -1701,7 +1701,7 @@ namespace btg
                         {
                            if (dynamic_cast<errorCommand*>(c)->getErrorCommand() == Command::CN_GINITCONNECTION)
                               {
-                                 clientcallback->onTransinitwaitError(
+                                 clientcallback.onTransinitwaitError(
                                                               dynamic_cast<errorCommand*>(c)->getMessage()
                                                               );
 #if BTG_STATEMACHINE_DEBUG
@@ -1753,7 +1753,7 @@ namespace btg
             if (counter_setup >= counter_setup_max)
                {
                   // Nothing to be done. This machine is quite dead.
-                  clientcallback->onSetupError("No reply.");
+                  clientcallback.onSetupError("No reply.");
                   changeState(SM_ERROR);
                   _status = true;
                   return;
@@ -1768,7 +1768,7 @@ namespace btg
                            // Reset the counter.
                            counter_setup = 0;
                            // Call the setup callback.
-                           clientcallback->onSetup(dynamic_cast<setupResponseCommand*>(c)->getSession());
+                           clientcallback.onSetup(dynamic_cast<setupResponseCommand*>(c)->getSession());
                            // Change state, ready to accept commands.
                            changeState(SM_COMMAND);
                            _status = true;
@@ -1776,7 +1776,7 @@ namespace btg
                         }
                      case Command::CN_ERROR:
                         {
-                           clientcallback->onSetupError(
+                           clientcallback.onSetupError(
                                                         dynamic_cast<errorCommand*>(c)->getMessage()
                                                         );
 #if BTG_STATEMACHINE_DEBUG
@@ -1927,7 +1927,7 @@ namespace btg
                         // Not the expected result.
                         if (c->getType() == Command::CN_ERROR)
                            {
-                              clientcallback->onError(dynamic_cast<errorCommand*>(c)->getMessage());
+                              clientcallback.onError(dynamic_cast<errorCommand*>(c)->getMessage());
                               changeState(SM_COMMAND);
                               delete c;
                            }
@@ -1945,7 +1945,7 @@ namespace btg
 
          void stateMachine::step_SM_ERROR(bool & _status)
          {
-            clientcallback->onFatalError("Fatal error. (Waited for an ack. Never got it. | Inappropriate state.)");
+            clientcallback.onFatalError("Fatal error. (Waited for an ack. Never got it. | Inappropriate state.)");
             _status = true;
          }
 
@@ -1969,7 +1969,7 @@ namespace btg
             if (counter_session_list >= counter_session_list_max)
                {
                   // Nothing to be done. This machine is quite dead.
-                  clientcallback->onSetupError("No reply.");
+                  clientcallback.onSetupError("No reply.");
                   changeState(SM_ERROR);
                   _status = true;
                   return;
@@ -1991,7 +1991,7 @@ namespace btg
                         btg_assert(sessions.size() == sessionIds.size(), 
                                    logWrapper(),
                                    "Session list and Id list must have same size.");
-                        clientcallback->onListSessions(sessions, sessionIds);
+                        clientcallback.onListSessions(sessions, sessionIds);
 
                         // Change state, ready to accept commands.
                         changeState(SM_TRANSPORT_READY);
@@ -2000,7 +2000,7 @@ namespace btg
                   else if ((c->getType() == Command::CN_ERROR))
                      {
                         // Call the error callback.
-                        clientcallback->onListSessionsError(dynamic_cast<errorCommand*>(c)->getMessage());
+                        clientcallback.onListSessionsError(dynamic_cast<errorCommand*>(c)->getMessage());
                         changeState(SM_TRANSPORT_READY);
                         _status = true;
                      }
@@ -2046,7 +2046,7 @@ namespace btg
                         // Reset the counter.
                         counter_attach = 0;
                         // Call the setup callback.
-                        clientcallback->onAttach();
+                        clientcallback.onAttach();
                         // Change state, ready to accept commands.
                         changeState(SM_COMMAND);
                         _status = true;
@@ -2056,7 +2056,7 @@ namespace btg
                         // Reset the counter.
                         counter_attach = 0;
                         // Call the setup callback.
-                        clientcallback->onAttachError(dynamic_cast<errorCommand*>(c)->getMessage());
+                        clientcallback.onAttachError(dynamic_cast<errorCommand*>(c)->getMessage());
                         // Change state, ready to accept commands.
                         changeState(SM_ERROR);
                         _status = true;
@@ -2089,7 +2089,7 @@ namespace btg
                   delete c;
                }
             changeState(SM_FINISHED);
-            clientcallback->onDetach();
+            clientcallback.onDetach();
             _status = true;
          }
 
@@ -2144,7 +2144,7 @@ namespace btg
                   // command state.
                   if (c->getType() == Command::CN_ERROR)
                      {
-                        clientcallback->onKillError(dynamic_cast<errorCommand*>(c)->getMessage());
+                        clientcallback.onKillError(dynamic_cast<errorCommand*>(c)->getMessage());
                         changeState(SM_COMMAND);
                         _status = true;
                         delete c;
@@ -2157,7 +2157,7 @@ namespace btg
                   delete c;
                }
 
-            clientcallback->onKill();
+            clientcallback.onKill();
 
             changeState(SM_FINISHED);
             _status = false;
@@ -2165,7 +2165,7 @@ namespace btg
 
          void stateMachine::step_SM_FINISHED(bool & _status)
          {
-            clientcallback->onQuit();
+            clientcallback.onQuit();
             _status = true;
          }
 

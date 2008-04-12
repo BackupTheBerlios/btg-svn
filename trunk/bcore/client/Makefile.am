@@ -1,7 +1,9 @@
 pkglib_LTLIBRARIES = libbtgclient.la
 
 libbtgclient_la_SOURCES = carg.cpp \
-configuration.cpp lastfiles.cpp\
+configuration.cpp \
+lastfiles.cpp \
+lasturls.cpp \
 statemachine_cb.cpp \
 statemachine.cpp \
 clienthandler.cpp \
@@ -15,7 +17,9 @@ ratio.cpp \
 urlhelper.cpp filephelper.cpp
 
 noinst_HEADERS = carg.h \
-configuration.h lastfiles.h \
+configuration.h \
+lastfiles.h \
+lasturls.h \
 statemachine.h \
 clienthandler.h \
 clientcallback.h \

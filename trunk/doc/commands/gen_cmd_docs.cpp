@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
 
    btg::core::externalization::Externalization* e = new externalizationPrinter(logwrapper);
 
-   btg::core::commandFactory cf(logwrapper, e);
+   btg::core::commandFactory cf(logwrapper, *e);
 
    // Create a number of commands and serialize/print them.
 

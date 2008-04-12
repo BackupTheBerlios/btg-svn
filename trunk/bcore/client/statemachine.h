@@ -60,9 +60,9 @@ namespace btg
             /// @param [in] _clientcallback Pointer to an instance which are used for callbacks.
             /// @param [in] _verboseFlag    Instructs the statemachine to do verbose logging.
             stateMachine(LogWrapperType _logwrapper,
-                         btg::core::externalization::Externalization* _e,
-                         btg::core::messageTransport *_transport,
-                         clientCallback *_clientcallback,
+                         btg::core::externalization::Externalization& _e,
+                         btg::core::messageTransport& _transport,
+                         clientCallback& _clientcallback,
                          bool const _verboseFlag);
 
             /// Make the machine work: change states, call callbacks.
@@ -175,7 +175,7 @@ namespace btg
          private:
 
             /// Pointer to the externalization which is used.
-            btg::core::externalization::Externalization* externalization_;
+            btg::core::externalization::Externalization& externalization_;
 
             /// The command factory used by this class.
             btg::core::commandFactory cf;
@@ -235,7 +235,7 @@ namespace btg
             /// Maximum value of the session list message counter.
             t_int const                           counter_session_list_max;
             /// The message que used to communicate with the daemon.
-            btg::core::messageTransport*        transport;
+            btg::core::messageTransport&        transport;
             /// Do* functions add commands to this vector.
             t_commandPointerList                commands;
             // std::vector<btg::core::Command*> commands;
@@ -248,7 +248,7 @@ namespace btg
             /// The type of command the expected Ack is for.
             btg::core::Command::commandType     ackForCommand;
             /// Pointer to the instance of the client callback class.
-            clientCallback*                     clientcallback;
+            clientCallback&                     clientcallback;
 
             /// Used to keep the number of calls to read.
             t_int                                 read_counter;

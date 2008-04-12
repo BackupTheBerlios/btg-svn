@@ -40,9 +40,9 @@
 #include <bcore/hrr.h>
 
 #define GET_HANDLER_INST \
-   boost::shared_ptr<boost::mutex> ptr = handlerthread_->mutex(); \
+   boost::shared_ptr<boost::mutex> ptr = handlerthread_.mutex(); \
    boost::mutex::scoped_lock interface_lock(*ptr); \
-   Handler* handler = dynamic_cast<Handler*>(handlerthread_->handler());
+   Handler* handler = dynamic_cast<Handler*>(&handlerthread_.handler());
 
 namespace btg
 {
@@ -59,7 +59,7 @@ namespace btg
                 bool _urlDlEnabled,
                 keyMapping const& _keymap,
                 Colors & _colors,
-                btg::core::client::handlerThread* _handlerthread)
+                btg::core::client::handlerThread& _handlerthread)
             : btg::core::Logable(_logwrapper),
               btg::core::client::createPartsReportInterface(),
               progress_(0),
@@ -78,7 +78,6 @@ namespace btg
               load_directory_(),
               handlerthread_(_handlerthread)
          {
-
          }
 
          bool UI::init()

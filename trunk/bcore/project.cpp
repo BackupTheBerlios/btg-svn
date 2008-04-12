@@ -31,6 +31,15 @@ namespace btg
 {
    namespace core
    {
+      projectDefaultsKiller::projectDefaultsKiller()
+      {
+         projectDefaults::getInstance();
+      }
+      
+      projectDefaultsKiller::~projectDefaultsKiller()
+      {
+         projectDefaults::killInstance();
+      }
 
       projectDefaults* projectDefaults::instance = 0;
 
@@ -46,11 +55,8 @@ namespace btg
 
       void projectDefaults::killInstance()
       {
-         if (projectDefaults::instance)
-            {
-               delete projectDefaults::instance;
-               projectDefaults::instance = 0;
-            }
+         delete projectDefaults::instance;
+         projectDefaults::instance = 0;
       }
 
       projectDefaults::projectDefaults()

@@ -68,18 +68,18 @@ namespace btg
          using namespace btg::core::client;
 
          cliHandler::cliHandler(btg::core::LogWrapperType _logwrapper,
-                                btg::core::externalization::Externalization* _e,
-                                messageTransport* _transport,
-                                clientConfiguration* _config,
-                                btg::core::client::lastFiles* _lastfiles,
+                                btg::core::externalization::Externalization& _e,
+                                messageTransport& _transport,
+                                clientConfiguration& _config,
+                                clientDynConfig& _dynconfig,
                                 bool const _verboseFlag,
                                 bool const _autoStartFlag)
             : clientHandler(_logwrapper,
                             _e,
-                            this,
+                            *this,
                             _transport,
                             _config,
-                            _lastfiles,
+                            _dynconfig,
                             _verboseFlag,
                             _autoStartFlag),
               isOutputAvailable(false),
@@ -284,7 +284,7 @@ namespace btg
 
          cliHandler::cliResponse cliHandler::handleInput(std::string const& _input, bool const _useSavedId)
          {
-            this->clearOutput();
+            clearOutput();
 
             // Recognize the commands from a user:
             cliResponse result = cliHandler::UNDEFINED_RESPONSE;
@@ -292,7 +292,7 @@ namespace btg
             CLICommand::ID id;
             if (!_useSavedId)
                {
-                  id = this->findCommand(_input);
+                  id = findCommand(_input);
                }
             else
                {
@@ -311,7 +311,7 @@ namespace btg
                      if (_useSavedId)
                         {
                            result = INPUT_LOCAL;
-                           this->reqQuit();
+                           reqQuit();
                         }
                      else
                         {
@@ -323,7 +323,7 @@ namespace btg
                case CLICommand::cmd_detach:
                   {
                      result = INPUT_LOCAL;
-                     this->reqDetach();
+                     reqDetach();
                      break;
                   }
                case CLICommand::cmd_kill:
@@ -331,7 +331,7 @@ namespace btg
                      if (_useSavedId)
                         {
                            result = INPUT_LOCAL;
-                           this->reqKill();
+                           reqKill();
                         }
                      else
                         {
@@ -343,24 +343,24 @@ namespace btg
                case CLICommand::cmd_glimit:
                   {
                      // Set global limit.
-                     this->handleGlobalLimit(_input, result);
+                     handleGlobalLimit(_input, result);
                      break;
                   }
                case CLICommand::cmd_glimitstatus:
                   {
-                     this->handleGlobalLimitStatus(result);
+                     handleGlobalLimitStatus(result);
                      break;
                   }
                case CLICommand::cmd_uptime:
                   {
                      result = INPUT_OK;
-                     this->reqUptime();
+                     reqUptime();
                      break;
                   }
                case CLICommand::cmd_sname:
                   {
                      result = INPUT_OK;
-                     this->reqSessionName();
+                     reqSessionName();
                      break;
                   }
                case CLICommand::cmd_ssname:
@@ -386,7 +386,7 @@ namespace btg
                                  counter++;
                               }
 
-                           this->reqSetSessionName(sname);
+                           reqSetSessionName(sname);
                         }
                      else
                         {
@@ -405,7 +405,7 @@ namespace btg
                case CLICommand::cmd_list:
                   {
                      result = INPUT_OK;
-                     this->reqList();
+                     reqList();
                      break;
                   }
                case CLICommand::cmd_url:
@@ -439,7 +439,7 @@ namespace btg
                         {
                            if (parts.at(1) == "last")
                               {
-                                 t_strList filelist = lastfiles->getLastFiles();
+                                 t_strList filelist = lastfiles.getLastFiles();
                                  for (t_strListCI iter = filelist.begin();
                                       iter != filelist.end();
                                       iter++)
@@ -462,7 +462,7 @@ namespace btg
                case CLICommand::cmd_last:
                   {
                      result = INPUT_LOCAL;
-                     t_strList filelist = lastfiles->getLastFiles();
+                     t_strList filelist = lastfiles.getLastFiles();
                      if (filelist.size() > 0)
                         {
                            std::string temp_output;
@@ -499,21 +499,21 @@ namespace btg
                      if (context_id != cliHandler::WRONG_CONTEXT_ID)
                         {
                            // Save the current ID.
-                           this->setCurrentID(context_id);
+                           setCurrentID(context_id);
                         }
 
                      switch (context_id)
                         {
                         case cliHandler::WRONG_CONTEXT_ID:
                            {
-                              this->setCurrentID(cliHandler::WRONG_CONTEXT_ID);
+                              setCurrentID(cliHandler::WRONG_CONTEXT_ID);
                               setError("Wrong context id.");
                               result = INPUT_ERROR;
                               break;
                            }
                         case cliHandler::WRONG_PARAMETER_COUNT:
                            {
-                              this->setCurrentID(cliHandler::WRONG_CONTEXT_ID);
+                              setCurrentID(cliHandler::WRONG_CONTEXT_ID);
                               setError("Missing parameter(s).");
                               result = INPUT_ERROR;
                               break;
@@ -524,47 +524,47 @@ namespace btg
                                  {
                                  case CLICommand::cmd_start:
                                     {
-                                       this->reqStart(contextCommand::UNDEFINED_CONTEXT, true);
+                                       reqStart(contextCommand::UNDEFINED_CONTEXT, true);
                                        break;
                                     }
                                  case CLICommand::cmd_stop:
                                     {
-                                       this->reqStop(contextCommand::UNDEFINED_CONTEXT, true);
+                                       reqStop(contextCommand::UNDEFINED_CONTEXT, true);
                                        break;
                                     }
                                  case CLICommand::cmd_abort:
                                     {
-                                       this->reqAbort(contextCommand::UNDEFINED_CONTEXT, false /* do not erase* */, true);
+                                       reqAbort(contextCommand::UNDEFINED_CONTEXT, false /* do not erase* */, true);
                                        break;
                                     }
                                  case CLICommand::cmd_erase:
                                     {
-                                       this->reqAbort(contextCommand::UNDEFINED_CONTEXT, true /* erase */, true);
+                                       reqAbort(contextCommand::UNDEFINED_CONTEXT, true /* erase */, true);
                                        break;
                                     }
                                  case CLICommand::cmd_status:
                                     {
-                                       this->reqStatus(contextCommand::UNDEFINED_CONTEXT, true);
+                                       reqStatus(contextCommand::UNDEFINED_CONTEXT, true);
                                        break;
                                     }
                                  case CLICommand::cmd_fileinfo:
                                     {
-                                       this->reqFileInfo(contextCommand::UNDEFINED_CONTEXT, true);
+                                       reqFileInfo(contextCommand::UNDEFINED_CONTEXT, true);
                                        break;
                                     }
                                  case CLICommand::cmd_peers:
                                     {
-                                       this->reqPeers(contextCommand::UNDEFINED_CONTEXT, true);
+                                       reqPeers(contextCommand::UNDEFINED_CONTEXT, true);
                                        break;
                                     }
                                  case CLICommand::cmd_clean:
                                     {
-                                       this->reqClean(contextCommand::UNDEFINED_CONTEXT, true);
+                                       reqClean(contextCommand::UNDEFINED_CONTEXT, true);
                                        break;
                                     }
                                  case CLICommand::cmd_limit:
                                     {
-                                       this->handleLimitOnAll(_input, result);
+                                       handleLimitOnAll(_input, result);
                                     }
 
                                  default:
@@ -581,47 +581,47 @@ namespace btg
                                  {
                                  case CLICommand::cmd_start:
                                     {
-                                       this->reqStart(context_id);
+                                       reqStart(context_id);
                                        break;
                                     }
                                  case CLICommand::cmd_stop:
                                     {
-                                       this->reqStop(context_id);
+                                       reqStop(context_id);
                                        break;
                                     }
                                  case CLICommand::cmd_abort:
                                     {
-                                       this->reqAbort(context_id, false);
+                                       reqAbort(context_id, false);
                                        break;
                                     }
                                  case CLICommand::cmd_erase:
                                     {
-                                       this->reqAbort(context_id, true /* erase */);
+                                       reqAbort(context_id, true /* erase */);
                                        break;
                                     }
                                  case CLICommand::cmd_status:
                                     {
-                                       this->reqStatus(context_id);
+                                       reqStatus(context_id);
                                        break;
                                     }
                                  case CLICommand::cmd_fileinfo:
                                     {
-                                       this->reqFileInfo(context_id);
+                                       reqFileInfo(context_id);
                                        break;
                                     }
                                  case CLICommand::cmd_peers:
                                     {
-                                       this->reqPeers(context_id);
+                                       reqPeers(context_id);
                                        break;
                                     }
                                  case CLICommand::cmd_clean:
                                     {
-                                       this->reqClean(context_id);
+                                       reqClean(context_id);
                                        break;
                                     }
                                  case CLICommand::cmd_limit:
                                     {
-                                       this->handleLimit(context_id, _input, result);
+                                       handleLimit(context_id, _input, result);
                                        break;
                                     }
                                  default:
@@ -638,13 +638,13 @@ namespace btg
                   {
                      result = INPUT_LOCAL;
 
-                     this->setCurrentID(cliHandler::WRONG_CONTEXT_ID);
+                     setCurrentID(cliHandler::WRONG_CONTEXT_ID);
 
                      t_strList parts = Util::splitLine(_input, " ");
                      if (parts.size() > 1)
                         {
                            std::string commandname = parts.at(1);
-                           CLICommand::ID id  = this->findCommand(commandname);
+                           CLICommand::ID id  = findCommand(commandname);
                            setOutput(commandlist.genSyntax(id));
                         }
                      else
@@ -703,7 +703,7 @@ namespace btg
 
          void cliHandler::defaultErrorHandler(CLICommand::ID _commandid, Command *_command)
          {
-            this->cmd_failture++;
+            cmd_failture++;
 
             switch(_command->getType())
                {
@@ -800,7 +800,7 @@ namespace btg
 
             // Reset the flag which makes the limit command use the
             // current context ID.
-            this->useCurrentID = false;
+            useCurrentID = false;
 
             t_strList parts = Util::splitLine(_s, " ");
 
@@ -835,9 +835,9 @@ namespace btg
 
             if (context_id == cliHandler::WRONG_PARAMETER_COUNT)
                {
-                  if (this->getCurrentID() != cliHandler::WRONG_CONTEXT_ID)
+                  if (getCurrentID() != cliHandler::WRONG_CONTEXT_ID)
                      {
-                        context_id   = this->getCurrentID();
+                        context_id   = getCurrentID();
                         useCurrentID = true;
                      }
                }
@@ -873,7 +873,7 @@ namespace btg
          {
             setSession(_session);
             setOutput("New session successfully created.");
-            this->setupDone = true;
+            setupDone = true;
          }
 
          void cliHandler::onSetupError(std::string const& _message)
@@ -885,7 +885,7 @@ namespace btg
 
          void cliHandler::onAttach()
          {
-            this->attachDone = true;
+            attachDone = true;
          }
 
          void cliHandler::onAttachError(std::string const& _message)
@@ -920,7 +920,7 @@ namespace btg
 
          void cliHandler::onListError()
          {
-            this->cmd_failture++;
+            cmd_failture++;
 
             setError("Listing failed.");
             BTG_NOTICE(logWrapper(), "Listing failed.");
@@ -931,7 +931,7 @@ namespace btg
 
          void cliHandler::onError(std::string const& _errorDescription)
          {
-            this->cmd_failture++;
+            cmd_failture++;
 
             setError(_errorDescription);
             BTG_NOTICE(logWrapper(), "On error: " << _errorDescription);
@@ -1057,7 +1057,7 @@ namespace btg
 
          void cliHandler::onCreateWithData()
          {
-            lastfiles->addLastFile(last_filename);
+            lastfiles.addLastFile(last_filename);
             setOutput("Created " + last_filename + ".");
             last_filename.clear();
          }
@@ -1406,7 +1406,7 @@ namespace btg
 
          void cliHandler::onFileInfoError(std::string const& _errorDescription)
          {
-            this->cmd_failture++;
+            cmd_failture++;
 
             setError(_errorDescription);
          }
@@ -1460,7 +1460,7 @@ namespace btg
 
          void cliHandler::onPeersError(std::string const& _errorDescription)
          {
-            this->cmd_failture++;
+            cmd_failture++;
 
             setError(_errorDescription);
             setCurrentID(cliHandler::WRONG_CONTEXT_ID);
@@ -1473,7 +1473,7 @@ namespace btg
 
          void cliHandler::onStatusError(std::string const& _errorDescription)
          {
-            this->cmd_failture++;
+            cmd_failture++;
 
             setError(_errorDescription);
             setCurrentID(cliHandler::WRONG_CONTEXT_ID);
@@ -1488,7 +1488,7 @@ namespace btg
 
          void cliHandler::onSessionError()
          {
-            this->cmd_failture++;
+            cmd_failture++;
 
             global_btg_run = GR_QUIT;
             setError("Invalid session. Quitting.");
@@ -1505,14 +1505,14 @@ namespace btg
                   output += *vsci + GPD->sNEWLINE();
                   // Since the torrent finished downloading, remove it
                   // from the list of last opened files.
-                  lastfiles->removeLastFile(*vsci);
+                  lastfiles.removeLastFile(*vsci);
                }
             setOutput(output);
          }
 
          void cliHandler::onListSessionsError(std::string const& _errorDescription)
          {
-            this->cmd_failture++;
+            cmd_failture++;
 
             std::cout << _errorDescription << std::endl;
          }
@@ -1525,7 +1525,7 @@ namespace btg
 
          void cliHandler::onLimitStatusError(std::string const& _errorDescription)
          {
-            this->cmd_failture++;
+            cmd_failture++;
 
             BTG_FATAL_ERROR(logWrapper(),
                             GPD->sCLI_CLIENT(), "Unused function, onLimitStatusError, called with parameter: " << _errorDescription << ".");
@@ -1570,9 +1570,9 @@ namespace btg
 
                   t_int uploadrate = convertStringTo<t_int>(*iter);
 
-                  if (!this->validateLimitSetting(uploadrate, btg::core::limitBase::KiB_to_B))
+                  if (!validateLimitSetting(uploadrate, btg::core::limitBase::KiB_to_B))
                      {
-                        this->setCurrentID(cliHandler::WRONG_CONTEXT_ID);
+                        setCurrentID(cliHandler::WRONG_CONTEXT_ID);
                         if (!useCurrentID)
                            {
                               setError("Wrong parameter, #2");
@@ -1590,9 +1590,9 @@ namespace btg
 
                   t_int downloadrate = convertStringTo<t_int>(*iter);
 
-                  if (!this->validateLimitSetting(downloadrate, btg::core::limitBase::KiB_to_B))
+                  if (!validateLimitSetting(downloadrate, btg::core::limitBase::KiB_to_B))
                      {
-                        this->setCurrentID(cliHandler::WRONG_CONTEXT_ID);
+                        setCurrentID(cliHandler::WRONG_CONTEXT_ID);
                         if (!useCurrentID)
                            {
                               setError("Wrong parameter, #3");
@@ -1609,9 +1609,9 @@ namespace btg
 
                   t_int seedLimit = convertStringTo<t_int>(*iter);
 
-                  if (!this->validateLimitSetting(seedLimit, 1))
+                  if (!validateLimitSetting(seedLimit, 1))
                      {
-                        this->setCurrentID(cliHandler::WRONG_CONTEXT_ID);
+                        setCurrentID(cliHandler::WRONG_CONTEXT_ID);
                         if (!useCurrentID)
                            {
                               setError("Wrong parameter, #4");
@@ -1628,9 +1628,9 @@ namespace btg
 
                   t_long seedTimeout = convertStringTo<t_long>(*iter);
 
-                  if (!this->validateLimitSetting(seedTimeout, 1))
+                  if (!validateLimitSetting(seedTimeout, 1))
                      {
-                        this->setCurrentID(cliHandler::WRONG_CONTEXT_ID);
+                        setCurrentID(cliHandler::WRONG_CONTEXT_ID);
                         if (!useCurrentID)
                            {
                               setError("Wrong parameter, #5");
@@ -1644,11 +1644,11 @@ namespace btg
                      }
 
                   _result = INPUT_OK;
-                  this->reqLimit(contextCommand::UNDEFINED_CONTEXT, uploadrate, downloadrate, seedLimit, seedTimeout, true);
+                  reqLimit(contextCommand::UNDEFINED_CONTEXT, uploadrate, downloadrate, seedLimit, seedTimeout, true);
                }
             else
                {
-                  this->setCurrentID(cliHandler::WRONG_CONTEXT_ID);
+                  setCurrentID(cliHandler::WRONG_CONTEXT_ID);
                   setError("Missing parameter(s).");
                   _result = INPUT_ERROR;
                }
@@ -1683,9 +1683,9 @@ namespace btg
                   
                   t_int uploadrate = convertStringTo<t_int>(*iter);
                   
-                  if (!this->validateLimitSetting(uploadrate, btg::core::limitBase::KiB_to_B))
+                  if (!validateLimitSetting(uploadrate, btg::core::limitBase::KiB_to_B))
                      {
-                        this->setCurrentID(cliHandler::WRONG_CONTEXT_ID);
+                        setCurrentID(cliHandler::WRONG_CONTEXT_ID);
                         if (!useCurrentID)
                            {
                               setError("Wrong parameter, #2");
@@ -1703,9 +1703,9 @@ namespace btg
                   
                   t_int downloadrate = convertStringTo<t_int>(*iter);
 
-                  if (!this->validateLimitSetting(downloadrate, btg::core::limitBase::KiB_to_B))
+                  if (!validateLimitSetting(downloadrate, btg::core::limitBase::KiB_to_B))
                      {
-                        this->setCurrentID(cliHandler::WRONG_CONTEXT_ID);
+                        setCurrentID(cliHandler::WRONG_CONTEXT_ID);
                         if (!useCurrentID)
                            {
                               setError("Wrong parameter, #3");
@@ -1722,9 +1722,9 @@ namespace btg
                   
                   t_int seedLimit = convertStringTo<t_int>(*iter);
                   
-                  if (!this->validateLimitSetting(seedLimit, 1))
+                  if (!validateLimitSetting(seedLimit, 1))
                      {
-                        this->setCurrentID(cliHandler::WRONG_CONTEXT_ID);
+                        setCurrentID(cliHandler::WRONG_CONTEXT_ID);
                         if (!useCurrentID)
                            {
                               setError("Wrong parameter, #4");
@@ -1741,9 +1741,9 @@ namespace btg
                   
                   t_long seedTimeout = convertStringTo<t_long>(*iter);
                   
-                  if (!this->validateLimitSetting(seedTimeout, 1))
+                  if (!validateLimitSetting(seedTimeout, 1))
                      {
-                        this->setCurrentID(cliHandler::WRONG_CONTEXT_ID);
+                        setCurrentID(cliHandler::WRONG_CONTEXT_ID);
                         if (!useCurrentID)
                            {
                               setError("Wrong parameter, #5");
@@ -1757,11 +1757,11 @@ namespace btg
                      }
                   
                   _result = INPUT_OK;
-                  this->reqLimit(_context_id, uploadrate, downloadrate, seedLimit, seedTimeout);
+                  reqLimit(_context_id, uploadrate, downloadrate, seedLimit, seedTimeout);
                }
             else
                {
-                  this->setCurrentID(cliHandler::WRONG_CONTEXT_ID);
+                  setCurrentID(cliHandler::WRONG_CONTEXT_ID);
                   setError("Missing parameter(s).");
                   _result = INPUT_ERROR;
                }
@@ -1784,7 +1784,7 @@ namespace btg
 
                   t_int uploadrate = convertStringTo<t_int>(*iter);
                   
-                  if (!this->validateLimitSetting(uploadrate, btg::core::limitBase::KiB_to_B))
+                  if (!validateLimitSetting(uploadrate, btg::core::limitBase::KiB_to_B))
                      {
                         setError("Wrong parameter, #1");
 
@@ -1796,7 +1796,7 @@ namespace btg
 
                   t_int downloadrate = convertStringTo<t_int>(*iter);
                   
-                  if (!this->validateLimitSetting(downloadrate, btg::core::limitBase::KiB_to_B))
+                  if (!validateLimitSetting(downloadrate, btg::core::limitBase::KiB_to_B))
                      {
                         setError("Wrong parameter, #2");
 
@@ -1808,7 +1808,7 @@ namespace btg
 
                   t_int maxUploads = convertStringTo<t_int>(*iter);
 
-                  if (!this->validateLimitSetting(maxUploads, 1))
+                  if (!validateLimitSetting(maxUploads, 1))
                      {
                         setError("Wrong parameter, #3");
 
@@ -1820,7 +1820,7 @@ namespace btg
 
                   t_long maxConnections = convertStringTo<t_long>(*iter);
                   
-                  if (!this->validateLimitSetting(maxConnections, 1))
+                  if (!validateLimitSetting(maxConnections, 1))
                      {
                         setError("Wrong parameter, #4");
 
@@ -1829,14 +1829,14 @@ namespace btg
                      }
                   
                   _result = INPUT_OK;
-                  this->reqGlobalLimit(uploadrate,
+                  reqGlobalLimit(uploadrate,
                                        downloadrate,
                                        maxUploads,
                                        maxConnections);
                }
             else
                {
-                  this->setCurrentID(cliHandler::WRONG_CONTEXT_ID);
+                  setCurrentID(cliHandler::WRONG_CONTEXT_ID);
                   setError("Missing parameter(s).");
                   _result = INPUT_ERROR;
                   return;
@@ -1846,7 +1846,7 @@ namespace btg
          void cliHandler::handleGlobalLimitStatus(cliResponse & _result)
          {
             _result = INPUT_OK;
-            this->reqGlobalLimitStatus();
+            reqGlobalLimitStatus();
          }
 
          void cliHandler::onSetFiles()
@@ -1940,10 +1940,10 @@ namespace btg
          }
 
          cliStartupHelper::cliStartupHelper(btg::core::LogWrapperType _logwrapper,
-                                            btg::core::client::clientConfiguration*        _config,
-                                            btg::core::client::commandLineArgumentHandler* _clah,
-                                            btg::core::messageTransport*                   _messageTransport,
-                                            btg::core::client::clientHandler*              _handler)
+                                            btg::core::client::clientConfiguration&        _config,
+                                            btg::core::client::commandLineArgumentHandler& _clah,
+                                            btg::core::messageTransport&                   _messageTransport,
+                                            btg::core::client::clientHandler&              _handler)
             : btg::core::client::startupHelper(_logwrapper,
                                                GPD->sCLI_CLIENT(),
                                                _config,

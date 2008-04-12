@@ -69,10 +69,10 @@ namespace btg
                /// Constructor.
                mainWindow(btg::core::LogWrapperType logwrapper,
                           std::string const& _session,
-                          bool const _verboseFlag, 
+                          bool const _verboseFlag,
                           bool const _neverAskFlag,
-                          btg::core::client::handlerThread* _handlerthread,
-                          btg::core::client::clientDynConfig & dc);
+                          btg::core::client::handlerThread& _handlerthread,
+                          btg::core::client::clientDynConfig& _CDC);
 
                /// Used when a menu item is selected.
                void on_menu_item_selected(buttonMenuIds::MENUID _which_item);
@@ -228,7 +228,7 @@ namespace btg
                /// callback interface and using a statemachine
                /// to talk to the daemon on the other side of a
                /// transport interface.
-               btg::core::client::handlerThread* handlerthread;
+               btg::core::client::handlerThread& handlerthread;
                      
                /// Pointer to the about dialog.
                aboutDialog*              aboutdialog;
