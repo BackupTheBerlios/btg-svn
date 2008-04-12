@@ -41,6 +41,11 @@ namespace btg
          {
          }
 
+         void createPartsReportInterface::CPRI_reset()
+         {
+            continue_ = true;
+         }
+
          void createPartsReportInterface::CPRI_cancel()
          {
             continue_ = false;
@@ -135,6 +140,7 @@ namespace btg
 
                   if (!_cpri->CPRI_continue())
                      {
+                        _ch->reqCancelFile(id);
                         _cpri->CPRI_error("Cancelled.");
                         return false;
                      }
@@ -196,6 +202,13 @@ namespace btg
                         {
                            op_status = false;
                            _cpri->CPRI_error("Unable to create torrent.");
+                           cont = false;
+                           break;
+                        }
+                     case btg::core::FILES_ABORTED:
+                        {
+                           op_status = false;
+                           _cpri->CPRI_error("Aborted.");
                            cont = false;
                            break;
                         }

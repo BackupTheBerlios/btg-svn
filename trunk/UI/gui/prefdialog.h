@@ -24,11 +24,15 @@
 #define PREFDIALOG_H
 
 #include <gtkmm/dialog.h>
-#include <gtkmm/comboboxtext.h>
-#include <gtkmm/spinbutton.h>
-#include <gtkmm/entry.h>
-
 #include <bcore/type.h>
+
+namespace Gtk
+{
+   class SpinButton;
+   class Adjustment;
+   class Entry;
+   class CheckButton;
+}
 
 namespace btg
 {

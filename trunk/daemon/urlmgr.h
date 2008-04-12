@@ -81,8 +81,12 @@ namespace btg
             /// Handle downloads - called by timer.
             void checkUrlDownloads();
 
+            t_uint size() const;
+
             bool unique(std::string const & _filename, 
                         std::string const & _userdir) const;
+
+            bool abort(const t_uint _id);
 
             bool getStatus(const t_uint _id, 
                            btg::core::urlStatus & _urlstat);

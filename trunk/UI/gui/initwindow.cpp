@@ -20,12 +20,13 @@
  * $Id$
  */
 
-
+#include "initwindow.h"
+#include "gtkmm_ver.h"
 #include <bcore/project.h>
 
-#include "gtkmm_ver.h"
-
-#include "initwindow.h"
+#include <gtkmm/label.h>
+#include <gtkmm/progressbar.h>
+#include <gtkmm/box.h>
 
 namespace btg
 {

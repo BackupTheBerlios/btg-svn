@@ -24,10 +24,15 @@
 #define FILEINFOPIXBOX_H
 
 #include <gtkmm.h>
-#include <bcore/file_info.h>
+#include <bcore/type.h>
 
 namespace btg
 {
+   namespace core
+   {
+      class fileInformation;
+   }
+
    namespace UI
       {
          namespace gui

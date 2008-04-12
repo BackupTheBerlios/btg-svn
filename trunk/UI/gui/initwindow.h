@@ -24,11 +24,15 @@
 #define INIT_WINDOW_H
 
 #include <gtkmm/dialog.h>
-#include <gtkmm/label.h>
-#include <gtkmm/progressbar.h>
-#include <gtkmm/box.h>
 
 #include <string>
+
+namespace Gtk
+{
+   class Label;
+   class ProgressBar;
+   class VBox;
+}
 
 namespace btg
 {

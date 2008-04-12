@@ -32,6 +32,7 @@
 
 #include "basemenu.h"
 #include "limitwindow.h"
+#include "progress.h"
 
 #include <bcore/client/handlerthr.h>
 #include "handler.h"

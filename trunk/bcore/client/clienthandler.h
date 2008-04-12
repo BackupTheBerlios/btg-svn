@@ -140,6 +140,9 @@ namespace btg
             /// Get the status of a file download.
             virtual void reqFileStatus(t_uint _id);
 
+            virtual void reqCancelFile(t_uint _id);
+            virtual void reqCancelUrl(t_uint _id);
+
             /// Get status from the daemon.
             virtual void reqStatus(t_int const _id, bool const _allContexts = false);
 

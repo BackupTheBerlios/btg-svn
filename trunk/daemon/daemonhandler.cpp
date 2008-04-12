@@ -278,6 +278,7 @@ namespace btg
 
                         case Command::CN_CCREATEFROMURL:
                         case Command::CN_CURLSTATUS:
+                        case Command::CN_CCREATEURLABORT:
                            {
                               handleUrlMessages(eventhandler, command_);
                               break;
@@ -286,6 +287,7 @@ namespace btg
                         case Command::CN_CCREATEFROMFILE:
                         case Command::CN_CCREATEFROMFILEPART:
                         case Command::CN_CCRFILESTATUS:
+                        case Command::CN_CCREATEFFABORT:
                            {
                               handleCreateFileMessages(eventhandler, command_);
                               break;
@@ -1028,6 +1030,11 @@ namespace btg
                   handle_CN_CURLSTATUS(_eventhandler, _command);
                   break;
                }
+            case Command::CN_CCREATEURLABORT:
+               {
+                  handle_CN_CCREATEURLABORT(_eventhandler, _command);
+                  break;
+               }
             }
 #else
          // URL loading disabled.
@@ -1055,6 +1062,11 @@ namespace btg
             case Command::CN_CCRFILESTATUS:
                {
                   handle_CN_CCRFILESTATUS(_eventhandler, _command);
+                  break;
+               }
+            case Command::CN_CCREATEFFABORT:
+               {
+                  handle_CN_CCREATEFFABORT(_eventhandler, _command);
                   break;
                }
             }
@@ -1237,7 +1249,6 @@ namespace btg
             {
                file_timer_trigger_ = false;
                file_timer_.Reset();
-               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Checking file downloads.");
                handleFileDownloads();
             }
          
@@ -1247,7 +1258,7 @@ namespace btg
                url_timer_trigger_ = false;
                url_timer_.Reset();
 
-               urlmgr.checkUrlDownloads();
+               handleUrlDownloads();
             }
 #endif
          if (session_timer_trigger_)

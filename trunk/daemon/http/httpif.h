@@ -44,10 +44,11 @@ namespace btg
             /// Status.
             enum Status
             {
-               ERROR  = 0, // Error.
-               INIT   = 1, // Initalize.
-               WAIT   = 2, // Wait, still loading.
-               FINISH = 3, // Done loading.
+               ERROR   = 0, // Error.
+               INIT    = 1, // Initalize.
+               WAIT    = 2, // Wait, still loading.
+               FINISH  = 3, // Done loading.
+               ABORTED = 4 // Aborted
             };
 
          public:
@@ -66,7 +67,7 @@ namespace btg
             virtual bool Result(const t_uint _id, 
                                 btg::core::sBuffer & _buffer) = 0;
 
-            /// Terminate a result of a search.
+            /// Terminate a fetch.
             virtual void Terminate(const t_uint _id) = 0;
 
             /// Destructor.

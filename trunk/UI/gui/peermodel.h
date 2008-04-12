@@ -24,7 +24,6 @@
 #define PEERMODEL_H
 
 #include <gtkmm.h>
-#include <string>
 
 #include <bcore/type.h>
 

@@ -36,7 +36,9 @@ namespace btg
 
          void mainWindow::CPRI_init(std::string const& _filename)
          {
-            upload_progressdialog = new progressDialog("Uploading '" + _filename + "' to the daemon.");
+            CPRI_reset();
+
+            upload_progressdialog = new progressDialog("Uploading '" + _filename + "' to the daemon.", true);
             upload_progressdialog->updateProgress(0, "Initalizing..");
          }
 
@@ -44,6 +46,11 @@ namespace btg
          {
             if (upload_progressdialog)
                {
+                  if (upload_progressdialog->cancelPressed())
+                     {
+                        CPRI_cancel();
+                     }
+
                   // Show as 0-98 % while uploading.
                   t_uint p = ((double)_number / _parts) * 98;
 
@@ -70,6 +77,10 @@ namespace btg
          {
             if (upload_progressdialog)
                {
+                  if (upload_progressdialog->cancelPressed())
+                     {
+                        CPRI_cancel();
+                     }
                   // waiting at 98%
                   upload_progressdialog->updateProgress(98, _msg);
                }

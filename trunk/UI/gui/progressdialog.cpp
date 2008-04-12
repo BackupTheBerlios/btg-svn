@@ -27,6 +27,11 @@
 
 #include "progressdialog.h"
 
+#include <gtkmm/label.h>
+#include <gtkmm/progressbar.h>
+#include <gtkmm/box.h>
+#include <gtkmm/button.h>
+
 namespace btg
 {
    namespace UI
@@ -34,16 +39,31 @@ namespace btg
       namespace gui
       {
 
-         progressDialog::progressDialog(std::string _title)
-            : title_label(0),
+         progressDialog::progressDialog(std::string _title,
+                                        bool const _cancel)
+            : cancel_enabled(_cancel),
+              cancel_pressed(false),
+              cancelbutton(0),
+              title_label(0),
               label(0),
               progressbar(0),
               vbox(0)
          {
-            title_label = Gtk::manage(new class Gtk::Label(_title));
-            label       = Gtk::manage(new class Gtk::Label());
-            progressbar = Gtk::manage(new class Gtk::ProgressBar());
-            vbox        = get_vbox();
+            if (cancel_enabled)
+               {
+                  cancelbutton = Gtk::manage(new class Gtk::Button("cancel"));
+               }
+
+            title_label  = Gtk::manage(new class Gtk::Label(_title));
+            label        = Gtk::manage(new class Gtk::Label());
+            progressbar  = Gtk::manage(new class Gtk::ProgressBar());
+            vbox         = get_vbox();
+
+            if (cancel_enabled)
+               {
+                  cancelbutton->set_flags(Gtk::CAN_FOCUS);
+                  cancelbutton->set_relief(Gtk::RELIEF_NORMAL);
+               }
 
             label->set_alignment(0.5,0.5);
             label->set_padding(0,5);
@@ -80,10 +100,32 @@ namespace btg
             set_resizable(false);
             property_destroy_with_parent().set_value(false);
 
+            if (cancel_enabled)
+               {
+                  set_has_separator(true);
+                  add_action_widget(*cancelbutton, -5);
+                  cancelbutton->show();
+               }
+
             title_label->show();
             label->show();
             progressbar->show();
             vbox->show();
+
+            if (cancel_enabled)
+               {
+                  cancelbutton->signal_clicked().connect(sigc::mem_fun(*this, &progressDialog::on_cancel_clicked));
+               }
+         }
+
+         void progressDialog::on_cancel_clicked()
+         {
+            cancel_pressed = true;
+         }
+
+         bool progressDialog::cancelPressed() const
+         {
+            return cancel_pressed;
          }
 
          void progressDialog::setText(std::string const& _text)

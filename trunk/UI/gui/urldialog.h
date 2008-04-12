@@ -24,14 +24,17 @@
 #define URLDIALOG_H
 
 #include <gtkmm/dialog.h>
-#include <gtkmm/label.h>
-#include <gtkmm/entry.h>
-#include <gtkmm/table.h>
-#include <gtkmm/box.h>
-#include <gtkmm/button.h>
-#include <gtkmm/buttonbox.h>
 
 #include <string>
+
+namespace Gtk
+{
+   class Button;
+   class Label;
+   class Entry;
+   class Table;
+   class VBox;
+}
 
 namespace btg
 {

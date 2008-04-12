@@ -200,6 +200,26 @@ namespace btg
                        "Error: " << _errorDescription);
          }
          
+         void guiHandler::onFileCancel()
+         {
+            commandStatus = true;
+         }
+
+         void guiHandler::onFileCancelError(std::string const& _errorDescription)
+         {
+            commandStatus = false;
+         }
+
+         void guiHandler::onUrlCancel()
+         {
+            commandStatus = true;
+         }
+
+         void guiHandler::onUrlCancelError(std::string const& _errorDescription)
+         {
+            commandStatus = false;
+         }
+
          void guiHandler::onAbort()
          {
             BTG_NOTICE(logWrapper(), 

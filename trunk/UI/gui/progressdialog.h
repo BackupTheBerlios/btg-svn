@@ -24,11 +24,16 @@
 #define PROGRESSDIALOG_H
 
 #include <gtkmm/dialog.h>
-#include <gtkmm/label.h>
-#include <gtkmm/progressbar.h>
-#include <gtkmm/box.h>
 
 #include <string>
+
+namespace Gtk
+{
+   class Button;
+   class Label;
+   class ProgressBar;
+   class VBox;
+}
 
 namespace btg
 {
@@ -47,13 +52,17 @@ namespace btg
 
                   public:
                      /// Constructor.
-                     progressDialog(std::string _title);
+                     progressDialog(std::string _title,
+                                    bool const _cancel);
 
                      /// Update progress.
                      /// @param _percent Percent.
                      /// @param _text    Text to display.
+                     /// @param _cancel  Show cancel button.
                      void updateProgress(t_uint const _percent, 
                                          std::string const& _text);
+
+                     bool cancelPressed() const;
 
                      /// Destructor.
                      virtual ~progressDialog();
@@ -67,8 +76,16 @@ namespace btg
                      /// timer expires.
                      void setTimeout();
 
+                     void on_cancel_clicked();
+
                      /// Callback.
                      bool on_refresh_timeout(int _timeout);
+
+                     bool              cancel_enabled;
+
+                     bool              cancel_pressed;
+
+                     Gtk::Button*      cancelbutton;
 
                      /// Label showing a title.
                      Gtk::Label*       title_label;

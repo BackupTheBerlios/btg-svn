@@ -33,13 +33,15 @@ namespace btg
 {
    namespace daemon
    {
-      const std::string moduleName("hdl");
+      const std::string moduleName("hdlf");
 
       using namespace btg::core;
 
       void daemonHandler::handle_CN_CCREATEFROMFILE(eventHandler* _eventhandler, 
                                                     btg::core::Command* _command)
       {
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
+
          contextCreateFromFileCommand* ccffc = dynamic_cast<contextCreateFromFileCommand*>(_command);
          std::string userdir  = _eventhandler->getTempDir();
          std::string filename=ccffc->getFilename();
@@ -63,14 +65,16 @@ namespace btg
                      connectionID_,
                      new contextCreateFromFileResponseCommand(id));
 
-         MVERBOSE_LOG(logWrapper(), 
-                      verboseFlag_, "File ID: " << id << ", added '" << filename << 
-                      "', waiting for file parts.");
+         BTG_MNOTICE(logWrapper(), 
+                     "File ID: " << id << ", added '" << filename << 
+                     "', waiting for file parts.");
       }
 
       void daemonHandler::handle_CN_CCREATEFROMFILEPART(eventHandler* _eventhandler, 
                                                         btg::core::Command* _command)
       {
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
+
          contextCreateFromFilePartCommand* ccffpc = dynamic_cast<contextCreateFromFilePartCommand*>(_command);
          const t_uint id = ccffpc->id();
 
@@ -85,8 +89,8 @@ namespace btg
          else
             {
                sendAck(_command->getType());
-               MVERBOSE_LOG(logWrapper(), 
-                            verboseFlag_, "File ID: " << id << ", added part " << ccffpc->part() << ".");
+               BTG_MNOTICE(logWrapper(), 
+                           "File ID: " << id << ", added part " << ccffpc->part() << ".");
             }
          
          if (filemgr.getStatus(id) == fileData::DONE)
@@ -121,8 +125,8 @@ namespace btg
                   }
                else
                   {
-                     MVERBOSE_LOG(logWrapper(), 
-                                  verboseFlag_, "Added '" << filename << "' from file.");
+                     BTG_MNOTICE(logWrapper(), 
+                                 "Added '" << filename << "' from file.");
                      filemgr.setState(id, fileData::CREATED);
                   }
          
@@ -136,6 +140,8 @@ namespace btg
       void daemonHandler::handle_CN_CCRFILESTATUS(eventHandler* _eventhandler, 
                                                   btg::core::Command* _command)
       {
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
+
          contextFileStatusCommand* cfsc = dynamic_cast<contextFileStatusCommand*>(_command);
 
          t_uint id = cfsc->id();
@@ -177,11 +183,16 @@ namespace btg
                   status = FILES_CREATE_ERR;
                   break;
                }
+            case fileData::ABORTED:
+               {
+                  status = FILES_ABORTED;
+                  break;
+               }
             }
          
          if (status == FILES_UNDEF)
             {
-               sendError(_command->getType(), "Unknown URL id.");
+               sendError(_command->getType(), "Unknown file id.");
             }
          else
             {
@@ -192,8 +203,31 @@ namespace btg
             }
       }
 
+      void daemonHandler::handle_CN_CCREATEFFABORT(eventHandler* _eventhandler, 
+                                                   btg::core::Command* _command)
+      {
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
+
+         contextFileAbortCommand* cfac = static_cast<contextFileAbortCommand*>(_command);
+
+         t_uint id = cfac->id();
+
+         if (filemgr.abort(id))
+            {
+               sendAck(_command->getType());
+            }
+         else
+            {
+               sendError(_command->getType(), "Unknown file id.");
+            }
+      }
+
       void daemonHandler::handleFileDownloads()
       {
+         if (filemgr.size() > 0)
+            {
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Checking file downloads (" << filemgr.size() << ").");
+            }
          filemgr.updateAge();
          filemgr.removeDead();
       }

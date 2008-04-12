@@ -24,10 +24,7 @@
 #define MAINMODEL_H
 
 #include <gtkmm.h>
-#include <string>
-
 #include <bcore/type.h>
-
 #include "gtkmm_ver.h"
 
 #if GTKMM_2_6_OR_BETTER

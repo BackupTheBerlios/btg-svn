@@ -108,6 +108,12 @@ namespace btg
                      /// Could not receive status for a download.
                      virtual void onFileStatusError(std::string const& _errorDescription) = 0;
 
+                     virtual void onFileCancel() = 0; 
+                     virtual void onFileCancelError(std::string const& _errorDescription) = 0; 
+
+                     virtual void onUrlCancel() = 0; 
+                     virtual void onUrlCancelError(std::string const& _errorDescription) = 0; 
+
                      /// The client got the Id of the last context it created.
                      /// Note that implementing this callback is optional.
                      virtual void onLast(t_int _contextId);

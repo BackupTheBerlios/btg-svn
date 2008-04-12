@@ -2,6 +2,9 @@
 List of commands
 ================
 
+.. contents:: Table of Contents 
+   :depth: 1
+
 This file specifies all the commands available between a BTG client
 and the BTG server.
 

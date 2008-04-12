@@ -377,6 +377,26 @@ namespace btg
             commandStatus = false;
          }
 
+         void Handler::onFileCancel()
+         {
+            
+         } 
+
+         void Handler::onFileCancelError(std::string const& _errorDescription)
+         {
+
+         }
+
+         void Handler::onUrlCancel()
+         {
+            
+         }
+
+         void Handler::onUrlCancelError(std::string const& _errorDescription)
+         {
+            
+         }
+
          Handler::~Handler()
          {
          }

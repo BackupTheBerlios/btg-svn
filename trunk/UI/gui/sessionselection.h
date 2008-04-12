@@ -24,10 +24,14 @@
 #define SESSION_SELECTION_H
 
 #include <gtkmm/dialog.h>
-#include <gtkmm/comboboxtext.h>
 
 #include <bcore/type.h>
 #include <string>
+
+namespace Gtk
+{
+   class ComboBoxText;
+}
 
 namespace btg
 {

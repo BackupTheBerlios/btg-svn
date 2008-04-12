@@ -133,6 +133,9 @@ namespace btg
             /// Action.
             void doFileStatus(t_uint const _id);
 
+            void doCancelFile(t_uint const _id);
+            void doCancelUrl(t_uint const _id);
+
             /// Action.
             void doLast();
             /// Action.

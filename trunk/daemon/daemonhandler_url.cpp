@@ -33,13 +33,15 @@ namespace btg
 {
    namespace daemon
    {
-      const std::string moduleName("hdl");
+      const std::string moduleName("hdlu");
 #if BTG_OPTION_URL
       using namespace btg::core;
 
       void daemonHandler::handle_CN_CURLSTATUS(eventHandler* _eventhandler, 
                                                btg::core::Command* _command)
       {
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
+
          contextUrlStatusCommand* cusc = dynamic_cast<contextUrlStatusCommand*>(_command);
          t_uint id = cusc->id();
 
@@ -60,6 +62,8 @@ namespace btg
       void daemonHandler::handle_CN_CCREATEFROMURL(eventHandler* _eventhandler, 
                                                    btg::core::Command* _command)
       {
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
+
          contextCreateFromUrlCommand* ccful = dynamic_cast<contextCreateFromUrlCommand*>(_command);
 
          std::string userdir  = _eventhandler->getTempDir();
@@ -97,6 +101,33 @@ namespace btg
                      new contextCreateFromUrlResponseCommand(id));
       }
 
+      void daemonHandler::handle_CN_CCREATEURLABORT(eventHandler* _eventhandler, 
+                                                    btg::core::Command* _command)
+      {
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
+
+         contextUrlAbortCommand* cuac = dynamic_cast<contextUrlAbortCommand*>(_command);
+
+         t_uint id = cuac->id();
+
+         if (urlmgr.abort(id))
+            {
+               sendAck(_command->getType());
+            }
+         else
+            {
+               sendError(_command->getType(), "Unable to abort.");
+            }
+      }
+
+      void daemonHandler::handleUrlDownloads()
+      {
+         if (urlmgr.size() > 0)
+            {
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Checking URL downloads(" << urlmgr.size() << ").");
+               urlmgr.checkUrlDownloads();
+            }
+      }
 #endif // BTG_OPTION_URL
 
    } // namespace daemon

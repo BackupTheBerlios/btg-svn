@@ -169,6 +169,11 @@ namespace btg
             /// Handle URL create message.
             void handle_CN_CCREATEFROMURL(eventHandler* _eventhandler, 
                                           btg::core::Command* _command);
+
+            void handle_CN_CCREATEURLABORT(eventHandler* _eventhandler, 
+                                           btg::core::Command* _command);
+
+            void handleUrlDownloads();
 #endif // BTG_OPTION_URL
 
             void handle_CN_CCREATEFROMFILE(eventHandler* _eventhandler, 
@@ -179,6 +184,9 @@ namespace btg
 
             void handle_CN_CCRFILESTATUS(eventHandler* _eventhandler, 
                                          btg::core::Command* _command);
+
+            void handle_CN_CCREATEFFABORT(eventHandler* _eventhandler, 
+                                          btg::core::Command* _command);
 
             /// Handle Version request.
             void handleVersion(eventHandler* _eventhandler, 

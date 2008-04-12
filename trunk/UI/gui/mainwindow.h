@@ -24,8 +24,6 @@
 #define MAIN_WINDOW_H
 
 #include <gtkmm/window.h>
-#include <gtkmm/toolbar.h>
-#include <gtkmm/scrolledwindow.h>
 
 #include <bcore/type.h>
 #include <bcore/status.h>
@@ -41,6 +39,11 @@
 
 #include <bcore/client/clientdynconfig.h>
 #include <bcore/client/filephelper.h>
+
+namespace Gtk
+{
+   class ToolButton;
+}
 
 namespace btg
 {

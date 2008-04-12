@@ -982,6 +982,24 @@ namespace btg
             SM_REQUEST_LOSS;
          }
 
+         void stateMachine::doCancelFile(t_uint const _id)
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(new contextFileAbortCommand(_id));
+               }
+            SM_REQUEST_LOSS;
+         }
+
+         void stateMachine::doCancelUrl(t_uint const _id)
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(new contextUrlAbortCommand(_id));
+               }
+            SM_REQUEST_LOSS;
+         }
+
          void stateMachine::doUrlStatus(t_uint const _id)
          {
             if (checkState(SM_COMMAND))
@@ -1220,6 +1238,8 @@ namespace btg
                case Command::CN_CSETFILES:
                case Command::CN_CMOVE:
                case Command::CN_CCREATEFROMFILEPART:
+               case Command::CN_CCREATEURLABORT:
+               case Command::CN_CCREATEFFABORT:
                   {
                      ackForCommand = static_cast<Command::commandType>(_type);
                      expectedReply[0] = Command::CN_ACK;
@@ -1334,6 +1354,16 @@ namespace btg
                case Command::CN_CCREATEFROMFILEPART:
                   {
                      clientcallback.OnCreateFromFilePart();
+                     break;
+                  }
+               case Command::CN_CCREATEURLABORT:
+                  {
+                     clientcallback.onUrlCancel();
+                     break;
+                  }
+               case Command::CN_CCREATEFFABORT:
+                  {
+                     clientcallback.onFileCancel();
                      break;
                   }
                default:
@@ -1542,6 +1572,16 @@ namespace btg
                         case Command::CN_CCRFILESTATUS:
                            {
                               clientcallback.onFileStatusError(errmessage);
+                              break;
+                           }
+                        case Command::CN_CCREATEURLABORT:
+                           {
+                              clientcallback.onUrlCancelError(errmessage);
+                              break;
+                           }
+                        case Command::CN_CCREATEFFABORT:
+                           {
+                              clientcallback.onFileCancelError(errmessage);
                               break;
                            }
                            // General error callback to fallback on.

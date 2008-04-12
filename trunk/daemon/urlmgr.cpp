@@ -86,13 +86,34 @@ namespace btg
          return urlIdSessions.end();
       }
 
-      void urlManager::checkUrlDownloads()
+      bool urlManager::abort(const t_uint _id)
       {
-         if (urlIdSessions.size() > 0)
+         std::vector<UrlIdSessionMapping>::iterator iter = getUrlMapping(_id);
+
+         if (iter == urlIdSessions.end())
             {
-               MVERBOSE_LOG(logWrapper(), verboseFlag, "Checking URL downloads.");
+               return false;
             }
 
+         if (iter->status == UCS_UNDEF)
+            {
+               // The context was not added.
+               httpmgr.Terminate(_id);
+               removeUrl(*iter);
+               
+               return true;
+            }
+
+         return false;
+      }
+
+      t_uint urlManager::size() const
+      {
+         return urlIdSessions.size();
+      }
+
+      void urlManager::checkUrlDownloads()
+      {
          std::vector<UrlIdSessionMapping>::iterator i;
          for (i = urlIdSessions.begin();
               i != urlIdSessions.end();
@@ -274,6 +295,11 @@ namespace btg
                         _urlstat = URLS_CREATE_ERR;
                      }
 
+                  break;
+               }
+            case btg::daemon::http::httpInterface::ABORTED:
+               {
+                  _urlstat = URLS_ABORTED;
                   break;
                }
             }

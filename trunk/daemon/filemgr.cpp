@@ -199,6 +199,52 @@ namespace btg
          iter->second.status = _status;
       }
 
+      bool fileManager::abort(const t_uint _id)
+      {
+         std::map<t_uint, fileData>::iterator iter = files.find(_id);
+
+         if (iter == files.end())
+            {
+               return false;
+            }
+         
+         bool status = true;
+
+         switch (iter->second.status)
+            {
+            case fileData::UNDEF:
+            case fileData::INIT:
+               {
+                  iter->second.status = fileData::ABORTED;
+                  invalidate(_id);
+                  status = true;
+                  break;
+               }
+            case fileData::WORK:
+            case fileData::DONE:
+               {
+                  removeData(_id);
+                  iter->second.status = fileData::ABORTED;
+                  invalidate(_id);
+                  status = true;
+                  break;
+               }
+            case fileData::DLERROR:
+            case fileData::CREATED:
+            case fileData::CREATE_ERROR:
+               {
+                  status = false;
+                  break;
+               }
+            case fileData::ABORTED:
+               {
+                  status = true;
+                  break;
+               }
+            }
+         return status;
+      }
+
       void fileManager::updateAge()
       {
          std::map<t_uint, fileData>::iterator iter;
@@ -250,6 +296,11 @@ namespace btg
          _dir      = iter->second.dir;
          _filename = iter->second.filename;
          _start    = iter->second.start;
+      }
+
+      t_uint fileManager::size() const
+      {
+         return files.size();
       }
 
       fileManager::~fileManager()

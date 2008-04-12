@@ -193,6 +193,26 @@ namespace btg
 
             }
             
+            void viewerHandler::onFileCancel()
+            {
+               
+            }
+ 
+            void viewerHandler::onFileCancelError(std::string const& _errorDescription)
+            {
+               
+            }
+
+            void viewerHandler::onUrlCancel()
+            {
+               
+            }
+
+            void viewerHandler::onUrlCancelError(std::string const& _errorDescription)
+            {
+               
+            }
+
             void viewerHandler::onAbort()
             {
                BTG_NOTICE(logWrapper(),

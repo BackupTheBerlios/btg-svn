@@ -38,12 +38,13 @@ namespace btg
          /// Status of a download.
          enum fileStatus
          {
-            FILES_UNDEF      = 0, //!<  Unknown.
-            FILES_WORKING    = 1, //!<  Download in progress.
-            FILES_FINISHED   = 2, //!<  Download finished.
-            FILES_ERROR      = 3, //!<  Unable to download.
-            FILES_CREATE     = 4, //!<  Context created.
-            FILES_CREATE_ERR = 5  //!<  Context not created.
+            FILES_UNDEF      = 0, //!< Unknown.
+            FILES_WORKING    = 1, //!< Download in progress.
+            FILES_FINISHED   = 2, //!< Download finished.
+            FILES_ERROR      = 3, //!< Unable to download.
+            FILES_CREATE     = 4, //!< Context created.
+            FILES_CREATE_ERR = 5, //!< Context not created.
+            FILES_ABORTED    = 6  //!< Context aborted.
          };
 
          /** @} */

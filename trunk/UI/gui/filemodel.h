@@ -24,7 +24,6 @@
 #define FILEMODEL_H
 
 #include <gtkmm.h>
-#include <string>
 
 namespace btg
 {

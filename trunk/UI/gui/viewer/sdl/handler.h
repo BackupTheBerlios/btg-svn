@@ -134,6 +134,12 @@ namespace btg
                   void onCreateFromFileError(std::string const& _errorDescription);
                   void OnCreateFromFilePart();
                   void OnCreateFromFilePartError(std::string const& _errorDescription);
+
+                  void onFileCancel(); 
+                  void onFileCancelError(std::string const& _errorDescription);
+                  void onUrlCancel();
+                  void onUrlCancelError(std::string const& _errorDescription);
+
                   void onFileStatus(t_uint const _id, 
                                     btg::core::fileStatus const _status);
                   void onFileStatusError(std::string const& _errorDescription);

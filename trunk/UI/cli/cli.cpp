@@ -1132,6 +1132,26 @@ namespace btg
             commandStatus = false;
          }
 
+         void cliHandler::onFileCancel()
+         {
+            
+         }
+
+         void cliHandler::onFileCancelError(std::string const& _errorDescription)
+         {
+            
+         }
+
+         void cliHandler::onUrlCancel()
+         {
+            
+         }
+
+         void cliHandler::onUrlCancelError(std::string const& _errorDescription)
+         {
+            
+         }
+
          void cliHandler::onStart()
          {
             setOutput("Started.");

@@ -21,7 +21,7 @@
  */
 
 #include "fipixbox.h"
-#include <bcore/type.h>
+#include <bcore/file_info.h>
 
 #include <iostream>
 

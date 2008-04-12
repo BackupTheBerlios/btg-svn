@@ -108,6 +108,11 @@ namespace btg
                      void OnCreateFromFilePart();
                      void OnCreateFromFilePartError(std::string const& _errorDescription);
 
+                     void onFileCancel(); 
+                     void onFileCancelError(std::string const& _errorDescription);
+                     void onUrlCancel();
+                     void onUrlCancelError(std::string const& _errorDescription);
+
                      void onAbort();
                      void onStart();
                      void onStop();

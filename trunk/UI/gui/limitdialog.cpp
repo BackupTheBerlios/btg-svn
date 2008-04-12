@@ -31,6 +31,8 @@
 #include <gtkmm/button.h>
 #include <gtkmm/buttonbox.h>
 #include <gtkmm/adjustment.h>
+#include <gtkmm/comboboxtext.h>
+#include <gtkmm/spinbutton.h>
 
 #include <bcore/project.h>
 

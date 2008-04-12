@@ -97,8 +97,11 @@ namespace btg
 
          void httpProcess::Terminate()
          {
+            boost::mutex::scoped_lock interface_lock(interfaceMutex);
+
             BTG_MNOTICE(logWrapper(), "terminate transfer");
             terminate = true;
+            status = httpInterface::ABORTED;
          }
          
          bool httpProcess::AbortTransfer() const

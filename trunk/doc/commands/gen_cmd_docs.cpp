@@ -31,6 +31,7 @@
 #include <bcore/command/context_clean_rsp.h>
 #include <bcore/command/context_create.h>
 #include <bcore/command/context_create_url.h>
+#include <bcore/command/context_create_file.h>
 #include <bcore/command/context_last.h>
 #include <bcore/command/context_fi.h>
 #include <bcore/command/context_fi_rsp.h>
@@ -281,6 +282,49 @@ int main(int argc, char* argv[])
    btg::core::urlStatus urlstatus = URLS_WORKING;
    printCommand(cf, e, 
                 new contextUrlStatusResponseCommand(urlId, urlstatus)
+                );
+   // Command::CN_CCREATEURLABORT
+   printCommand(cf, e,
+                new contextFileAbortCommand(urlId)
+                );
+
+   t_uint fileId = 1;
+   // Command::CN_CCREATEFROMFILE
+   printCommand(cf, e,
+                new contextCreateFromFileCommand("filename.torrent",
+                                                 50,
+                                                 true)
+                );
+
+   // Command::CN_CCREATEFROMFILERSP
+   printCommand(cf, e,
+                new contextCreateFromFileResponseCommand(fileId)
+                );
+
+   // Command::CN_CCREATEFFABORT
+   printCommand(cf, e,
+                new contextFileAbortCommand(fileId)
+                );
+
+   // Command::CN_CCREATEFROMFILEPART
+   sBuffer data;
+   printCommand(cf, e,
+                new contextCreateFromFilePartCommand(fileId,
+                                                     1,
+                                                     data)
+                );
+
+   // Command::CN_CCRFILESTATUS
+   printCommand(cf, e,
+                new contextFileStatusCommand(fileId)
+                );
+
+   // Command::CN_CCRFILESTATUSRSP
+   btg::core::fileStatus file_status = btg::core::FILES_WORKING;
+
+   printCommand(cf, e,
+                new contextFileStatusResponseCommand(fileId, 
+                                                     file_status)
                 );
 
    // Command::CN_VERSION

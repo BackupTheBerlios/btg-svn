@@ -23,6 +23,9 @@
 #include "mainwindow.h"
 #include <gtkmm.h>
 
+#include <gtkmm/toolbar.h>
+#include <gtkmm/scrolledwindow.h>
+
 #include "mainmenubar.h"
 #include "maintreeview.h"
 #include "mainfiletreeview.h"
@@ -648,7 +651,7 @@ namespace btg
 
                   t_uint hid = handler->UrlId();
 
-                  progressDialog pd("Adding URL");
+                  progressDialog pd("Adding URL", true);
 
                   bool cont = true;
                   while (cont)
@@ -698,6 +701,20 @@ namespace btg
                                  break;
                               }
                            }
+
+                        if (pd.cancelPressed())
+                           {
+                              // Cancel URL loading.
+                              handler->reqCancelUrl(hid);
+
+                              if (handler->commandSuccess())
+                                 {
+                                    msb->set("URL loading cancelled.");
+                                    logVerboseMessage("URL loading cancelled.");
+                                    return;
+                                 }
+                           }
+
                         btg::core::os::Sleep::sleepMiliSeconds(500);
                      }
 

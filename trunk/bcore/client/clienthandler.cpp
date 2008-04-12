@@ -216,6 +216,20 @@ namespace btg
             statemachine.work();
          }
 
+         void clientHandler::reqCancelFile(t_uint _id)
+         {
+            commandStatus = false;
+            statemachine.doCancelFile(_id);
+            statemachine.work();
+         }
+
+         void clientHandler::reqCancelUrl(t_uint _id)
+         {
+            commandStatus = false;
+            statemachine.doCancelUrl(_id);
+            statemachine.work();            
+         }
+
          void clientHandler::reqStatus(t_int const _id, bool const _allContexts)
          {
             commandStatus = false;

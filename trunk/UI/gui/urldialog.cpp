@@ -21,6 +21,14 @@
  */
 
 #include "urldialog.h"
+
+#include <gtkmm/label.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/table.h>
+#include <gtkmm/box.h>
+#include <gtkmm/button.h>
+#include <gtkmm/buttonbox.h>
+
 #include <bcore/project.h>
 #include <bcore/client/urlhelper.h>
 

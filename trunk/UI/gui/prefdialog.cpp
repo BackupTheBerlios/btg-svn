@@ -21,6 +21,7 @@
  */
 
 #include "prefdialog.h"
+
 #include <gdk/gdkkeysyms.h>
 #include <gtkmm/accelgroup.h>
 #include <gtkmm/label.h>
@@ -32,6 +33,9 @@
 #include <gtkmm/buttonbox.h>
 #include <gtkmm/adjustment.h>
 #include <gtkmm/filechooserdialog.h>
+#include <gtkmm/comboboxtext.h>
+#include <gtkmm/spinbutton.h>
+#include <gtkmm/entry.h>
 
 #include <bcore/project.h>
 #include <bcore/logmacro.h>

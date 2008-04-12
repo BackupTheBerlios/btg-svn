@@ -24,10 +24,13 @@
 #define LIMITDIALOG_H
 
 #include <gtkmm/dialog.h>
-#include <gtkmm/comboboxtext.h>
-#include <gtkmm/spinbutton.h>
-
 #include <bcore/type.h>
+
+namespace Gtk
+{
+   class ComboBoxText;
+   class SpinButton;
+}
 
 namespace btg
 {
@@ -49,7 +52,10 @@ namespace btg
                      /// @param [in] _szDownloadLabel 2nd label text (default "Download")
                      /// @param [in] _szSeedpercUploadscntLabel 3rd label text (default "Seed %")
                      /// @param [in] _szSeedtimeConnectionscntLabel 4th label text (default "Seed Time")
-                     limitDialog(const char * _szUploadLabel = NULL, const char * _szDownloadLabel = NULL, const char * _szParam3Label = NULL, const char * _szParam4Label = NULL);
+                     limitDialog(const char * _szUploadLabel = NULL, 
+                                 const char * _szDownloadLabel = NULL, 
+                                 const char * _szParam3Label = NULL, 
+                                 const char * _szParam4Label = NULL);
 
                      /// Update this dialog. Should be called before
                      /// the run method is called.

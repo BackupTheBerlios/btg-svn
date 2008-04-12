@@ -49,11 +49,12 @@ namespace btg
             {
                UNDEF        = 0, // Undefined state.
                INIT         = 1, // Added filename, wait for parts.
-               WORK         = 2, // Receive at least one part.
+               WORK         = 2, // Received at least one part.
                DONE         = 3, // Received all parts.
                DLERROR      = 4, // Error receiving required parts.
                CREATED      = 5, // Created torrent.
                CREATE_ERROR = 6, // Unable to create torrent.
+               ABORTED      = 7  // Aborted.
             };
          
          fileData(std::string const& _dir,
@@ -109,9 +110,8 @@ namespace btg
 
             void updateAge();
 
-            // bool getDead(std::vector<fileData> & _list) const;
-
-            // bool getDone(std::vector<fileData> & _list);
+            /// Abort a download in progress.
+            bool abort(const t_uint _id);
 
             void removeData(const t_uint _id);
 
@@ -121,6 +121,9 @@ namespace btg
                              std::string & _dir,
                              std::string & _filename,
                              bool        & _start);
+
+            /// Get the number of active downloads.
+            t_uint size() const;
 
             /// Destructor.
             virtual ~fileManager();
