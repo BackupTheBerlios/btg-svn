@@ -40,6 +40,14 @@ PKG_PROG_PKG_CONFIG(0.15)
 
 dnl FBsd wants special paths
 case "${target}" in
+        *-*-freebsd8*)
+                AC_MSG_NOTICE([Enabling FreeBSD 8 specific settings])
+                # FreeBSD
+                CPPFLAGS="$CPPFLAGS -pthread -I/usr/local/include"
+                CFLAGS="$CPPFLAGS -I/usr/local/include"
+                LDFLAGS="$LDFLAGS -L/usr/local/lib -lpthread -lexecinfo"
+                export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
+                ;;
         *-*-freebsd7*)
                 AC_MSG_NOTICE([Enabling FreeBSD 7 specific settings])
                 # FreeBSD
