@@ -175,8 +175,7 @@ namespace btg
          void Handler::onCreateWithData()
          {
             commandStatus = true;
-
-            lastfiles.addLastFile(last_filename);
+            lastfiles.add(last_filename);
             last_filename.clear();
          }
 

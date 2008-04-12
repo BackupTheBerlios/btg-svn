@@ -42,7 +42,7 @@ namespace btg
                      /// ID used to decide which menu option was selected.
                      enum MENUID
                         {
-                           BTN_LOAD        = 100,  //!< Open a file.
+                           BTN_LOAD,               //!< Open a file.
                            BTN_LOAD_URL,
                            BTN_START,              //!< Start a context.
                            BTN_STOP,               //!< Start a context.
@@ -59,7 +59,13 @@ namespace btg
                            BTN_GLIMIT,             //!< Set globa limits.
                            BTN_UPTIME,             //!< Ask the daemon for uptime.
                            BTN_SESNAME,            //!< Change the name of the current session.
+                           
+                           BTN_MAX,
+                           
+                           BTN_LASTFILE = 100,     //!< Last opened files history marker.
+                           BTN_LASTURL  = 200,     //!< Last opened URL history marker. (Consider co-ordination with projectDefaults::max_last_files)  
 
+                           /*
                            BTN_LASTFILE0 = 0,   //!< Last opened file #0.
                            BTN_LASTFILE1 = 1,   //!< Last opened file #1.
                            BTN_LASTFILE2 = 2,   //!< Last opened file #2.
@@ -71,6 +77,7 @@ namespace btg
                            BTN_LASTFILE8 = 8,   //!< Last opened file #8.
                            BTN_LASTFILE9 = 9,   //!< Last opened file #9.
                            BTN_ALL_LAST  = 10   //!< Open all last files.
+                           */
                         };
                   };
 

@@ -65,19 +65,12 @@ namespace btg
          {
          public:
             /// Constructor.
-            ///
             /// @param [in] _logwrapper Pointer used to send logs to.
             /// @param [in] _e          Pointer to the externalization which is used.
             /// @param [in] _callback   Pointer to an implementation of the client callback interface.
-            ///
             /// @param [in] _transport Pointer to an implementation of the transport interface.
-            ///
             /// @param [in] _config Pointer to the class holding the client configuration.
-            ///
-            /// \note This class owns this pointer and
-            /// deletes it in the destructor.
-            /// @param [in] _lastfiles Pointer to the class
-            /// holding a list of last accessed files.
+            /// @param [in] _dynconfig Pointer to the class holding the client dynamic configuration.
             /// @param [in] _verboseFlag Instructs this class to do verbose logging.
             /// @param [in] _autoStartFlag Indicates that the handler should start torrents automatically after loading them.
             clientHandler(LogWrapperType _logwrapper,
@@ -335,6 +328,14 @@ namespace btg
 
             void setFileId(t_uint const _id);
             t_uint getFileId() const;
+            
+            /// Add opened torrent file to the recent-list.
+            void addLastFile(const std::string& _filename);
+            
+            /// Add opened URL to the recent-list.
+            /// @param _url [in] torrent URL
+            /// @param _filename [in] Corresponding file name.
+            void addLastURL(const std::string& _url, const std::string& _filename);
             
             virtual ~clientHandler();
 

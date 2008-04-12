@@ -212,10 +212,10 @@ namespace btg
 
             {
                GET_HANDLER_INST;
-
-               // Update the last opened file list in menubar.
+               // Update the last opened file list and URL list in menubar.
                // can hide items, so should be called after show_all()
                mmb->updateLastFileList(handler->getLastFiles());
+               mmb->updateLastURLList(handler->getLastURLs(),handler->getLastURLFiles());
             }
 
             // Restore window geometry
@@ -412,31 +412,10 @@ namespace btg
 
             // During execution of this function, no updates of
             // contexts should be done.
-            this->updateContexts = false;
-
+            updateContexts = false;
+            
             switch (_which_item)
                {
-               case buttonMenuIds::BTN_LASTFILE0:
-               case buttonMenuIds::BTN_LASTFILE1:
-               case buttonMenuIds::BTN_LASTFILE2:
-               case buttonMenuIds::BTN_LASTFILE3:
-               case buttonMenuIds::BTN_LASTFILE4:
-               case buttonMenuIds::BTN_LASTFILE5:
-               case buttonMenuIds::BTN_LASTFILE6:
-               case buttonMenuIds::BTN_LASTFILE7:
-               case buttonMenuIds::BTN_LASTFILE8:
-               case buttonMenuIds::BTN_LASTFILE9:
-                  {
-                     handle_btn_lastfile(_which_item);
-                     non_context = true;
-                     break;
-                  }
-               case buttonMenuIds::BTN_ALL_LAST:
-                  {
-                     handle_btn_lastfile_all(_which_item);
-                     non_context = true;
-                     break;
-                  }
                case buttonMenuIds::BTN_LOAD:
                   {
                      handle_btn_load();
@@ -499,7 +478,18 @@ namespace btg
                      non_context = true;
                      break;
                   }
-
+               case buttonMenuIds::BTN_LASTFILE:
+                  {
+                     handle_btn_lastfile_all();
+                     non_context = true;
+                     break;
+                  }
+               case buttonMenuIds::BTN_LASTURL:
+                  {
+                     handle_btn_lasturl_all();
+                     non_context = true;
+                     break;
+                  }
                default:
                   {
                      // Ignore the rest of buttons, handled elsewhere.
@@ -507,9 +497,23 @@ namespace btg
                   }
                } // switch
 
+            if (_which_item > buttonMenuIds::BTN_LASTFILE && \
+               _which_item < buttonMenuIds::BTN_LASTFILE + GPD->iMAXLASTFILES() + 1)
+            {
+               handle_btn_lastfile(_which_item - buttonMenuIds::BTN_LASTFILE - 1);
+               non_context = true;
+            }
+            
+            if (_which_item > buttonMenuIds::BTN_LASTURL && \
+               _which_item < buttonMenuIds::BTN_LASTURL + GPD->iMAXLASTURLS() + 1)
+            {
+               handle_btn_lasturl(_which_item - buttonMenuIds::BTN_LASTURL - 1);
+               non_context = true;
+            }
+            
             if (non_context)
                {
-                  this->updateContexts = true;
+                  updateContexts = true;
                   return;
                }
 
@@ -562,7 +566,7 @@ namespace btg
                   // enable controls
                   setControlFunction(true);
                }
-            this->updateContexts = true;
+            updateContexts = true;
          }
 
          void mainWindow::handle_btn_load()
@@ -599,8 +603,13 @@ namespace btg
                {
                case(Gtk::RESPONSE_OK):
                   {
-                     this->lastOpenDirectory = dialog.get_current_folder();
-                     this->openFile(dialog.get_filename());
+                     lastOpenDirectory = dialog.get_current_folder();
+                     openFile(dialog.get_filename());
+                     {
+                        GET_HANDLER_INST;
+                        handler->addLastFile(dialog.get_filename());
+                        mmb->updateLastFileList(handler->getLastFiles());
+                     }
                      break;
                   }
                case(Gtk::RESPONSE_CANCEL):
@@ -636,18 +645,45 @@ namespace btg
                   logVerboseMessage("Loading URL aborted.");
                   return;
                }
+            
+            openURL(url, filename);
 
-            msb->set("Loading URL: " + url);
-            logVerboseMessage("Loading URL: " + url);
+            {
+               GET_HANDLER_INST;
+               handler->addLastURL(url, filename);
+               mmb->updateLastURLList(handler->getLastURLs(), handler->getLastURLFiles());
+            }
+         }
+
+         void mainWindow::openFile(std::string const& _filename)
+         {
+            GET_HANDLER_INST;
+
+            if (btg::core::client::createParts(logWrapper(), handler, this, _filename))
+               {
+                  msb->set(USERMESSAGE_ADDED_B + _filename + USERMESSAGE_ADDED_E);
+                  logVerboseMessage(USERMESSAGE_ADDED_B + _filename + USERMESSAGE_ADDED_E);
+               }
+            else
+               {
+                  msb->set(USERMESSAGE_ADD_FAILED_B + _filename + USERMESSAGE_ADD_FAILED_E);
+                  logVerboseMessage(USERMESSAGE_ADD_FAILED_B + _filename + USERMESSAGE_ADD_FAILED_E);
+               }
+         }
+
+         void mainWindow::openURL(std::string const& _url, std::string const& _filename)
+         {
+            msb->set("Loading URL: " + _url);
+            logVerboseMessage("Loading URL: " + _url);
 
             GET_HANDLER_INST;
 
-            handler->reqCreateFromUrl(filename, url);
+            handler->reqCreateFromUrl(_filename, _url);
 
             if (handler->commandSuccess())
                {
-                  last_url      = url;
-                  last_url_file = filename;
+                  last_url      = _url;
+                  last_url_file = _filename;
 
                   t_uint hid = handler->UrlId();
 
@@ -715,35 +751,20 @@ namespace btg
                                  }
                            }
 
-                        btg::core::os::Sleep::sleepMiliSeconds(500);
+                        // very ugly to spend this time while handlerhtread is locked
+                        btg::core::os::Sleep::sleepMiliSeconds(100);
                      }
 
-                  msb->set("Added: " + filename);
-                  logVerboseMessage("Added: " + filename);
+                  msb->set("Added: " + _filename);
+                  logVerboseMessage("Added: " + _filename);
                }
             else
                {
-                  msb->set("Unable to load: " + filename);
-                  logVerboseMessage("Unable to load: " + filename);
+                  msb->set("Unable to load: " + _filename);
+                  logVerboseMessage("Unable to load: " + _filename);
                }
          }
-
-         void mainWindow::openFile(std::string const& _filename)
-         {
-            GET_HANDLER_INST;
-
-            if (btg::core::client::createParts(logWrapper(), handler, this, _filename))
-               {
-                  msb->set(USERMESSAGE_ADDED_B + _filename + USERMESSAGE_ADDED_E);
-                  logVerboseMessage(USERMESSAGE_ADDED_B + _filename + USERMESSAGE_ADDED_E);
-               }
-            else
-               {
-                  msb->set(USERMESSAGE_ADD_FAILED_B + _filename + USERMESSAGE_ADD_FAILED_E);
-                  logVerboseMessage(USERMESSAGE_ADD_FAILED_B + _filename + USERMESSAGE_ADD_FAILED_E);
-               }
-         }
-
+         
          bool mainWindow::onWindowClose(GdkEventAny *)
          {
             on_menu_item_selected(buttonMenuIds::BTN_DETACH);
@@ -765,8 +786,7 @@ namespace btg
                {
                   return;
                }
-
-            // VERBOSE_LOG(verboseFlag, _msg);
+            VERBOSE_LOG(logWrapper(), verboseFlag, _msg);
             logMessage(_msg);
          }
 
@@ -889,7 +909,7 @@ namespace btg
             handler->reqPeers(_id);
             if (handler->commandSuccess())
                {
-                  t_peerList peerlist = handler->getPeers();
+                  t_peerList const& peerlist = handler->getPeers();
                   
                   mnb->getPeerTreeview()->clear();
                   mnb->getPeerTreeview()->update(peerlist);
@@ -948,7 +968,7 @@ namespace btg
                }
          }
 
-         void mainWindow::handle_btn_lastfile(buttonMenuIds::MENUID _which_item)
+         void mainWindow::handle_btn_lastfile(int _which_item)
          {
             std::string filename;
             {
@@ -958,21 +978,45 @@ namespace btg
             openFile(filename);
          }
 
-         void mainWindow::handle_btn_lastfile_all(buttonMenuIds::MENUID _which_item)
+         void mainWindow::handle_btn_lastfile_all()
          {
             t_strList lastfiles;
             {
                GET_HANDLER_INST;
-
-               // Open all last files.
                lastfiles = handler->getLastFiles();
             }
-
             for (t_strListCI lastIter=lastfiles.begin();
                  lastIter != lastfiles.end();
                  lastIter++)
                {
-                  this->openFile(*lastIter);
+                  openFile(*lastIter);
+               }
+         }
+
+         void mainWindow::handle_btn_lasturl(int _which_item)
+         {
+            std::string url;
+            std::string filename;
+            {
+               GET_HANDLER_INST;
+               url = handler->getLastURLs().at(_which_item);
+               filename = handler->getLastURLFiles().at(_which_item);
+            }
+            openURL(url,filename);
+         }
+
+         void mainWindow::handle_btn_lasturl_all()
+         {
+            t_strList lastURLs;
+            t_strList lastURLFiles;
+            {
+               GET_HANDLER_INST;
+               lastURLs = handler->getLastURLs();
+               lastURLFiles = handler->getLastURLFiles();
+            }
+            for (int i=0; i<lastURLs.size(); ++i)
+               {
+                  openURL(lastURLs[i],lastURLFiles[i]);
                }
          }
 

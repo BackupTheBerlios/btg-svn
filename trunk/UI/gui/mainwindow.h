@@ -115,6 +115,9 @@ namespace btg
                /// created.
                void openFile(std::string const& _filename);
 
+               /// Load URL
+               void openURL(std::string const& _url, std::string const& _filename);
+               
                /// Log a message to internal application log and
                /// the normal log.
                void logMessage(std::string const& _msg);
@@ -145,10 +148,16 @@ namespace btg
                void setControlFunction(const bool bSensitive = true);
 
                /// Handle opening a last file.
-               void handle_btn_lastfile(buttonMenuIds::MENUID _which_item);
+               void handle_btn_lastfile(int _which_item);
 
                /// Handle opening all last files.
-               void handle_btn_lastfile_all(buttonMenuIds::MENUID _which_item);
+               void handle_btn_lastfile_all();
+
+               /// Handle opening a last URL.
+               void handle_btn_lasturl(int _which_item);
+
+               /// Handle opening all last URLs.
+               void handle_btn_lasturl_all();
 
                /// Create and show a dialog to open a torrent
                /// file.

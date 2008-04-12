@@ -531,7 +531,7 @@ void OpenFiles(ncursesScreen& _nscr,
             {
                _nscr.setOutput("Response: " + _clihandler.getOutput());
                // Update the list of last opened files.
-               _lastfiles.addLastFile(*iter);
+               _lastfiles.add(*iter);
             }
          else if (_clihandler.errorAvailable())
             {

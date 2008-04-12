@@ -439,7 +439,7 @@ namespace btg
                         {
                            if (parts.at(1) == "last")
                               {
-                                 t_strList filelist = lastfiles.getLastFiles();
+                                 t_strList filelist = lastfiles.get();
                                  for (t_strListCI iter = filelist.begin();
                                       iter != filelist.end();
                                       iter++)
@@ -462,7 +462,7 @@ namespace btg
                case CLICommand::cmd_last:
                   {
                      result = INPUT_LOCAL;
-                     t_strList filelist = lastfiles.getLastFiles();
+                     t_strList filelist = lastfiles.get();
                      if (filelist.size() > 0)
                         {
                            std::string temp_output;
@@ -1057,7 +1057,7 @@ namespace btg
 
          void cliHandler::onCreateWithData()
          {
-            lastfiles.addLastFile(last_filename);
+            lastfiles.add(last_filename);
             setOutput("Created " + last_filename + ".");
             last_filename.clear();
          }
@@ -1525,7 +1525,7 @@ namespace btg
                   output += *vsci + GPD->sNEWLINE();
                   // Since the torrent finished downloading, remove it
                   // from the list of last opened files.
-                  lastfiles.removeLastFile(*vsci);
+                  lastfiles.remove(*vsci);
                }
             setOutput(output);
          }

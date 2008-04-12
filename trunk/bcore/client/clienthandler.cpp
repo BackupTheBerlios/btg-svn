@@ -649,6 +649,16 @@ namespace btg
             return last_file_id;
          }
          
+         void clientHandler::addLastFile(const std::string& _filename)
+         {
+            lastfiles.add(_filename);
+         }
+         
+         void clientHandler::addLastURL(const std::string& _url, const std::string& _filename)
+         {
+            lasturls.add(_url, _filename);
+         }
+
          clientHandler::~clientHandler()
          {
          }

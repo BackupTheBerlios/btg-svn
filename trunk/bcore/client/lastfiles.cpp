@@ -15,17 +15,12 @@ namespace btg
                               clientDynConfig & _CDC)
             : Logable(_logwrapper),
               CDC_(_CDC),
-              data_modified_(false),
+              modified_(false),
               lastFiles_(_CDC.lastFiles_)
          {
          }
 
-         t_strList lastFiles::getLastFiles() const
-         {
-            return lastFiles_;
-         }
-
-         void lastFiles::addLastFile(std::string const& _filename)
+         void lastFiles::add(std::string const& _filename)
          {
             t_strListCI strIter = find(lastFiles_.begin(), lastFiles_.end(), _filename);
             if (strIter == lastFiles_.end())
@@ -43,7 +38,7 @@ namespace btg
                }
          }
 
-         void lastFiles::removeLastFile(std::string const& _filename)
+         void lastFiles::remove(std::string const& _filename)
          {
             t_strListI strIter = find(lastFiles_.begin(), lastFiles_.end(), _filename);
             if (strIter != lastFiles_.end())
@@ -53,26 +48,13 @@ namespace btg
                }
          }
 
-         void lastFiles::setLastFiles(t_strList const& _lastfiles)
-         {
-            lastFiles_ = _lastfiles;
-
-            // Only keep a certain number of elements.
-            while (lastFiles_.size() > GPD->iMAXLASTFILES())
-               {
-                  lastFiles_.erase(lastFiles_.begin());
-               }
-
-            set_modified(true);
-         }
-
          lastFiles::~lastFiles()
          {
          }
          
          void lastFiles::set_modified(bool const bMod)
          {
-            data_modified_ = bMod;
+            modified_ = bMod;
             CDC_.set_modified(bMod);
          }
 

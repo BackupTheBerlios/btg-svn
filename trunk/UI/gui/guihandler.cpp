@@ -134,7 +134,7 @@ namespace btg
          void guiHandler::onCreateWithData()
          {
             commandStatus = true;
-            lastfiles.addLastFile(last_filename);
+            lastfiles.add(last_filename);
             BTG_NOTICE(logWrapper(), 
                        "Added a new torrent with data, filename = " << last_filename << ".");
             last_filename.clear();
@@ -321,7 +321,7 @@ namespace btg
                {
                   // Since the torrent finished downloading, remove it
                   // from the list of last opened files.
-                  lastfiles.removeLastFile(*vsci);
+                  lastfiles.remove(*vsci);
                }
 
             cleanedFilenames = _filenames;
@@ -427,9 +427,19 @@ namespace btg
             return status;
          }
 
-         t_strList guiHandler::getLastFiles() const
+         t_strList const& guiHandler::getLastFiles() const
          {
-            return lastfiles.getLastFiles();
+            return lastfiles.get();
+         }
+         
+         t_strList const& guiHandler::getLastURLs() const
+         {
+            return lasturls.getURLs();
+         }
+         
+         t_strList const& guiHandler::getLastURLFiles() const
+         {
+            return lasturls.getFiles();
          }
 
          t_strList guiHandler::getCleanedFilenames()
@@ -444,7 +454,7 @@ namespace btg
             pstatus_bar = _pstatus_bar;
          }
 
-         t_peerList guiHandler::getPeers() const
+         t_peerList const& guiHandler::getPeers() const
          {
             return peerlist;
          }

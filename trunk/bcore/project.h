@@ -136,6 +136,9 @@ namespace btg
                /// Number of last opened files the clients should
                /// remember.
                t_uint      iMAXLASTFILES()        const;
+               /// Number of last opened URLs the clients should
+               /// remember.
+               t_uint      iMAXLASTURLS()         const;
 
             private:
                /// Constructor.
@@ -207,6 +210,8 @@ namespace btg
                std::string const  temptemplate1;
                /// Number of last opened files the clients should remember.
                t_uint      const  max_last_files;
+               /// Number of last opened URLs the clients should remember.
+               t_uint      const  max_last_URLs;
             };
 
       } // namespace core

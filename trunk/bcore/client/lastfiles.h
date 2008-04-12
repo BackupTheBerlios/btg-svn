@@ -44,19 +44,16 @@ namespace btg
                                clientDynConfig & _CDC);
 
                      /// Return true if the list was modified.
-                     bool modified() const { return data_modified_; };
+                     bool modified() const { return modified_; };
 
                      /// Get the list of last opened files.
-                     t_strList getLastFiles() const;
+                     const t_strList& get() const { return lastFiles_; }
 
                      /// Add a filename to the filename list.
-                     void addLastFile(std::string const& _filename);
+                     void add(std::string const& _filename);
 
                      /// Remove a filename from the filename list.
-                     void removeLastFile(std::string const& _filename);
-
-                     /// Set the list of last opened files.
-                     void setLastFiles(t_strList const& _lastfiles);
+                     void remove(std::string const& _filename);
 
                      /// Destructor.
                      virtual ~lastFiles();
@@ -71,7 +68,7 @@ namespace btg
                      clientDynConfig & CDC_;
 
                      /// Indicates if the list was modified.
-                     bool data_modified_;
+                     bool modified_;
 
                      /// List of last opened files.
                      /// (agregated by clientDynConfig now)

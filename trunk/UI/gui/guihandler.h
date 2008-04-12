@@ -102,7 +102,13 @@ namespace btg
                      bool idToFilename(t_int const _id, std::string & _filename);
 
                      /// Get the list of files which were opened last.
-                     t_strList getLastFiles() const;
+                     t_strList const& getLastFiles() const;
+                     
+                     /// Get the list of URLs from URL-history.
+                     t_strList const& getLastURLs() const;
+                     
+                     /// Get the list of files from URL-history.
+                     t_strList const& getLastURLFiles() const;
 
                      /// Return the list of files cleaned by the last
                      /// clean operation.
@@ -113,7 +119,7 @@ namespace btg
                      void setStatusBar(mainStatusbar* _status_bar);
 
                      /// Get the last received list of peers.
-                     t_peerList getPeers() const;
+                     t_peerList const& getPeers() const;
 
                      /// Get a list of selected files, updated by the
                      /// last command to the daemon.

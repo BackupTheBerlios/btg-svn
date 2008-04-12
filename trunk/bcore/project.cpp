@@ -86,7 +86,8 @@ namespace btg
            default_leech_mode(false),
            temptemplate0("/tmp/btg0"),
            temptemplate1("/tmp/btg1"),
-           max_last_files(50)
+           max_last_files(20),
+           max_last_URLs(20)
       {
          // Paths that can contain *.ini-files
          static const char * config_paths[] = {
@@ -334,6 +335,11 @@ namespace btg
       t_uint projectDefaults::iMAXLASTFILES() const
       {
          return max_last_files;
+      }
+
+      t_uint projectDefaults::iMAXLASTURLS() const
+      {
+         return max_last_URLs;
       }
 
    } // namespace core
