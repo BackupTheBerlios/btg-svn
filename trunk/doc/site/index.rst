@@ -129,27 +129,12 @@ Experimental Releases
 ======================= ========================== ======================= ==================================
 **Source**              **Release note**           **Changelog**           **Rasterbar Libtorrent version**
 ----------------------- -------------------------- ----------------------- ----------------------------------
-`btg-0.9.7-rc4.tar.gz`_ `0.9.7 RC4 release note`_  `0.9.7 RC4 changelog`_  0.12.1/0.13RC/SVN
-`btg-0.9.7-rc3.tar.gz`_ `0.9.7 RC3 release note`_  `0.9.7 RC3 changelog`_  0.13RC/SVN
-`btg-0.9.7-rc2.tar.gz`_ `0.9.7 RC2 release note`_  `0.9.7 RC2 changelog`_  0.13RC/SVN
-`btg-0.9.7-rc1.tar.gz`_ `0.9.7 RC1 release note`_  `0.9.7 RC1 changelog`_  0.13RC/SVN
+`btg-0.9.8-rc1.tar.gz`_ `0.9.8 RC1 release note`_  `0.9.8 RC1 changelog`_  0.12.1/0.13/SVN
 ======================= ========================== ======================= ==================================
 
-.. _btg-0.9.7-rc4.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.7-rc4.tar.gz
-.. _0.9.7 RC4 release note: http://developer.berlios.de/project/shownotes.php?release_id=14318
-.. _0.9.7 RC4 changelog: http://developer.berlios.de/project/shownotes.php?release_id=14318
-
-.. _btg-0.9.7-rc3.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.7-rc3.tar.gz
-.. _0.9.7 RC3 release note: http://developer.berlios.de/project/shownotes.php?release_id=14299
-.. _0.9.7 RC3 changelog: http://developer.berlios.de/project/shownotes.php?release_id=14299
-
-.. _btg-0.9.7-rc2.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.7-rc2.tar.gz
-.. _0.9.7 RC2 release note: http://developer.berlios.de/project/shownotes.php?release_id=14078
-.. _0.9.7 RC2 changelog: http://developer.berlios.de/project/shownotes.php?release_id=14078
-
-.. _btg-0.9.7-rc1.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.7-rc1.tar.gz
-.. _0.9.7 RC1 release note: http://developer.berlios.de/project/shownotes.php?release_id=13992
-.. _0.9.7 RC1 changelog: http://developer.berlios.de/project/shownotes.php?release_id=13992
+.. _btg-0.9.8-rc1.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.8-rc1.tar.gz
+.. _0.9.8 RC1 release note: https://developer.berlios.de/project/shownotes.php?release_id=14498
+.. _0.9.8 RC1 changelog: https://developer.berlios.de/project/shownotes.php?release_id=14498
 
 
 Packages
