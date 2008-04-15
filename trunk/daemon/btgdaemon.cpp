@@ -228,10 +228,6 @@ int main(int argc, char* argv[])
 
       if ( pfname.size() > 0 )
       {
-         if (!checkFile(logwrapper, "PID-file", pfname))
-            {
-               return BTG_ERROR_EXIT;
-            }
          // passwd file should be absolute to be able to unlink it after current dir change
          btg::core::os::fileOperation::resolvePath(pfname);
          pidfile.create(pfname.c_str());
