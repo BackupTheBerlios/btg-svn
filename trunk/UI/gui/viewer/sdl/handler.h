@@ -79,13 +79,13 @@ namespace btg
                   /// @param [in] _gui           Reference to the GUI instance used.
 
                   viewerHandler(btg::core::LogWrapperType _logwrapper,
-                                btg::core::externalization::Externalization* _e,
-                                btg::core::messageTransport*            _transport,
-                                btg::core::client::clientConfiguration* _config,
-                                btg::core::client::lastFiles*           _lastfiles,
+                                btg::core::externalization::Externalization& _e,
+                                btg::core::messageTransport&            _transport,
+                                btg::core::client::clientConfiguration& _config,
+                                btg::core::client::clientDynConfig&     _dynconfig,
                                 bool const                              _verboseFlag,
                                 bool const                              _autoStartFlag,
-                                btgvsGui *                              _gui
+                                btgvsGui&                               _gui
                                 );
 
                   /// Returns the list of contexts from the daemon.
@@ -213,7 +213,7 @@ namespace btg
                   t_strList      cleanedFilenames;
 
                   /// Reference to the GUI instance used.
-                  btgvsGui*      gui;
+                  btgvsGui&      gui;
 
                   /// List of peers, got from the last request to
                   /// get peers.
@@ -238,10 +238,10 @@ namespace btg
                public:
                   /// Constructor.
                   viewerStartupHelper(btg::core::LogWrapperType _logwrapper,
-                                      btg::core::client::clientConfiguration*        _config,
-                                      vsCommandLineArgumentHandler* _clah,
-                                      btg::core::messageTransport*                   _messageTransport,
-                                      btg::core::client::clientHandler*              _handler);
+                                      btg::core::client::clientConfiguration& _config,
+                                      vsCommandLineArgumentHandler&           _clah,
+                                      btg::core::messageTransport&            _messageTransport,
+                                      btg::core::client::clientHandler&       _handler);
 
                   /// Query the user about which session to attach to.
                   virtual t_long queryUserAboutSession(t_longList const& _sessions,
