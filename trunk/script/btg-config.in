@@ -4,13 +4,7 @@
 # Ask the user a number of quiestions, from which a deamon.ini and
 # client.ini files can be generated.
 
-# Make sure that dialog is present:
-
-if [ ! -x "@DIALOG@" ]
-then
-  echo "This script needs dialog to function. Abort."
-  exit -1
-fi
+DIALOG="@DIALOG@"
 
 TEMP=/tmp/btg.menuconfig.out
 TITLE="BTG daemon config"
@@ -20,6 +14,10 @@ CLIENT_INI="client.ini"
 system=`uname`
 if [ "$system" = "FreeBSD" ]
 then
+  # Native FreeBSD dialog does not support --fselect and other features
+  # so it must be installed from ports
+  DIALOG="/usr/local/bin/cdialog"
+
   # Default dimensions of a file selection dialog.
   FSEL_DIM_WIDTH=60
   FSEL_DIM_HEIGHT=13
@@ -49,6 +47,13 @@ else
 
   MENU_DIM_HEIGHT=0
   MENU_DIM_WIDTH=0
+fi
+
+# Make sure that dialog is present:
+if [ ! -x "${DIALOG}" ]
+then
+  echo "This script needs ${DIALOG} to function. Abort."
+  exit -1
 fi
 
 # As returned by dialog.
@@ -158,7 +163,7 @@ function handle_exit_status
   case $STATUS in
     0) ;;
     1) exit;;
-    2) @DIALOG@ --title "help" --msgbox "$HELPMESSAGE" $MESSAGE_DIM_HEIGHT $MESSAGE_DIM_WIDTH; \
+    2) ${DIALOG} --title "help" --msgbox "$HELPMESSAGE" $MESSAGE_DIM_HEIGHT $MESSAGE_DIM_WIDTH; \
        if [ "$EXITONUNKNOWN" -eq "1" ] ; then exit; fi;;
     *) if [ "$EXITONUNKNOWN" -eq "1" ] ; then exit; fi
   esac
@@ -182,17 +187,17 @@ function show_help
   local title=$1
   local helpstr=$2
 
-  @DIALOG@ --title "help: $title" --msgbox "$helpstr" $MESSAGE_DIM_HEIGHT $MESSAGE_DIM_WIDTH;
+  ${DIALOG} --title "help: $title" --msgbox "$helpstr" $MESSAGE_DIM_HEIGHT $MESSAGE_DIM_WIDTH;
 }
 
 function show_error_message
 {
-  @DIALOG@ --title "Error: $1" --msgbox "$2" $MESSAGE_DIM_HEIGHT $MESSAGE_DIM_WIDTH;
+  ${DIALOG} --title "Error: $1" --msgbox "$2" $MESSAGE_DIM_HEIGHT $MESSAGE_DIM_WIDTH;
 }
 
 function query_transport
 {
-  @DIALOG@ --help-button --title "(required) transport" \
+  ${DIALOG} --help-button --title "(required) transport" \
   --menu "Use the following transport:" $MENU_DIM_WIDTH $MENU_DIM_HEIGHT 4 \
     1 "TCP/IP" \
     2 "STCP/IP (Secured using GNUTLS)" \
@@ -240,7 +245,7 @@ if [ "$SEL_CERT_USE" -eq 1 ]
 
 function query_CA
 {
-  @DIALOG@ --help-button --title "$1: $CA_SUBTITLE" \
+  ${DIALOG} --help-button --title "$1: $CA_SUBTITLE" \
   --fselect "$HOME" $FSEL_DIM_HEIGHT $FSEL_DIM_WIDTH 2>$TEMP
 
   local STATUS=$?
@@ -258,7 +263,7 @@ function query_CA
 
 function query_certificate
 {
-  @DIALOG@ --help-button --title "$1: $CERT_SUBTITLE" \
+  ${DIALOG} --help-button --title "$1: $CERT_SUBTITLE" \
   --fselect "$HOME" $FSEL_DIM_HEIGHT $FSEL_DIM_WIDTH 2>$TEMP
 
   local STATUS=$?
@@ -275,7 +280,7 @@ function query_certificate
 
 function query_privkey
 {
-  @DIALOG@ --help-button --title "$1: $PRIVKEY_SUBTITLE" \
+  ${DIALOG} --help-button --title "$1: $PRIVKEY_SUBTITLE" \
   --fselect "$HOME" $FSEL_DIM_HEIGHT $FSEL_DIM_WIDTH 2>$TEMP
 
   local STATUS=$?
@@ -305,7 +310,7 @@ function query_certificates
 
 function query_network
 {
-  @DIALOG@ --help-button --title "$NETWORK_SUBTITLE" \
+  ${DIALOG} --help-button --title "$NETWORK_SUBTITLE" \
   --inputbox "IPv4 address:port" $INPUTBOX_HEIGHT $INPUTBOX_WIDTH "127.0.0.1:16000" 2>$TEMP
 
   local STATUS=$?
@@ -351,7 +356,7 @@ function query_network
 
 function query_network_torrent_range
 {
-  @DIALOG@ --help-button --title "$NETWORK_TORRENT_SUBTITLE" \
+  ${DIALOG} --help-button --title "$NETWORK_TORRENT_SUBTITLE" \
   --inputbox "Port range (port:port)" $INPUTBOX_HEIGHT $INPUTBOX_WIDTH "9000:9100" 2>$TEMP
 
   local STATUS=$?
@@ -398,7 +403,7 @@ function query_network_torrent_range
 
 function query_logging
 {
-  @DIALOG@ --help-button --title "$LOGGING_SUBTITLE" \
+  ${DIALOG} --help-button --title "$LOGGING_SUBTITLE" \
   --menu "Use the following logging:" $MENU_DIM_WIDTH $MENU_DIM_HEIGHT 4 \
     1 "Standard out" \
     2 "Log file" \
@@ -423,7 +428,7 @@ function query_logging
 
 function query_logfilename
 {
-  @DIALOG@ --help-button --title "$LOGFILENAME_SUBTITLE" \
+  ${DIALOG} --help-button --title "$LOGFILENAME_SUBTITLE" \
   --fselect "$HOME" $FSEL_DIM_HEIGHT $FSEL_DIM_WIDTH 2>$TEMP
 
   local STATUS=$?
@@ -440,7 +445,7 @@ function query_logfilename
 
 function query_auth
 {
-  @DIALOG@ --help-button --title "$AUTH_SUBTITLE" \
+  ${DIALOG} --help-button --title "$AUTH_SUBTITLE" \
   --fselect "$HOME" $FSEL_DIM_HEIGHT $FSEL_DIM_WIDTH 2>$TEMP
 
   local STATUS=$?
@@ -457,7 +462,7 @@ function query_auth
 
 function query_opt_proxy
 {
-  @DIALOG@ --help-button --title "$OPT_PROXY_SUBTITLE" \
+  ${DIALOG} --help-button --title "$OPT_PROXY_SUBTITLE" \
   --inputbox "IPv4 address:port" $INPUTBOX_HEIGHT $INPUTBOX_WIDTH "127.0.0.1:8118" 2>$TEMP
 
   local STATUS=$?
@@ -508,7 +513,7 @@ function query_opt_proxy
 
 function query_opt_filter
 {
-  @DIALOG@ --title "$OPT_FILTER_SUBTITLE" --help-button \
+  ${DIALOG} --title "$OPT_FILTER_SUBTITLE" --help-button \
   --menu "Use the following filter:" $MENU_DIM_WIDTH $MENU_DIM_HEIGHT 3 \
     1 "Level1.txt" \
     2 "Emule" \
@@ -541,7 +546,7 @@ function query_opt_filter_file
 {
   if [ "$SEL_USEIPFILTER" -eq 1 ]
   then
-    @DIALOG@ --title "$OPT_FILTER_FILE_SUBTITLE" --help-button \
+    ${DIALOG} --title "$OPT_FILTER_FILE_SUBTITLE" --help-button \
     --fselect "$HOME" $FSEL_DIM_HEIGHT $FSEL_DIM_WIDTH 2>$TEMP
 
     local STATUS=$?
@@ -564,7 +569,7 @@ function query_opt_filter_file
 
 function query_opt_savesessions
 {
-  @DIALOG@ --help-button --title "$OPT_SAVESESSIONS_SUBTITLE" \
+  ${DIALOG} --help-button --title "$OPT_SAVESESSIONS_SUBTITLE" \
   --fselect "$HOME" $FSEL_DIM_HEIGHT $FSEL_DIM_WIDTH 2>$TEMP
 
   local STATUS=$?
@@ -724,7 +729,7 @@ function write_client_config
 #
 # 
 
-@DIALOG@ --title "Info" \
+${DIALOG} --title "Info" \
 --msgbox "This script generates a daemon and client config files based \
 on selection performed by you.\n\n\
 You can press ESC at any time to abort.\n\n\
@@ -739,7 +744,7 @@ query_network_torrent_range
 query_logging
 query_auth
 
-@DIALOG@ --title "Info" \
+${DIALOG} --title "Info" \
 --msgbox "The following information is optional. Press ESC to skip a setting in the following dialogs." \
 $MESSAGE_DIM_HEIGHT $MESSAGE_DIM_WIDTH
 
@@ -751,7 +756,7 @@ query_opt_filter_file
 
 query_opt_savesessions
 
-@DIALOG@ --title "Info" \
+${DIALOG} --title "Info" \
 --msgbox "Ready to write BTG daemon config to $DAEMON_INI and BTG client config to $CLIENT_INI. Press ESC to quit." \
 $MESSAGE_DIM_HEIGHT $MESSAGE_DIM_WIDTH
 
