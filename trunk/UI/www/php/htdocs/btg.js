@@ -152,6 +152,9 @@ function sessionQuit()
 
 function cleanAllContexts()
 {
+	if(!confirm("Are you sure you want to clean all torrents?"))
+		return;
+
 	setStatus("Cleaning session...");
 	btg_cleanAll(cb_cleanAll, cb_cleanAll_err);
 }
