@@ -1,0 +1,2 @@
+script.sh - This directory contains a script to do out-of-source builds.
+deb.sh - invoke dpkg-buildpackage

@@ -1,0 +1,3 @@
+<?php
+define("BTG_BUILD", "@BTG_BUILD@");
+?>

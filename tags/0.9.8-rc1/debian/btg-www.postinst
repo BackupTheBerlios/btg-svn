@@ -1,0 +1,15 @@
+#! /bin/sh
+
+# $Id$
+
+set -e # fail on errors
+
+#DEBHELPER#
+
+if [ "$1" = "configure" ]; then
+	echo "**************************************************"
+	echo "Now you can add /usr/share/btgwww/htdocs"
+	echo "to your web-server configuration."
+	echo "Take a look at /etc/btg/config.php"
+	echo "**************************************************"
+fi

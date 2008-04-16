@@ -1,0 +1,11 @@
+#! /bin/sh
+
+# $Id$
+
+set -e # fail on errors
+
+#DEBHELPER#
+
+if [ "$1" = "configure" ]; then
+	id btg || adduser --system --home /nonexistent --shell /bin/false --disabled-login --no-create-home --group btg
+fi
