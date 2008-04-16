@@ -16,17 +16,18 @@
 ### END INIT INFO
 
 PIDFILE=/var/run/btgdaemon.pid
+CONFFILE=/etc/btg/daemon.ini
 
 case $1 in
     start)
     	[ -e $PIDFILE ] && pid=`cat $PIDFILE`
-    	if [ -n "$pid" ] ; then
+    	if [ -n "$pid" ] && kill -0 $pid ; then
 	    echo "BTG already running. PID=$pid."
 	    exit 0
 	fi
 	
 	echo "Starting BTG ..."	
-	exec /usr/bin/btgdaemon --verbose --pid-file $PIDFILE
+	exec /usr/bin/btgdaemon --verbose --config $CONFFILE --pid-file $PIDFILE
     ;;
     stop)
     	[ -e $PIDFILE ] && pid=`cat $PIDFILE`
@@ -36,7 +37,7 @@ case $1 in
 	fi
 	
 	echo -n "Stopping BTG ..."
-	kill $pid
+	kill $pid || { echo "ERROR"; exit 1; }
 	cnt=0
 	while [ -n "$pid" -a $cnt -le 30 ] ; do
 		pid=`cat $PIDFILE`

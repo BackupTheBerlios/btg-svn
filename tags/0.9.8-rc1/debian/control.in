@@ -78,7 +78,7 @@ Description: web interface to the BTG daemon
  http://btg.berlios.de
 
 Package: btg-daemon@SUFFIX@
-Depends: btg-common@SUFFIX@ (= @VERSION@), sysvutils
+Depends: btg-common@SUFFIX@ (= @VERSION@), sysvutils, libclinkcc (>= 1.7.1)
 Replaces: btg-daemon
 Recommends: btg-gui@SUFFIX@ | btg-cli@SUFFIX@ | btg-www@SUFFIX@
 Architecture: i386
