@@ -674,9 +674,62 @@ class BTG
 							. "</tracker>\n";
 					}
 
-					// $output .= contextTrackers($contextStatus->getContextID());
-					$output .= "</context>\n";
-				}
+               // Get the list of contained files.
+               $output .= "<fileinfo>";
+
+               $r2 = $this->executeCommand(new contextFileInfoCommand((int)$contextStatus->getContextID()));
+               if ($r2 instanceof contextFileInfoResponseCommand)
+                  {
+                     $fi_lst = $r2->getFileInfoList();
+
+                     $fileId = 0;
+                     foreach($fi_lst as $fi)
+                     {
+                        $percent = 0;
+                        if ($fi->isFull())
+                           {
+                              $percent = 100;
+                           }
+                           else if ($fi->isEmpty())
+                              {
+                                 $percent = 100;
+                              }
+                           else
+                              {
+                                 /// !!!
+                                 $bits = $fi->getBits();
+                                 $bit_set = 0;
+                                 $bit_unset = 0;
+                                 
+                                 foreach($bits as $bit)
+                                    {
+                                       if ($bit)
+                                          {
+                                             $bit_set++;
+                                          }
+                                       else
+                                          {
+                                             $bit_unset++;
+                                          }
+                                    }
+
+                                 $percent = (integer)($bit_set * 100 / ($bit_set + $bit_unset));
+                              }
+                           
+                           $output .= "<file>";
+
+                           $output .= "<id>".$fileId."</id>";
+                           $fileId++;
+
+                           $output .= "<name>".$fi->getFilename()."</name>";
+                           $output .= "<size>".$fi->getFileSize()."</size>";
+                           $output .= "<percent>".$percent."</percent>";
+                           $output .= "</file>";
+                           }
+                     }
+                     $output .= "</fileinfo>";
+                     $output .= "</context>\n";
+                  }
 			}else
 			{
 				$output .= "<context>\n";
