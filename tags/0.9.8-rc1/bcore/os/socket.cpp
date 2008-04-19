@@ -178,7 +178,7 @@ namespace btg
             //t_int addr_length = sizeof(addr_);
             _new_socket.sock_ = ::accept(sock_, &addr, &addr_length);
 
-            if (_new_socket.sock_ <= 0)
+            if (_new_socket.sock_ == -1)
                {
 #if BTG_TRANSPORT_DEBUG
                   BTG_NOTICE(logWrapper(), "Socket::accept, false");

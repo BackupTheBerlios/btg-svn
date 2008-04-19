@@ -282,10 +282,7 @@ int main(int argc, char* argv[])
       
       if (dd.ss_enable)
       {
-         if (!checkFile(logwrapper, "session file", ss_fname))
-            {
-               return BTG_ERROR_EXIT;
-            }
+         btg::core::os::fileOperation::resolvePath(ss_fname);
          dd.ss_file.open(ss_fname.c_str());
          if (!dd.ss_file.is_open())
          {
@@ -803,13 +800,12 @@ int main(int argc, char* argv[])
    
    if (!dd.cla->doNotDetach())
       {
-#if BTG_OPTION_USECYBERLINK
-         btg::daemon::upnp::cyberlinkUpnpIf * pCLUPnPIf = dynamic_cast<btg::daemon::upnp::cyberlinkUpnpIf*>(upnpif.get());
-
          // stop existing threads
+#if BTG_OPTION_USECYBERLINK
+         // cyberlinkif thread
+         btg::daemon::upnp::cyberlinkUpnpIf * pCLUPnPIf = dynamic_cast<btg::daemon::upnp::cyberlinkUpnpIf*>(upnpif.get());
          if (pCLUPnPIf)
          {
-            // cyberlinkif thread
             pCLUPnPIf->stop_thread();
          }
 #endif // BTG_OPTION_USECYBERLINK        
@@ -845,11 +841,11 @@ int main(int argc, char* argv[])
                }
                break;
             }
-#if BTG_OPTION_USECYBERLINK
          // re-start needed threads
+#if BTG_OPTION_USECYBERLINK
+         // cyberlinkif thread
          if (pCLUPnPIf)
          {
-            // cyberlinkif thread
             pCLUPnPIf->start_thread();
          }
 #endif // BTG_OPTION_USECYBERLINK

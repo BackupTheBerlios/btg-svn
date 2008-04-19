@@ -2,11 +2,11 @@ Source: btg@SUFFIX@
 Section: net
 Priority: extra
 Maintainer: Roman Rybalko <btg@romanr.info>
-Build-Depends: debhelper (>= 5), autotools-dev, pkg-config (>= 0.15), libtorrent-0.13-dev | libtorrent13-dev | libtorrent-dev (>= 0.12), libboost-iostreams-dev, libboost-filesystem-dev, libboost-date-time-dev, libboost-thread-dev, libboost-program-options-dev, libncurses5-dev, libgnutls-dev, libgtkmm-2.4-dev, libcppunit-dev, automake, autoconf, dialog, libclinkcc-dev
+Build-Depends: debhelper (>= 5), autotools-dev, pkg-config (>= 0.15), libtorrent-rasterbar-dev (>= 0.13) | libtorrent-rasterbar-0.13-dev, libboost-iostreams-dev, libboost-filesystem-dev, libboost-date-time-dev, libboost-thread-dev, libboost-program-options-dev, libncurses5-dev, libgnutls-dev, libgtkmm-2.4-dev, libcppunit-dev, automake, autoconf, dialog, libclinkcc-dev
 Standards-Version: 3.7.3
 
 Package: btg-common@SUFFIX@
-Depends: libboost-date-time1.34.1, libboost-filesystem1.34.1, libboost-thread1.34.1, libboost-iostreams1.34.1, libboost-program-options1.34.1, libgnutls13 (>= 1.6), zlib1g (>= 1:1.2.3), libtorrent-0.13 | libtorrent13 | libtorrent (>= 0.13), dialog, libclinkcc
+Depends: libboost-date-time1.34.1, libboost-filesystem1.34.1, libboost-thread1.34.1, libboost-iostreams1.34.1, libboost-program-options1.34.1, libgnutls13 (>= 1.6), zlib1g (>= 1:1.2.3), dialog
 Conflicts: btg-common
 Recommends: btg-daemon@SUFFIX@ | btg-gui@SUFFIX@ | btg-cli@SUFFIX@
 Architecture: i386
@@ -78,7 +78,7 @@ Description: web interface to the BTG daemon
  http://btg.berlios.de
 
 Package: btg-daemon@SUFFIX@
-Depends: btg-common@SUFFIX@ (= @VERSION@), sysvutils, libclinkcc (>= 1.7.1)
+Depends: btg-common@SUFFIX@ (= @VERSION@), sysvutils, libclinkcc (>= 1.7.1), libtorrent-rasterbar (>= 0.13) | libtorrent-rasterbar-0.13
 Replaces: btg-daemon
 Recommends: btg-gui@SUFFIX@ | btg-cli@SUFFIX@ | btg-www@SUFFIX@
 Architecture: i386

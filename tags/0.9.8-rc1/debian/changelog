@@ -1,4 +1,4 @@
-btg-0.9.8 (304svn-RC1) stable; urgency=low
+btg-0.9.8 (305svn-RC1) stable; urgency=low
 
   * The following bugs were fixed:
     013557 UPnP, automatic internal IP detection.
