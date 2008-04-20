@@ -16,4 +16,5 @@ libtoolize -c -f
 automake --add-missing --copy --gnu
 autoconf
 
-rm -Rf config.cache autom4te.cache aclocal.m4 *~
+rm -Rf config.cache autom4te.cache *~
+# Deleting aclocal.m4 is a BAD idea, Roman.

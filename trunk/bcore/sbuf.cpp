@@ -28,6 +28,11 @@
 
 #include <fstream>
 
+extern "C"
+{
+#include <string.h>
+}
+
 namespace btg
 {
    namespace core
