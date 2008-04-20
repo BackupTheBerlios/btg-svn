@@ -2,7 +2,7 @@ Source: btg@SUFFIX@
 Section: net
 Priority: extra
 Maintainer: Roman Rybalko <btg@romanr.info>
-Build-Depends: debhelper (>= 5), autotools-dev, pkg-config (>= 0.15), libtorrent-rasterbar-dev (>= 0.13) | libtorrent-rasterbar-0.13-dev, libboost-iostreams-dev, libboost-filesystem-dev, libboost-date-time-dev, libboost-thread-dev, libboost-program-options-dev, libncurses5-dev, libgnutls-dev, libgtkmm-2.4-dev, libcppunit-dev, automake, autoconf, dialog, libclinkcc-dev
+Build-Depends: debhelper (>= 5), automake, pkg-config, dialog, libtorrent-rasterbar-dev (>= 0.13) | libtorrent-rasterbar-0.13-dev, libboost-iostreams-dev, libboost-filesystem-dev, libboost-date-time-dev, libboost-thread-dev, libboost-program-options-dev, libncurses5-dev, libgnutls-dev, libgtkmm-2.4-dev, libcppunit-dev, libclinkcc-dev
 Standards-Version: 3.7.3
 
 Package: btg-common@SUFFIX@

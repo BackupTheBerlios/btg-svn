@@ -1,34 +1,19 @@
 #!/bin/sh
+
 # 
 # This script is used to generate the configure script using GNU
 # autotools.
 # 
 
-echo "Deleting temp files."
+# $Id$
 
-rm -f config.cache
-rm -fr autom4te.cache
+set -x
+set -e
 
-#if test "`uname`" = "FreeBSD"  && test "`uname -r|cut -f1 -d'.'`" != "7"
-if false
-then
-	autoheader259 &&
-	aclocal19 -I m4 -I /usr/local/share/aclocal &&
-	libtoolize -c -f &&
-	automake19 --add-missing --copy --gnu &&
-	autoconf259 &&
-	rm -f config.cache
-else 
-	echo "Running autoheader."
-	autoheader
-	echo "Running aclocal."
-	aclocal -I m4
-	echo "Running libtoolize."
-	libtoolize -c -f
-	echo "Running automake."
-	automake --add-missing --copy --gnu
-	echo "Running autoconf."
-	autoconf
-fi
-	
-echo "Done"
+autoheader
+aclocal -I m4
+libtoolize -c -f
+automake --add-missing --copy --gnu
+autoconf
+
+rm -Rf config.cache autom4te.cache aclocal.m4 *~
