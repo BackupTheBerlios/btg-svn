@@ -21,6 +21,7 @@
  */
 
 #include "errordialog.h"
+#include <memory>
 
 namespace btg
 {
