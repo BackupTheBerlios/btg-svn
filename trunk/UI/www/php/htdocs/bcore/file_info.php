@@ -26,6 +26,52 @@ if(!defined("BTG_BCORE_PATH"))
 
 require_once(BTG_BCORE_PATH."/serializable.php");
 
+class selectedFileEntry extends BTGSerializable
+{
+   private $filename;
+   private $selected;
+
+   public function selectedFileEntry($filename = "", $selected = false)
+   {
+      $this->filename = $filename;
+      $this->selected = $selected;
+   }
+
+   public function select()
+   {
+      $this->selected = true;
+   }
+
+   public function deSelect()
+   {
+      $this->selected = false;
+   }
+
+   public function getFilename()
+   {
+      return $this->filename;
+   }
+
+   public function getSelected()
+   {
+      return $this->selected;
+   }
+
+   public function serialize(&$a = array())
+	{
+      $this->stringToBytes($a, $this->filename);
+		$this->boolToBytes($a, $this->selected);
+
+      return $a;
+   }
+
+   public function deserialize(&$data)
+   {
+      $this->bytesToString($this->filename, $data);
+		$this->bytesToBool($this->selected, $data);
+   }
+}
+
 class fileInformation extends BTGSerializable
 {
 	const MAX_PASS_COUNT = 5;

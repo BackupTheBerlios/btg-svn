@@ -485,6 +485,76 @@ class BTG
 		return $this->addExtraOutput($output);
 	}
 
+   function getFiles($id)
+   {
+      $r = $this->executeCommand(new contextFileInfoCommand((int)$id));
+
+      if($r == NULL)
+         {
+            return array();
+         }
+
+      if ($r instanceof contextFileInfoResponseCommand)
+         {
+            return $r->getFileInfoList();
+         }
+    
+      return array();
+   }
+
+   function fileEntryToPercent($entry)
+   {
+      $percent = 0;
+
+      if ($entry->isFull())
+         {
+            $percent = 100;
+         }
+      else if ($entry->isEmpty())
+         {
+            $percent = 0;
+         }
+      else
+         {
+            $bits      = $entry->getBits();
+            $bit_set   = 0;
+            $bit_unset = 0;
+            
+            foreach($bits as $bit)
+               {
+                  if ($bit)
+                     {
+                        $bit_set++;
+                     }
+                  else
+                     {
+                        $bit_unset++;
+                     }
+               }
+
+            $percent = (integer)($bit_set * 100 / ($bit_set + $bit_unset));
+         }
+
+      return $percent;
+   }
+
+   // !!!
+   function getSelectedFiles($id)
+   {
+		$r = $this->executeCommand(new contextGetFilesCommand((int)$id, false));
+		if ($r == NULL)
+         {
+            return array();
+         }
+
+		if ($r instanceof contextGetFilesResponseCommand)
+         {
+            return $r->getFileList();
+         }
+      
+		return array();
+   }
+
 	/// Get global limit
 	function globalLimitStatus()
 	{
@@ -675,61 +745,62 @@ class BTG
 					}
 
                // Get the list of contained files.
-               $output .= "<fileinfo>";
+               $output .= "<fileinfo>\n";
 
-               $r2 = $this->executeCommand(new contextFileInfoCommand((int)$contextStatus->getContextID()));
-               if ($r2 instanceof contextFileInfoResponseCommand)
+               // Get list of selected files first,
+               $selected_files = $this->getSelectedFiles((int)$contextStatus->getContextID());
+               $files          = $this->getFiles((int)$contextStatus->getContextID());
+               
+               // !!!
+               $this->logMessage("Selected files: ". count($selected_files));
+               $this->logMessage("Selected files: ". count($files));
+
+               $fileId = 0;
+
+               foreach($selected_files as $entry)
                   {
-                     $fi_lst = $r2->getFileInfoList();
+                     $f  = $entry->getFilename();
+                     $fs = 0;
+                     $pc = 0;
 
-                     $fileId = 0;
-                     foreach($fi_lst as $fi)
-                     {
-                        $percent = 0;
-                        if ($fi->isFull())
-                           {
-                              $percent = 100;
-                           }
-                           else if ($fi->isEmpty())
+                     if ($entry->getSelected() == true)
+                        {
+                           $selected = 1;
+
+                           foreach($files as $file_entry)
                               {
-                                 $percent = 100;
-                              }
-                           else
-                              {
-                                 /// !!!
-                                 $bits = $fi->getBits();
-                                 $bit_set = 0;
-                                 $bit_unset = 0;
-                                 
-                                 foreach($bits as $bit)
+                                 if ($file_entry->getFilename() == $f)
                                     {
-                                       if ($bit)
-                                          {
-                                             $bit_set++;
-                                          }
-                                       else
-                                          {
-                                             $bit_unset++;
-                                          }
+                                       // File size.
+                                       $fs = $file_entry->getFileSize();
+
+                                       // Percent done.
+                                       $pc = $this->fileEntryToPercent($file_entry);
                                     }
-
-                                 $percent = (integer)($bit_set * 100 / ($bit_set + $bit_unset));
                               }
-                           
-                           $output .= "<file>";
+                        }
+                     else
+                        {
+                           $selected = 0;
+                        }
 
-                           $output .= "<id>".$fileId."</id>";
-                           $fileId++;
+                     $output .= "<file>\n";
+                     
+                     $output .= "<id>".$fileId."</id>\n";
+                     $fileId++;
+                     
+                     $output .= "<name>".$f."</name>\n";
+                     $output .= "<selected>".$selected."</selected>\n";
+                     $output .= "<size>".$fs."</size>\n";
+                     $output .= "<percent>".$pc."</percent>\n";
+                     $output .= "</file>";
 
-                           $output .= "<name>".$fi->getFilename()."</name>";
-                           $output .= "<size>".$fi->getFileSize()."</size>";
-                           $output .= "<percent>".$percent."</percent>";
-                           $output .= "</file>";
-                           }
-                     }
-                     $output .= "</fileinfo>";
-                     $output .= "</context>\n";
+                     $this->logMessage("Entry: ".$f.", ".$selected);
                   }
+
+               $output .= "</fileinfo>\n";
+               $output .= "</context>\n";
+            }
 			}else
 			{
 				$output .= "<context>\n";
@@ -1050,6 +1121,8 @@ try
 	$ajax->register('btg_globallimitstatus', array($btg, 'globalLimitStatus'));
 	$ajax->register('btg_sessionName', array($btg, 'sessionName'));
 	$ajax->register('btg_setSessionName', array($btg, 'setSessionName'));
+   // Get file information, used to select files.
+   // $ajax->register('btg_getFiles', array($btg, 'getFiles'));
 
 	// Handle any requests
 	if($ajax->handle_client_request())

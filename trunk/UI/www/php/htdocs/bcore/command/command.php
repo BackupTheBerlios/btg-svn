@@ -80,8 +80,9 @@ class Command extends BTGSerializable
 	const CN_CMOVE           = 66;
 	const CN_CCREATEFROMURL  = 67;
 	const CN_CCREATEFROMURLRSP = 68;
-	const CN_CURLSTATUS        = 69;
-	const CN_CURLSTATUSRSP     = 70;
+   const CN_CCREATEURLABORT   = 69;
+	const CN_CURLSTATUS        = 70;
+	const CN_CURLSTATUSRSP     = 71;
 
 	const CN_ERROR           = 100;
 	const CN_ACK             = 101;

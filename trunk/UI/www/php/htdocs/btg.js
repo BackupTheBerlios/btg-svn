@@ -1517,7 +1517,9 @@ function updateContextTable(newList)
 			detailsRow.style.display = 'none'; 
 			detailsRow.id = 'context_'+s.contextID+'_details_row';
 			detailsRow.contextID = s.contextID;
-			detailsRow.onclick = function(){ toogleContextDetails(this.contextID); }
+			// wojci: do not use this, as file selection cannot work if
+			// the details are hidden when one clicks anywhere on the details.
+			//detailsRow.onclick = function(){ toogleContextDetails(this.contextID); }
 
 			/* Create the details cell and insert a detailsTable in it */
 			detailsCell = detailsRow.insertCell(-1);
@@ -1949,17 +1951,22 @@ function createTorrentDetails()
 	return tbl;
 }
 
-function addFileInfoList(fileinfolist)
+function addFileInfoList(status)
 {
+	 var fileinfolist = status.fileinfolist;
+
 	 var tableStr = '<table>';
+	 tableStr+='<th>Selected</th>';
 	 tableStr+='<th>Filename</th>';
 	 tableStr+='<th>Size</th>';
 	 tableStr+='<th>Done %</th>';
 
-	 for (var count = 0; count < fileinfolist.length ; count++)
+	 for (var count = 0; count < fileinfolist.length; count++)
 		  {
 				tableStr+='<tr>\n';
-				tableStr+=addFileInfoEntry(fileinfolist[count].name, 
+				tableStr+=addFileInfoEntry(status.contextID,
+													fileinfolist[count].name, 
+													fileinfolist[count].selected, 
 													fileinfolist[count].size, 
 													fileinfolist[count].percent);
 				tableStr+='</tr>\n';
@@ -1970,17 +1977,35 @@ function addFileInfoList(fileinfolist)
 	 return tableStr;
 }
 
-function addFileInfoEntry(filename, filesize, percentdone)
+function addFileInfoEntry(context_id, filename, sel, filesize, percentdone)
 {
-	 // FF0000
 	 var output = "";
 	 output += '<tr>\n';
 
 	 output += '<td>';
-	 output += filename;
+	 output += '<input type="checkbox" value="';
+	 if (sel == true)
+		  {
+				output += '666" checked onClick="unSelectFile(';
+				output += context_id;
+				output += ',\''
+				output += filename;
+				output += '\');"/>';
+		  }
+	 else
+		  {
+				output += '666" onClick="selectFile(';
+				output += context_id;
+				output += ',\''
+				output += filename;
+				output += '\');"/>';
+		  }
 	 output += '</td>';
 
-
+	 output += '<td>';
+	 output += filename;
+	 output += '</td>';
+	 
 	 output += '<td>';
 	 output += filesize;
 	 output += '</td>';
@@ -2013,6 +2038,16 @@ function addFileInfoEntry(filename, filesize, percentdone)
 	 output+='</tr>\n';
 	 
 	 return output;
+}
+
+function selectFile(context_id, filename)
+{
+	 setStatus("Selected: " + filename);
+}
+
+function unSelectFile(context_id, filename)
+{
+	 setStatus("UnSelected: " + filename);
 }
 
 /**
@@ -2140,7 +2175,7 @@ function updateTorrentDetails(t, s)
 	t.rows[5].cells[3].innerHTML = ratio_tr.toString();
 
 	// Update file list (!!!).
-	t.rows[6].cells[1].innerHTML = addFileInfoList(s.fileinfolist)
+	t.rows[6].cells[1].innerHTML = addFileInfoList(s)
 
 	// Not used right now.
 	//	t.rows[5].cells[4].innerHTML = "";
@@ -2162,11 +2197,12 @@ ts_seeding = 5;
 ts_stopped = 6;
 ts_finished = 7;
 
-function fileInfo(name, size, percent)
+function fileInfo(name, selected, size, percent)
 {
-	 this.name    = name;
-	 this.size    = size;
-	 this.percent = percent;
+	 this.name     = name;
+	 this.selected = selected;
+	 this.size     = size;
+	 this.percent  = percent;
 }
 
 // Status object (!!!).
@@ -2243,10 +2279,16 @@ function Status(dom)
 		for (var count = 0; count < files.length ; count++)
 			 {
 				  var filename = getFirstChildValue(files[count], 'name');
+				  var selected = getFirstChildValue(files[count], 'selected');
+				  var sel = false;
+				  if (selected == 1)
+						{
+							 sel = true;
+						}
 				  var size     = getFirstChildValue(files[count], 'size');
 				  var percent  = getFirstChildValue(files[count], 'percent');
 
-				  this.fileinfolist.push(new fileInfo(filename, size, percent));
+				  this.fileinfolist.push(new fileInfo(filename, sel, size, percent));
 			 }
 	}
 
