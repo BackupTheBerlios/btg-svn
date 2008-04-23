@@ -40,18 +40,39 @@ class contextSetFilesCommand extends contextCommand
 
    public function serialize(&$a = array())
 	{
-		$a = parent::serialize();
-      $this->filelist->serialize($a);
+      $a = parent::serialize();
 
+      // Size of the list.
+		$this->intToBytes($a, count($this->filelist));
+
+      // Each entry.
+		foreach($this->filelist as $entry)
+			{
+            $entry->serialize($a);
+         }
 		return $a;
 	}
 
 	public function deserialize(&$data)
 	{
-		parent::deserialize($data);
+      parent::deserialize($data);
 
-      $filelist = new selectedFileEntryList();
-      $filelist->deserialize($data);
+      // Size of the list.
+		$size = 0;
+		$this->bytesToInt($size, $data);
+
+      syslog(LOG_DEBUG, "Got ".$size." selected file entries.");
+
+      // Each entry.
+		for($i = 0; $i < $size; $i++)
+		{
+			$entry = new selectedFileEntry();
+			$entry->deserialize($data);
+
+         syslog(LOG_DEBUG, "Entry ".$entry->getFilename());
+
+			$this->filelist[] = $entry;
+		}
 	}
 }
 
@@ -89,7 +110,7 @@ class contextGetFilesResponseCommand extends contextCommand
 		$this->intToBytes($a, count($this->filelist));
 
       // Each entry.
-		foreach($this->list as $entry)
+		foreach($this->filelist as $entry)
 			{
             $entry->serialize($a);
          }
@@ -104,15 +125,11 @@ class contextGetFilesResponseCommand extends contextCommand
 		$size = 0;
 		$this->bytesToInt($size, $data);
 
-      syslog(LOG_DEBUG, "Got ".$size." selected file entries.");
-
       // Each entry.
 		for($i = 0; $i < $size; $i++)
 		{
 			$entry = new selectedFileEntry();
 			$entry->deserialize($data);
-
-         syslog(LOG_DEBUG, "Entry ".$entry->getFilename());
 
 			$this->filelist[] = $entry;
 		}

@@ -1585,8 +1585,45 @@ namespace btg
                return false;
             }
          
+         btg::core::selectedFileEntryList file_list;
+
+         if (_file_list.size() < ti->selected_files.size())
+            {
+               // The message only contains some changes, not the
+               // whole list.
+
+               BTG_MNOTICE(logWrapper(), "Setting files to download, not all files received (" << _file_list.size() << ").");
+
+               file_list = ti->selected_files;
+
+               std::vector<selectedFileEntry> const & newfiles = _file_list.files();
+               std::vector<selectedFileEntry> currentfiles     = file_list.files();
+
+               for (std::vector<selectedFileEntry>::const_iterator  newiter = newfiles.begin();
+                    newiter != newfiles.end();
+                    newiter++)
+                  {
+                     for (std::vector<selectedFileEntry>::iterator currentiter = currentfiles.begin();
+                          currentiter != currentfiles.end();
+                          currentiter++)
+                        {
+                           if (currentiter->filename() == newiter->filename())
+                              {
+                                 *currentiter = *newiter;
+                              }
+                        }  
+                  }
+
+               file_list.setFiles(currentfiles);
+            }
+         else
+            {
+               // Same size.
+               file_list.setFiles(_file_list.files());
+            }
+
          BTG_MNOTICE(logWrapper(), "Setting files to download");
-         std::vector<selectedFileEntry> const& files = _file_list.files();
+         std::vector<selectedFileEntry> const& files = file_list.files();
          if (files.size() == 0)
             {
                BTG_MEXIT(logWrapper(), "setSelectedFiles", false);
@@ -1601,13 +1638,13 @@ namespace btg
                BTG_MNOTICE(logWrapper(), "fn:" + iter->filename());
             }
 
-         if (!checkSelectedFiles(ti->selected_files, _file_list))
+         if (!checkSelectedFiles(ti->selected_files, file_list))
             {
                BTG_MEXIT(logWrapper(), "setSelectedFiles", false);
                return false;
             }
          
-         if (!applySelectedFiles(ti, _file_list))
+         if (!applySelectedFiles(ti, file_list))
             {
                BTG_MEXIT(logWrapper(), "setSelectedFiles", false);
                return false;

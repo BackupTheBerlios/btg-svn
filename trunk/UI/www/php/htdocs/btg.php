@@ -539,6 +539,43 @@ class BTG
    }
 
    // !!!
+
+   function genericSelectFile($contextID=contextCommand::UNDEFINED_CONTEXT, $filename, $value)
+   {
+      $this->attachLast();
+		if(!$this->sessionAttached)
+			return $this->addExtraOutput("");
+		
+		$output = "";
+		if(!$this->sessionAttached)
+         {
+            $this->log_error("No session attached, can't set limits.");
+         }
+		else
+		{
+         $entry      = new selectedFileEntry($filename, $value);
+         $filelist   = array();
+         $filelist[] = $entry;
+
+			$r = $this->executeCommand(new contextSetFilesCommand((int)$contextID, $filelist));
+			if($r instanceof ackCommand)
+			{
+				$output .= "<ack/>\n";
+			}
+		}
+		return $this->addExtraOutput($output);
+   }
+
+   function contextSelectFile($contextID=contextCommand::UNDEFINED_CONTEXT, $filename)
+   {
+      return $this->genericSelectFile($contextID, $filename, true);
+	}
+
+   function contextUnSelectFile($contextID=contextCommand::UNDEFINED_CONTEXT, $filename)
+   {
+      return $this->genericSelectFile($contextID, $filename, false);
+   }
+
    function getSelectedFiles($id)
    {
 		$r = $this->executeCommand(new contextGetFilesCommand((int)$id, false));
@@ -1121,8 +1158,8 @@ try
 	$ajax->register('btg_globallimitstatus', array($btg, 'globalLimitStatus'));
 	$ajax->register('btg_sessionName', array($btg, 'sessionName'));
 	$ajax->register('btg_setSessionName', array($btg, 'setSessionName'));
-   // Get file information, used to select files.
-   // $ajax->register('btg_getFiles', array($btg, 'getFiles'));
+   $ajax->register('btg_contextSelectFile', array($btg, 'contextSelectFile'));
+   $ajax->register('btg_contextUnSelectFile', array($btg, 'contextUnSelectFile'));
 
 	// Handle any requests
 	if($ajax->handle_client_request())

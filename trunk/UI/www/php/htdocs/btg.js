@@ -2040,14 +2040,35 @@ function addFileInfoEntry(context_id, filename, sel, filesize, percentdone)
 	 return output;
 }
 
+// !!!
 function selectFile(context_id, filename)
 {
-	 setStatus("Selected: " + filename);
+	 btg_contextSelectFile(cb_contextSelectFile, cb_contextSelectFile_err, context_id, filename);
+}
+
+function cb_contextSelectFile(response)
+{
+	 // TODO: do something here.
+}
+
+function cb_contextSelectFile_err(error, errStr)
+{
+	 setError(error, 'Failed to select file.');
 }
 
 function unSelectFile(context_id, filename)
 {
-	 setStatus("UnSelected: " + filename);
+	 btg_contextUnSelectFile(cb_contextUnSelectFile, cb_contextUnSelectFile_err, context_id, filename);
+}
+
+function cb_contextUnSelectFile(response)
+{
+	 // TODO: do something here.
+}
+
+function cb_contextUnSelectFile_err(error, errStr)
+{
+	 setError(error, 'Failed to un-select file.');
 }
 
 /**
