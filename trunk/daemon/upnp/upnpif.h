@@ -60,6 +60,11 @@ namespace btg
                      /// Clear internal state - disable destruction
                      void clear();
 
+                     /// Terminate whatever this interface is doing.
+                     void setTerminate();
+
+                     bool terminate();
+
                      /// Destructor.
                      virtual ~upnpIf();
 
@@ -69,6 +74,8 @@ namespace btg
                      bool const verboseFlag_;
                      /// Indicates if this interface is initialized.
                      bool initialized_;
+
+                     bool terminate_;
                   };
 
                /** @} */

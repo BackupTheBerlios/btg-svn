@@ -31,7 +31,8 @@ namespace btg
          upnpIf::upnpIf(btg::core::LogWrapperType _logwrapper, bool const _verboseFlag)
             : btg::core::Logable(_logwrapper),
               verboseFlag_(_verboseFlag),
-              initialized_(false)
+              initialized_(false),
+              terminate_(false)
          {
          };
 
@@ -43,6 +44,16 @@ namespace btg
          void upnpIf::clear()
          {
             initialized_ = false;
+         }
+
+         void upnpIf::setTerminate()
+         {
+            terminate_ = true;
+         }
+
+         bool upnpIf::terminate()
+         {
+            return terminate_;
          }
 
          upnpIf::~upnpIf()

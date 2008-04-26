@@ -30,6 +30,7 @@
 #endif // BTG_OPTION_EVENTCALLBACK
 
 #include <bcore/verbose.h>
+#include "lt_version.h"
 
 namespace btg
 {
@@ -109,8 +110,11 @@ namespace btg
          asio::ip::address_v4 banned_ip = endp.address().to_v4();
          BTG_NOTICE(logWrapper(), "Errors from peer: " << banned_ip.to_string() << ".");
       }
-
+#if BTG_LT_0_14
+      void Context::handleTrackerAlert(libtorrent::tracker_error_alert* _alert)
+#else
       void Context::handleTrackerAlert(libtorrent::tracker_alert* _alert)
+#endif
       {
          t_int torrent_id;
          torrentInfo *ti;
@@ -119,7 +123,6 @@ namespace btg
          if (getIdFromHandle(_alert->handle, torrent_id, ti))
             {
                getFilename(torrent_id, filename);
-
                VERBOSE_LOG(logWrapper(),
                            verboseFlag_, "Tracker alert: filename '" << 
                            filename << "', status = " << 
@@ -134,7 +137,7 @@ namespace btg
                else
                   {
                      ti->trackerStatus.setStatus(trackerStatus::warning);
-                  }
+                  }               
                ti->trackerStatus.setSerial(ti->serial);
                ti->trackerStatus.setMessage(_alert->msg());
                ti->serial++;
@@ -230,10 +233,17 @@ namespace btg
                      {
                         handlePeerError(dynamic_cast<libtorrent::peer_error_alert*>(alert));
                      }
+#if BTG_LT_0_14
+                  else if (typeid(*alert) == typeid(libtorrent::tracker_error_alert))
+                     {
+                        handleTrackerAlert(dynamic_cast<libtorrent::tracker_error_alert*>(alert));
+                     }
+#else
                   else if (typeid(*alert) == typeid(libtorrent::tracker_alert))
                      {
                         handleTrackerAlert(dynamic_cast<libtorrent::tracker_alert*>(alert));
                      }
+#endif
                   else if (typeid(*alert) == typeid(libtorrent::tracker_reply_alert))
                      {
                         handleTrackerReplyAlert(dynamic_cast<libtorrent::tracker_reply_alert*>(alert));

@@ -63,7 +63,7 @@ namespace btg
                              "Attempt to move '" << filename << "' to " << _destination_dir << " failed.");
                result = false;
             }
-#elif BTG_LT_0_13
+#elif (BTG_LT_0_13 || BTG_LT_0_14)
          ti->handle.move_storage(_destination_dir);
 #endif // lt version
          BTG_MEXIT(logWrapper(), "moveToDirectory", result);

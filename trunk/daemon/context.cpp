@@ -420,7 +420,7 @@ namespace btg
                   }
             }
 
-#if BTG_LT_0_13
+#if (BTG_LT_0_13 || BTG_LT_0_14)
          // Enable encryption.
          if (useEncryption_)
             {
@@ -505,7 +505,7 @@ namespace btg
                BTG_MEXIT(logWrapper(), "add", status);
                return status;
             }
-#elif BTG_LT_0_13
+#elif (BTG_LT_0_13 || BTG_LT_0_14)
          boost::intrusive_ptr<libtorrent::torrent_info> tinfo(new libtorrent::torrent_info);
          // libtorrent::torrent_info tinfo;
          if (!entryToInfo(torrent_entry, *tinfo))
@@ -552,7 +552,7 @@ namespace btg
          torrentStorage ts = tsWork;
 #if BTG_LT_0_12
          if (dataPresentInSeedDir(tinfo))
-#elif BTG_LT_0_13
+#elif (BTG_LT_0_13 || BTG_LT_0_14)
          if (dataPresentInSeedDir(*tinfo))
 #endif
             {
@@ -594,7 +594,7 @@ namespace btg
                            BTG_MNOTICE(logWrapper(), "using fast resume for '" << _torrent_filename << "'");
 #if BTG_LT_0_12
                            handle = torrent_session->add_torrent(torrent_entry, dataPath, fastResumeEntry);         
-#elif BTG_LT_0_13
+#elif (BTG_LT_0_13 || BTG_LT_0_14)
                            handle = torrent_session->add_torrent(tinfo, dataPath, fastResumeEntry);
 #endif
 
@@ -604,7 +604,7 @@ namespace btg
                   {
 #if BTG_LT_0_12
                      handle = torrent_session->add_torrent(torrent_entry, dataPath);
-#elif BTG_LT_0_13
+#elif (BTG_LT_0_13 || BTG_LT_0_14)
                      handle = torrent_session->add_torrent(tinfo, dataPath);
 #endif
                   }
@@ -1716,7 +1716,7 @@ namespace btg
                                        btg::core::selectedFileEntryList const& _input)
       {
          BTG_MENTER(logWrapper(), "applySelectedFiles", "torrent info");
-#if BTG_LT_0_13
+#if (BTG_LT_0_13 || BTG_LT_0_14)
          enum lt_file_priority
          {
             LTF_NO  = 0,
@@ -1778,7 +1778,7 @@ namespace btg
          BTG_MNOTICE(logWrapper(), "Setting file priorities is not implemented in libtorrent 0.12.x");
          BTG_MEXIT(logWrapper(), "applySelectedFiles", false);
          return false;
-#endif // BTG_LT_0_13
+#endif
       }
 
       torrentInfo* Context::getTorrentInfo(t_int const _torrent_id) const
@@ -2120,7 +2120,7 @@ namespace btg
       void Context::setProxyHttpSettings(btg::core::addressPort const& _proxy)
       {
          BTG_MNOTICE(logWrapper(), "setting session settings: proxy");
-#if (BTG_LT_0_13)
+#if (BTG_LT_0_13 || BTG_LT_0_14)
          libtorrent::proxy_settings ps;
          ps.hostname = _proxy.getIp();
          ps.port     = _proxy.getPort();
@@ -2252,7 +2252,7 @@ namespace btg
 
       void Context::enableEncryption()
       {
-#if BTG_LT_0_13
+#if (BTG_LT_0_13 || BTG_LT_0_14)
          try
             {
                libtorrent::pe_settings enc_settings;
@@ -2334,7 +2334,7 @@ namespace btg
             {
                BTG_ERROR_LOG(logWrapper(), "libtorrent exception: " << e.what() );
             }
-#endif // BTG_LT_0_13      
+#endif
       }
 
       std::string Context::getTempDir() const

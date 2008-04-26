@@ -55,6 +55,15 @@
 
 namespace btg
 {
+   namespace core
+   {
+      class Status;
+      class trackerStatus;
+   }
+}
+
+namespace btg
+{
    namespace daemon
       {
 
@@ -66,9 +75,6 @@ namespace btg
           * \addtogroup daemon
           */
          /** @{ */
-
-         class btg::core::Status;
-         class btg::core::trackerStatus;
 
          /// Used to keep information about a torrent
          class torrentInfo
@@ -422,10 +428,12 @@ namespace btg
 
                /// Handle libtorrent alert.
                void handlePeerError(libtorrent::peer_error_alert* _alert);
-
+#if BTG_LT_0_14
+               void handleTrackerAlert(libtorrent::tracker_error_alert* _alert);
+#else
                /// Handle libtorrent alert.
                void handleTrackerAlert(libtorrent::tracker_alert* _alert);
-
+#endif
                /// Handle libtorrent alert.
                void handleTrackerReplyAlert(libtorrent::tracker_reply_alert* _alert);
 
