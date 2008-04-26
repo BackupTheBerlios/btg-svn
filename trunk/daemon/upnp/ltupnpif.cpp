@@ -48,7 +48,9 @@ namespace btg
                          agent, 
                          boost::bind(&libtorrentUpnpIf::portMap, this, _1, _2, _3),
                          false),
-                    indicesMutex()
+                    indicesMutex(),
+                    portsMapped(0),
+                    portsFailed(0)
                {
                   upnp.discover_device();
 
@@ -81,12 +83,14 @@ namespace btg
                         // Success.
                         if (pi.index_tcp == _index)
                            {
+                              portsMapped++;
                               pi.success_tcp = true;
                               MVERBOSE_LOG(logWrapper(), verboseFlag_, 
                                            "Mapped TCP port " << pi.port << ".");
                            }
                         else if (pi.index_udp == _index)
                            {
+                              portsMapped++;
                               pi.success_udp = true;
                               MVERBOSE_LOG(logWrapper(), verboseFlag_, 
                                            "Mapped UDP port " << pi.port << ".");
@@ -97,11 +101,13 @@ namespace btg
                         // Failure.
                         if (pi.index_tcp == _index)
                            {
+                              portsFailed++;
                               BTG_MERROR(logWrapper(), 
                                          "Unable to map TCP port " << pi.port << ".");
                            }
                         else if (pi.index_udp == _index)
                            {
+                              portsFailed++;
                               BTG_MERROR(logWrapper(), 
                                          "Unable to map TCP port " << pi.port << ".");
                            }
@@ -132,6 +138,8 @@ namespace btg
                      {
                         return false;
                      }
+                  
+                  t_int numberOfPorts = 0;
 
                   for (t_int port = _range.first;
                        port < _range.second;
@@ -140,7 +148,7 @@ namespace btg
                         boost::mutex::scoped_lock scoped_lock(indicesMutex);
 
                         MVERBOSE_LOG(logWrapper(), verboseFlag_, 
-                                    "UPNP: Mapping port " << port << ".");
+                                    "Mapping port " << port << ".");
 
                         currentPortIndex.port = port;
 
@@ -173,6 +181,8 @@ namespace btg
 
                         indices.push_back(currentPortIndex);
 
+                        numberOfPorts += 2;
+
                         if (currentPortIndex.index_tcp == portIndex::INVALID_INDEX || 
                             currentPortIndex.index_udp == portIndex::INVALID_INDEX)
                            {
@@ -183,6 +193,14 @@ namespace btg
                   // Wait for libtorrent to map all ports.
                   while (true)
                      {
+                        if (portsMapped == numberOfPorts)
+                           {
+                              // Done.
+                              MVERBOSE_LOG(logWrapper(), verboseFlag_, 
+                                           "Mapped all ports.");
+                              return true;
+                           }
+
                         if (portsFailed > 0)
                            {
                               return false;
