@@ -662,29 +662,38 @@ int main(int argc, char* argv[])
    bool const upnpEnabled = dd.config->getUseUPnP();
    std::auto_ptr<btg::daemon::upnp::upnpIf> upnpif;
    
-   VERBOSE_LOG(logwrapper, 
-               verboseFlag,
-               "UPnP using internal IP: " << dd.config->getUPNPInternalIP().getIp() << ".");
+   if (upnpEnabled)
+      {
+         VERBOSE_LOG(logwrapper, 
+                     verboseFlag,
+                     "UPnP using internal IP: " << dd.config->getUPNPInternalIP().getIp() << ".");
+      }
 
 #  if BTG_OPTION_USECYBERLINK
 
-   upnpif.reset(
-      /* creates a thread */
-      new btg::daemon::upnp::cyberlinkUpnpIf(logwrapper, verboseFlag, dd.config->getUPNPInternalIP())
-   );
+   if (upnpEnabled)
+      {
+         upnpif.reset(
+                      /* creates a thread */
+                      new btg::daemon::upnp::cyberlinkUpnpIf(logwrapper, verboseFlag, dd.config->getUPNPInternalIP())
+                      );
+      }
 #  endif // BTG_OPTION_USECYBERLINK
 
 #if BTG_LT_0_14
    // Use UPnP interface from libtorrent.
 
-   libtorrent::address upnpIpAddr;
-   upnpIpAddr.from_string(dd.config->getUPNPInternalIP().getIp());
-
-   upnpif.reset(
-                new btg::daemon::upnp::libtorrentUpnpIf(logwrapper,
-                                                        verboseFlag,
-                                                        upnpIpAddr)
-                );
+   if (upnpEnabled)
+      {
+         libtorrent::address upnpIpAddr;
+         upnpIpAddr.from_string(dd.config->getUPNPInternalIP().getIp());
+         
+         upnpif.reset(
+                      new btg::daemon::upnp::libtorrentUpnpIf(logwrapper,
+                                                              verboseFlag,
+                                                              upnpIpAddr)
+                      );
+      }
 #endif
 
    if (upnpif.get())
