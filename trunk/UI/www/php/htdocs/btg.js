@@ -2007,34 +2007,43 @@ function addFileInfoEntry(context_id, filename, sel, filesize, percentdone)
 	 output += '</td>';
 	 
 	 output += '<td>';
-	 output += filesize;
+	 if (sel == true)
+	     {
+		 output += filesize;
+	     }
 	 output += '</td>';
 
-	 output+='<td><div class="gr" style="border-left: ';
-	 var barsize = percentdone;
+	 output+='<td>';
 
-	 output+=barsize;
-	 output+='px solid ';
+	 if (sel == true)
+	     {
+		 output+='<div class="gr" style="border-left: ';
+		 var barsize = percentdone;
+		 
+		 output+=barsize;
+		 output+='px solid ';
+		 
+		 if (percentdone == 100)
+		     {
+			 // Green.
+			 output += '#6f0';
+		     }
+		 else if (percentdone >= 50)
+		     {
+			 output += '#FFFF00';
+		     }
+		 else
+		     {
+			 output += '#FF0000';
+		     }
+		 
+		 output += ';">';
+		 output += percentdone;
+		 output += "%";
 
-	 if (percentdone == 100)
-		  {
-				// Green.
-				output += '#6f0';
-		  }
-	 else if (percentdone >= 50)
-		  {
-				output += '#FFFF00';
-		  }
-	 else
-		  {
-				output += '#FF0000';
-		  }
-
-	 output += ';">';
-	 output += percentdone;
-	 output += "%";
-
-	 output+='&nbsp;</div></td>\n';
+		 output+='&nbsp;</div>';
+	     }
+	 output+='</td>\n';
 	 output+='</tr>\n';
 	 
 	 return output;
