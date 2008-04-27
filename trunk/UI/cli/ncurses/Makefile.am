@@ -1,3 +1,5 @@
+if BUILDCLI
+
 bin_PROGRAMS = btgncli
 
 btgncli_SOURCES = nconfig.cpp \
@@ -52,3 +54,5 @@ INCLUDES = -I$(top_srcdir)
 
 man1_MANS  = btgncli.man
 EXTRA_DIST = btgncli.man
+
+endif # BUILDCLI

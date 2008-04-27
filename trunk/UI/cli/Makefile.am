@@ -1,5 +1,6 @@
 SUBDIRS = ncurses
 
+if BUILDCLI
 bin_PROGRAMS = btgcli
 
 btgcli_SOURCES = clicmd.cpp cli_create.cpp cli.cpp nscreen.cpp nscreen_log.cpp btgcli.cpp
@@ -21,3 +22,4 @@ INCLUDES = -I$(top_srcdir)
 
 man1_MANS  = btgcli.man
 EXTRA_DIST = btgcli.man
+endif # BUILDCLI
