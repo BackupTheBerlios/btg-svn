@@ -27,10 +27,7 @@
 
 #include "progressdialog.h"
 
-#include <gtkmm/label.h>
-#include <gtkmm/progressbar.h>
-#include <gtkmm/box.h>
-#include <gtkmm/button.h>
+#include <gtkmm.h>
 
 namespace btg
 {
@@ -100,13 +97,6 @@ namespace btg
             set_resizable(false);
             property_destroy_with_parent().set_value(false);
 
-            if (cancel_enabled)
-               {
-                  set_has_separator(true);
-                  add_action_widget(*cancelbutton, -5);
-                  cancelbutton->show();
-               }
-
             title_label->show();
             label->show();
             progressbar->show();
@@ -114,7 +104,12 @@ namespace btg
 
             if (cancel_enabled)
                {
+                  set_has_separator(true);
+                  add_action_widget(*cancelbutton, -5);
+                  cancelbutton->show();
+
                   cancelbutton->signal_clicked().connect(sigc::mem_fun(*this, &progressDialog::on_cancel_clicked));
+                  signal_delete_event().connect( sigc::bind_return<bool>( sigc::hide( sigc::mem_fun(*this, &progressDialog::on_cancel_clicked) ), true /* do not propagate furhter */ ), false /* before the default */ );
                }
          }
 

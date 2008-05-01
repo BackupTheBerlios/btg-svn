@@ -27,6 +27,8 @@
 
 #include "progressdialog.h"
 
+#include <gtkmm.h>
+
 namespace btg
 {
    namespace UI
@@ -65,8 +67,13 @@ namespace btg
          {
             if (upload_progressdialog)
                {
-                  upload_progressdialog->updateProgress(100, "Upload done.");
-                  btg::core::os::Sleep::sleepMiliSeconds(1000);
+                  upload_progressdialog->updateProgress(0, _error);
+
+                  for(int i=0; i<100; ++i)
+                  {
+                     Gtk::Main::iteration(false /* non-blocking */);
+                     btg::core::os::Sleep::sleepMiliSeconds(10);
+                  }
                }
 
             delete upload_progressdialog;
@@ -91,7 +98,12 @@ namespace btg
             if (upload_progressdialog)
                {
                   upload_progressdialog->updateProgress(100, "Upload done.");
-                  btg::core::os::Sleep::sleepMiliSeconds(1000);
+
+                  for(int i=0; i<100; ++i)
+                  {
+                     Gtk::Main::iteration(false /* non-blocking */);
+                     btg::core::os::Sleep::sleepMiliSeconds(10);
+                  }
                }
 
             delete upload_progressdialog;
