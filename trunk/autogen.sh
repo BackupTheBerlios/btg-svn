@@ -17,4 +17,3 @@ automake --add-missing --copy --gnu
 autoconf
 
 rm -Rf config.cache autom4te.cache *~
-# Deleting aclocal.m4 is a BAD idea, Roman.

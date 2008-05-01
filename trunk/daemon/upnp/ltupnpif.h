@@ -35,8 +35,6 @@
 
 #include <vector>
 
-#include <daemon/lt_version.h>
-
 namespace btg
 {
    namespace daemon
@@ -67,7 +65,7 @@ namespace btg
                      void portMap(int _index, 
                                   int _externalPort, 
                                   std::string const& _errorMessage);
-#if BTG_LT_0_14
+
                      std::string                  agent;
                      libtorrent::io_service       io;
                      libtorrent::connection_queue queue; 
@@ -108,7 +106,6 @@ namespace btg
 
                      t_uint                       portsMapped;
                      t_uint                       portsFailed;
-#endif // BTG_LT_0_14
                   };
 
                /** @} */

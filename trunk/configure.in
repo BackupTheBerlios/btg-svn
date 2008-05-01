@@ -323,44 +323,63 @@ esac],[enablecommandlist=false])
 dnl 
 
 BTG_OPTION_USECYBERLINK=0
+AC_SUBST(BTG_OPTION_USECYBERLINK)
 AM_CONDITIONAL(BUILDCYBERLINK, false)
+BTG_OPTION_USELTUPNP=0
+AC_SUBST(BTG_OPTION_USELTUPNP)
+AM_CONDITIONAL(BUILDLTUPNP, false)
 
 if $enableupnp ; then
 
-AC_ARG_WITH(cyberlink-include,
-[  --with-cyberlink-include=PATH  path to Cyberlink header files],
-[
-   CYBERLINK_CFLAGS="$CFLAGS -I${withval} -DHAVE_SOCKLEN_T"
-   AC_SUBST(CYBERLINK_CFLAGS)
+AC_MSG_CHECKING([for libtorrent UPnP])
+AC_TRY_LINK([
+#include <libtorrent/upnp.hpp>
+],[
+#if (LIBTORRENT_VERSION_MAJOR == 0) && (LIBTORRENT_VERSION_MINOR == 14)
+libtorrent::upnp upnp;
+#else
+#error "LT version < 0.14 - doesn't support UPnP"
+#endif
+return 0;
+],[
+   BTG_OPTION_USELTUPNP=1
+   AM_CONDITIONAL(BUILDLTUPNP, true)
+   AC_MSG_RESULT([yes])
+],[
+   AC_MSG_RESULT([no])
 
-   AM_CONDITIONAL(BUILDCYBERLINK, true)
-   BTG_OPTION_USECYBERLINK=1
-]
-)
+   AC_ARG_WITH(cyberlink-include,
+   [  --with-cyberlink-include=PATH  path to Cyberlink header files],
+   [
+      CYBERLINK_CFLAGS="$CFLAGS -I${withval} -DHAVE_SOCKLEN_T"
+      AC_SUBST(CYBERLINK_CFLAGS)
 
-AC_ARG_WITH(cyberlink-lib,
-[  --with-cyberlink-lib=PATH  path to Cyberlink libraries],
-[
-   CYBERLINK_LIBS="-L${withval} ${withval}/libclink.a -lxerces-c -lxerces-depdom"
-   AC_SUBST(CYBERLINK_LIBS)
+      AM_CONDITIONAL(BUILDCYBERLINK, true)
+      BTG_OPTION_USECYBERLINK=1
+   ])
 
-   AM_CONDITIONAL(BUILDCYBERLINK, true)
-   BTG_OPTION_USECYBERLINK=1
-]
-)
+   AC_ARG_WITH(cyberlink-lib,
+   [  --with-cyberlink-lib=PATH  path to Cyberlink libraries],
+   [
+      CYBERLINK_LIBS="-L${withval} ${withval}/libclink.a -lxerces-c -lxerces-depdom"
+      AC_SUBST(CYBERLINK_LIBS)
 
-if test "$BTG_OPTION_USECYBERLINK" -ne "1" ; then
-dnl try to detect our one
-PKG_CHECK_MODULES(CYBERLINK, [libclinkcc], [
-	AM_CONDITIONAL(BUILDCYBERLINK, true)
-	BTG_OPTION_USECYBERLINK=1
-	CYBERLINK_CFLAGS="$CYBERLINK_CFLAGS -DHAVE_SOCKLEN_T"
-], [ AC_MSG_NOTICE([can't find CyberLink library ($CYBERLINK_PKG_ERRORS)]) ])
-fi
+      AM_CONDITIONAL(BUILDCYBERLINK, true)
+      BTG_OPTION_USECYBERLINK=1
+   ])
+
+   if test "$BTG_OPTION_USECYBERLINK" -ne "1" ; then
+      dnl try to detect our one
+      PKG_CHECK_MODULES(CYBERLINK, [libclinkcc], [
+         AM_CONDITIONAL(BUILDCYBERLINK, true)
+         BTG_OPTION_USECYBERLINK=1
+         CYBERLINK_CFLAGS="$CYBERLINK_CFLAGS -DHAVE_SOCKLEN_T"
+      ], [ AC_MSG_NOTICE([can't find CyberLink library ($CYBERLINK_PKG_ERRORS)]) ])
+   fi
+
+]); dnl AC_TRY_LINK LT-UPnP
 
 fi dnl if $enableupnp
-
-AC_SUBST(BTG_OPTION_USECYBERLINK)
 
 AC_MSG_CHECKING([whether debug information should be included])
 if test "$enabledebug" == "true"; then
@@ -519,12 +538,7 @@ fi
 
 BTG_LINK_CHECK
 
-AC_OUTPUT(Makefile external/Makefile external/xmlrpc-epi/Makefile external/xmlrpc-epi/src/Makefile external/xmlrpc-epi/expat/Makefile external/xmlrpc-epi/expat/xmlparse/Makefile external/xmlrpc-epi/expat/xmltok/Makefile external/ini/Makefile external/plotmm/Makefile bcore/Makefile bcore/client/Makefile daemon/Makefile daemon/http/Makefile daemon/upnp/Makefile daemon/ipfilter/Makefile daemon/auth/Makefile daemon/resource/Makefile utest/Makefile stest/Makefile doc/Makefile doc/commands/Makefile doc/site/Makefile UI/Makefile UI/cli/Makefile UI/cli/ncurses/Makefile UI/gui/Makefile UI/gui/viewer/Makefile UI/gui/viewer/sdl/Makefile UI/www/Makefile UI/www/php/Makefile UI/www/php/htdocs/bcore/command/Makefile UI/www/php/htdocs/bcore/Makefile UI/www/php/htdocs/images/Makefile UI/www/php/htdocs/Makefile UI/www/php/htdocs/version.php script/Makefile debian/Makefile)
-
-if test "$gen_btg_config" == "true"; then
-   AC_OUTPUT(script/btg-config)
-fi
-
+AC_OUTPUT(Makefile external/Makefile external/xmlrpc-epi/Makefile external/xmlrpc-epi/src/Makefile external/xmlrpc-epi/expat/Makefile external/xmlrpc-epi/expat/xmlparse/Makefile external/xmlrpc-epi/expat/xmltok/Makefile external/ini/Makefile external/plotmm/Makefile bcore/Makefile bcore/client/Makefile daemon/Makefile daemon/http/Makefile daemon/upnp/Makefile daemon/ipfilter/Makefile daemon/auth/Makefile daemon/resource/Makefile utest/Makefile stest/Makefile doc/Makefile doc/commands/Makefile doc/site/Makefile UI/Makefile UI/cli/Makefile UI/cli/ncurses/Makefile UI/gui/Makefile UI/gui/viewer/Makefile UI/gui/viewer/sdl/Makefile UI/www/Makefile UI/www/php/Makefile UI/www/php/htdocs/bcore/command/Makefile UI/www/php/htdocs/bcore/Makefile UI/www/php/htdocs/images/Makefile UI/www/php/htdocs/Makefile UI/www/php/htdocs/version.php script/Makefile debian/Makefile script/btg-config)
 
 AC_MSG_NOTICE([Status:])
 

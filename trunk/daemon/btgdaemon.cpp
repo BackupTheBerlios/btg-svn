@@ -669,18 +669,7 @@ int main(int argc, char* argv[])
                      "UPnP using internal IP: " << dd.config->getUPNPInternalIP().getIp() << ".");
       }
 
-#  if BTG_OPTION_USECYBERLINK
-
-   if (upnpEnabled)
-      {
-         upnpif.reset(
-                      /* creates a thread */
-                      new btg::daemon::upnp::cyberlinkUpnpIf(logwrapper, verboseFlag, dd.config->getUPNPInternalIP())
-                      );
-      }
-#  endif // BTG_OPTION_USECYBERLINK
-
-#if BTG_LT_0_14
+#if BTG_OPTION_USELTUPNP
    // Use UPnP interface from libtorrent.
 
    if (upnpEnabled)
@@ -692,6 +681,15 @@ int main(int argc, char* argv[])
                       new btg::daemon::upnp::libtorrentUpnpIf(logwrapper,
                                                               verboseFlag,
                                                               upnpIpAddr)
+                      );
+      }
+#elif BTG_OPTION_USECYBERLINK
+
+   if (upnpEnabled)
+      {
+         upnpif.reset(
+                      /* creates a thread */
+                      new btg::daemon::upnp::cyberlinkUpnpIf(logwrapper, verboseFlag, dd.config->getUPNPInternalIP())
                       );
       }
 #endif

@@ -37,7 +37,6 @@ namespace btg
                libtorrentUpnpIf::libtorrentUpnpIf(btg::core::LogWrapperType _logwrapper,
                                                   bool const _verboseFlag,
                                                   libtorrent::address const& _addr)
-#if BTG_LT_0_14
                   : upnpIf(_logwrapper, _verboseFlag),
                     agent("BTG"),
                     io(),
@@ -59,10 +58,6 @@ namespace btg
 
                   initialized_ = true;
                }
-#else
-{
-}
-#endif // BTG_LT_0_14
 
                void libtorrentUpnpIf::portMap(int _index, 
                                               int _externalPort, 
@@ -133,7 +128,6 @@ namespace btg
 
                bool libtorrentUpnpIf::open(std::pair<t_int, t_int> const& _range)
                {
-#if BTG_LT_0_14
                   if (!initialized_)
                      {
                         return false;
@@ -215,14 +209,10 @@ namespace btg
                         btg::core::os::Sleep::sleepMiliSeconds(64);
                      }
                   return true;
-#else
-                  return false;
-#endif
                }
 
                bool libtorrentUpnpIf::close()
                {
-#if BTG_LT_0_14
                   if (!initialized_)
                      {
                         return false;
@@ -245,19 +235,14 @@ namespace btg
                   indices.clear();
 
                   return true;
-#else
-                  return false;
-#endif // BTG_LT_0_14
                }
                      
                libtorrentUpnpIf::~libtorrentUpnpIf()
                {
-#if BTG_LT_0_14
                   if (initialized_)
                      {
                         upnp.close();
                      }
-#endif
                }
 
             } // namespace upnp

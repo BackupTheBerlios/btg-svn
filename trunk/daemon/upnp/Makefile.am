@@ -5,9 +5,14 @@ if BUILDCYBERLINK
   CYBERLINK_SOURCE=cyberlink.cpp
 endif
 
-noinst_HEADERS = upnpif.h portmap.h ltupnpif.h $(CYBERLINK_HEADER)
+if BUILDLTUPNP
+  LTUPNP_HEADER=ltupnpif.h
+  LTUPNP_SOURCE=ltupnpif.cpp
+endif
 
-libupnp_la_SOURCES = upnpif.cpp portmap.cpp ltupnpif.cpp $(CYBERLINK_SOURCE)
+noinst_HEADERS = upnpif.h portmap.h $(CYBERLINK_HEADER) $(LTUPNP_HEADER)
+
+libupnp_la_SOURCES = upnpif.cpp portmap.cpp $(CYBERLINK_SOURCE) $(LTUPNP_SOURCE)
 
 libupnp_la_CFLAGS   = @CFLAGS@ @DEBUG_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ \
 -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \
