@@ -125,7 +125,7 @@ namespace btg
                      /// Key.
                      t_int quitKey;
                      /// Key.
-                     t_int quitscreenKey;
+                     t_int backKey;
                      /// Key.
                      t_int loadKey;
                      /// Key.

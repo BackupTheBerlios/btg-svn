@@ -246,7 +246,7 @@ namespace btg
             std::string keyDescr;
 
             if (helpWindow::generateHelpForKey(keymap_,
-                                               keyMapping::K_QUIT,
+                                               keyMapping::K_BACK,
                                                "to go back",
                                                keyDescr))
                {
@@ -307,7 +307,8 @@ namespace btg
                               }
                               break;
                            }
-                        case keyMapping::K_QUIT:
+                        case keyMapping::K_SELECT:
+                        case keyMapping::K_BACK:
                            {
                               cont = false;
                               dw.clear();
@@ -1077,8 +1078,8 @@ namespace btg
                      QUIT_NO  = 2
                   };
 
-                  contents.push_back(menuEntry(QUIT_NO,  "No",  "Quit"));
-                  contents.push_back(menuEntry(QUIT_YES, "Yes", "Do not quit"));
+                  contents.push_back(menuEntry(QUIT_NO,  "No",  "Do not quit"));
+                  contents.push_back(menuEntry(QUIT_YES, "Yes", "Quit"));
 
                   windowSize menudimensions;
                   mainwindow_.getSize(menudimensions);

@@ -2,6 +2,7 @@ BTG version 0.9.8
 -----------------
 The following bugs were fixed:
 
+013701 Keys for "Quit" and "Back" should be separate.
 013700 Reload filter list w/o restarting daemon.
 013644 Ports opened by UPnP when it is disabled.
 013643 Daemon starts without rewriting unexistent pid.

@@ -57,7 +57,7 @@ namespace btg
          {
             // Keys used by this window.
             std::vector<keyMapping::KEYLABEL> labels;
-            labels.push_back(keyMapping::K_QUIT);
+            labels.push_back(keyMapping::K_BACK);
             labels.push_back(keyMapping::K_MENU);
             labels.push_back(keyMapping::K_DOWN);
             labels.push_back(keyMapping::K_UP);
@@ -88,7 +88,7 @@ namespace btg
                   switch (kl)
                      {
                      case keyMapping::K_MENU:
-                     case keyMapping::K_QUIT:
+                     case keyMapping::K_BACK:
                         {
                            quit = true;
                            break;

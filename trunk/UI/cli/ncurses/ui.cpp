@@ -24,7 +24,6 @@
 
 #include <bcore/logmacro.h>
 
-#include "detailwindow.h"
 #include "helpwindow.h"
 #include "filelist.h"
 #include "fileview.h"

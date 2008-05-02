@@ -63,9 +63,9 @@ namespace btg
 
             // Used for dialogs where one cannot press for example
             // 'q', since the dialog accepts this key.
-            if (!exists(keyMapping::K_QUITSCREEN))
+            if (!exists(keyMapping::K_BACK))
                {
-                  add(keyMapping::K_QUITSCREEN, KEY_F(10));
+                  add(keyMapping::K_BACK, KEY_F(10));
                }
 
             if (!exists(keyMapping::K_LOAD))

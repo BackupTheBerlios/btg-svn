@@ -44,7 +44,8 @@ namespace btg
             // Keys used by this window.
             std::vector<keyMapping::KEYLABEL> labels;
 
-            labels.push_back(keyMapping::K_QUIT);
+            labels.push_back(keyMapping::K_SELECT);
+            labels.push_back(keyMapping::K_BACK);
             labels.push_back(keyMapping::K_HELP);
             labels.push_back(keyMapping::K_RESIZE);
 
