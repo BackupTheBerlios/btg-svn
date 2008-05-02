@@ -2,11 +2,16 @@ BTG version 0.9.8
 -----------------
 The following bugs were fixed:
 
+013644 Ports opened by UPnP when it is disabled.
+013643 Daemon starts without rewriting unexistent pid.
+013618 btgncli, show sessions when invoked without arguments.
 013557 UPnP, automatic internal IP detection.
 013555 UPnP, added separate config-file parameter for internal-ip.
 013538 Issues with native FreeBSD dialog.
 013501 Implement better torrent loading.
+013490 Provide source-packages in deb-src.
 013460 Showing file pieces for torrents missing from wwwui.
+013459 File selection missing from wwwui.
 013454 Writing PID-file (daemon).
 013435 Open all necessary files before switching EUID (daemon).
 013450 Logging optimization - static conditions.
