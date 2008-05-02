@@ -91,311 +91,16 @@ namespace btg
             messages.push_back(_message);
          }
 
-         startupHelper::startupHelper(LogWrapperType _logwrapper,
-                                      std::string const&          _clientName,
-                                      clientConfiguration&        _config,
-                                      HelperArgIf&                _clah,
-                                      messageTransport&           _mtrans,
-                                      clientHandler&              _handler
-                                      )
-            : Helper(_logwrapper,
-                     _clientName,
-                     _config,
-                     _clah),
-              mtrans(_mtrans),
-              handler(_handler),
-              username_(),
+         /* */
+
+         startupHelperIf::startupHelperIf()
+            : username_(),
               passwordHash_(),
               authSet_(false)
          {
          }
 
-         bool startupHelper::init()
-         {
-            using namespace btg::core;
-
-            if (!mtrans.isInitialized())
-               {
-                  addMessage("Message transport not initialized.");
-                  return false;
-               }
-
-            return true;
-         }
-
-         startupHelper::operationResult startupHelper::execute(startupHelper::Operation const _operation)
-         {
-            startupHelper::operationResult result = startupHelper::or_undefined;
-
-            switch(_operation)
-               {
-               case startupHelper::op_log:
-                  {
-                     using namespace btg::core::logger;
-
-                     result = or_log_success;
-
-                     switch(config.getLog())
-                        {
-                        case logBuffer::STDOUT:
-                           {
-                              boost::shared_ptr<btg::core::logger::logStream> l(new btg::core::logger::logStream(new btg::core::logger::consoleLogger()));
-                              logWrapper()->setLogStream(l);
-                              break;
-                           }
-                        case logBuffer::LOGFILE:
-                           {
-                              std::string logfilename = config.getLogFile();
-                              btg::core::os::fileOperation::resolvePath(logfilename);
-
-                              fileLogger* fl = new fileLogger(logfilename);
-
-                              if (fl->open())
-                                 {
-                                    boost::shared_ptr<btg::core::logger::logStream> l(new btg::core::logger::logStream(fl));
-                                    logWrapper()->setLogStream(l);
-                                    BTG_NOTICE(logWrapper(), "Logfile opened");
-                                 }
-                              else
-                                 {
-                                    delete fl;
-                                    fl = 0;
-                                    result = or_log_failture;
-                                    BTG_NOTICE(logWrapper(), "Failed to open '" << logfilename << "' for writing.");
-                                 }
-
-                              break;
-                           }
-                        case logBuffer::SYSLOG:
-                           {
-                              // Log to syslog.
-                              boost::shared_ptr<btg::core::logger::logStream> l(new logStream(new syslogLogger()));
-                              logWrapper()->setLogStream(l);
-                              break;
-                           }
-                        case logBuffer::UNDEF:
-                           {
-                              // No logging.
-                              break;
-                           }
-                        }
-                     break;
-                  }
-               case startupHelper::op_init:
-                  {
-                     btg::core::Hash h;
-                     h.set(passwordHash());
-                     handler.reqInit(user(), h);
-                     result = handler.transinitwaitError() ? startupHelper::or_init_failure : startupHelper::or_init_success;
-                     break;
-                  }
-               case startupHelper::op_auth:
-                  {
-                     result = startupHelper::or_auth_failture;
-                     if (authUserQuery())
-                        {
-                           // The user entered the auth information.
-                           result = startupHelper::or_auth_success;
-                        }
-
-                     // Make sure that the username and hash was
-                     // actually set.
-                     if (!authSet())
-                        {
-                           BTG_NOTICE(logWrapper(), "No auth information set.");
-                           result = startupHelper::or_auth_failture;
-                        }
-
-                     break;
-                  }
-               case startupHelper::op_attach:
-                  {
-                     // Attach to a certain session, either specified on the
-                     // command line or chosen by the user from a list.
-
-                     t_long temp_session = clah.sessionId();
-                     if (temp_session != Command::INVALID_SESSION)
-                        {
-                           std::string errorMessage;
-                           handler.reqSetupAttach(temp_session);
-
-                           if (!handler.isAttachDone())
-                              {
-                                 addMessage("Unable to attach to session.");
-                                 addMessage("The daemon returned: " +
-                                            handler.getAttachFailtureMessage());
-                                 result = startupHelper::or_attach_failture;
-                                 break;
-                              }
-                           else
-                              {
-                                 // Was able to attach to session.
-                                 result = startupHelper::or_attach_success;
-                                 session = temp_session;
-                              }
-
-                           result = startupHelper::or_attach_success;
-                           break;
-                        }
-                     else
-                        {
-                           // Ask user which session he wants to attach to.
-                           handler.reqGetActiveSessions();
-
-                           t_longList sessions   = handler.getSessionList();
-                           t_strList sessionsIDs = handler.getSessionNames();
-
-                           // Make sure that sessions are available.
-                           if (sessions.size() <= 0)
-                              {
-                                 result = startupHelper::or_attach_failture;
-                                 addMessage("No sessions present.");
-
-                                 break;
-                              }
-
-                           t_long temp_session = queryUserAboutSession(sessions, 
-                                                                       sessionsIDs);
-
-                           if (temp_session != Command::INVALID_SESSION)
-                              {
-                                 // Attempt to attach to session.
-
-                                 std::string errorMessage;
-
-                                 handler.reqSetupAttach(temp_session);
-
-                                 if (!handler.isAttachDone())
-                                    {
-                                       addMessage("Unable to attach to session.");
-                                       addMessage("The daemon returned: " +
-                                                  handler.getAttachFailtureMessage());
-
-                                       result = startupHelper::or_attach_failture;
-                                       break;
-                                    }
-                                 else
-                                    {
-                                       // Was able to attach to session.
-                                       result = startupHelper::or_attach_success;
-                                       session = temp_session;
-                                    }
-                              }
-                           else
-                              {
-                                 // Invalid session ID.
-                                 // User cancelled.
-                                 result = startupHelper::or_attach_cancelled;
-                              }
-
-                        } // Attach to as session.
-
-                     break;
-                  }
-
-               case startupHelper::op_attach_first:
-                  {
-                     // Attach to the first available session.
-
-                     handler.reqGetActiveSessions();
-
-                     t_longList sessions = handler.getSessionList();
-                     t_longListCI vlci   = sessions.begin();
-
-                     if (vlci != sessions.end())
-                        {
-                           // Got user input, attach to session.
-                           handler.reqSetupAttach(*vlci);
-
-                           if (!handler.isAttachDone())
-                              {
-                                 addMessage("Unable to attach to session.");
-
-                                 result = startupHelper::or_attach_first_failture;
-                                 break;
-                              }
-                           else
-                              {
-                                 session = *vlci;
-                              }
-                        }
-                     else
-                        {
-                           addMessage("No session to attach to.");
-
-                           result = startupHelper::or_attach_first_failture;
-                           break;
-                        }
-                     result = startupHelper::or_attach_first_success;
-                     break;
-                  }
-               case startupHelper::op_list:
-                  {
-                     handler.reqGetActiveSessions();
-
-                     t_longList sessions   = handler.getSessionList();
-                     t_strList sessionsIDs = handler.getSessionNames();
-
-                     if (sessions.size() > 0)
-                        {
-                           result = startupHelper::or_list_success;
-                           showSessions(sessions, sessionsIDs);
-                        }
-                     else
-                        {
-                           result = startupHelper::or_list_failture;
-                           addMessage("No sessions to list.");
-                        }
-                     break;
-                  }
-               case startupHelper::op_setup:
-                  {
-                     // If DHT was enabled/disabled using a command
-                     // line argument, use that instead of the value
-                     // from the config file.
-                     bool useDHT = config.getUseDHT();
-                     if (clah.useDHTSet())
-                        {
-                           if (clah.useDHT() != useDHT)
-                              {
-                                 useDHT = clah.useDHT();
-                              }
-                        }
-
-                     // If encryption was enabled/disabled using a
-                     // command line argument, use that instead of the
-                     // value from the config file.
-                     bool useEncryption = config.getUseEncryption();
-                     if (clah.useEncryptionSet())
-                        {
-                           if (clah.useEncryption() != useEncryption)
-                              {
-                                 useEncryption = clah.useEncryption();
-                              }
-                        }
-
-                     handler.reqSetup(clientHandler::NO_SEEDLIMIT, 
-                                       clientHandler::NO_SEEDTIMEOUT, 
-                                       useDHT,
-                                       useEncryption);
-
-                     if (!handler.isSetupDone())
-                        {
-                           addMessage(handler.getSetupFailtureMessage());
-                           addMessage("Could not establish a session.");
-                           result = startupHelper::or_setup_failture;
-                           break;
-                        }
-
-                     result = startupHelper::or_setup_success;
-                     break;
-                  }
-               }
-
-            return result;
-         }
-
-         void startupHelper::setAuth(std::string const& _username, std::string const& _password)
+         void startupHelperIf::setAuth(std::string const& _username, std::string const& _password)
          {
             username_ = _username;
             Hash hash;
@@ -405,35 +110,356 @@ namespace btg
             authSet_ = true;
          }
 
-         bool startupHelper::authSet() const
+         bool startupHelperIf::authSet() const
          {
             return authSet_;
          }
 
-         std::string startupHelper::user() const
+         std::string startupHelperIf::user() const
          {
             return username_;
          }
 
-         void startupHelper::setUser(std::string const& _user)
+         void startupHelperIf::setUser(std::string const& _user)
          {
             username_ = _user;
          }
 
-         std::string startupHelper::passwordHash() const
+         std::string startupHelperIf::passwordHash() const
          {
             return passwordHash_;
          }
 
-         void startupHelper::setPasswordHash(std::string const& _passwordHash)
+         void startupHelperIf::setPasswordHash(std::string const& _passwordHash)
          {
             passwordHash_ = _passwordHash;
             authSet_      = true;
          }
 
+         startupHelperIf::~startupHelperIf()
+         {
+
+         }
+
+         /* */
+
+         startupHelper::startupHelper(LogWrapperType _logwrapper,
+                                      std::string const&          _clientName,
+                                      clientConfiguration&        _config,
+                                      HelperArgIf&                _clah,
+                                      messageTransport&           _mtrans,
+                                      clientHandler&              _handler,
+                                      startupHelperIf&            _helperif
+                                      )
+            : Helper(_logwrapper,
+                     _clientName,
+                     _config,
+                     _clah),
+              mtrans(_mtrans),
+              handler(_handler),
+              config(_config),
+              helperif(_helperif)
+         {
+         }
+
+         bool startupHelper::SetupLogging()
+         {
+            bool status = true;
+            using namespace btg::core::logger;
+
+            switch(config.getLog())
+               {
+               case logBuffer::STDOUT:
+                  {
+                     boost::shared_ptr<btg::core::logger::logStream> l(new btg::core::logger::logStream(new btg::core::logger::consoleLogger()));
+                     logWrapper()->setLogStream(l);
+                     break;
+                  }
+               case logBuffer::LOGFILE:
+                  {
+                     std::string logfilename = config.getLogFile();
+                     btg::core::os::fileOperation::resolvePath(logfilename);
+                     
+                     fileLogger* fl = new fileLogger(logfilename);
+                     
+                     if (fl->open())
+                        {
+                           boost::shared_ptr<btg::core::logger::logStream> l(new btg::core::logger::logStream(fl));
+                           logWrapper()->setLogStream(l);
+                           BTG_NOTICE(logWrapper(), "Logfile opened");
+                        }
+                     else
+                        {
+                           delete fl;
+                           fl = 0;
+                           BTG_NOTICE(logWrapper(), "Failed to open '" << logfilename << "' for writing.");
+                           status = false;
+                        }
+                     
+                     break;
+                  }
+               case logBuffer::SYSLOG:
+                  {
+                     // Log to syslog.
+                     boost::shared_ptr<btg::core::logger::logStream> l(new logStream(new syslogLogger()));
+                     logWrapper()->setLogStream(l);
+                     break;
+                  }
+               case logBuffer::UNDEF:
+                  {
+                     // No logging.
+                     break;
+                  }
+               }
+
+            return status;
+         }
+
+         bool startupHelper::Init()
+         {
+            using namespace btg::core;
+
+            if (config.authSet())
+               {
+                  // Auth info is in the config.
+                  helperif.setUser(config.getUserName());
+                  helperif.setPasswordHash(config.getPasswordHash());
+               }
+
+            if (!mtrans.isInitialized())
+               {
+                  addMessage("Message transport not initialized.");
+                  return false;
+               }
+
+            if (!helperif.authSet())
+               {
+                  if (!helperif.AuthQuery())
+                     {
+                        return false;
+                     }
+               }
+
+            btg::core::Hash h;
+            h.set(helperif.passwordHash());
+            handler.reqInit(helperif.user(), h);
+
+            if (handler.transinitwaitError())
+               {
+                  addMessage("Auth error.");
+                  return false;
+               }
+            
+            return true;
+         }
+
+         bool startupHelper::AttachToSession(t_long const _sessionId)
+         {
+            handler.reqSetupAttach(_sessionId);
+
+            if (!handler.isAttachDone())
+               {
+                  addMessage("Unable to attach to session.");
+                  addMessage("The daemon returned: " +
+                             handler.getAttachFailtureMessage());
+
+                  return false;
+               }
+
+            return true;
+         }
+
+         bool startupHelper::AttachSession(t_long & _sessionId)
+         {
+            t_long temp_session = clah.sessionId();
+            if (temp_session != Command::INVALID_SESSION)
+               {
+                  std::string errorMessage;
+                  handler.reqSetupAttach(temp_session);
+
+                  if (!handler.isAttachDone())
+                     {
+                        addMessage("Unable to attach to session.");
+                        addMessage("The daemon returned: " +
+                                   handler.getAttachFailtureMessage());
+
+                        return false;
+                     }
+                  else
+                     {
+                        // Was able to attach to session.
+                        _sessionId = temp_session;
+                     }
+               }
+            else
+               {
+                  // Ask user which session he wants to attach to.
+                  handler.reqGetActiveSessions();
+
+                  t_longList sessions   = handler.getSessionList();
+                  t_strList sessionsIDs = handler.getSessionNames();
+
+                  // Make sure that sessions are available.
+                  if (sessions.size() <= 0)
+                     {
+                        addMessage("No sessions present.");
+                        return false;
+                     }
+
+                  t_long temp_session = Command::INVALID_SESSION;
+                  helperif.AttachSessionQuery(sessions, sessionsIDs, temp_session);
+
+                  if (temp_session != Command::INVALID_SESSION)
+                     {
+                        // Attempt to attach to session.
+                        std::string errorMessage;
+
+                        handler.reqSetupAttach(temp_session);
+
+                        if (!handler.isAttachDone())
+                           {
+                              addMessage("Unable to attach to session.");
+                              addMessage("The daemon returned: " +
+                                         handler.getAttachFailtureMessage());
+
+                              return false;
+                           }
+                        else
+                           {
+                              // Was able to attach to session.
+                              _sessionId = temp_session;
+                           }
+                     }
+                  else
+                     {
+                        addMessage("Attach cancelled.");
+                        return false;
+                     }
+               }
+            return true;
+         }
+
+         bool startupHelper::AttachFirstSession(t_long & _sessionId)
+         {
+            // Attach to the first available session.
+            handler.reqGetActiveSessions();
+
+            t_longList sessions = handler.getSessionList();
+            t_longListCI vlci   = sessions.begin();
+
+            if (vlci != sessions.end())
+               {
+                  // Got user input, attach to session.
+                  handler.reqSetupAttach(*vlci);
+
+                  if (!handler.isAttachDone())
+                     {
+                        addMessage("Unable to attach to session.");
+                     }
+                  else
+                     {
+                        _sessionId = *vlci;
+                        return true;
+                     }
+               }
+            else
+               {
+                  addMessage("No session to attach to.");
+               }
+            return false;
+         }
+
+         bool startupHelper::ListSessions()
+         {
+            handler.reqGetActiveSessions();
+
+            t_longList sessions   = handler.getSessionList();
+            t_strList sessionsIDs = handler.getSessionNames();
+
+            if (sessions.size() > 0)
+               {
+                  helperif.ListSessions(sessions, sessionsIDs);
+               }
+            else
+               {
+                  addMessage("No sessions to list.");
+                  return false;
+               }
+            
+            return true;
+         }
+
+         bool startupHelper::NewSession(t_long & _sessionId)
+         {
+            // If DHT was enabled/disabled using a command
+            // line argument, use that instead of the value
+            // from the config file.
+            bool useDHT = config.getUseDHT();
+            if (clah.useDHTSet())
+               {
+                  if (clah.useDHT() != useDHT)
+                     {
+                        useDHT = clah.useDHT();
+                     }
+               }
+            
+            // If encryption was enabled/disabled using a
+            // command line argument, use that instead of the
+            // value from the config file.
+            bool useEncryption = config.getUseEncryption();
+            if (clah.useEncryptionSet())
+               {
+                  if (clah.useEncryption() != useEncryption)
+                     {
+                        useEncryption = clah.useEncryption();
+                     }
+               }
+            
+            handler.reqSetup(clientHandler::NO_SEEDLIMIT, 
+                             clientHandler::NO_SEEDTIMEOUT, 
+                             useDHT,
+                             useEncryption);
+            
+            if (!handler.isSetupDone())
+               {
+                  addMessage(handler.getSetupFailtureMessage());
+                  addMessage("Could not establish a session.");
+                  return false;
+               }
+            else
+               {
+                  _sessionId = handler.session();
+               }
+
+            return true;
+         }
+
+         bool startupHelper::DefaultAction(bool & _attach, t_long & _sessionId)
+         {
+            handler.reqGetActiveSessions();
+
+            t_longList sessions   = handler.getSessionList();
+            t_strList sessionsIDs = handler.getSessionNames();
+
+            if (!helperif.DefaultAction(sessions, 
+                                        sessionsIDs,
+                                        _attach,
+                                        _sessionId))
+               {
+                  // Aborted.
+                  return false;
+               }
+
+            return true;
+         }
+
+         startupHelperIf & startupHelper::getIf() const
+         {
+            return helperif;
+         }
+
          startupHelper::~startupHelper()
          {
-            // The contained pointers are deleted elsewhere.
          }
 
          /* -- */

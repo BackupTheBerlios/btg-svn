@@ -82,7 +82,10 @@ namespace btg
             property_window_position().set_value(Gtk::WIN_POS_NONE);
             set_resizable(true);
             property_destroy_with_parent().set_value(false);
-            add_action_widget(*cancelbutton, -6);
+            if (!disableSelection_)
+               {
+                  add_action_widget(*cancelbutton, -6);
+               }
             add_action_widget(*okbutton, -5);
 
             /// Fill the combobox with session ids.

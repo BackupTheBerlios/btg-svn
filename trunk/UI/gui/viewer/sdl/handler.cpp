@@ -487,27 +487,40 @@ namespace btg
                                                   _config,
                                                   _clah,
                                                   _messageTransport,
-                                                  _handler)
+                                                  _handler,
+                                                  *this)
             {
 
             }
 
-            t_long viewerStartupHelper::queryUserAboutSession(t_longList const& _sessions,
-                                                              t_strList const& _sessionIds) const
+            bool viewerStartupHelper::AuthQuery()
             {
-               return Command::INVALID_SESSION;
+               // Not implemented, auth info is read from config file
+               // only.
+               return false;
             }
 
-            bool viewerStartupHelper::authUserQuery()
+            bool viewerStartupHelper::AttachSessionQuery(t_longList const& _sessionsIDs,
+                                                         t_strList const& _sessionNames,
+                                                         t_long & _session)
             {
-               bool status = false;
-
-               return status;
+               // Not implemented.
+               _session = Command::INVALID_SESSION;
             }
-
-            void viewerStartupHelper::showSessions(t_longList const& _sessions,
-                                                   t_strList const& _sessionNames) const
+                  
+            void viewerStartupHelper::ListSessions(t_longList const& _sessions,
+                                                   t_strList const& _sessionNames)
             {
+               // Not implemented.
+            }
+            
+            bool viewerStartupHelper::DefaultAction(t_longList const& _sessions,
+                                                    t_strList const& _sessionNames,
+                                                    bool & _attach,
+                                                    t_long & _sessionId)
+            {
+               // Not implemented.
+               return false;
             }
 
             viewerStartupHelper::~viewerStartupHelper()

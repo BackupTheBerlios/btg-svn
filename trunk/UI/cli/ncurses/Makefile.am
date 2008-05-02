@@ -1,5 +1,19 @@
 if BUILDCLI
 
+noinst_LTLIBRARIES   = libcommoncli.la
+
+noinst_HEADERS = cli_helper.h
+
+libcommoncli_la_SOURCES = cli_helper.cpp
+
+libcommoncli_la_CXXFLAGS = @CXXFLAGS@ @LIBGNUTLS_CFLAGS@ \
+-DBTG_DEBUG=@BTG_DEBUG@ \
+-DBTG_REV="@BTG_REV@"
+
+#
+#
+#
+
 bin_PROGRAMS = btgncli
 
 btgncli_SOURCES = nconfig.cpp \
@@ -19,7 +33,7 @@ btgncli_SOURCES = nconfig.cpp \
                   handler.cpp \
                   btgncli.cpp
 
-noinst_HEADERS = nconfig.h \
+noinst_HEADERS += nconfig.h \
                  keys.h colors.h \
                  window.h \
                  basemenu.h \
@@ -35,7 +49,8 @@ noinst_HEADERS = nconfig.h \
                  ui.h \
                  handler.h
 
-btgncli_LDADD   = $(top_builddir)/bcore/libbtgcore.la \
+btgncli_LDADD   = libcommoncli.la \
+                  $(top_builddir)/bcore/libbtgcore.la \
                   $(top_builddir)/bcore/client/libbtgclient.la \
                   $(top_builddir)/external/ini/libini.la \
                   $(top_builddir)/bcore/libbtgcore.la

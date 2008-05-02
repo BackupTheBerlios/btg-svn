@@ -39,6 +39,7 @@
 #include "errordialog.h"
 
 #include "guihandler.h"
+#include "guihelper.h"
 #include "sessiondialog.h"
 
 #include <bcore/logger/logger.h>
@@ -64,6 +65,8 @@ void OpenUrls(guiHandler & _handler,
 
 int main(int argc, char **argv)
 {
+   std::string appname("btgui");
+
    btg::core::crashLog::init();
    projectDefaultsKiller PDK__; // need to be before anything uses GPD
    LogWrapperType logwrapper(new btg::core::logger::logWrapper);
@@ -117,7 +120,7 @@ int main(int argc, char **argv)
    if (!btg::core::os::fileOperation::check(config_filename, errorString, false))
       {
          BTG_FATAL_ERROR(logwrapper,
-                         GPD->sGUI_CLIENT(), "Could not open file '" << config_filename << "'");
+                         appname, "Could not open file '" << config_filename << "'");
 
          return BTG_ERROR_EXIT;
       }
@@ -140,7 +143,7 @@ int main(int argc, char **argv)
    if (!gotConfig)
       {
          BTG_FATAL_ERROR(logwrapper,
-                         GPD->sGUI_CLIENT(), "Could not read the config file, '" << GPD->sGUI_CONFIG() << "'. Create one.");
+                         appname, "Could not read the config file, '" << GPD->sGUI_CONFIG() << "'. Create one.");
 
          return BTG_ERROR_EXIT;
       }
@@ -155,13 +158,12 @@ int main(int argc, char **argv)
    std::auto_ptr<btg::core::externalization::Externalization> apExternalization;
    std::auto_ptr<messageTransport> apTransport;
 
-   INIT_TRANSPORT:
    {
       btg::core::externalization::Externalization* externalization = 0;
       messageTransport* transport                                  = 0;
       
       transportHelper transporthelper(logwrapper,
-                                      GPD->sGUI_CLIENT(),
+                                      appname,
                                       config,
                                       cla);
 
@@ -180,7 +182,7 @@ int main(int argc, char **argv)
       
       apExternalization.reset(externalization);
       apTransport.reset(transport);
-   } /* INIT_TRANSPORT */
+   }
    
    // Update init dialog.
    iw->updateProgress(initWindow::IEV_TRANSP_DONE);
@@ -206,69 +208,43 @@ int main(int argc, char **argv)
                                                                  *apTransport,
                                                                  guihandler));
 
-   if (!starthelper->init())
+   if (!starthelper->Init())
       {
          errorDialog::showAndDie(starthelper->getMessages());
          BTG_FATAL_ERROR(logwrapper,
-                         GPD->sGUI_CLIENT(), "Internal error: start up helper not initialized.");
+                         appname, "Internal error: start up helper not initialized.");
 
          return BTG_ERROR_EXIT;
       }
-   
+
+   setDefaultLogLevel(logwrapper, cla.doDebug(), verboseFlag);
+
    // Initialize logging.
-   if (starthelper->execute(startupHelper::op_log) != startupHelper::or_log_success)
+   if (!starthelper->SetupLogging())
       {
-         BTG_FATAL_ERROR(logwrapper,
-                         GPD->sCLI_CLIENT(), "Unable to initialize logging");
+         BTG_FATAL_ERROR(logwrapper, appname, "Unable to initialize logging");
 
          return BTG_ERROR_EXIT;
       }
 
-   if (config.authSet())
-      {
-         // Auth info is in the config.
-         starthelper->setUser(config.getUserName());
-         starthelper->setPasswordHash(config.getPasswordHash());
-      }
-   else
-      {
-         AUTH_RETRY:
-         // Ask the user about which username and password to use.
-         if (starthelper->execute(startupHelper::op_auth) != startupHelper::or_auth_success)
-            {
-               BTG_FATAL_ERROR(logwrapper,
-                               GPD->sCLI_CLIENT(), "Unable to initialize logging");
+   bool attach      = cla.doAttach();
+   bool attachFirst = cla.doAttachFirst();
 
-               return BTG_ERROR_EXIT;
-            }
-      }
-   
-   /// Initialize the transport
-   if (starthelper->execute(startupHelper::op_init) != startupHelper::or_init_success)
-   {
-      errorDialog::showAndDie("Authentication error.");
-      goto AUTH_RETRY;
-   }
-   
    // Handle command line options:
    if (cla.doList())
       {
-         if (starthelper->execute(startupHelper::op_list) == startupHelper::or_list_failture)
-            {
-               errorDialog::showAndDie(starthelper->getMessages());
-            }
-
+         starthelper->ListSessions();
          return BTG_NORMAL_EXIT;
       }
    else if (cla.doAttachFirst())
       {
+         t_long sessionId;
          // Attach to the first available session.
-
-         if (starthelper->execute(startupHelper::op_attach_first) == startupHelper::or_attach_first_failture)
+         if (!starthelper->AttachFirstSession(sessionId))
             {
                errorDialog::showAndDie(starthelper->getMessages());
                BTG_FATAL_ERROR(logwrapper,
-                               GPD->sGUI_CLIENT(), "Unable to attach to session");
+                               appname, "Unable to attach to session");
 
                return BTG_ERROR_EXIT;
             }
@@ -280,94 +256,61 @@ int main(int argc, char **argv)
          // Attach to a certain session, either specified on the
          // command line or chosen by the user from a list.
 
-         startupHelper::operationResult result = starthelper->execute(startupHelper::op_attach);
+         t_long sessionId;
 
-         if (result == startupHelper::or_attach_failture)
+         if (!starthelper->AttachSession(sessionId))
             {
                errorDialog::showAndDie(starthelper->getMessages());
                BTG_FATAL_ERROR(logwrapper,
-                               GPD->sGUI_CLIENT(), "Unable to attach to session");
-            }
-         
-         if ((result == startupHelper::or_attach_failture) || 
-             (result == startupHelper::or_attach_cancelled))
-            {
+                               appname, "Unable to attach to session");
+
                return BTG_ERROR_EXIT;
             }
 
          initialStatusMessage = "Attached to session.";
-
-      } // Attach to as session.
-
-   bool executeSetup        = false;
-   bool attachToSession     = false;
-   t_long sessionToAttachTo = Command::INVALID_SESSION;
-
-   if ((!cla.doAttach()) && (!cla.doAttachFirst()))
+      }
+   else 
       {
-         // Not attaching to a session. Show a dialog that lets one
-         // select which session to use or to create a new one.
+         // No options, show list of sessions or allow to create a new one.
 
-         // Get a list of sessions.
-         guihandler.reqGetActiveSessions();
-         
-         t_longList sessionlist = guihandler.getSessionList();
-         t_strList sessionsIDs = guihandler.getSessionNames();
+         bool action_attach = false;
+         t_long session;
 
-         sessionDialog sd(sessionlist, sessionsIDs);
-         sd.run();
-
-         switch (sd.getResult())
+         if (!starthelper->DefaultAction(action_attach, session))
             {
-            case sessionDialog::QUIT:
-               {
-                  return BTG_ERROR_EXIT;
-                  break;
-               }
-            case sessionDialog::NEW_SESSION:
-               {
-                  executeSetup    = true;
-                  attachToSession = false;
-                  // Create a new session.
-                  break;
-               }
-            case sessionDialog::SELECTED:
-               {
-                  // A session was selected.
-                  executeSetup    = false;
-                  attachToSession = true;
-                  sd.getSelectedSession(sessionToAttachTo);
-                  break;
-               }
+               BTG_FATAL_ERROR(logwrapper, appname, "Cancelled.");
+
+               return BTG_ERROR_EXIT;
+            }
+
+         if (action_attach)
+            {
+               attach = action_attach;
+
+               if (!starthelper->AttachToSession(session))
+                  {
+                     BTG_FATAL_ERROR(logwrapper, appname, "Unable to attach to session.");
+
+                     return BTG_ERROR_EXIT;
+                  }
+               initialStatusMessage = "Attached to session.";
             }
       }
-   
+
    // Only execute setup if we are not attaching to an existing session.
-   if (executeSetup)
+   if ((!attach) && (!attachFirst))
       {
-         if (starthelper->execute(startupHelper::op_setup) == startupHelper::or_setup_failture)
+         t_long sessionId;
+         if (!starthelper->NewSession(sessionId))
             {
-               errorDialog::showAndDie(starthelper->getMessages());
+               BTG_FATAL_ERROR(logwrapper, appname, "Unable to create new session.");
 
                return BTG_ERROR_EXIT;
             }
-
-         initialStatusMessage = "Established session.";
-      }
-
-   if (attachToSession)
-      {
-         std::string errorMessage;
-         guihandler.reqSetupAttach(sessionToAttachTo);
-
-         if (!guihandler.isAttachDone())
-            {
-               errorDialog::showAndDie("Unable to attach to session");
-               BTG_FATAL_ERROR(logwrapper,
-                               GPD->sGUI_CLIENT(), "Unable to attach to session");
-
-               return BTG_ERROR_EXIT;
-            }
+         
+         t_long session         = guihandler.session();
+         std::string strSession = btg::core::convertToString<t_long>(session);
+         initialStatusMessage   = "Established session #" + strSession + ".";
       }
 
    // If the user requested to open any files, do it.

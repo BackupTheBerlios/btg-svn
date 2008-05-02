@@ -65,6 +65,7 @@ void global_signal_handler(int _signal_no)
 
 #include <bcore/logable.h>
 #include <bcore/crashlog.h>
+#include <UI/cli/ncurses/cli_helper.h>
 
 using namespace btg::core;
 using namespace btg::core::logger;
@@ -189,7 +190,7 @@ int main(int argc, char* argv[])
                                                                  *apTransport,
                                                                  clihandler));
 
-   if (!starthelper->init())
+   if (!starthelper->Init())
       {
          BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Internal error: start up helper not initialized.");
 
@@ -199,90 +200,99 @@ int main(int argc, char* argv[])
    setDefaultLogLevel(logwrapper, cla.doDebug(), verboseFlag);
 
    // Initialize logging.
-   if (starthelper->execute(startupHelper::op_log) != startupHelper::or_log_success)
+   if (!starthelper->SetupLogging())
       {
          BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Unable to initialize logging");
 
          return BTG_ERROR_EXIT;
       }
 
-   if (config.authSet())
-      {
-         // Auth info is in the config.
-         starthelper->setUser(config.getUserName());
-         starthelper->setPasswordHash(config.getPasswordHash());
-      }
-   else
-      {
-         AUTH_RETRY:
-         // Ask the user about which username and password to use.
-         if (starthelper->execute(startupHelper::op_auth) != startupHelper::or_auth_success)
-            {
-               BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Unable to initialize auth");
-
-               return BTG_ERROR_EXIT;
-            }
-      }
-
-   /// Initialize the transport.
-   if (starthelper->execute(startupHelper::op_init) != startupHelper::or_init_success)
-   {
-      std::cout << "Authentication error." << std::endl;
-      return BTG_ERROR_EXIT;
-   }
+   bool attach      = cla.doAttach();
+   bool attachFirst = cla.doAttachFirst();
 
    // Handle command line options:
    if (cla.doList())
       {
-         starthelper->execute(startupHelper::op_list);
-
+         starthelper->ListSessions();
          return BTG_NORMAL_EXIT;
       }
    else if (cla.doAttachFirst())
       {
+         t_long sessionId;
          // Attach to the first available session.
-
-         if (starthelper->execute(startupHelper::op_attach_first) == startupHelper::or_attach_first_failture)
+         if (!starthelper->AttachFirstSession(sessionId))
             {
                BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Unable to attach to session");
 
                return BTG_ERROR_EXIT;
             }
 
-         t_long session = clihandler.session();
+         t_long session         = clihandler.session();
          std::string strSession = btg::core::convertToString<t_long>(session);
-         initialStatusMessage = "Attached to session #" + strSession + ".";
+         initialStatusMessage   = "Attached to session #" + strSession + ".";
       }
    else if (cla.doAttach())
       {
          // Attach to a certain session, either specified on the
          // command line or chosen by the user from a list.
 
-         if (starthelper->execute(startupHelper::op_attach) == startupHelper::or_attach_failture)
+         t_long sessionId;
+
+         if (!starthelper->AttachSession(sessionId))
             {
                BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Unable to attach to session");
 
                return BTG_ERROR_EXIT;
             }
 
-         t_long session = clihandler.session();
+         t_long session         = clihandler.session();
          std::string strSession = btg::core::convertToString<t_long>(session);
-         initialStatusMessage = "Attached to session #" + strSession + ".";
+         initialStatusMessage   = "Attached to session #" + strSession + ".";
       }
-
-   // Only execute setup if we are not attaching to an existing session.
-   if ((!cla.doAttach()) && (!cla.doAttachFirst()))
+   else 
       {
-         if (starthelper->execute(startupHelper::op_setup) == startupHelper::or_setup_failture)
+         // No options, show list of sessions or allow to create a new one.
+
+         bool action_attach = false;
+         t_long session;
+
+         if (!starthelper->DefaultAction(action_attach, session))
             {
-               BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Unable to connect to daemon.");
+               BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Cancelled.");
 
                return BTG_ERROR_EXIT;
             }
 
-         t_long session = clihandler.session();
+         if (action_attach)
+            {
+               attach = action_attach;
+
+               if (!starthelper->AttachToSession(session))
+                  {
+                     BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Unable to attach to session.");
+
+                     return BTG_ERROR_EXIT;
+                  }
+               t_long session         = clihandler.session();
+               std::string strSession = btg::core::convertToString<t_long>(session);
+               initialStatusMessage   = "Attached to session #" + strSession + ".";
+            }
+      }
+
+   // Only execute setup if we are not attaching to an existing session.
+   if ((!attach) && (!attachFirst))
+      {
+         t_long sessionId;
+         if (!starthelper->NewSession(sessionId))
+            {
+               BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Unable to create new session.");
+
+               return BTG_ERROR_EXIT;
+            }
+         
+         t_long session         = clihandler.session();
          std::string strSession = btg::core::convertToString<t_long>(session);
-         initialStatusMessage = "Established session #" + strSession + ".";
+         initialStatusMessage   = "Established session #" + strSession + ".";
       }
 
 #if defined(__APPLE__) && defined(__MACH__)

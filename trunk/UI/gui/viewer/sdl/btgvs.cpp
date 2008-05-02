@@ -151,100 +151,67 @@ int main(int argc, char **argv)
                          cla.automaticStart(),
                          gui);
 
-   std::string initialStatusMessage("");
-
    // Create a helper to do the initial setup of this client.
    std::auto_ptr<startupHelper> starthelper(new viewerStartupHelper(logwrapper,
                                                                     config,
                                                                     cla,
                                                                     *apTransport,
                                                                     handler));
-
-   if (!starthelper->init())
+   if (!starthelper->Init())
       {
-         BTG_FATAL_ERROR(logwrapper,
-                         clientName, "Internal error: start up helper not initialized.");
+         BTG_FATAL_ERROR(logwrapper, clientName, "Internal error: start up helper not initialized.");
+
          return BTG_ERROR_EXIT;
       }
 
    setDefaultLogLevel(logwrapper, cla.doDebug(), verboseFlag);
 
    // Initialize logging.
-   if (starthelper->execute(startupHelper::op_log) != startupHelper::or_log_success)
+   if (!starthelper->SetupLogging())
       {
-         BTG_FATAL_ERROR(logwrapper,
-                         clientName, "Unable to initialize logging");
+         BTG_FATAL_ERROR(logwrapper, clientName, "Unable to initialize logging");
+
          return BTG_ERROR_EXIT;
       }
-
-   if (!config.authSet())
-      {
-         BTG_FATAL_ERROR(logwrapper,
-                         clientName, "No auth info in client config file.");
-         return BTG_ERROR_EXIT;
-      }
-
-   // Auth info is in the config.
-   starthelper->setUser(config.getUserName());
-   starthelper->setPasswordHash(config.getPasswordHash());
-
-   /// Initialize the transport
-   starthelper->execute(startupHelper::op_init);
-
-   bool attached = false;
 
    // Handle command line options:
    if (cla.doAttachFirst())
       {
+         t_long sessionId;
          // Attach to the first available session.
-
-         if (starthelper->execute(startupHelper::op_attach_first) == 
-             startupHelper::or_attach_first_failture)
+         if (!starthelper->AttachFirstSession(sessionId))
             {
-               BTG_FATAL_ERROR(logwrapper,
-                               clientName, "Unable to attach to session");
+               BTG_FATAL_ERROR(logwrapper, clientName, "Unable to attach to session");
+
                return BTG_ERROR_EXIT;
             }
-
-         initialStatusMessage = "Attached to session.";
-         attached = true;
       }
    else if (cla.doAttach())
       {
          // Attach to a certain session, either specified on the
          // command line or chosen by the user from a list.
 
-         startupHelper::operationResult result = starthelper->execute(startupHelper::op_attach);
+         t_long sessionId;
 
-         if (result == startupHelper::or_attach_failture)
+         if (!starthelper->AttachSession(sessionId))
             {
-               BTG_FATAL_ERROR(logwrapper,
-                               clientName, "Unable to attach to session");
-            }
-         
-         if ((result == startupHelper::or_attach_failture) || 
-             (result == startupHelper::or_attach_cancelled))
-            {
+               BTG_FATAL_ERROR(logwrapper, clientName, "Unable to attach to session");
+
                return BTG_ERROR_EXIT;
             }
-
-         initialStatusMessage = "Attached to session.";
-         attached = true;
       }
-
-   // Attempt to the first session even if no arguments were given.
-   if (!attached)
+   else 
       {
+         // No options, show list of sessions or allow to create a new one.
+
+         t_long sessionId;
          // Attach to the first available session.
-         if (starthelper->execute(startupHelper::op_attach_first) == 
-             startupHelper::or_attach_first_failture)
+         if (!starthelper->AttachFirstSession(sessionId))
             {
-               BTG_FATAL_ERROR(logwrapper,
-                               clientName, "Unable to attach to session");
+               BTG_FATAL_ERROR(logwrapper, clientName, "Unable to attach to session");
+
                return BTG_ERROR_EXIT;
             }
-
-         initialStatusMessage = "Attached to session.";
       }
 
    // Done using the start up helper.
@@ -275,8 +242,6 @@ int main(int argc, char **argv)
 
    // Start a thread that takes care of communicating with the daemon.
    //handlerThread handlerthr(verboseFlag, clientdata.handler);
-
-   BTG_NOTICE(logwrapper, initialStatusMessage);
 
    //
    // 

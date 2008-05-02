@@ -174,29 +174,6 @@ namespace btg
 
                /** @} */
 
-               /// Helper: executes a number of tasks when this client starts.
-               class ncliStartupHelper: public btg::core::client::startupHelper
-                  {
-                  public:
-                     /// Constructor.
-                     ncliStartupHelper(btg::core::LogWrapperType _logwrapper,
-                                       btg::core::client::clientConfiguration&        _config,
-                                       btg::core::client::commandLineArgumentHandler& _clah,
-                                       btg::core::messageTransport&                   _messageTransport,
-                                       btg::core::client::clientHandler&              _handler);
-
-                     /// Query the user about which session to attach to.
-                     virtual t_long queryUserAboutSession(t_longList const& _sessions,
-                                                          t_strList const& _sessionIds) const;
-                     virtual bool authUserQuery();
-                     virtual void showSessions(t_longList const& _sessions,
-                                               t_strList const& _sessionNames) const;
-                     /// Destructor.
-                     virtual ~ncliStartupHelper();
-                  };
-
-               /** @} */
-
             } // namespace cli
       } // namespace UI
 } // namespace btg

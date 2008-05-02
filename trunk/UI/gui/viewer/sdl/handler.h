@@ -233,7 +233,8 @@ namespace btg
 
             /// Helper: executes a number of tasks when this client
             /// starts.
-            class viewerStartupHelper: public btg::core::client::startupHelper
+            class viewerStartupHelper: public btg::core::client::startupHelper,
+               public btg::core::client::startupHelperIf
                {
                public:
                   /// Constructor.
@@ -243,12 +244,20 @@ namespace btg
                                       btg::core::messageTransport&            _messageTransport,
                                       btg::core::client::clientHandler&       _handler);
 
-                  /// Query the user about which session to attach to.
-                  virtual t_long queryUserAboutSession(t_longList const& _sessions,
-                                                       t_strList const& _sessionIds) const;
-                  virtual bool authUserQuery();
-                  virtual void showSessions(t_longList const& _sessions,
-                                            t_strList const& _sessionNames) const;
+                  bool AuthQuery();
+
+                  bool AttachSessionQuery(t_longList const& _sessionsIDs,
+                                          t_strList const& _sessionNames,
+                                          t_long & _session);
+                  
+                  void ListSessions(t_longList const& _sessions,
+                                    t_strList const& _sessionNames);
+                  
+                  bool DefaultAction(t_longList const& _sessions,
+                                     t_strList const& _sessionNames,
+                                     bool & _attach,
+                                     t_long & _sessionId);
+                  
                   /// Destructor.
                   virtual ~viewerStartupHelper();
                };

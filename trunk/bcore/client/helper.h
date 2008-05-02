@@ -82,6 +82,72 @@ namespace btg
                      Helper& operator=(Helper const& _h);
                   };
 
+               /// Implement this interface to be able to use the
+               /// startupHelper class.
+               class startupHelperIf
+               {
+               public:
+                  /// Constructor.
+                  startupHelperIf();
+                  
+                  /// Show a query where the user can input an
+                  /// username and password.
+                  /// \note This function _will_ be called at some
+                  ///       point during the initalization.
+                  virtual bool AuthQuery() = 0;
+
+                  virtual bool AttachSessionQuery(t_longList const& _sessionsIDs,
+                                                  t_strList const& _sessionNames,
+                                                  t_long & _session) = 0;
+
+                  virtual void ListSessions(t_longList const& _sessions,
+                                            t_strList const& _sessionNames) = 0;
+
+                  virtual bool DefaultAction(t_longList const& _sessions,
+                                             t_strList const& _sessionNames,
+                                             bool & _attach,
+                                             t_long & _sessionId) = 0;
+
+                  /// Return true, if authorization information was set.
+                  virtual bool authSet() const;
+
+                  /// Get the password hash, set by setAuth.
+                  virtual std::string passwordHash() const;
+
+                  /// Get the username, set by setAuth.
+                  virtual std::string user() const;
+
+                  
+                  /// Set the password hash.
+                  /// Used when password is stored in the client's
+                  /// config to avoid a prompt each time one
+                  /// connects to the daemon.
+                  /// Also set authSet_ to true.
+                  virtual void setPasswordHash(std::string const& _passwordHash);
+
+                  /// Set the username.
+                  virtual void setUser(std::string const& _user);
+
+                  /// Destructor.
+                  virtual ~startupHelperIf();
+               protected:
+                  /// Set the auth parameters which are used for
+                  /// creating a transport to the daemon.
+                  /// @param [in] _username The username to use.
+                  /// @param [in] _password The password to use.
+                  virtual void setAuth(std::string const& _username, 
+                                       std::string const& _password);
+
+                  /// The username used for login.
+                  std::string username_;
+                  
+                  /// The password used for login.
+                  std::string passwordHash_;
+                  
+                  /// Indicates that username and password was set.
+                  bool        authSet_;
+               };
+
                /// Handles client startup, configuring transports,
                /// listing and attaching to already running sessions.
                ///
@@ -90,121 +156,44 @@ namespace btg
                class startupHelper: public Helper
                   {
                   public:
-                     /// Type of operation this class handles.
-                     enum Operation
-                        {
-                           op_log = 1,      //!< Initialize logging.
-                           op_auth,         //!< Get auth information from the user.
-                           op_init,         //!< Init.
-                           op_attach,       //!< Attach to a session, presents a list of sessions.
-                           op_attach_first, //!< Attach to the first available session.
-                           op_list,         //!< List sessions.
-                           op_setup         //!< Execute setup.
-                        };
-
-                     /// Indicates status of an operation.
-                     enum operationResult
-                        {
-                           or_undefined             =  0, //!< The result of an operation is undefined.
-
-                           or_log_success           =  1, //!< Log initialized.
-                           or_log_failture          = -1, //!< Log init failed.
-
-                           or_auth_success          =  2, //!< Auth was set.
-                           or_auth_failture         = -2, //!< Auth was not set.
-
-                           // This operation cannot fail here.
-                           // An attempt to setup or attach will fail
-                           // if the transport is not ready.
-                           or_init_success          =  3, //!< Initialize the transport.
-                           or_init_failure          = -3, //!< Initialize the transport failed (from server side, incorrect user credentials).
-
-                           or_attach_success        =  4, //!< Client attached.
-                           or_attach_cancelled      = -4, //!< Client cancelled attach operation.
-                           or_attach_failture       = -5, //!< Client attach failed.
-
-                           or_attach_first_success  =  6, //!< Client attached.
-                           or_attach_first_failture = -6, //!< Client attach failed.
-
-                           or_list_success          =  7, //!< Session list success.
-                           or_list_failture         = -7, //!< Session list failture.
-
-                           or_setup_success         =  8, //!< Setup success.
-                           or_setup_failture        = -8  //!< Setup failture.
-                        };
-
-                     /// Constructor.
-                     /// \note None of the pointers are deleted by the destructor of this class.
-                     /// @param [in] _logwrapper       Pointer used to send logs to.
-                     /// @param [in] _clientName       The name of the client using this helper.
-                     /// @param [in] _config           The client configuration used.
-                     /// @param [in] _clah             The client command line arguments.
-                     /// @param [in] _messageTransport The message transport used.
-                     /// @param [in] _handler          The client handler used.
-
                      startupHelper(LogWrapperType _logwrapper,
                                    std::string const&          _clientName,
                                    clientConfiguration&        _config,
                                    HelperArgIf&                _clah,
                                    messageTransport&           _messageTransport,
-                                   clientHandler&              _handler
+                                   clientHandler&              _handler,
+                                   startupHelperIf &           _helperIf
                                    );
 
-                     /// Init this helper.
-                     virtual bool init();
+                     /// Setup logging.
+                     bool SetupLogging();
 
-                     /// Execute an operation.
-                     /// @param [in] _operation The operation to execute.
-                     /// @return Operation status.
-                     virtual startupHelper::operationResult execute(startupHelper::Operation const _operation);
+                     /// Initialize connection to the daemon.
+                     bool Init();
 
-                     /// Implement this function, so it presents a
-                     /// list of sessions to the user to choose from.
-                     /// Should return Command::INVALID_SESSION if the
-                     /// user cancels this operation.
-                     /// @param [in] _sessions    List of sessions to choose from.
-                     /// @param [in] _sessionsIDs List of session names.
-                     /// @return Valid session ID or Command::INVALID_SESSION.
-                     virtual t_long queryUserAboutSession(t_longList const& _sessions,
-                                                          t_strList const& _sessionsIDs) const = 0;
+                     /// Attach to a session.
+                     /// Queries the user about which session id to use, if
+                     /// its not been given using command line arguments.
+                     bool AttachSession(t_long & _sessionId);
 
-                     /// Implement his function, so it asks the user
-                     /// about which username and password he wishes
-                     /// to use.
-                     /// Make it call setAuth to set the username and the password.
-                     /// @return True, if the auth information was set, false otherwise.
-                     virtual bool authUserQuery() = 0;
+                     /// Attach to a session. No questions are asked.
+                     bool AttachToSession(t_long const _sessionId);
 
-                     /// Set the auth parameters which are used for
-                     /// creating a transport to the daemon.
-                     /// @param [in] _username The username to use.
-                     /// @param [in] _password The password to use.
-                     virtual void setAuth(std::string const& _username, std::string const& _password);
+                     /// Attach to first available session.
+                     bool AttachFirstSession(t_long & _sessionId);
 
-                     /// Return true, if authorization information was set.
-                     virtual bool authSet() const;
+                     /// List sessions present.
+                     bool ListSessions();
 
-                     /// Implement this function, so it shows a list of sessions.
-                     /// @param [in] _sessions     List of sessions.
-                     /// @param [in] _sessionNames List of session names.
-                     virtual void showSessions(t_longList const& _sessions,
-                                               t_strList const& _sessionNames) const = 0;
+                     /// Create a new session.
+                     bool NewSession(t_long & _sessionId);
+                     
+                     /// No command line parameters were given, so
+                     /// show a list of sessions which can be attached to or
+                     /// allow the user to create a new one.
+                     bool DefaultAction(bool & _attach, t_long & _sessionId);
 
-                     /// Get the username, set by setAuth.
-                     virtual std::string user() const;
-
-                     /// Set the username.
-                     virtual void setUser(std::string const& _user);
-
-                     /// Get the password hash, set by setAuth.
-                     virtual std::string passwordHash() const;
-
-                     /// Set the password hash.
-                     /// Used when password is stored in the client's
-                     /// config to avoid a prompt each time one
-                     /// connects to the daemon.
-                     /// Also set authSet_ to true.
-                     virtual void setPasswordHash(std::string const& _passwordHash);
+                     startupHelperIf & getIf() const;
 
                      /// Destructor.
                      /// \note Does not delete the stored pointers.
@@ -217,13 +206,8 @@ namespace btg
                      /// The client handler used.
                      btg::core::client::clientHandler&              handler;
 
-                     /// The username used for login.
-                     std::string                                    username_;
-                     /// The password used for login.
-                     std::string                                    passwordHash_;
-                  private:
-                     /// Indicates that username and password was set.
-                     bool                                           authSet_;
+                     clientConfiguration&                           config;
+                     startupHelperIf&                               helperif;
                   private:
                      /// Copy constructor.
                      startupHelper(startupHelper const& _h);

@@ -48,6 +48,7 @@
 #include "keys.h"
 #include "handler.h"
 #include "initwindow.h"
+#include "cli_helper.h"
 
 extern "C"
 {
@@ -225,16 +226,14 @@ int main(int argc, char* argv[])
    iw->updateProgress(initWindow::IEV_SETUP);
 
    // Create a helper to do the initial setup of this client.
-   std::auto_ptr<startupHelper> starthelper(new ncliStartupHelper(logwrapper,
-                                                                  config,
-                                                                  cla,
-                                                                  *apTransport,
-                                                                  handler));
+   std::auto_ptr<startupHelper> starthelper(new cliStartupHelper(logwrapper,
+                                                                 config,
+                                                                 cla,
+                                                                 *apTransport,
+                                                                 handler));
 
-   if (!starthelper->init())
+   if (!starthelper->Init())
       {
-         // BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Internal error: start up helper not initialized.");
-
          iw->showError("Internal error: startup helper not initialized.");
 
          return BTG_ERROR_EXIT;
@@ -242,69 +241,35 @@ int main(int argc, char* argv[])
 
    setDefaultLogLevel(logwrapper, cla.doDebug(), verboseFlag);
 
-   // Initialize logging.
-   if (starthelper->execute(startupHelper::op_log) != startupHelper::or_log_success)
-      {
-         // BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to initialize logging");
+   iw->show();
+   iw->updateProgress(initWindow::IEV_SETUP);
 
+   // Initialize logging.
+   if (!starthelper->SetupLogging())
+      {
          iw->showError("Unable to initialize logging.");
 
          return BTG_ERROR_EXIT;
       }
 
-   // In case authorization is required from the user, hide window
-   iw->hide();
 
-   if (config.authSet())
-      {
-         // Auth info is in the config.
-         starthelper->setUser(config.getUserName());
-         starthelper->setPasswordHash(config.getPasswordHash());
-      }
-   else
-      {
-         AUTH_RETRY:
-         // Ask the user about which username and password to use.
-         if (starthelper->execute(startupHelper::op_auth) != startupHelper::or_auth_success)
-            {
-               // BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to initialize auth");
-
-               // Show the init window to display the error.
-               iw->show();
-               iw->showError("Authorization failed.");
-
-               return BTG_ERROR_EXIT;
-            }
-      }
-
-   iw->show();
-   iw->updateProgress(initWindow::IEV_SETUP);
-
-   /// Initialize the transport.
-   if (starthelper->execute(startupHelper::op_init) != startupHelper::or_init_success)
-   {
-      iw->hide();
-      std::cout << "Authentication error." << std::endl;
-      goto AUTH_RETRY;
-   }
+   bool attach      = cla.doAttach();
+   bool attachFirst = cla.doAttachFirst();
 
    // Handle command line options:
    if (cla.doList())
       {
-         iw->showError("Unable to list sessions.");
-
-         starthelper->execute(startupHelper::op_list);
-
+         iw->hide();
+         starthelper->ListSessions();
          return BTG_NORMAL_EXIT;
       }
    else if (cla.doAttachFirst())
       {
+         iw->hide();
+         t_long sessionId;
          // Attach to the first available session.
-
-         if (starthelper->execute(startupHelper::op_attach_first) == startupHelper::or_attach_first_failture)
+         if (!starthelper->AttachFirstSession(sessionId))
             {
-               // BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to attach to session");
-
                iw->showError("Unable to attach to session.");
 
                return BTG_ERROR_EXIT;
@@ -317,11 +282,10 @@ int main(int argc, char* argv[])
 
          iw->hide();
 
-         if (starthelper->execute(startupHelper::op_attach) == startupHelper::or_attach_failture)
-            {
-               // BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to attach to session");
+         t_long sessionId;
 
-               iw->show();
+         if (!starthelper->AttachSession(sessionId))
+            {
                iw->showError("Unable to attach to session.");
 	       
                return BTG_ERROR_EXIT;
@@ -330,15 +294,41 @@ int main(int argc, char* argv[])
          iw->show();
          iw->updateProgress(initWindow::IEV_SETUP);
       }
+   else 
+      {
+         // No options, show list of sessions or allow to create a new one.
+         iw->hide();
+
+         bool action_attach = false;
+         t_long session;
+
+         if (!starthelper->DefaultAction(action_attach, session))
+            {
+               iw->showError("Cancelled.");
+
+               return BTG_ERROR_EXIT;
+            }
+
+         if (action_attach)
+            {
+               attach = action_attach;
+
+               if (!starthelper->AttachToSession(session))
+                  {
+                     iw->showError("Unable to attach to session.");
+                     
+                     return BTG_ERROR_EXIT;
+                  }
+            }
+      }
 
    // Only execute setup if we are not attaching to an existing session.
-   if ((!cla.doAttach()) && (!cla.doAttachFirst()))
+   if ((!attach) && (!attachFirst))
       {
-         if (starthelper->execute(startupHelper::op_setup) == startupHelper::or_setup_failture)
+         t_long sessionId;
+         if (!starthelper->NewSession(sessionId))
             {
-               // BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Unable to connect to daemon.");
-
-               iw->showError("Unable to connect to daemon.");
+               iw->showError("Unable to create new session.");
 
                return BTG_ERROR_EXIT;
             }

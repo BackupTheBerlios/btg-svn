@@ -9,7 +9,7 @@ bin_PROGRAMS = btgui
 btgui_SOURCES = initwindow.cpp progressdialog.cpp urldialog.cpp \
 errordialog.cpp questiondialog.cpp prefdialog.cpp aboutdialog.cpp limitdialog.cpp sessiondialog.cpp \
 sessionselection.cpp authdialog.cpp sndialog.cpp \
-gtkmm_log.cpp guihandler.cpp traficmodel.cpp traficplot.cpp logtextview.cpp mainfiletreeview.cpp selectfiletreeview.cpp mainnotebook.cpp mainmodel.cpp filemodel.cpp fipixbox.cpp mainstatusbar.cpp mainmenubar.cpp maintreeview.cpp \
+gtkmm_log.cpp guihelper.cpp guihandler.cpp traficmodel.cpp traficplot.cpp logtextview.cpp mainfiletreeview.cpp selectfiletreeview.cpp mainnotebook.cpp mainmodel.cpp filemodel.cpp fipixbox.cpp mainstatusbar.cpp mainmenubar.cpp maintreeview.cpp \
 peermodel.cpp peertreeview.cpp \
 detailsmodel.cpp detailstreeview.cpp \
 mainwindow_create.cpp mainwindow.cpp btgui.cpp guiutils.cpp
@@ -18,7 +18,9 @@ noinst_HEADERS = initwindow.h progressdialog.h urldialog.h \
 errordialog.h questiondialog.h prefdialog.h aboutdialog.h aboutimage.h \
 limitdialog.h sessiondialog.h \
 sessionselection.h authdialog.h sndialog.h \
-gtkmm_log.h guihandler.h traficmodel.h filemodel.h fipixbox.h traficplot.h logtextview.h mainfiletreeview.h selectfiletreeview.h mainnotebook.h mainmodel.h mainmenubar.h mainstatusbar.h maintreeview.h \
+gtkmm_log.h guihelper.h guihandler.h traficmodel.h filemodel.h fipixbox.h \
+traficplot.h logtextview.h mainfiletreeview.h selectfiletreeview.h mainnotebook.h \
+mainmodel.h mainmenubar.h mainstatusbar.h maintreeview.h \
 peermodel.h peertreeview.h \
 detailsmodel.h detailstreeview.h \
 mainwindow.h sig_button_menu.h \
