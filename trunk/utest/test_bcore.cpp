@@ -126,7 +126,7 @@ void testBcore::tearDown()
 
 void testBcore::testCommand()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
    // A most basic command. This command cannot be serialized, its
    // serialize/deserialize methods are used by its children to store
    // session and command type.
@@ -182,7 +182,7 @@ void testBcore::testListCommandRange(t_uint _start, t_uint _end)
 
 void testBcore::testListCommand()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    // List command
    listCommand *lc = new listCommand();
@@ -202,7 +202,7 @@ void testBcore::testListCommand()
 
 void testBcore::testListCommandResponse()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    std::vector<t_int> ids;
    std::vector<std::string> files;
@@ -239,7 +239,7 @@ void testBcore::testListCommandResponse()
 
 void testBcore::testErrorCommand()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    // List response command:
    std::string const message = "Message. \nTestMessage. TestTestTest Message          0x0\\\\\0";
@@ -265,7 +265,7 @@ void testBcore::testErrorCommand()
 
 void testBcore::testListContextCommand()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    listSessionCommand *lcc = new listSessionCommand();
    lcc->serialize(externalization);
@@ -286,7 +286,7 @@ void testBcore::testListContextCommand()
 
 void testBcore::testListSessionResponseCommand()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    std::vector<t_long> vl;
    std::vector<std::string> sn;
@@ -318,7 +318,7 @@ void testBcore::testListSessionResponseCommand()
 
 void testBcore::testAttachSessionCommand()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    for (t_long trySession=0; trySession<512; trySession++)
       {
@@ -350,7 +350,7 @@ void testBcore::testContextStatusResponseCommand()
    btg::core::externalization::Externalization* eSource = 
       new btg::core::externalization::XMLRPC(logwrapper);
    
-   btg::core::commandFactory cf1(logwrapper, eSource);
+   btg::core::commandFactory cf1(logwrapper, *eSource);
 
    trackerStatus ts(-1, 0);
    Status status(100, 
@@ -386,7 +386,7 @@ void testBcore::testContextStatusResponseCommand()
       new btg::core::externalization::XMLRPC(logwrapper);
    eDestin->setBuffer(dbuffer);
 
-   btg::core::commandFactory cf2(logwrapper, eDestin);
+   btg::core::commandFactory cf2(logwrapper, *eDestin);
 
    // csrc->serialize(externalization);
 
@@ -418,7 +418,7 @@ void testBcore::testContextStatusResponseCommand()
 
 void testBcore::testContextAllStatusResponseCommand()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    std::vector<Status> vstatus;
    for (t_int i=0; i<9; i++)
@@ -451,7 +451,7 @@ void testBcore::testContextAllStatusResponseCommand()
 
 void testBcore::testUtil_simple_types()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    dBuffer output_buffer;
    bool bool_value = false;
@@ -638,7 +638,7 @@ void testBcore::testSbuffer()
 }
 void testBcore::testStatus()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    t_int context_id     = 1024;
    std::string filename("/tmp/test.torrent");
@@ -695,7 +695,7 @@ void testBcore::testStatus()
 
 void testBcore::testContextCleanCommand()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    contextCleanCommand* ccc = new contextCleanCommand();
 
@@ -717,7 +717,7 @@ void testBcore::testContextCleanCommand()
 
 void testBcore::testContextCleanResponseCommand()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    std::vector<std::string> filenames;
    std::vector<t_int>  ids;
@@ -975,7 +975,7 @@ void testBcore::testFileInfo()
 
 void testBcore::testFileInfoResponseCommand()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    std::vector<bool> boolvect;
 
@@ -1239,7 +1239,7 @@ void testBcore::testAddrPort()
 
 void testBcore::testPeer()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    t_peerList peerlist;
 
@@ -1732,13 +1732,41 @@ void testBcore::testPIDFile()
       ifs >> pid;
       CPPUNIT_ASSERT(pid == getpid());
    }
+   
+   {
+      // correct pidfile re-writing
+      std::ofstream ofs(fname);
+      ofs << "999999"; // unexistent PID, hope
+      ofs.close();
+      
+      btg::core::os::PIDFile pf(fname);
+      CPPUNIT_ASSERT(pf.error() == false);
+      CPPUNIT_ASSERT(pf.exists() == false);
+      pf.write();
+      
+      /* 
+       * fighting against filesystem cache
+       */
+      
+      std::stringstream ss;
+      ss << "cp " << fname << " " << fname << ".new";
+      CPPUNIT_ASSERT(system(ss.str().c_str()) == 0);
+      
+      int pid = 0;
+      ss.str("");
+      ss << fname << ".new";
+      std::ifstream ifs(ss.str().c_str());
+      ifs >> pid;
+      CPPUNIT_ASSERT(unlink(ss.str().c_str()) == 0);
+      CPPUNIT_ASSERT(pid == getpid());
+   }
 }
 
 void testBcore::XmlRpcSerializeDeserialize(btg::core::externalization::Externalization* _eSource,
                                            btg::core::externalization::Externalization* _eDestin)
 {
-   btg::core::commandFactory cf1(logwrapper, _eSource);
-   btg::core::commandFactory cf2(logwrapper, _eDestin);
+   btg::core::commandFactory cf1(logwrapper, *_eSource);
+   btg::core::commandFactory cf2(logwrapper, *_eDestin);
 
    std::vector<btg::core::Command*> org_commands;
    std::vector<btg::core::Command*> restored_commands;

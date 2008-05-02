@@ -133,7 +133,7 @@ void testBcoreClient::testConfigurationLastOpenFiles()
    using namespace btg::core::logger;
 
    std::string dynconfig_filename        = std::string(TESTFILE_CONFIG) + ".dynconfig";
-   std::vector<std::string> last_files;
+   t_strList last_files;
 
    last_files.push_back(TESTFILE_LAST_0);
    last_files.push_back(TESTFILE_LAST_1);
@@ -153,7 +153,8 @@ void testBcoreClient::testConfigurationLastOpenFiles()
    lastFiles *config = new lastFiles(logwrapper,
                                      *cliDynConf);
 
-   config->setLastFiles(last_files);
+   for (t_strListCI i = last_files.begin(); i!= last_files.end(); ++i)
+      config->add(*i);
 
    delete config;
    config = 0;
@@ -165,8 +166,8 @@ void testBcoreClient::testConfigurationLastOpenFiles()
    config = new lastFiles(logwrapper,
                           *cliDynConf);
 
-   CPPUNIT_ASSERT(config->getLastFiles() == last_files);
-   CPPUNIT_ASSERT(config->getLastFiles().size() == last_files.size());
+   CPPUNIT_ASSERT(config->get() == last_files);
+   CPPUNIT_ASSERT(config->get().size() == last_files.size());
 
    delete config;
    config = 0;

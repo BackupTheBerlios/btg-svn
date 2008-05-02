@@ -441,7 +441,7 @@ void testDaemon::testHttpDownload()
    using namespace btg::daemon::http;
    using namespace btg::core::os;
 
-   httpManager httpm(logwrapper);
+   httpDlManager httpm(logwrapper);
 
    // Download a non existing file.
    t_uint serial = httpm.Fetch("http://127.0.0.1/test.torrent", "test.torrent");

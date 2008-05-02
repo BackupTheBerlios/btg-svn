@@ -42,7 +42,6 @@ namespace btg
                   {
                   public:
                      /// Truncate file in current tellp() position
-                     /// @note will flush stream (seekp called)
                      bool truncate();
                      
                      /// Truncate file
@@ -68,7 +67,6 @@ namespace btg
                      __filebuf_type* rdbuf() const;
 
                      /// Truncate file in current tellp() position
-                     /// @note will flush stream (seekp called)
                      bool truncate();
                      
                      /// Truncate file

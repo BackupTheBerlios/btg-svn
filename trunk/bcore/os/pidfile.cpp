@@ -53,8 +53,6 @@ namespace btg
                m_pidfile >> pid;
                if (m_pidfile.fail())
                {
-                  m_pidfile.clear();
-                  m_pidfile.seekp(0);
                   m_pidfile.truncate(0);
                }
                else
@@ -69,7 +67,6 @@ namespace btg
                   }
                   else
                   {
-                     m_pidfile.seekp(0);
                      m_pidfile.truncate(0);
                   }
                }
@@ -99,9 +96,13 @@ namespace btg
          {
             if (!m_fname)
                return;
+            if (m_error || m_exists)
+               return;
+            m_pidfile.clear();
             m_pidfile.seekp(0);
             m_pidfile << static_cast<pid_type>(getpid());
-            m_pidfile.truncate(); // also do flush
+            m_pidfile.truncate();
+            m_pidfile.flush(); // calls fsync(2)/fdatasync(2)
          }
          
          PIDFile::~PIDFile()
