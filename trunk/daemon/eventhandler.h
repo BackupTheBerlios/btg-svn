@@ -180,6 +180,8 @@ namespace btg
                /// Get the temp directory used by this event handler.
                std::string getTempDir() const;
 
+               void updateFilter(IpFilterIf* _filter);
+
                /// Destructor.
                ~eventHandler();
             private:

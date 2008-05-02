@@ -1162,6 +1162,11 @@ namespace btg
          return daemoncontext->getTempDir();
       }
 
+      void eventHandler::updateFilter(IpFilterIf* _filter)
+      {
+         daemoncontext->updateFilter(_filter);
+      }
+
       eventHandler::~eventHandler()
       {
          BTG_MENTER(logWrapper(), "destructor", "");

@@ -465,6 +465,8 @@ namespace btg
                /// Get the temp directory used by this context.
                std::string getTempDir() const;
 
+               void updateFilter(IpFilterIf* _filter);
+
                /// Destructor.
                ~Context();
             private:

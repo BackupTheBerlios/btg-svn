@@ -82,6 +82,9 @@ namespace btg
             /// Shutdown all eventhandlers.
             void shutdown();
 
+            /// Update the IP filter used for all contained sessions.
+            void updateFilter();
+
             /// Destructor.
             ~daemonHandler();
          private:

@@ -2,6 +2,7 @@ BTG version 0.9.8
 -----------------
 The following bugs were fixed:
 
+013700 Reload filter list w/o restarting daemon.
 013644 Ports opened by UPnP when it is disabled.
 013643 Daemon starts without rewriting unexistent pid.
 013618 btgncli, show sessions when invoked without arguments.

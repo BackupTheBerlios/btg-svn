@@ -97,6 +97,8 @@ bool checkFile(LogWrapperType _logwrapper,
                std::string const& _purpose, 
                std::string & _filename);
 
+bool loadFilter(LogWrapperType _logwrapper, bool _verboseFlag, daemonData & _dd);
+
 const std::string moduleName("dem");
 
 int global_btg_run = 1;
@@ -199,13 +201,13 @@ int main(int argc, char* argv[])
    MVERBOSE_LOG(logwrapper, verboseFlag, "config read from '" << dd.configFile << "'.");
 
    if (dd.config->getUseTorrentName())
-     {
-       VERBOSE_LOG(logwrapper, verboseFlag, "Sending status using torrent names.");
-     }
+      {
+         VERBOSE_LOG(logwrapper, verboseFlag, "Sending status using torrent names.");
+      }
    else
-     {
-       VERBOSE_LOG(logwrapper, verboseFlag, "Sending status using file names.");
-     }
+      {
+         VERBOSE_LOG(logwrapper, verboseFlag, "Sending status using file names.");
+      }
 
    /* 
     * Creating/check PID-file
@@ -218,43 +220,43 @@ int main(int argc, char* argv[])
       
       // try cmdline first
       if ( dd.cla->PIDFile().size() > 0 )
-      {
-         pfname = dd.cla->PIDFile();
-         VERBOSE_LOG(logwrapper, verboseFlag, "Using PID-file from cmdline: '"
-            << pfname << "'.");
-      }
+         {
+            pfname = dd.cla->PIDFile();
+            VERBOSE_LOG(logwrapper, verboseFlag, "Using PID-file from cmdline: '"
+                        << pfname << "'.");
+         }
       // then config
       else if ( dd.config->getPIDFile().size() > 0 )
-      {
-         pfname = dd.config->getPIDFile();
-         VERBOSE_LOG(logwrapper, verboseFlag, "Using PID-file from config: '"
-            << pfname << "'.");
-      }
+         {
+            pfname = dd.config->getPIDFile();
+            VERBOSE_LOG(logwrapper, verboseFlag, "Using PID-file from config: '"
+                        << pfname << "'.");
+         }
 
       if ( pfname.size() > 0 )
-      {
-         // passwd file should be absolute to be able to unlink it after current dir change
-         btg::core::os::fileOperation::resolvePath(pfname);
-         pidfile.create(pfname.c_str());
+         {
+            // passwd file should be absolute to be able to unlink it after current dir change
+            btg::core::os::fileOperation::resolvePath(pfname);
+            pidfile.create(pfname.c_str());
 
-         if (pidfile.exists())
-            {
-               BTG_FATAL_ERROR(logwrapper, 
-                               "btgdaemon",
-                               "Another instance of btgdaemon with pid "
-                               << pidfile.pid()
-                               << " already running.");
-               return BTG_ERROR_EXIT;
-            }
+            if (pidfile.exists())
+               {
+                  BTG_FATAL_ERROR(logwrapper, 
+                                  "btgdaemon",
+                                  "Another instance of btgdaemon with pid "
+                                  << pidfile.pid()
+                                  << " already running.");
+                  return BTG_ERROR_EXIT;
+               }
          
-         if (pidfile.error())
-            {
-               BTG_FATAL_ERROR(logwrapper, 
-                               "btgdaemon",
-                               "Could not create PIDfile '" << dd.config->getPIDFile() << "'");
-               return BTG_ERROR_EXIT;
-            }
-      }
+            if (pidfile.error())
+               {
+                  BTG_FATAL_ERROR(logwrapper, 
+                                  "btgdaemon",
+                                  "Could not create PIDfile '" << dd.config->getPIDFile() << "'");
+                  return BTG_ERROR_EXIT;
+               }
+         }
    } // end create PID-file
    
 #if BTG_OPTION_SAVESESSIONS
@@ -268,43 +270,43 @@ int main(int argc, char* argv[])
 
       // try cmdline first
       if (dd.cla->saveSessionsFileSet())
-      {
-         dd.ss_enable = true;
-         ss_fname     = dd.cla->saveSessionsFile();
-         VERBOSE_LOG(logwrapper, verboseFlag, "Using session file name from cmdline: '"
-            << ss_fname << "'." );
-      }
+         {
+            dd.ss_enable = true;
+            ss_fname     = dd.cla->saveSessionsFile();
+            VERBOSE_LOG(logwrapper, verboseFlag, "Using session file name from cmdline: '"
+                        << ss_fname << "'." );
+         }
       // then config file
       else if (dd.config->getSSEnable())
-      {
-         dd.ss_enable  = dd.config->getSSEnable();
-         dd.ss_timeout = dd.config->getSSTimeout();
-         ss_fname      = dd.config->getSSFilename();
-         dd.ss_file.open( ss_fname.c_str() );
-         VERBOSE_LOG(logwrapper, verboseFlag, "Using session file from config: '"
-            << ss_fname << "'." );
-      }
+         {
+            dd.ss_enable  = dd.config->getSSEnable();
+            dd.ss_timeout = dd.config->getSSTimeout();
+            ss_fname      = dd.config->getSSFilename();
+            dd.ss_file.open( ss_fname.c_str() );
+            VERBOSE_LOG(logwrapper, verboseFlag, "Using session file from config: '"
+                        << ss_fname << "'." );
+         }
       
       if (dd.ss_enable)
-      {
-         btg::core::os::fileOperation::resolvePath(ss_fname);
-         dd.ss_file.open(ss_fname.c_str());
-         if (!dd.ss_file.is_open())
          {
-            // file not exists (or something else but don't care for now)
-            dd.ss_file.clear();
-            dd.ss_file.open(ss_fname.c_str(), std::ios_base::out); // try to create a new
+            btg::core::os::fileOperation::resolvePath(ss_fname);
+            dd.ss_file.open(ss_fname.c_str());
             if (!dd.ss_file.is_open())
-            {
-               BTG_FATAL_ERROR(logwrapper, 
-                               "btgdaemon", "Could not open/create session file '"
-                               << ss_fname << "'");
-               return BTG_ERROR_EXIT;
-            }
-            dd.ss_file.close();
-            dd.ss_file.open(ss_fname.c_str()); // reopen in read/write mode
+               {
+                  // file not exists (or something else but don't care for now)
+                  dd.ss_file.clear();
+                  dd.ss_file.open(ss_fname.c_str(), std::ios_base::out); // try to create a new
+                  if (!dd.ss_file.is_open())
+                     {
+                        BTG_FATAL_ERROR(logwrapper, 
+                                        "btgdaemon", "Could not open/create session file '"
+                                        << ss_fname << "'");
+                        return BTG_ERROR_EXIT;
+                     }
+                  dd.ss_file.close();
+                  dd.ss_file.open(ss_fname.c_str()); // reopen in read/write mode
+               }
          }
-      }
    } // end sessionsaving
    
 #endif // BTG_OPTION_SAVESESSIONS
@@ -559,73 +561,10 @@ int main(int argc, char* argv[])
    /*
     * Load filters.
     */
-   
-   dd.config->getFilterFilename(dd.filterFilename);
-   dd.filterType = dd.config->getFilterType();
-
-   if (dd.filterType != IpFilterIf::IPF_UNDEF)
-   {
-      if (! btg::core::os::fileOperation::check(dd.filterFilename))
+   if (!loadFilter(logwrapper, verboseFlag, dd))
       {
-         BTG_FATAL_ERROR(logwrapper,
-                         "btgdaemon",
-                         "Unable to load IP filter.");
          return BTG_ERROR_EXIT;
       }
-      
-      std::string filtername;
-
-      switch (dd.filterType)
-         {
-         case IpFilterIf::IPF_LEVELONE:
-            {
-               VERBOSE_LOG(logwrapper, 
-                           verboseFlag, "Loading IP filter, level one.");
-               BTG_MNOTICE(logwrapper, 
-                           "creating filter: IPF_LEVELONE");
-               filtername = "level one";
-               dd.filter  = new levelOne(logwrapper, verboseFlag, dd.filterFilename);
-               break;
-            }
-         case IpFilterIf::IPF_EMULE:
-            {
-               VERBOSE_LOG(logwrapper, 
-                           verboseFlag, "Loading IP filter, emule.");
-               BTG_MNOTICE(logwrapper, 
-                           "creating filter: IPF_EMULE");
-               filtername = "emule";
-               dd.filter  = new Emule(logwrapper, verboseFlag, dd.filterFilename);
-               break;
-            }
-         case IpFilterIf::IPF_UNDEF:
-            {
-               dd.filter = 0;
-               break;
-            }
-         }
-
-      if (dd.filter)
-         {
-            if ((!dd.filter->initialized()) || (dd.filter->numberOfEntries() == 0))
-               {
-                  BTG_MNOTICE(logwrapper, 
-                              "filter not initialized or empty. Deleted.");
-
-                  delete dd.filter;
-                  dd.filter = 0;
-               }
-            else
-               {
-                  BTG_MNOTICE(logwrapper, 
-                              "IP filter '" << filtername << "' created, contains "
-                              << dd.filter->numberOfEntries() << " entries.");
-                  VERBOSE_LOG(logwrapper, 
-                              verboseFlag,
-                              "IP filter '" << filtername << "' created, contains "
-                              << dd.filter->numberOfEntries() << " entries.");
-               }
-         }
-   }
 
    /*
     * Make sure that the provided torrent range is valid and that the
@@ -648,8 +587,8 @@ int main(int argc, char* argv[])
    if ((dd.portRange.second - dd.portRange.first) < 1)
       {
          BTG_FATAL_ERROR(logwrapper, 
-                   "btgdaemon", "Unable to use port range: " << dd.portRange.first << 
-                   ":" << dd.portRange.second << ", at least two ports are required.");
+                         "btgdaemon", "Unable to use port range: " << dd.portRange.first << 
+                         ":" << dd.portRange.second << ", at least two ports are required.");
          return BTG_ERROR_EXIT;
       }
 
@@ -702,12 +641,12 @@ int main(int argc, char* argv[])
                            verboseFlag, "UPnP: attempting to forward ports.");
 
                if (!upnpif->open(dd.portRange))
-               {
-                  BTG_FATAL_ERROR(logwrapper,
-                                  "btgdaemon",
-                                  "UPnP: port forwarding failed.");
-                  return BTG_ERROR_EXIT;
-               }
+                  {
+                     BTG_FATAL_ERROR(logwrapper,
+                                     "btgdaemon",
+                                     "UPnP: port forwarding failed.");
+                     return BTG_ERROR_EXIT;
+                  }
                
                VERBOSE_LOG(logwrapper, 
                            verboseFlag, "UPnP: port forwarding succeded.");
@@ -835,9 +774,9 @@ int main(int argc, char* argv[])
          // cyberlinkif thread
          btg::daemon::upnp::cyberlinkUpnpIf * pCLUPnPIf = dynamic_cast<btg::daemon::upnp::cyberlinkUpnpIf*>(upnpif.get());
          if (pCLUPnPIf)
-         {
-            pCLUPnPIf->stop_thread();
-         }
+            {
+               pCLUPnPIf->stop_thread();
+            }
 #endif // BTG_OPTION_USECYBERLINK        
          switch (do_daemonize())
             {
@@ -875,9 +814,9 @@ int main(int argc, char* argv[])
 #if BTG_OPTION_USECYBERLINK
          // cyberlinkif thread
          if (pCLUPnPIf)
-         {
-            pCLUPnPIf->start_thread();
-         }
+            {
+               pCLUPnPIf->start_thread();
+            }
 #endif // BTG_OPTION_USECYBERLINK
       }
    else
@@ -920,12 +859,23 @@ int main(int argc, char* argv[])
          dh->readFromTransport();
          dh->checkTimeout();
 
-         if(global_btg_hup == 1)
+         if (global_btg_hup == 1)
             {
-               // SIGHUP received, reload user file
+               // SIGHUP received, reload user file.
                VERBOSE_LOG(logwrapper, 
                            verboseFlag, "Reloaded users file.");
                dd.auth->reInit();
+
+               if (!loadFilter(logwrapper, verboseFlag, dd))
+                  {
+                     // If something goes wrong with reloading the
+                     // filter, quit.
+                     global_btg_run = 0;
+                  }
+               dh->updateFilter();
+
+               VERBOSE_LOG(logwrapper, 
+                           verboseFlag, "Reloaded filter.");
 
                global_btg_hup = 0;
             }
@@ -968,4 +918,84 @@ bool checkFile(LogWrapperType _logwrapper,
       }
 
    return status;
+}
+
+bool loadFilter(LogWrapperType _logwrapper, bool _verboseFlag, daemonData & _dd)
+{
+   if (_dd.filter)
+      {
+         delete _dd.filter;
+         _dd.filter = 0;
+      }
+
+   _dd.config->getFilterFilename(_dd.filterFilename);
+   _dd.filterType = _dd.config->getFilterType();
+
+   if (_dd.filterType != IpFilterIf::IPF_UNDEF)
+      {
+         if (! btg::core::os::fileOperation::check(_dd.filterFilename))
+            {
+               BTG_FATAL_ERROR(_logwrapper,
+                               "btgdaemon",
+                               "Unable to load IP filter.");
+               return false;
+            }
+      
+         std::string filtername;
+
+         switch (_dd.filterType)
+            {
+            case IpFilterIf::IPF_LEVELONE:
+               {
+                  VERBOSE_LOG(_logwrapper, 
+                              _verboseFlag, "Loading IP filter, level one.");
+                  BTG_MNOTICE(_logwrapper, 
+                              "creating filter: IPF_LEVELONE");
+                  filtername = "level one";
+                  _dd.filter  = new levelOne(_logwrapper, _verboseFlag, _dd.filterFilename);
+                  break;
+               }
+            case IpFilterIf::IPF_EMULE:
+               {
+                  VERBOSE_LOG(_logwrapper, 
+                              _verboseFlag, "Loading IP filter, emule.");
+                  BTG_MNOTICE(_logwrapper, 
+                              "creating filter: IPF_EMULE");
+                  filtername = "emule";
+                  _dd.filter  = new Emule(_logwrapper, _verboseFlag, _dd.filterFilename);
+                  break;
+               }
+            case IpFilterIf::IPF_UNDEF:
+               {
+                  VERBOSE_LOG(_logwrapper, 
+                              _verboseFlag, "Loading IP filter disabled.");
+                  _dd.filter = 0;
+                  break;
+               }
+            }
+
+         if (_dd.filter)
+            {
+               if ((!_dd.filter->initialized()) || (_dd.filter->numberOfEntries() == 0))
+                  {
+                     BTG_MNOTICE(_logwrapper, 
+                                 "filter not initialized or empty. Deleted.");
+
+                     delete _dd.filter;
+                     _dd.filter = 0;
+                  }
+               else
+                  {
+                     BTG_MNOTICE(_logwrapper, 
+                                 "IP filter '" << filtername << "' created, contains "
+                                 << _dd.filter->numberOfEntries() << " entries.");
+                     VERBOSE_LOG(_logwrapper, 
+                                 _verboseFlag,
+                                 "IP filter '" << filtername << "' created, contains "
+                                 << _dd.filter->numberOfEntries() << " entries.");
+                  }
+            }
+      }
+
+   return true;
 }

@@ -1357,6 +1357,11 @@ namespace btg
          sessionlist_.deleteAll();
       }
 
+      void daemonHandler::updateFilter()
+      {
+         sessionlist_.updateFilter(dd_->filter);
+      }
+
       daemonHandler::~daemonHandler()
       {
 

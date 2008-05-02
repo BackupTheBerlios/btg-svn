@@ -2,6 +2,7 @@
 #include <bcore/verbose.h>
 
 #include "modulelog.h"
+#include <daemon/ipfilter/ipfilterif.h>
 
 namespace btg
 {
@@ -242,6 +243,16 @@ namespace btg
       t_uint sessionList::size() const
       {
          return eventhandlers_.size();
+      }
+
+      void sessionList::updateFilter(IpFilterIf* _filter)
+      {
+         for (std::map<t_long, btg::daemon::eventHandler*>::iterator iter = eventhandlers_.begin(); 
+              iter != eventhandlers_.end(); 
+              iter++)
+            {
+               iter->second->updateFilter(_filter);
+            }
       }
 
       sessionList::~sessionList()

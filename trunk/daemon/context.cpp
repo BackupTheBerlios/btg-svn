@@ -2342,6 +2342,23 @@ namespace btg
          return tempDir_;
       }
 
+      void Context::updateFilter(IpFilterIf* _filter)
+      {
+         filter_ = _filter;
+
+         if (!torrent_session)
+            {
+               return;
+            }
+
+         if (!filter_)
+            {
+               return;
+            }
+
+         filter_->set(*torrent_session);
+      }
+
       Context::~Context()
       {
          portMgr->giveBack(listen_port_range_);
