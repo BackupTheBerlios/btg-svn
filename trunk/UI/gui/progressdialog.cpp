@@ -144,7 +144,7 @@ namespace btg
          {
             // Create/connect a timer used for updating the list of contexts.
             sigc::slot<bool> slot = sigc::bind(sigc::mem_fun(*this, &progressDialog::on_refresh_timeout), 0);
-            Glib::signal_timeout().connect(slot, 64);
+            Glib::signal_timeout().connect(slot, 2);
          }
 
          bool progressDialog::on_refresh_timeout(int _timeout)
