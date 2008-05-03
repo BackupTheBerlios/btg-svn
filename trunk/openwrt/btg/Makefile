@@ -21,17 +21,6 @@ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_VERSION:=$(PKG_REV)
 PKG_SOURCE_PROTO:=svn
 
-# ---
-
-# PKG_NAME:=btg
-# PKG_VERSION:=0.9.8
-# PKG_RELEASE:=1
-
-# PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-# PKG_SOURCE_URL:=ftp://ftp.berlios.de/pub/btg/openwrt/
-# PKG_MD5SUM:=94b8338db3828298888fb1171bbdab36
-# PKG_BUILD_DEPENDS:=libtool
-
 include $(INCLUDE_DIR)/package.mk
 
 define Package/btg
@@ -52,13 +41,13 @@ CONFIGURE_ARGS+= \
 	--disable-debug \
 	--enable-session-saving \
 	--enable-url \
-	--with-boost-date-time=gcc41-mt-1_34_1 \
-	--with-boost-filesystem=gcc41-mt-1_34_1 \
-	--with-boost-thread=gcc41-mt-1_34_1 \
-	--with-boost-regex=gcc41-mt-1_34_1 \
-	--with-boost-program_options=gcc41-mt-1_34_1 \
-	--with-boost-iostreams=gcc41-mt-1_34_1 \
-	--with-boost-program_options=gcc41-mt-1_34_1 \
+	--with-boost-date-time=gcc42-mt-1_34_1 \
+	--with-boost-filesystem=gcc42-mt-1_34_1 \
+	--with-boost-thread=gcc42-mt-1_34_1 \
+	--with-boost-regex=gcc42-mt-1_34_1 \
+	--with-boost-program_options=gcc42-mt-1_34_1 \
+	--with-boost-iostreams=gcc42-mt-1_34_1 \
+	--with-boost-program_options=gcc42-mt-1_34_1 \
 	--with-rblibtorrent=$(STAGING_DIR)/usr \
 
 CONFIGURE_VARS += \
@@ -66,7 +55,7 @@ CONFIGURE_VARS += \
 	CXX="$(GNU_TARGET_NAME)-g++" \
 	CXXFLAGS="$$$$CXXFLAGS -I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/include" \
 	CFLAGS="$$$$CFLAGS -I$(STAGING_DIR)/usr/lib/libiconv/include -I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/include" \
-	LDFLAGS="$$$$LDFLAGS -Wl,-rpath=$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/usr/lib/libiconv/lib -L$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/lib -lz -lbz2 -lpthread -lboost_iostreams-gcc41-mt-1_34_1 -lboost_filesystem-gcc41-mt-1_34_1 -lboost_date_time-gcc41-mt-1_34_1 -lboost_thread-gcc41-mt-1_34_1 -lboost_program_options-gcc41-mt-1_34_1 -lssl -lcrypto -liconv -lcurl" \
+	LDFLAGS="$$$$LDFLAGS -Wl,-rpath=$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/usr/lib/libiconv/lib -L$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/lib -lz -lbz2 -lpthread -lboost_iostreams-gcc42-mt-1_34_1 -lboost_filesystem-gcc42-mt-1_34_1 -lboost_date_time-gcc42-mt-1_34_1 -lboost_thread-gcc42-mt-1_34_1 -lboost_program_options-gcc42-mt-1_34_1 -lssl -lcrypto -liconv -lcurl" \
 
 define Build/Configure
 	cd $(PKG_BUILD_DIR) && ./autogen.sh && \
