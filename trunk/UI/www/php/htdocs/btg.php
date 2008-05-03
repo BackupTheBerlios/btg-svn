@@ -784,56 +784,57 @@ class BTG
                // Get the list of contained files.
                $output .= "<fileinfo>\n";
 
-               // Get list of selected files first,
-               $selected_files = $this->getSelectedFiles((int)$contextStatus->getContextID());
-               $files          = $this->getFiles((int)$contextStatus->getContextID());
-               
-               // !!!
-               $this->logMessage("Selected files: ". count($selected_files));
-               $this->logMessage("Selected files: ". count($files));
-
-               $fileId = 0;
-
-               foreach($selected_files as $entry)
+               // Only get file information in certain states.
+               if ($contextStatus->getStatus() >= 3)
                   {
-                     $f  = $entry->getFilename();
-                     $fs = 0;
-                     $pc = 0;
+                     // Get list of selected files first,
+                     $selected_files = $this->getSelectedFiles((int)$contextStatus->getContextID());
+                     $files          = $this->getFiles((int)$contextStatus->getContextID());
+               
+                     // !!!
+                     $fileId = 0;
 
-                     if ($entry->getSelected() == true)
+                     foreach($selected_files as $entry)
                         {
-                           $selected = 1;
-
-                           foreach($files as $file_entry)
+                           $f  = $entry->getFilename();
+                           $fs = 0;
+                           $pc = 0;
+                           
+                           if ($entry->getSelected() == true)
                               {
-                                 if ($file_entry->getFilename() == $f)
+                                 $selected = 1;
+                                 
+                                 foreach($files as $file_entry)
                                     {
-                                       // File size.
-                                       $fs = $file_entry->getFileSize();
-
-                                       // Percent done.
-                                       $pc = $this->fileEntryToPercent($file_entry);
+                                       if ($file_entry->getFilename() == $f)
+                                          {
+                                             // File size.
+                                             $fs = $file_entry->getFileSize();
+                                             
+                                             // Percent done.
+                                             $pc = $this->fileEntryToPercent($file_entry);
+                                          }
                                     }
                               }
-                        }
-                     else
-                        {
-                           $selected = 0;
-                        }
+                           else
+                              {
+                                 $selected = 0;
+                              }
+                           
+                           $output .= "<file>\n";
+                           
+                           $output .= "<id>".$fileId."</id>\n";
+                           $fileId++;
+                           
+                           $output .= "<name>".$f."</name>\n";
+                           $output .= "<selected>".$selected."</selected>\n";
+                           $output .= "<size>".$fs."</size>\n";
+                           $output .= "<percent>".$pc."</percent>\n";
+                           $output .= "</file>";
 
-                     $output .= "<file>\n";
-                     
-                     $output .= "<id>".$fileId."</id>\n";
-                     $fileId++;
-                     
-                     $output .= "<name>".$f."</name>\n";
-                     $output .= "<selected>".$selected."</selected>\n";
-                     $output .= "<size>".$fs."</size>\n";
-                     $output .= "<percent>".$pc."</percent>\n";
-                     $output .= "</file>";
-
-                     $this->logMessage("Entry: ".$f.", ".$selected);
-                  }
+                           $this->logMessage("Entry: ".$f.", ".$selected);
+                        }
+                  } // file information
 
                $output .= "</fileinfo>\n";
                $output .= "</context>\n";
