@@ -173,6 +173,14 @@ namespace btg
                
             }
             
+            void viewerHandler::onUrlDlProgress(t_uint const _id,
+                                                t_float _dltotal, 
+                                                t_float _dlnow, 
+                                                t_float _dlspeed)
+            {
+               
+            }
+
             void viewerHandler::onCreateFromFile(t_uint const _id)
             {
 
