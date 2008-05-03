@@ -65,7 +65,8 @@ namespace btg
               fileinfolist(0),
               cleanedFilenames(0),
               pstatus_bar(_pstatus_bar),
-              peerlist(0)
+              peerlist(0),
+              UrlDlProgress(false)
          {
          }
 
@@ -167,14 +168,24 @@ namespace btg
                                       btg::core::urlStatus const _status)
          {
             commandStatus = true;
+            UrlDlProgress = false;
             setUrlStatusResponse(_id, _status);
          }
          
          void guiHandler::onUrlStatusError(std::string const& _message)
          {
             commandStatus = false;
+            UrlDlProgress = false;
          }
 
+         void guiHandler::onUrlDlProgress(t_uint const, t_float _dltotal, t_float _dlnow, t_float _dlspeed)
+         {
+            UrlDlProgress = true;
+            UrlDlTotal = _dltotal;
+            UrlDlNow = _dlnow;
+            UrlDlSpeed = _dlspeed;
+         }
+         
          void guiHandler::onCreateFromFile(t_uint const _id)
          {
             commandStatus = true;
@@ -498,6 +509,14 @@ namespace btg
          btg::core::selectedFileEntryList guiHandler::getLastSelectedFiles() const
          {
             return selected_files;
+         }
+         
+         bool guiHandler::getUrlDlProgress(t_float &_total, t_float &_now, t_float &_speed)
+         {
+            _total = UrlDlTotal;
+            _now = UrlDlNow;
+            _speed = UrlDlSpeed;
+            return UrlDlProgress;
          }
 
          void guiHandler::onSessionInfo(bool const _encryption, bool const _dht)

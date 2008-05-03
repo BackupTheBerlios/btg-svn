@@ -280,9 +280,10 @@ int main(int argc, char* argv[])
 
    // Command::CN_CURLSTATUSRSP
    btg::core::urlStatus urlstatus = URLS_WORKING;
-   printCommand(cf, e, 
-                new contextUrlStatusResponseCommand(urlId, urlstatus)
-                );
+   btg::core::contextUrlStatusResponseCommand *usrc = new contextUrlStatusResponseCommand(urlId, urlstatus);
+   usrc->setDlProgress(0,0,0);
+   printCommand(cf, e, usrc);
+
    // Command::CN_CCREATEURLABORT
    printCommand(cf, e,
                 new contextFileAbortCommand(urlId)

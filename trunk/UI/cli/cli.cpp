@@ -1098,6 +1098,11 @@ namespace btg
          {
             commandStatus = false;
          }
+         
+         void cliHandler::onUrlDlProgress(t_uint const, t_float _dltotal, t_float _dlnow, t_float _dlspeed)
+         {
+            // TODO this
+         }
 
          void cliHandler::onAbort()
          {

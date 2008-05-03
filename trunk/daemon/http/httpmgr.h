@@ -57,6 +57,10 @@ namespace btg
 
             /// Get status of a download.
             httpInterface::Status getStatus(const t_uint _id);
+            
+            /// Get download progress of a download.
+            /// @return true - success, false - wrong _id
+            bool getDlProgress(const t_uint _id, t_float &_dltotal, t_float &_dlnow, t_float &_dlspeed);
 
             /// Get the downloaded file.
             bool Result(const t_uint _id, 

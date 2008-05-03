@@ -55,12 +55,38 @@ namespace btg
             /// @return True - abort download. False - continue download.
             virtual bool AbortTransfer() const = 0;
             
-            virtual ~httpAbortIf();
+            virtual ~httpAbortIf()
+            {
+               
+            }
+         };
+         
+         /// Interface used to track download progress
+         class httpProgressIf
+         {
+         public:
+            /// Report the download progress
+            /// @param [in] dltotal total bytes to download
+            /// @param [in] dlnow bytes already downloaded
+            /// @param [in] dlspeed current download speed (bytes/sec)
+            virtual void ReportDownloadProgress(t_float dltotal, t_float dlnow, t_float dlspeed) = 0;
+            
+            /// Report the upload progress
+            /// @param [in] ultotal total bytes to upload
+            /// @param [in] ulnow bytes already uploaded
+            /// @param [in] ulspeed current upload speed (bytes/sec)
+            /// @note for the future
+            //virtual void ReportUploadProgress(double ultotal, double ulnow, double ulspeed) = 0;
+            
+            virtual ~httpProgressIf()
+            {
+               
+            }
          };
 
          /// Thread used to download an URL. This thread can be
          /// aborted.
-         class httpProcess: public btg::core::Logable, public httpAbortIf
+         class httpProcess: public btg::core::Logable, public httpAbortIf, public httpProgressIf
          {
          public:
             /// Constructor.
@@ -70,6 +96,9 @@ namespace btg
 
             /// Get the status of the download.
             httpInterface::Status Status();
+            
+            /// Get download progress info
+            void DlProgress(t_float &_dltotal, t_float &_dlnow, t_float &_dlspeed);
 
             /// Get the result of the download.
             bool Result(btg::core::sBuffer & _buffer);
@@ -85,6 +114,10 @@ namespace btg
 
             /// Indicate if the transfer should be aborted.
             bool AbortTransfer() const;
+            
+            /// Download progress reporter callback.
+            /// Called by curlInterface.
+            void ReportDownloadProgress(t_float _dltotal, t_float _dlnow, t_float _dlspeed);
 
             /// The URL to download.
             std::string           URL;
@@ -100,6 +133,15 @@ namespace btg
 
             /// Indicates if the download should terminate.
             bool                  terminate;
+            
+            /// Content-Length
+            t_float               dltotal;
+            
+            /// How much data we downloaded
+            t_float               dlnow;
+            
+            /// Last measured download speed (bytes/sec) 
+            t_float               dlspeed;
 
             /// Mutex used to control access to the members
             /// of this class from the outside.

@@ -52,11 +52,24 @@ namespace btg
                sendError(_command->getType(), "Unknown URL id.");
                return;
             }
+         
+         contextUrlStatusResponseCommand *usrc = new contextUrlStatusResponseCommand(id, urlstat);
 
+         if (urlstat == URLS_WORKING)
+         {
+            t_float dltotal, dlnow, dlspeed;
+            if (!urlmgr.getDlProgress(id, dltotal, dlnow, dlspeed))
+               {
+                  sendError(_command->getType(), "Unknown URL id (by getDlProgress).");
+                  return;
+               }
+            usrc->setDlProgress(dltotal, dlnow, dlspeed);
+         }
+         
          sendCommand(dd_->externalization,
                      dd_->transport,
                      connectionID_,
-                     new contextUrlStatusResponseCommand(id, urlstat));
+                     usrc);
       }
 
       void daemonHandler::handle_CN_CCREATEFROMURL(eventHandler* _eventhandler, 

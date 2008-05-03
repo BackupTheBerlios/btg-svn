@@ -23,11 +23,6 @@
 #include "curlif.h"
 #include "httpproc.h"
 
-extern "C"
-{
-#include <stdio.h>
-}
-
 #include <bcore/os/sleep.h>
 #include <bcore/os/fileop.h>
 
@@ -41,115 +36,100 @@ namespace btg
       {
          const std::string moduleName("cuif");
 
-         curlException::curlException(std::string const& _message)
-            : message_(_message)
-         {
-         }
-
-         std::string curlException::message() const
-         {
-            return message_;
-         }
-
-         /* */
-
          curlInterface::curlInterface(btg::core::LogWrapperType _logwrapper,
-                                      httpAbortIf const& _abortIf)
+                                      httpAbortIf const& _abortIf,
+                                      httpProgressIf & _progressIf)
             : btg::core::Logable(_logwrapper),
               abortIf(_abortIf),
-              curl(0),
-              filename()
+              progressIf(_progressIf),
+              curl(0)
          {
             BTG_MNOTICE(logWrapper(), "constructed");
-
-            curlm = curl_multi_init();
-            if (!curlm) 
-               {
-                  throw curlException("curl_multi_init failed.");
-               }
 
             curl = curl_easy_init();
             if (!curl) 
                {
-                  throw curlException("curl_easy_init failed.");
+                  throw curlException("curl_easy_init failed");
                }
          }
          
          bool curlInterface::Get(std::string const& _url,
                                  std::string const& _filename)
          {
-            status = false;
+            status = true;
+            filename.clear();
 
-            curl_easy_setopt(curl, CURLOPT_URL, _url.c_str());
+            status = status && (curl_easy_setopt(curl, CURLOPT_URL, _url.c_str()) == 0);
+            // status = status && (curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1) == 0);
+            status = status && (curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_write_function) == 0);
+            status = status && (curl_easy_setopt(curl, CURLOPT_WRITEDATA, this) == 0);
+            
+            if (!status)
+            {
+               BTG_MNOTICE(logWrapper(), "curl_easy_setopt failed");
+               return status;
+            }
 
-            // curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
+            file.clear();
+            file.open(_filename.c_str());
+            status = status && file.good();
 
-            FILE* f = fopen(_filename.c_str(), "w");
-
-            if (f == 0)
+            if (!status)
                {
                   BTG_MNOTICE(logWrapper(), "fopen failed, filename << '" << _filename << "'.");
                   return status;
                }
             
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, f);
+            if (status)
+            {
+               status = status && (curl_easy_perform(curl) == 0);
+               
+               if (!status)
+               {
+                  if (abortIf.AbortTransfer())
+                  {
+                     BTG_MNOTICE(logWrapper(), "Transfer aborted.");
+                  }
+                  else
+                  {
+                     BTG_MNOTICE(logWrapper(), "curl_easy_perform returned bad status");
+                  }
+               }
+            }
             
-            curl_multi_add_handle(curlm, curl);
-
-            bool done = false;
-            while (!done && !abortIf.AbortTransfer())
-               {
-                  int running_handles;
-                  CURLMcode code = curl_multi_perform(curlm, &running_handles);
-                  switch (code)
-                     {
-                     case CURLM_CALL_MULTI_PERFORM:
-                     case CURLM_OK:
-                        // Give curl a chance to download something.
-                        btg::core::os::Sleep::sleepMiliSeconds(50);
-                        break;
-                     default:
-                        BTG_MNOTICE(logWrapper(), "CURLM code:" << code);
-                        break;
-                     }
-                  
-                  if (running_handles == 0)
-                     {
-                        BTG_MNOTICE(logWrapper(), "No more curl handles.");
-                        done = true;
-                     }
-               }
-
-            if (abortIf.AbortTransfer())
-               {
-                  BTG_MNOTICE(logWrapper(), "Transfer aborted.");
-
-                  curl_multi_remove_handle(curlm, curl);
-                  fclose(f);
-                  // Remove the filename used.
-                  btg::core::os::fileOperation::remove(_filename);
-
-                  return status;
-               }
-
+            file.close();
+            
             long httpcode = 404;
-            CURLcode rcode = curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpcode);
-
-            if ((rcode != CURLE_OK) || (httpcode >= 400))
+            if (status)
+            {
+               status = status && (curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpcode) == 0);
+               
+               if (!status)
                {
-                  BTG_MNOTICE(logWrapper(), "Got error " << httpcode << " while loading '" << _url << "'.");
-                  status = false;
+                  BTG_MNOTICE(logWrapper(), "curl_easy_getinfo[CURLINFO_RESPONSE_CODE] failed");
                }
+            }
+            
+            if (status)
+            {
+               status = status && (httpcode == 200);
+               
+               if (!status)
+               {
+                  BTG_MNOTICE(logWrapper(), "Got HTTP error " << httpcode << " while loading '" << _url << "'.");
+               }
+            }
+            
+            if (status)
+            {
+               BTG_MNOTICE(logWrapper(), "Loaded '" << _url << "'.");
+               filename = _filename;
+            }
             else
-               {
-                  BTG_MNOTICE(logWrapper(), "Loaded '" << _url << "'.");
-                  status   = true;
-                  filename = _filename;
-               }
-
-            fclose(f);
-
-            curl_multi_remove_handle(curlm, curl);
+            {
+               // Remove the filename used.
+              btg::core::os::fileOperation::remove(_filename);
+            }
 
             return status;
          }
@@ -165,7 +145,7 @@ namespace btg
             BTG_MNOTICE(logWrapper(), "reading file '" << filename << "'");
 
             status = _buffer.read(filename);
-            filename = "";
+            // filename = "";
 
             return status;
          }
@@ -173,9 +153,44 @@ namespace btg
          curlInterface::~curlInterface()
          {
             curl_easy_cleanup(curl);
-            curl_multi_cleanup(curlm);
 
             BTG_MNOTICE(logWrapper(), "destroyed");
+         }
+         
+         size_t curlInterface::curl_write_function(void *data, size_t size, size_t nmemb, curlInterface *self)
+         {
+            return self->onDataChunk(data, size * nmemb) ? size * nmemb : -1;
+         }
+         
+         bool curlInterface::onDataChunk(void *data, size_t size)
+         {
+            bool bResult = true;
+            
+            double dltotal, dlnow, dlspeed;
+            bResult = bResult && (curl_easy_getinfo(curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &dltotal) == 0);
+            bResult = bResult && (curl_easy_getinfo(curl, CURLINFO_SIZE_DOWNLOAD, &dlnow) == 0);
+            bResult = bResult && (curl_easy_getinfo(curl, CURLINFO_SPEED_DOWNLOAD, &dlspeed) == 0);
+            if (bResult)
+            {
+               progressIf.ReportDownloadProgress(dltotal, dlnow, dlspeed);
+            }
+            
+            /*
+             * for the future (may be)
+             * 
+            double ultotal, ulnow, ulspeed;
+            bResult = bResult && (curl_easy_getinfo(curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &ultotal) == 0);
+            bResult = bResult && (curl_easy_getinfo(curl, CURLINFO_SIZE_DOWNLOAD, &ulnow) == 0);
+            bResult = bResult && (curl_easy_getinfo(curl, CURLINFO_SPEED_DOWNLOAD, &ulspeed) == 0);
+            if (bResult)
+            {
+               progressIf.ReportUploadProgress(ultotal, ulnow, ulspeed);
+            }
+            */
+
+            file.write(static_cast<char*>(data), size);
+            
+            return file.good() && !abortIf.AbortTransfer();            
          }
 
       } // namespace http

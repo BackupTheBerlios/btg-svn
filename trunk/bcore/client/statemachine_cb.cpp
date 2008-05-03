@@ -203,6 +203,12 @@ namespace btg
             contextUrlStatusResponseCommand* cusrc = dynamic_cast<contextUrlStatusResponseCommand*>(_command);
 
             clientcallback.onUrlStatus(cusrc->id(), cusrc->status());
+            
+            t_float dltotal, dlnow, dlspeed;
+            if (cusrc->getDlProgress(dltotal, dlnow, dlspeed))
+            {
+               clientcallback.onUrlDlProgress(cusrc->id(), dltotal, dlnow, dlspeed);
+            }
          }
 
          void stateMachine::cb_CN_CCRFILESTATUS(btg::core::Command* _command)

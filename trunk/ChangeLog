@@ -7,8 +7,8 @@ The following bugs were fixed:
 013644 Ports opened by UPnP when it is disabled.
 013643 Daemon starts without rewriting unexistent pid.
 013618 btgncli, show sessions when invoked without arguments.
-013557 UPnP, automatic internal IP detection.
-013555 UPnP, added separate config-file parameter for internal-ip.
+013557 CyberLink UPnP, automatic internal IP detection.
+013555 CyberLink UPnP, added separate config-file parameter for internal-ip.
 013538 Issues with native FreeBSD dialog.
 013501 Implement better torrent loading.
 013490 Provide source-packages in deb-src.

@@ -18,3 +18,6 @@ In the case of Lists, there is first an int (Integer) specifying the
 size of the list, then the elements are passed with their specific
 type.
 
+Implementation MUST be capable to handle commands with additional
+fields at the end.
+Implementation MUST ignore fields it doesn't know about.

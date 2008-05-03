@@ -27,13 +27,12 @@
 // Run bcore tests.
 #define BTG_UTEST_BCORE   1
 // Run bcore/client tests.
-#define BTG_UTEST_CLIENT  0
+#define BTG_UTEST_CLIENT  1
 // Run TCP/IP transport tests.
-#define BTG_UTEST_TCPIP   0
+#define BTG_UTEST_TCPIP   1
 // Run HTTP transport tests.
-#define BTG_UTEST_HTTP    0
+#define BTG_UTEST_HTTP    1
 // Run daemon tests.
-#define BTG_UTEST_DAEMON  0
+#define BTG_UTEST_DAEMON  1
 // Run os specific tests.
-#define BTG_UTEST_OS      0
-
+#define BTG_UTEST_OS      1

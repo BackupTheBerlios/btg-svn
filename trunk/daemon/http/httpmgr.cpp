@@ -89,6 +89,27 @@ namespace btg
             return httpInterface::ERROR;
          }
 
+         bool httpDlManager::getDlProgress(const t_uint _id, t_float &_dltotal, t_float &_dlnow, t_float &_dlspeed)
+         {
+            std::map<t_uint, boost::shared_ptr<httpProcess> >::const_iterator i = 
+               processes.find(_id);
+
+            if (i != processes.end())
+               {
+                  i->second->DlProgress(_dltotal, _dlnow, _dlspeed);
+                  BTG_MNOTICE(logWrapper(),
+                     "DlProgress(id=" << _id
+                     << ", total=" << _dltotal
+                     << ", now=" << _dlnow
+                     << ", speed=" << _dlspeed
+                     << ")");
+                  return true;
+               }
+
+            BTG_MNOTICE(logWrapper(), "DlStatus(id=" << _id << "): no such id");
+            return false;
+         }
+         
          bool httpDlManager::Result(const t_uint _id, 
                                   btg::core::sBuffer & _buffer)
          {

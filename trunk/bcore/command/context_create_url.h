@@ -169,6 +169,23 @@ namespace btg
          {
             return status_;
          }
+         
+         bool getDlProgress(t_float &_dltotal, t_float &_dlnow, t_float &_dlspeed) const
+         {
+            _dltotal = dltotal_;
+            _dlnow = dlnow_;
+            _dlspeed = dlspeed_;
+            return bDlProgress_;
+         }
+         
+         /// Set the download progress info
+         void setDlProgress(t_float _dltotal, t_float _dlnow, t_float _dlspeed)
+         {
+            bDlProgress_ = true;
+            dltotal_ = _dltotal;
+            dlnow_ = _dlnow;
+            dlspeed_ = _dlspeed;
+         }
 
          /// Destructor.
          virtual ~contextUrlStatusResponseCommand();
@@ -177,6 +194,14 @@ namespace btg
          t_uint id_;
          /// Status.
          btg::core::urlStatus status_;
+         /// Whether download progress info present
+         bool bDlProgress_;
+         /// Total bytes to go
+         t_float dltotal_;
+         /// Bytes already downloaded
+         t_float dlnow_;
+         /// download speed
+         t_float dlspeed_;
       };
 
       /// Get the status of a URL download.

@@ -307,6 +307,18 @@ namespace btg
          return true;
       }
 
+      bool urlManager::getDlProgress(const t_uint _id, t_float & _dltotal, t_float & _dlnow, t_float & _dlspeed)
+      {
+         std::vector<UrlIdSessionMapping>::iterator mapping = getUrlMapping(_id);
+
+         if (mapping == urlIdSessions.end())
+            {
+               return false;
+            }
+         
+         return httpmgr.getDlProgress(_id, _dltotal, _dlnow, _dlspeed);
+      }
+
       t_uint urlManager::addMapping(std::string const& _url, 
                                     std::string const& _userdir,
                                     std::string const& _filename,

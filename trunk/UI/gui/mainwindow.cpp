@@ -676,93 +676,155 @@ namespace btg
             msb->set("Loading URL: " + _url);
             logVerboseMessage("Loading URL: " + _url);
 
-            GET_HANDLER_INST;
+            t_uint hid;
+            
+            {
+               GET_HANDLER_INST;
 
-            handler->reqCreateFromUrl(_filename, _url);
+               handler->reqCreateFromUrl(_filename, _url);
 
-            if (handler->commandSuccess())
+               if (!handler->commandSuccess())
+                  {
+                     msb->set("Unable to load: " + _filename);
+                     logVerboseMessage("Unable to load: " + _filename);
+                     return;
+                  }
+
+               hid = handler->UrlId();
+            }
+
+            last_url      = _url;
+            last_url_file = _filename;
+            
+            progressDialog pd("Adding URL", true);
+
+            bool cont = true;
+            while (cont)
                {
-                  last_url      = _url;
-                  last_url_file = _filename;
-
-                  t_uint hid = handler->UrlId();
-
-                  progressDialog pd("Adding URL", true);
-
-                  bool cont = true;
-                  while (cont)
-                     {
-                        handler->reqUrlStatus(hid);
-                        if (!handler->commandSuccess())
+                  {
+                     GET_HANDLER_INST;
+                     
+                     handler->reqUrlStatus(hid);
+                     if (!handler->commandSuccess())
+                        {
+                           return;
+                        }
+                     t_uint id = 0;
+                     btg::core::urlStatus status;
+   
+                     handler->UrlStatusResponse(id, status);
+   
+                     switch (status)
+                        {
+                        case btg::core::URLS_UNDEF:
                            {
-                              return;
+                              break;
                            }
-                        t_uint id = 0;
-                        btg::core::urlStatus status;
-
-                        handler->UrlStatusResponse(id, status);
-
-                        switch (status)
+                        case btg::core::URLS_WORKING:
                            {
-                           case btg::core::URLS_UNDEF:
+                              std::stringstream ssmsg;
+                              t_uint progress = 10;
+                              t_float total, now, speed;
+                              
+                              ssmsg << "Working";
+                              
+                              if (handler->getUrlDlProgress(total, now, speed))
                               {
-                                 break;
-                              }
-                           case btg::core::URLS_WORKING:
-                              {
-                                 pd.updateProgress(50, "Working.");
-                                 break;
-                              }
-                           case btg::core::URLS_FINISHED:
-                              {
-                                 pd.updateProgress(80, "Loaded URL.");
-                                 break;
-                              }
-                           case btg::core::URLS_ERROR:
-                              {
-                                 pd.updateProgress(100, "Error loading URL.");
-                                 cont = false;
-                                 break;
-                              }
-                           case btg::core::URLS_CREATE:
-                              {
-                                 pd.updateProgress(100, "Torrent created.");
-                                 cont = false;
-                                 break;
-                              }
-                           case btg::core::URLS_CREATE_ERR:
-                              {
-                                 pd.updateProgress(100, "Unable to create torrent.");
-                                 cont = false;
-                                 break;
-                              }
-                           }
-
-                        if (pd.cancelPressed())
-                           {
-                              // Cancel URL loading.
-                              handler->reqCancelUrl(hid);
-
-                              if (handler->commandSuccess())
+                                 progress += total > 0 ? now / total * 80 : 40;
+                                 
+                                 std::string unit;
+                                 
+                                 ssmsg << std::fixed;
+                                 ssmsg << std::setprecision(2);
+                                 
+                                 now = btg::core::Util::valueUnit(now, unit);                                    
+                                 ssmsg << " (" << now << unit << "b";
+                                 
+                                 if (total > 0)
                                  {
-                                    msb->set("URL loading cancelled.");
-                                    logVerboseMessage("URL loading cancelled.");
-                                    return;
+                                    total = btg::core::Util::valueUnit(total, unit);                                    
+                                    ssmsg << "/" << total << unit << "b";
                                  }
+                                 else
+                                 {
+                                    ssmsg << "/?";
+                                 }
+                                 
+                                 speed = btg::core::Util::valueUnit(speed, unit);                                    
+                                 ssmsg << " " << speed << unit << "b/sec)";                                    
+                              }
+                              else
+                              {
+                                 ssmsg << ".";
+                              }
+                              
+                              pd.updateProgress(progress, ssmsg.str());
+                              break;
                            }
+                        case btg::core::URLS_FINISHED:
+                           {
+                              pd.updateProgress(90, "Loaded URL.");
+                              break;
+                           }
+                        case btg::core::URLS_ERROR:
+                           {
+                              pd.updateProgress(0, "Error loading URL.");
 
-                        // very ugly to spend this time while handlerhtread is locked
-                        btg::core::os::Sleep::sleepMiliSeconds(100);
-                     }
+                              msb->set("Error loading URL: " + _url);
+                              logVerboseMessage("Error loading URL: " + _url);
+                              cont = false;
 
-                  msb->set("Added: " + _filename);
-                  logVerboseMessage("Added: " + _filename);
+                              break;
+                           }
+                        case btg::core::URLS_CREATE:
+                           {
+                              pd.updateProgress(100, "Torrent created.");
+
+                              msb->set("Torrent created: " + _filename);
+                              logVerboseMessage("Torrent created: " + _filename);
+                              cont = false;
+
+                              break;
+                           }
+                        case btg::core::URLS_CREATE_ERR:
+                           {
+                              pd.updateProgress(0, "Unable to create torrent.");
+
+                              msb->set("Unable to create torrent: " + _filename);
+                              logVerboseMessage("Unable to create torrent: " + _filename);
+                              cont = false;
+
+                              break;
+                           }
+                        }
+   
+                     if (pd.cancelPressed())
+                        {
+                           // Cancel URL loading.
+                           handler->reqCancelUrl(hid);
+   
+                           if (handler->commandSuccess())
+                              {
+                                 msb->set("URL loading cancelled.");
+                                 logVerboseMessage("URL loading cancelled.");
+                                 return;
+                              }
+                        }
+                  }
+
+                  for (int i=0; i<25; ++i)
+                  {
+                     Gtk::Main::iteration(false);
+                     btg::core::os::Sleep::sleepMiliSeconds(10);
+                  }
                }
-            else
-               {
-                  msb->set("Unable to load: " + _filename);
-                  logVerboseMessage("Unable to load: " + _filename);
-               }
+
+            // sleep for a second so user can see our message
+            for (int i=0; i<100; ++i)
+            {
+               Gtk::Main::iteration(false);
+               btg::core::os::Sleep::sleepMiliSeconds(10);
+            }
          }
          
          bool mainWindow::onWindowClose(GdkEventAny *)

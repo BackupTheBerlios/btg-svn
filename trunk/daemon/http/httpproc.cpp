@@ -32,11 +32,6 @@ namespace btg
       {
          const std::string moduleName("htpr");
          
-         httpAbortIf::~httpAbortIf()
-         {
-            
-         }
-
          httpProcess::httpProcess(btg::core::LogWrapperType _logwrapper,
                                   std::string _URL, 
                                   std::string _filename)
@@ -44,8 +39,11 @@ namespace btg
               URL(_URL),
               filename(_filename),
               status(httpInterface::INIT),
-              ci(logWrapper(), *this),
+              ci(logWrapper(), *this, *this),
               terminate(false),
+              dltotal(0.0),
+              dlnow(0.0),
+              dlspeed(0.0),
               thread(
                      boost::bind(&httpProcess::work, boost::ref(*this))
                      )
@@ -80,9 +78,19 @@ namespace btg
          httpInterface::Status httpProcess::Status()
          {
             boost::mutex::scoped_lock interface_lock(interfaceMutex);
-
+            
             return status;
          }
+         
+         void httpProcess::DlProgress(t_float &_dltotal, t_float &_dlnow, t_float &_dlspeed)
+         {
+            boost::mutex::scoped_lock interface_lock(interfaceMutex);
+
+            _dltotal = dltotal;
+            _dlnow = dlnow;
+            _dlspeed = dlspeed;
+         }
+
 
          bool httpProcess::Result(btg::core::sBuffer & _buffer)
          {
@@ -107,6 +115,15 @@ namespace btg
          bool httpProcess::AbortTransfer() const
          {
             return terminate;
+         }
+         
+         void httpProcess::ReportDownloadProgress(t_float _dltotal, t_float _dlnow, t_float _dlspeed)
+         {
+            boost::mutex::scoped_lock interface_lock(interfaceMutex);
+            
+            dltotal = _dltotal;
+            dlnow = _dlnow;
+            dlspeed = _dlspeed;
          }
 
          httpProcess::~httpProcess()

@@ -124,6 +124,10 @@ namespace btg
                      /// Get a list of selected files, updated by the
                      /// last command to the daemon.
                      btg::core::selectedFileEntryList getLastSelectedFiles() const;
+                     
+                     /// Get URL download progress info (if available)
+                     /// @return false if wl progress info unavailable
+                     bool getUrlDlProgress(t_float &_total, t_float &_now, t_float &_speed);
 
                      /// Destructor.
                      virtual ~guiHandler();
@@ -157,6 +161,8 @@ namespace btg
                      void onUrlStatus(t_uint const _id, 
                                       btg::core::urlStatus const _status);
                      void onUrlStatusError(std::string const& _message);
+                     void onUrlDlProgress(t_uint const _id,
+                                          t_float _dltotal, t_float _dlnow, t_float _dlspeed);
                      void onAbort();
                      void onStart();
                      void onStop();
@@ -233,6 +239,16 @@ namespace btg
                      /// A list of selected files, updated by the
                      /// last command to the daemon.
                      btg::core::selectedFileEntryList selected_files;
+                     
+                     /// Whether download progress received
+                     bool           UrlDlProgress;
+                     
+                     /// total bytes to download
+                     t_float        UrlDlTotal;
+                     /// bytes downloaded
+                     t_float        UrlDlNow;
+                     /// Download speed (bytes/sec)
+                     t_float        UrlDlSpeed;
                   private:
                      /// Copy constructor.
                      guiHandler(guiHandler const& _gh);

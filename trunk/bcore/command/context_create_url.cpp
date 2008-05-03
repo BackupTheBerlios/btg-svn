@@ -186,7 +186,11 @@ namespace btg
                                                                        btg::core::urlStatus const _status)
          : Command(Command::CN_CURLSTATUSRSP),
            id_(_id),
-           status_(_status)
+           status_(_status),
+           bDlProgress_(false),
+           dltotal_(0.0),
+           dlnow_(0.0),
+           dlspeed_(0.0)
       {}
 
       bool contextUrlStatusResponseCommand::serialize(btg::core::externalization::Externalization* _e) const
@@ -224,6 +228,25 @@ namespace btg
          _e->setParamInfo("url status", true);
          _e->uintToBytes(&temp_status);
          BTG_RCHECK(_e->status());
+         
+         _e->setParamInfo("donwload progress info flag", true);
+         _e->boolToBytes(bDlProgress_);
+         BTG_RCHECK(_e->status());
+         
+         if (bDlProgress_)
+         {
+            _e->setParamInfo("total bytes to download", false);
+            _e->floatToBytes(&dltotal_);
+            BTG_RCHECK(_e->status());
+            
+            _e->setParamInfo("bytes downloaded", false);
+            _e->floatToBytes(&dlnow_);
+            BTG_RCHECK(_e->status());
+            
+            _e->setParamInfo("download speed (bytes/sec)", false);
+            _e->floatToBytes(&dlspeed_);
+            BTG_RCHECK(_e->status());
+         }
 
          return true;
       }
@@ -267,6 +290,25 @@ namespace btg
                break;
             }
 
+         _e->setParamInfo("donwload progress info flag", true);
+         _e->bytesToBool(bDlProgress_);
+         BTG_RCHECK(_e->status());
+         
+         if (bDlProgress_)
+         {
+            _e->setParamInfo("total bytes to download", false);
+            _e->bytesToFloat(&dltotal_);
+            BTG_RCHECK(_e->status());
+            
+            _e->setParamInfo("bytes downloaded", false);
+            _e->bytesToFloat(&dlnow_);
+            BTG_RCHECK(_e->status());
+            
+            _e->setParamInfo("download speed (bytes/sec)", false);
+            _e->bytesToFloat(&dlspeed_);
+            BTG_RCHECK(_e->status());
+         }
+         
          return true;
       }
 

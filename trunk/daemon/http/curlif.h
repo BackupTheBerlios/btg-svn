@@ -24,6 +24,8 @@
 #define CURL_IF_H
 
 #include <string>
+#include <stdexcept> // for std::runtime_error
+#include <fstream>
 
 extern "C"
 {
@@ -44,20 +46,19 @@ namespace btg
          /** @{ */
 
          /// Exception thown by the curl interface constructor.
-         class curlException
+         class curlException: public std::runtime_error
          {
          public:
             /// Constructor.
-            curlException(std::string const& _message);
-
-            /// Get the contained message.
-            std::string message() const;
-         private:
-            /// The contained message.
-            const std::string message_;
+            curlException(std::string const& _message)
+               : std::runtime_error(_message)
+            {
+               
+            }
          };
 
          class httpAbortIf;
+         class httpProgressIf;
 
          /// Curl interface.
          class curlInterface: public btg::core::Logable
@@ -65,7 +66,8 @@ namespace btg
          public:
             /// Constructor.
             curlInterface(btg::core::LogWrapperType _logwrapper,
-                          httpAbortIf const& _abortIf);
+                          httpAbortIf const& _abortIf,
+                          httpProgressIf & _progressIf);
 
             /// Download _url into _filename.
             /// @return true - downloaded, false - not downloaded.
@@ -77,18 +79,39 @@ namespace btg
             
             /// Destructor.
             ~curlInterface();
-         protected:
+         
+         private:
             /// Reference to the interface used for quering if the
             /// download should terminate.
             httpAbortIf const& abortIf;
-            /// Pointer to curl structure.
-            CURLM*      curlm;
+            /// Reference to the interface to report download progress
+            httpProgressIf & progressIf;
             /// Pointer to curl structure.
             CURL*       curl;
             /// Download status.
             bool        status;
             /// Filename used.
             std::string filename;
+
+            /// file stream to write the data to
+            std::ofstream file;
+            
+            /// Callback from the CURL
+            /// called when chunk to write is ready
+            /// @param [in] data data to write
+            /// @param [in] size size of block
+            /// @param [in] nmemb count of blocks
+            /// @param [in] self pointer to CURL object owner (this)
+            /// @return size * nmemb if success, something else if want to terminate (curl_easy_perform will return CURLE_WRITE_ERROR then) 
+            static size_t curl_write_function(void *data, size_t size, size_t nmemb, curlInterface *self);
+            
+         protected:
+            /// Called (from curl_write_function) when data chunk arrived
+            /// @param [in] data the chunk
+            /// @param [in] size chunk size
+            /// @return true - continue, false - terminate
+            bool onDataChunk(void *data, size_t size);
+            
          private:
             /// Copy constructor.
             curlInterface(curlInterface const& _ci);
