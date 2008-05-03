@@ -921,21 +921,14 @@ OpenWrt
 =======
 
 This section describes how to build BTG for use with `OpenWrt`_
-kamikaze. Note that this procedure is highly experimental.
+kamikaze. Only the daemon is built and please do note that this
+procedure is highly experimental.
 
 Check out the required software:
 
  - BTG SVN in ~/remote-svn/btg.
  - OpenWrt SVN into ~/remote-svn/openwrt (buildroot).
  - OpenWrt package SVN in ~/remote-svn/openwrt-packages.
-
-The following OpenWrt revisions are known to build:
-
-======================= ==========================
-**OpenWrt trunk**       **OpenWrt packages trunk**     
------------------------ --------------------------
-10359                   10359
-======================= ==========================
 
 The method of building a working OpenWrt is described `elsewhere`_.
 
@@ -988,6 +981,33 @@ packages to the device running OpenWrt and install them using ipkg.
 
 .. _OpenWrt: http://openwrt.org/
 .. _elsewhere: http://downloads.openwrt.org/kamikaze/docs/openwrt.html#x1-310002
+
+Revisions
+---------
+
+The following OpenWrt revisions are known to build:
+
+======================= ========================== ===========
+**OpenWrt trunk**       **OpenWrt packages trunk** **BTG SVN**
+----------------------- -------------------------- -----------
+10359                   10359                      210 (0.9.7)
+11011                   11011                      328       
+======================= ========================== ===========
+
+Revision 328 Notes
+------------------
+
+Uses boost 1.34.1, libtorrent 0.13 and BTG from the trunk of SVN.
+
+GCC 4.2.3 is used because other versions had problems compiling
+libtorrent 0.13. To be able to build revision 328 for the
+XScale-IXP42x, the following had to be used in the .config file.
+
+::
+
+ CONFIG_TARGET_OPTIMIZATION="-Os -pipe -march=armv5te -mtune=xscale -funit-at-a-time"
+ CONFIG_GCC_VERSION="4.2.3"
+ CONFIG_UCLIBC_VERSION="0.9.29"
 
 Credits
 =======
