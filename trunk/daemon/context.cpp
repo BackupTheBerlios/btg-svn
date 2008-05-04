@@ -1498,7 +1498,7 @@ namespace btg
                                     );
 
                      std::string client_identification = libtorrent::identify_client(iter->pid);
-                     Peer peer(pa, iter->seed, client_identification);
+                     Peer peer(pa, iter->flags & libtorrent::peer_info::seed, client_identification);
 
                      _peerlist.push_back(peer);
                   }
