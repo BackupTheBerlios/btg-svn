@@ -20,7 +20,9 @@ AC_DEFUN([RBLIBTORRENT],
     CXXFLAGS_SAVED="$CXXFLAGS"
     CXXFLAGS="$CXXFLAGS -I$RBLIBTORRENT_ROOT/include -I$RBLIBTORRENT_ROOT/include/libtorrent"
     LDFLAGS_SAVED="$LDFLAGS"
-    LDFLAGS="$LDFLAGS -L$RBLIBTORRENT_ROOT/lib -ltorrent"
+    LDFLAGS="$LDFLAGS -L$RBLIBTORRENT_ROOT/lib"
+    LIBS_SAVED="$LIBS"
+    LIBS="$LIBS -L$RBLIBTORRENT_ROOT/lib -ltorrent"
 
     AC_MSG_CHECKING([whether Rasterbar Libtorrent headers can be used])
 
@@ -54,6 +56,7 @@ AC_DEFUN([RBLIBTORRENT],
    AC_LANG_RESTORE
    CXXFLAGS="$CXXFLAGS_SAVED"
    LDFLAGS="$LDFLAGS_SAVED"
+   LIBS="$LIBS_SAVED"
 
    if test x_$rblibtorrent_compiles != x_yes; then
      AC_MSG_ERROR(Cannot find Rasterbar Libtorrent headers)
@@ -62,10 +65,5 @@ AC_DEFUN([RBLIBTORRENT],
    if test x_$rblibtorrent_links != x_yes; then
      AC_MSG_ERROR(Cannot link with Rasterbar Libtorrent)
    fi
-
-dnl   RBLIBTORRENT_CXXFLAGS="-I$RBLIBTORRENT_ROOT/include -I$RBLIBTORRENT_ROOT/include/libtorrent"
-dnl   AC_SUBST(RBLIBTORRENT_CXXFLAGS)
-dnl   RBLIBTORRENT_LDFLAGS="-L$RBLIBTORRENT_ROOT/lib -ltorrent"
-dnl   AC_SUBST(RBLIBTORRENT_LDFLAGS)
 
 ])dnl

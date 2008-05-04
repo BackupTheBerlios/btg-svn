@@ -25,9 +25,9 @@ btgpasswd_SOURCES = arg.cpp btgpasswd.cpp ../dconfig.cpp
 
 btgpasswd_LDADD   = $(top_builddir)/bcore/libbtgcore.la \
                     libauth.la \
-                    $(top_builddir)/external/ini/libini.la
-
-btgpasswd_LDFLAGS  = @LIBS@ @LIBTORRENT_LIBS@ -l@BOOST_IOSTREAMS_LIB@ @LIBGNUTLS_LIBS@ @LIBGNUTLS_LIBS@ -l@BOOST_PROGRAM_OPTIONS_LIB@ @LIBCURL@
+                    $(top_builddir)/external/ini/libini.la \
+                    @LIBS@ @LIBTORRENT_LIBS@ -l@BOOST_IOSTREAMS_LIB@ \
+                    @LIBGNUTLS_LIBS@ @LIBGNUTLS_LIBS@ -l@BOOST_PROGRAM_OPTIONS_LIB@ @LIBCURL@
 
 btgpasswd_CFLAGS   = @CFLAGS@   @DEBUG_CFLAGS@ @LIBGNUTLS_CFLAGS@ \
 -DBTG_DEBUG=@BTG_DEBUG@ -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \

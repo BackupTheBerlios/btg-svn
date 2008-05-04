@@ -81,12 +81,9 @@ btgdaemon_LDADD   = $(top_builddir)/bcore/libbtgcore.la \
                     $(top_builddir)/daemon/auth/libauth.la \
                     $(top_builddir)/external/ini/libini.la \
                     $(top_builddir)/bcore/libbtgcore.la \
-        	    $(UPNP_LDADD) \
-        	    $(CYBERLINK_LDADD) \
-        	    $(HTTP_LDADD)
-
-btgdaemon_LDFLAGS  = @LIBS@ @LIBTORRENT_LIBS@ -l@BOOST_IOSTREAMS_LIB@ @LIBGNUTLS_LIBS@ \
--l@BOOST_PROGRAM_OPTIONS_LIB@ $(URL_LIBS)
+                    @LIBS@ @LIBTORRENT_LIBS@ -l@BOOST_IOSTREAMS_LIB@ \
+                    @LIBGNUTLS_LIBS@ \
+                    -l@BOOST_PROGRAM_OPTIONS_LIB@ $(URL_LIBS) $(UPNP_LDADD) $(CYBERLINK_LDADD) $(HTTP_LDADD)
 
 btgdaemon_CFLAGS   = @CFLAGS@   @DEBUG_CFLAGS@ @LIBGNUTLS_CFLAGS@ \
 -DBTG_DEBUG=@BTG_DEBUG@ -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \
