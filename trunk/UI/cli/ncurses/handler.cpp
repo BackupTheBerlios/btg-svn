@@ -318,6 +318,12 @@ namespace btg
             encryption_enabled_ = _encryption;
          }
 
+         void Handler::onTrackerInfo(t_strList const& _trackerlist)
+         {
+            commandStatus = true;
+            setTrackerList(_trackerlist);
+         }
+
          void Handler::onCreateFromUrl(t_uint const _id)
          {
             commandStatus = true;

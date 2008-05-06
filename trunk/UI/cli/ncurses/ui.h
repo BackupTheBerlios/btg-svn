@@ -124,6 +124,9 @@ namespace btg
                      /// Resize all contained windows.
                      void resize();
 
+                     void getTrackers(t_int _contextID, 
+                                      t_strList & _trackers);
+
                      /// Destructor.
                      virtual ~UI();
                   private:

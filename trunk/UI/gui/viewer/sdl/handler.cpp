@@ -480,6 +480,12 @@ namespace btg
                encryption_enabled_ = _dht;
             }
 
+            void viewerHandler::onTrackerInfo(t_strList const& _trackerlist)
+            {
+               commandStatus = true;
+               setTrackerList(_trackerlist);
+            }
+
             viewerHandler::~viewerHandler()
             {
 

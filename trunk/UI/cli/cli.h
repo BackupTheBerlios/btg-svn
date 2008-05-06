@@ -297,6 +297,8 @@ namespace btg
 
                      void onSessionInfo(bool const _encryption, bool const _dht);
 
+                     void onTrackerInfo(t_strList const& _trackerlist);
+
                      /// Set the current context ID.
                      void setCurrentID(t_int const _currentID);
 

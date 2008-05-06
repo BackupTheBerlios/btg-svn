@@ -1911,6 +1911,12 @@ namespace btg
             encryption_enabled_ = _dht;
          }
 
+         void cliHandler::onTrackerInfo(t_strList const& _trackerlist)
+         {
+            commandStatus = true;
+            setTrackerList(_trackerlist);
+         }
+
          cliHandler::cliResponse cliHandler::handleLoadUrl(std::string const& _url)
          {
             cliHandler::cliResponse result = INPUT_OK;

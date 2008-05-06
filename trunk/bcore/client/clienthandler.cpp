@@ -94,7 +94,8 @@ namespace btg
               options(),
               last_file_id(FILES_INVALID_FILEID),
               lastfiles(_logwrapper, _dynconfig),
-              lasturls(_logwrapper, _dynconfig)
+              lasturls(_logwrapper, _dynconfig),
+              trackerlist()
          {
          }
 
@@ -439,6 +440,14 @@ namespace btg
             statemachine.work();
          }
 
+         void clientHandler::reqTrackers(t_int const _id)
+         {
+            commandStatus = false;
+            
+            statemachine.doTrackers(_id);
+            statemachine.work();
+         }
+
          bool clientHandler::isSetupDone() const
          {
             return setupDone;
@@ -657,6 +666,16 @@ namespace btg
          void clientHandler::addLastURL(const std::string& _url, const std::string& _filename)
          {
             lasturls.add(_url, _filename);
+         }
+
+         void clientHandler::setTrackerList(t_strList const& _trackerlist)
+         {
+            trackerlist = _trackerlist;
+         }
+
+         t_strList clientHandler::getTrackerList() const
+         {
+            return trackerlist;
          }
 
          clientHandler::~clientHandler()

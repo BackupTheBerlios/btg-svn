@@ -1345,6 +1345,18 @@ namespace btg
             actionSuccess("Move to session", _filename);
          }
 
+         void UI::getTrackers(t_int _contextID, 
+                              t_strList & _trackers)
+         {
+            GET_HANDLER_INST;
+            handler->reqTrackers(_contextID);
+            
+            if (handler->commandSuccess())
+               {
+                  _trackers = handler->getTrackerList();
+               }
+         }
+
       } // namespace cli
    } // namespace UI
 } // namespace btg

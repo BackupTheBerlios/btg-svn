@@ -56,7 +56,7 @@ namespace btg
                   {
                   public:
                      /// Constructor.
-                     detailWindow(keyMapping const& _kmap, mainWindow const& _mainwindow);
+                     detailWindow(keyMapping const& _kmap, mainWindow & _mainwindow);
 
                      void resize(windowSize const& _ws);
 
@@ -76,7 +76,7 @@ namespace btg
                      virtual ~detailWindow();
                   private:
                      /// Reference to the main window, containing contexts.
-                     mainWindow const& mainwindow_;
+                     mainWindow & mainwindow_;
 
                      /// Counter used as the Y-position while drawing
                      /// the contents of this window.

@@ -525,6 +525,12 @@ namespace btg
             encryption_enabled_ = _encryption;
          }
          
+         void guiHandler::onTrackerInfo(t_strList const& _trackerlist)
+         {
+            commandStatus = true;
+            setTrackerList(_trackerlist);
+         }
+         
          guiHandler::~guiHandler()
          {
 

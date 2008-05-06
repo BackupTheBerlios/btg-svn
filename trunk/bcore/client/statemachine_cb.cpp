@@ -59,6 +59,7 @@
 #include <bcore/command/context_status.h>
 #include <bcore/command/context_stop.h>
 #include <bcore/command/context_file.h>
+#include <bcore/command/context_tracker.h>
 
 #include <bcore/command/limit.h>
 
@@ -225,6 +226,11 @@ namespace btg
             clientcallback.onCreateFromFile(ccffrc->id());
          }
 
+         void stateMachine::cb_CN_CGETTRACKERS(btg::core::Command* _command)
+         {
+            contextGetTrackersResponseCommand* cgtrc = dynamic_cast<contextGetTrackersResponseCommand*>(_command);
+            clientcallback.onTrackerInfo(cgtrc->getTrackers());
+         }
          void stateMachine::cb_CN_VERSION(btg::core::Command* _command)
          {
             versionResponseCommand* vrc = dynamic_cast<versionResponseCommand*>(_command);

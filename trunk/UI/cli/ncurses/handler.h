@@ -164,6 +164,8 @@ namespace btg
 
                      void onSessionInfo(bool const _encryption, bool const _dht);
 
+                     void onTrackerInfo(t_strList const& _trackerlist);
+                     
                      /// Last received list of file info objects.
                      t_fileInfoList lastFileinfolist_;
 

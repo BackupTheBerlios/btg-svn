@@ -68,7 +68,7 @@ namespace btg
               urlDlEnabled_(_urlDlEnabled),
               keymap_(_keymap),
               colors_(_colors),
-              mainwindow_(_keymap),
+              mainwindow_(_keymap, *this),
               topwindow_(_keymap),
               statuswindow_(_keymap),
               mainwindow_topx(0),

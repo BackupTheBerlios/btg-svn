@@ -172,6 +172,8 @@ namespace btg
             /// Action.
             void doClean(t_int const _contextID, bool const _allContexts = false);
 
+            void doTrackers(t_int const _contextID, bool const _allContexts = false);
+
             /// Destructor.
             virtual ~stateMachine();
 
@@ -417,6 +419,8 @@ namespace btg
             void cb_CN_CCRFILESTATUS(btg::core::Command* _command);
 
             void cb_CN_CCREATEFROMFILERSP(btg::core::Command* _command);
+
+            void cb_CN_CGETTRACKERS(btg::core::Command* _command);
 
             /// Call a callback. Version and options.
             void cb_CN_VERSION(btg::core::Command* _command);

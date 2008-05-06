@@ -212,6 +212,10 @@ namespace btg
             /// Request version information.
             virtual void reqVersion();
 
+            /// Request list of trackers used by a context.
+            virtual void reqTrackers(t_int const _id);
+
+         public:
             /// Returns true if the statemachine thinks that
             /// it completed the setup of the client.
             virtual bool isSetupDone() const;
@@ -337,6 +341,9 @@ namespace btg
             /// @param _filename [in] Corresponding file name.
             void addLastURL(const std::string& _url, const std::string& _filename);
             
+            void setTrackerList(t_strList const& _trackerlist);
+            t_strList getTrackerList() const;
+
             virtual ~clientHandler();
 
          protected:
@@ -480,6 +487,7 @@ namespace btg
             /// last opened urls history
             lastURLs                          lasturls;
 
+            t_strList                         trackerlist;
          private:
             /// Copy constructor.
             clientHandler(clientHandler const& _ch);

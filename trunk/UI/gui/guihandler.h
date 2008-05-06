@@ -208,6 +208,8 @@ namespace btg
 
                      void onSessionInfo(bool const _encryption, bool const _dht);
                      
+                     void onTrackerInfo(t_strList const& _trackerlist);
+
                      /// List of context IDs.
                      t_intList      contextIDs;
 

@@ -64,6 +64,10 @@ namespace btg
             /// The status.
             btg::core::Status status;
 
+            bool              trackers_set;
+
+            t_strList         trackers;
+
             /// Flag: this torrent is marked.
             bool              marked;
 
@@ -93,6 +97,14 @@ namespace btg
             /// list.
             bool getAtPosition(t_uint const _position,
                                btg::core::Status & _status) const;
+
+            /// Get the list of trackers, return false if its not
+            /// present and must be fetched first.
+            bool getAtPosition(t_uint const _position,
+                               t_strList & _trackers) const;
+
+            void setAtPosition(t_uint const _position, 
+                               t_strList const& _trackers);
 
             /// Mark an entry, based on its position.
             void mark(t_uint const _position);
@@ -153,12 +165,14 @@ namespace btg
             void removeDead();
          };
 
+         class UI;
+
          /// Window showing a list of torrents.
          class mainWindow: public baseWindow
          {
          public:
             /// Constructor.
-            mainWindow(keyMapping const& _kmap);
+            mainWindow(keyMapping const& _kmap, UI & _ui);
 
             bool init(windowSize const& _ws);
 
@@ -201,7 +215,11 @@ namespace btg
             void toEnd();
 
             /// Get the selected entry.
-            bool getSelection(btg::core::Status & _status) const;
+            bool getSelection(btg::core::Status & _status);
+
+            /// Get the selected entry.
+            bool getSelection(btg::core::Status & _status, 
+                              t_strList & _trackers);
 
             /// Get a status, identified by a context id.
             bool get(t_int const _context_id, btg::core::Status & _status) const;
@@ -246,6 +264,8 @@ namespace btg
 
             /// The ID of the currently selected torrent.
             t_int      currentId_;
+
+            UI &       ui_;
          };
 
          /** @} */

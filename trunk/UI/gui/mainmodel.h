@@ -31,6 +31,11 @@
 #include <gtkmm/progressbar.h>
 #endif // GTKMM_2_6_OR_BETTER
 
+namespace Gtk
+{
+   class TreeView;
+}
+
 namespace btg
 {
    namespace UI
@@ -41,8 +46,6 @@ namespace btg
                 * \addtogroup gui
                 */
                /** @{ */
-
-               class Gtk::TreeView;
 
                /// Record used in connection with mainTreeview
                /// (table). Represents a context.

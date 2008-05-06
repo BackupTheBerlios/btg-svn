@@ -257,6 +257,9 @@ namespace btg
                      /// Information about the current session.
                      virtual void onSessionInfo(bool const _encryption, bool const _dht) = 0;
 
+                     /// Received a list of trackers used by a context.
+                     virtual void onTrackerInfo(t_strList const& _trackerlist) = 0;
+
                      /// Destructor.
                      virtual ~clientCallback();
                   };

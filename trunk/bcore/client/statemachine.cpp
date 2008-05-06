@@ -75,6 +75,7 @@
 #include <bcore/command/context_stop.h>
 #include <bcore/command/context_file.h>
 #include <bcore/command/context_move.h>
+#include <bcore/command/context_tracker.h>
 
 #include <bcore/command/limit.h>
 
@@ -1132,8 +1133,16 @@ namespace btg
          {
             if (checkState(SM_COMMAND))
                {
-                  // Send the command.
                   commands.push_back(new contextCleanCommand(_contextID, _allContexts));
+               }
+            SM_REQUEST_LOSS;
+         }
+
+         void stateMachine::doTrackers(t_int const _contextID, bool const _allContexts)
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(new contextGetTrackersCommand(_contextID, _allContexts));
                }
             SM_REQUEST_LOSS;
          }
@@ -1221,6 +1230,12 @@ namespace btg
                case Command::CN_CCRFILESTATUS:
                   {
                      expectedReply[0] = Command::CN_CCRFILESTATUSRSP;
+                     expectedReply[1] = Command::CN_UNDEFINED;
+                     break;
+                  }
+               case Command::CN_CGETTRACKERS:
+                  {
+                     expectedReply[0] = Command::CN_CGETTRACKERSRSP;
                      expectedReply[1] = Command::CN_UNDEFINED;
                      break;
                   }
@@ -1475,6 +1490,11 @@ namespace btg
                case Command::CN_CCRFILESTATUS:
                   {
                      cb_CN_CCRFILESTATUS(_command);
+                     break;
+                  }
+               case Command::CN_CGETTRACKERS:
+                  {
+                     cb_CN_CGETTRACKERS(_command);
                      break;
                   }
                case Command::CN_VERSION:

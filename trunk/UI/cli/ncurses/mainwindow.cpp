@@ -21,6 +21,7 @@
  */
 
 #include "mainwindow.h"
+#include "ui.h"
 
 #include <bcore/t_string.h>
 #include <bcore/logmacro.h>
@@ -34,7 +35,9 @@ namespace btg
          statusEntry::statusEntry(btg::core::Status const& _s)
             : status(_s),
               marked(false),
-              updated(true)
+              updated(true),
+              trackers_set(false),
+              trackers()
          {
 
          }
@@ -42,7 +45,9 @@ namespace btg
          statusEntry::statusEntry()
             : status(),
               marked(false),
-              updated(false)
+              updated(false),
+              trackers_set(false),
+              trackers()
          {
          }
 
@@ -84,7 +89,75 @@ namespace btg
             return status;
          }
 
-         bool statusList::getAtPosition(t_uint const _position, btg::core::Status & _status) const
+         void statusList::setAtPosition(t_uint const _position, 
+                                        t_strList const& _trackers)
+         {
+            if (statusList_.size() == 0)
+               {
+                  return;
+               }
+
+            std::map<t_int, statusEntry>::iterator iter;
+            t_uint counter = 0;
+            bool status    = false;
+            for (iter = statusList_.begin();
+                 iter != statusList_.end();
+                 iter++)
+               {
+                  if (counter == _position)
+                     {
+                        status = true;
+                        break;
+                     }
+                  counter++;
+               }
+
+            if (status)
+               {
+                  iter->second.trackers_set = true;
+                  iter->second.trackers     = _trackers;
+               }
+         }
+
+         bool statusList::getAtPosition(t_uint const _position, 
+                                        t_strList & _trackers) const
+         {
+            bool status = false;
+
+            if (statusList_.size() == 0)
+               {
+                  return status;
+               }
+
+            std::map<t_int, statusEntry>::const_iterator iter;
+            t_uint counter = 0;
+
+            for (iter = statusList_.begin();
+                 iter != statusList_.end();
+                 iter++)
+               {
+                  if (counter == _position)
+                     {
+                        status = true;
+                        break;
+                     }
+                  counter++;
+               }
+
+            if (status)
+               {
+                  status = iter->second.trackers_set;
+                  if (status)
+                     {
+                        _trackers = iter->second.trackers;
+                     }
+               }
+
+            return status;
+         }
+
+         bool statusList::getAtPosition(t_uint const _position, 
+                                        btg::core::Status & _status) const
          {
             bool status = false;
 
@@ -325,13 +398,14 @@ namespace btg
          /* */
          /* */
 
-         mainWindow::mainWindow(keyMapping const& _kmap)
+         mainWindow::mainWindow(keyMapping const& _kmap, UI & _ui)
             : baseWindow(_kmap),
               numberOfLines_(0),
               list_(),
               positionWindowStart_(0),
               positionWindowEnd_(0),
-              currentPosition_(0)
+              currentPosition_(0),
+              ui_(_ui)
          {
          }
 
@@ -823,7 +897,14 @@ namespace btg
             return list_.get(_context_id, _status);
          }
 
-         bool mainWindow::getSelection(btg::core::Status & _status) const
+         bool mainWindow::getSelection(btg::core::Status & _status)
+         {
+            t_strList trackers;
+            return getSelection(_status, trackers);
+         }
+
+         bool mainWindow::getSelection(btg::core::Status & _status, 
+                                       t_strList & _trackers)
          {
             bool status = false;
 
@@ -836,6 +917,15 @@ namespace btg
 
             if (list_.getAtPosition(current, _status))
                {
+                  if (!list_.getAtPosition(current, _trackers))
+                     {
+                        // No list of trackers.
+                        t_strList trackers;
+                        ui_.getTrackers(_status.contextID(), trackers);
+                        list_.setAtPosition(current, trackers);
+                        _trackers = trackers;
+                     }
+
                   status = true;
                }
 
