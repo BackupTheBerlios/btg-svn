@@ -25,6 +25,8 @@
 #include <bcore/trackerstatus.h>
 #include <bcore/logmacro.h>
 
+#include <asio/ip/address_v4.hpp>
+
 #if BTG_OPTION_EVENTCALLBACK
 #  include "callbackmgr.h"
 #endif // BTG_OPTION_EVENTCALLBACK
@@ -42,9 +44,13 @@ namespace btg
       void Context::handleBannedHost(libtorrent::peer_ban_alert* _alert)
       {
          // A peer was banned.
+#if BTG_LT_0_14
+         boost::asio::ip::basic_endpoint<boost::asio::ip::tcp> endp = _alert->ip;
+         boost::asio::ip::address_v4 banned_ip = endp.address().to_v4();
+#else
          asio::ip::basic_endpoint<asio::ip::tcp> endp = _alert->ip;
          asio::ip::address_v4 banned_ip = endp.address().to_v4();
-
+#endif
          BTG_NOTICE(logWrapper(), "Banned host: " << banned_ip.to_string() << ".");
 
          VERBOSE_LOG(logWrapper(), verboseFlag_, "Banned host: " << banned_ip.to_string() << ".");
@@ -106,8 +112,13 @@ namespace btg
       void Context::handlePeerError(libtorrent::peer_error_alert* _alert)
       {
          // A peer generates errors.
+#if BTG_LT_0_14
+         boost::asio::ip::basic_endpoint<boost::asio::ip::tcp> endp = _alert->ip;
+         boost::asio::ip::address_v4 banned_ip = endp.address().to_v4();
+#else
          asio::ip::basic_endpoint<asio::ip::tcp> endp = _alert->ip;
          asio::ip::address_v4 banned_ip = endp.address().to_v4();
+#endif
          BTG_NOTICE(logWrapper(), "Errors from peer: " << banned_ip.to_string() << ".");
       }
 #if BTG_LT_0_14

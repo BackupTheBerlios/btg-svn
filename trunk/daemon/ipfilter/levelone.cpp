@@ -127,9 +127,13 @@ namespace btg
                                                 {
                                                    boost::array<unsigned char, 4u> const ip1 = {{ipa0[0], ipa0[1], ipa0[2], ipa0[3]}};
                                                    boost::array<unsigned char, 4u> const ip2 = {{ipa1[0], ipa1[1], ipa1[2], ipa1[3]}};
+#if BTG_LT_0_14
+                                                   boost::asio::ip::address_v4 address1(ip1);
+                                                   boost::asio::ip::address_v4 address2(ip2);
+#else
                                                    asio::ip::address_v4 address1(ip1);
                                                    asio::ip::address_v4 address2(ip2);
-                                                   
+#endif
                                                    filter_.add_rule(address1,
                                                                     address2,
                                                                     libtorrent::ip_filter::blocked);

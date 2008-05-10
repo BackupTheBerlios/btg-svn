@@ -1484,10 +1484,13 @@ namespace btg
                for (iter = peerinfolist.begin(); iter != peerinfolist.end(); iter++)
                   {
                      // Convert the peer ip from the libtorrent implementation to 4 bytes.
+#if BTG_LT_0_14
+                     boost::asio::ip::basic_endpoint<boost::asio::ip::tcp> endp = iter->ip;
+                     boost::asio::ip::address_v4 addr = endp.address().to_v4();
+#else
                      asio::ip::basic_endpoint<asio::ip::tcp> endp = iter->ip;
-
                      asio::ip::address_v4 addr = endp.address().to_v4();
-
+#endif
                      boost::array<unsigned char, 4> bytes = addr.to_bytes();
 
                      peerAddress pa(

@@ -144,6 +144,15 @@ fi
 
 AM_LIBGNUTLS_VERSION
 
+AX_BOOST_SYSTEM
+dnl check that Boost.System was found:
+if test -z "$BOOST_SYSTEM_LIB"; then
+   dnl AC_MSG_ERROR([unable to find Boost.System library, currently this is required.])
+   AC_MSG_NOTICE(["unable to find Boost.System library, this is not required unless boost 1.3.5 or better is used."])
+   BOOST_SYSTEM_LIB=""
+   AC_SUBST(BOOST_SYSTEM_LIB)
+fi
+
 AX_BOOST_IOSTREAMS
 dnl check that Boost.IOStreams was found:
 if test -z "$BOOST_IOSTREAMS_LIB"; then

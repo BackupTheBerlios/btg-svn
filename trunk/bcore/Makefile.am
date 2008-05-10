@@ -122,7 +122,7 @@ $(LOGGER_SOURCES) \
 $(EXTERNALIZATION_SOURCES) \
 $(AUTH_SOURCES)
 
-libbtgcore_la_LIBADD = $(top_builddir)/external/xmlrpc-epi/src/libxmlrpc.la 
+libbtgcore_la_LIBADD = $(top_builddir)/external/xmlrpc-epi/src/libxmlrpc.la @BOOST_FILESYSTEM_LIB@
 
 OS_HEADER=os/sleep.h \
 os/fileop.h \

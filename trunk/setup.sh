@@ -89,10 +89,11 @@ echo "Using CFLAGS: $CFLAGS"
 # 
 
 # Tell the configure script which versions of the boost libs to use.
-BOOST_SUFFIX="gcc41-mt-1_34_1"
+# BOOST_SUFFIX="gcc41-mt-1_34_1"
+BOOST_SUFFIX="mt"
 
 # Use a certain boost suffix. Hopefully it will stay the same on GNU/Debian.
-CONFIGURE_BOOST="--with-boost-date-time=$BOOST_SUFFIX --with-boost-filesystem=$BOOST_SUFFIX --with-boost-thread=$BOOST_SUFFIX --with-boost-regex=$BOOST_SUFFIX --with-boost-program_options=$BOOST_SUFFIX --with-boost-iostreams=$BOOST_SUFFIX"
+CONFIGURE_BOOST="--with-boost-system=$BOOST_SUFFIX --with-boost-date-time=$BOOST_SUFFIX --with-boost-filesystem=$BOOST_SUFFIX --with-boost-thread=$BOOST_SUFFIX --with-boost-regex=$BOOST_SUFFIX --with-boost-program_options=$BOOST_SUFFIX --with-boost-iostreams=$BOOST_SUFFIX"
 
 # Execute this configure command.
 CONFIGURE="./configure $STATIC --disable-static $DEBUG --enable-btg-config --enable-cli $GUI_CLIENT $GUI_VIEWER --enable-unittest --enable-session-saving --enable-command-list --enable-event-callback --enable-www --enable-url --enable-upnp --prefix=/pack/btg-cvs $CONFIGURE_BOOST"
@@ -117,6 +118,10 @@ case "$1" in
     $CONFIGURE --with-rblibtorrent=$ROOT/$1
     ;;
   svn)
+    # Libtorrent from SVN uses boost 1.3.5, where asio is included.
+    export CXXFLAGS="$CXXFLAGS -I/pack/boost-1.35.0/include"
+    export LDFLAGS="$LDFLAGS -L/pack/boost-1.35.0/lib"
+    export LD_LIBRARY_PATH=/pack/boost-1.35.0/lib
     export LIBTORRENT_CFLAGS="-I$ROOT/svn/include -I$ROOT/svn/include/libtorrent" && \
     export LIBTORRENT_LIBS="-L$ROOT/svn/lib -ltorrent" && \
     echo "Using $CONFIGURE";
