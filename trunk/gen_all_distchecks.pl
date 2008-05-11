@@ -1,14 +1,11 @@
 #!/usr/bin/perl
 
 # 
-# Generate a script that builts all the possible configurations.
+# Generate a script that executes distcheck for all the possible configurations.
 # 
 # 
-# Usage: ./gen_all_builds.pl > build_all.sh
+# Usage: ./gen_all_distchecks.pl > distcheck_all.sh
 # 
-# Execute build_all.sh, which will fail if one of the configurations
-# fail to compile.
-#
 # $Id$
 #
 
@@ -97,23 +94,32 @@ my @sets = subsets( @CONFIGURE_PARAMS );
 push @$_ => @PERMANENT_CONFIGURE_PARAMS foreach @sets;
 
 my $counter = 0;
+my $g_counter = 0;
 
-print "echo \"Building " . scalar(@sets) . " BTG configurations\" > build.log\n";
+print "echo \"distchecking " . scalar(@sets) . " (" . scalar(@sets)*scalar(@sets) . ") BTG configurations\" > distcheck.log\n";
 
 foreach ( @sets ) 
 {
     print "# $counter:\n";
     print "echo \"#$counter: Configure @$_\" && \\
-echo \"BTG config #$counter args: @$_\" >> build.log && \\
-./configure @$_ &> build$counter-configure.log && \\
+echo \"BTG config #$counter args: @$_\" >> distcheck.log && \\
+./configure @$_ &> distcheck$counter-configure.log && \\
 echo \"#$counter: make clean\" && \\
-make clean &> build$counter-make_clean.log && \\
-echo \"#$counter: make\" && \\
-make &> build$counter-make.log && \\
-echo \"BTG config #$counter built.\" >> build.log && \\
-echo \"#$counter: make done\" && \\
-echo \"BTG config #$counter built.\"
+make clean &> distcheck$counter-make_clean.log
 ";
+    foreach ( @sets )
+    {
+        my $dc_counter = 0;
+        print "# general config $g_counter:\n";
+        print "# distcheck $dc_counter:\n";
+        print "echo \"#$dc_counter: make distcheck DISTCHECK_CONFIGURE_FLAGS=\\\"@$_\\\"\" && \\
+echo \"BTG config #$counter distcheck$dc_counter\" >> distcheck.log && \\
+make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" &> distcheck$counter-make_distcheck$dc_counter.log && \\
+echo \"#$counter: make distcheck done\"
+";
+        $dc_counter++;
+	$g_counter++;
+    }
 
     $counter++;
 } 
