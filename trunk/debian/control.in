@@ -9,7 +9,7 @@ Package: btg-common@SUFFIX@
 Depends: libboost-date-time1.34.1, libboost-filesystem1.34.1, libboost-thread1.34.1, libboost-iostreams1.34.1, libboost-program-options1.34.1, libgnutls13 (>= 1.6), zlib1g (>= 1:1.2.3), dialog
 Conflicts: btg-common
 Recommends: btg-daemon@SUFFIX@ | btg-gui@SUFFIX@ | btg-cli@SUFFIX@
-Architecture: i386
+Architecture: i386 i586 i686 amd64
 Section: net
 Priority: extra
 Description: common files for BTG
@@ -24,7 +24,7 @@ Description: common files for BTG
 Package: btg-cli-common@SUFFIX@
 Depends: btg-common@SUFFIX@ (= @VERSION@)
 Recommends: btg-gui@SUFFIX@ | btg-cli@SUFFIX@
-Architecture: i386
+Architecture: i386 i586 i686 amd64
 Section: net
 Priority: extra
 Description: common files for BTG clients
@@ -39,7 +39,7 @@ Description: common files for BTG clients
 Package: btg-cli@SUFFIX@
 Depends: btg-cli-common@SUFFIX@ (= @VERSION@), libncurses5 (>= 5.6)
 Recommends: btg-gui@SUFFIX@
-Architecture: i386
+Architecture: i386 i586 i686 amd64
 Section: net
 Priority: extra
 Description: command line interface to the BTG daemon
@@ -53,7 +53,7 @@ Description: command line interface to the BTG daemon
 Package: btg-gui@SUFFIX@
 Depends: btg-cli-common@SUFFIX@ (= @VERSION@), libgtkmm-2.4 (>= 2.12) | libgtkmm-2.4-1c2a (>= 1:2.12)
 Recommends: btg-cli@SUFFIX@
-Architecture: i386
+Architecture: i386 i586 i686 amd64
 Section: net
 Priority: extra
 Description: GUI interface to the BTG daemon
@@ -81,7 +81,7 @@ Package: btg-daemon@SUFFIX@
 Depends: btg-common@SUFFIX@ (= @VERSION@), sysvutils, libclinkcc (>= 1.7.1), libtorrent-rasterbar (>= 0.13) | libtorrent-rasterbar-0.13
 Replaces: btg-daemon
 Recommends: btg-gui@SUFFIX@ | btg-cli@SUFFIX@ | btg-www@SUFFIX@
-Architecture: i386
+Architecture: i386 i586 i686 amd64
 Section: net
 Priority: extra
 Description: daemon for downloading BitTorrent streams
