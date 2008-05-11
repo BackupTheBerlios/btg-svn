@@ -64,7 +64,7 @@ class sBuffer extends BTGSerializable
 	public function deserialize(&$data)
 	{
 		$numBytes = 0;
-		$this->getBytes($data, $this->buffer, $numBytes);
+		$this->getBytes($this->buffer, $data, $numBytes);
 	}
 
 	public function toString()
