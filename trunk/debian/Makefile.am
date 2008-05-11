@@ -1,7 +1,7 @@
 EXTRA_DIST = \
-	README.this \
+	README \
 	extra/etc/btg/client.ini extra/etc/btg/daemon.ini extra/etc/btg/config.php \
-	extra/var/lib/btg/auth extra/var/lib/btg/sessions \
+	extra/var/lib/btg/auth \
 	compat \
 	btg-cli-common.install btg-cli.install btg-common.install btg-daemon.install btg-gui.install btg-www.install \
 	btg-daemon.init \

@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 
+use strict;
 # 
 # Generate a script that builts all the possible configurations.
 # 
@@ -10,9 +11,11 @@
 # fail to compile.
 
 # List of configure options.
-@CONFIGURE_PARAMS=("--enable-cli", "--enable-www", "--enable-debug", "--enable-unittest", "--enable-session-saving", "--enable-event-callback");
+my @CONFIGURE_PARAMS=("--enable-cli", "--enable-www", "--enable-debug", "--enable-unittest", "--enable-session-saving", "--enable-event-callback", " --enable-url");
 
-sub permute (@) 
+my @PERMANENT_CONFIGURE_PARAMS=@ARGV;
+
+sub permute (@)
 {
     if ( @_ <= 1 ) 
 	{
@@ -86,7 +89,9 @@ sub subsets
 
 my @sets = subsets( @CONFIGURE_PARAMS );
 
-$counter = 0;
+push @$_ => @PERMANENT_CONFIGURE_PARAMS foreach @sets;
+
+my $counter = 0;
 
 print "echo \"Building different BTG configurations ..\" >> build.log\n";
 

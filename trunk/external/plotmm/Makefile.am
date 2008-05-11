@@ -15,6 +15,6 @@ libplotmm_la_SOURCES = \
 	compat.h
 
 #libplotmm_la_CXXFLAGS = @PACKAGE_CFLAGS@ -I$(top_srcdir)/external
-libplotmm_la_CXXFLAGS = @PCM_GTKMM_CFLAGS@ -I$(top_srcdir)/external
+libplotmm_la_CXXFLAGS = @GTKMM_CFLAGS@ -I$(top_srcdir)/external
 
 # CLEANFILES = *~

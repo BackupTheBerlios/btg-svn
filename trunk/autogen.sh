@@ -10,8 +10,8 @@
 set -x
 set -e
 
-autoheader
 aclocal -I m4
+autoheader
 libtoolize -c -f
 automake --add-missing --copy --gnu
 autoconf

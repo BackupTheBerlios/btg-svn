@@ -413,9 +413,9 @@ AC_SUBST(BTG_DEBUG)
 AC_MSG_CHECKING([whether the GUI should be built])
 if test "$buildgui" == "true"; then
         AC_MSG_RESULT([yes])
-        PKG_CHECK_MODULES(PCM_GTKMM, gtkmm-2.4 >= 2.4.8)
-        AC_SUBST(PCM_GTKMM_CFLAGS)
-        AC_SUBST(PCM_GTKMM_LIBS)
+        PKG_CHECK_MODULES(GTKMM, gtkmm-2.4 >= 2.4.8)
+        AC_SUBST(GTKMM_CFLAGS)
+        AC_SUBST(GTKMM_LIBS)
 
         AC_CHECK_HEADERS(gtkmmconfig.h)
 else
