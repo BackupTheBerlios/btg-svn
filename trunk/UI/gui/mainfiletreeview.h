@@ -65,7 +65,7 @@ namespace btg
                            pixmap_size_x          = 200,
 
                            /// The height of the pixmap used to show pieces of a context.
-                           pixmap_size_y          = 100,
+                           pixmap_size_y          = 20,
                            
                            /// The number of pixels the pixmap used to show pieces of a context contains.
                            pixmap_bits_per_sample = 8

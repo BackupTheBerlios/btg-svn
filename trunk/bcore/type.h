@@ -102,15 +102,6 @@ typedef std::vector<std::string>::iterator       t_strListI;
 /// List of strings - const iterator.
 typedef std::vector<std::string>::const_iterator t_strListCI;
 
-/// List of bits.
-typedef std::vector<bool>                         t_bitList;
-
-/// List of bits - iterator.
-typedef std::vector<bool>::iterator               t_bitListI;
-
-/// List of bits - const iterator.
-typedef std::vector<bool>::const_iterator         t_bitListCI;
-
 /// Mapping (integer, string) - const iterator.
 typedef std::map<t_int, std::string>                  t_intStrMap;
 

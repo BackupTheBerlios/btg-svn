@@ -190,15 +190,17 @@ class fileInformation extends BTGSerializable
 		$this->uLongToBytes($a, $this->fileSize);
 		$this->intToBytes($a, $this->pieces_size);
 
-		if(($this->status == fileInformation::DONE_UNDEF) && ($this->pieces_size > 0))
+		if($this->status == fileInformation::DONE_UNDEF)
 		{
 			$bit_counter = 0;
 			$output = 0;
+			$data = "";
+
 			foreach($this->pieces as $piece)
 			{
 				if($bit_counter >= fileInformation::BITS_PER_BYTE)
 				{
-					$this->intToBytes($a, $output);
+					$data .= chr($output);
 					$output = 0;
 					$bit_counter = 0;
 				}
@@ -211,8 +213,11 @@ class fileInformation extends BTGSerializable
 
 			if($bit_counter > 0)
 			{
-				$this->intToBytes($a, $output);
+				$data .= chr($output);
 			}
+			
+			$this->intToBytes($a, $bit_counter);
+			$this->addBytes($a, $data, strlen($data));
 		}
 		return $a;
 	}
@@ -223,48 +228,46 @@ class fileInformation extends BTGSerializable
 		$this->bytesToInt($this->status, $data);
 		$this->bytesToInt($this->bytesPerPiece, $data);
 		$this->bytesToULong($this->fileSize, $data);
-		$this->bytesToInt($length, $data);
-
-		if($this->status == fileInformation::DONE_ALL || $this->status == fileInformation::DONE_NONE)
-			$this->pieces_size = $length;
-		else if($this->status == fileInformation::DONE_UNDEF)
+		$this->bytesToInt($this->pieces_size, $data);
+		
+		if($this->status == fileInformation::DONE_UNDEF)
 		{
-			$octets = $length / fileInformation::BITS_PER_BYTE;
-			$remainder = $length - ($octets * fileInformation::BITS_PER_BYTE);
+			$bytes = "";
+			$bits = 0;
+			$octets = 0;
+			$this->bytesToInt($bits, $data);
+			$this->getBytes($bytes, $data, $octets);
+
 			$this->pieces = array();
 
-			if($length  > 0)
+			$remainder =  $octets * fileInformation::BITS_PER_BYTE - $bits;
+			$octets -= $remainder ? 1 : 0;
+
+			if($octets > 0)
 			{
-				$bit_counter = 0;
-				$b=0;
 				for($i=0; $i < $octets; $i++)
 				{
-					$this->bytesToInt($b, $data);
+					$b = $bytes[$i];
 					for($n=0; $n < fileInformation::BITS_PER_BYTE; $n++)
 					{
 						if( (($b >> $n) & 1) == 1 )
 							$this->pieces[] = true;
 						else
 							$this->pieces[] = false;
-						$bit_counter++;
 					}
 				}
+			}
 
-				if($remainder > 0)
+			if($remainder > 0)
+			{
+				$b = $bytes[$octets];
+				for($n = 0; $n < $remainder; $n++)
 				{
-					$b=0;
-					$this->bytesToInt($b, $data);
-					for($n = 0; $n < $remainder; $n++)
-					{
-						if( (($b >> $n) & 1) == 1 )
-							$this->pieces[] = true;
-						else
-							$this->pieces[] = false;
-						$bit_counter++;
-					}
+					if( (($b >> $n) & 1) == 1 )
+						$this->pieces[] = true;
+					else
+						$this->pieces[] = false;
 				}
-
-				$this->pieces_size = $bit_counter;
 			}
 		}
 	}

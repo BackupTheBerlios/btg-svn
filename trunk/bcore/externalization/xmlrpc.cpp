@@ -364,7 +364,8 @@ namespace btg
             XMLRPC_VALUE v = getNextValue();
             if(XMLRPC_GetValueType(v) != xmlrpc_int)
                {
-                  return 0;
+                  failture();
+                  return false;
                }
 
             int res = XMLRPC_GetValueInt(v);
@@ -380,6 +381,7 @@ namespace btg
             BTG_ICHECK( genericSDTSerialize<t_uint>(&size) );
             if(size == 0)
                {
+                  success();
                   return true;
                }
 
@@ -387,6 +389,7 @@ namespace btg
                                     XMLRPC_RequestGetData(xmlrpc_request),
                                     XMLRPC_CreateValueBase64(NULL, reinterpret_cast<const char*>(_bytes), _size)
                                     );
+            success();
             return true;
          }
 
@@ -398,13 +401,15 @@ namespace btg
             BTG_ICHECK(genericSDTDeserialize<t_uint>(&_size));
             if(_size == 0)
                {
+                  success();
                   return true;
                }
 
             XMLRPC_VALUE v = getNextValue();
             if(XMLRPC_GetValueType(v) != xmlrpc_base64)
                {
-                  return 0;
+                  failture();
+                  return false;
                }
 
             // Determine size and get pointer
@@ -418,6 +423,7 @@ namespace btg
                   (*_bytes)[i] = p[i];
                }
 
+            success();
             return true;
          }
 

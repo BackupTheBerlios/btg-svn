@@ -30,6 +30,7 @@
 #include <bcore/serializable.h>
 #include <bcore/printable.h>
 #include <bcore/project.h>
+#include <bcore/bitvector.h>
 
 namespace btg
 {
@@ -64,7 +65,7 @@ namespace btg
                /// @param _bytesPerPiece How many bytes is represented by each piece.
                /// @param _file_size     Filesize in bytes.
                fileInformation(std::string const& _filename, 
-                               t_bitList const& _pieces, 
+                               t_bitVector const& _pieces, 
                                t_int const _bytesPerPiece, 
                                t_ulong const _file_size);
 
@@ -92,7 +93,7 @@ namespace btg
                std::string getFilename() const;
 
                /// Return the bits.
-               t_bitList getBits() const;
+               t_bitVector getBits() const;
 
                /// Used to convert this object to a byte array. This does not
                /// create a valid representation, since the session information
@@ -125,9 +126,9 @@ namespace btg
                /// The filename this class holds piece-info about.
                std::string    filename;
                /// The number of the pieces.
-               t_uint         pieces_size;
+               t_int          pieces_size;
                /// The pieces of this file.
-               t_bitList      pieces;
+               t_bitVector    pieces;
                /// The number of bytes each piece represents.
                t_int          bytesPerPiece;
                /// The exact file size.

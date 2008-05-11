@@ -92,6 +92,8 @@ extern "C"
 
 #include <bcore/logger/console_log.h>
 
+#include <bcore/bitvector.h>
+
 #include "files.h"
 
 #define buffer_size (t_int)1024
@@ -912,7 +914,7 @@ void testBcore::testFileInfo()
    t_uint const bytesPerPiece = 1024;
    t_ulong const filesize     = 1024 * 1024 * 1024;
 
-   std::vector<bool> boolvect;
+   t_bitVector boolvect;
 
    for (t_uint i=0; i<(bits / 2); i++)
       {
@@ -977,7 +979,7 @@ void testBcore::testFileInfoResponseCommand()
 {
    btg::core::commandFactory cf(logwrapper, *externalization);
 
-   std::vector<bool> boolvect;
+   t_bitVector boolvect;
 
    for (t_int i=0; i<256; i++)
       {
@@ -1762,6 +1764,29 @@ void testBcore::testPIDFile()
    }
 }
 
+void testBcore::test_bitvector()
+{
+   btg::core::bitvector bv1;
+   bv1.resize(100,false);
+   bv1[3] = true;
+   bv1[33] = true;
+   bv1[50] = true;
+   bv1[58] = true;
+   bv1[88] = true;
+   bv1[99] = true;
+   
+   std::string s = bv1.toString();
+   CPPUNIT_ASSERT(s.size() == bv1.size() / 8 + (bv1.size() % 8 ? 1 : 0) );
+   
+   btg::core::bitvector bv2;
+   bv2.fromString(s,bv1.size());
+   CPPUNIT_ASSERT(bv2 == bv1);
+   
+   bv1.erase(bv1.begin(), bv1.begin() + 30);
+   bv2.erase(bv2.begin(), bv2.begin() + 30);
+   CPPUNIT_ASSERT(bv1.toString() == bv2.toString());
+}
+
 void testBcore::XmlRpcSerializeDeserialize(btg::core::externalization::Externalization* _eSource,
                                            btg::core::externalization::Externalization* _eDestin)
 {
@@ -1954,7 +1979,7 @@ void testBcore::createCommands(std::vector<btg::core::Command*> & commands)
                       new contextFileInfoCommand(cid, false)
                       );
 
-   t_bitList pieces;
+   t_bitVector pieces;
    pieces.push_back(true);
    pieces.push_back(true);
    pieces.push_back(true);

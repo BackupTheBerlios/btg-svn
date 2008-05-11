@@ -447,9 +447,9 @@ namespace btg
                }
             else
                {
-                  t_bitList bl = _fi.getBits();
+                  t_bitVector bl = _fi.getBits();
 
-                  t_bitListCI iter;
+                  t_bitVectorCI iter;
                   t_uint bit_set = 0;
                   t_uint bit_unset = 0;
 

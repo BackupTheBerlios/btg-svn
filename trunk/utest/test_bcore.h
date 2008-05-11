@@ -90,6 +90,8 @@ class testBcore : public CppUnit::TestFixture
 
    CPPUNIT_TEST( testPIDFile );
 
+   CPPUNIT_TEST( test_bitvector );
+   
    CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -154,6 +156,9 @@ class testBcore : public CppUnit::TestFixture
    
    // test btg::core::os::PIDFile
    void testPIDFile();
+   
+   // the test for btg::core::bitvector
+   void test_bitvector();
  private:
    void createCommands(std::vector<btg::core::Command*> & commands);
    void destroyCommands(std::vector<btg::core::Command*> & commands);

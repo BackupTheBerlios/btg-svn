@@ -24,11 +24,6 @@
 #include <bcore/t_string.h>
 #include <bcore/helpermacro.h>
 
-// Macro to set a bit.
-#define set_bit(_src, _pos) { _src |= (1 << _pos);  }
-#define unset_bit(_src, _pos) { _src &= ~(1 << _pos); }
-#define BYTE_IN_BITS 7
-
 namespace btg
 {
    namespace core
@@ -74,7 +69,7 @@ namespace btg
       }
 
       fileInformation::fileInformation(std::string const& _filename, 
-                                       t_bitList const& _pieces, 
+                                       t_bitVector const& _pieces, 
                                        t_int const _bytesPerPiece, 
                                        t_ulong const _file_size)
          : Serializable(),
@@ -88,7 +83,7 @@ namespace btg
       {
          if (_pieces.size() > 0)
             {
-               t_bitListCI iter;
+               t_bitVectorCI iter;
                t_uint b_set = 0;
 
                for (iter = _pieces.begin(); 
@@ -170,58 +165,22 @@ namespace btg
          _e->intToBytes(&temp_status);
          BTG_RCHECK(_e->status());
 
-         t_int temp_bytesPerPiece = this->bytesPerPiece;
-         _e->intToBytes(&temp_bytesPerPiece);
+         _e->intToBytes(&this->bytesPerPiece);
          BTG_RCHECK(_e->status());
 
-         t_ulong temp_exactSize = this->fileSize;
-         _e->uLongToBytes(&temp_exactSize);
+         _e->uLongToBytes(&this->fileSize);
          BTG_RCHECK(_e->status());
 
          // Length, in bits.
-         t_int length         = pieces_size;
-         _e->intToBytes(&length);
+         _e->intToBytes(&this->pieces_size);
          BTG_RCHECK(_e->status());
 
-         if ((status == fileInformation::DONE_UNDEF) && (pieces_size > 0))
-            {
-               t_uint bit_counter = 0;
-               t_byte output      = 0;
+         if (status == fileInformation::DONE_UNDEF)
+         {
+            pieces.serialize(_e);
+            BTG_RCHECK(_e->status());
+         }
 
-               t_bitListCI iter = pieces.begin();
-
-               for (t_uint i=0; i<pieces_size; i++)
-                  {
-                     if (bit_counter >= BYTE_IN_BITS)
-                        {
-                           // Write one octet.
-                           _e->addByte(output);
-                           BTG_RCHECK(_e->status());
-
-                           bit_counter = 0;
-                           output      = 0;
-                        }
-
-
-                     if (*iter)
-                        {
-                           set_bit(output, bit_counter);
-                        }
-                     else
-                        {
-                           unset_bit(output, bit_counter);
-                        }
-
-                     iter++;
-                     bit_counter++;
-                  } // for
-
-               if (bit_counter > 0)
-                  {
-                     _e->addByte(output);
-                     BTG_RCHECK(_e->status());
-                  }
-            }
          return true;
       }
 
@@ -234,92 +193,23 @@ namespace btg
          t_int temp_status = 0;
          _e->bytesToInt(&temp_status);
          BTG_RCHECK(_e->status());
+         this->status = (bitsetModifier)temp_status;
 
-         t_int temp_bytesPerPiece = 0;
-         _e->bytesToInt(&temp_bytesPerPiece);
+         _e->bytesToInt(&this->bytesPerPiece);
          BTG_RCHECK(_e->status());
-         this->bytesPerPiece = temp_bytesPerPiece;
 
-         t_ulong temp_exactSize = 0;
-         _e->bytesToULong(&temp_exactSize);
+         _e->bytesToULong(&this->fileSize);
          BTG_RCHECK(_e->status());
-         this->fileSize = temp_exactSize;
 
          // Length, in bits.
-         t_int length       = 0;
-         _e->bytesToInt(&length);
+         _e->bytesToInt(&this->pieces_size);
          BTG_RCHECK(_e->status());
 
-         switch(temp_status)
-            {
-            case fileInformation::DONE_ALL:
-               this->status      = fileInformation::DONE_ALL;
-               this->pieces_size = length;
-               break;
-            case fileInformation::DONE_NONE:
-               this->status = fileInformation::DONE_NONE;
-               this->pieces_size = length;
-               break;
-            case fileInformation::DONE_UNDEF:
-               this->status = fileInformation::DONE_UNDEF;
-               break;
-            }
-
-         if (this->status == fileInformation::DONE_UNDEF)
-            {
-               t_uint octets    = length / BYTE_IN_BITS;
-               t_uint remainder = length - (octets * BYTE_IN_BITS);
-               t_byte b;
-
-               if (length > 0)
-                  {
-                     t_uint bit_counter = 0;
-
-                     for (t_uint i=0; i< octets; i++)
-                        {
-                           _e->getByte(b);
-                           BTG_RCHECK(_e->status());
-
-                           for (t_uint n = 0; n < BYTE_IN_BITS; n++)
-                              {
-                                 if (((b >> n) & 1) == 1)
-                                    {
-                                       pieces.push_back(true);
-                                    }
-                                 else
-                                    {
-                                       pieces.push_back(false);
-                                    }
-                                 bit_counter++;
-                              }
-                           b = 0;
-                        }
-
-                     if (remainder > 0)
-                        {
-                           t_uint left = length - (octets * BYTE_IN_BITS);
-                           b = 0;
-
-                           _e->getByte(b);
-                           BTG_RCHECK(_e->status());
-
-                           for (t_uint n = 0; n < left; n++)
-                              {
-                                 if (((b >> n) & 1) == 1)
-                                    {
-                                       this->pieces.push_back(true);
-                                    }
-                                 else
-                                    {
-                                       this->pieces.push_back(false);
-                                    }
-                                 bit_counter++;
-                              }
-                        } // if any bits are left.
-
-                     this->pieces_size = bit_counter;
-                  } // length greater than zero.
-            }
+         if (status == fileInformation::DONE_UNDEF)
+         {
+            pieces.deserialize(_e);
+            BTG_RCHECK(_e->status());
+         }
 
          return true;
       }
@@ -334,7 +224,7 @@ namespace btg
          return filename;
       }
 
-      t_bitList fileInformation::getBits() const
+      t_bitVector fileInformation::getBits() const
       {
          if ((this->status != fileInformation::DONE_ALL) && 
              (this->status != fileInformation::DONE_NONE))
@@ -342,18 +232,18 @@ namespace btg
                return pieces;
             }
 
-         t_bitList list_to_return;
+         t_bitVector list_to_return;
 
          if (this->status == fileInformation::DONE_ALL)
             {
-               for (t_uint i=0; i<this->pieces_size; i++)
+               for (t_int i=0; i<this->pieces_size; i++)
                   {
                      list_to_return.push_back(1);
                   }
             }
          else if (this->status == fileInformation::DONE_NONE)
             {
-               for (t_uint i=0; i<this->pieces_size; i++)
+               for (t_int i=0; i<this->pieces_size; i++)
                   {
                      list_to_return.push_back(0);
                   }
@@ -407,7 +297,7 @@ namespace btg
                      {
                         t_uint const max_char = lineWidth;
                         t_uint charcount      = 0;
-                        t_bitListCI iter;
+                        t_bitVectorCI iter;
 
                         for (iter = pieces.begin(); iter != pieces.end(); iter++)
                            {

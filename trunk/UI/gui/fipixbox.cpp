@@ -114,7 +114,7 @@ namespace btg
          {
             this->findSizes();
 
-            t_bitListCI bitIter = this->bits.begin();
+            t_bitVectorCI bitIter = this->bits.begin();
 
             int x = 0;
             int y = 0;

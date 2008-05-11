@@ -166,7 +166,7 @@ int main(int argc, char* argv[])
    // Command::CN_CFILEINFORSP
 
    t_fileInfoList fileinfolist;
-   t_bitList pieces;
+   t_bitVector pieces;
    pieces.push_back(true);
    pieces.push_back(false);
    pieces.push_back(false);

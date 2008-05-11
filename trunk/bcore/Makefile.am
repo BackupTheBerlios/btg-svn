@@ -120,7 +120,8 @@ $(COMMAND_SOURCES) \
 command_factory.cpp \
 $(LOGGER_SOURCES) \
 $(EXTERNALIZATION_SOURCES) \
-$(AUTH_SOURCES)
+$(AUTH_SOURCES) \
+bitvector.cpp
 
 libbtgcore_la_LIBADD = $(top_builddir)/external/xmlrpc-epi/src/libxmlrpc.la
 
@@ -230,7 +231,8 @@ $(COMMAND_HEADER) \
 command_factory.h \
 $(LOGGER_HEADER) \
 $(EXTERNALIZATION_HEADER) \
-$(AUTH_HEADER)
+$(AUTH_HEADER) \
+bitvector.h
 
 AM_CFLAGS           = @CFLAGS@   @DEBUG_CFLAGS@ \
                     -DBTG_DEBUG=@BTG_DEBUG@ \

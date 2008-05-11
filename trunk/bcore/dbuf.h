@@ -23,7 +23,7 @@
 #ifndef DBUF_H
 #define DBUF_H
 
-#include "type.h"
+#include <bcore/type.h>
 
 #include <vector>
 

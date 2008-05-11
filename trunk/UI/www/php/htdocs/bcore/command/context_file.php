@@ -55,21 +55,21 @@ class contextSetFilesCommand extends contextCommand
 
 	public function deserialize(&$data)
 	{
-      parent::deserialize($data);
+		parent::deserialize($data);
 
-      // Size of the list.
+		// Size of the list.
 		$size = 0;
 		$this->bytesToInt($size, $data);
 
-      syslog(LOG_DEBUG, "Got ".$size." selected file entries.");
+		syslog(LOG_DEBUG, "Got ".$size." selected file entries.");
 
-      // Each entry.
+		// Each entry.
 		for($i = 0; $i < $size; $i++)
 		{
 			$entry = new selectedFileEntry();
 			$entry->deserialize($data);
 
-         syslog(LOG_DEBUG, "Entry ".$entry->getFilename());
+			syslog(LOG_DEBUG, "Entry ".$entry->getFilename());
 
 			$this->filelist[] = $entry;
 		}

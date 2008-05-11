@@ -1403,8 +1403,8 @@ namespace btg
                      }
                   else
                      {
-                        t_bitList bitlist = iter->getBits();
-                        t_bitListCI piece_iter;
+                        t_bitVector bitlist = iter->getBits();
+                        t_bitVectorCI piece_iter;
                         for (piece_iter = bitlist.begin(); piece_iter != bitlist.end(); piece_iter++)
                            {
                               if (*piece_iter)

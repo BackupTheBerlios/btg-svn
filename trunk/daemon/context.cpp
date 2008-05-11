@@ -1412,7 +1412,7 @@ namespace btg
                            continue;
                         }
 
-                     t_bitList filepieces;
+                     t_bitVector filepieces;
                      t_ulong current_size = 0;
                      do
                         {

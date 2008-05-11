@@ -24,7 +24,7 @@
 #define FILEINFOPIXBOX_H
 
 #include <gtkmm.h>
-#include <bcore/type.h>
+#include <bcore/bitvector.h>
 
 namespace btg
 {
@@ -103,7 +103,7 @@ namespace btg
 
                      /// Copy of the bits from the fileInformation
                      /// object given in constructor.
-                     t_bitList                  bits;
+                     t_bitVector                  bits;
 
                      /// Number of bits.
                      int                        fileinfoSize;
