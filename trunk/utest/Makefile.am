@@ -81,7 +81,10 @@ testrunner_LDADD   = $(top_builddir)/bcore/libbtgcore.la $(BCORE_CLIENT_TEST_LIB
                      $(top_builddir)/external/ini/libini.la \
                      $(top_builddir)/bcore/libbtgcore.la
 
-testrunner_LDFLAGS  = @LIBS@ $(CPPUNIT_LIBS) @LIBTORRENT_LIBS@ @BOOST_IOSTREAMS_LIB@ @BOOST_FILESYSTEM_LIB@ @LIBGNUTLS_LIBS@ $(URL_LIBS)
+testrunner_LDFLAGS  = @LIBS@ $(CPPUNIT_LIBS) @LIBTORRENT_LIBS@ @BOOST_SYSTEM_LIB@ \
+                      @BOOST_IOSTREAMS_LIB@ @BOOST_FILESYSTEM_LIB@ \
+                      @BOOST_PROGRAM_OPTIONS_LIB@ @BOOST_THREAD_LIB@ \
+                      @LIBGNUTLS_LIBS@ $(URL_LIBS)
 
 testrunner_CFLAGS   = @CFLAGS@   $(CPPUNIT_CFLAGS) @LIBTORRENT_CFLAGS@ @LIBGNUTLS_CFLAGS@ \
                       -DBTG_DEBUG=@BTG_DEBUG@ \

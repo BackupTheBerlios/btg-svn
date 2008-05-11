@@ -67,7 +67,7 @@ bin_PROGRAMS = btgdaemon
 btgdaemon_SOURCES = btgdaemon.cpp daemon.c
 
 if BUILDCYBERLINK
-  CYBERLINK_LDADD = @CYBERLINK_LIBS@
+  CYBERLINKLDFLAGS = @CYBERLINK_LIBS@
 endif
 
 if BUILDURL
@@ -81,9 +81,11 @@ btgdaemon_LDADD   = $(top_builddir)/bcore/libbtgcore.la \
                     $(top_builddir)/daemon/auth/libauth.la \
                     $(top_builddir)/external/ini/libini.la \
                     $(top_builddir)/bcore/libbtgcore.la \
-                    @LIBS@ @LIBTORRENT_LIBS@ @BOOST_SYSTEM_LIB@ @BOOST_IOSTREAMS_LIB@ \
-                    @LIBGNUTLS_LIBS@ \
-                    @BOOST_PROGRAM_OPTIONS_LIB@ $(URL_LIBS) $(UPNP_LDADD) $(CYBERLINK_LDADD) $(HTTP_LDADD)
+                    $(UPNP_LDADD) $(HTTP_LDADD)
+
+btgdaemon_LDFLAGS = @LIBS@ @LIBTORRENT_LIBS@ @BOOST_SYSTEM_LIB@ @BOOST_IOSTREAMS_LIB@ \
+                    @LIBGNUTLS_LIBS@ @BOOST_THREAD_LIB@ @BOOST_FILESYSTEM_LIB@ \
+                    @BOOST_PROGRAM_OPTIONS_LIB@ $(URL_LIBS) $(CYBERLINKLDFLAGS)
 
 btgdaemon_CFLAGS   = @CFLAGS@   @DEBUG_CFLAGS@ @LIBGNUTLS_CFLAGS@ \
 -DBTG_DEBUG=@BTG_DEBUG@ -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \
