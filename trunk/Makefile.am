@@ -11,12 +11,8 @@ gentoo/README
 
 EXTRA_DIST = AUTHORS TODO README configure menuconfig.sh autogen.sh setup.sh
 
-# Cannot use --enable-all flag here, as installation of www ui borkes
-# distcheck.
-# The reason is that the www ui install rules install data files in
-# quite unexpected locations.
-
-DISTCHECK_CONFIGURE_FLAGS = --enable-gui --enable-cli --enable-debug --enable-unittest --enable-session-saving --enable-event-callback
+# Taking it from the environment
+# DISTCHECK_CONFIGURE_FLAGS = --with-boost-iostreams=mt --with-boost-filesystem=mt --with-boost-date-time=mt --with-boost-thread=mt --with-boost-program-options=mt
 
 doxygen:
 	cd doc && $(MAKE) doxygen

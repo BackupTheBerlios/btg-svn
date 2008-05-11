@@ -485,5 +485,7 @@ void testDaemon::testHttpDownload()
    CPPUNIT_ASSERT(buffer2.size() > 0);
 
    std::cout << "Got bytes: " << buffer2.size() << std::endl;
+   
+   CPPUNIT_ASSERT(unlink("test2.torrent") != -1);
 }
 #endif // BTG_OPTION_URL
