@@ -107,9 +107,9 @@ echo \"BTG config #$counter args: @$_\" >> distcheck.log && \\
 echo \"#$counter: make clean\" && \\
 make clean &> distcheck$counter-make_clean.log
 ";
+    my $dc_counter = 0;
     foreach ( @sets )
     {
-        my $dc_counter = 0;
         print "# general config $g_counter:\n";
         print "# distcheck $dc_counter:\n";
         print "echo \"#$dc_counter: make distcheck DISTCHECK_CONFIGURE_FLAGS=\\\"@$_\\\"\" && \\
