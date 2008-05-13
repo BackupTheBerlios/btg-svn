@@ -571,34 +571,12 @@ that `Bash`_ is installed and used to execute the configure
 script. `Bash`_ should also be used for generating the configure
 script by the way of autogen.sh.
 
-`GNU Make`_ should be used instead of the native make. `GNU Make`_ can be
-installed from ports and is as far as I know is called "gmake".
-
-Most of the build process appears to work using the native FreeBSD
-make with the exception of running unittests. One of the steps leading
-up to executing the tests is not executed (creating files and
-directories) and makes two of the unittests to fail.
-
-If make fails on FreeBSD (observed on 6.2) with
-
-::
-
- "libbtgcore.so: undefined reference to `backtrace_symbols'"
-
-and the libexecinfo (provides the execinfo.h header) package is
-installed, use the following linker flags before running the configure
-script:
-
-::
-
-  LDFLAGS="-L/usr/local/lib -lexecinfo"
-
 Notice that the native FreeBSD dialog used by btg-config does not work
-- it does not implement --fselect. So use cdialog from ports instead.
+- it does not implement --fselect (and some other options).
+So use cdialog from ports instead.
 
 .. _Tcsh: http://www.tcsh.org
 .. _Bash: http://www.gnu.org/software/bash/
-.. _GNU Make: http://www.gnu.org/software/make/
 
 Rasterbar Libtorrent Versions
 =============================
