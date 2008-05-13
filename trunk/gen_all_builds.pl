@@ -16,7 +16,7 @@
 use strict;
 
 # List of configure options.
-my @CONFIGURE_PARAMS=("--enable-cli", "--enable-www", "--enable-debug", "--enable-unittest", "--enable-session-saving", "--enable-event-callback", " --enable-url");
+my @CONFIGURE_PARAMS=("--enable-cli", "--enable-www", "--enable-debug", "--enable-unittest", "--enable-session-saving", "--enable-event-callback", " --enable-url", "--enable-viewer");
 
 my @PERMANENT_CONFIGURE_PARAMS=@ARGV;
 
@@ -102,8 +102,8 @@ print "echo \"Building " . scalar(@sets) . " BTG configurations\" > build.log\n"
 
 foreach ( @sets ) 
 {
-    print "# $counter:\n";
-    print "echo \"#$counter: Configure @$_\" && \\
+    print "# $counter:
+echo \"#$counter: Configure @$_\" && \\
 echo \"BTG config #$counter args: @$_\" >> build.log && \\
 ./configure @$_ &> build$counter-configure.log && \\
 echo \"#$counter: make clean\" && \\
@@ -114,6 +114,5 @@ echo \"BTG config #$counter built.\" >> build.log && \\
 echo \"#$counter: make done\" && \\
 echo \"BTG config #$counter built.\"
 ";
-
     $counter++;
 } 

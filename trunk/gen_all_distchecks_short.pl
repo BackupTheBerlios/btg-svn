@@ -94,31 +94,21 @@ my @sets = subsets( @CONFIGURE_PARAMS );
 push @$_ => @PERMANENT_CONFIGURE_PARAMS foreach @sets;
 
 my $counter = 0;
-my $g_counter = 0;
 
-print "echo \"distchecking " . scalar(@sets) . " (" . scalar(@sets)*scalar(@sets) . ") BTG configurations\" > distcheck.log\n";
+print "echo \"distchecking " . scalar(@sets) . " BTG configurations\" > distcheck_short.log\n";
 
 foreach ( @sets ) 
 {
-    print "# $counter:\n";
-    print "echo \"#$counter: Configure @$_\" && \\
-echo \"BTG config #$counter args: @$_\" >> distcheck.log && \\
-./configure @$_ &> distcheck$counter-configure.log && \\
+    print "# $counter:
+echo \"#$counter: Configure @$_\" && \\
+echo \"BTG config #$counter args: @$_\" >> distcheck_short.log && \\
+./configure @$_ &> distcheck_short$counter-configure.log && \\
 echo \"#$counter: make clean\" && \\
-make clean &> distcheck$counter-make_clean.log
-";
-    my $dc_counter = 0;
-    foreach ( @sets )
-    {
-        print "# general config $g_counter:\n";
-        print "# distcheck $dc_counter:\n";
-        print "echo \"#$dc_counter: make distcheck DISTCHECK_CONFIGURE_FLAGS=\\\"@$_\\\"\" && \\
-echo \"BTG config #$counter distcheck$dc_counter\" >> distcheck.log && \\
-make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" &> distcheck$counter-make_distcheck$dc_counter.log && \\
+make clean &> distcheck_short$counter-make_clean.log
+echo \"#$counter: make distcheck DISTCHECK_CONFIGURE_FLAGS=\\\"@$_\\\"\" && \\
+echo \"BTG config #$counter distcheck$counter\" >> distcheck_short.log && \\
+make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" &> distcheck_short$counter-make_distcheck.log && \\
 echo \"#$counter: make distcheck done\"
 ";
-        $dc_counter++;
-	$g_counter++;
-    }
     $counter++;
 } 
