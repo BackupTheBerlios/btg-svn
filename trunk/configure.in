@@ -45,15 +45,14 @@ case "${target}" in
                 CPPFLAGS="$CPPFLAGS -I/usr/local/include"
                 CFLAGS="$CFLAGS -I/usr/local/include"
                 LDFLAGS="$LDFLAGS -L/usr/local/lib"
-                export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
+		#LIBS="$LIBS -lpthread" enable it if doesn't work without
                 ;;
         *-*-freebsd*)
                 AC_MSG_NOTICE([Enabling FreeBSD non-7 specific settings])
                 CPPFLAGS="$CPPFLAGS -I/usr/local/include"
                 CFLAGS="$CFLAGS -I/usr/local/include"
                 LDFLAGS="$LDFLAGS -L/usr/local/lib"
-		LIBS="-lc_r"
-                export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
+		LIBS="$LIBS -lc_r -lpthread"
                 ;;
         *)
                 ;;
