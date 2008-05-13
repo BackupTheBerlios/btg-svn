@@ -28,14 +28,14 @@
 
 #include "logmacro.h"
 
-#if HAVE_EXECINFO_H
+#if HAVE_EXECINFO
 extern "C"
 {
 #include <execinfo.h>
 #include <stdio.h>
 #include <stdlib.h>
 }
-#endif // HAVE_EXECINFO_H
+#endif // HAVE_EXECINFO
 
 #include <iostream>
 
@@ -62,7 +62,7 @@ namespace btg
 
       void crashLog::printStackTrace()
       {
-#if HAVE_EXECINFO_H
+#if HAVE_EXECINFO
          // Print a stacktrace using libc.
          // The printed addresses can be translated into file lines
          // with:
@@ -83,7 +83,7 @@ namespace btg
                std::cerr << "Frame " << i << ": " << strings[i] << std::endl;
             }
          free (strings);
-#endif // HAVE_EXECINFO_H
+#endif // HAVE_EXECINFO
       }
 
 

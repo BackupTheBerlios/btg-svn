@@ -40,33 +40,56 @@ PKG_PROG_PKG_CONFIG(0.15)
 
 dnl FBsd wants special paths
 case "${target}" in
-        *-*-freebsd8*)
-                AC_MSG_NOTICE([Enabling FreeBSD 8 specific settings])
-                # FreeBSD
-                CPPFLAGS="$CPPFLAGS -pthread -I/usr/local/include"
-                CFLAGS="$CPPFLAGS -I/usr/local/include"
-                LDFLAGS="$LDFLAGS -L/usr/local/lib -lpthread -lexecinfo"
-                export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
-                ;;
-        *-*-freebsd7*)
-                AC_MSG_NOTICE([Enabling FreeBSD 7 specific settings])
-                # FreeBSD
-                CPPFLAGS="$CPPFLAGS -pthread -I/usr/local/include"
-                CFLAGS="$CPPFLAGS -I/usr/local/include"
-                LDFLAGS="$LDFLAGS -L/usr/local/lib -lpthread -lexecinfo"
+	*-*-freebsd7* | *-*-freebsd8*)
+                AC_MSG_NOTICE([Enabling FreeBSD 7/8 specific settings])
+                CPPFLAGS="$CPPFLAGS -I/usr/local/include"
+                CFLAGS="$CFLAGS -I/usr/local/include"
+                LDFLAGS="$LDFLAGS -L/usr/local/lib"
                 export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
                 ;;
         *-*-freebsd*)
                 AC_MSG_NOTICE([Enabling FreeBSD non-7 specific settings])
-                # FreeBSD
-                CPPFLAGS="$CPPFLAGS -pthread -I/usr/local/include"
-                CFLAGS="$CPPFLAGS -I/usr/local/include"
-                LDFLAGS="$LDFLAGS -L/usr/local/lib -lc_r -lpthread"
+                CPPFLAGS="$CPPFLAGS -I/usr/local/include"
+                CFLAGS="$CFLAGS -I/usr/local/include"
+                LDFLAGS="$LDFLAGS -L/usr/local/lib"
+		LIBS="-lc_r"
                 export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
                 ;;
         *)
                 ;;
 esac
+
+# execinfo detection
+AC_MSG_CHECKING([for execinfo (backtrace* functions) in libc])
+AC_TRY_LINK([
+	#include <execinfo.h>
+],[
+	backtrace(0, 0);
+	backtrace_symbols(0, 0);
+	return 0;
+],[
+	AC_MSG_RESULT([yes])
+	AC_DEFINE([HAVE_EXECINFO],[1],[Execinfo detected and can be used.])
+],[
+	AC_MSG_RESULT([no])
+	SAVE_LIBS=$LIBS
+	LIBS="$LIBS -lexecinfo"
+	AC_MSG_CHECKING([for execinfo in libexecinfo])
+	AC_TRY_LINK([
+		#include <execinfo.h>
+	],[
+		backtrace(0, 0);
+		backtrace_symbols(0, 0);
+		return 0;
+	],[
+		AC_MSG_RESULT([yes])
+		AC_DEFINE([HAVE_EXECINFO],[1],[Execinfo detected and can be used.])
+	],[
+		AC_MSG_RESULT([no])
+		LIBS=$SAVE_LIBS
+	])
+])
+
 
 dnl Used in the script in the script directory.
 AC_PATH_PROGS(BASH, bash)
@@ -117,8 +140,6 @@ fi
 AC_CXX_HAVE_SSTREAM
 AC_CXX_HAVE_STD
 AC_CXX_HAVE_VECTOR_AT
-
-AC_CHECK_HEADERS(execinfo.h)
 
 AC_LANG_CPLUSPLUS
 AC_CHECK_HEADERS(streambuf   ostream   iostream   fstream   sstream ios_base)
