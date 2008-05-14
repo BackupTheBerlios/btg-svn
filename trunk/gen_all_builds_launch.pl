@@ -104,7 +104,7 @@ while(my $dentry = readdir $d)
 	kill 'SIGUSR1', $pid; # launch it
 }
 
-while(scalar keys %pids >= $forks)
+while(scalar keys %pids)
 {
 	waitpids();
 	sleep 1;
