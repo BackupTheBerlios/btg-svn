@@ -14,13 +14,40 @@
 
 
 use strict;
+use warnings;
+use Cwd qw(getcwd);
 
 # List of configure options.
 my @CONFIGURE_PARAMS=("--enable-cli", "--enable-www", "--enable-debug", "--enable-unittest", "--enable-session-saving", "--enable-event-callback", " --enable-url", "--enable-viewer");
 
+my $mode = $ARGV[0];
+my $dir = "";
+my $curdir = getcwd(); # the dir with configure script
+if ($mode eq "help" || $mode eq "-h")
+{
+	print "USAGE: $0 [build|distcheck|distcheck_short|build_parallel <dir>|distcheck_parallel <dir>|distcheck_short_parallel <dir>] [permanent configure params ...]\n";
+	exit 1;
+}
+elsif ($mode eq "build" || $mode eq "distcheck" || $mode eq "distcheck_short")
+{
+	shift;
+}
+elsif ($mode eq "build_parallel" || $mode eq "distcheck_parallel" || $mode eq "distcheck_short_parallel")
+{
+	shift;
+	$dir = shift or die "You have to set directory. See usage.";
+	print STDERR "directory \"$dir\" is like configure parameter!\n" if $dir =~ /^\-\-/;
+	mkdir $dir or die "Can't create dir \"$dir\"";
+}
+else
+{
+	# default
+	$mode = "build";
+}
+
 my @PERMANENT_CONFIGURE_PARAMS=@ARGV;
 
-sub permute (@)
+sub permute
 {
     if ( @_ <= 1 ) 
 	{
@@ -96,13 +123,15 @@ my @sets = subsets( @CONFIGURE_PARAMS );
 
 push @$_ => @PERMANENT_CONFIGURE_PARAMS foreach @sets;
 
-my $counter = 0;
-
-print "echo \"Building " . scalar(@sets) . " BTG configurations\" > build.log\n";
-
-foreach ( @sets ) 
+if ($mode eq "build")
 {
-    print "# $counter:
+	my $counter = 0;
+
+	print "echo \"Building " . scalar(@sets) . " BTG configurations\" > build.log\n";
+
+	foreach ( @sets ) 
+	{
+		print "# $counter:
 echo \"#$counter: Configure @$_\" && \\
 echo \"BTG config #$counter args: @$_\" >> build.log && \\
 ./configure @$_ &> build$counter-configure.log && \\
@@ -111,8 +140,143 @@ make clean &> build$counter-make_clean.log && \\
 echo \"#$counter: make\" && \\
 make &> build$counter-make.log && \\
 echo \"BTG config #$counter built.\" >> build.log && \\
-echo \"#$counter: make done\" && \\
-echo \"BTG config #$counter built.\"
+echo \"#$counter: make done\"
 ";
-    $counter++;
+		$counter++;
+	}
+}
+elsif ($mode eq "distcheck")
+{
+	my $counter = 0;
+	my $g_counter = 0;
+
+	print "echo \"distchecking " . scalar(@sets) . " (" . scalar(@sets)*scalar(@sets) . ") BTG configurations\" > distcheck.log\n";
+
+	foreach ( @sets ) 
+	{
+		print "# $counter:
+echo \"#$counter: Configure @$_\" && \\
+echo \"BTG config #$counter args: @$_\" >> distcheck.log && \\
+./configure @$_ &> distcheck$counter-configure.log && \\
+echo \"#$counter: make clean\" && \\
+make clean &> distcheck$counter-make_clean.log
+";
+		my $dc_counter = 0;
+		foreach ( @sets )
+		{
+			print "# general config $g_counter:
+# distcheck $dc_counter:
+echo \"#$dc_counter: make distcheck DISTCHECK_CONFIGURE_FLAGS=\\\"@$_\\\"\" && \\
+echo \"BTG config #$counter distcheck$dc_counter\" >> distcheck.log && \\
+make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" &> distcheck$counter-make_distcheck$dc_counter.log && \\
+echo \"#$counter: make distcheck done\"
+";
+			$dc_counter++;
+			$g_counter++;
+		}
+		$counter++;
+	}
+} 
+elsif ($mode eq "distcheck_short")
+{
+	my $counter = 0;
+
+	print "echo \"distchecking " . scalar(@sets) . " BTG configurations\" > distcheck_short.log\n";
+
+	foreach ( @sets ) 
+	{
+		print "# $counter:
+echo \"#$counter: Configure @$_\" && \\
+echo \"BTG config #$counter args: @$_\" >> distcheck_short.log && \\
+./configure @$_ &> distcheck_short$counter-configure.log && \\
+echo \"#$counter: make clean\" && \\
+make clean &> distcheck_short$counter-make_clean.log
+echo \"#$counter: make distcheck DISTCHECK_CONFIGURE_FLAGS=\\\"@$_\\\"\" && \\
+echo \"BTG config #$counter distcheck$counter\" >> distcheck_short.log && \\
+make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" &> distcheck_short$counter-make_distcheck.log && \\
+echo \"#$counter: make distcheck done\"
+";
+		$counter++;
+	}
+} 
+elsif ($mode eq "build_parallel")
+{
+	my $counter = 0;
+
+	foreach ( @sets ) 
+	{
+		mkdir "$dir/build$counter" or die "Can't create dir \"$dir/build$counter\"";
+		
+		my $f;
+		open $f,">$dir/build$counter/.launch" or die "Can't create file \"$dir/build$counter/.launch\"";
+		print $f "# $counter:
+echo \"#$counter: Configure @$_\" && \\
+$curdir/configure @$_ &> build-configure.log && \\
+echo \"#$counter: make clean\" && \\
+make clean &> build-make_clean.log && \\
+echo \"#$counter: make\" && \\
+make &> build-make.log && \\
+echo \"#$counter: make done\"
+";
+		close $f;
+		$counter++;
+	}
+}
+elsif ($mode eq "distcheck_parallel")
+{
+	my $counter = 0;
+	my $g_counter = 0;
+
+	foreach ( @sets ) 
+	{
+		my $dc_counter = 0;
+		foreach ( @sets )
+		{
+			mkdir "$dir/distcheck$counter-$dc_counter" or die "Can't create dir \"$dir/distcheck$counter-$dc_counter\"";
+
+			my $f;
+			open $f,">$dir/distcheck$counter-$dc_counter/.launch" or die "Can't create file \"$dir/distcheck$counter-$dc_counter/.launch\"";
+
+			print $f "# $counter:
+echo \"#$counter: Configure @$_\" && \\
+$curdir/configure @$_ &> distcheck-configure.log && \\
+echo \"#$counter: make clean\" && \\
+make clean &> distcheck-make_clean.log
+# general config $g_counter:
+# distcheck $dc_counter:
+echo \"#$dc_counter: make distcheck DISTCHECK_CONFIGURE_FLAGS=\\\"@$_\\\"\" && \\
+make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" &> distcheck-make_distcheck.log && \\
+echo \"#$counter: make distcheck done\"
+";
+			close $f;
+			
+			$dc_counter++;
+			$g_counter++;
+		}
+		$counter++;
+	}
+} 
+elsif ($mode eq "distcheck_short_parallel")
+{
+	my $counter = 0;
+
+	foreach ( @sets ) 
+	{
+		mkdir "$dir/distcheck_short$counter" or die "Can't create dir \"$dir/distcheck_short$counter\"";
+
+		my $f;
+		open $f,">$dir/distcheck_short$counter/.launch" or die "Can't create file \"$dir/distcheck_short$counter/.launch\"";
+
+		print $f "# $counter:
+echo \"#$counter: Configure @$_\" && \\
+$curdir/configure @$_ &> distcheck_short-configure.log && \\
+echo \"#$counter: make clean\" && \\
+make clean &> distcheck_short-make_clean.log
+echo \"#$counter: make distcheck DISTCHECK_CONFIGURE_FLAGS=\\\"@$_\\\"\" && \\
+make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" &> distcheck_short-make_distcheck.log && \\
+echo \"#$counter: make distcheck done\"
+";
+		close $f;		
+		$counter++;
+	}
 } 

@@ -9,7 +9,8 @@ gentoo/net-libs/rblibtorrent/rblibtorrent.ebuild \
 gentoo/net-p2p/btg/btg.ebuild \
 gentoo/README
 
-EXTRA_DIST = AUTHORS TODO README configure menuconfig.sh autogen.sh setup.sh
+EXTRA_DIST = AUTHORS TODO README configure menuconfig.sh autogen.sh setup.sh \
+	gen_all_builds.pl gen_all_builds_launch.pl
 
 # Taking it from the environment
 # DISTCHECK_CONFIGURE_FLAGS = --with-boost-iostreams=mt --with-boost-filesystem=mt --with-boost-date-time=mt --with-boost-thread=mt --with-boost-program-options=mt
