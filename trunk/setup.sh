@@ -68,6 +68,10 @@ do
 	    echo "Enabling static."
 	    export STATIC="--enable-shared=no --enable-static=yes"
 	    ;;
+	"-gentoo-linking")
+	    echo "Enabling gentoo linker flags."
+	    LDFLAGS="$LDFLAGS --as-needed"
+	    ;;
 	"-help")
 	    echo "Help:"
 	    echo "Argument 0:"

@@ -123,7 +123,10 @@ $(EXTERNALIZATION_SOURCES) \
 $(AUTH_SOURCES) \
 bitvector.cpp
 
-libbtgcore_la_LIBADD = $(top_builddir)/external/xmlrpc-epi/src/libxmlrpc.la
+libbtgcore_la_LIBADD = $(top_builddir)/external/xmlrpc-epi/src/libxmlrpc.la \
+@LIBTORRENT_LIBS@ @BOOST_IOSTREAMS_LIB@ \
+@LIBGNUTLS_LIBS@ @BOOST_PROGRAM_OPTIONS_LIB@ \
+@BOOST_THREAD_LIB@ @BOOST_FILESYSTEM_LIB@ @BOOST_SYSTEM_LIB@
 
 OS_HEADER=os/sleep.h \
 os/fileop.h \

@@ -206,17 +206,22 @@ fi
 
 AC_CACHE_SAVE
 
-dnl Check for Libtorrent.
+PKG_PROG_PKG_CONFIG([0.20])
 
-dnl Find the libtorrent headers and try to compile and link a simple
-dnl program.
-RBLIBTORRENT
+dnl Check for Libtorrent.
 
 dnl Use the settings from the libtorrent pkg-config configuration
 dnl file.
 PKG_CHECK_MODULES(LIBTORRENT, libtorrent >= 0.12)
 AC_SUBST(LIBTORRENT_CFLAGS)
 AC_SUBST(LIBTORRENT_LIBS)
+
+AC_MSG_NOTICE([Using libtorrent CFLAGS: $LIBTORRENT_CFLAGS])
+AC_MSG_NOTICE([Using libtorrent LIBS  : $LIBTORRENT_LIBS])
+
+dnl Find the libtorrent headers and try to compile and link a simple
+dnl program.
+RBLIBTORRENT
 
 AC_ARG_ENABLE(btg-config,
 [  --enable-btg-config     generate btg-config script.],
