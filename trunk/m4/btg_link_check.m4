@@ -1,5 +1,8 @@
 dnl 
 dnl Check that the libs used to build the daemon are present.
+dnl
+dnl
+dnl $Id$
 dnl 
 
 AC_DEFUN([BTG_LINK_CHECK],

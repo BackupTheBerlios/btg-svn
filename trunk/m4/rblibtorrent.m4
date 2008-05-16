@@ -1,69 +1,67 @@
 AC_DEFUN([RBLIBTORRENT],
 [
-    AC_ARG_WITH(rblibtorrent,
-          [  --with-rblibtorrent     Where Rasterbar libtorrent is installed],
-          rblibtorrent_prefix="$withval", rblibtorrent_prefix="")
+    AC_ARG_WITH(rblibtorrent, AC_HELP_STRING([--with-rblibtorrent], [Where Rasterbar libtorrent is installed]),
+    [          
+        rblibtorrent_prefix="$withval"
 
-    for dir in $rblibtorrent_prefix /usr /usr/local; do
-        libtorrentdir="$dir"
-        if test -f "$dir/include/libtorrent/version.hpp"; then
-            found_rblibtorrent_header="yes";
-            RBLIBTORRENT_ROOT="$libtorrentdir"
-            break;
+        for dir in $rblibtorrent_prefix; do
+    	    libtorrentdir="$dir"
+    	    if test -f "$dir/include/libtorrent/version.hpp"; then
+            	found_rblibtorrent_header="yes";
+                RBLIBTORRENT_ROOT="$libtorrentdir"
+    	        break;
+    	    fi
+        done
+
+	    if test x_$found_rblibtorrent_header != x_yes; then
+    	    AC_MSG_ERROR([Cannot find Rasterbar Libtorrent headers])
         fi
-    done
 
-    if test x_$found_rblibtorrent_header != x_yes; then
-        AC_MSG_ERROR(Cannot find Rasterbar Libtorrent headers)
-    fi
+        LIBTORRENT_CFLAGS="-I$RBLIBTORRENT_ROOT/include -I$RBLIBTORRENT_ROOT/include/libtorrent"
+    	LIBTORRENT_LIBS="-L$RBLIBTORRENT_ROOT/lib -ltorrent"
+        CXXFLAGS_SAVED="$CXXFLAGS"
+	    CXXFLAGS="$CXXFLAGS $LIBTORRENT_CFLAGS"
+        LIBS_SAVED="$LIBS"
+    	LIBS="$LIBS $LIBTORRENT_LIBS"
+        AC_LANG_SAVE
+	    AC_LANG_CPLUSPLUS
 
-    CXXFLAGS_SAVED="$CXXFLAGS"
-    CXXFLAGS="$CXXFLAGS -I$RBLIBTORRENT_ROOT/include -I$RBLIBTORRENT_ROOT/include/libtorrent $LIBTORRENT_CFLAGS"
-    LDFLAGS_SAVED="$LDFLAGS"
-    LDFLAGS="$LDFLAGS -L$RBLIBTORRENT_ROOT/lib"
-    LIBS_SAVED="$LIBS"
-    LIBS="$LIBS -L$RBLIBTORRENT_ROOT/lib -ltorrent"
+    	AC_MSG_CHECKING([whether Rasterbar Libtorrent headers can be used])
+        AC_COMPILE_IFELSE([
+    	    AC_LANG_PROGRAM([
+#       		include <libtorrent/session.hpp>
+	        ], [
+    		    libtorrent::session s(libtorrent::fingerprint("LT", 0, 1, 2, 0));
+	        	return 0;
+    	    ])
+	    ], [
+            AC_MSG_RESULT([yes])
+	    ], [
+	        AC_MSG_RESULT([no])
+            AC_MSG_ERROR([Cannot use Rasterbar Libtorrent headers from the specified libtorrent location])
+	    ])
 
-    AC_MSG_CHECKING([whether Rasterbar Libtorrent headers can be used])
+        AC_MSG_CHECKING([whether Rasterbar Libtorrent library can be used])
+    	AC_TRY_LINK([
+#	        include <libtorrent/session.hpp>
+    	], [
+	        libtorrent::session s(libtorrent::fingerprint("LT", 0, 1, 2, 0));
+            return 0;
+    	], [
+            AC_MSG_RESULT([yes])
+    	], [
+            AC_MSG_RESULT([no])
+            AC_MSG_ERROR([Cannot link with Rasterbar Libtorrent from the specified libtorrent location])
+		])
 
-    AC_LANG_SAVE
-    AC_LANG_CPLUSPLUS
-    AC_COMPILE_IFELSE(AC_LANG_PROGRAM([[#include <libtorrent/session.hpp>]],
-                     [[libtorrent::session s(libtorrent::fingerprint("LT", 0, 1, 2, 0));
-                     return 0;]]),
-                     rblibtorrent_compiles=yes, rblibtorrent_compiles=no)
+        AC_LANG_RESTORE
+        CXXFLAGS="$CXXFLAGS_SAVED"
+        LIBS="$LIBS_SAVED"
 
-    if test x_$rblibtorrent_compiles != x_yes; then
-      AC_MSG_RESULT([no])
-    else
-      AC_MSG_RESULT([yes])
-    fi
-    
-
-    AC_MSG_CHECKING([whether Rasterbar Libtorrent library can be used])
-
-    AC_TRY_LINK([#include <libtorrent/session.hpp>],
-                [libtorrent::session s(libtorrent::fingerprint("LT", 0, 1, 2, 0));
-                 return 0;],
-                [rblibtorrent_links=yes])
-
-   if test x_$rblibtorrent_links != x_yes; then
-     AC_MSG_RESULT([no])
-   else
-     AC_MSG_RESULT([yes])
-   fi
-
-   AC_LANG_RESTORE
-   CXXFLAGS="$CXXFLAGS_SAVED"
-   LDFLAGS="$LDFLAGS_SAVED"
-   LIBS="$LIBS_SAVED"
-
-   if test x_$rblibtorrent_compiles != x_yes; then
-     AC_MSG_ERROR(Cannot find Rasterbar Libtorrent headers)
-   fi
-
-   if test x_$rblibtorrent_links != x_yes; then
-     AC_MSG_ERROR(Cannot link with Rasterbar Libtorrent)
-   fi
-
-])dnl
+        AC_SUBST(LIBTORRENT_CFLAGS)
+        AC_SUBST(LIBTORRENT_LIBS)
+    ], [
+        dnl else try to use the settings from the libtorrent pkg-config configuration
+        PKG_CHECK_MODULES([LIBTORRENT], [libtorrent >= 0.12])
+    ])
+])
