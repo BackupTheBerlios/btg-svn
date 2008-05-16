@@ -1,4 +1,11 @@
-AC_DEFUN([RBLIBTORRENT],
+dnl
+dnl Rasterbar Libtorrent detection
+dnl
+dnl
+dnl $Id$
+dnl
+
+AC_DEFUN([BTG_RBLIBTORRENT_CHECK],
 [
     AC_ARG_WITH(rblibtorrent, AC_HELP_STRING([--with-rblibtorrent], [Where Rasterbar libtorrent is installed]),
     [          
