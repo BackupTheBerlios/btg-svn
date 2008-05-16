@@ -20,19 +20,19 @@ use Cwd qw(getcwd);
 # List of configure options.
 my @CONFIGURE_PARAMS=("--enable-cli", "--enable-www", "--enable-debug", "--enable-unittest", "--enable-session-saving", "--enable-event-callback", " --enable-url", "--enable-viewer");
 
-my $mode = $ARGV[0];
+my $mode = $ARGV[0] || "";
 my $dir = "";
 my $curdir = getcwd(); # the dir with configure script
 if ($mode eq "help" || $mode eq "-h")
 {
-	print "USAGE: $0 [build|distcheck|distcheck_short|build_parallel <dir>|distcheck_parallel <dir>|distcheck_short_parallel <dir>] [permanent configure params ...]\n";
+	print "USAGE: $0 [build|distcheck|distcheck_short|build_parallel <dir>|distcheck_parallel <dir>|distcheck_short_parallel <dir>|check_parallel <dir>] [permanent configure params ...]\n";
 	exit 1;
 }
 elsif ($mode eq "build" || $mode eq "distcheck" || $mode eq "distcheck_short")
 {
 	shift;
 }
-elsif ($mode eq "build_parallel" || $mode eq "distcheck_parallel" || $mode eq "distcheck_short_parallel")
+elsif ($mode eq "build_parallel" || $mode eq "distcheck_parallel" || $mode eq "distcheck_short_parallel" || $mode eq "check_parallel")
 {
 	shift;
 	$dir = shift or die "You have to set directory. See usage.";
@@ -127,19 +127,18 @@ if ($mode eq "build")
 {
 	my $counter = 0;
 
-	print "echo \"Building " . scalar(@sets) . " BTG configurations\" > build.log\n";
+	print "echo \"Building " . scalar(@sets) . " BTG configurations\" >.build.log\n";
 
 	foreach ( @sets ) 
 	{
-		print "# $counter:
-echo \"#$counter: Configure @$_\" && \\
-echo \"BTG config #$counter args: @$_\" >> build.log && \\
-./configure @$_ &> build$counter-configure.log && \\
-echo \"#$counter: make clean\" && \\
-make clean &> build$counter-make_clean.log && \\
+		print "
+# $counter:
+echo \"#$counter: configure @$_\" && \\
+echo \"BTG config #$counter args: @$_\" >>.build.log && \\
+./configure @$_ &>.build$counter-configure.log && \\
 echo \"#$counter: make\" && \\
-make &> build$counter-make.log && \\
-echo \"BTG config #$counter built.\" >> build.log && \\
+make &>.build$counter-make.log && \\
+echo \"BTG config #$counter built.\" >>.build.log && \\
 echo \"#$counter: make done\"
 ";
 		$counter++;
@@ -150,26 +149,27 @@ elsif ($mode eq "distcheck")
 	my $counter = 0;
 	my $g_counter = 0;
 
-	print "echo \"distchecking " . scalar(@sets) . " (" . scalar(@sets)*scalar(@sets) . ") BTG configurations\" > distcheck.log\n";
+	print "echo \"distchecking " . scalar(@sets) . " (" . scalar(@sets)*scalar(@sets) . ") BTG configurations\" >.distcheck.log\n";
 
 	foreach ( @sets ) 
 	{
-		print "# $counter:
-echo \"#$counter: Configure @$_\" && \\
-echo \"BTG config #$counter args: @$_\" >> distcheck.log && \\
-./configure @$_ &> distcheck$counter-configure.log && \\
-echo \"#$counter: make clean\" && \\
-make clean &> distcheck$counter-make_clean.log
+		print "
+#
+# $counter:
+echo \"#$counter: configure @$_\" && \\
+echo \"BTG config #$counter args: @$_\" >>.distcheck.log && \\
+./configure @$_ &>.distcheck$counter-configure.log
 ";
 		my $dc_counter = 0;
 		foreach ( @sets )
 		{
-			print "# general config $g_counter:
+			print "
+# general config $g_counter:
 # distcheck $dc_counter:
 echo \"#$dc_counter: make distcheck DISTCHECK_CONFIGURE_FLAGS=\\\"@$_\\\"\" && \\
-echo \"BTG config #$counter distcheck$dc_counter\" >> distcheck.log && \\
-make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" &> distcheck$counter-make_distcheck$dc_counter.log && \\
-echo \"#$counter: make distcheck done\"
+echo \"BTG config #$counter distcheck$dc_counter\" >>.distcheck.log && \\
+make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" &>.distcheck$counter-make_distcheck$dc_counter.log && \\
+echo \"#$dc_counter: make distcheck done\"
 ";
 			$dc_counter++;
 			$g_counter++;
@@ -181,19 +181,18 @@ elsif ($mode eq "distcheck_short")
 {
 	my $counter = 0;
 
-	print "echo \"distchecking " . scalar(@sets) . " BTG configurations\" > distcheck_short.log\n";
+	print "echo \"distchecking " . scalar(@sets) . " BTG configurations\" >.distcheck_short.log\n";
 
 	foreach ( @sets ) 
 	{
-		print "# $counter:
-echo \"#$counter: Configure @$_\" && \\
-echo \"BTG config #$counter args: @$_\" >> distcheck_short.log && \\
-./configure @$_ &> distcheck_short$counter-configure.log && \\
-echo \"#$counter: make clean\" && \\
-make clean &> distcheck_short$counter-make_clean.log
+		print "
+# $counter:
+echo \"#$counter: configure @$_\" && \\
+echo \"BTG config #$counter args: @$_\" >>.distcheck_short.log && \\
+./configure @$_ &>.distcheck_short$counter-configure.log
 echo \"#$counter: make distcheck DISTCHECK_CONFIGURE_FLAGS=\\\"@$_\\\"\" && \\
-echo \"BTG config #$counter distcheck$counter\" >> distcheck_short.log && \\
-make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" &> distcheck_short$counter-make_distcheck.log && \\
+echo \"BTG config #$counter distcheck$counter\" >>.distcheck_short.log && \\
+make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" &>.distcheck_short$counter-make_distcheck.log && \\
 echo \"#$counter: make distcheck done\"
 ";
 		$counter++;
@@ -205,18 +204,33 @@ elsif ($mode eq "build_parallel")
 
 	foreach ( @sets ) 
 	{
-		mkdir "$dir/build$counter" or die "Can't create dir \"$dir/build$counter\"";
+		mkdir "$dir/build$counter" or die "Can't create dir \"$dir/build$counter\" ($!)";
 		
 		my $f;
-		open $f,">$dir/build$counter/.launch" or die "Can't create file \"$dir/build$counter/.launch\"";
-		print $f "# $counter:
-echo \"#$counter: Configure @$_\" && \\
-$curdir/configure @$_ &> build-configure.log && \\
-echo \"#$counter: make clean\" && \\
-make clean &> build-make_clean.log && \\
+		open $f,">$dir/build$counter/.launch" or die "Can't create file \"$dir/build$counter/.launch\" ($!)";
+		print $f "
+# $counter:
+echo \"#$counter: configure @$_\" && \\
+$curdir/configure @$_ &>.build-configure.log && \\
+echo \"#$counter: configure done\"
+
 echo \"#$counter: make\" && \\
-make &> build-make.log && \\
-echo \"#$counter: make done\"
+make &>.build-make.log && \\
+echo \"#$counter: make done\" && \\
+echo \"#$counter: make clean\" && \\
+make clean &>.build-make_clean.log && \\
+echo \"#$counter: make clean done\" && \\
+echo \"#$counter: make distclean\" && \\
+make distclean &>.build-make_distclean.log && \\
+echo \"#$counter: make distclean done\"
+retval=\$?
+
+# freeing disk space, or we can run out of it
+ls -l &>.build-ll.log
+chmod -R u+rwx *
+rm -Rf * # should not touch newly created .build-* files
+
+exit \$retval
 ";
 		close $f;
 		$counter++;
@@ -232,21 +246,37 @@ elsif ($mode eq "distcheck_parallel")
 		my $dc_counter = 0;
 		foreach ( @sets )
 		{
-			mkdir "$dir/distcheck$counter-$dc_counter" or die "Can't create dir \"$dir/distcheck$counter-$dc_counter\"";
+			mkdir "$dir/distcheck$counter-$dc_counter" or die "Can't create dir \"$dir/distcheck$counter-$dc_counter\" ($!)";
 
 			my $f;
-			open $f,">$dir/distcheck$counter-$dc_counter/.launch" or die "Can't create file \"$dir/distcheck$counter-$dc_counter/.launch\"";
+			open $f,">$dir/distcheck$counter-$dc_counter/.launch" or die "Can't create file \"$dir/distcheck$counter-$dc_counter/.launch\" ($!)";
 
-			print $f "# $counter:
-echo \"#$counter: Configure @$_\" && \\
-$curdir/configure @$_ &> distcheck-configure.log && \\
-echo \"#$counter: make clean\" && \\
-make clean &> distcheck-make_clean.log
+			print $f "
 # general config $g_counter:
+
+# configure $counter:
+echo \"#$counter: configure @$_\" && \\
+$curdir/configure @$_ &>.distcheck-configure.log && \\
+echo \"#$counter: configure done\"
+
 # distcheck $dc_counter:
 echo \"#$dc_counter: make distcheck DISTCHECK_CONFIGURE_FLAGS=\\\"@$_\\\"\" && \\
-make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" &> distcheck-make_distcheck.log && \\
-echo \"#$counter: make distcheck done\"
+make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" &>.distcheck-make_distcheck.log && \\
+echo \"#$dc_counter: make distcheck done\" && \\
+echo \"#$counter: make clean\" && \\
+make clean &>.distcheck-make_clean.log && \\
+echo \"#$counter: make clean done\" && \\
+echo \"#$counter: make distclean\" && \\
+make distclean &>.distcheck-make_distclean.log && \\
+echo \"#$counter: make distclean done\"
+retval=\$?
+
+# freeing disk space, or we can run out of it
+ls -l &>.distcheck-ll.log
+chmod -R u+rwx *
+rm -Rf * # should not touch newly created .distcheck-* files
+
+exit \$retval
 ";
 			close $f;
 			
@@ -262,19 +292,73 @@ elsif ($mode eq "distcheck_short_parallel")
 
 	foreach ( @sets ) 
 	{
-		mkdir "$dir/distcheck_short$counter" or die "Can't create dir \"$dir/distcheck_short$counter\"";
+		mkdir "$dir/distcheck_short$counter" or die "Can't create dir \"$dir/distcheck_short$counter\" ($!)";
 
 		my $f;
-		open $f,">$dir/distcheck_short$counter/.launch" or die "Can't create file \"$dir/distcheck_short$counter/.launch\"";
+		open $f,">$dir/distcheck_short$counter/.launch" or die "Can't create file \"$dir/distcheck_short$counter/.launch\" ($!)";
 
-		print $f "# $counter:
-echo \"#$counter: Configure @$_\" && \\
-$curdir/configure @$_ &> distcheck_short-configure.log && \\
-echo \"#$counter: make clean\" && \\
-make clean &> distcheck_short-make_clean.log
+		print $f "
+# $counter:
+echo \"#$counter: configure @$_\" && \\
+$curdir/configure @$_ &>.distcheck_short-configure.log && \\
+echo \"#$counter: configure done\"
+
 echo \"#$counter: make distcheck DISTCHECK_CONFIGURE_FLAGS=\\\"@$_\\\"\" && \\
-make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" &> distcheck_short-make_distcheck.log && \\
-echo \"#$counter: make distcheck done\"
+make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" &>.distcheck_short-make_distcheck.log && \\
+echo \"#$counter: make distcheck done\" && \\
+echo \"#$counter: make clean\" && \\
+make clean &>.distcheck_short-make_clean.log && \\
+echo \"#$counter: make clean done\" && \\
+echo \"#$counter: make distclean\" && \\
+make distclean &>.distcheck_short-make_distclean.log && \\
+echo \"#$counter: make distclean done\"
+retval=\$?
+
+# freeing disk space, or we can run out of it
+ls -l &>.distcheck_short-ll.log
+chmod -R u+rwx *
+rm -Rf * # should not touch newly created .distcheck_short-* files
+
+exit \$retval
+";
+		close $f;		
+		$counter++;
+	}
+} 
+elsif ($mode eq "check_parallel")
+{
+	my $counter = 0;
+
+	foreach ( @sets ) 
+	{
+		mkdir "$dir/check$counter" or die "Can't create dir \"$dir/check$counter\" ($!)";
+
+		my $f;
+		open $f,">$dir/check$counter/.launch" or die "Can't create file \"$dir/check$counter/.launch\" ($!)";
+
+		print $f "
+# $counter:
+echo \"#$counter: configure @$_\" && \\
+$curdir/configure @$_ &>.check-configure.log && \\
+echo \"#$counter: configure done\"
+
+echo \"#$counter: make check && \\
+make check &>.check-make_check.log && \\
+echo \"#$counter: make check done\" && \\
+echo \"#$counter: make clean\" && \\
+make clean &>.check-make_clean.log && \\
+echo \"#$counter: make clean done\" && \\
+echo \"#$counter: make distclean\" && \\
+make distclean &>.check-make_distclean.log && \\
+echo \"#$counter: make distclean done\"
+retval=\$?
+
+# freeing disk space, or we can run out of it
+ls -l &>.check-ll.log
+chmod -R u+rwx *
+rm -Rf * # should not touch newly created .check-* files
+
+exit \$retval
 ";
 		close $f;		
 		$counter++;
