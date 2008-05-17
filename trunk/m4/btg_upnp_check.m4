@@ -22,10 +22,9 @@ AC_DEFUN([BTG_UPNP_CHECK],
 	[enableupnp=false])
 
 	BTG_OPTION_USECYBERLINK=0
-	AC_SUBST(BTG_OPTION_USECYBERLINK)
 	AM_CONDITIONAL(BUILDCYBERLINK, false)
 	BTG_OPTION_USELTUPNP=0
-	AC_SUBST(BTG_OPTION_USELTUPNP)
+	
 	AM_CONDITIONAL(BUILDLTUPNP, false)
 
 	if $enableupnp ; then
@@ -39,7 +38,6 @@ AC_DEFUN([BTG_UPNP_CHECK],
 #			include <libtorrent/upnp.hpp>
 		],[
 #			if (LIBTORRENT_VERSION_MAJOR == 0) && (LIBTORRENT_VERSION_MINOR == 14)
-				libtorrent::upnp upnp;
 #			else
 #				error "LT version < 0.14 - doesn't support UPnP"
 #			endif
@@ -89,5 +87,7 @@ AC_DEFUN([BTG_UPNP_CHECK],
 
 		]); dnl AC_TRY_LINK LT-UPnP
 
+      AC_SUBST(BTG_OPTION_USELTUPNP)
+      AC_SUBST(BTG_OPTION_USECYBERLINK)
 	fi dnl if $enableupnp
 ])
