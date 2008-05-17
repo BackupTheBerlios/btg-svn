@@ -82,8 +82,6 @@ namespace btg
                         : port(-1),
                            index_tcp(INVALID_INDEX),
                            index_udp(INVALID_INDEX),
-                           enabled_tcp(false),
-                           enabled_udp(false),
                            success_tcp(false),
                            success_udp(false)
                         {}
@@ -91,21 +89,13 @@ namespace btg
                         t_int port;
                         t_int index_tcp;
                         t_int index_udp;
-                        bool  enabled_tcp;
-                        bool  enabled_udp;
                         bool  success_tcp;
                         bool  success_udp;
                      };
 
-                     bool findIndex(t_int const _index, portIndex & _portIndex);
-
                      boost::mutex                 indicesMutex;
-
-                     portIndex                    currentPortIndex;
                      std::vector<portIndex>       indices;
-
-                     t_uint                       portsMapped;
-                     t_uint                       portsFailed;
+                     portIndex                    pi;
                   };
 
                /** @} */

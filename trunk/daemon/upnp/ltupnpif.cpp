@@ -26,6 +26,13 @@
 #include <daemon/modulelog.h>
 #include <bcore/os/sleep.h>
 
+#include <libtorrent/socket.hpp>
+#include <libtorrent/connection_queue.hpp>
+#include <libtorrent/time.hpp>
+#include <boost/ref.hpp>
+#include <boost/intrusive_ptr.hpp>
+#include <asio/basic_deadline_timer.hpp>
+
 namespace btg
 {
    namespace daemon
@@ -48,10 +55,19 @@ namespace btg
                          boost::bind(&libtorrentUpnpIf::portMap, this, _1, _2, _3),
                          false),
                     indicesMutex(),
-                    portsMapped(0),
-                    portsFailed(0)
+                    indices(),
+                    pi()
                {
                   upnp.discover_device();
+
+                  libtorrent::deadline_timer timer(io);
+                  timer.expires_from_now(libtorrent::seconds(2));
+                  timer.async_wait(boost::bind(&libtorrent::io_service::stop, boost::ref(io)));
+
+                  MVERBOSE_LOG(logWrapper(), verboseFlag_, "Broadcasting for UPnP device.");
+
+                  io.reset();
+                  io.run();
 
                   MVERBOSE_LOG(logWrapper(), verboseFlag_, 
                                "Router info: '" << upnp.router_model() << "'.");
@@ -65,27 +81,17 @@ namespace btg
                {
                   boost::mutex::scoped_lock scoped_lock(indicesMutex);
 
-                  portIndex pi;
-                  if (!findIndex(_index, pi))
-                     {
-                        BTG_MERROR(logWrapper(), 
-                                   "Unable to find index " << _index << ".");
-                        return;
-                     }
-
                   if (_errorMessage.size() == 0)
                      {
                         // Success.
                         if (pi.index_tcp == _index)
                            {
-                              portsMapped++;
                               pi.success_tcp = true;
                               MVERBOSE_LOG(logWrapper(), verboseFlag_, 
                                            "Mapped TCP port " << pi.port << ".");
                            }
                         else if (pi.index_udp == _index)
                            {
-                              portsMapped++;
                               pi.success_udp = true;
                               MVERBOSE_LOG(logWrapper(), verboseFlag_, 
                                            "Mapped UDP port " << pi.port << ".");
@@ -96,34 +102,15 @@ namespace btg
                         // Failure.
                         if (pi.index_tcp == _index)
                            {
-                              portsFailed++;
                               BTG_MERROR(logWrapper(), 
                                          "Unable to map TCP port " << pi.port << ".");
                            }
                         else if (pi.index_udp == _index)
                            {
-                              portsFailed++;
                               BTG_MERROR(logWrapper(), 
                                          "Unable to map TCP port " << pi.port << ".");
                            }
                      }
-               }
-
-               bool libtorrentUpnpIf::findIndex(t_int const _index, portIndex & _portIndex)
-               {
-                  std::vector<portIndex>::iterator iter;
-                  for (iter = indices.begin();
-                       iter != indices.end();
-                       iter++)
-                     {
-                        if (iter->index_tcp == _index || iter->index_udp == _index)
-                           {
-                              _portIndex = *iter;
-                              return true;
-                           }
-                     }
-
-                  return false;
                }
 
                bool libtorrentUpnpIf::open(std::pair<t_int, t_int> const& _range)
@@ -133,81 +120,41 @@ namespace btg
                         return false;
                      }
                   
-                  t_int numberOfPorts = 0;
+                  libtorrent::deadline_timer timer(io);
 
                   for (t_int port = _range.first;
                        port < _range.second;
                        port++)
                      {
-                        boost::mutex::scoped_lock scoped_lock(indicesMutex);
-
                         MVERBOSE_LOG(logWrapper(), verboseFlag_, 
                                     "Mapping port " << port << ".");
 
-                        currentPortIndex.port = port;
+                        {
+                           boost::mutex::scoped_lock scoped_lock(indicesMutex);
+                           pi.port        = port;
+                           pi.success_tcp = false;
+                           pi.success_udp = false;
+                           pi.index_tcp   = upnp.add_mapping(libtorrent::upnp::tcp, port, port);
+                           pi.index_udp   = upnp.add_mapping(libtorrent::upnp::udp, port, port);
+                        }
+                        
+                        timer.expires_from_now(libtorrent::seconds(10));
+                        timer.async_wait(boost::bind(&libtorrent::io_service::stop, 
+                                                     boost::ref(io)));
+                        io.reset();
+                        io.run();
 
-                        currentPortIndex.index_tcp = 
-                           upnp.add_mapping(libtorrent::upnp::tcp, port, port);
-                        if (currentPortIndex.index_tcp == portIndex::INVALID_INDEX)
+                        if (!pi.success_tcp || !pi.success_udp)
                            {
-                              // Write a verbose message.
-                              BTG_MERROR(logWrapper(), 
-                                         "Unable to map TCP port " << port << ".");
-                           }
-                        else
-                           {
-                              currentPortIndex.enabled_tcp = true;
-                           }
-
-                        currentPortIndex.index_udp = 
-                           upnp.add_mapping(libtorrent::upnp::udp, port, port);
-
-                        if (currentPortIndex.index_udp == portIndex::INVALID_INDEX)
-                           {
-                              // Write a verbose message.
-                              BTG_MERROR(logWrapper(), 
-                                         "Unable to map UDP port " << port << ".");
-                           }
-                        else 
-                           {
-                              currentPortIndex.enabled_udp = true;
-                           }
-
-                        indices.push_back(currentPortIndex);
-
-                        numberOfPorts += 2;
-
-                        if (currentPortIndex.index_tcp == portIndex::INVALID_INDEX || 
-                            currentPortIndex.index_udp == portIndex::INVALID_INDEX)
-                           {
-                              return false;
-                           }
-                     }
-
-                  // Wait for libtorrent to map all ports.
-                  while (true)
-                     {
-                        if (portsMapped == numberOfPorts)
-                           {
-                              // Done.
                               MVERBOSE_LOG(logWrapper(), verboseFlag_, 
-                                           "Mapped all ports.");
-                              return true;
-                           }
-
-                        if (portsFailed > 0)
-                           {
-                              return false;
-                           }
-                        if (terminate())
-                           {
-                              BTG_MERROR(logWrapper(), 
-                                         "Terminating.");
+                                           "Port " << port << " not mapped. Aborting.");
                               return false;
                            }
 
-                        btg::core::os::Sleep::sleepMiliSeconds(64);
+                        indices.push_back(pi);
                      }
+
+                  MVERBOSE_LOG(logWrapper(), verboseFlag_, "Mapped all ports.");
                   return true;
                }
 
@@ -230,9 +177,14 @@ namespace btg
                            {
                               upnp.delete_mapping(iter->index_udp);
                            }
+
+                        io.reset();
+                        io.run();
                      }
 
                   indices.clear();
+
+                  upnp.close();
 
                   return true;
                }
