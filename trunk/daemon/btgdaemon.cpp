@@ -886,6 +886,13 @@ int main(int argc, char* argv[])
    delete dh;
    dh = 0;
 
+#if BTG_OPTION_UPNP
+   if (upnpif.get())
+      {
+         upnpif.get()->close();
+      }
+#endif
+
    BTG_MNOTICE(logwrapper, 
                "finished execution");
    VERBOSE_LOG(logwrapper, 

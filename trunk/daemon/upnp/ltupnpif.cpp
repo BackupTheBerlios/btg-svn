@@ -165,18 +165,28 @@ namespace btg
                         return false;
                      }
 
+                  libtorrent::deadline_timer timer(io);
+
                   for (std::vector<portIndex>::const_iterator iter = indices.begin();
                        iter != indices.end();
                        iter++)
                      {
                         if (iter->index_tcp != portIndex::INVALID_INDEX)
                            {
+                              MVERBOSE_LOG(logWrapper(), verboseFlag_, 
+                                           "Unmapping TCP port " << iter->port << ".");
                               upnp.delete_mapping(iter->index_tcp);
                            }
                         if (iter->index_udp != portIndex::INVALID_INDEX)
                            {
+                              MVERBOSE_LOG(logWrapper(), verboseFlag_, 
+                                           "Unmapping UDP port " << iter->port << ".");
                               upnp.delete_mapping(iter->index_udp);
                            }
+
+                        timer.expires_from_now(libtorrent::seconds(10));
+                        timer.async_wait(boost::bind(&libtorrent::io_service::stop, 
+                                                     boost::ref(io)));
 
                         io.reset();
                         io.run();
@@ -185,6 +195,8 @@ namespace btg
                   indices.clear();
 
                   upnp.close();
+
+                  initialized_ = false;
 
                   return true;
                }
