@@ -1,7 +1,21 @@
+btg-0.9.8 (357svn) unstable; urgency=low
+
+  * The following bugs were fixed:
+    013701 Keys for "Quit" and "Back" should be separate.
+    013700 Reload filter list w/o restarting daemon.
+    013644 Ports opened by UPnP when it is disabled.
+    013643 Daemon starts without rewriting unexistent pid.
+    013618 btgncli, show sessions when invoked without arguments.
+    013490 Provide source-packages in deb-src.
+    013460 Showing file pieces for torrents missing from wwwui.
+    013459 File selection missing from wwwui.
+
+ -- Roman Rybalko <btg@romanr.info>  Sat, 17 May 2008 14:09:28 +0400
+
 btg-0.9.8 (305svn-RC1) stable; urgency=low
 
   * The following bugs were fixed:
-    013557 UPnP, automatic internal IP detection.
+    013557 CyberLink UPnP, automatic internal IP detection.
     013555 UPnP, added separate config-file parameter for internal-ip.
     013538 Issues with native FreeBSD dialog.
     013501 Implement better torrent loading.

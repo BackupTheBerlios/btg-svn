@@ -6,6 +6,10 @@ if [ "$1" = "configure" ]; then
 	id btg || adduser --system --home /nonexistent --shell /bin/false --disabled-login --no-create-home --group btg
 fi
 
+# backup default config data
+cp -f /var/lib/btg/auth /var/lib/btg/auth.bak
+cp -f /var/lib/btg/sessions /var/lib/btg/sessions.bak
+
 #DEBHELPER#
 
 echo "************************************"
