@@ -24,8 +24,13 @@ AC_DEFUN([BTG_RBLIBTORRENT_CHECK],
     	    AC_MSG_ERROR([Cannot find Rasterbar Libtorrent headers])
         fi
 
-        LIBTORRENT_CFLAGS="-I$RBLIBTORRENT_ROOT/include -I$RBLIBTORRENT_ROOT/include/libtorrent"
-    	LIBTORRENT_LIBS="-L$RBLIBTORRENT_ROOT/lib -ltorrent"
+	dnl Find out what flags are required by libtorrent.
+	LIBTORRENT_CFLAGS=`export PKG_CONFIG_PATH=$RBLIBTORRENT_ROOT/lib/pkgconfig; $PKG_CONFIG --cflags libtorrent`
+        LIBTORRENT_LIBS=`export PKG_CONFIG_PATH=$RBLIBTORRENT_ROOT/lib/pkgconfig; $PKG_CONFIG --libs libtorrent`
+
+        dnl LIBTORRENT_CFLAGS="-I$RBLIBTORRENT_ROOT/include -I$RBLIBTORRENT_ROOT/include/libtorrent"
+    	dnl LIBTORRENT_LIBS="-L$RBLIBTORRENT_ROOT/lib -ltorrent"
+
         CXXFLAGS_SAVED="$CXXFLAGS"
 	    CXXFLAGS="$CXXFLAGS $LIBTORRENT_CFLAGS"
         LIBS_SAVED="$LIBS"

@@ -9,7 +9,7 @@ What is BTG?
 ~~~~~~~~~~~~
 
 Bittorrent client implemented in C++ and using the `Rasterbar Libtorrent`_
-library.
+library. BTG is released under the GNU GPL license.
 
 Provides a Ncurses_, SDL_, Gtkmm_ and WWW GUI, which communicate with a
 common backend running the actual bittorrent operation.
@@ -24,7 +24,7 @@ Features
 - Session saving.
 - Per user event callback.
 - IPv4 filter (level1.txt and Emule lists).
-- Port forwarding using UPnP.
+- Port forwarding using UPnP (Using Cyberlink or Libtorrent).
 - Periodic session saving.
 - DHT and encryption (since libtorrent supports both).
 
