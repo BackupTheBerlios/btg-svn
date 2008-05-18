@@ -135,9 +135,9 @@ if ($mode eq "build")
 # $counter:
 echo \"#$counter: configure @$_\" && \\
 echo \"BTG config #$counter args: @$_\" >>.build.log && \\
-./configure @$_ &>.build$counter-configure.log && \\
+./configure @$_ >.build$counter-configure.log 2>.build$counter-configure.err && \\
 echo \"#$counter: make\" && \\
-make &>.build$counter-make.log && \\
+make >.build$counter-make.log 2>.build$counter-make.err && \\
 echo \"BTG config #$counter built.\" >>.build.log && \\
 echo \"#$counter: make done\"
 ";
@@ -158,7 +158,7 @@ elsif ($mode eq "distcheck")
 # $counter:
 echo \"#$counter: configure @$_\" && \\
 echo \"BTG config #$counter args: @$_\" >>.distcheck.log && \\
-./configure @$_ &>.distcheck$counter-configure.log
+./configure @$_ >.distcheck$counter-configure.log 2>.distcheck$counter-configure.err
 ";
 		my $dc_counter = 0;
 		foreach ( @sets )
@@ -168,7 +168,7 @@ echo \"BTG config #$counter args: @$_\" >>.distcheck.log && \\
 # distcheck $dc_counter:
 echo \"#$dc_counter: make distcheck DISTCHECK_CONFIGURE_FLAGS=\\\"@$_\\\"\" && \\
 echo \"BTG config #$counter distcheck$dc_counter\" >>.distcheck.log && \\
-make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" &>.distcheck$counter-make_distcheck$dc_counter.log && \\
+make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" >.distcheck$counter-make_distcheck$dc_counter.log 2>.distcheck$counter-make_distcheck$dc_counter.err && \\
 echo \"#$dc_counter: make distcheck done\"
 ";
 			$dc_counter++;
@@ -189,10 +189,10 @@ elsif ($mode eq "distcheck_short")
 # $counter:
 echo \"#$counter: configure @$_\" && \\
 echo \"BTG config #$counter args: @$_\" >>.distcheck_short.log && \\
-./configure @$_ &>.distcheck_short$counter-configure.log
+./configure @$_ >.distcheck_short$counter-configure.log 2>.distcheck_short$counter-configure.err
 echo \"#$counter: make distcheck DISTCHECK_CONFIGURE_FLAGS=\\\"@$_\\\"\" && \\
 echo \"BTG config #$counter distcheck$counter\" >>.distcheck_short.log && \\
-make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" &>.distcheck_short$counter-make_distcheck.log && \\
+make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" >.distcheck_short$counter-make_distcheck.log 2>.distcheck_short$counter-make_distcheck.err && \\
 echo \"#$counter: make distcheck done\"
 ";
 		$counter++;
@@ -211,22 +211,22 @@ elsif ($mode eq "build_parallel")
 		print $f "
 # $counter:
 echo \"#$counter: configure @$_\" && \\
-$curdir/configure @$_ &>.build-configure.log && \\
+$curdir/configure @$_ >.build-configure.log 2>.build-configure.err && \\
 echo \"#$counter: configure done\"
 
 echo \"#$counter: make\" && \\
-make &>.build-make.log && \\
+make >.build-make.log 2>.build-make.err && \\
 echo \"#$counter: make done\" && \\
 echo \"#$counter: make clean\" && \\
-make clean &>.build-make_clean.log && \\
+make clean >.build-make_clean.log 2>.build-make_clean.err && \\
 echo \"#$counter: make clean done\" && \\
 echo \"#$counter: make distclean\" && \\
-make distclean &>.build-make_distclean.log && \\
+make distclean >.build-make_distclean.log 2>.build-make_distclean.err && \\
 echo \"#$counter: make distclean done\"
 retval=\$?
 
 # freeing disk space, or we can run out of it
-ls -l &>.build-ll.log
+ls -l >.build-ll.log 2>.build-ll.err
 chmod -R u+rwx *
 rm -Rf * # should not touch newly created .build-* files
 
@@ -256,23 +256,23 @@ elsif ($mode eq "distcheck_parallel")
 
 # configure $counter:
 echo \"#$counter: configure @$_\" && \\
-$curdir/configure @$_ &>.distcheck-configure.log && \\
+$curdir/configure @$_ >.distcheck-configure.log 2>.distcheck-configure.err && \\
 echo \"#$counter: configure done\"
 
 # distcheck $dc_counter:
 echo \"#$dc_counter: make distcheck DISTCHECK_CONFIGURE_FLAGS=\\\"@$_\\\"\" && \\
-make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" &>.distcheck-make_distcheck.log && \\
+make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" >.distcheck-make_distcheck.log 2>.distcheck-make_distcheck.err && \\
 echo \"#$dc_counter: make distcheck done\" && \\
 echo \"#$counter: make clean\" && \\
-make clean &>.distcheck-make_clean.log && \\
+make clean >.distcheck-make_clean.log 2>.distcheck-make_clean.err && \\
 echo \"#$counter: make clean done\" && \\
 echo \"#$counter: make distclean\" && \\
-make distclean &>.distcheck-make_distclean.log && \\
+make distclean >.distcheck-make_distclean.log 2>.distcheck-make_distclean.err && \\
 echo \"#$counter: make distclean done\"
 retval=\$?
 
 # freeing disk space, or we can run out of it
-ls -l &>.distcheck-ll.log
+ls -l >.distcheck-ll.log 2>.distcheck-ll.err
 chmod -R u+rwx *
 rm -Rf * # should not touch newly created .distcheck-* files
 
@@ -300,22 +300,22 @@ elsif ($mode eq "distcheck_short_parallel")
 		print $f "
 # $counter:
 echo \"#$counter: configure @$_\" && \\
-$curdir/configure @$_ &>.distcheck_short-configure.log && \\
+$curdir/configure @$_ >.distcheck_short-configure.log 2>.distcheck_short-configure.err && \\
 echo \"#$counter: configure done\"
 
 echo \"#$counter: make distcheck DISTCHECK_CONFIGURE_FLAGS=\\\"@$_\\\"\" && \\
-make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" &>.distcheck_short-make_distcheck.log && \\
+make distcheck DISTCHECK_CONFIGURE_FLAGS=\"@$_\" >.distcheck_short-make_distcheck.log 2>.distcheck_short-make_distcheck.err && \\
 echo \"#$counter: make distcheck done\" && \\
 echo \"#$counter: make clean\" && \\
-make clean &>.distcheck_short-make_clean.log && \\
+make clean >.distcheck_short-make_clean.log 2>.distcheck_short-make_clean.err && \\
 echo \"#$counter: make clean done\" && \\
 echo \"#$counter: make distclean\" && \\
-make distclean &>.distcheck_short-make_distclean.log && \\
+make distclean >.distcheck_short-make_distclean.log 2>.distcheck_short-make_distclean.err && \\
 echo \"#$counter: make distclean done\"
 retval=\$?
 
 # freeing disk space, or we can run out of it
-ls -l &>.distcheck_short-ll.log
+ls -l >.distcheck_short-ll.log 2>.distcheck_short-ll.err
 chmod -R u+rwx *
 rm -Rf * # should not touch newly created .distcheck_short-* files
 
@@ -339,22 +339,22 @@ elsif ($mode eq "check_parallel")
 		print $f "
 # $counter:
 echo \"#$counter: configure @$_\" && \\
-$curdir/configure @$_ &>.check-configure.log && \\
+$curdir/configure @$_ >.check-configure.log 2>.check-configure.err && \\
 echo \"#$counter: configure done\"
 
-echo \"#$counter: make check && \\
-make check &>.check-make_check.log && \\
+echo \"#$counter: make check\" && \\
+make check >.check-make_check.log 2>.check-make_check.err && \\
 echo \"#$counter: make check done\" && \\
 echo \"#$counter: make clean\" && \\
-make clean &>.check-make_clean.log && \\
+make clean >.check-make_clean.log 2>.check-make_clean.err && \\
 echo \"#$counter: make clean done\" && \\
 echo \"#$counter: make distclean\" && \\
-make distclean &>.check-make_distclean.log && \\
+make distclean >.check-make_distclean.log 2>.check-make_distclean.err && \\
 echo \"#$counter: make distclean done\"
 retval=\$?
 
 # freeing disk space, or we can run out of it
-ls -l &>.check-ll.log
+ls -l >.check-ll.log 2>.check-ll.err
 chmod -R u+rwx *
 rm -Rf * # should not touch newly created .check-* files
 
