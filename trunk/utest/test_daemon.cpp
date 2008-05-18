@@ -444,7 +444,7 @@ void testDaemon::testHttpDownload()
    httpDlManager httpm(logwrapper);
 
    // Download a non existing file.
-   t_uint serial = httpm.Fetch("http://127.0.0.1/test.torrent", "test.torrent");
+   t_uint serial = httpm.Fetch(TEST_HTTPADDR "test.torrent", "test.torrent");
    
    bool done = false;
    httpInterface::Status stat = httpInterface::ERROR;
@@ -465,7 +465,7 @@ void testDaemon::testHttpDownload()
    CPPUNIT_ASSERT(!httpm.Result(serial, buffer));
 
    // Download a file which exists.
-   serial = httpm.Fetch("http://127.0.0.1/test2.torrent", "test2.torrent");
+   serial = httpm.Fetch(TEST_HTTPADDR "test2.torrent", "test2.torrent");
    done = false;
    while (!done)
       {
