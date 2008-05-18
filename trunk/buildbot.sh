@@ -7,7 +7,7 @@
 # $Id$
 #
 
-set -x
+#set -x
 
 pidfile="buildbot.pid"
 reportfile="buildbot.report"
@@ -77,7 +77,7 @@ oldver=`svnversion`
 conflicts=`svn st | grep '^C'`
 if [ -n "$conflicts" ] ; then
 	echo "++> Conflicts. Need human support." >$reportfile
-	svn st >>$reportfile
+	svn st | grep '^C' >>$reportfile
 	report_exit "SVN rev. $oldver - conflicts"
 fi
 
@@ -85,13 +85,14 @@ conflicts=`svn up | grep '^C'`
 newver=`svnversion`
 if [ -n "$conflicts" ] ; then
 	echo "++> Conflicts after update. Need human support." >$reportfile
-	svn st >>$reportfile
+	svn st | grep '^C' >>$reportfile
 	report_exit "Update SVN rev. $newver - conflicts"
 fi
 
 if [ "$oldver" != "$newver" ] ; then
 	rotate $workdir
 	$workgen
+	make distclean
 	$worklaunch
 	echo "==> Completed. ($?)" >$reportfile
 	echo "==> Failed:" >>$reportfile
