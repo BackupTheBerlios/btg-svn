@@ -53,10 +53,17 @@ namespace btg
                      /// @param [in] _range Reference to a range to open.
                      /// @return True - success. False - failture.
                      virtual bool open(std::pair<t_int, t_int> const& _range) = 0;
+                     
+                     /// Stop any threads or resources which cannot survive a fork.
+                     /// Called just before forking the daemon. 
+                     virtual void suspend() = 0;
+
+                     /// Resume operation. Called after the fork. 
+                     virtual void resume() = 0;
 
                      /// Close an already opened port range.
                      virtual bool close() = 0;
-                     
+
                      /// Clear internal state - disable destruction
                      void clear();
 

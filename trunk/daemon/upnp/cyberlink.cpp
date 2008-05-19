@@ -631,20 +631,24 @@ namespace btg
             return range_status_;
          }
          
-         void cyberlinkUpnpIf::start_thread()
-         {
-            if (!die_)
-               return;
-            die_ = false;
-            pthread_.reset( new boost::thread( boost::bind(&cyberlinkUpnpIf::work, boost::ref(*this)) ) ); 
-         }
-         
-         void cyberlinkUpnpIf::stop_thread()
+         void cyberlinkUpnpIf::suspend()
          {
             if (die_)
-               return;
+               {
+                  return;
+               }
             die_ = true;
             pthread_->join();
+         }
+
+         void cyberlinkUpnpIf::resume()
+         {
+            if (!die_)
+               {
+                  return;
+               }
+            die_ = false;
+            pthread_.reset( new boost::thread( boost::bind(&cyberlinkUpnpIf::work, boost::ref(*this)) ) ); 
          }
 
          void cyberlinkUpnpIf::work()

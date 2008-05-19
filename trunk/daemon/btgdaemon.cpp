@@ -769,15 +769,16 @@ int main(int argc, char* argv[])
    
    if (!dd.cla->doNotDetach())
       {
-         // stop existing threads
-#if BTG_OPTION_USECYBERLINK
-         // cyberlinkif thread
-         btg::daemon::upnp::cyberlinkUpnpIf * pCLUPnPIf = dynamic_cast<btg::daemon::upnp::cyberlinkUpnpIf*>(upnpif.get());
-         if (pCLUPnPIf)
+#if BTG_OPTION_UPNP
+         // Suspend interface.
+         if (upnpEnabled)
             {
-               pCLUPnPIf->stop_thread();
+               if (upnpif.get())
+                  {
+                     upnpif->suspend();
+                  }
             }
-#endif // BTG_OPTION_USECYBERLINK        
+#endif // BTG_OPTION_UPNP
          switch (do_daemonize())
             {
             case PID_OK:
@@ -810,14 +811,17 @@ int main(int argc, char* argv[])
                }
                break;
             }
-         // re-start needed threads
-#if BTG_OPTION_USECYBERLINK
-         // cyberlinkif thread
-         if (pCLUPnPIf)
+
+#if BTG_OPTION_UPNP
+         // Resume interface.
+         if (upnpEnabled)
             {
-               pCLUPnPIf->start_thread();
+               if (upnpif.get())
+                  {
+                     upnpif->resume();
+                  }
             }
-#endif // BTG_OPTION_USECYBERLINK
+#endif // BTG_OPTION_UPNP
       }
    else
       {

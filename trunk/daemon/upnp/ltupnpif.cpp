@@ -48,17 +48,17 @@ namespace btg
                     agent("BTG"),
                     io(),
                     queue(io), 
-                    upnp(io, 
-                         queue, 
-                         _addr, 
-                         agent, 
-                         boost::bind(&libtorrentUpnpIf::portMap, this, _1, _2, _3),
-                         false),
+                    upnp(new libtorrent::upnp(io, 
+                                              queue, 
+                                              _addr, 
+                                              agent, 
+                                              boost::bind(&libtorrentUpnpIf::portMap, this, _1, _2, _3),
+                                              false)),
                     indicesMutex(),
                     indices(),
                     pi()
                {
-                  upnp.discover_device();
+                  upnp->discover_device();
 
                   libtorrent::deadline_timer timer(io);
                   timer.expires_from_now(libtorrent::seconds(2));
@@ -70,7 +70,7 @@ namespace btg
                   io.run();
 
                   MVERBOSE_LOG(logWrapper(), verboseFlag_, 
-                               "Router info: '" << upnp.router_model() << "'.");
+                               "Router info: '" << upnp->router_model() << "'.");
 
                   initialized_ = true;
                }
@@ -134,8 +134,8 @@ namespace btg
                            pi.port        = port;
                            pi.success_tcp = false;
                            pi.success_udp = false;
-                           pi.index_tcp   = upnp.add_mapping(libtorrent::upnp::tcp, port, port);
-                           pi.index_udp   = upnp.add_mapping(libtorrent::upnp::udp, port, port);
+                           pi.index_tcp   = upnp->add_mapping(libtorrent::upnp::tcp, port, port);
+                           pi.index_udp   = upnp->add_mapping(libtorrent::upnp::udp, port, port);
                         }
                         
                         timer.expires_from_now(libtorrent::seconds(10));
@@ -158,6 +158,17 @@ namespace btg
                   return true;
                }
 
+               void libtorrentUpnpIf::suspend()
+               {
+                  io.reset();
+                  io.stop();
+               }
+
+               void libtorrentUpnpIf::resume()
+               {
+
+               }
+
                bool libtorrentUpnpIf::close()
                {
                   if (!initialized_)
@@ -175,13 +186,13 @@ namespace btg
                            {
                               MVERBOSE_LOG(logWrapper(), verboseFlag_, 
                                            "Unmapping TCP port " << iter->port << ".");
-                              upnp.delete_mapping(iter->index_tcp);
+                              upnp->delete_mapping(iter->index_tcp);
                            }
                         if (iter->index_udp != portIndex::INVALID_INDEX)
                            {
                               MVERBOSE_LOG(logWrapper(), verboseFlag_, 
                                            "Unmapping UDP port " << iter->port << ".");
-                              upnp.delete_mapping(iter->index_udp);
+                              upnp->delete_mapping(iter->index_udp);
                            }
 
                         timer.expires_from_now(libtorrent::seconds(10));
@@ -194,7 +205,14 @@ namespace btg
 
                   indices.clear();
 
-                  upnp.close();
+                  upnp->close();
+
+                  timer.expires_from_now(libtorrent::seconds(10));
+                  timer.async_wait(boost::bind(&libtorrent::io_service::stop, 
+                                               boost::ref(io)));
+                  
+                  io.reset();
+                  io.run();
 
                   initialized_ = false;
 
@@ -205,7 +223,10 @@ namespace btg
                {
                   if (initialized_)
                      {
-                        upnp.close();
+                        upnp->close();
+
+                        io.reset();
+                        io.run();
                      }
                }
 

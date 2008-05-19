@@ -176,11 +176,9 @@ namespace btg
 
                      bool close();
                      
-                     /// Start polling thread
-                     void stop_thread();
-                     
-                     /// Stop polling thread
-                     void start_thread();
+                     void suspend();
+
+                     void resume();
 
                      /// Destructor.
                      virtual ~cyberlinkUpnpIf();

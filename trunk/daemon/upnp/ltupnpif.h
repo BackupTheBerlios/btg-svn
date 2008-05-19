@@ -32,7 +32,7 @@
 #include <asio/io_service.hpp>
 #include <libtorrent/upnp.hpp>
 #include <boost/thread/mutex.hpp>
-
+#include <boost/intrusive_ptr.hpp>
 #include <vector>
 
 namespace btg
@@ -56,6 +56,10 @@ namespace btg
                      
                      bool open(std::pair<t_int, t_int> const& _range);
 
+                     void suspend();
+
+                     void resume();
+
                      bool close();
                      
                      /// Destructor.
@@ -69,7 +73,7 @@ namespace btg
                      std::string                  agent;
                      libtorrent::io_service       io;
                      libtorrent::connection_queue queue; 
-                     libtorrent::upnp             upnp;
+                     boost::intrusive_ptr<libtorrent::upnp> upnp;
 
                      struct portIndex
                      {
