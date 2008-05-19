@@ -81,8 +81,8 @@ namespace btg
          _M_initialize(size);
          std::copy(sData.begin(),
             sData.begin() +
-               std::min( (const char *)_M_impl._M_end_of_storage - (const char *)_M_impl._M_start._M_p,
-                  (int)sData.size() ),
+               std::min( (long)((const char *)_M_impl._M_end_of_storage - (const char *)_M_impl._M_start._M_p),
+                  (long)sData.size() ),
             (char *)_M_impl._M_start._M_p);
       }
       

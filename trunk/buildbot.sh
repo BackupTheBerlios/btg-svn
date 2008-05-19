@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 #
 # Buildbot.
@@ -94,24 +94,59 @@ if [ "$oldver" != "$newver" ] ; then
 	$workgen
 	make distclean
 	$worklaunch
-	echo "==> Completed. ($?)" >$reportfile
-	echo "==> Failed:" >>$reportfile
-	# we shouldn't use constructions like ls $workdir/*.fail here
+
+	>$reportfile
+
+	# we should carefully use parameters with wildcards ($workdir/*.fail)
 	# because we can run out of max. cmdline length
+
+	ok_cnt=0
+	for ok in $workdir/*.ok ; do
+		[ -e $ok ] || continue
+		ok_cnt=$(($ok_cnt+1))
+	done
+	[ $ok_cnt -gt 0 ] && echo "==> Completed successfully: $ok_cnt" >>$reportfile
+
+	>$reportfile.fails
+	fail_cnt=0
 	for fail in $workdir/*.fail ; do
 		[ -e $fail ] || continue
 		name=`basename $fail .fail`
-		echo "($name)" >>$reportfile
-		cat $workdir/$name.log >>$reportfile
-	done
-	echo "==> Warnings:" >>$reportfile
+		echo "($name)"
+		cat $workdir/$name.log
+		fail_cnt=$(($fail_cnt+1))
+	done >>$reportfile.fails
+	if [ $fail_cnt -gt 0 ] ; then
+		echo "==> Failed: $fail_cnt"
+		cat $reportfile.fails
+	fi >>$reportfile
+	
 	>$reportfile.warnings
-	for err in $workdir/*/*.err ; do
+	>$reportfile.errors
+	for err in $workdir/*/*.err $workdir/*/.*.err ; do
 		[ -e $err ] || continue
 		cat $err | grep 'warning' >>$reportfile.warnings
+		cat $err | grep 'error' >>$reportfile.errors
 	done
-	cat $reportfile.warnings | sort --unique >>$reportfile
-	rm -f $reportfile.warnings
+	sort --unique $reportfile.warnings >$reportfile.warnings.unique
+	sort --unique $reportfile.errors >$reportfile.errors.unique
+	warn_cnt=`cat $reportfile.warnings.unique | wc -l`
+	err_cnt=`cat $reportfile.errors.unique | wc -l`
+
+	if [ $warn_cnt -gt 0 ] ; then
+		warn_cnt=$(($warn_cnt)) # strip space
+		echo "==> Warnings: $warn_cnt"
+		cat $reportfile.warnings.unique
+	fi >>$reportfile
+	
+	if [ $err_cnt -gt 0 ] ; then
+		err_cnt=$(($err_cnt)) # strip space
+		echo "==> Errors: $err_cnt"
+		cat $reportfile.errors.unique
+	fi >>$reportfile
+	
+	rm -f $reportfile.*
+
 	report_exit "Update SVN rev. $newver"
 else
 	rm -f $reportfile

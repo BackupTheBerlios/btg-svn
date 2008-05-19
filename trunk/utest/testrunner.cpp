@@ -36,6 +36,7 @@
 #include <bcore/logger/console_log.h>
 
 #include "listener.h"
+#include "synchronize.h"
 
 int main(int argc, char **argv)
 {
@@ -52,6 +53,11 @@ int main(int argc, char **argv)
    log->setMinMessagePriority(logWrapper::PRIO_ERROR);
 #endif // BTG_DEBUG
    */
+   
+   // synchronize with others (if any)
+   int sync_result = synchronize();
+   if (sync_result)
+   	return sync_result;
 
    // Default, run the tests one time.
    t_int repeatCount = 1;
