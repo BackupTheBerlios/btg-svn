@@ -20,7 +20,12 @@ worklaunch="./gen_all_builds_launch.pl $workdir 8"
 subject="BUILD"
 mailto="btg@romanr.info"
 
-[ -r ./buildbot.conf ] && . ./buildbot.conf
+# setup config
+config="$1"
+[ -z "$config" ] && config="./buildbot.conf"
+
+# read config
+[ -r $config ] && . $config
 
 # check pid (ugly)
 if [ -e "$pidfile" ] ; then
