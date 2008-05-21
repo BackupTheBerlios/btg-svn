@@ -193,11 +193,11 @@ namespace btg
 
       bool Address::valid() const
       {
-         bool status = false;
+         bool status = true;
 
-         if ( (ip_[0] > 0) && (ip_[1] > 0) && (ip_[2] > 0) && (ip_[3] > 0))
+         if ( (ip_[0] == 0) && (ip_[1] == 0) && (ip_[2] == 0) && (ip_[3] == 0))
             {
-               status = true;
+               status = false;
             }
 
          return status;

@@ -92,6 +92,8 @@ namespace btg
 #if BTG_OPTION_EVENTCALLBACK
                             std::string const& _callback,
 #endif // BTG_OPTION_EVENTCALLBACK
+                            bool _interface_used,
+                            std::string const& _interface,
                             portManager* _portMgr,
                             limitManager* _limitMgr,
                             btg::core::externalization::Externalization* _e,

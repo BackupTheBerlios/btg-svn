@@ -47,6 +47,8 @@ namespace btg
          config(0),
          connHandler(0),
          portRange(0,0),
+         interface(),
+         interface_used(false),
          externalization(0),
          transport(0),
          secureTransportData(0),

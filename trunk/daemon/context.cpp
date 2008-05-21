@@ -98,6 +98,8 @@ namespace btg
                        std::string const& _workDir,
                        std::string const& _seedDir,
                        std::string const& _outputDir,
+                       bool _interface_used,
+                       std::string const& _interface,
                        portManager* _portMgr,
                        limitManager* _limitMgr,
                        fileTrack* _filetrack,
@@ -116,6 +118,8 @@ namespace btg
            workDir_(_workDir),
            seedDir_(_seedDir),
            outputDir_(_outputDir),
+           interface_used_(_interface_used),
+           interface_(_interface),
            portMgr(_portMgr),
            limitMgr_(_limitMgr),
            configured(false),
@@ -405,7 +409,15 @@ namespace btg
             {
                try
                   {
-                     torrent_session->listen_on(listen_port_range_);
+                     if (interface_used_)
+                        {
+                           VERBOSE_LOG(logWrapper(), verboseFlag_, "Libtorrent binding to interface '" << interface_ << "'.");
+                           torrent_session->listen_on(listen_port_range_, interface_.c_str());
+                        }
+                     else
+                        {
+                           torrent_session->listen_on(listen_port_range_);
+                        }
 
                      // Just start DHT, if enabled for this session.
                      //

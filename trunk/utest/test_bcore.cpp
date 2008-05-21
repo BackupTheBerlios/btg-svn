@@ -1201,6 +1201,23 @@ void testBcore::testSelectedFileEntryList()
 
 }
 
+void testBcore::testAddressPort()
+{
+   Address i;
+   CPPUNIT_ASSERT(!i.valid());
+
+   Address ii(0, 0, 0, 0);
+   CPPUNIT_ASSERT(!ii.valid());
+
+   Address a(192, 168, 0, 1);
+   CPPUNIT_ASSERT(a.valid());
+
+   std::string input("127.0.0.1");
+
+   CPPUNIT_ASSERT(a.fromString(input));
+   CPPUNIT_ASSERT(a.valid());
+}
+
 void testBcore::testAddrPort()
 {
    std::string input("127.0.0.1:60000");

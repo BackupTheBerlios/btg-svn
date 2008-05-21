@@ -439,6 +439,8 @@ namespace btg
 #if BTG_OPTION_EVENTCALLBACK
                                              callback,
 #endif // BTG_OPTION_EVENTCALLBACK
+                                             dd.interface_used,
+                                             dd.interface,
                                              &portManager_,
                                              &limitManager_,
                                              dd.externalization,

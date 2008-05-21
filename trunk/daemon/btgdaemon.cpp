@@ -209,6 +209,15 @@ int main(int argc, char* argv[])
          VERBOSE_LOG(logwrapper, verboseFlag, "Sending status using file names.");
       }
 
+   btg::core::Address lt_address = dd.config->getLTListenTo();
+
+   if (lt_address.valid())
+      {
+         dd.interface      = lt_address.toString();
+         dd.interface_used = true;
+         VERBOSE_LOG(logwrapper, verboseFlag, "Libtorrent will bind to '" << lt_address.toString() << "'.");
+      }
+
    /* 
     * Creating/check PID-file
     */
@@ -253,7 +262,7 @@ int main(int argc, char* argv[])
                {
                   BTG_FATAL_ERROR(logwrapper, 
                                   "btgdaemon",
-                                  "Could not create PIDfile '" << dd.config->getPIDFile() << "'");
+                                  "Could not create PID file '" << dd.config->getPIDFile() << "'");
                   return BTG_ERROR_EXIT;
                }
          }

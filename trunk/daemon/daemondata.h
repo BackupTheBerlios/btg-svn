@@ -84,6 +84,12 @@ namespace btg
                /// Port range used by libtorrent.
                std::pair<t_int, t_int>                      portRange;
 
+               /// Interface used by libtorrent.
+               std::string                                  interface;
+
+               /// Indicates if the interface is being used.
+               bool                                         interface_used;
+
                /// Pointer to the externalization i/f used.
                btg::core::externalization::Externalization* externalization;
 

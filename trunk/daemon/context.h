@@ -185,6 +185,8 @@ namespace btg
                        std::string const& _workDir,
                        std::string const& _seedDir,
                        std::string const& _outputDir,
+                       bool _interface_used,
+                       std::string const& _interface,
                        portManager* _portMgr,
                        limitManager* _limitMgr,
                        fileTrack* _filetrack,
@@ -491,6 +493,9 @@ namespace btg
 
                /// The path to where to save the finished torrent files.
                std::string outputDir_;
+
+               bool interface_used_;
+               std::string interface_;
 
                /// Pointer to port manager.
                portManager*  portMgr;
