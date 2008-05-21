@@ -17,6 +17,7 @@ workgen_params="build_parallel $workdir"
 	workgen="./.gen_all_builds.sh $workgen_params" || \
 	workgen="./gen_all_builds.pl $workgen_params"
 worklaunch="./gen_all_builds_launch.pl $workdir 8"
+prelaunch="./buildbot.prelaunch"
 subject="BUILD"
 mailto="btg@romanr.info"
 
@@ -97,7 +98,7 @@ fi
 if [ "$oldver" != "$newver" ] ; then
 	rotate $workdir
 	$workgen
-	make distclean
+	[ -x "$prelaunch" ] && "$prelaunch"
 	$worklaunch
 
 	>$reportfile
