@@ -49,12 +49,11 @@ using namespace btg::UI::gui::viewer;
 int main(int argc, char **argv)
 {
    btg::core::crashLog::init();
-   projectDefaultsKiller PDK__;
    LogWrapperType logwrapper(new btg::core::logger::logWrapper);
 
    std::string clientName("btgvs");
 
-   vsCommandLineArgumentHandler cla(GPD->sGUI_CONFIG());
+   vsCommandLineArgumentHandler cla(btg::core::projectDefaults::sGUI_CONFIG());
 
    cla.setup();
 
@@ -84,7 +83,7 @@ int main(int argc, char **argv)
    bool verboseFlag = cla.beVerbose();
 
    // Open the configuration file:
-   std::string config_filename = GPD->sCLI_CONFIG();
+   std::string config_filename = btg::core::projectDefaults::sCLI_CONFIG();
 
    if (cla.configFileSet())
       {
@@ -102,12 +101,12 @@ int main(int argc, char **argv)
       }
 
    clientConfiguration config(logwrapper, config_filename);
-   clientDynConfig dynconfig(logwrapper, GPD->sCLI_DYNCONFIG());
+   clientDynConfig dynconfig(logwrapper, btg::core::projectDefaults::sCLI_DYNCONFIG());
 
    if (!config.read())
       {
          BTG_FATAL_ERROR(logwrapper, 
-                         clientName, "Could not read the config file, '" << GPD->sGUI_CONFIG() << "'. Create one.");
+                         clientName, "Could not read the config file, '" << btg::core::projectDefaults::sGUI_CONFIG() << "'. Create one.");
          return BTG_ERROR_EXIT;
       }
 

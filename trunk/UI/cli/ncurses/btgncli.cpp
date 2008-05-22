@@ -67,7 +67,6 @@ void global_signal_handler(int _signal_no);
 int main(int argc, char* argv[])
 {
    btg::core::crashLog::init();
-   projectDefaultsKiller PDK__;
    LogWrapperType logwrapper(new btg::core::logger::logWrapper);
 
    // UI stuff.
@@ -75,7 +74,7 @@ int main(int argc, char* argv[])
    Colors     colors;
 
    // Parse command line arguments.
-   commandLineArgumentHandler cla(GPD->sCLI_CONFIG(),
+   commandLineArgumentHandler cla(btg::core::projectDefaults::sCLI_CONFIG(),
                                   false /* Extra option used to pass commands. */);
    cla.setup();
 
@@ -106,7 +105,7 @@ int main(int argc, char* argv[])
    iw->updateProgress(initWindow::IEV_RCONF);
 
    // Open the configuration file:
-   std::string config_filename = GPD->sCLI_CONFIG();
+   std::string config_filename = btg::core::projectDefaults::sCLI_CONFIG();
 
    if (cla.configFileSet())
       {
@@ -116,7 +115,7 @@ int main(int argc, char* argv[])
    std::string errorString;
    if (!btg::core::os::fileOperation::check(config_filename, errorString, false))
       {
-         // BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Could not open file '" << config_filename << "'.");
+         // BTG_FATAL_ERROR(btg::core::projectDefaults::sCLI_CLIENT(), "Could not open file '" << config_filename << "'.");
 
          iw->showError("Could not open file '" + config_filename + "'.");
 
@@ -126,16 +125,16 @@ int main(int argc, char* argv[])
    ncliConfiguration config(logwrapper, config_filename);
    bool const gotConfig = config.read();
 
-   clientDynConfig dynconfig(logwrapper, GPD->sCLI_DYNCONFIG());
+   clientDynConfig dynconfig(logwrapper, btg::core::projectDefaults::sCLI_DYNCONFIG());
 
    // Update init dialog.
    iw->updateProgress(initWindow::IEV_RCONF_DONE);
 
    if (!gotConfig)
       {
-         // BTG_FATAL_ERROR(GPD->sCLI_CLIENT(), "Could not read the config file, '" << GPD->sCLI_CONFIG() << "'. Create one.");
+         // BTG_FATAL_ERROR(btg::core::projectDefaults::sCLI_CLIENT(), "Could not read the config file, '" << btg::core::projectDefaults::sCLI_CONFIG() << "'. Create one.");
 
-         iw->showError("Could not read config file, '" + GPD->sCLI_CONFIG() + "'.");
+         iw->showError("Could not read config file, '" + btg::core::projectDefaults::sCLI_CONFIG() + "'.");
 
          return BTG_ERROR_EXIT;
       }
@@ -190,7 +189,7 @@ int main(int argc, char* argv[])
       messageTransport* transport                                  = 0;
 
       transportHelper transporthelper(logwrapper,
-                                      GPD->sCLI_CLIENT(),
+                                      btg::core::projectDefaults::sCLI_CLIENT(),
                                       config,
                                       cla);
 

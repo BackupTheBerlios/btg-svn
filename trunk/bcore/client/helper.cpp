@@ -73,7 +73,7 @@ namespace btg
                  iter++)
                {
                   output += *iter;
-                  output += GPD->sNEWLINE();
+                  output += "\n";
                }
 
             messages.clear();

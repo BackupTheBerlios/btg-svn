@@ -90,8 +90,6 @@ int main(int argc, char **argv)
 
          if (!wasSucessful)
             {
-               btg::core::projectDefaults::killInstance();
-
                return wasSucessful ? 0 : 1;
             }
       }

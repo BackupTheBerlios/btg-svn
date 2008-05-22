@@ -260,16 +260,15 @@ namespace btg
 
          output += "Filename: ";
          output += this->filename;
-         output += GPD->sNEWLINE();
+         output += "\n";
 
          output += "Size: ";
          output += convertToString<t_uint>(this->pieces_size);
-         output += GPD->sNEWLINE();
+         output += "\n";
 
          output += "Bytes per piece: ";
          output += convertToString<t_uint>(this->bytesPerPiece);
-         output += GPD->sNEWLINE();
-
+         output += "\n";
 
 
          switch (this->status)
@@ -277,13 +276,13 @@ namespace btg
             case fileInformation::DONE_ALL:
                {
                   output += "All bits set.";
-                  output += GPD->sNEWLINE();
+                  output += "\n";
                   break;
                }
             case fileInformation::DONE_NONE:
                {
                   output += "All bits unset.";
-                  output += GPD->sNEWLINE();
+                  output += "\n";
                   break;
                }
             case fileInformation::DONE_UNDEF:
@@ -291,7 +290,7 @@ namespace btg
                   if (this->pieces_size <= 0)
                      {
                         output += "Undefined.";
-                        output += GPD->sNEWLINE();
+                        output += "\n";
                      }
                   else
                      {
@@ -314,7 +313,7 @@ namespace btg
                               if (charcount >= max_char)
                                  {
                                     charcount  = 0;
-                                    output    += GPD->sNEWLINE();
+                                    output    += "\n";
                                  }
                            } // for iter
 

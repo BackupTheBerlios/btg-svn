@@ -471,7 +471,7 @@ namespace btg
                                 iter != filelist.end();
                                 iter++)
                               {
-                                 temp_output += *iter + GPD->sNEWLINE();
+                                 temp_output += *iter + "\n";
                               }
                            setOutput(temp_output);
                            // List the files.
@@ -753,7 +753,7 @@ namespace btg
          {
             isOutputAvailable = true;
             isErrorAvailable  = false;
-            output           += GPD->sNEWLINE();
+            output           += "\n";
             output           += _output;
          }
 
@@ -915,7 +915,7 @@ namespace btg
                   ci++;
                }
 
-            setOutput(GPD->sNEWLINE() + output);
+            setOutput("\n" + output);
          }
 
          void cliHandler::onListError()
@@ -993,7 +993,7 @@ namespace btg
                                                 t_long const _maxConnections)
          {
             std::string limitdesc = "Global limits:";
-            limitdesc += GPD->sNEWLINE();
+            limitdesc += "\n";
 
             limitdesc += " ";
             if (_limitBytesUpld == limitBase::LIMIT_DISABLED)
@@ -1006,7 +1006,7 @@ namespace btg
                   limitdesc += " bytes/sec";
                }
             limitdesc += " upload,";
-            limitdesc += GPD->sNEWLINE();
+            limitdesc += "\n";
 
             limitdesc += " ";
             if (_limitBytesDwnld == limitBase::LIMIT_DISABLED)
@@ -1019,7 +1019,7 @@ namespace btg
                   limitdesc += " bytes/sec";
                }
             limitdesc += " download,";
-            limitdesc += GPD->sNEWLINE();
+            limitdesc += "\n";
 
             limitdesc += " ";
             if (_maxUplds == limitBase::LIMIT_DISABLED)
@@ -1031,7 +1031,7 @@ namespace btg
                   limitdesc += convertToString<t_int>(_maxUplds);
                }
             limitdesc += " # uploads,";
-            limitdesc += GPD->sNEWLINE();
+            limitdesc += "\n";
 
             limitdesc += " ";
             if (_maxConnections == limitBase::LIMIT_DISABLED)
@@ -1044,7 +1044,7 @@ namespace btg
                }
 
             limitdesc += " # connections.";
-            limitdesc += GPD->sNEWLINE();
+            limitdesc += "\n";
 
             setOutput(limitdesc);
          }
@@ -1169,14 +1169,14 @@ namespace btg
 
          void cliHandler::onStatus(btg::core::Status const& _status)
          {
-            std::string output(GPD->sNEWLINE());
+            std::string output("\n");
             StatusToString(_status, output);
             setOutput(output);
          }
 
          void cliHandler::onStatusAll(t_statusList const& _vstatus)
          {
-            std::string output(GPD->sNEWLINE() + "Status of all contexts:" + GPD->sNEWLINE());
+            std::string output("\nStatus of all contexts:\n");
 
             t_long down_rate = 0;
             t_long up_rate   = 0;
@@ -1194,11 +1194,11 @@ namespace btg
                {
                   humanReadableRate hrr = humanReadableRate::convert(down_rate);
 
-                  output += "--" + GPD->sNEWLINE();
+                  output += "--\n";
                   output += "Totals: " + hrr.toString() + " dl, ";
 
                   hrr = humanReadableRate::convert(up_rate);
-                  output += hrr.toString() + " ul." + GPD->sNEWLINE();
+                  output += hrr.toString() + " ul.\n";
                }
 
             setOutput(output);
@@ -1213,9 +1213,9 @@ namespace btg
                   // The long format.
 
                   _output += "Id: " + convertToString<t_int>(_status.contextID());
-                  _output += GPD->sNEWLINE();
+                  _output += "\n";
                   _output += "Filename: " + _status.filename();
-                  _output += GPD->sNEWLINE();
+                  _output += "\n";
                   _output += "Status: ";
 
                   switch (_status.status())
@@ -1246,12 +1246,12 @@ namespace btg
                         break;
                      }
 
-                  _output += GPD->sNEWLINE();
+                  _output += "\n";
                   _output += "Up/down ratio: ";
                   std::string st_ratio;
                   btg::core::client::CalculateUlDlRatio(_status, st_ratio);
                   _output += st_ratio;
-                  _output += GPD->sNEWLINE();
+                  _output += "\n";
 
                   // Progress:
                   std::string timespec("Time left: ");
@@ -1260,30 +1260,30 @@ namespace btg
                      {
                         _status.timeLeftToString(timespec, _shortFormat);
                         _output += timespec;
-                        _output += GPD->sNEWLINE();
+                        _output += "\n";
                      }
 
                   humanReadableUnit hru = humanReadableUnit::convert(_status.downloadTotal());
-                  _output += "Total download: " + hru.toString() + GPD->sNEWLINE();
+                  _output += "Total download: " + hru.toString() + "\n";
 
                   hru = humanReadableUnit::convert(_status.uploadTotal());
-                  _output += "Total upload: " + hru.toString() + GPD->sNEWLINE();
+                  _output += "Total upload: " + hru.toString() + "\n";
 
                   humanReadableRate hrr = humanReadableRate::convert(static_cast<t_uint>(_status.downloadRate()));
 
-                  _output += "Download rate: " + hrr.toString() + GPD->sNEWLINE();
+                  _output += "Download rate: " + hrr.toString() + "\n";
 
                   hrr = humanReadableRate::convert(static_cast<t_uint>(_status.uploadRate()));
-                  _output += "Upload rate: " + hrr.toString() + GPD->sNEWLINE();
+                  _output += "Upload rate: " + hrr.toString() + "\n";
 
-                  _output += "Done: " + convertToString<t_ulong>(_status.done()) + " %." + GPD->sNEWLINE();
+                  _output += "Done: " + convertToString<t_ulong>(_status.done()) + " %.\n";
 
                   _output += "Leeches/seeders: ";
                   _output += convertToString<t_int>(_status.leechers());
                   _output += "/";
                   _output += convertToString<t_int>(_status.seeders());
 
-                  _output += GPD->sNEWLINE();
+                  _output += "\n";
 
                }
             else
@@ -1354,7 +1354,7 @@ namespace btg
 
                   hrr = humanReadableRate::convert(_status.uploadRate());
                   _output += hrr.toString(true) + " ul.";
-                  _output += GPD->sNEWLINE();
+                  _output += "\n";
                }
          }
 	
@@ -1370,8 +1370,8 @@ namespace btg
                {
                   charcounter = 0;
 
-                  output     += "Filename: " + iter->getFilename() + GPD->sNEWLINE();
-                  output     += "Bits: " + GPD->sNEWLINE();
+                  output     += "Filename: " + iter->getFilename() + "\n";
+                  output     += "Bits: \n";
 
                   if (iter->isFull())
                      {
@@ -1381,7 +1381,7 @@ namespace btg
 
                               if (charcounter >= width)
                                  {
-                                    output     += GPD->sNEWLINE();
+                                    output     += "\n";
                                     charcounter = 0;
                                  }
                               charcounter++;
@@ -1395,7 +1395,7 @@ namespace btg
 
                               if (charcounter >= width)
                                  {
-                                    output     += GPD->sNEWLINE();
+                                    output     += "\n";
                                     charcounter = 0;
                                  }
                               charcounter++;
@@ -1418,13 +1418,13 @@ namespace btg
 
                               if (charcounter >= width)
                                  {
-                                    output     += GPD->sNEWLINE();
+                                    output     += "\n";
                                     charcounter = 0;
                                  }
                               charcounter++;
                            } // for piece iter
                      }
-                  output += GPD->sNEWLINE();
+                  output += "\n";
                } // for file iter
             setOutput(output);
          }
@@ -1441,8 +1441,7 @@ namespace btg
             t_int const maxPeers  = 40;
             t_int       peerCount = 0;
 
-            std::string output = "Peers";
-            output += GPD->sNEWLINE();
+            std::string output = "Peers\n";
 
             t_peerListCI iter;
 
@@ -1454,7 +1453,7 @@ namespace btg
             for (iter=_peerlist.begin(); iter!= _peerlist.end(); iter++)
                {
                   peer_str += iter->toString();
-                  peer_str += GPD->sNEWLINE();
+                  peer_str += "\n";
 
                   if (iter->seeder())
                      {
@@ -1477,7 +1476,7 @@ namespace btg
             output += " leeches, ";
             output += convertToString<t_int>(seeders);
             output += " seeds):";
-            output += GPD->sNEWLINE();
+            output += "\n";
             output += peer_str;
 
             setOutput(output);
@@ -1521,13 +1520,13 @@ namespace btg
 
          void cliHandler::onClean(t_strList const& _filenames, t_intList const& _contextIDs)
          {
-            std::string output(GPD->sNEWLINE() + "Following files finished downloading:" + GPD->sNEWLINE());
+            std::string output("\nFollowing files finished downloading:\n");
 
             for (t_strListCI vsci = _filenames.begin();
                  vsci != _filenames.end();
                  vsci++)
                {
-                  output += *vsci + GPD->sNEWLINE();
+                  output += *vsci + "\n";
                   // Since the torrent finished downloading, remove it
                   // from the list of last opened files.
                   lastfiles.remove(*vsci);
@@ -1545,7 +1544,7 @@ namespace btg
          void cliHandler::onLimitStatus(t_int const _uploadRate, t_int const _downloadRate, t_int const _seedLimit, t_long const _seedTimeout)
          {
             BTG_FATAL_ERROR(logWrapper(),
-                            GPD->sCLI_CLIENT(), "Unused function, onLimitStatus, called with parameters: " << _uploadRate << ", " << _downloadRate << ", " << _seedLimit << ", " << _seedTimeout << ".");
+                            btg::core::projectDefaults::sCLI_CLIENT(), "Unused function, onLimitStatus, called with parameters: " << _uploadRate << ", " << _downloadRate << ", " << _seedLimit << ", " << _seedTimeout << ".");
          }
 
          void cliHandler::onLimitStatusError(std::string const& _errorDescription)
@@ -1553,7 +1552,7 @@ namespace btg
             cmd_failture++;
 
             BTG_FATAL_ERROR(logWrapper(),
-                            GPD->sCLI_CLIENT(), "Unused function, onLimitStatusError, called with parameter: " << _errorDescription << ".");
+                            btg::core::projectDefaults::sCLI_CLIENT(), "Unused function, onLimitStatusError, called with parameter: " << _errorDescription << ".");
          }
 
          void cliHandler::setCurrentID(t_int const _currentID)

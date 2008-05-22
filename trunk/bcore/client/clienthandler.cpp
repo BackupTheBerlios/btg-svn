@@ -111,7 +111,11 @@ namespace btg
                                       bool const _useDHT,
                                       bool const _useEncryption)
          {
-            requiredSetupData rsd(GPD->sBUILD(), _seedLimit, _seedTimeout, _useDHT, _useEncryption);
+            requiredSetupData rsd(projectDefaults::sBUILD(), 
+                                  _seedLimit, 
+                                  _seedTimeout, 
+                                  _useDHT, 
+                                  _useEncryption);
 
             statemachine.doSetup(new setupCommand(rsd));
             statemachine.work();
@@ -120,7 +124,8 @@ namespace btg
          void clientHandler::reqSetupAttach(t_long const _old_session)
          {
             setSession(_old_session);
-            statemachine.doAttach(new attachSessionCommand(GPD->sBUILD(), _old_session));
+            statemachine.doAttach(new attachSessionCommand(projectDefaults::sBUILD(), 
+                                                           _old_session));
             statemachine.work();
          }
 

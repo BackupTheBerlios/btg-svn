@@ -27,319 +27,194 @@
 #define BTG_STRINGIFY(x) #x
 #define BTG_EXPAND(x)    BTG_STRINGIFY(x)
 
+typedef std::vector<std::string> t_Path;
+typedef t_Path::value_type     t_PathElem;
+typedef t_Path::const_iterator t_PathCI;
+
+// Paths that can contain *.ini-files.
+static const t_PathElem config_paths[] =
+   {
+      t_PathElem("~/.btg/"),
+      t_PathElem(/*PREFIX*/ "/etc/btg/"),
+      t_PathElem("/etc/btg/"),
+      t_PathElem("~/"),
+      t_PathElem(/*PREFIX*/ "/etc/"),
+      t_PathElem("/etc/")
+   };
+static t_int const config_paths_size = sizeof(config_paths)/sizeof(t_PathElem);
+
 namespace btg
 {
    namespace core
    {
-      projectDefaultsKiller::projectDefaultsKiller()
+      std::string getClientConfig();
+      t_int getVersionNumber(t_uint const _n);
+
+      std::string projectDefaults::sPROJECT_NAME()
       {
-         projectDefaults::getInstance();
+         return "btg";
+      }
+
+      std::string projectDefaults::sCLI_CLIENT()
+      {
+         return "btg*cli";
+      }
+
+      std::string projectDefaults::sGUI_CLIENT()
+      {
+         return "btgui";
+      }
+
+      std::string getClientConfig()
+      {
+         std::string client_config("client.ini");
+         
+         static const t_Path cp(&config_paths[0], &config_paths[config_paths_size]);
+
+         // Search for client config file
+         for (t_PathCI iter = cp.begin();
+              iter != cp.end();
+              iter++)
+            {
+               std::string cc = *iter + client_config;
+               btg::core::os::fileOperation::resolvePath(cc);
+               if (btg::core::os::fileOperation::check(cc))
+                  {
+                     client_config = cc;
+               break;
+                  }
+            }
+
+         return client_config;
+      }
+
+      std::string projectDefaults::sCLI_CONFIG()
+      {
+         return getClientConfig();
+      }
+
+
+      std::string projectDefaults::sCLI_DYNCONFIG()
+      {
+         std::string client_dynconfig("~/.btg/client.dynconfig");
+         return client_dynconfig;
+      }
+
+      std::string projectDefaults::sGUI_CONFIG()
+      {
+         return getClientConfig();
+      }
+
+      std::string projectDefaults::sDAEMON()
+      {
+         return "btgdaemon";
+      }
+
+      std::string projectDefaults::sVERSION()
+      {
+         return std::string(BTG_EXPAND(BTG_VERSION));
+      }
+
+      std::string projectDefaults::sREVISION()
+      {
+         return std::string(BTG_EXPAND(BTG_REV));
       }
       
-      projectDefaultsKiller::~projectDefaultsKiller()
+      std::string projectDefaults::sFULLVERSION()
       {
-         projectDefaults::killInstance();
-      }
-
-      projectDefaults* projectDefaults::instance = 0;
-
-      projectDefaults* projectDefaults::getInstance()
-      {
-         if (projectDefaults::instance == 0)
-            {
-               projectDefaults::instance = new projectDefaults();
-            }
-
-         return projectDefaults::instance;
-      }
-
-      void projectDefaults::killInstance()
-      {
-         delete projectDefaults::instance;
-         projectDefaults::instance = 0;
-      }
-
-      projectDefaults::projectDefaults()
-         : project_name("btg"),
-           cli_client_name("btg*cli"),
-           gui_client_name("btgui"),
-           m_client_config("client.ini"),
-           m_client_dynconfig("client.dynconfig"),
-           daemon_name("btgdaemon"),
-           version(BTG_EXPAND(BTG_VERSION)),
-           revision(BTG_EXPAND(BTG_REV)),
-           majorVersion(0),
-           minorVersion(0),
-           revisionVersion(0),
-           build(BTG_EXPAND(BTG_BUILD)),
-           newline("\n"),
-           space(" "),
-           path_separator("/"),
-           hidden_prefix("."),
-           buffer_size(512),
-           m_deamon_config("daemon.ini"),
-           default_work_dir("~/bt"),
-           default_dest_dir("~/bt/finished"),
-           default_que("~/.btg/daemon"),
-           default_range_start(15000),
-           default_range_end(15400),
-           default_leech_mode(false),
-           temptemplate0("/tmp/btg0"),
-           temptemplate1("/tmp/btg1"),
-           max_last_files(20),
-           max_last_URLs(20)
-      {
-         // Paths that can contain *.ini-files
-         static const char * config_paths[] = {
-            // default locations
-            "~/.btg/",
-            PREFIX "/etc/btg/",
-            "/etc/btg/",
-            // extra locations
-            "~/",
-            PREFIX "/etc/",
-            "/etc/",
-            0
-         };
-
-         // Search for daemon config file
-         for (int i = 0; config_paths[i]; ++i)
-         {
-            std::string daemon_config = config_paths[i] + m_deamon_config;
-            btg::core::os::fileOperation::resolvePath(daemon_config);
-            if (btg::core::os::fileOperation::check(daemon_config))
-            {
-               m_deamon_config = daemon_config;
-               break;
-            }
-         }
-         // else in current dir
+         std::string v(BTG_EXPAND(BTG_VERSION));
+         std::string r(BTG_EXPAND(BTG_REV));
          
-         // Search for client config file
-         for (int i = 0; config_paths[i]; ++i)
-         {
-            std::string client_config = config_paths[i] + m_client_config;
-            btg::core::os::fileOperation::resolvePath(client_config);
-            if (btg::core::os::fileOperation::check(client_config))
+         if (r.size())
             {
-               m_client_config = client_config;
-               break;
+               v += ", ";
+               v += r;
             }
-         }
-         // else in current dir
-         
-         m_client_dynconfig = "~/.btg/" + m_client_dynconfig;
 
-         // Convert the version string into:
-         // majorVersion
-         // minorVersion;
-         // revisionVersion;
+         return v;
+      }
 
-         t_strList s = Util::splitLine(version, ".");
+      t_int getVersionNumber(t_uint const _n)
+      {
+         t_int version = 0;
 
-         if (s.size() > 0)
+         std::string v(BTG_EXPAND(BTG_VERSION));
+
+         t_strList s = Util::splitLine(v, ".");
+
+         if (s.size() > _n)
             {
-               t_uint buffer;
-               t_strListCI iter = s.begin();
-
-               if (Util::stringToUInt(*iter, buffer))
+               t_uint buffer = 0;
+               if (Util::stringToUInt(s[_n], buffer))
                   {
-                     majorVersion = buffer;
-                  }
-
-               iter++;
-
-               if (iter != s.end())
-                  {
-                     if (Util::stringToUInt(*iter, buffer))
-                        {
-                           minorVersion = buffer;
-                        }
-                  }
-
-               iter++;
-
-               if (iter != s.end())
-                  {
-                     if (Util::stringToUInt(*iter, buffer))
-                        {
-                           revisionVersion = buffer;
-                        }
-
+                     version = buffer;
                   }
             }
-      }
 
-      projectDefaults::~projectDefaults()
-      {
-      }
-
-      std::string projectDefaults::sPROJECT_NAME() const
-      {
-         return project_name;
-      }
-
-      std::string projectDefaults::sCLI_CLIENT() const
-      {
-         return cli_client_name;
-      }
-
-      std::string projectDefaults::sGUI_CLIENT() const
-      {
-         return gui_client_name;
-      }
-
-      std::string projectDefaults::sCLI_CONFIG() const
-      {
-         return m_client_config;
-      }
-
-
-      std::string projectDefaults::sCLI_DYNCONFIG() const
-      {
-         return m_client_dynconfig;
-      }
-
-      std::string projectDefaults::sGUI_CONFIG() const
-      {
-         return m_client_config;
-      }
-
-      std::string projectDefaults::sDAEMON() const
-      {
-         return daemon_name;
-      }
-
-      std::string projectDefaults::sVERSION() const
-      {
          return version;
       }
 
-      std::string projectDefaults::sREVISION() const
+      t_int projectDefaults::iMAJORVERSION()
       {
-         return revision;
+         return getVersionNumber(0);
       }
-      
-      std::string projectDefaults::sFULLVERSION() const
+
+      t_int projectDefaults::iMINORVERSION()
       {
-         std::string temp(version);
-         if (revision.size() > 0)
+         return getVersionNumber(1);
+      }
+
+      t_int projectDefaults::iREVISIONVERSION()
+      {
+         return getVersionNumber(2);
+      }
+
+      std::string projectDefaults::sBUILD()
+      {
+         return std::string(BTG_EXPAND(BTG_BUILD));
+      }
+
+      std::string projectDefaults::sHiddenPrefix()
+      {
+         return ".";
+      }
+
+      std::string projectDefaults::sPATH_SEPARATOR()
+      {
+         return "/";
+      }
+
+      std::string projectDefaults::sDAEMON_CONFIG()
+      {
+         std::string deamon_config("daemon.ini");
+
+         static const t_Path dp(&config_paths[0], &config_paths[config_paths_size]);
+
+         // Search for daemon config file
+         for (t_PathCI iter = dp.begin();
+              iter != dp.end();
+              iter++)
             {
-               temp += ", ";
-               temp += revision;
+               std::string dc = *iter + deamon_config;
+               btg::core::os::fileOperation::resolvePath(dc);
+               if (btg::core::os::fileOperation::check(dc))
+                  {
+                     deamon_config = dc;
+                     break;
+                  }
             }
 
-         return temp;
+         return deamon_config;
       }
 
-      t_int projectDefaults::iMAJORVERSION() const
+      t_uint projectDefaults::iMAXLASTFILES()
       {
-         return majorVersion;
+         return 20;
       }
 
-      t_int projectDefaults::iMINORVERSION() const
+      t_uint projectDefaults::iMAXLASTURLS()
       {
-         return minorVersion;
-      }
-
-      t_int projectDefaults::iREVISIONVERSION() const
-      {
-         return revisionVersion;
-      }
-
-      std::string projectDefaults::sBUILD() const
-      {
-         return build;
-      }
-
-      std::string projectDefaults::sHiddenPrefix() const
-      {
-         return hidden_prefix;
-      }
-
-      std::string projectDefaults::sNEWLINE() const
-      {
-         return newline;
-      }
-
-      char projectDefaults::cNEWLINE() const
-      {
-         return newline[0];
-      }
-
-      std::string projectDefaults::sSPACE() const
-      {
-         return space;
-      }
-
-      char projectDefaults::cSPACE() const
-      {
-         return space[0];
-      }
-
-      std::string projectDefaults::sPATH_SEPARATOR() const
-      {
-         return path_separator;
-      }
-
-      t_uint projectDefaults::iBufferSize() const
-      {
-         return buffer_size;
-      }
-
-      std::string projectDefaults::sDAEMON_CONFIG() const
-      {
-         return m_deamon_config;
-      }
-
-      std::string projectDefaults::sDEFAULT_WORK_DIR() const
-      {
-         return default_work_dir;
-      }
-
-      std::string projectDefaults::sDEFAULT_DEST_DIR() const
-      {
-         return default_dest_dir;
-      }
-
-      std::string projectDefaults::sDEFAULT_QUE() const
-      {
-         return default_que;
-      }
-
-      t_int projectDefaults::iDEFAULT_RANGE_START() const
-      {
-         return default_range_start;
-      }
-
-      t_int projectDefaults::iDEFAULT_RANGE_END() const
-      {
-         return default_range_end;
-      }
-
-      bool projectDefaults::bDEFAULT_LEECH_MODE() const
-      {
-         return default_leech_mode;
-      }
-
-      std::string projectDefaults::sTEMPTEMPLATE0() const
-      {
-         return temptemplate0;
-      }
-
-      std::string projectDefaults::sTEMPTEMPLATE1() const
-      {
-         return temptemplate1;
-      }
-
-      t_uint projectDefaults::iMAXLASTFILES() const
-      {
-         return max_last_files;
-      }
-
-      t_uint projectDefaults::iMAXLASTURLS() const
-      {
-         return max_last_URLs;
+         return 20;
       }
 
    } // namespace core

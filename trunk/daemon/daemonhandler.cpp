@@ -608,9 +608,9 @@ namespace btg
       {
          MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
          
-         versionResponseCommand* vrc = new versionResponseCommand(GPD->iMAJORVERSION(), 
-                                                                  GPD->iMINORVERSION(),
-                                                                  GPD->iREVISIONVERSION());
+         versionResponseCommand* vrc = new versionResponseCommand(projectDefaults::iMAJORVERSION(), 
+                                                                  projectDefaults::iMINORVERSION(),
+                                                                  projectDefaults::iREVISIONVERSION());
          // Set the differnent options, default is off.
 #if BTG_OPTION_SAVESESSIONS
          vrc->setOption(versionResponseCommand::SS);
@@ -736,7 +736,7 @@ namespace btg
       {
          attachSessionCommand *asc = dynamic_cast<attachSessionCommand*>(_command);
          /*
-         if (asc->getBuildID() != GPD->sBUILD())
+         if (asc->getBuildID() != projectDefaults::sBUILD())
             {
                // Wrong build.
                BTG_ERROR_LOG(logWrapper(), "Attach, unexpected build id '" << asc->getBuildID() << "'");
@@ -807,9 +807,9 @@ namespace btg
       {
          setupCommand *sc = dynamic_cast<setupCommand*>(_command);
 
-         if (sc->getRequiredData().getBuildID() != GPD->sBUILD())
+         if (sc->getRequiredData().getBuildID() != projectDefaults::sBUILD())
             {
-               BTG_ERROR_LOG(logWrapper(), "Setup, unexpected build id '" << sc->getRequiredData().getBuildID() << "', expected '" << GPD->sBUILD() << "'");
+               BTG_ERROR_LOG(logWrapper(), "Setup, unexpected build id '" << sc->getRequiredData().getBuildID() << "', expected '" << projectDefaults::sBUILD() << "'");
                sendError(command_->getType(), 
                          "Wrong build ID");
             }

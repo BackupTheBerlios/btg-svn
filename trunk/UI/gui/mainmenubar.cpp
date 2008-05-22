@@ -127,7 +127,7 @@ namespace btg
             lastFilesMenu->items().push_back(Gtk::Menu_Helpers::SeparatorElem());
 
             // List of recent files, in the submenu.
-            for (t_int i=0; i<GPD->iMAXLASTFILES(); ++i)
+            for (t_int i=0; i<btg::core::projectDefaults::iMAXLASTFILES(); ++i)
                {
                   lastFilesMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("LastFile"));
 
@@ -148,7 +148,7 @@ namespace btg
             lastURLsMenu->items().push_back(Gtk::Menu_Helpers::SeparatorElem());
 
             // List of recent files, in the submenu.
-            for (t_int i=0; i<GPD->iMAXLASTURLS(); ++i)
+            for (t_int i=0; i<btg::core::projectDefaults::iMAXLASTURLS(); ++i)
                {
                   lastURLsMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("LastURL"));
 

@@ -31,7 +31,7 @@ namespace btg
                }
 
             // Only keep a certain number of elements.
-            while (URLs_.size() > GPD->iMAXLASTFILES())
+            while (URLs_.size() > projectDefaults::iMAXLASTFILES())
                {
                   URLs_.erase(URLs_.begin());
                   Files_.erase(Files_.begin());

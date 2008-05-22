@@ -46,7 +46,7 @@ namespace btg
 
       std::string contextCreateFromUrlCommand::toString() const
       {
-         std::string output = Command::toString() + GPD->sSPACE() + "Filename = " + filename + ".";
+         std::string output = Command::toString() + " " + "Filename = " + filename + ".";
          if (start)
             {
                output += " Start flag set.";

@@ -498,14 +498,14 @@ namespace btg
                } // switch
 
             if (_which_item > buttonMenuIds::BTN_LASTFILE && \
-               _which_item < buttonMenuIds::BTN_LASTFILE + GPD->iMAXLASTFILES() + 1)
+               _which_item < buttonMenuIds::BTN_LASTFILE + btg::core::projectDefaults::iMAXLASTFILES() + 1)
             {
                handle_btn_lastfile(_which_item - buttonMenuIds::BTN_LASTFILE - 1);
                non_context = true;
             }
             
             if (_which_item > buttonMenuIds::BTN_LASTURL && \
-               _which_item < buttonMenuIds::BTN_LASTURL + GPD->iMAXLASTURLS() + 1)
+               _which_item < buttonMenuIds::BTN_LASTURL + btg::core::projectDefaults::iMAXLASTURLS() + 1)
             {
                handle_btn_lasturl(_which_item - buttonMenuIds::BTN_LASTURL - 1);
                non_context = true;

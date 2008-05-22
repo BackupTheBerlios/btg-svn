@@ -94,7 +94,7 @@ namespace btg
       void Configuration::formatHeader(std::string & _output) const
       {
          _output += "INI file format:";
-         _output += GPD->sNEWLINE();
+         _output += "\n";
 
       }
 
@@ -105,7 +105,7 @@ namespace btg
 
          _output += sectionLabel;
          _output += "\"" + _section + "\"";
-         _output += GPD->sNEWLINE();
+         _output += "\n";
       }
 
       void Configuration::formatKey(std::string const& _key,
@@ -125,7 +125,7 @@ namespace btg
          _output += " (" + _descr + ")";
          _output += ".";
 
-         _output += GPD->sNEWLINE();
+         _output += "\n";
 
          _output += valueLabel;
 
@@ -143,8 +143,8 @@ namespace btg
                counter++;
             }
          _output += ".";
-         _output += GPD->sNEWLINE();
-         _output += GPD->sNEWLINE();
+         _output += "\n";
+         _output += "\n";
       }
 
       void Configuration::setErrorDescription(std::string const& _operation, 

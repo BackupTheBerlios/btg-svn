@@ -362,13 +362,13 @@ namespace btg
          void guiHandler::onListSessionsError(std::string const& _errorDescription)
          {
             BTG_FATAL_ERROR(logWrapper(),
-                            GPD->sGUI_CLIENT(), _errorDescription);
+                            btg::core::projectDefaults::sGUI_CLIENT(), _errorDescription);
          }
 
          void guiHandler::onSessionError()
          {
             BTG_FATAL_ERROR(logWrapper(), 
-                            GPD->sGUI_CLIENT(), "Invalid session. Quitting.");
+                            btg::core::projectDefaults::sGUI_CLIENT(), "Invalid session. Quitting.");
             setSessionError();
          }
 

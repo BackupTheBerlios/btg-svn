@@ -111,7 +111,7 @@ namespace btg
             file_entry->signal_changed().connect(sigc::mem_fun(*this, &urlDialog::file_changed));
             url_entry->signal_changed().connect(sigc::mem_fun(*this, &urlDialog::url_changed));
 
-            set_title( GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() + " / URL" );
+            set_title( btg::core::projectDefaults::sGUI_CLIENT() + " " + btg::core::projectDefaults::sFULLVERSION() + " / URL" );
             set_modal(true);
             property_window_position().set_value(Gtk::WIN_POS_CENTER);
             set_resizable(true);

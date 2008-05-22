@@ -143,14 +143,14 @@ namespace btg
             for (iter = list.begin(); iter != list.end(); iter++)
                {
                   cmd = *iter;
-                  output += cmd->getName() + " (" + cmd->getShortName() + ")\t" + cmd->getDescription() + GPD->sNEWLINE();
+                  output += cmd->getName() + " (" + cmd->getShortName() + ")\t" + cmd->getDescription() + "\n";
                }
 
-            output += GPD->sNEWLINE();
+            output += "\n";
             output += "The IDs used with for example the start command are numbers which are greater or equal to zero. The client remembers the last used ID, so the following commands can be used without the ID.";
-            output += GPD->sNEWLINE();
+            output += "\n";
             output += "The insert key toggles between insert/overwrite mode. Overwrite mode is the default.";
-            output += GPD->sNEWLINE();
+            output += "\n";
             return output;
          }
 
@@ -164,11 +164,11 @@ namespace btg
                   CLICommand* cmd = iter->second;
                   if (cmd->getSyntax() != "")
                      {
-                        output = cmd->getName() + " (" + cmd->getShortName() + ") " + cmd->getSyntax() + GPD->sNEWLINE();
+                        output = cmd->getName() + " (" + cmd->getShortName() + ") " + cmd->getSyntax() + "\n";
                      }
                   else
                      {
-                        output = cmd->getName() + " (" + cmd->getShortName() + "): no parameters." + GPD->sNEWLINE();
+                        output = cmd->getName() + " (" + cmd->getShortName() + "): no parameters." + "\n";
                      }
                }
 

@@ -163,9 +163,9 @@ namespace btg
                torrent_session = new libtorrent::session(
                                                          libtorrent::fingerprint(
                                                                                  "BG",
-                                                                                 GPD->iMAJORVERSION(),
-                                                                                 GPD->iMINORVERSION(),
-                                                                                 GPD->iREVISIONVERSION(),
+                                                                                 projectDefaults::iMAJORVERSION(),
+                                                                                 projectDefaults::iMINORVERSION(),
+                                                                                 projectDefaults::iREVISIONVERSION(),
                                                                                  0
                                                                                  )
                                                          );
@@ -322,7 +322,7 @@ namespace btg
                return false;
             }
 
-         std::string fullFilename = tempDir_ + GPD->sPATH_SEPARATOR() + ti->filename;
+         std::string fullFilename = tempDir_ + projectDefaults::sPATH_SEPARATOR() + ti->filename;
          if (!_buffer.read(fullFilename))
             {
                BTG_MNOTICE(logWrapper(), 
@@ -462,7 +462,7 @@ namespace btg
          Context::addResult status = Context::ERR_UNDEFINED;
 
          // Filename used as key for the file tracker.
-         // tempDir_ + GPD->sPATH_SEPARATOR() + 
+         // tempDir_ + projectDefaults::sPATH_SEPARATOR() + 
          std::string fileTrackFilename = _torrent_filename;
 
          // Add torrent name to filetracker
@@ -479,7 +479,7 @@ namespace btg
          libtorrent::entry torrent_entry;
 
          // Prepend tempDir_ to filename.
-         std::string targetPath = tempDir_ + GPD->sPATH_SEPARATOR() + _torrent_filename;
+         std::string targetPath = tempDir_ + projectDefaults::sPATH_SEPARATOR() + _torrent_filename;
 
          // Read the file:
          try
@@ -583,7 +583,7 @@ namespace btg
                if (this->hasFastResumeData(_torrent_filename))
                   {
                      // Get fast resume data.
-                     std::string fastResumeFileName = tempDir_ + GPD->sPATH_SEPARATOR() + _torrent_filename + fastResumeFileNameEnd;
+                     std::string fastResumeFileName = tempDir_ + projectDefaults::sPATH_SEPARATOR() + _torrent_filename + fastResumeFileNameEnd;
                      std::ifstream in(fastResumeFileName.c_str(), std::ios_base::binary);
                      in.unsetf(std::ios_base::skipws);
 
@@ -696,7 +696,7 @@ namespace btg
             }
 
          // Convert _buffer into a temporary file and call the other add.
-         std::string targetPath = tempDir_ + GPD->sPATH_SEPARATOR() + _torrent_filename;
+         std::string targetPath = tempDir_ + projectDefaults::sPATH_SEPARATOR() + _torrent_filename;
          if (_buffer.write(targetPath))
             {
                status = add(_torrent_filename, _handle_id);
@@ -2129,7 +2129,7 @@ namespace btg
             }
          else
             {
-               session_settings_.user_agent = GPD->sDAEMON() + GPD->sSPACE() + GPD->sVERSION();
+               session_settings_.user_agent = projectDefaults::sDAEMON() + " " + projectDefaults::sVERSION();
             }
          BTG_MNOTICE(logWrapper(), "user agent string: " << session_settings_.user_agent);
 

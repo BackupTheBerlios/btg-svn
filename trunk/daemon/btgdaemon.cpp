@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
    time(&dd.daemonStartTime);
 
    // Parse command line arguments.
-   dd.cla = new commandLineArgumentHandler(GPD->sDAEMON_CONFIG());
+   dd.cla = new commandLineArgumentHandler(projectDefaults::sDAEMON_CONFIG());
    dd.cla->setup();
 
    if (!dd.cla->parse(argc, argv))
@@ -174,7 +174,7 @@ int main(int argc, char* argv[])
 #endif // BTG_DEBUG
 
    
-   dd.configFile = GPD->sDAEMON_CONFIG();
+   dd.configFile = btg::core::projectDefaults::sDAEMON_CONFIG();
 
    if (dd.cla->configFileSet())
       {
@@ -863,7 +863,8 @@ int main(int argc, char* argv[])
    daemonHandler* dh = new daemonHandler(logwrapper, &dd, verboseFlag);
 
    VERBOSE_LOG(logwrapper, 
-               verboseFlag, GPD->sDAEMON() << " version " << GPD->sFULLVERSION() << ".");
+               verboseFlag, btg::core::projectDefaults::sDAEMON() << " version " << 
+               btg::core::projectDefaults::sFULLVERSION() << ".");
    VERBOSE_LOG(logwrapper, 
                verboseFlag, "Ready to accept clients.");
 
@@ -917,8 +918,6 @@ int main(int argc, char* argv[])
                      "saving config");
          dd.config->write();
       }
-
-   projectDefaults::killInstance();
 
    return BTG_NORMAL_EXIT;
 }

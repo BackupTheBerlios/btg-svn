@@ -24,7 +24,7 @@ namespace btg
          aboutDialog::aboutDialog()
          {
             Gtk::Button* okbutton    = Gtk::manage(new class Gtk::Button("ok"));
-            Gtk::Label* aboutLabel   = Gtk::manage(new class Gtk::Label( "About " + GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() + ", build " + GPD->sBUILD() ));
+            Gtk::Label* aboutLabel   = Gtk::manage(new class Gtk::Label( "About " + btg::core::projectDefaults::sGUI_CLIENT() + " " + btg::core::projectDefaults::sFULLVERSION() + ", build " + btg::core::projectDefaults::sBUILD() ));
             Gtk::TextView* textview  = Gtk::manage(new class Gtk::TextView());
             Gtk::ScrolledWindow* scrolledwindow = Gtk::manage(new class Gtk::ScrolledWindow());
             Gtk::VBox* vbox                     = Gtk::manage(new class Gtk::VBox(false, 0));
@@ -57,30 +57,18 @@ namespace btg
             textview->set_justification(Gtk::JUSTIFY_LEFT);
 
             std::string text;
-            text += "btg Copyright (C) 2005 Michael Wojciechowski.";
-            text += GPD->sNEWLINE();
-            text += "This program is free software; you can redistribute it and/or modify";
-            text += GPD->sNEWLINE();
-            text += "it under the terms of the GNU General Public License as published by ";
-            text += GPD->sNEWLINE();
-            text += "the Free Software Foundation; either version 2 of the License, or ";
-            text += GPD->sNEWLINE();
-            text += "(at your option) any later version.";
-            text += GPD->sNEWLINE();
-            text += "This program is distributed in the hope that it will be useful, ";
-            text += GPD->sNEWLINE();
-            text += "but WITHOUT ANY WARRANTY; without even the implied warranty of ";
-            text += GPD->sNEWLINE();
-            text += "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the ";
-            text += GPD->sNEWLINE();
-            text += "GNU General Public License for more details.";
-            text += GPD->sNEWLINE();
-            text += "You should have received a copy of the GNU General Public License ";
-            text += GPD->sNEWLINE();
-            text += "along with this program; if not, write to the Free Software ";
-            text += GPD->sNEWLINE();
-            text += "Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA";
-            text += GPD->sNEWLINE();
+            text += "btg Copyright (C) 2005 Michael Wojciechowski.\n";
+            text += "This program is free software; you can redistribute it and/or modify\n";
+            text += "it under the terms of the GNU General Public License as published by \n";
+            text += "the Free Software Foundation; either version 2 of the License, or \n";
+            text += "(at your option) any later version.\n";
+            text += "This program is distributed in the hope that it will be useful, \n";
+            text += "but WITHOUT ANY WARRANTY; without even the implied warranty of \n";
+            text += "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \n";
+            text += "GNU General Public License for more details.\n";
+            text += "You should have received a copy of the GNU General Public License \n";
+            text += "along with this program; if not, write to the Free Software \n";
+            text += "Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n";
 
             textview->get_buffer()->set_text(text);
 
@@ -97,7 +85,7 @@ namespace btg
             get_vbox()->set_homogeneous(false);
             get_vbox()->set_spacing(0);
             get_vbox()->pack_start(*vbox);
-            set_title( GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() + " / About" );
+            set_title( btg::core::projectDefaults::sGUI_CLIENT() + " " + btg::core::projectDefaults::sFULLVERSION() + " / About" );
             set_modal(true);
             property_window_position().set_value(Gtk::WIN_POS_CENTER);
             set_resizable(true);

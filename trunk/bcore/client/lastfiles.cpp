@@ -31,7 +31,7 @@ namespace btg
                }
 
             // Only keep a certain number of elements.
-            while (lastFiles_.size() > GPD->iMAXLASTFILES())
+            while (lastFiles_.size() > projectDefaults::iMAXLASTFILES())
                {
                   lastFiles_.erase(lastFiles_.begin());
                   set_modified(true);

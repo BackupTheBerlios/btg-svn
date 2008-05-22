@@ -42,8 +42,8 @@ namespace btg
               vbox(0)
          {
             title_label = Gtk::manage(new class Gtk::Label(
-                                                           GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() +
-                                                           ", build " + GPD->sBUILD()
+                                                           btg::core::projectDefaults::sGUI_CLIENT() + " " + btg::core::projectDefaults::sFULLVERSION() +
+                                                           ", build " + btg::core::projectDefaults::sBUILD()
                                                            )
                                       );
             label       = Gtk::manage(new class Gtk::Label());
@@ -81,8 +81,8 @@ namespace btg
 
             set_border_width(20);
             set_title(
-                      GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() +
-                      ", build " + GPD->sBUILD() + " - initializing .."
+                      btg::core::projectDefaults::sGUI_CLIENT() + " " + btg::core::projectDefaults::sFULLVERSION() +
+                      ", build " + btg::core::projectDefaults::sBUILD() + " - initializing .."
                       );
             set_modal(true);
             set_resizable(false);

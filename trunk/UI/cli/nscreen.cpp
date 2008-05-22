@@ -468,7 +468,7 @@ namespace btg
                   return;
                }
 
-            wprintw(main_window, "%s%c", _s.c_str(), GPD->cNEWLINE());
+            wprintw(main_window, "%s%c", _s.c_str(), "\n");
          }
 
          void ncursesScreen::setInput(std::string const& _s)

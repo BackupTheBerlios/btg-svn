@@ -151,7 +151,7 @@ namespace btg
       std::string commandLineArgumentHandler::getCompileTimeOptions() const
       {
          std::string output = argumentInterface::getCompileTimeOptions();
-         output            += GPD->sNEWLINE();
+         output            += "\n";
 
          btg::core::getCompileTimeOptions(output);
 

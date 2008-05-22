@@ -49,7 +49,7 @@ namespace btg
                                             btg::core::messageTransport&                   _messageTransport,
                                             btg::core::client::clientHandler&              _handler)
             : btg::core::client::startupHelper(_logwrapper,
-                                               GPD->sGUI_CLIENT(),
+                                               btg::core::projectDefaults::sGUI_CLIENT(),
                                                _config,
                                                _clah,
                                                _messageTransport,
@@ -100,7 +100,7 @@ namespace btg
                {
                   // Pressed cancel.
                   BTG_FATAL_ERROR(logWrapper(), 
-                                  GPD->sGUI_CLIENT(), "Cancelled.");
+                                  btg::core::projectDefaults::sGUI_CLIENT(), "Cancelled.");
 
                   _session = Command::INVALID_SESSION;
                   return false;

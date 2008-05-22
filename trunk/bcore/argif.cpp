@@ -51,7 +51,7 @@ namespace btg
            debugMode(false),
            verboseMode(false),
            listSyntax(false),
-           desc(_applicationName + " (version " + GPD->sFULLVERSION() + ") options"),
+           desc(_applicationName + " (version " + projectDefaults::sFULLVERSION() + ") options"),
            vm()
       {
 

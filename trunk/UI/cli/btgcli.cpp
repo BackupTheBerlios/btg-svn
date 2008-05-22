@@ -90,11 +90,10 @@ void OpenFiles(ncursesScreen& _nscr,
 int main(int argc, char* argv[])
 {
    btg::core::crashLog::init();
-   projectDefaultsKiller PDK__;
    LogWrapperType logwrapper(new btg::core::logger::logWrapper);
 
    // Parse command line arguments.
-   commandLineArgumentHandler cla(GPD->sCLI_CONFIG(),
+   commandLineArgumentHandler cla(btg::core::projectDefaults::sCLI_CONFIG(),
                                   true /* Extra option used to pass commands. */);
    cla.setup();
 
@@ -117,7 +116,7 @@ int main(int argc, char* argv[])
    bool verboseFlag  = cla.beVerbose();
 
    // Open the configuration file:
-   std::string config_filename = GPD->sCLI_CONFIG();
+   std::string config_filename = btg::core::projectDefaults::sCLI_CONFIG();
 
    if (cla.configFileSet())
       {
@@ -129,17 +128,17 @@ int main(int argc, char* argv[])
    std::string errorString;
    if (!btg::core::os::fileOperation::check(config_filename, errorString, false))
       {
-         BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Could not open file '" << config_filename << "'.");
+         BTG_FATAL_ERROR(logwrapper, btg::core::projectDefaults::sCLI_CLIENT(), "Could not open file '" << config_filename << "'.");
 
          return BTG_ERROR_EXIT;
       }
 
    clientConfiguration config(logwrapper, config_filename);
-   clientDynConfig dynconfig(logwrapper, GPD->sCLI_DYNCONFIG());
+   clientDynConfig dynconfig(logwrapper, btg::core::projectDefaults::sCLI_DYNCONFIG());
 
    if (!config.read())
       {
-         BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Could not read the config file, '" << GPD->sCLI_CONFIG() << "'. Create one.");
+         BTG_FATAL_ERROR(logwrapper, btg::core::projectDefaults::sCLI_CLIENT(), "Could not read the config file, '" << btg::core::projectDefaults::sCLI_CONFIG() << "'. Create one.");
 
          return BTG_ERROR_EXIT;
       }
@@ -154,7 +153,7 @@ int main(int argc, char* argv[])
       messageTransport* transport                                  = 0;
 
       transportHelper transporthelper(logwrapper,
-                                      GPD->sCLI_CLIENT(),
+                                      btg::core::projectDefaults::sCLI_CLIENT(),
                                       config,
                                       cla);
 
@@ -192,7 +191,7 @@ int main(int argc, char* argv[])
 
    if (!starthelper->Init())
       {
-         BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Internal error: start up helper not initialized.");
+         BTG_FATAL_ERROR(logwrapper, btg::core::projectDefaults::sCLI_CLIENT(), "Internal error: start up helper not initialized.");
 
          return BTG_ERROR_EXIT;
       }
@@ -202,7 +201,7 @@ int main(int argc, char* argv[])
    // Initialize logging.
    if (!starthelper->SetupLogging())
       {
-         BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Unable to initialize logging");
+         BTG_FATAL_ERROR(logwrapper, btg::core::projectDefaults::sCLI_CLIENT(), "Unable to initialize logging");
 
          return BTG_ERROR_EXIT;
       }
@@ -222,7 +221,7 @@ int main(int argc, char* argv[])
          // Attach to the first available session.
          if (!starthelper->AttachFirstSession(sessionId))
             {
-               BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Unable to attach to session");
+               BTG_FATAL_ERROR(logwrapper, btg::core::projectDefaults::sCLI_CLIENT(), "Unable to attach to session");
 
                return BTG_ERROR_EXIT;
             }
@@ -240,7 +239,7 @@ int main(int argc, char* argv[])
 
          if (!starthelper->AttachSession(sessionId))
             {
-               BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Unable to attach to session");
+               BTG_FATAL_ERROR(logwrapper, btg::core::projectDefaults::sCLI_CLIENT(), "Unable to attach to session");
 
                return BTG_ERROR_EXIT;
             }
@@ -258,7 +257,7 @@ int main(int argc, char* argv[])
 
          if (!starthelper->DefaultAction(action_attach, session))
             {
-               BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Cancelled.");
+               BTG_FATAL_ERROR(logwrapper, btg::core::projectDefaults::sCLI_CLIENT(), "Cancelled.");
 
                return BTG_ERROR_EXIT;
             }
@@ -269,7 +268,7 @@ int main(int argc, char* argv[])
 
                if (!starthelper->AttachToSession(session))
                   {
-                     BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Unable to attach to session.");
+                     BTG_FATAL_ERROR(logwrapper, btg::core::projectDefaults::sCLI_CLIENT(), "Unable to attach to session.");
 
                      return BTG_ERROR_EXIT;
                   }
@@ -285,7 +284,7 @@ int main(int argc, char* argv[])
          t_long sessionId;
          if (!starthelper->NewSession(sessionId))
             {
-               BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Unable to create new session.");
+               BTG_FATAL_ERROR(logwrapper, btg::core::projectDefaults::sCLI_CLIENT(), "Unable to create new session.");
 
                return BTG_ERROR_EXIT;
             }
@@ -336,7 +335,7 @@ int main(int argc, char* argv[])
    apnscr->setOutput(" :: : ::     :     :: :: :   :: :: : : ::.: : :   ");
    apnscr->setOutput("                                                  ");
 
-   apnscr->setOutput(GPD->sCLI_CLIENT() +" version " + GPD->sFULLVERSION() + ", build " + GPD->sBUILD() + " initializing ..");
+   apnscr->setOutput(btg::core::projectDefaults::sCLI_CLIENT() +" version " + btg::core::projectDefaults::sFULLVERSION() + ", build " + btg::core::projectDefaults::sBUILD() + " initializing ..");
    apnscr->setOutput(initialStatusMessage);
 
    clihandler.reqVersion();

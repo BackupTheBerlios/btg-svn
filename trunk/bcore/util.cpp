@@ -81,7 +81,7 @@ namespace btg
 
       bool Util::getFileFromPath(std::string const& _input, std::string & _output)
       {
-         std::string ps = GPD->sPATH_SEPARATOR();
+         std::string ps = projectDefaults::sPATH_SEPARATOR();
          size_t pos = _input.rfind(ps);
          if (pos != std::string::npos)
          {

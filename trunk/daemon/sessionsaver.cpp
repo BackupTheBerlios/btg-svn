@@ -458,7 +458,7 @@ namespace btg
 
          // Disable DHT and encryption here. It will be enabled,
          // during the the deserialization.
-         btg::core::requiredSetupData rsd(GPD->sBUILD(),
+         btg::core::requiredSetupData rsd(btg::core::projectDefaults::sBUILD(),
                                           _seed_limit,
                                           _seed_timeout,
                                           false,

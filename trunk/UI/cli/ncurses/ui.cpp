@@ -131,7 +131,8 @@ namespace btg
                   return false;
                }
 
-            topwindow_.setTitle(GPD->sCLI_CLIENT() +" version " + GPD->sFULLVERSION() + 
+            topwindow_.setTitle(btg::core::projectDefaults::sCLI_CLIENT() + 
+                                " version " + btg::core::projectDefaults::sFULLVERSION() + 
                                 " (session #" + session_ + ")");
 
             // Init the status window.

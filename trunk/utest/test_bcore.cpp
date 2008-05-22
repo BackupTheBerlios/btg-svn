@@ -1411,19 +1411,19 @@ void testBcore::testOsFileOp()
 void testBcore::testVersion()
 {
    CPPUNIT_ASSERT((
-                   GPD->iMAJORVERSION() != 0 ||
-                   GPD->iMINORVERSION() != 0 ||
-                   GPD->iREVISIONVERSION() != 0));
+                   btg::core::projectDefaults::iMAJORVERSION() != 0 ||
+                   btg::core::projectDefaults::iMINORVERSION() != 0 ||
+                   btg::core::projectDefaults::iREVISIONVERSION() != 0));
 
    // This is required by libtorrent.
-   CPPUNIT_ASSERT( (GPD->iMAJORVERSION() >= 0) && (GPD->iMAJORVERSION() <= 9) );
-   CPPUNIT_ASSERT( (GPD->iMINORVERSION() >= 0) && (GPD->iMINORVERSION() <= 9) );
-   CPPUNIT_ASSERT( (GPD->iREVISIONVERSION() >= 0 ) && (GPD->iREVISIONVERSION() <= 9) );
+   CPPUNIT_ASSERT( (btg::core::projectDefaults::iMAJORVERSION() >= 0) && (btg::core::projectDefaults::iMAJORVERSION() <= 9) );
+   CPPUNIT_ASSERT( (btg::core::projectDefaults::iMINORVERSION() >= 0) && (btg::core::projectDefaults::iMINORVERSION() <= 9) );
+   CPPUNIT_ASSERT( (btg::core::projectDefaults::iREVISIONVERSION() >= 0 ) && (btg::core::projectDefaults::iREVISIONVERSION() <= 9) );
 
    // Test the version command.
-   versionResponseCommand vrc(GPD->iMAJORVERSION(), 
-                              GPD->iMINORVERSION(),
-                              GPD->iREVISIONVERSION());
+   versionResponseCommand vrc(btg::core::projectDefaults::iMAJORVERSION(), 
+                              btg::core::projectDefaults::iMINORVERSION(),
+                              btg::core::projectDefaults::iREVISIONVERSION());
 
    vrc.setOption(versionResponseCommand::SS);
    vrc.setOption(versionResponseCommand::PERIODIC_SS);

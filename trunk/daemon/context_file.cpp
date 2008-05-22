@@ -175,7 +175,8 @@ namespace btg
             {
                if (this->hasFastResumeData(filename))
                   {
-                     std::string fastResumeFilename = tempDir_ + GPD->sPATH_SEPARATOR() + 
+                     std::string fastResumeFilename = tempDir_ + 
+                        projectDefaults::sPATH_SEPARATOR() + 
                         filename + this->fastResumeFileNameEnd;
                      status = btg::core::os::fileOperation::remove(fastResumeFilename);
                   }
@@ -193,7 +194,7 @@ namespace btg
          std::string filename;
          if (this->getFilename(_torrent_id, filename))
             {
-               filename = tempDir_ + GPD->sPATH_SEPARATOR() + filename;
+               filename = tempDir_ + projectDefaults::sPATH_SEPARATOR() + filename;
                status = btg::core::os::fileOperation::remove(filename);
             }
 
@@ -464,7 +465,7 @@ namespace btg
                     cpyIter != files.end();
                     cpyIter++)
                   {
-                     std::string filename = _directory + GPD->sPATH_SEPARATOR() + (*cpyIter);
+                     std::string filename = _directory + projectDefaults::sPATH_SEPARATOR() + (*cpyIter);
                      output.push_back(filename);
                   }
 
@@ -473,7 +474,7 @@ namespace btg
                     cpyIter != unique_directories.end();
                     cpyIter++)
                   {
-                     std::string dirname = _directory + GPD->sPATH_SEPARATOR() + (*cpyIter);
+                     std::string dirname = _directory + projectDefaults::sPATH_SEPARATOR() + (*cpyIter);
                      output.push_back(dirname);
                   }
 
@@ -523,7 +524,7 @@ namespace btg
 
                // The name to which the resume data is saved to.
                std::string filename;
-               filename = tempDir_ + GPD->sPATH_SEPARATOR() + ti->filename + 
+               filename = tempDir_ + projectDefaults::sPATH_SEPARATOR() + ti->filename + 
                   this->fastResumeFileNameEnd;
 
                // Output file.
@@ -567,7 +568,7 @@ namespace btg
       bool Context::hasFastResumeData(std::string const& _torrent_filename) const
       {
          // Check if the fast resume data actually exists.
-         std::string fastResumeFilename = tempDir_ + GPD->sPATH_SEPARATOR() + 
+         std::string fastResumeFilename = tempDir_ + projectDefaults::sPATH_SEPARATOR() + 
             _torrent_filename + this->fastResumeFileNameEnd;
          bool status = btg::core::os::fileOperation::check(fastResumeFilename);
 

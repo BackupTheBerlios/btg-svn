@@ -51,7 +51,7 @@ namespace btg
                                             btg::core::messageTransport&                   _messageTransport,
                                             btg::core::client::clientHandler&              _handler)
             : btg::core::client::startupHelper(_logwrapper,
-                                               GPD->sCLI_CLIENT(),
+                                               btg::core::projectDefaults::sCLI_CLIENT(),
                                                _config,
                                                _clah,
                                                _messageTransport,

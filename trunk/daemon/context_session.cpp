@@ -105,7 +105,7 @@ namespace btg
                // Add .torrent file
                btg::core::sBuffer sbuf;
                std::string fullFilename;
-               fullFilename = tempDir_ + GPD->sPATH_SEPARATOR() + ti->filename;
+               fullFilename = tempDir_ + projectDefaults::sPATH_SEPARATOR() + ti->filename;
                if (!sbuf.read(fullFilename))
                   {
                      BTG_MNOTICE(logWrapper(), "failed to read .torrent file from '" << fullFilename << "' (serializing)");
@@ -231,7 +231,7 @@ namespace btg
                BTG_CDC(!sbuf.deserialize(_e), "torrent file");
 
                std::string fullFilename;
-               fullFilename = tempDir_ + GPD->sPATH_SEPARATOR() + filename;
+               fullFilename = tempDir_ + projectDefaults::sPATH_SEPARATOR() + filename;
                if (!sbuf.write(fullFilename))
                   {
                      BTG_MNOTICE(logWrapper(), "failed to write .torrent file '" << fullFilename << "' after deserialization");
@@ -240,7 +240,7 @@ namespace btg
 
                // Deserialize .fast file
                BTG_CDC(!sbuf.deserialize(_e), "fast file");
-               fullFilename = tempDir_ + GPD->sPATH_SEPARATOR() + filename + fastResumeFileNameEnd;
+               fullFilename = tempDir_ + projectDefaults::sPATH_SEPARATOR() + filename + fastResumeFileNameEnd;
                if (!sbuf.write(fullFilename))
                   {
                      BTG_MNOTICE(logWrapper(), "failed to write .fast file '" << fullFilename << "' after deserialization");

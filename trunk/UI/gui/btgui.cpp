@@ -68,10 +68,9 @@ int main(int argc, char **argv)
    std::string appname("btgui");
 
    btg::core::crashLog::init();
-   projectDefaultsKiller PDK__; // need to be before anything uses GPD
    LogWrapperType logwrapper(new btg::core::logger::logWrapper);
 
-   commandLineArgumentHandler cla(GPD->sGUI_CONFIG());
+   commandLineArgumentHandler cla(btg::core::projectDefaults::sGUI_CONFIG());
    cla.setup();
 
    // Parse command line arguments.
@@ -107,7 +106,7 @@ int main(int argc, char **argv)
    iw->updateProgress(initWindow::IEV_RCONF);
 
    // Open the configuration file:
-   std::string config_filename = GPD->sCLI_CONFIG();
+   std::string config_filename = btg::core::projectDefaults::sCLI_CONFIG();
 
    if (cla.configFileSet())
       {
@@ -132,7 +131,7 @@ int main(int argc, char **argv)
 
    bool neverAskFlag = config.getNeverAskQuestions();
 
-   clientDynConfig dynconfig(logwrapper, GPD->sCLI_DYNCONFIG());
+   clientDynConfig dynconfig(logwrapper, btg::core::projectDefaults::sCLI_DYNCONFIG());
 
    // Update init dialog.
    iw->updateProgress(initWindow::IEV_RCONF_DONE);
@@ -143,7 +142,7 @@ int main(int argc, char **argv)
    if (!gotConfig)
       {
          BTG_FATAL_ERROR(logwrapper,
-                         appname, "Could not read the config file, '" << GPD->sGUI_CONFIG() << "'. Create one.");
+                         appname, "Could not read the config file, '" << btg::core::projectDefaults::sGUI_CONFIG() << "'. Create one.");
 
          return BTG_ERROR_EXIT;
       }

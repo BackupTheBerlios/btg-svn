@@ -196,7 +196,7 @@ namespace btg
             }
 
          btg::core::sBuffer sbuf;
-         if (!sbuf.read(_mapping.userdir + GPD->sPATH_SEPARATOR() + _mapping.filename))
+         if (!sbuf.read(_mapping.userdir + projectDefaults::sPATH_SEPARATOR() + _mapping.filename))
             {
                // No data, expire.
                _mapping.valid = false;
@@ -325,7 +325,7 @@ namespace btg
                                     t_long const _session,
                                     bool const _start)
       {
-         t_uint id = httpmgr.Fetch(_url, _userdir + GPD->sPATH_SEPARATOR() + _filename);
+         t_uint id = httpmgr.Fetch(_url, _userdir + projectDefaults::sPATH_SEPARATOR() + _filename);
 
          UrlIdSessionMapping usmap(id, _session, _userdir, _filename, _start);
          urlIdSessions.push_back(usmap);
