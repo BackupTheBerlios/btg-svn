@@ -10,10 +10,10 @@
 set -x
 set -e
 
-aclocal-1.9 -I m4
+aclocal -I m4
 autoheader
 libtoolize -c -f
-automake-1.9 --add-missing --copy --gnu
+automake --add-missing --copy --gnu
 autoconf
 
 rm -Rf config.cache autom4te.cache *~
