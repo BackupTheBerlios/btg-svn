@@ -79,7 +79,7 @@ int synchronize()
 		}
 		// initialized
 	}
-	printf("waiting for other test processes ...\n");
+	printf("waiting for other testrunner processes ...\n");
 	// performing operation
 	struct sembuf op[2];
 	op[0].sem_num = 0;

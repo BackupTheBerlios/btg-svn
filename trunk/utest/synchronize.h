@@ -20,7 +20,12 @@
  * $Id$
  */
 
+#ifndef _SYNCHRONIZE_H
+#define _SYNCHRONIZE_H
+
 // IPC key, just some "magic" number
 #define IPC_KEY 0x5d3f7248
 
 int synchronize();
+
+#endif // _SYNCHRONIZE_H
