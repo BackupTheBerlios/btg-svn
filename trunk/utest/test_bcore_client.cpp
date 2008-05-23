@@ -217,7 +217,7 @@ void testBcoreClient::testCommandLineHandler()
 
    char* args[argc] = {0, 0, 0, 0, 0, 0};
 #else
-   int argc = 5;
+   const int argc = 5;
    const char* coarg[argc] = {
       "test_client",
       "-A",
