@@ -6,11 +6,15 @@ if BUILDCLI
   BCORE_CLIENT = client
 endif
 
+if BUILDVIEWER
+  BCORE_CLIENT = client
+endif
+
 # Build the current directory first, since the client stuff depends on
 # commands etc.
 SUBDIRS            = . $(BCORE_CLIENT)
 
-pkglib_LTLIBRARIES    = libbtgcore.la
+pkglib_LTLIBRARIES = libbtgcore.la
 
 OS_SOURCES=os/sleep.cpp \
 os/fileop.cpp \
