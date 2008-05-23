@@ -50,9 +50,9 @@ function report()
 {
 	subject_add=$1
 	for rcpt in $mailto ; do
-		cat $reportfile | mutt \
+		mutt \
 			-s "$subject $subject_add" \
-			"$rcpt"
+			"$rcpt" <$reportfile
 			# -a attachment
 	done
 }
@@ -79,10 +79,12 @@ function rotate()
 trap cleanup_exit SIGINT
 trap cleanup_exit SIGTERM
 
+>$reportfile
+
 oldver=`svnversion`
 conflicts=`svn st | grep '^C'`
 if [ -n "$conflicts" ] ; then
-	echo "++> Conflicts. Need human support." >$reportfile
+	echo "++> Conflicts. Need human support." >>$reportfile
 	svn st | grep '^C' >>$reportfile
 	report_exit "SVN rev. $oldver - conflicts"
 fi
@@ -90,7 +92,7 @@ fi
 conflicts=`svn up | grep '^C'`
 newver=`svnversion`
 if [ -n "$conflicts" ] ; then
-	echo "++> Conflicts after update. Need human support." >$reportfile
+	echo "++> Conflicts after update. Need human support." >>$reportfile
 	svn st | grep '^C' >>$reportfile
 	report_exit "Update SVN rev. $newver - conflicts"
 fi
@@ -100,8 +102,6 @@ if [ "$oldver" != "$newver" ] ; then
 	$workgen
 	[ -x "$prelaunch" ] && "$prelaunch"
 	$worklaunch
-
-	>$reportfile
 
 	# we should carefully use parameters with wildcards ($workdir/*.fail)
 	# because we can run out of max. cmdline length
