@@ -79,8 +79,7 @@ int synchronize()
 		}
 		// initialized
 	}
-	printf("waiting for other testrunner processes ...\n");
-	// performing operation
+	printf("waiting for other testrunner processes ..."); fflush(stdout);
 	struct sembuf op[2];
 	op[0].sem_num = 0;
 	op[0].sem_op = 0;
@@ -88,11 +87,25 @@ int synchronize()
 	op[1].sem_num = 0;
 	op[1].sem_op = 1;
 	op[1].sem_flg = SEM_UNDO; // will decrease when app terminates
-	if (semop(id, op, 2) == -1)
-	{
-		perror("semop");
-		return 54;
-	}
-	// when application terminates, semaphore will be decreased and other application will be unblocked
+	struct timespec tout;
+	tout.tv_nsec = 0;
+	tout.tv_sec = 1;
+   for(;;)
+   {
+      // performing operation
+      if (semtimedop(id, op, 2, &tout) == -1)
+      {
+         if (errno == EAGAIN)
+         {
+            printf("."); fflush(stdout);
+            continue;
+         }
+         perror("semop");
+         return 54;
+      }
+      printf("\n");
+      break;
+   }
+	// when application terminates, the semaphore will be decreased and other application will be unblocked
 	return 0;
 }

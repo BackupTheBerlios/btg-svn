@@ -267,7 +267,7 @@ namespace btg
       {
          t_uint counter = 0;
          std::string output;
-         for (t_byteList_CI blci = contents.begin(); blci != contents.end(); blci++)
+         for (t_byteList_CI blci = contents.begin(); blci != contents.end(); ++blci)
             {
                t_int c = static_cast<t_int>(*blci);
                output += " " + btg::core::convertToString<t_int>(c);

@@ -69,21 +69,28 @@ namespace btg
          return true;         
       }
 
+      // 11001010 01010011 01111110 100001 -> 0x53 0xCA 0x7E 0x21
       std::string bitvector::toString() const
       {
-         // see http://www.everfall.com/paste/id.php?ghhy9v0dlo75 for full example
-         return std::string( (const char *)_M_impl._M_start._M_p, size() / 8 + ( size() % 8 ? 1 : 0 ) );
+         std::string data(size() / 8 + ( size() % 8 ? 1 : 0 ), (char)0);
+         for(size_t ibyte = 0, ibit = 0; ibit < size(); ++ibit)
+         {
+            data[ibyte] |= at(ibit) << (ibit % 8);
+            if (ibit % 8 == 7)
+               ++ibyte;
+         }
+         return data;
       }
       
-      void bitvector::fromString(const std::string & sData, size_t size)
+      void bitvector::fromString(const std::string & _sData, size_t _size)
       {
-         _M_deallocate();
-         _M_initialize(size);
-         std::copy(sData.begin(),
-            sData.begin() +
-               std::min( (long)((const char *)_M_impl._M_end_of_storage - (const char *)_M_impl._M_start._M_p),
-                  (long)sData.size() ),
-            (char *)_M_impl._M_start._M_p);
+         resize(_size);
+         for(size_t ibyte = 0, ibit = 0; ibit < size(); ++ibit)
+         {
+            at(ibit) = (_sData[ibyte] >> (ibit % 8)) & 1;
+            if (ibit % 8 == 7)
+               ++ibyte;
+         }
       }
       
    } // namespace core

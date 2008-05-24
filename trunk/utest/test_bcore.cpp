@@ -1792,11 +1792,41 @@ void testBcore::test_bitvector()
    bv1[88] = true;
    bv1[99] = true;
    
+   /*
+   for (int i = 0; i < bv1.size(); ++i)
+   {
+      std::cout << bv1[i];
+      if (i % 8 == 7)
+         std::cout << " ";
+   }
+   std::cout << std::endl;
+   */
+   
    std::string s = bv1.toString();
    CPPUNIT_ASSERT(s.size() == bv1.size() / 8 + (bv1.size() % 8 ? 1 : 0) );
    
+   /*
+   std::cout << std::hex;
+   for (int i = 0; i < s.size(); ++i)
+   {
+      std::cout << "0x" << (unsigned short)s[i] << " ";
+   }
+   std::cout << std::dec << std::endl;
+   */
+   
    btg::core::bitvector bv2;
    bv2.fromString(s,bv1.size());
+
+   /*
+   for (int i = 0; i < bv2.size(); ++i)
+   {
+      std::cout << bv2[i];
+      if (i % 8 == 7)
+         std::cout << " ";
+   }
+   std::cout << std::endl;
+   */
+   
    CPPUNIT_ASSERT(bv2 == bv1);
    
    bv1.erase(bv1.begin(), bv1.begin() + 30);

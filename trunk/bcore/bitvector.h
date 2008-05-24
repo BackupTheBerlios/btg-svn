@@ -58,11 +58,11 @@ namespace btg
                std::string toString() const;
                
                /// Initialize object from string
-               /// @param [in] data The string of bits in packed format (i.e. 8 bits per byte)
-               /// @param [in] size the count of bits to initialize.
+               /// @param [in] _sData The string of bits in packed format (i.e. 8 bits per byte)
+               /// @param [in] _size the count of bits to initialize.
                ///             Trailing bits (if string contains less bits then size)
                ///             will not be initialized.
-               virtual void fromString(const std::string & sData, size_t size);
+               virtual void fromString(const std::string & _sData, size_t _size);
             };
 
          /** @} */
