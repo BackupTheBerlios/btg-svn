@@ -87,6 +87,8 @@ namespace btg
                bool stringToBytes(const std::string* _source);
                bool bytesToString(std::string* _destination);
 
+               void setParamInfo(std::string const& _name, bool _required);
+
                std::string dumpData() const;
             private:
                /// XMLRPC request used.

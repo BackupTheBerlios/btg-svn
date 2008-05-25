@@ -287,7 +287,7 @@ namespace btg
                                     }
 
                                  std::string key(line, pos, pos2);   // from first non-whitespace to :
-				 // Find first non-space after the ":".
+                                 // Find first non-space after the ":".
                                  pos = line.find_first_not_of(' ', pos2+1);   
                                  std::string value(line, pos);
                                  request_headers[key] = value;

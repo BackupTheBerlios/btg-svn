@@ -223,6 +223,9 @@ namespace btg
             case URLS_CREATE_ERR:
                temp_status = URLS_CREATE_ERR;
                break;
+            case URLS_ABORTED:
+               temp_status = URLS_ABORTED;
+               break;
             }
 
          _e->setParamInfo("url status", true);
@@ -284,6 +287,9 @@ namespace btg
                break;
             case URLS_CREATE_ERR:
                status_ = URLS_CREATE_ERR;
+               break;
+            case URLS_ABORTED:
+               status_ = URLS_ABORTED;
                break;
             default:
                status_ = URLS_UNDEF;

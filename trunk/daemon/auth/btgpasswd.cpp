@@ -537,7 +537,7 @@ bool createDirectory(LogWrapperType _logwrapper,
    return result;
 }
 
-bool uniqueDirectories(LogWrapperType _logwrapper,
+bool uniqueDirectories(LogWrapperType,
                        std::string const& _temp_dir,
                        std::string const& _work_dir,
                        std::string const& _seed_dir,

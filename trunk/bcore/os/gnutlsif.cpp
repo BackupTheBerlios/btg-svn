@@ -49,7 +49,7 @@ namespace btg
             gnutls_global_init();
          }
 
-         void gtlsGeneric::logCallback(int _level, const char* _p)
+         void gtlsGeneric::logCallback(int, const char*)
          {
             // Disabled:
             // GNUTLS_NOTICE("GNUTLS(" << _level << "): " << _p);

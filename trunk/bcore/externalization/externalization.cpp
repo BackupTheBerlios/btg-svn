@@ -177,10 +177,6 @@ namespace btg
             status_ = true;
          }
 
-         void Externalization::setParamInfo(std::string const& _name, bool _required)
-         {
-            // Not used in most externalizations
-         }
       } // namespace externalization
    } // namespace core
 } // namespace btg

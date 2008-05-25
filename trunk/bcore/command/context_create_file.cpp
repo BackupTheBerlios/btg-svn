@@ -272,6 +272,9 @@ namespace btg
             case FILES_CREATE_ERR:
                temp_status = FILES_CREATE_ERR;
                break;
+            case FILES_ABORTED:
+               temp_status = FILES_ABORTED;
+               break;
             }
 
          _e->setParamInfo("file status", true);
@@ -314,6 +317,9 @@ namespace btg
                break;
             case FILES_CREATE_ERR:
                status_ = FILES_CREATE_ERR;
+               break;
+            case FILES_ABORTED:
+               status_ = FILES_ABORTED;
                break;
             default:
                status_ = FILES_UNDEF;

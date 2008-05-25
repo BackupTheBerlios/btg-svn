@@ -636,6 +636,12 @@ namespace btg
                            cont = false;
                            break;
                         }
+                     case btg::core::URLS_ABORTED:
+                        {
+                           res = false;
+                           cont = false;
+                           break;
+                        }
                      }
                   btg::core::os::Sleep::sleepMiliSeconds(500);
                }
