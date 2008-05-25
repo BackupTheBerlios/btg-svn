@@ -57,6 +57,11 @@
 
 #include "lt_version.h"
 
+#if (BTG_LT_0_13 || BTG_LT_0_14)
+#include <libtorrent/extensions/metadata_transfer.hpp>
+#include <libtorrent/extensions/ut_pex.hpp>
+#endif
+
 namespace btg
 {
    namespace daemon
@@ -187,6 +192,11 @@ namespace btg
             {
                // Libtorrent created its threads.
                //
+#if (BTG_LT_0_13 || BTG_LT_0_14)
+               // Add the available extensions.
+               torrent_session->add_extension(&libtorrent::create_metadata_plugin);
+               torrent_session->add_extension(&libtorrent::create_ut_pex_plugin);
+#endif
 
                if (filter_)
                   {
@@ -224,7 +234,7 @@ namespace btg
       {
          // Read a Peer ID from config.
          // Convert it to a string in which each character is a hex pair.
-         // This is representation which is used by libtorrent.
+         // This is a representation which is used by libtorrent.
          // Pad with zeros or truncate the string if its more than 20 characters.
          const t_uint minPeerIdSize = 4;
          const t_uint maxPeerIdSize = 20;
