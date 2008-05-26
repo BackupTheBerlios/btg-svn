@@ -194,7 +194,6 @@ namespace btg
                //
 #if (BTG_LT_0_13 || BTG_LT_0_14)
                // Add the available extensions.
-               torrent_session->add_extension(&libtorrent::create_metadata_plugin);
                torrent_session->add_extension(&libtorrent::create_ut_pex_plugin);
 #endif
 
