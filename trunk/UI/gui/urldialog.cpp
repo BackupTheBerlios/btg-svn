@@ -57,9 +57,9 @@ namespace btg
                   url_entry->set_text(_url);
                }
 
-            fn_label = Gtk::manage(new class Gtk::Label("Filename"));
-            url_label = Gtk::manage(new class Gtk::Label("URL"));
-            table1 = Gtk::manage(new class Gtk::Table(2, 2, true));
+            fn_label = Gtk::manage(new class Gtk::Label("Filename",Gtk::ALIGN_LEFT,Gtk::ALIGN_CENTER));
+            url_label = Gtk::manage(new class Gtk::Label("URL",Gtk::ALIGN_LEFT,Gtk::ALIGN_CENTER));
+            table1 = Gtk::manage(new class Gtk::Table(2, 2));
             vbox1 = Gtk::manage(new class Gtk::VBox(false, 0));
             cancelbutton = Gtk::manage(new class Gtk::Button(Gtk::StockID("gtk-cancel")));
             applybutton = Gtk::manage(new class Gtk::Button(Gtk::StockID("gtk-apply")));
@@ -73,20 +73,21 @@ namespace btg
             fn_label->set_events(Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
             url_label->set_events(Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
             table1->set_events(Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
-            table1->attach(*url_label,  0, 1, 0, 1, Gtk::EXPAND|Gtk::FILL, Gtk::EXPAND|Gtk::FILL, 0, 0);
-            table1->attach(*url_entry,  1, 2, 0, 1, Gtk::EXPAND|Gtk::FILL, Gtk::EXPAND|Gtk::FILL, 0, 0);
-            table1->attach(*fn_label,   0, 1, 1, 2, Gtk::EXPAND|Gtk::FILL, Gtk::EXPAND|Gtk::FILL, 0, 0);
-            table1->attach(*file_entry, 1, 2, 1, 2, Gtk::EXPAND|Gtk::FILL, Gtk::EXPAND|Gtk::FILL, 0, 0);
+            table1->attach(*url_label,  0, 1, 0, 1, Gtk::FILL);
+            table1->attach(*url_entry,  1, 2, 0, 1);
+            table1->attach(*fn_label,   0, 1, 1, 2, Gtk::FILL);
+            table1->attach(*file_entry, 1, 2, 1, 2);
+            table1->set_col_spacing(0,10);
 
             vbox1->set_events(Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
             vbox1->pack_start(*label1);
-            vbox1->pack_start(*table1, Gtk::PACK_EXPAND_PADDING, 0);
+            vbox1->pack_start(*table1);
             cancelbutton->set_events(Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
             cancelbutton->set_flags(Gtk::CAN_FOCUS);
             applybutton->set_events(Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
             applybutton->set_flags(Gtk::CAN_FOCUS);
             get_action_area()->set_events(Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
-            get_action_area()->property_layout_style().set_value(Gtk::BUTTONBOX_CENTER);
+            get_action_area()->property_layout_style().set_value(Gtk::BUTTONBOX_END);
             get_vbox()->set_events(Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
             get_vbox()->set_spacing(2);
             get_vbox()->pack_start(*vbox1);
