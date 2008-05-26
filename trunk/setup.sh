@@ -123,7 +123,8 @@ case "$1" in
     ;;
   svn)
     # Libtorrent from SVN uses boost 1.3.5, where asio is included.
-    export CXXFLAGS="$CXXFLAGS -I/pack/boost-1.35.0/include"
+    CXXFLAGS_pkgconfig=`export PKG_CONFIG_PATH=/$ROOT/$1/lib/pkgconfig; pkg-config --cflags libtorrent`
+    export CXXFLAGS="$CXXFLAGS -I/pack/boost-1.35.0/include $CXXFLAGS_pkgconfig"
     export LDFLAGS="$LDFLAGS -L/pack/boost-1.35.0/lib"
     export LD_LIBRARY_PATH=/pack/boost-1.35.0/lib
     export LIBTORRENT_CFLAGS="-I$ROOT/svn/include -I$ROOT/svn/include/libtorrent" && \
