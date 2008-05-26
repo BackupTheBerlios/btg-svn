@@ -9,10 +9,17 @@ What is BTG?
 ~~~~~~~~~~~~
 
 Bittorrent client implemented in C++ and using the `Rasterbar Libtorrent`_
-library. BTG is released under the GNU GPL license.
+library.
 
 Provides a Ncurses_, SDL_, Gtkmm_ and WWW GUI, which communicate with a
 common backend running the actual bittorrent operation.
+
+License
+-------
+
+BTG is released under the `GNU GPL license`_.
+
+.. _GNU GPL license: http://www.gnu.org/licenses/gpl.html
 
 Features
 --------
