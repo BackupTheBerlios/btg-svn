@@ -271,7 +271,7 @@ namespace btg
                void handle_CN_CCREATEWITHDATA(btg::core::Command* _command, t_int _connectionID);
 
                /// Get the last created context Id.
-               void handle_CN_CLAST(btg::core::Command* _command, t_int _connectionID);
+               void handle_CN_CLAST(t_int _connectionID);
 
                /// Start a context.
                void handle_CN_CSTART(btg::core::Command* _command, t_int _connectionID);

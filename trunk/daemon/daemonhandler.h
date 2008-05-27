@@ -89,23 +89,23 @@ namespace btg
             ~daemonHandler();
          private:
             /// Handle quit request.
-            void handleQuit(eventHandler* _eventhandler);
+            void handleQuit(eventHandler* _eventhandler, btg::core::Command* _command);
 
             /// Handle detach request.
-            void handleDetach(eventHandler* _eventhandler);
+            void handleDetach(eventHandler* _eventhandler, btg::core::Command* _command);
 
             /// Handle commands that require the authorized user
             /// with a control flag set.
             ///
             /// The commands are kill and set global limits.
             /// @param [in] _id The ID of the command to handle.
-            void handleControlCommand(t_int const _id);
+            void handleControlCommand(btg::core::Command* _command);
 
             /// Handle daemon kill requested by the client.
-            void handleKill();
+            void handleKill(btg::core::Command* _command);
 
             /// Handle setting of global limits.
-            void handleGlobalLimit();
+            void handleGlobalLimit(btg::core::Command* _command);
 
             /// Validate global limits.
             void validateGlobalLimits(t_int & _limitBytesUpld,
@@ -123,13 +123,13 @@ namespace btg
                }
 
             /// Handle sending the current global limit to client.
-            void handleGlobalStatus();
+            void handleGlobalStatus(btg::core::Command* _command);
 
             /// Handle uptime request.
-            void handleUptime();
+            void handleUptime(btg::core::Command* _command);
 
             /// Handle session name request.
-            void handleSessionName(eventHandler* _eventhandler);
+            void handleSessionName(eventHandler* _eventhandler, btg::core::Command* _command);
 
             /// Handle setting session name.
             void handleSessionSetName(eventHandler* _eventhandler, 
@@ -149,7 +149,7 @@ namespace btg
             void handleAttach(btg::core::Command* _command);
 
             /// Handle list session request.
-            void handleSessionList();
+            void handleSessionList(btg::core::Command* _command);
 
             /// Handle setup request.
             void handleSetup(btg::core::Command* _command);
@@ -166,15 +166,13 @@ namespace btg
                                           btg::core::Command* _command);
 #if BTG_OPTION_URL
             /// Handle URL status mesasge.
-            void handle_CN_CURLSTATUS(eventHandler* _eventhandler, 
-                                      btg::core::Command* _command);
+            void handle_CN_CURLSTATUS(btg::core::Command* _command);
 
             /// Handle URL create message.
             void handle_CN_CCREATEFROMURL(eventHandler* _eventhandler, 
                                           btg::core::Command* _command);
 
-            void handle_CN_CCREATEURLABORT(eventHandler* _eventhandler, 
-                                           btg::core::Command* _command);
+            void handle_CN_CCREATEURLABORT(btg::core::Command* _command);
 
             void handleUrlDownloads();
 #endif // BTG_OPTION_URL
@@ -185,15 +183,12 @@ namespace btg
             void handle_CN_CCREATEFROMFILEPART(eventHandler* _eventhandler, 
                                                btg::core::Command* _command);
 
-            void handle_CN_CCRFILESTATUS(eventHandler* _eventhandler, 
-                                         btg::core::Command* _command);
+            void handle_CN_CCRFILESTATUS(btg::core::Command* _command);
 
-            void handle_CN_CCREATEFFABORT(eventHandler* _eventhandler, 
-                                          btg::core::Command* _command);
+            void handle_CN_CCREATEFFABORT(btg::core::Command* _command);
 
             /// Handle Version request.
-            void handleVersion(eventHandler* _eventhandler, 
-                               btg::core::Command* _command);
+            void handleVersion(btg::core::Command* _command);
 
             /// Handle any other request.
             void handleOther(eventHandler* _eventhandler, btg::core::Command* _command);
@@ -242,9 +237,6 @@ namespace btg
 
             /// List of contained sessions.
             sessionList                     sessionlist_;
-
-            /// Pointer to the current command.
-            btg::core::Command*             command_;
 
             /// Current Session.
             long                            session_;

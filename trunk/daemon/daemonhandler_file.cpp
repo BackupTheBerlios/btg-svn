@@ -137,8 +137,7 @@ namespace btg
             }
       }
 
-      void daemonHandler::handle_CN_CCRFILESTATUS(eventHandler* _eventhandler, 
-                                                  btg::core::Command* _command)
+      void daemonHandler::handle_CN_CCRFILESTATUS(btg::core::Command* _command)
       {
          MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
 
@@ -203,8 +202,7 @@ namespace btg
             }
       }
 
-      void daemonHandler::handle_CN_CCREATEFFABORT(eventHandler* _eventhandler, 
-                                                   btg::core::Command* _command)
+      void daemonHandler::handle_CN_CCREATEFFABORT(btg::core::Command* _command)
       {
          MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
 

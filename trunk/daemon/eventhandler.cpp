@@ -170,7 +170,7 @@ namespace btg
                }
             case Command::CN_CLAST:
                {
-                  handle_CN_CLAST(_command, _connectionID);
+                  handle_CN_CLAST(_connectionID);
                   break;
                }
             case Command::CN_CSTART:
@@ -572,7 +572,7 @@ namespace btg
             }
       }
 
-      void eventHandler::handle_CN_CLAST(btg::core::Command* _command, t_int _connectionID)
+      void eventHandler::handle_CN_CLAST(t_int _connectionID)
       {
          ConnectionExtraState& extraState = connHandler->getConnection(_connectionID)->ExtraState();
          t_int last_context_id = extraState.getLastCreatedContextId();

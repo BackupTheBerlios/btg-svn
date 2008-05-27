@@ -1447,7 +1447,7 @@ namespace btg
 
       void daemonConfiguration::setUseUPnP(bool const _useUpnp)
       {
-         def_use_upnp = def_use_upnp;
+         def_use_upnp = _useUpnp;
       }
 
       bool daemonConfiguration::getUseUPnP() const

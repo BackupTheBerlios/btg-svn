@@ -44,7 +44,7 @@ namespace btg
 
          bool passwordAuth::checkUser(std::string const& _username,
                                       std::string const& _passwordHash,
-                                      btg::core::addressPort const& _addressport)
+                                      btg::core::addressPort const& /*_addressport*/)
          {
             bool status = false;
 

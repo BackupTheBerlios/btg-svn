@@ -37,8 +37,7 @@ namespace btg
 #if BTG_OPTION_URL
       using namespace btg::core;
 
-      void daemonHandler::handle_CN_CURLSTATUS(eventHandler* _eventhandler, 
-                                               btg::core::Command* _command)
+      void daemonHandler::handle_CN_CURLSTATUS(btg::core::Command* _command)
       {
          MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
 
@@ -114,8 +113,7 @@ namespace btg
                      new contextCreateFromUrlResponseCommand(id));
       }
 
-      void daemonHandler::handle_CN_CCREATEURLABORT(eventHandler* _eventhandler, 
-                                                    btg::core::Command* _command)
+      void daemonHandler::handle_CN_CCREATEURLABORT(btg::core::Command* _command)
       {
          MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
 

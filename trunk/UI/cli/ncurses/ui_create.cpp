@@ -42,8 +42,7 @@ namespace btg
          {
             if (progress_)
                {
-                  t_uint p = ((_number * 100) / _parts) * 0.9;
-                  // t_uint p = ((_number * 100) / _parts) / 2;
+                  t_uint p = static_cast<t_uint>(((_number * 100) / _parts) * 0.9);
 
                   std::string number = btg::core::convertToString<t_uint>(_number);
                   std::string parts  = btg::core::convertToString<t_uint>(_parts);

@@ -65,7 +65,6 @@ namespace btg
            dd_(_dd),
            verboseFlag_(_verboseFlag),
            sessionlist_(_logwrapper, _verboseFlag, 1024*1024 /* Max number of sessions. */),
-           command_(0),
            session_(0),
            readBytes_(0),
            connectionID_(btg::core::messageTransport::NO_CONNECTION_ID),
@@ -143,7 +142,6 @@ namespace btg
 
       void daemonHandler::readFromTransport()
       {
-         command_      = 0;
          session_      = 0;
          connectionID_ = btg::core::messageTransport::NO_CONNECTION_ID;
 
@@ -187,13 +185,13 @@ namespace btg
                   }
 
                btg::core::commandFactory::decodeStatus dstatus;
-               command_ = cf_.createFromBytes(dstatus);
+               btg::core::Command* currentCmd = cf_.createFromBytes(dstatus);
 
                // This buffer is also used for sending messages, so erase
                // the contents.
                buffer_.erase();
 
-               if ((dstatus != btg::core::commandFactory::DS_OK) || (command_ == 0))
+               if ((dstatus != btg::core::commandFactory::DS_OK) || (currentCmd == 0))
                   {
                      handleDeserializationError(dstatus);
                      return;
@@ -201,7 +199,7 @@ namespace btg
 
                session_ = connection_->getSession();
 
-               BTG_MNOTICE(logWrapper(), "attempting to handle " << command_->getName() << " with " << connection_->toString());
+               BTG_MNOTICE(logWrapper(), "attempting to handle " << currentCmd->getName() << " with " << connection_->toString());
 
                // Try to find an eventhandler for this session.
                // We dont have to check auth here, since the connecton
@@ -213,54 +211,54 @@ namespace btg
 
                if (sessionlist_.get(session_, eventhandler))
                   {
-                     switch (command_->getType())
+                     switch (currentCmd->getType())
                         {
                         case Command::CN_SQUIT:
                            {
                               // Special case, where the client wishes to close
                               // the session.
-                              handleQuit(eventhandler);
+                              handleQuit(eventhandler, currentCmd);
                               break;
                            }
                         case Command::CN_SLIST:
                            {
-                              handleSessionList();
+                              handleSessionList(currentCmd);
                               break;
                            }
                         case Command::CN_SDETACH:
                            {
-                              handleDetach(eventhandler);
+                              handleDetach(eventhandler, currentCmd);
                               break;
                            }
                         case Command::CN_GKILL:
                         case Command::CN_GLIMIT:
                            {
-                              handleControlCommand(command_->getType());
+                              handleControlCommand(currentCmd);
                               break;
                            }
                         case Command::CN_GLIMITSTAT:
                            {
-                              handleGlobalStatus();
+                              handleGlobalStatus(currentCmd);
                               break;
                            }
                         case Command::CN_GUPTIME:
                            {
-                              handleUptime();
+                              handleUptime(currentCmd);
                               break;
                            }
                         case Command::CN_SNAME:
                            {
-                              handleSessionName(eventhandler);
+                              handleSessionName(eventhandler, currentCmd);
                               break;
                            }
                         case Command::CN_SSETNAME:
                            {
-                              handleSessionSetName(eventhandler, command_);
+                              handleSessionSetName(eventhandler, currentCmd);
                               break;
                            }
                         case Command::CN_SINFO:
                            {
-                              handleSessionInfo(eventhandler, command_);
+                              handleSessionInfo(eventhandler, currentCmd);
                            }
                         case Command::CN_MOREAD:
                            {
@@ -272,7 +270,7 @@ namespace btg
                            }
                         case Command::CN_CMOVE:
                            {
-                              handleMoveContext(eventhandler, command_);
+                              handleMoveContext(eventhandler, currentCmd);
                               break;
                            }
 
@@ -280,7 +278,7 @@ namespace btg
                         case Command::CN_CURLSTATUS:
                         case Command::CN_CCREATEURLABORT:
                            {
-                              handleUrlMessages(eventhandler, command_);
+                              handleUrlMessages(eventhandler, currentCmd);
                               break;
                            }
 
@@ -289,26 +287,26 @@ namespace btg
                         case Command::CN_CCRFILESTATUS:
                         case Command::CN_CCREATEFFABORT:
                            {
-                              handleCreateFileMessages(eventhandler, command_);
+                              handleCreateFileMessages(eventhandler, currentCmd);
                               break;
                            }
 
                         case Command::CN_VERSION:
                            {
-                              handleVersion(eventhandler, command_);
+                              handleVersion(currentCmd);
                               break;
                            }
                         default:
                            {
-                              handleOther(eventhandler, command_);
+                              handleOther(eventhandler, currentCmd);
                            }
                         } // switch special commands.
 
                   }
                // No session is established at this point.
-               else if (command_->getType() == Command::CN_GINITCONNECTION)
+               else if (currentCmd->getType() == Command::CN_GINITCONNECTION)
                   {
-                     handleInitConnection(command_);
+                     handleInitConnection(currentCmd);
                   }
                else
                   {
@@ -323,7 +321,7 @@ namespace btg
 
                            MVERBOSE_LOG(logWrapper(), verboseFlag_, "Client (" << connectionID_ << ") is not authorized.");
 
-                           sendError(command_->getType(), "Not authorized.");
+                           sendError(currentCmd->getType(), "Not authorized.");
                         }
                      else
                         {
@@ -333,21 +331,21 @@ namespace btg
                            // No session yet.
                            // ***************
 
-                           switch(command_->getType())
+                           switch(currentCmd->getType())
                               {
                               case Command::CN_SATTACH:
                                  {
-                                    handleAttach(command_);
+                                    handleAttach(currentCmd);
                                     break;
                                  }
                               case Command::CN_SLIST:
                                  {
-                                    handleSessionList();
+                                    handleSessionList(currentCmd);
                                     break;
                                  }
                               case Command::CN_GSETUP:
                                  {
-                                    handleSetup(command_);
+                                    handleSetup(currentCmd);
                                     break;
                                  }
                               case Command::CN_SNAME:
@@ -356,15 +354,15 @@ namespace btg
                                  {
                                     // These commands are not supported here.
                                     // Send an nice error back.
-                                    handleSessionInInvalidState(command_->getType());
+                                    handleSessionInInvalidState(currentCmd->getType());
                                     break;
                                  }
                               }
                         } // End if !authed...
                   }
 
-               delete command_;
-               command_ = 0;
+               delete currentCmd;
+               currentCmd = 0;
             }
 
 #if BTG_DEBUG
@@ -378,18 +376,18 @@ namespace btg
 
       }
 
-      void daemonHandler::handleQuit(eventHandler* _eventhandler)
+      void daemonHandler::handleQuit(eventHandler* _eventhandler, Command* _command)
       {
          // Dont allow detach if we have more clients than this one.
          if(_eventhandler->getNumClients() > 1)
             {
-               sendError(command_->getType(), "Cannot quit, other clients attached.");
+               sendError(_command->getType(), "Cannot quit, other clients attached.");
             }
          else
             {
                BTG_MNOTICE(logWrapper(), "terminating session " << session_);
 
-               MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
 
                // Remove the session data.
                sessionlist_.erase(session_);
@@ -402,60 +400,61 @@ namespace btg
             }
       }
 
-      void daemonHandler::handleDetach(eventHandler* _eventhandler)
+      void daemonHandler::handleDetach(eventHandler* _eventhandler, Command* _command)
       {
          BTG_MNOTICE(logWrapper(), "detaching the current session");
          _eventhandler->decClients();
 
          // Send an ack message back, as the session was detached.
-         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
          sendAck(Command::CN_SDETACH);
          connection_->setSession(0);
          dd_->transport->endConnection(connectionID_);
       }
 
-      void daemonHandler::handleControlCommand(t_int const _id)
+      void daemonHandler::handleControlCommand(btg::core::Command* _command)
       {
+         t_int id         = _command->getType();
          std::string user = connection_->getUsername();
 
          bool control_flag = false;
 
          if (!dd_->auth->getControlFlag(user, control_flag))
             {
-               sendError(_id, "Control not allowed.");
+               sendError(id, "Control not allowed.");
                return;
             }
 
          if (!control_flag)
             {
-               sendError(_id, "Control not allowed.");
+               sendError(id, "Control not allowed.");
                return;
             }
 
-         switch (_id)
+         switch (id)
             {
             case Command::CN_GKILL:
                {
-                  handleKill();
+                  handleKill(_command);
                   break;
                }
             case Command::CN_GLIMIT:
                {
-                  handleGlobalLimit();
+                  handleGlobalLimit(_command);
                   break;
                }
             default:
                {
-                  sendError(_id, "Control command not implemented.");
+                  sendError(id, "Control command not implemented.");
                   break;
                }
             }
       }
 
-      void daemonHandler::handleKill()
+      void daemonHandler::handleKill(Command* _command)
       {
          BTG_MNOTICE(logWrapper(), "killing the daemon");
-         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
 
          sendAck(Command::CN_GKILL);
          dd_->transport->endConnection(connectionID_);
@@ -474,12 +473,12 @@ namespace btg
          validateLimit<t_long>(_maxConnections);
       }
 
-      void daemonHandler::handleGlobalLimit()
+      void daemonHandler::handleGlobalLimit(Command* _command)
       {
          BTG_MNOTICE(logWrapper(), "Setting global limits");
-         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
 
-         limitCommand* lc = dynamic_cast<limitCommand*>(command_);
+         limitCommand* lc = dynamic_cast<limitCommand*>(_command);
 
          t_int limitBytesUpld   = lc->getUploadLimit();
          t_int limitBytesDwnld  = lc->getDownloadLimit();
@@ -494,11 +493,11 @@ namespace btg
          sendAck(Command::CN_GLIMIT);
       }
 
-      void daemonHandler::handleGlobalStatus()
+      void daemonHandler::handleGlobalStatus(Command* _command)
       {
          BTG_MNOTICE(logWrapper(), "Global limits request");
 
-         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
 
          t_int limitBytesUpld  = btg::core::limitBase::LIMIT_DISABLED;
          t_int limitBytesDwnld = btg::core::limitBase::LIMIT_DISABLED;
@@ -519,9 +518,9 @@ namespace btg
                                                     maxConnections));
       }
 
-      void daemonHandler::handleUptime()
+      void daemonHandler::handleUptime(Command* _command)
       {
-         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
          buffer_.erase();
 
          time_t now;
@@ -535,9 +534,9 @@ namespace btg
                      new uptimeResponseCommand(timeDiff));
       }
 
-      void daemonHandler::handleSessionName(eventHandler* _eventhandler)
+      void daemonHandler::handleSessionName(eventHandler* _eventhandler, Command* _command)
       {
-         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
 
          sendCommand(dd_->externalization, 
                      dd_->transport,
@@ -548,7 +547,7 @@ namespace btg
       void daemonHandler::handleSessionSetName(eventHandler* _eventhandler, 
                                                Command* _command)
       {
-         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
 
          setSessionNameCommand* ssnc = dynamic_cast<setSessionNameCommand*>(_command);
 
@@ -568,20 +567,20 @@ namespace btg
             }
          else
             {
-               sendError(command_->getType(), "Session name too short.");
+               sendError(_command->getType(), "Session name too short.");
             }
       }
 
       void daemonHandler::handleMoveContext(eventHandler* _eventhandler, 
                                             btg::core::Command* _command)
       {
-         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
 
          contextMoveToSessionCommand* cmtsc = dynamic_cast<contextMoveToSessionCommand*>(_command);
 
          if (cmtsc->isAllContextsFlagSet())
             {
-               sendError(command_->getType(), "Moving all contexts is not supported.");
+               sendError(_command->getType(), "Moving all contexts is not supported.");
             }
          else
             {
@@ -590,23 +589,22 @@ namespace btg
                eventHandler* new_eventhandler;
                if (!sessionlist_.get(old_session, new_eventhandler))
                   {
-                     sendError(command_->getType(), "Unable to find target session.");
+                     sendError(_command->getType(), "Unable to find target session.");
                      return;
                   }
                
                if (!_eventhandler->move(connectionID_, context_id, new_eventhandler))
                   {
-                     sendError(command_->getType(), "Unable to move context.");
+                     sendError(_command->getType(), "Unable to move context.");
                      return;
                   }
-               sendAck(command_->getType());
+               sendAck(_command->getType());
             }
       }
 
-      void daemonHandler::handleVersion(eventHandler* _eventhandler, 
-                                        btg::core::Command* _command)
+      void daemonHandler::handleVersion(btg::core::Command* _command)
       {
-         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
          
          versionResponseCommand* vrc = new versionResponseCommand(projectDefaults::iMAJORVERSION(), 
                                                                   projectDefaults::iMINORVERSION(),
@@ -638,7 +636,7 @@ namespace btg
       void daemonHandler::handleSessionInfo(eventHandler* _eventhandler, 
                                             btg::core::Command* _command)
       {
-         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
 
          sendCommand(dd_->externalization, 
                      dd_->transport,
@@ -668,7 +666,7 @@ namespace btg
                BTG_MNOTICE(logWrapper(), connection_->toString() <<
                            " is authorized with username " << icc->getUsername());
 
-               MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
 
                if (!sendAck(Command::CN_GINITCONNECTION))
                   {
@@ -680,7 +678,7 @@ namespace btg
                // Failure.
 
                BTG_MNOTICE(logWrapper(), "connection " << connection_->toString() << " used incorrect username '" << icc->getUsername() << "', password hash = '" << icc->getPassword() << "'");
-               MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << " failed.");
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << " failed.");
 
                MVERBOSE_LOG(logWrapper(), verboseFlag_, "Client (" << connectionID_ << "): Rejecting connection from user '" <<
                             icc->getUsername() << "'.");
@@ -689,9 +687,9 @@ namespace btg
             }
       }
 
-      void daemonHandler::handleSessionList()
+      void daemonHandler::handleSessionList(Command* _command)
       {
-         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
 
          std::vector<t_long> sessions;
          std::vector<std::string> session_names;
@@ -728,7 +726,7 @@ namespace btg
             }
          else
             {
-               sendError(command_->getType(), "No sessions to list.");
+               sendError(_command->getType(), "No sessions to list.");
             }
       }
 
@@ -741,7 +739,7 @@ namespace btg
                // Wrong build.
                BTG_ERROR_LOG(logWrapper(), "Attach, unexpected build id '" << asc->getBuildID() << "'");
 
-               sendCommand(dd_->externalization, dd_->transport, connectionID_, new errorCommand(command_->getType(), "Wrong build ID"));
+               sendCommand(dd_->externalization, dd_->transport, connectionID_, new errorCommand(_command->getType(), "Wrong build ID"));
                return;
             }
          */
@@ -752,7 +750,7 @@ namespace btg
          t_long attachTo    = asc->getSession();
          if (connection_->getSession() != 0)
             {
-               sendError(command_->getType(), 
+               sendError(_command->getType(), 
                          "Could not attach to session, already attached to another session.");
                return;
 
@@ -760,7 +758,7 @@ namespace btg
 
          if (attachTo == Command::INVALID_SESSION)
             {
-               sendError(command_->getType(), 
+               sendError(_command->getType(), 
                          "Could not attach to session, invalid session id.");
                return;
             }
@@ -769,7 +767,7 @@ namespace btg
 
          if (!sessionlist_.get(attachTo, eventhandler))
             {
-               sendError(command_->getType(), 
+               sendError(_command->getType(), 
                          "Could not attach to session, unknown session id.");
                return;
             }
@@ -787,7 +785,7 @@ namespace btg
          if ((!controlFlag) && 
              (eventhandler->getUsername() != connection_->getUsername()))
             {
-               sendError(command_->getType(), 
+               sendError(_command->getType(), 
                          "Could not attach to session, wrong username.");
                return;
             }
@@ -799,7 +797,7 @@ namespace btg
          connection_->setSession(attachTo);
 
          // Send an ack message back with the new session. Everything is OK.
-         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << ".");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
          sendAck(Command::CN_SATTACH);
       }
 
@@ -810,7 +808,7 @@ namespace btg
          if (sc->getRequiredData().getBuildID() != projectDefaults::sBUILD())
             {
                BTG_ERROR_LOG(logWrapper(), "Setup, unexpected build id '" << sc->getRequiredData().getBuildID() << "', expected '" << projectDefaults::sBUILD() << "'");
-               sendError(command_->getType(), 
+               sendError(_command->getType(), 
                          "Wrong build ID");
             }
          else
@@ -834,7 +832,7 @@ namespace btg
                if (!getDirectories(userTempDir, userWorkDir, userSeedDir, userDestDir, errorDescription))
                   {
                      // Error handling.
-                     sendError(command_->getType(), errorDescription);
+                     sendError(_command->getType(), errorDescription);
                      return;
                   }
 
@@ -843,7 +841,7 @@ namespace btg
                   {
                      // Error handling.
                      errorDescription = "Missing callback.";
-                     sendError(command_->getType(), errorDescription); 
+                     sendError(_command->getType(), errorDescription); 
                      return;
                   }
 #endif // BTG_OPTION_EVENTCALLBACK
@@ -873,10 +871,10 @@ namespace btg
 
                if (!portManager_.available())
                   {
-                     sendError(command_->getType(), 
+                     sendError(_command->getType(), 
                                "Failed to setup session (all ports used)."); 
 
-                     MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << " failed.");
+                     MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << " failed.");
                      return;
                   }
 
@@ -940,7 +938,7 @@ namespace btg
                            setupInfoMessage += " Encryption: OFF.";
                         }
                      
-                     MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << "(" << setupInfoMessage << ").");
+                     MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << "(" << setupInfoMessage << ").");
 
                      // Write a response:
                      sendCommand(dd_->externalization,
@@ -951,9 +949,9 @@ namespace btg
                else
                   {
                      delete eh;
-                     sendError(command_->getType(), 
+                     sendError(_command->getType(), 
                                "Failed to setup session."); 
-                     MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << command_->getName() << " failed.");
+                     MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << " failed.");
                   }
             }
       }
@@ -1029,12 +1027,12 @@ namespace btg
                }
             case Command::CN_CURLSTATUS:
                {
-                  handle_CN_CURLSTATUS(_eventhandler, _command);
+                  handle_CN_CURLSTATUS(_command);
                   break;
                }
             case Command::CN_CCREATEURLABORT:
                {
-                  handle_CN_CCREATEURLABORT(_eventhandler, _command);
+                  handle_CN_CCREATEURLABORT(_command);
                   break;
                }
             }
@@ -1063,12 +1061,12 @@ namespace btg
                }
             case Command::CN_CCRFILESTATUS:
                {
-                  handle_CN_CCRFILESTATUS(_eventhandler, _command);
+                  handle_CN_CCRFILESTATUS(_command);
                   break;
                }
             case Command::CN_CCREATEFFABORT:
                {
-                  handle_CN_CCREATEFFABORT(_eventhandler, _command);
+                  handle_CN_CCREATEFFABORT(_command);
                   break;
                }
             }
