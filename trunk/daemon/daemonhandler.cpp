@@ -1012,7 +1012,8 @@ namespace btg
          return status;
       }
 
-      void daemonHandler::handleUrlMessages(eventHandler* _eventhandler, btg::core::Command* _command)
+      void daemonHandler::handleUrlMessages(eventHandler* _eventhandler, 
+                                            btg::core::Command* _command)
       {
 #if BTG_OPTION_URL
          // Messages which download from URL or which get the status
@@ -1040,7 +1041,10 @@ namespace btg
          // URL loading disabled.
          sendError(_command->getType(), 
                    "URL loading not enabled."); 
-         MVERBOSE_LOG(logWrapper(), verboseFlag_, "Received unsupported URL command: " << _command->getName() << " from client (" << connectionID_ << ").");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "Session " << _eventhandler.getSession() << 
+                      " received unsupported URL command: " << _command->getName() << 
+                      " from client (" << connectionID_ << ").");
+         
 #endif // BTG_OPTION_URL
       }
 

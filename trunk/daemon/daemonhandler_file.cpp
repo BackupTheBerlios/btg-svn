@@ -146,7 +146,7 @@ namespace btg
          t_uint id = cfsc->id();
          fileData::Status s = filemgr.getStatus(id);
 
-         btg::core::fileStatus status;
+         btg::core::fileStatus status = FILES_UNDEF;
 
          switch (s)
             {
