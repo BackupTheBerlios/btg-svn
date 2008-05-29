@@ -21,6 +21,7 @@
  */
 
 #include "clicmd.h"
+#include <iostream>
 
 namespace btg
 {
@@ -139,18 +140,36 @@ namespace btg
             std::string output;
 
             std::vector<CLICommand*>::const_iterator iter;
-            CLICommand* cmd;
+            CLICommand* cmd = 0;
+
+            t_uint max_cmdlen = 0;
             for (iter = list.begin(); iter != list.end(); iter++)
                {
                   cmd = *iter;
-                  output += cmd->getName() + " (" + cmd->getShortName() + ")\t" + cmd->getDescription() + "\n";
+                  std::string n = cmd->getName() + " (" + cmd->getShortName() + ")";
+
+                  if (n.size() > max_cmdlen)
+                     {
+                        max_cmdlen = n.size();
+                     }
+               }
+            max_cmdlen++;
+
+            for (iter = list.begin(); iter != list.end(); iter++)
+               {
+                  cmd = *iter;
+                  std::string n = cmd->getName() + " (" + cmd->getShortName() + ")";
+                  t_uint spaces = max_cmdlen - n.size();
+                  for (t_uint c = 0; c < spaces; c++)
+                     {
+                        n += " ";
+                     }
+                  output += n;
+                  output +=  cmd->getDescription() + "\n";
                }
 
             output += "\n";
-            output += "The IDs used with for example the start command are numbers which are greater or equal to zero. The client remembers the last used ID, so the following commands can be used without the ID.";
-            output += "\n";
-            output += "The insert key toggles between insert/overwrite mode. Overwrite mode is the default.";
-            output += "\n";
+            output += "The IDs used with for example the start command are numbers which are greater or equal to zero. The client remembers the last used ID.";
             return output;
          }
 

@@ -74,14 +74,14 @@ using namespace btg::UI::cli;
 
 void handleInput(std::string const& _line, 
                  cliHandler& _clihandler, 
-                 ncursesScreen& _nscr, 
+                 Screen& _nscr, 
                  bool const _neverAskFlag);
 
-void OpenUrls(ncursesScreen& _nscr, 
+void OpenUrls(Screen& _nscr, 
               cliHandler& _clihandler, 
               t_strList const& _filelist);
 
-void OpenFiles(ncursesScreen& _nscr, 
+void OpenFiles(Screen& _nscr, 
                cliHandler& _clihandler, 
                lastFiles& _lastfiles,
                t_strList const& _filelist);
@@ -311,15 +311,15 @@ int main(int argc, char* argv[])
    // Done using the start up helper.
    starthelper.reset();
 
-   std::auto_ptr<ncursesScreen> apnscr;
+   std::auto_ptr<Screen> apnscr;
 
    if ((cla.CommandPresent()) && (cla.NoOutputPresent()))
       {
-         apnscr.reset(new ncursesScreen(true /* no output to screen */));
+         apnscr.reset(new Screen(true /* no output to screen */));
       }
    else
       {
-         apnscr.reset(new ncursesScreen(false));
+         apnscr.reset(new Screen(false));
       }
 
    // Generated with http://www.network-science.de/ascii/.
@@ -408,27 +408,11 @@ int main(int argc, char* argv[])
       {
          apnscr->setInput("# ");
 
-         switch (apnscr->getKeys())
+         if (apnscr->getLine())
             {
-            case ncursesScreen::EVENT_RESIZE:
-               {
-                  BTG_NOTICE(logwrapper, "Resize event received (2).");
-                  apnscr->resize();
-                  apnscr->clear();
-                  apnscr->refresh();
-                  break;
-               }
-            case ncursesScreen::EVENT_KEY:
-               {
-                  line = apnscr->getInput();
-                  BTG_NOTICE(logwrapper, "Got input: '" << line << "'");
-                  handleInput(line, clihandler, *apnscr, neverAskFlag);
-                  break;
-               }
-            case ncursesScreen::EVENT_NO_KEY:
-               {
-                  break;
-               }
+               line = apnscr->getInput();
+               BTG_NOTICE(logwrapper, "Got input: '" << line << "'");
+               handleInput(line, clihandler, *apnscr, neverAskFlag);
             }
       } // while
 
@@ -440,7 +424,7 @@ int main(int argc, char* argv[])
    return BTG_NORMAL_EXIT;
 }
 
-void handleInput(std::string const& _line, cliHandler& _clihandler, ncursesScreen& _nscr, bool const _neverAskFlag)
+void handleInput(std::string const& _line, cliHandler& _clihandler, Screen& _nscr, bool const _neverAskFlag)
 {
    switch (_clihandler.handleInput(_line))
       {
@@ -524,7 +508,7 @@ void handleInput(std::string const& _line, cliHandler& _clihandler, ncursesScree
       }
 }
 
-void OpenFiles(ncursesScreen& _nscr, 
+void OpenFiles(Screen& _nscr, 
                cliHandler& _clihandler, 
                lastFiles& _lastfiles,
                t_strList const& _filelist)
@@ -549,7 +533,7 @@ void OpenFiles(ncursesScreen& _nscr,
       }
 }
 
-void OpenUrls(ncursesScreen& _nscr, 
+void OpenUrls(Screen& _nscr, 
               cliHandler& _clihandler, 
               t_strList const& _filelist)
 {
