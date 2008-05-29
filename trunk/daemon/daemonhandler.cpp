@@ -1041,7 +1041,7 @@ namespace btg
          // URL loading disabled.
          sendError(_command->getType(), 
                    "URL loading not enabled."); 
-         MVERBOSE_LOG(logWrapper(), verboseFlag_, "Session " << _eventhandler.getSession() << 
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "Session " << _eventhandler->getSession() << 
                       " received unsupported URL command: " << _command->getName() << 
                       " from client (" << connectionID_ << ").");
          
