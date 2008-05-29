@@ -224,6 +224,8 @@ int main(int argc, char* argv[])
    // Update init dialog.
    iw->updateProgress(initWindow::IEV_SETUP);
 
+   iw->hide();
+
    // Create a helper to do the initial setup of this client.
    std::auto_ptr<startupHelper> starthelper(new cliStartupHelper(logwrapper,
                                                                  config,
