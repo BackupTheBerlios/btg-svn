@@ -131,8 +131,8 @@ if [ "$oldver" != "$newver" ] ; then
 	>$reportfile.errors
 	for err in $workdir/*/*.err $workdir/*/.*.err ; do
 		[ -e $err ] || continue
-		cat $err | grep 'warning' >>$reportfile.warnings
-		cat $err | grep 'error' >>$reportfile.errors
+		cat $err | grep -i 'warning' >>$reportfile.warnings
+		cat $err | grep -i 'error' >>$reportfile.errors
 	done
 	sort --unique $reportfile.warnings >$reportfile.warnings.unique
 	sort --unique $reportfile.errors >$reportfile.errors.unique

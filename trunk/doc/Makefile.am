@@ -6,7 +6,8 @@ all:
 
 doxygen:
 	@echo "Generating docs with doxygen.."
-	doxygen
+	rm -Rf $(srcdir)/doxygen
+	cd $(srcdir) && doxygen && echo Documentation ready in $(srcdir)/doxygen
 
 clean:
 	@rm -fr doxygen

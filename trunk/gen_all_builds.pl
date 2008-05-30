@@ -25,14 +25,14 @@ my $dir = "";
 my $curdir = getcwd(); # the dir with configure script
 if ($mode eq "help" || $mode eq "-h")
 {
-	print "USAGE: $0 [build|distcheck|distcheck_short|build_parallel <dir>|distcheck_parallel <dir>|distcheck_short_parallel <dir>|check_parallel <dir>] [permanent configure params ...]\n";
+	print "USAGE: $0 [build|distcheck|distcheck_short|doxygen_launch <dir>|build_parallel <dir>|distcheck_parallel <dir>|distcheck_short_parallel <dir>|check_parallel <dir>] [permanent configure params ...]\n";
 	exit 1;
 }
 elsif ($mode eq "build" || $mode eq "distcheck" || $mode eq "distcheck_short")
 {
 	shift;
 }
-elsif ($mode eq "build_parallel" || $mode eq "distcheck_parallel" || $mode eq "distcheck_short_parallel" || $mode eq "check_parallel")
+elsif ($mode eq "doxygen_launch" || $mode eq "build_parallel" || $mode eq "distcheck_parallel" || $mode eq "distcheck_short_parallel" || $mode eq "check_parallel")
 {
 	shift;
 	$dir = shift or die "You have to set directory. See usage.";
@@ -235,6 +235,32 @@ exit \$retval
 		close $f;
 		$counter++;
 	}
+}
+elsif ($mode eq "doxygen_launch")
+{
+		mkdir "$dir/doxygen" or die "Can't create dir \"$dir/doxygen\" ($!)";
+
+		my $f;
+		open $f,">$dir/doxygen/.launch" or die "Can't create file \"$dir/doxygen/.launch\" ($!)";
+
+		print $f "
+echo configure @PERMANENT_CONFIGURE_PARAMS && \\
+$curdir/configure @PERMANENT_CONFIGURE_PARAMS >.doxygen-configure.log 2>.doxygen-configure.err && \\
+echo configure done
+
+echo make doxygen && \\
+make doxygen >.doxygen-make_doxygen.log 2>.doxygen-make_doxygen.err && \\
+echo make doxygen done
+retval=\$?
+
+# freeing disk space
+#ls -l >.doxygen-ll.log 2>.doxygen-ll.err
+chmod -R u+rwx *
+rm -Rf * # should not touch newly created .doxygen-* files
+
+exit \$retval
+";
+			close $f;
 }
 elsif ($mode eq "distcheck_parallel")
 {
