@@ -10,7 +10,7 @@ doxygen:
 	cd $(srcdir) && doxygen && echo Documentation ready in $(srcdir)/doxygen
 
 clean:
-	@rm -fr doxygen
+	@rm -Rf $(srcdir)/doxygen
 
 man5_MANS  = btg_config.man btg.man
 EXTRA_DIST = btg_config.man btg.man Doxyfile
