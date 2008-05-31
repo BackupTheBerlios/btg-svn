@@ -60,9 +60,9 @@
 #define BTG_AUTH_DEBUG 0
 #endif
 
-// stringify defines
-// standard hack to stringify integers
+/// stringify defines: standard hack to stringify integers.
 #define _LOGMACRO_STRINGIFY(x) _LOGMACRO_XSTRINGIFY(x)
+/// stringify defines: standard hack to stringify integers.
 #define _LOGMACRO_XSTRINGIFY(x) #x
 
 
@@ -80,8 +80,10 @@
 
 #else
 
-// empty stubs
+// Empty stubs.
+/// BTG debug not enabled.
 #define BTG_ERROR_LOG(_LOGW, _ERRORTEXT)
+/// BTG debug not enabled.
 #define BTG_NOTICE(_LOGW, _TEXT)
 
 #endif

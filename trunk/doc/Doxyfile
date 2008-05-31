@@ -70,6 +70,8 @@ SHOW_DIRECTORIES       = YES
 QUIET                  = NO
 WARNINGS               = YES
 WARN_IF_UNDOCUMENTED   = YES
+# TODO: Enable this and fix the comments!
+#WARN_NO_PARAMDOC       = YES
 WARN_IF_DOC_ERROR      = YES
 WARN_FORMAT            = "$file:$line: $text"
 WARN_LOGFILE           = 

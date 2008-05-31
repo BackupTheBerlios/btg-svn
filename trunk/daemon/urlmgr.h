@@ -70,9 +70,11 @@ namespace btg
       class fileTrack;
       class sessionList;
 
+      /// Manages URL downloads in the daemon.
       class urlManager: public btg::core::Logable
          {
          public:
+            /// Constructor.
             urlManager(btg::core::LogWrapperType _logwrapper,
                        bool const _verboseFlag,
                        fileTrack* _filetrack,
@@ -81,26 +83,32 @@ namespace btg
             /// Handle downloads - called by timer.
             void checkUrlDownloads();
 
+            /// Number of downloads.
             t_uint size() const;
 
+            /// Find out if a filename/user directory combination is unique.
             bool unique(std::string const & _filename, 
                         std::string const & _userdir) const;
 
+            /// Abort a download.
             bool abort(const t_uint _id);
 
+            /// Get status of a download.
             bool getStatus(const t_uint _id, 
                            btg::core::urlStatus & _urlstat);
 
-            /// Get download progress
+            /// Get download progress.
             bool getDlProgress(const t_uint _id, 
                t_float & _dltotal, t_float & _dlnow, t_float & _dlspeed);
 
+            /// Start downloading.
             t_uint addMapping(std::string const& _url, 
                               std::string const& _userdir,
                               std::string const& _filename,
                               t_long const _session,
                               bool const _start);
 
+            /// Destructor.
             ~urlManager();
          protected:
             /// Handle a single download.

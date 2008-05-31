@@ -120,9 +120,12 @@ namespace btg
             virtual void reqCreateFromUrl(std::string const& _filename,
                                           std::string const& _url);
 
+            /// Upload a torrent to the daemon. This is done in a
+            /// number of parts assembed by the daemon.
             virtual void reqCreateFromFile(std::string const& _filename,
                                            t_uint const _numberOfParts);
 
+            /// Upload a part of a file identified by _id.
             virtual void reqTransmitFilePart(t_uint const _id, 
                                              t_uint const _part,
                                              sBuffer const& _buffer);
@@ -133,7 +136,10 @@ namespace btg
             /// Get the status of a file download.
             virtual void reqFileStatus(t_uint _id);
 
+            /// Cancel a file upload in progress.
             virtual void reqCancelFile(t_uint _id);
+
+            /// Cancel an URL download in progress.
             virtual void reqCancelUrl(t_uint _id);
 
             /// Get status from the daemon.
@@ -326,11 +332,16 @@ namespace btg
             /// @return true - success, URL loaded. false - URL not loaded.
             bool handleUrlProgress(t_uint _hid);
 
+            /// Helper function, used to set the options used by the daemon.
             virtual void setOption(btg::core::OptionBase const & _options);
 
+            /// Get the version and options used by the daemon.
             const btg::core::OptionBase& getOption() const;
 
+            /// Set current file id (upload).
             void setFileId(t_uint const _id);
+
+            /// Get current file id (upload).
             t_uint getFileId() const;
             
             /// Add opened torrent file to the recent-list.
@@ -341,9 +352,13 @@ namespace btg
             /// @param _filename [in] Corresponding file name.
             void addLastURL(const std::string& _url, const std::string& _filename);
             
+            /// Set list of trackers.
             void setTrackerList(t_strList const& _trackerlist);
+
+            /// Get list of trackers.
             t_strList getTrackerList() const;
 
+            /// Destructor.
             virtual ~clientHandler();
 
          protected:
@@ -472,13 +487,16 @@ namespace btg
             /// Last received URL status.
             btg::core::urlStatus              last_surl_status;
 
+            /// Last file id - the id of the file upload in progress.
             t_uint                            last_sfile_id;
 
+            /// Last file status received.
             btg::core::fileStatus             last_sfile_status;
 
             /// Received options.
             btg::core::OptionBase             options;
 
+            /// File id of the current file upload.
             t_uint                            last_file_id;
             
             /// last opened files history
@@ -487,6 +505,7 @@ namespace btg
             /// last opened urls history
             lastURLs                          lasturls;
 
+            /// List of trackers used.
             t_strList                         trackerlist;
          private:
             /// Copy constructor.

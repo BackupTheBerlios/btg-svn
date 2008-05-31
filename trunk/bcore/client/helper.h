@@ -96,13 +96,19 @@ namespace btg
                   ///       point during the initalization.
                   virtual bool AuthQuery() = 0;
 
+                  /// Show a query used to attach to a certain session.
                   virtual bool AttachSessionQuery(t_longList const& _sessionsIDs,
                                                   t_strList const& _sessionNames,
                                                   t_long & _session) = 0;
 
+                  /// List available sessions.
                   virtual void ListSessions(t_longList const& _sessions,
                                             t_strList const& _sessionNames) = 0;
 
+                  /// If no command line arguments are given to a client,
+                  /// the default action is to list the sessions and
+                  /// let the user either attach to one or create a
+                  /// new session.
                   virtual bool DefaultAction(t_longList const& _sessions,
                                              t_strList const& _sessionNames,
                                              bool & _attach,
@@ -156,6 +162,7 @@ namespace btg
                class startupHelper: public Helper
                   {
                   public:
+                     /// Constructor.
                      startupHelper(LogWrapperType _logwrapper,
                                    std::string const&          _clientName,
                                    clientConfiguration&        _config,
@@ -193,6 +200,8 @@ namespace btg
                      /// allow the user to create a new one.
                      bool DefaultAction(bool & _attach, t_long & _sessionId);
 
+                     /// Get the contained reference to the helper
+                     /// interface used to perform actions.
                      startupHelperIf & getIf() const;
 
                      /// Destructor.
@@ -206,7 +215,12 @@ namespace btg
                      /// The client handler used.
                      btg::core::client::clientHandler&              handler;
 
+                     /// Configuration.
                      clientConfiguration&                           config;
+
+                     /// Interface used to perform actions like
+                     /// showing sessions or selecting which session
+                     /// to attach to.
                      startupHelperIf&                               helperif;
                   private:
                      /// Copy constructor.

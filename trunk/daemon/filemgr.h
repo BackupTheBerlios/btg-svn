@@ -43,6 +43,7 @@ namespace btg
        */
       /** @{ */
 
+      /// File state information.
       struct fileData
       {
          enum Status
@@ -57,17 +58,26 @@ namespace btg
                ABORTED      = 7  // Aborted.
             };
          
+         /// Constructor.
          fileData(std::string const& _dir,
                   std::string const& _filename, 
                   t_uint _parts,
                   bool   _start);
          
+         /// Directory.
          const std::string    dir;
+         /// Filename.
          const std::string    filename;
+         /// Number of parts.
          const t_uint         parts;
+         /// Indicates if the torrent should be started after
+         /// uploading (to the daemon).
          const bool           start;
+         /// Current part received.
          t_uint               current_part;
+         /// List of buffers received.
          std::vector<btg::core::sBuffer> buffers;
+         /// State.
          Status               status;
 
          /// Indicates that this download is valid, used to mark
@@ -80,6 +90,7 @@ namespace btg
 
       class fileTrack;
 
+      /// Tracks file uploads in the daemon.
       class fileManager: public btg::core::Logable
          {
          public:
@@ -87,36 +98,47 @@ namespace btg
             fileManager(btg::core::LogWrapperType _logwrapper,
                         fileTrack* _filetrack);
 
+            /// Add a file.
             t_uint addFile(std::string const& _dir,
                            std::string const& _filename,
                            t_uint const _parts,
                            bool const _start);
 
+            /// Add a piece of a file.
             bool addPiece(const t_uint _id, 
                           const t_uint _num,
                           btg::core::sBuffer const& _data);
 
+            /// Get the id of the next piece.
             bool nextPiece(const t_uint _id, t_uint & _piece) const;
 
+            /// Get the state of a file upload.
             fileData::Status getStatus(const t_uint _id);
 
+            /// Get the whole file after a completed upload.
             bool getResult(const t_uint _id, 
                            btg::core::sBuffer & _buffer);
 
+            /// Invalidate an upload.
             void invalidate(const t_uint _id);
 
+            /// Set state of an upload.
             void setState(const t_uint _id, 
                           fileData::Status const _status);
 
+            /// Update the age of an upload.
             void updateAge();
 
             /// Abort a download in progress.
             bool abort(const t_uint _id);
 
+            /// Remove stored data for an upload.
             void removeData(const t_uint _id);
 
+            /// Remove dead uploads.
             void removeDead();
 
+            /// Get information about a file.
             void getFileInfo(const t_uint _id,
                              std::string & _dir,
                              std::string & _filename,
@@ -135,9 +157,11 @@ namespace btg
 
             /// The current ID.
             t_uint         current_id;
+
             /// The max ID - used to decide when to wrap.
             const t_uint   max_id;
             
+            /// Maps ID to file information.
             std::map<t_uint, fileData> files;
          };
 

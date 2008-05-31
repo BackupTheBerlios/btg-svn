@@ -58,10 +58,15 @@ namespace btg
                /// Default constructor.
                versionResponseCommand();
 
+               /// Constructor.
+               /// 
+               /// Setup an instance of this class with version
+               /// information.
                versionResponseCommand(t_byte const _mayor, 
                                       t_byte const _minor, 
                                       t_byte const _revision);
                
+               /// Enable an option.
                void setOption(OptionBase::Option const _option);
 
                bool serialize(btg::core::externalization::Externalization* _e) const;

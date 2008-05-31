@@ -56,6 +56,10 @@ namespace btg
                /// Copy constructor.
                sBuffer(sBuffer const& _sbuffer);
 
+               /// Get a byte.
+               /// @param [in]  _offset The offset.
+               /// @param [out] _byte   Reference to where to store the result.
+               /// @return True - success, false otherwise.
                bool getByte(t_uint _offset, t_byte & _byte) const;
 
                /// Read file from _filename.

@@ -170,6 +170,7 @@ namespace btg
             return status_;
          }
          
+         /// Get progress information.
          bool getDlProgress(t_float &_dltotal, t_float &_dlnow, t_float &_dlspeed) const
          {
             _dltotal = dltotal_;

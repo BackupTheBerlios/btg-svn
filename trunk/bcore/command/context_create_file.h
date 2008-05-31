@@ -37,6 +37,7 @@ namespace btg
        */
       /** @{ */
 
+      /// Upload a file to the daemon.
       class contextCreateFromFileCommand: public Command
       {
       public:
@@ -44,8 +45,9 @@ namespace btg
          contextCreateFromFileCommand();
 
          /// Constructor.
-         /// @param [in] _filename     The filename of the torrent file to create.
-         /// @param [in] _start        Indicates if the torrent will be started after creation.
+         /// @param [in] _filename      The filename of the torrent file to create.
+         /// @param [in] _numberOfParts The file will be sent as this number of parts.
+         /// @param [in] _start         Indicates if the torrent will be started after creation.
          contextCreateFromFileCommand(std::string const& _filename,
                                       t_uint _numberOfParts,
                                       bool const _start);
@@ -58,7 +60,8 @@ namespace btg
             {
                return filename;
             }
-               
+         
+         /// Get the number of parts this file is sent in.
          t_uint numberOfParts() const
          {
             return numberOfParts_;
@@ -77,6 +80,7 @@ namespace btg
          /// The filename of the torrent file to create.
          std::string filename;
 
+         /// The number of parts this file is sent in.
          t_uint numberOfParts_;
 
          /// Indicates if the torrent should be started after
@@ -84,6 +88,7 @@ namespace btg
          bool start;
       };
 
+      /// A file is being opened.
       class contextCreateFromFileResponseCommand: public Command
       {
       public:
@@ -91,6 +96,7 @@ namespace btg
          contextCreateFromFileResponseCommand();
 
          /// Constructor.
+         /// @param [in] _id The id of the file which is being opened.
          contextCreateFromFileResponseCommand(t_uint const _id);
 
          bool serialize(btg::core::externalization::Externalization* _e) const;
@@ -109,12 +115,14 @@ namespace btg
          t_uint id_;
       };
 
+      /// Part of a file upload.
       class contextCreateFromFilePartCommand: public Command
       {
       public:
          /// Constructor.
          contextCreateFromFilePartCommand();
 
+         /// Constructor.
          contextCreateFromFilePartCommand(t_uint _id,
                                           t_uint _part,
                                           sBuffer const& _data);
@@ -122,16 +130,19 @@ namespace btg
          bool serialize(btg::core::externalization::Externalization* _e) const;
          bool deserialize(btg::core::externalization::Externalization* _e);
 
+         /// Id this part belongs to.
          t_uint id() const
          {
             return id_;
          }
 
+         /// Part number.
          t_uint part() const
          {
             return part_;
          }
 
+         /// Contained data.
          sBuffer const& data() const
          {
             return data_;
@@ -140,8 +151,11 @@ namespace btg
          /// Destructor.
          virtual ~contextCreateFromFilePartCommand();
       private:
+         /// Id of the upload this part belongs to.
          t_uint  id_;
+         /// Part number.
          t_uint  part_;
+         /// Data.
          sBuffer data_;
       };
 

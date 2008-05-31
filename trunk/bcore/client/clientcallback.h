@@ -89,10 +89,16 @@ namespace btg
                      /// The daemon could not start downloading a torrent.
                      virtual void onCreateFromUrlError(std::string const& _errorDescription) = 0;
 
+                     /// A file was uploaded. The daemon uses _id to refer to it from now on.
                      virtual void onCreateFromFile(t_uint const _id) = 0;
+
+                     /// A file upload failed.
                      virtual void onCreateFromFileError(std::string const& _errorDescription) = 0;
 
+                     /// A part of a file was uploaded.
                      virtual void OnCreateFromFilePart() = 0;
+
+                     /// A part of a file could not be uploaded.
                      virtual void OnCreateFromFilePartError(std::string const& _errorDescription) = 0;
                      /// Received status for a download.
                      virtual void onUrlStatus(t_uint const _id, 
@@ -111,10 +117,16 @@ namespace btg
                      /// Could not receive status for a download.
                      virtual void onFileStatusError(std::string const& _errorDescription) = 0;
 
+                     /// File upload was cancelled.
                      virtual void onFileCancel() = 0; 
+                     
+                     /// Unable to cancel a file upload.
                      virtual void onFileCancelError(std::string const& _errorDescription) = 0; 
 
-                     virtual void onUrlCancel() = 0; 
+                     /// Url download was cancelled.
+                     virtual void onUrlCancel() = 0;
+                     
+                     /// Unable to cancel an url download. 
                      virtual void onUrlCancelError(std::string const& _errorDescription) = 0; 
 
                      /// The client got the Id of the last context it created.
@@ -169,6 +181,7 @@ namespace btg
                      /// A context was moved to another session.
                      virtual void onMove() = 0;
 
+                     /// Version and options for the daemon received.
                      virtual void onVersion(btg::core::OptionBase const& _ob) = 0;
 
                      /// The files requested by the client could not

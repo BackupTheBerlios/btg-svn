@@ -133,7 +133,10 @@ namespace btg
             /// Action.
             void doFileStatus(t_uint const _id);
 
+            /// Cancel file upload.
             void doCancelFile(t_uint const _id);
+
+            /// Cancel URL download.
             void doCancelUrl(t_uint const _id);
 
             /// Action.
@@ -172,6 +175,7 @@ namespace btg
             /// Action.
             void doClean(t_int const _contextID, bool const _allContexts = false);
 
+            /// Action.
             void doTrackers(t_int const _contextID, bool const _allContexts = false);
 
             /// Destructor.
@@ -417,9 +421,9 @@ namespace btg
             void cb_CN_CURLSTATUS(btg::core::Command* _command);
             /// Call a callback, file status.
             void cb_CN_CCRFILESTATUS(btg::core::Command* _command);
-
+            /// Call a callback, file upload.
             void cb_CN_CCREATEFROMFILERSP(btg::core::Command* _command);
-
+            /// Call a callback, list of trackers.
             void cb_CN_CGETTRACKERS(btg::core::Command* _command);
 
             /// Call a callback. Version and options.

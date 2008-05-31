@@ -66,15 +66,22 @@ namespace btg
                      virtual ~libtorrentUpnpIf();
 
                   private:
+                     /// Callback, indicates if a port was mapped.
                      void portMap(int _index, 
                                   int _externalPort, 
                                   std::string const& _errorMessage);
 
+                     /// Agent name, received from network.
                      std::string                  agent;
+                     /// Used by libtorrent UPnP interface.
                      libtorrent::io_service       io;
+                     /// Used by libtorrent UPnP interface.
                      libtorrent::connection_queue queue; 
+                     /// Pointer to the libtorrent UPnP interface.
                      boost::intrusive_ptr<libtorrent::upnp> upnp;
 
+                     /// Used to keep track of which ports were
+                     /// opened by this interface.
                      struct portIndex
                      {
                         enum
@@ -82,6 +89,7 @@ namespace btg
                               INVALID_INDEX = -1
                            };
 
+                        /// Constructor.
                         portIndex()
                         : port(-1),
                            index_tcp(INVALID_INDEX),
@@ -90,15 +98,23 @@ namespace btg
                            success_udp(false)
                         {}
 
+                        /// Port.
                         t_int port;
+                        /// Libtorrent id.
                         t_int index_tcp;
+                        /// Libtorrent id.
                         t_int index_udp;
+                        /// Indicates if the opening was sucessful.
                         bool  success_tcp;
+                        /// Indicates if the opening was sucessful.
                         bool  success_udp;
                      };
 
+                     /// Mutex used.
                      boost::mutex                 indicesMutex;
+                     /// List of port indices.
                      std::vector<portIndex>       indices;
+                     /// Current port index.
                      portIndex                    pi;
                   };
 
