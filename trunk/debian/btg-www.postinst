@@ -8,7 +8,7 @@ set -e # fail on errors
 
 if [ "$1" = "configure" ]; then
 	echo "**************************************************"
-	echo "Now you can add /usr/share/btgwww/htdocs"
+	echo "Now you can add /usr/share/wwwbtg/htdocs"
 	echo "to your web-server configuration."
 	echo "Take a look at /etc/btg/config.php"
 	echo "**************************************************"
