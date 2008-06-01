@@ -108,6 +108,7 @@ namespace btg
                      /// Get an error message.
                      std::string getError();
 
+                     /// Disable URL download - ie not supported by the daemon.
                      void DisableUrlDownload();
 
                      /// Destructor.
@@ -181,7 +182,8 @@ namespace btg
 
                      /// Global limit handling.
                      void handleGlobalLimitStatus(cliResponse & _result);
-
+                     
+                     /// Instruct the daemon to download an URL.
                      cliHandler::cliResponse handleLoadUrl(std::string const& _url);
 
                      void onTransportInit();
@@ -338,6 +340,7 @@ namespace btg
                      /// contains the ID of the command to execute.
                      CLICommand::ID savedId;
 
+                     /// Indicates if the daemon can download URLs.
                      bool           url_enabled;
                   };
 

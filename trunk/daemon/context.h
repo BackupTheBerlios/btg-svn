@@ -170,6 +170,9 @@ namespace btg
                /// @param [in] _workDir        Working directory.
                /// @param [in] _seedDir        Seeding directory.
                /// @param [in] _outputDir      Output directory.
+               /// @param [in] _interface_used Indicates if the session shall bind to a specific interface.
+               /// @param [in] _interface      Interface to bind to.
+
                /// @param [in] _portMgr        Pointer to port manager.
                /// @param [in] _limitMgr       Pointer to limit manager.
                /// @param [in] _filetrack      Pointer to the class keeping track of added/removed torrents.
@@ -471,6 +474,7 @@ namespace btg
                /// Get the temp directory used by this context.
                std::string getTempDir() const;
 
+               /// Update the IP filter which is used.
                void updateFilter(IpFilterIf* _filter);
 
                /// Destructor.
@@ -498,7 +502,10 @@ namespace btg
                /// The path to where to save the finished torrent files.
                std::string outputDir_;
 
+               /// Indicates if the session was bound to a specific interface.
                bool interface_used_;
+
+               /// Session was bound to this specific interface.
                std::string interface_;
 
                /// Pointer to port manager.

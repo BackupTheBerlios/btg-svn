@@ -39,8 +39,9 @@ namespace btg
                   public:
                      /// Constructor.
                      /// @param [in] _logwrapper Pointer used to send logs to.
-                     /// @param [in] cc          The dynamic client configuration data object
-                     lastURLs(LogWrapperType _logwrapper, clientDynConfig & _CDC);
+                     /// @param [in] _CDC        The dynamic client configuration data object
+                     lastURLs(LogWrapperType _logwrapper, 
+                              clientDynConfig & _CDC);
 
                      /// Return true if the list was modified.
                      bool modified() const { return modified_; };

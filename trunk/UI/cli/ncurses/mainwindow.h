@@ -64,8 +64,10 @@ namespace btg
             /// The status.
             btg::core::Status status;
 
+            /// Indicates if the list of trackers was received.
             bool              trackers_set;
 
+            /// List of trackers.
             t_strList         trackers;
 
             /// Flag: this torrent is marked.
@@ -103,6 +105,7 @@ namespace btg
             bool getAtPosition(t_uint const _position,
                                t_strList & _trackers) const;
 
+            /// Update the list of trackers for a position.
             void setAtPosition(t_uint const _position, 
                                t_strList const& _trackers);
 
@@ -265,6 +268,7 @@ namespace btg
             /// The ID of the currently selected torrent.
             t_int      currentId_;
 
+            /// Reference to the UI object used.
             UI &       ui_;
          };
 

@@ -106,10 +106,13 @@ namespace btg
                      /// command line arguments.
                      void handleLoad(t_strList const& _filelist);
 
+                     /// Instruct the daemon to download an URL.
                      void handleLoadUrl();
 
+                     /// Instruct the daemon to download the provided URLs.
                      void handleUrl(t_strList const& _filelist);
 
+                     /// URL downloading progress.
                      bool handleUrlProgress(t_uint _hid);
 
 
@@ -124,6 +127,7 @@ namespace btg
                      /// Resize all contained windows.
                      void resize();
 
+                     /// Get the trackers used by a context.
                      void getTrackers(t_int _contextID, 
                                       t_strList & _trackers);
 
@@ -136,6 +140,7 @@ namespace btg
                      void CPRI_wait(std::string const& _msg);
                      void CPRI_success(std::string const& _filename);
 
+                     /// Pointer to a progress window used.
                      progressWindow* progress_;
                   private:
                      /// Menu entries.
@@ -170,6 +175,7 @@ namespace btg
                      /// Flag: if true, no questions are asked. Ever.
                      bool           neverAskQuestions_;
 
+                     /// Indicates if the daemon supports URL downloading.
                      bool           urlDlEnabled_;
 
                      /// The keys used by the UI.

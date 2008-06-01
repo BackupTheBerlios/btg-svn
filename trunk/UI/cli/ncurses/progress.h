@@ -38,6 +38,7 @@ namespace btg
                 */
                /** @{ */
 
+               /// A window showing a progress bar.
                class progressWindow : public baseWindow
                   {
 
@@ -53,6 +54,7 @@ namespace btg
                      /// Destructor.
                      virtual ~progressWindow();
                   protected:
+                     /// The size of the window.
                      windowSize size_;
 
                      /// The middle x position for this window.

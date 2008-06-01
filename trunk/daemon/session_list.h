@@ -106,6 +106,7 @@ namespace btg
                /// shutdown (first implemented in libtorrent 0.11).
                void shutdown();
 
+               /// Update the IP filter used.
                void updateFilter(IpFilterIf* _filter);
 
                /// Destructor.

@@ -98,7 +98,7 @@ namespace btg
             /// with a control flag set.
             ///
             /// The commands are kill and set global limits.
-            /// @param [in] _id The ID of the command to handle.
+            /// @param [in] _command Pointer to the command to handle.
             void handleControlCommand(btg::core::Command* _command);
 
             /// Handle daemon kill requested by the client.
@@ -162,6 +162,7 @@ namespace btg
             void handleUrlMessages(eventHandler* _eventhandler, 
                                    btg::core::Command* _command);
 
+            /// Handle messages used to upload files.
             void handleCreateFileMessages(eventHandler* _eventhandler, 
                                           btg::core::Command* _command);
 #if BTG_OPTION_URL
@@ -172,19 +173,26 @@ namespace btg
             void handle_CN_CCREATEFROMURL(eventHandler* _eventhandler, 
                                           btg::core::Command* _command);
 
+            /// Handle URL abort message.
             void handle_CN_CCREATEURLABORT(btg::core::Command* _command);
 
+            /// Once every few seconds, see if any of the URLs
+            /// downloading have changed state.
             void handleUrlDownloads();
 #endif // BTG_OPTION_URL
 
+            /// File upload.
             void handle_CN_CCREATEFROMFILE(eventHandler* _eventhandler, 
                                            btg::core::Command* _command);
 
+            /// File uploade, part x of y.
             void handle_CN_CCREATEFROMFILEPART(eventHandler* _eventhandler, 
                                                btg::core::Command* _command);
 
+            /// Status of file upload.
             void handle_CN_CCRFILESTATUS(btg::core::Command* _command);
 
+            /// File upload abort.
             void handle_CN_CCREATEFFABORT(btg::core::Command* _command);
 
             /// Handle Version request.
@@ -319,10 +327,14 @@ namespace btg
             /// Command factory used by this instance.
             btg::core::commandFactory       cf_;
 
+            /// Every few seconds, check if any of the file uploads
+            /// changed state.
             void handleFileDownloads();
 #if BTG_OPTION_URL
+            /// URL manager.
             btg::daemon::urlManager  urlmgr;
 #endif // BTG_OPTION_URL
+            /// File manager.
             btg::daemon::fileManager filemgr;
          private:
             /// Copy constructor.

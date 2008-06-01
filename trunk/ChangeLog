@@ -3,6 +3,9 @@ BTG version 0.9.8
 The following bugs were fixed:
 
 013852 Use torrent-ip to create lt sessions.
+013833 Convert projectDefaults to a non-singleton.
+013814 Configure script does not detect lt upnp in lt 0.14.
+013774 Add amd64 architecture to the packages.
 013701 Keys for "Quit" and "Back" should be separate.
 013700 Reload filter list w/o restarting daemon.
 013644 Ports opened by UPnP when it is disabled.

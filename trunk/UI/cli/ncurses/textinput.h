@@ -51,8 +51,7 @@ namespace btg
 
                class mainWindow;
 
-               /// Dialog used to set the session name of the current
-               /// session.
+               /// Generic dialog used for entering text.
                class textInput: public baseWindow, public dialog
                   {
                   public:
@@ -75,9 +74,10 @@ namespace btg
                      /// Size of this window.
                      windowSize  size_;
 
+                     /// Title of the dialog.
                      std::string topic_;
 
-                     /// The name of the current session.
+                     /// Entered text.
                      std::string text_;
 
                      /// Line number.
@@ -86,6 +86,7 @@ namespace btg
                      /// Indicates if the text was changed.
                      bool        changed_;
 
+                     /// Indicates if new text was entered.
                      bool        text_entered;
 
                      void refresh();

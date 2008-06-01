@@ -70,6 +70,8 @@ namespace btg
                /// @param [in] _seedDir        Seeding directory.
                /// @param [in] _outputDir      Output directory.
                /// @param [in] _callback       Callback to use, if enabled.
+               /// @param [in] _interface_used Indicates if the session shall bind to a specific interface.
+               /// @param [in] _interface      Interface to bind to.
                /// @param [in] _portMgr        Pointer to the port manager to use to obtain ports.
                /// @param [in] _limitMgr       Pointer to the global limit manager.
                /// @param [in] _e              The externalization to use.
@@ -182,6 +184,7 @@ namespace btg
                /// Get the temp directory used by this event handler.
                std::string getTempDir() const;
 
+               /// Update the IP filter used.
                void updateFilter(IpFilterIf* _filter);
 
                /// Destructor.

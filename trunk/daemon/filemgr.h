@@ -46,16 +46,17 @@ namespace btg
       /// File state information.
       struct fileData
       {
+         /// State.
          enum Status
             {
-               UNDEF        = 0, // Undefined state.
-               INIT         = 1, // Added filename, wait for parts.
-               WORK         = 2, // Received at least one part.
-               DONE         = 3, // Received all parts.
-               DLERROR      = 4, // Error receiving required parts.
-               CREATED      = 5, // Created torrent.
-               CREATE_ERROR = 6, // Unable to create torrent.
-               ABORTED      = 7  // Aborted.
+               UNDEF        = 0, //!< Undefined state.
+               INIT         = 1, //!< Added filename, wait for parts.
+               WORK         = 2, //!< Received at least one part.
+               DONE         = 3, //!< Received all parts.
+               DLERROR      = 4, //!< Error receiving required parts.
+               CREATED      = 5, //!< Created torrent.
+               CREATE_ERROR = 6, //!< Unable to create torrent.
+               ABORTED      = 7  //!< Aborted.
             };
          
          /// Constructor.
@@ -150,7 +151,9 @@ namespace btg
             /// Destructor.
             virtual ~fileManager();
          protected:
+            /// File tracker used.
             fileTrack* filetrack;
+
             /// Get the current ID - start() returns this ID each time
             /// its called.
             t_uint getCurrentId();

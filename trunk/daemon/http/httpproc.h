@@ -71,11 +71,11 @@ namespace btg
             /// @param [in] dlspeed current download speed (bytes/sec)
             virtual void ReportDownloadProgress(t_float dltotal, t_float dlnow, t_float dlspeed) = 0;
             
-            /// Report the upload progress
-            /// @param [in] ultotal total bytes to upload
-            /// @param [in] ulnow bytes already uploaded
-            /// @param [in] ulspeed current upload speed (bytes/sec)
-            /// @note for the future
+            // Report the upload progress
+            // @param [in] ultotal total bytes to upload
+            // @param [in] ulnow bytes already uploaded
+            // @param [in] ulspeed current upload speed (bytes/sec)
+            // @note for the future
             //virtual void ReportUploadProgress(double ultotal, double ulnow, double ulspeed) = 0;
             
             virtual ~httpProgressIf()

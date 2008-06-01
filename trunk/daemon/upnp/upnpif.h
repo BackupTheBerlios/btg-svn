@@ -43,6 +43,7 @@ namespace btg
                   {
                   public:
                      /// Constructor.
+                     /// @param [in] _logwrapper  The log wrapper to use.
                      /// @param [in] verboseFlag_ Indicates if this interface should do verbose logging.
                      upnpIf(btg::core::LogWrapperType _logwrapper, bool const verboseFlag_);
 
@@ -70,6 +71,7 @@ namespace btg
                      /// Terminate whatever this interface is doing.
                      void setTerminate();
 
+                     /// Indicates if this interface should terminate.
                      bool terminate();
 
                      /// Destructor.
@@ -79,9 +81,11 @@ namespace btg
                      /// Indicates if this interface should do verbose
                      /// logging.
                      bool const verboseFlag_;
+
                      /// Indicates if this interface is initialized.
                      bool initialized_;
 
+                     /// Indicates if this interface should terminate.
                      bool terminate_;
                   };
 
