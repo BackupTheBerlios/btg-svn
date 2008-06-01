@@ -158,7 +158,8 @@ namespace btg
             virtual void reqFileInfo(t_int const _id, bool const _allContexts = false);
 
             /// Request a list of peers.
-            virtual void reqPeers(t_int const _id, bool const _allContexts = false);
+            virtual void reqPeers(t_int const _id, bool const _allContexts = false,
+               t_uint const *const _ex_offset = 0, t_uint const *const _ex_count = 0);
 
             /// Limit a context.
             virtual void reqLimit(t_int const _id,

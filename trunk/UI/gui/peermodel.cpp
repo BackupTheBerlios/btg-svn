@@ -33,13 +33,39 @@ namespace btg
       namespace gui
       {
          peerRecord::peerRecord()
-            : ipv4(),
-              status(),
-              identification()
          {
             add(ipv4);
             add(status);
             add(identification);
+            
+            /*
+             * Extended info
+             */
+            add(flags);
+            add(source);
+            add(down_speed);
+            add(up_speed);
+            add(payload_down_speed);
+            add(payload_up_speed);
+            add(pieces);
+            add(download_limit);
+            add(upload_limit);
+            add(country);
+            add(load_balancing);
+            add(download_queue_length);
+            add(upload_queue_length);
+            add(downloading_piece_index);
+            add(downloading_block_index);
+            add(downloading_progress);
+            add(downloading_total);
+            add(client);
+            add(connection_type);
+            add(last_request);
+            add(last_active);
+            add(num_hashfails);
+            add(failcount);
+            add(target_dl_queue_length);
+            add(remote_dl_rate);
          }
 
          void peerRecord::appendToView(Gtk::TreeView* _treeview)
@@ -47,7 +73,41 @@ namespace btg
             _treeview->append_column("Address", ipv4);
             _treeview->append_column("Status",  status);
             _treeview->append_column("Identification", identification);
+
+            /*
+             * Extended info
+             */
+            _treeview->append_column("Flags", flags);
+            _treeview->append_column("Source", source);
+            _treeview->append_column("Down speed", down_speed);
+            _treeview->append_column("Up speed", up_speed);
+            _treeview->append_column("Payload down speed", payload_down_speed);
+            _treeview->append_column("Payload up speed", payload_up_speed);
+
+            Gtk::CellRendererPixbuf* imagerenderer = Gtk::manage(new Gtk::CellRendererPixbuf);
+            Gtk::TreeViewColumn* iconcolumn = Gtk::manage(new Gtk::TreeViewColumn("Pieces", *imagerenderer));
+            iconcolumn->set_renderer(*imagerenderer, pieces);
+            _treeview->append_column(*iconcolumn);
             
+            _treeview->append_column("Download limit", download_limit);
+            _treeview->append_column("Upload limit", upload_limit);
+            _treeview->append_column("Country", country);
+            _treeview->append_column("Load balancing", load_balancing);
+            _treeview->append_column("Upload queue length", upload_queue_length);
+            _treeview->append_column("Download queue length", download_queue_length);
+            _treeview->append_column("Downloading piece index", downloading_piece_index);
+            _treeview->append_column("Downloading block index", downloading_block_index);
+            _treeview->append_column("Dwonloading progress", downloading_progress);
+            _treeview->append_column("Downloading total", downloading_total);
+            _treeview->append_column("Client", client);
+            _treeview->append_column("Connection type", connection_type);
+            _treeview->append_column("Last request", last_request);
+            _treeview->append_column("Last active", last_active);
+            _treeview->append_column("Hashfalis", num_hashfails);
+            _treeview->append_column("Failcount", failcount);
+            _treeview->append_column("Target dl q len", target_dl_queue_length);
+            _treeview->append_column("Remt dl rate", remote_dl_rate);
+
             headersSetResizable(*_treeview);
          }
 

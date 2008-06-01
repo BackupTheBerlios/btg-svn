@@ -53,12 +53,27 @@ namespace btg
                      /// Update the table with a list of peers.
                      void update(t_peerList const& _peerlist);
 
+                     /// Update the table with an extended list of peers.
+                     void update(t_uint _offset, t_peerExList const& _peerExlist);
+
                      /// Clear the table.
                      void clear();
 
                      /// Destructor.
                      virtual ~peerTreeview();
                   private:
+                     enum
+                        {
+                           /// The width of the pixmap used to show pieces.
+                           pixmap_size_x          = 200,
+
+                           /// The height of the pixmap used to show pieces.
+                           pixmap_size_y          = 20,
+                           
+                           /// The number of pixels the pixmap used to show pieces.
+                           pixmap_bits_per_sample = 8
+                        };
+                     
                      /// Data this view operates on.
                      peerRecord                        peerrecord;
 

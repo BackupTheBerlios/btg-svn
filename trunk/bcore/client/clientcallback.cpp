@@ -43,9 +43,20 @@ namespace btg
          {
          }
 
-         /// Default empty implementations for optional callback.
+
+         /*
+          * 
+          * Default empty implementations for optional callbacks.
+          * 
+          */
+         
          void clientCallback::onLast(t_int)
          {
+         }
+         
+         void clientCallback::onPeersEx(t_uint, t_peerExList const&)
+         {
+            
          }
          
       } // namespace client

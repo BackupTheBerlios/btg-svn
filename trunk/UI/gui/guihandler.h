@@ -119,8 +119,24 @@ namespace btg
                      void setStatusBar(mainStatusbar* _status_bar);
 
                      /// Get the last received list of peers.
-                     t_peerList const& getPeers() const;
+                     t_peerList const& getPeers() const { return peerlist; }
+                     
+                     
+                     /*
+                      * Ugly interface.
+                      * Needs refactoring.
+                      */
+                     
+                     /// Whether we received extended list of peers or not.
+                     bool haveExPeers() const { return peerEx; }
+                     
+                     /// Get offset of the last received extended peers.
+                     t_uint getExPeersOffset() const { return peerExOffset; }
+                     
+                     /// Get the last received extended peers.
+                     t_peerExList const& getExPeers() const { return peerExList; }
 
+                     
                      /// Get a list of selected files, updated by the
                      /// last command to the daemon.
                      btg::core::selectedFileEntryList getLastSelectedFiles() const;
@@ -172,6 +188,7 @@ namespace btg
                      void onFileInfo(t_fileInfoList const& _fileinfolist);
                      void onFileInfoError(std::string const& _errorDescription);
                      void onPeers(t_peerList const& _peerlist);
+                     void onPeersEx(t_uint _offset, t_peerExList const& _peerExList);
                      void onPeersError(std::string const& _errorDescription);
 
                      void onSetFiles();
@@ -237,6 +254,13 @@ namespace btg
                      /// List of peers, got from the last request to
                      /// get peers.
                      t_peerList     peerlist;
+                     
+                     /// Extended peers flag.
+                     bool           peerEx;
+                     /// Extended list of peers.
+                     t_peerExList   peerExList;
+                     /// Offset of extended peer list in the full peer list.
+                     t_uint         peerExOffset;
 
                      /// A list of selected files, updated by the
                      /// last command to the daemon.

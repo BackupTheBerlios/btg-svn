@@ -1002,7 +1002,12 @@ namespace btg
          contextPeersCommand* cpc  = dynamic_cast<contextPeersCommand*>(_command);
 
          t_peerList peerlist;
-
+         
+         t_uint peerExOffset;
+         t_uint peerExCount;
+         bool bPeerEx = cpc->getExRange(peerExOffset, peerExCount);
+         t_peerExList peerExList;
+         
          // Get a list of peers.
          if (cpc->isAllContextsFlagSet())
             {
@@ -1015,14 +1020,26 @@ namespace btg
             }
          else
             {
-               op_status = daemoncontext->getPeers(cpc->getContextId(), peerlist);
+               if (bPeerEx)
+               {
+                  op_status = daemoncontext->getPeers(cpc->getContextId(), peerlist,
+                     &peerExOffset, &peerExCount, &peerExList);
+               }
+               else
+               {
+                  op_status = daemoncontext->getPeers(cpc->getContextId(), peerlist);
+               }
 
                switch(op_status)
                   {
                   case true:
-                     sendCommand(_connectionID, new contextPeersResponseCommand(
-                                                                                cpc->getContextId(),
-                                                                                peerlist));
+                     {
+                        contextPeersResponseCommand * cprc = \
+                           new contextPeersResponseCommand(cpc->getContextId(), peerlist);
+                        if (bPeerEx)
+                           cprc->setExList(peerExOffset, peerExList);
+                        sendCommand(_connectionID, cprc);
+                     }
                      break;
                   case false:
                      sendError(_connectionID, Command::CN_CPEERS, "Failed to obtain peer information.");

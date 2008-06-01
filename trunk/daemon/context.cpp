@@ -1477,7 +1477,10 @@ namespace btg
       }
 
       bool Context::getPeers(t_int const _torrent_id, 
-                             t_peerList & _peerlist)
+                             t_peerList & _peerlist,
+                             t_uint * _peerExOffset,
+                             t_uint * _peerExCount,
+                             t_peerExList * _peerExList)
       {
          BTG_MENTER(logWrapper(), "getPeers", "id = " << _torrent_id);
 
@@ -1536,6 +1539,54 @@ namespace btg
                      // Do not return an empty peer list.
                      status = false;
                   }
+               else
+               {
+                  if (_peerExOffset && _peerExCount && _peerExList)
+                  {
+                     _peerExList->clear();
+                     if (*_peerExOffset + *_peerExCount > peerinfolist.size())
+                     {
+                        if (*_peerExCount > peerinfolist.size())
+                           *_peerExCount = peerinfolist.size();
+                        *_peerExOffset = peerinfolist.size() - *_peerExCount;
+                     }
+                     for(t_uint i = *_peerExOffset; i < *_peerExCount; ++i)
+                     {
+                        PeerEx peerEx(
+                           peerinfolist[i].flags,
+                           peerinfolist[i].source,
+                           (t_uint)peerinfolist[i].down_speed, (t_uint)peerinfolist[i].up_speed,
+                           (t_uint)peerinfolist[i].payload_down_speed, (t_uint)peerinfolist[i].payload_up_speed,
+                           peerinfolist[i].total_download, peerinfolist[i].total_upload,
+                           peerinfolist[i].pieces,
+                           peerinfolist[i].download_limit, peerinfolist[i].upload_limit,
+#ifndef TORRENT_DISABLE_RESOLVE_COUNTRIES
+                           peerinfolist[i].country,
+#else
+                           0,
+#endif
+                           peerinfolist[i].load_balancing,
+                           peerinfolist[i].download_queue_length, peerinfolist[i].upload_queue_length,
+                           peerinfolist[i].downloading_piece_index, peerinfolist[i].downloading_block_index,
+                              peerinfolist[i].downloading_progress, peerinfolist[i].downloading_total,
+                           peerinfolist[i].client,
+                           peerinfolist[i].connection_type,
+#if !BTG_LT_0_12
+                           peerinfolist[i].last_request.diff, peerinfolist[i].last_active.diff,
+                           peerinfolist[i].num_hashfails, peerinfolist[i].failcount,
+                           peerinfolist[i].target_dl_queue_length,
+                           peerinfolist[i].remote_dl_rate
+#else
+                           -1, -1,
+                           -1, -1,
+                           -1,
+                           -1
+#endif
+                           );
+                        _peerExList->push_back(peerEx);
+                     }
+                  }
+               }
             }
 
          BTG_MEXIT(logWrapper(), "getPeers", status);

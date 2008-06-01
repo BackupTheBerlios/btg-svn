@@ -70,6 +70,37 @@ namespace btg
             draw();
          }
 
+         fileInfoPixbox::fileInfoPixbox(int const _bits_per_sample,
+                                        int const _sizeX,
+                                        int const _sizeY,
+                                        t_bitVector const& _bits)
+            : sizeX(_sizeX),
+              sizeY(_sizeY),
+              pixbuf(),
+              rowstride(0),
+              buffer(0),
+              max_pixel_offset(0),
+              bits(_bits),
+              fileinfoSize(_bits.size()),
+              bitsize(2),
+              full(_bits.full())
+         {
+            pixbuf = Gdk::Pixbuf::create(Gdk::COLORSPACE_RGB, 
+                                         FALSE, 
+                                         _bits_per_sample, 
+                                         _sizeX, 
+                                         _sizeY);
+
+            pixbuf->fill(0);
+
+            this->rowstride        = pixbuf->get_rowstride();
+            this->buffer           = pixbuf->get_pixels();
+
+            this->max_pixel_offset = (_sizeY * this->rowstride) + (_sizeX * 3);
+
+            draw();
+         }
+
          fileInfoPixbox::fileInfoPixbox(fileInformation const& _fileinfo, 
                                         Glib::RefPtr<Gdk::Pixbuf> _pixbuf)
             : sizeX(_pixbuf->get_width()),

@@ -97,7 +97,7 @@ namespace btg
                /// interface documentation.
                /// If a parameter is optional (ie. there is an preceeding bool argument telling if its set or not)
                /// then _required should be set to false.
-               virtual void setParamInfo(std::string const& _name, bool _required) = 0;
+               virtual void setParamInfo(const char * _name, bool _required) = 0;
 
                /// Sets the name of the command to be serialized
                virtual bool setCommand(t_int const _command) = 0;

@@ -335,7 +335,11 @@ namespace btg
                bool getFileInfo(t_int const _torrent_id, t_fileInfoList & _vfileinfo);
 
                /// Get a list of peers.
-               bool getPeers(t_int const _torrent_id, t_peerList & _peerlist);
+               /// @param _peerExOffset [inout]
+               /// @param _peerExCount [inout]
+               bool getPeers(t_int const _torrent_id, t_peerList & _peerlist,
+                  t_uint * _peerExOffset = 0, t_uint * _peerExCount = 0,
+                  t_peerExList * _peerExList = 0);
 
                /// Get a list of trackers belonging to a certain torrent.
                bool getTrackers(t_int const _torrent_id, t_strList & _trackers);

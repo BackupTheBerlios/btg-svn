@@ -164,11 +164,8 @@ namespace btg
                   break;
                }
 
-            humanReadableRate hrr = humanReadableRate::convert(_status.downloadRate());
-            row[statusrecord.dn_rate] = hrr.toString();
-
-            hrr = humanReadableRate::convert(_status.uploadRate());
-            row[statusrecord.ul_rate] = hrr.toString();
+            row[statusrecord.dn_rate] = humanReadableRate::convert(_status.downloadRate()).toString();
+            row[statusrecord.ul_rate] = humanReadableRate::convert(_status.uploadRate()).toString();
 
             if (_updateProgress)
                {

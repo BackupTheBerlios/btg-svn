@@ -152,7 +152,8 @@ namespace btg
             /// Action.
             void doFileInfo(t_int const _contextID, bool const _allContexts = false);
             /// Action.
-            void doPeers(t_int const _contextID, bool const _allContexts = false);
+            void doPeers(t_int const _contextID, bool const _allContexts = false,
+               t_uint const *const _offset = 0, t_uint const *const _count = 0);
 
             /// Action.
             void doLimit(t_int const _contextID,

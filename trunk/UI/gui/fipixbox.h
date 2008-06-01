@@ -52,6 +52,12 @@ namespace btg
                                     int const _sizeY,
                                     btg::core::fileInformation const& _fileinfo);
 
+                     /// Another constructor (is used in extended list of peers).
+                     fileInfoPixbox(int const _bits_per_sample,
+                                                    int const _sizeX,
+                                                    int const _sizeY,
+                                                    t_bitVector const& _bits);
+
                      /// Constructor. Takes an existing Gdk::Pixbuf
                      /// which is used for drawing on.
                      fileInfoPixbox(btg::core::fileInformation const& _fileinfo,

@@ -206,16 +206,23 @@ int main(int argc, char* argv[])
    printCommand(cf, e, new contextLimitStatusResponseCommand(context_id, 10, 5));
 
    // Command::CN_CPEERS
+   contextPeersCommand *cpc = new contextPeersCommand(context_id, false);
+   cpc->setExRange(0, 10);
    e->setDirection(TO_SERVER);
-   printCommand(cf, e, new contextPeersCommand(context_id, false));
+   printCommand(cf, e, cpc);
 
    // Command::CN_CPEERSRSP
    peerAddress peeraddress(127,0,0,1);
    Peer peer(peeraddress, true, "info");
    t_peerList peerlist;
    peerlist.push_back(peer);
+   contextPeersResponseCommand *cprc = new contextPeersResponseCommand(context_id, peerlist);
+   PeerEx peerEx;
+   t_peerExList peerExList;
+   peerExList.push_back(peerEx);
+   cprc->setExList(0,peerExList);
    e->setDirection(FROM_SERVER);
-   printCommand(cf, e, new contextPeersResponseCommand(context_id, peerlist));
+   printCommand(cf, e, cprc);
 
    // Command::CN_ERROR
    e->setDirection(FROM_SERVER);

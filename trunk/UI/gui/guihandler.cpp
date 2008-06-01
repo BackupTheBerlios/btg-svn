@@ -305,6 +305,14 @@ namespace btg
          {
             commandStatus = true;
             peerlist      = _peerlist;
+            peerEx = false;
+         }
+
+         void guiHandler::onPeersEx(t_uint _offset, t_peerExList const& _peerExList)
+         {
+            peerEx = true;
+            peerExList = _peerExList;
+            peerExOffset = _offset;
          }
 
          void guiHandler::onPeersError(std::string const& _errorDescription)
@@ -463,11 +471,6 @@ namespace btg
          void guiHandler::setStatusBar(mainStatusbar* _pstatus_bar)
          {
             pstatus_bar = _pstatus_bar;
-         }
-
-         t_peerList const& guiHandler::getPeers() const
-         {
-            return peerlist;
          }
 
          void guiHandler::onSetFiles()

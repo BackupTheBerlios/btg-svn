@@ -291,12 +291,13 @@ namespace btg
             statemachine.work();
          }
 
-         void clientHandler::reqPeers(t_int const _id, bool const _allContexts)
+         void clientHandler::reqPeers(t_int const _id, bool const _allContexts,
+            t_uint const *const _offset, t_uint const *const _count)
          {
             commandStatus = false;
             last_id       = _id;
 
-            statemachine.doPeers(_id, _allContexts);
+            statemachine.doPeers(_id, _allContexts, _offset, _count);
             statemachine.work();
          }
 

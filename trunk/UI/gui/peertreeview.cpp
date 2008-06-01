@@ -20,14 +20,10 @@
  * $Id$
  */
 
-#include <string>
-
 #include "peertreeview.h"
 
-#include <bcore/util.h>
-#include <bcore/hru.h>
-#include <bcore/hrr.h>
-#include <bcore/t_string.h>
+#include "fipixbox.h"
+#include <bcore/t_string.h> // only for debugging
 
 namespace btg
 {
@@ -61,9 +57,7 @@ namespace btg
 
          void peerTreeview::update(t_peerList const& _peerlist)
          {
-            t_peerListCI piter;
-
-            for (piter = _peerlist.begin();
+            for (t_peerListCI piter = _peerlist.begin();
                  piter != _peerlist.end();
                  piter++)
                {
@@ -86,6 +80,47 @@ namespace btg
                }
          }
 
+         void peerTreeview::update(t_uint _offset, t_peerExList const& _peerExlist)
+         {
+            for(
+               t_peerExListCI pi = _peerExlist.begin();
+               _offset < refListStore->children().size() && pi != _peerExlist.end();
+               ++_offset, ++pi)
+            {
+               refListStore->children()[_offset][peerrecord.flags] = pi->flags();
+               refListStore->children()[_offset][peerrecord.source] = pi->source();
+               refListStore->children()[_offset][peerrecord.down_speed] = pi->down_speed();
+               refListStore->children()[_offset][peerrecord.up_speed] = pi->up_speed();
+               refListStore->children()[_offset][peerrecord.payload_down_speed] = pi->payload_down_speed();
+               refListStore->children()[_offset][peerrecord.payload_up_speed] = pi->payload_up_speed();
+
+               fileInfoPixbox piecespixbox(pixmap_bits_per_sample,
+                                           pixmap_size_x,
+                                           pixmap_size_y,
+                                           pi->pieces());
+               refListStore->children()[_offset][peerrecord.pieces] = piecespixbox.getPixBuf();
+               
+               refListStore->children()[_offset][peerrecord.download_limit] = pi->download_limit();
+               refListStore->children()[_offset][peerrecord.upload_limit] = pi->upload_limit();
+               refListStore->children()[_offset][peerrecord.country] = pi->country();
+               refListStore->children()[_offset][peerrecord.load_balancing] = pi->load_balancing();
+               refListStore->children()[_offset][peerrecord.download_queue_length] = pi->download_queue_length();
+               refListStore->children()[_offset][peerrecord.upload_queue_length] = pi->upload_queue_length();
+               refListStore->children()[_offset][peerrecord.downloading_piece_index] = pi->downloading_piece_index();
+               refListStore->children()[_offset][peerrecord.downloading_block_index] = pi->downloading_block_index();
+               refListStore->children()[_offset][peerrecord.downloading_progress] = convertToString(pi->downloading_progress());
+               refListStore->children()[_offset][peerrecord.downloading_total] = pi->downloading_total();
+               refListStore->children()[_offset][peerrecord.client] = pi->client();
+               refListStore->children()[_offset][peerrecord.connection_type] = pi->connection_type();
+               refListStore->children()[_offset][peerrecord.last_request] = pi->last_request();
+               refListStore->children()[_offset][peerrecord.last_active] = pi->last_active();
+               refListStore->children()[_offset][peerrecord.num_hashfails] = pi->num_hashfails();
+               refListStore->children()[_offset][peerrecord.failcount] = pi->failcount();
+               refListStore->children()[_offset][peerrecord.target_dl_queue_length] = pi->target_dl_queue_length();
+               refListStore->children()[_offset][peerrecord.remote_dl_rate] = pi->remote_dl_rate();
+            }
+         }
+         
          void peerTreeview::clear()
          {
             refListStore->clear();

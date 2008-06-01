@@ -157,7 +157,13 @@ namespace btg
 
          void stateMachine::cb_CN_CPEERS(btg::core::Command* _command)
          {
-            clientcallback.onPeers(dynamic_cast<contextPeersResponseCommand*>(_command)->getList());
+            contextPeersResponseCommand *cprc = dynamic_cast<contextPeersResponseCommand*>(_command);
+            assert(cprc);
+
+            clientcallback.onPeers(cprc->getList());
+            
+            if (cprc->isEx())
+               clientcallback.onPeersEx(cprc->getExOffset(), cprc->getExList());
          }
 
          void stateMachine::cb_CN_CLIMITSTATUS(btg::core::Command* _command)

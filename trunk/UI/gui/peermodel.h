@@ -54,14 +54,65 @@ namespace btg
                      /// Append data from an instance of this object to a view.
                      void appendToView(Gtk::TreeView *treeview);
 
-                     /// The filename of the context.
                      Gtk::TreeModelColumn<Glib::ustring> ipv4;
 
-                     /// The file size of the context.
                      Gtk::TreeModelColumn<Glib::ustring> status;
 
-                     /// The file size of the context.
                      Gtk::TreeModelColumn<Glib::ustring> identification;
+                     
+                     /*
+                      * Extended fields
+                      */
+
+                     Gtk::TreeModelColumn<Glib::ustring> flags;
+
+                     Gtk::TreeModelColumn<Glib::ustring> source;
+
+                     Gtk::TreeModelColumn<Glib::ustring> down_speed;
+
+                     Gtk::TreeModelColumn<Glib::ustring> up_speed;
+
+                     Gtk::TreeModelColumn<Glib::ustring> payload_down_speed;
+                     
+                     Gtk::TreeModelColumn<Glib::ustring> payload_up_speed;
+
+                     Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > pieces;
+
+                     Gtk::TreeModelColumn<Glib::ustring> download_limit;
+
+                     Gtk::TreeModelColumn<Glib::ustring> upload_limit;
+
+                     Gtk::TreeModelColumn<Glib::ustring> country;
+
+                     Gtk::TreeModelColumn<Glib::ustring> load_balancing;
+
+                     Gtk::TreeModelColumn<Glib::ustring> upload_queue_length;
+
+                     Gtk::TreeModelColumn<Glib::ustring> download_queue_length;
+
+                     Gtk::TreeModelColumn<Glib::ustring> downloading_piece_index;
+
+                     Gtk::TreeModelColumn<Glib::ustring> downloading_block_index;
+
+                     Gtk::TreeModelColumn<Glib::ustring> downloading_progress;
+
+                     Gtk::TreeModelColumn<Glib::ustring> downloading_total;
+
+                     Gtk::TreeModelColumn<Glib::ustring> client;
+
+                     Gtk::TreeModelColumn<Glib::ustring> connection_type;
+
+                     Gtk::TreeModelColumn<Glib::ustring> last_request;
+
+                     Gtk::TreeModelColumn<Glib::ustring> last_active;
+
+                     Gtk::TreeModelColumn<Glib::ustring> num_hashfails;
+
+                     Gtk::TreeModelColumn<Glib::ustring> failcount;
+
+                     Gtk::TreeModelColumn<Glib::ustring> target_dl_queue_length;
+
+                     Gtk::TreeModelColumn<Glib::ustring> remote_dl_rate;
 
                      /// Destructor.
                      virtual ~peerRecord();

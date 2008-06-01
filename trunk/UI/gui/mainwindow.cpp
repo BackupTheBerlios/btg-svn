@@ -967,14 +967,17 @@ namespace btg
          {
             GET_HANDLER_INST;
 
+            t_uint offset = 0;
+            t_uint count = 20;
+            
             // Get a list of peers.
-            handler->reqPeers(_id);
+            handler->reqPeers(_id, false, &offset, &count);
             if (handler->commandSuccess())
                {
-                  t_peerList const& peerlist = handler->getPeers();
-                  
                   mnb->getPeerTreeview()->clear();
-                  mnb->getPeerTreeview()->update(peerlist);
+                  mnb->getPeerTreeview()->update(handler->getPeers());
+                  if (handler->haveExPeers())
+                     mnb->getPeerTreeview()->update(handler->getExPeersOffset(), handler->getExPeers());
                }
             else
                {

@@ -164,6 +164,9 @@ namespace btg
 
                      /// The client got a list of peers.
                      virtual void onPeers(t_peerList const& _peerlist) = 0;
+                     
+                     /// The client got an extended list of peers.
+                     virtual void onPeersEx(t_uint _offset, t_peerExList const& _peerExList);
 
                      /// The client could not obtain a list of peers.
                      virtual void onPeersError(std::string const& _errorDescription) = 0;

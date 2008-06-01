@@ -1069,12 +1069,16 @@ namespace btg
             SM_REQUEST_LOSS;
          }
 
-         void stateMachine::doPeers(t_int const _contextID, bool const _allContexts)
+         void stateMachine::doPeers(t_int const _contextID, bool const _allContexts,
+            t_uint const *const _offset, t_uint const *const _count)
          {
             if (checkState(SM_COMMAND))
                {
+                  contextPeersCommand * cpc = new contextPeersCommand(_contextID, _allContexts);
+                  if (_offset && _count)
+                     cpc->setExRange(*_offset, *_count);
                   // Send the command.
-                  commands.push_back(new contextPeersCommand(_contextID, _allContexts));
+                  commands.push_back(cpc);
                }
             SM_REQUEST_LOSS;
          }
@@ -1953,7 +1957,8 @@ namespace btg
                      {
                         BTG_ERROR_LOG(logWrapper(), "Not the expected reply: '" << c->getName() << "'");
                      }
-                  counter_command++;
+                  ++counter_command;
+                  btg::core::os::Sleep::sleepMiliSeconds(min_sleep_in_ms + counter_command);
                }
          }
 

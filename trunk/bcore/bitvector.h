@@ -44,6 +44,9 @@ namespace btg
                /// Constructor (without allocator reference)
                bitvector(size_t = 0, const bool& = false);
                
+               /// Backward compatibility constructor
+               bitvector(const std::vector<bool>&);
+               
                /// Used to convert this object to a byte array. This does not
                /// create a valid representation, since the session information
                /// and command type is not included, only the data from this
@@ -63,6 +66,9 @@ namespace btg
                ///             Trailing bits (if string contains less bits then size)
                ///             will not be initialized.
                virtual void fromString(const std::string & _sData, size_t _size);
+               
+               /// Check whether all bits is set to 1
+               bool full() const;
             };
 
          /** @} */

@@ -29,10 +29,16 @@ namespace btg
    namespace core
    {
 
-      bitvector::bitvector(size_t _n, const bool& _value)
-         : std::vector<bool>(_n, _value)
+      bitvector::bitvector(size_t _n, const bool& _value) :
+         std::vector<bool>(_n, _value)
       {
          
+      }
+
+      bitvector::bitvector(const std::vector<bool>& _src) :
+         std::vector<bool>(_src)
+      {
+
       }
 
       bool bitvector::serialize(btg::core::externalization::Externalization* _e) const
@@ -91,6 +97,14 @@ namespace btg
             if (ibit % 8 == 7)
                ++ibyte;
          }
+      }
+      
+      bool bitvector::full() const
+      {
+         for (const_iterator i = begin(); i != end(); ++i)
+            if (!*i)
+               return false;
+         return true;
       }
       
    } // namespace core

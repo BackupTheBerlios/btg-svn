@@ -628,7 +628,7 @@ namespace btg
             return true;
          }
 
-         void XMLRPC::setParamInfo(std::string const&, bool)
+         void XMLRPC::setParamInfo(const char *, bool)
          {
             // Not used.
          }

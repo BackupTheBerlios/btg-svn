@@ -1261,10 +1261,11 @@ void testBcore::testPeer()
    btg::core::commandFactory cf(logwrapper, *externalization);
 
    t_peerList peerlist;
+   t_peerExList peerExList;
 
    for (t_int i = 0; i<12; i++)
       {
-         peerAddress pa(i, 127, i, 254);
+         peerAddress pa(i, 127, i, 255 /* it's possible */);
 
          bool seed = false;
          if (i % 2)
@@ -1275,9 +1276,36 @@ void testBcore::testPeer()
          Peer peer(pa, seed, "info");
 
          peerlist.push_back(peer);
+         
+         std::vector<bool> pieces(10+i);
+         pieces[3] = 1;
+         pieces[5] = 1;
+         pieces[i] = 1;
+         std::string client("test client");
+         PeerEx peerEx(
+            1,
+            11,
+            2, 3,
+            4, 5,
+            123, 321,
+            pieces,
+            333, 444,
+            "BT",
+            10,
+            12, 13,
+            10, 8, 1000, 2000,
+            client,
+            1,
+            102034, 123123,
+            3, 5,
+            10,
+            43235);
+         
+         peerExList.push_back(peerEx);
       }
 
    contextPeersResponseCommand* cprc = new contextPeersResponseCommand(0, peerlist);
+   cprc->setExList(3, peerExList);
 
    cprc->serialize(externalization);
 
@@ -1293,6 +1321,10 @@ void testBcore::testPeer()
 
    CPPUNIT_ASSERT(dynamic_cast<contextPeersResponseCommand*>(command_pointer)->getList() == peerlist);
 
+   CPPUNIT_ASSERT(dynamic_cast<contextPeersResponseCommand*>(command_pointer)->isEx());
+   CPPUNIT_ASSERT(dynamic_cast<contextPeersResponseCommand*>(command_pointer)->getExOffset() == 3);
+   CPPUNIT_ASSERT(dynamic_cast<contextPeersResponseCommand*>(command_pointer)->getExList() == peerExList);
+   
    delete cprc;
    cprc = 0;
 
@@ -1832,6 +1864,11 @@ void testBcore::test_bitvector()
    bv1.erase(bv1.begin(), bv1.begin() + 30);
    bv2.erase(bv2.begin(), bv2.begin() + 30);
    CPPUNIT_ASSERT(bv1.toString() == bv2.toString());
+   
+   std::fill(bv1.begin(), bv1.end(), 1);
+   assert(bv1.full());
+   bv1[23] = 0;
+   assert(!bv1.full());
 }
 
 void testBcore::XmlRpcSerializeDeserialize(btg::core::externalization::Externalization* _eSource,
