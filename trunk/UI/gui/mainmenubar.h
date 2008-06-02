@@ -102,6 +102,7 @@ namespace btg
                      /// Item in the control menu.
                      Gtk::MenuItem*              moveMenuitem;
 
+                     /// Indicates if URL downloading is enabled.
                      bool                        urlDlEnabled;
                   private:
                      /// Copy constructor.

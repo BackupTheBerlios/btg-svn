@@ -80,6 +80,7 @@ namespace btg
                /// Used when a menu item is selected.
                void on_menu_item_selected(buttonMenuIds::MENUID _which_item);
 
+               /// Indicates if URL downloading is enabled.
                bool isUrlDlEnabled() const;
 
                /// Destructor.
@@ -274,8 +275,11 @@ namespace btg
                /// Last downloaded URL - the filename used.
                std::string                 last_url_file;
 
+               /// Indicates if URL downloading is enabled.
                bool                        urlDlEnabled;
                
+               /// Dialog used to show progress when creating new
+               /// contexts.
                progressDialog*             upload_progressdialog;
             private:
                /// Copy constructor.

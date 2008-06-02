@@ -73,7 +73,7 @@ namespace btg
                   /// @param [in] _transport     Message transport to be used for communicating with the daemon.
                   ///
                   /// @param [in] _config        Pointer to the class holding the client configuration.
-                  /// @param [in] _lastfiles     Pointer to the class holding the list of last accessed files.
+                  /// @param [in] _dynconfig Pointer to the class holding the dynamic client configuration.
                   /// @param [in] _verboseFlag   Be verbose.
                   /// @param [in] _autoStartFlag Auto start loaded torrents.
                   /// @param [in] _gui           Reference to the GUI instance used.

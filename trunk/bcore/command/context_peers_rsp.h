@@ -47,7 +47,7 @@ namespace btg
 
                /// Constructor.
                /// @param [in] _context_id      The context ID of the context of which a status is required.
-               /// @param [in] _peerlist        List of peers.
+               /// @param [in] _peerList        List of peers.
                contextPeersResponseCommand(t_int const  _context_id,
                                            t_peerList const& _peerList);
                

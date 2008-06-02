@@ -121,15 +121,15 @@ namespace btg
                std::string identification_;
             };
          
-         /// Extended peer information
-         /// @see libtorrent::peer_info
+         /// Extended peer information.
+         /// @see libtorrent::peer_info.
          class PeerEx: public Serializable
          {
          public:
-            /// Default constructor. (is used when object is initializing by deserialization)
+            /// Default constructor. (is used when object is initializing by deserialization).
             PeerEx();
             
-            /// Constructor
+            /// Constructor.
             PeerEx(
                const t_uint flags,
                const t_uint source,
@@ -152,7 +152,7 @@ namespace btg
                const t_uint remote_dl_rate
                );
             
-            /// Equality operator (actually is needed only in tests for now)
+            /// Equality operator (actually is needed only in tests for now).
             bool operator== (PeerEx const& _peerEx) const;
             
             bool serialize(btg::core::externalization::Externalization* _e) const;
@@ -162,58 +162,90 @@ namespace btg
             /// Destructor
             virtual ~PeerEx();
             
+            /// LT peer flags (peer state).
             std::string flags() const;
             
+            /// Peer source.
             std::string source() const;
             
+            /// Download speed.
             std::string down_speed() const;
             
+            /// Upload speed to this peer.
             std::string up_speed() const;
             
+            /// Payload data download speed.
             std::string payload_down_speed() const;
             
+            /// Payload data upload speed.
             std::string payload_up_speed() const;
             
+            /// Count of downloaded payload data from this peer.
             std::string total_download() const;
             
+            /// Count of uploaded payload data to this peer.
             std::string total_upload() const;
             
+            /// Pieces this peer has.
             const t_bitVector & pieces() const;
             
+            /// Number of bytes per second this peer is allowed to
+            /// receive.
             std::string download_limit() const;
             
+            /// Number of bytes per second we are allowed to send to
+            /// this peer every second.
             std::string upload_limit() const;
             
+            /// ISO 3166 country code.
             std::string country() const;
             
+            /// Measurement of the balancing of free download (that we get)
+            /// and free upload that we give.
             std::string load_balancing() const;
             
+            /// Number of piece-requests we have sent to this peer
+            /// that hasn't been answered with a piece yet.
             std::string download_queue_length() const;
-            
+
+            /// Number of piece-requests we have received from this peer
+            /// that we haven't answered with a piece yet.
             std::string upload_queue_length() const;
             
+            /// Index of the piece that is currently being downloaded.
             std::string downloading_piece_index() const;
             
+            /// Index of the block (or sub-piece) that is being downloaded.
             std::string downloading_block_index() const;
             
+            /// Number of bytes of this block we have received from the peer.
             t_float downloading_progress() const;
             
+            /// Total number of bytes in this block
             std::string downloading_total() const;
             
+            /// String describing the software at the other end of the connection.
             std::string client() const;
             
+            /// Standard_bittorrent or web_seed.
             std::string connection_type() const;
             
+            /// Time since last request (milliseconds).
             std::string last_request() const;
             
+            /// Time since last download or upload (milliseconds).
             std::string last_active() const;
             
+            /// The number of failed hashes for this peer.
             std::string num_hashfails() const;
             
+            /// The number of times this IP has failed to connect.
             std::string failcount() const;
             
+            /// The number of requests that is tried to be maintained. 
             std::string target_dl_queue_length() const;
             
+            /// The approximate peer download rate.
             std::string remote_dl_rate() const;
             
          private:
@@ -223,42 +255,42 @@ namespace btg
              * http://www.rasterbar.com/products/libtorrent/manual.html#peer-info
              */
             
-            /// LT peer flags (peer state)
+            /// LT peer flags (peer state).
             t_uint flags_;
             
-            /// Peer source
+            /// Peer source.
             t_uint source_;
             
-            /// Download speed
+            /// Download speed.
             t_uint down_speed_;
             
-            /// Upload speed to this peer
+            /// Upload speed to this peer.
             t_uint up_speed_;
 
-            /// Payload data download speed
+            /// Payload data download speed.
             t_uint payload_down_speed_;
             
-            /// Payload data upload speed
+            /// Payload data upload speed.
             t_uint payload_up_speed_;
             
-            /// Count of downloaded payload data from this peer
+            /// Count of downloaded payload data from this peer.
             t_ulong total_download_;
             
-            /// Count of uploaded payload data to this peer
+            /// Count of uploaded payload data to this peer.
             t_ulong total_upload_;
             
             /// Pieces this peer has
             t_bitVector pieces_;
             
-            /// number of bytes per second this peer is allowed to receive.
+            /// Number of bytes per second this peer is allowed to receive.
             /// (int)-1 means it's unlimited.
             t_uint download_limit_;
             
-            /// Number of bytes per second we are allowed to send to this peer every second
+            /// Number of bytes per second we are allowed to send to this peer every second.
             /// It may be (int)-1 if there's no local limit on the peer.
             t_uint upload_limit_;
             
-            /// ISO 3166 country code
+            /// ISO 3166 country code.
             t_byte country_[2];
             
             /// Measurement of the balancing of free download (that we get)
@@ -270,35 +302,40 @@ namespace btg
             t_long load_balancing_;
             
             /// Number of piece-requests we have sent to this peer
-            /// that hasn't been answered with a piece yet
+            /// that hasn't been answered with a piece yet.
             t_uint download_queue_length_;
             
             /// Number of piece-requests we have received from this peer
-            /// that we haven't answered with a piece yet
+            /// that we haven't answered with a piece yet.
             t_uint upload_queue_length_;
             
             /// Index of the piece that is currently being downloaded.
-            /// This may be set to (int)-1 if there's currently no piece downloading from this peer.
+            /// This may be set to (int)-1 if there's currently no
+            /// piece downloading from this peer.
             /// If it is >= 0, the other three members are valid.
             t_uint downloading_piece_index_;
 
-            /// Index of the block (or sub-piece) that is being downloaded.
+            /// Index of the block (or sub-piece) that is being
+            /// downloaded.
             t_uint downloading_block_index_;
             
-            /// Number of bytes of this block we have received from the peer
+            /// Number of bytes of this block we have received from
+            /// the peer.
             t_uint downloading_progress_;
             
-            /// Total number of bytes in this block
+            /// Total number of bytes in this block.
             t_uint downloading_total_;
 
             /// String describing the software at the other end of the connection.
             /// In some cases this information is not available,
             /// then it will contain a string that may give away
             /// something about which software is running in the other end.
-            /// In the case of a web seed, the server type and version will be a part of this string.
+            /// 
+            /// In the case of a web seed, the server type and version
+            /// will be a part of this string.
             std::string client_;
             
-            /// standard_bittorrent or web_seed
+            /// standard_bittorrent or web_seed.
             t_uint connection_type_;
             
 
@@ -306,23 +343,23 @@ namespace btg
              * LT-13 -related parameters
              */
             
-            /// time since last request (seconds)
+            /// Time since last request (milliseconds).
             t_uint last_request_;
 
-            /// time since last download or upload (seconds)
+            /// Time since last download or upload (seconds)
             t_uint last_active_;
             
-            /// the number of failed hashes for this peer
+            /// The number of failed hashes for this peer.
             t_uint num_hashfails_;
 
-            /// the number of times this IP has failed to connect
+            /// The number of times this IP has failed to connect.
             t_uint failcount_;
 
-            /// the number of requests that is tried to be maintained 
-            /// (this is typically a function of download speed)
+            /// The number of requests that is tried to be maintained 
+            /// (this is typically a function of download speed).
             t_uint target_dl_queue_length_;
             
-            /// approximate peer download rate
+            /// Approximate peer download rate.
             t_uint remote_dl_rate_;
 
          };

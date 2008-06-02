@@ -48,10 +48,10 @@ namespace btg
                   {
                   public:
                      /// Constructor.
-                     /// @param [in] _szUploadLabel 1st label text (default "Upload")
+                     /// @param [in] _szUploadLabel   1st label text (default "Upload")
                      /// @param [in] _szDownloadLabel 2nd label text (default "Download")
-                     /// @param [in] _szSeedpercUploadscntLabel 3rd label text (default "Seed %")
-                     /// @param [in] _szSeedtimeConnectionscntLabel 4th label text (default "Seed Time")
+                     /// @param [in] _szParam3Label   3rd label text
+                     /// @param [in] _szParam4Label   4th label text
                      limitDialog(const char * _szUploadLabel = NULL, 
                                  const char * _szDownloadLabel = NULL, 
                                  const char * _szParam3Label = NULL, 
@@ -62,8 +62,8 @@ namespace btg
                      /// @param [in] _filename             Used as a part of the title.
                      /// @param [in] _currentUploadLimit   Choosen upload limit, in KiB/sec.
                      /// @param [in] _currentDownloadLimit Choosen download limit, in KiB/sec.
-                     /// @param [in] _currentSeedPercent Choosen seed percent.
-                     /// @param [in] _currentSeedTime    Choosen seed timeout, in minutes.
+                     /// @param [in] _currentParam3        value #3.
+                     /// @param [in] _currentParam4        value #4.
                      void update(std::string const& _filename,
                                  t_int const  _currentUploadLimit,
                                  t_int const  _currentDownloadLimit,

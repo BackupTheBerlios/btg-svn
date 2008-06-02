@@ -58,10 +58,10 @@ namespace btg
                      /// Update progress.
                      /// @param _percent Percent.
                      /// @param _text    Text to display.
-                     /// @param _cancel  Show cancel button.
                      void updateProgress(t_uint const _percent, 
                                          std::string const& _text);
 
+                     /// Indicates if user pressed cancel,
                      bool cancelPressed() const;
 
                      /// Destructor.
@@ -76,15 +76,19 @@ namespace btg
                      /// timer expires.
                      void setTimeout();
 
+                     /// User clicked cancel, callback.
                      void on_cancel_clicked();
 
                      /// Callback.
                      bool on_refresh_timeout(int _timeout);
 
+                     /// Canceling is enabled.
                      bool              cancel_enabled;
 
+                     /// Cancel was pressed.
                      bool              cancel_pressed;
 
+                     /// The cancel button.
                      Gtk::Button*      cancelbutton;
 
                      /// Label showing a title.

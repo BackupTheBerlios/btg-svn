@@ -74,8 +74,7 @@ namespace btg
                      /// holding the dynamic client configuration.
                      /// @param [in] _verboseFlag Be verbose.
                      /// @param [in] _autoStartFlag Auto start loaded torrents.
-                     /// @param [in] _status_bar Pointer to the class
-                     /// representing a statusbar.
+                     /// @param [in] _pstatus_bar Pointer to the class representing a statusbar.
 
                      guiHandler(btg::core::LogWrapperType _logwrapper,
                                 btg::core::externalization::Externalization& _e,

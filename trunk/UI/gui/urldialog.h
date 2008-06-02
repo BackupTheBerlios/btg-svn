@@ -65,6 +65,7 @@ namespace btg
             protected:
                /// Called when the file input was changed.
                void file_changed();
+
                /// Called when the url input was changed.
                void url_changed();
 
@@ -93,6 +94,8 @@ namespace btg
                /// Indicates if both inputs contain text.
                bool url_filename_filled;
 
+               /// Indicates if the user entered a filename used to
+               /// download something into.
                bool filename_filled;
             };
 
