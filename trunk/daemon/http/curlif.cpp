@@ -159,7 +159,7 @@ namespace btg
          
          size_t curlInterface::curl_write_function(void *data, size_t size, size_t nmemb, curlInterface *self)
          {
-            return self->onDataChunk(data, size * nmemb) ? size * nmemb : -1;
+            return self->onDataChunk(data, size * nmemb) ? size * nmemb : (size_t)-1;
          }
          
          bool curlInterface::onDataChunk(void *data, size_t size)

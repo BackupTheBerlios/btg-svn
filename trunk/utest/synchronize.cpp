@@ -22,9 +22,15 @@
 
 #include "synchronize.h"
 
+#include <config.h>
+
 #include <sys/types.h>
+
+#ifdef HAVE_SEMOP
 #include <sys/ipc.h>
 #include <sys/sem.h>
+#endif
+
 #include <errno.h>
 #include <stdio.h> // for perror, printf
 #include <unistd.h> // for sleep
@@ -33,71 +39,75 @@
 // doesn't allow to launch several processes simultaneously
 int synchronize()
 {
-	int id;
-	union semun {
-		int     val;    /* Value for SETVAL */
-        	struct semid_ds *buf;    /* Buffer for IPC_STAT, IPC_SET */
-		unsigned short  *array;  /* Array for GETALL, SETALL */
-		struct seminfo  *__buf;  /* Buffer for IPC_INFO
-		                            (Linux specific) */
-        } u;
-	//union semun u;
-	
-	id = semget(IPC_KEY, 1, IPC_CREAT|IPC_EXCL|0660);
-	if (id == -1 && errno == EEXIST)
-	{
-		id = semget(IPC_KEY, 1, 0);
-		if (id == -1)
-		{
-			perror("semget");
-			return 51;
-		}
-		
-		// checking whether it inited
-		struct semid_ds s;
-		do
-		{
-			// waiting for init
-			sleep(1);
-			u.buf = &s;
-			if (semctl(id, 0, IPC_STAT, u) == -1)
-			{
-				perror("semctl");
-				return 52;
-			}
-		}
-		while(s.sem_otime == 0);
-	}
-	else
-	{
-		// initializing
-		u.val = 0;
-		if(semctl(id, 0, SETVAL, u) == -1)
-		{
-			perror("semctl");
-			return 53;
-		}
-		// initialized
-	}
-	printf("waiting for other testrunner processes ..."); fflush(stdout);
-	struct sembuf op[2];
-	op[0].sem_num = 0;
-	op[0].sem_op = 0;
-	op[0].sem_flg = 0;
-	op[1].sem_num = 0;
-	op[1].sem_op = 1;
-	op[1].sem_flg = SEM_UNDO; // will decrease when app terminates
-	struct timespec tout;
-	tout.tv_nsec = 0;
-	tout.tv_sec = 1;
-   for(;;)
+#ifdef HAVE_SEMOP
+   int id;
+   union semun
+   {
+      int val; /* Value for SETVAL */
+      struct semid_ds *buf; /* Buffer for IPC_STAT, IPC_SET */
+      unsigned short *array; /* Array for GETALL, SETALL */
+      struct seminfo *__buf; /* Buffer for IPC_INFO
+       (Linux specific) */
+   } u;
+   //union semun u;
+
+   id = semget(IPC_KEY, 1, IPC_CREAT|IPC_EXCL|0660);
+   if (id == -1 && errno == EEXIST)
+   {
+      id = semget(IPC_KEY, 1, 0);
+      if (id == -1)
+      {
+         perror("semget");
+         return 51;
+      }
+
+      // checking whether it inited
+      struct semid_ds s;
+      do
+      {
+         // waiting for init
+         sleep(1);
+         u.buf = &s;
+         if (semctl(id, 0, IPC_STAT, u) == -1)
+         {
+            perror("semctl");
+            return 52;
+         }
+      } while (s.sem_otime == 0);
+   } else
+   {
+      // initializing
+      u.val = 0;
+      if (semctl(id, 0, SETVAL, u) == -1)
+      {
+         perror("semctl");
+         return 53;
+      }
+      // initialized
+   }
+   printf("waiting for other testrunner processes ...");
+   fflush(stdout);
+   struct sembuf op[2];
+   op[0].sem_num = 0;
+   op[0].sem_op = 0;
+   op[0].sem_flg = 0;
+   op[1].sem_num = 0;
+   op[1].sem_op = 1;
+   // when application terminates, the semaphore will be decreased and other application will be unblocked
+   op[1].sem_flg = SEM_UNDO; // will decrease when app terminates
+#ifdef HAVE_SEMTIMEDOP
+   struct timespec tout;
+   tout.tv_nsec = 0;
+   tout.tv_sec = 1;
+   for (;;)
    {
       // performing operation
       if (semtimedop(id, op, 2, &tout) == -1)
       {
          if (errno == EAGAIN)
          {
-            printf("."); fflush(stdout);
+            printf(".");
+            fflush(stdout);
             continue;
          }
          perror("semop");
@@ -106,6 +116,17 @@ int synchronize()
       printf("\n");
       break;
    }
-	// when application terminates, the semaphore will be decreased and other application will be unblocked
-	return 0;
+#else // ifdef HAVE_SEMTIMEDOP
+   // performing operation
+   if (semop(id, op, 2) == -1)
+   {
+      perror("semop");
+      return 54;
+   }
+   printf("\n");
+#endif // ifdef HAVE_SEMTIMEDOP
+#else // ifdef HAVE_SEMOP
+   printf("Warning: SysV IPC (semaphores) unavailable. Unable to synchronize tests!\n");
+#endif // ifdef HAVE_SEMOP
+   return 0;
 }

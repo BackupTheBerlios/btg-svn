@@ -69,7 +69,13 @@ namespace btg
             /// @param [in] dltotal total bytes to download
             /// @param [in] dlnow bytes already downloaded
             /// @param [in] dlspeed current download speed (bytes/sec)
-            virtual void ReportDownloadProgress(t_float dltotal, t_float dlnow, t_float dlspeed) = 0;
+            /// @note for faster communication with curl all values are in double
+            virtual void ReportDownloadProgress(double dltotal, double dlnow, double dlspeed) = 0;
+            
+            /*
+             * Additional reporting methods (callbacks) also can be defined
+             * for communication with another backends
+             */
             
             // Report the upload progress
             // @param [in] ultotal total bytes to upload
@@ -98,7 +104,7 @@ namespace btg
             httpInterface::Status Status();
             
             /// Get download progress info
-            void DlProgress(t_float &_dltotal, t_float &_dlnow, t_float &_dlspeed);
+            void DlProgress(t_uint &_dltotal, t_uint &_dlnow, t_uint &_dlspeed);
 
             /// Get the result of the download.
             bool Result(btg::core::sBuffer & _buffer);
@@ -117,7 +123,7 @@ namespace btg
             
             /// Download progress reporter callback.
             /// Called by curlInterface.
-            void ReportDownloadProgress(t_float _dltotal, t_float _dlnow, t_float _dlspeed);
+            void ReportDownloadProgress(double _dltotal, double _dlnow, double _dlspeed);
 
             /// The URL to download.
             std::string           URL;
@@ -135,13 +141,13 @@ namespace btg
             bool                  terminate;
             
             /// Content-Length
-            t_float               dltotal;
+            double               dltotal;
             
             /// How much data we downloaded
-            t_float               dlnow;
+            double               dlnow;
             
             /// Last measured download speed (bytes/sec) 
-            t_float               dlspeed;
+            double               dlspeed;
 
             /// Mutex used to control access to the members
             /// of this class from the outside.

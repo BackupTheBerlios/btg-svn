@@ -146,7 +146,7 @@ namespace btg
                const std::string & client,
                const t_uint connection_type,
                /* LT-13 - related */
-               const t_ulong last_request, const t_ulong last_active,
+               const t_uint last_request, const t_uint last_active,
                const t_uint num_hashfails, const t_uint failcount,
                const t_uint target_dl_queue_length,
                const t_uint remote_dl_rate
@@ -306,11 +306,11 @@ namespace btg
              * LT-13 -related parameters
              */
             
-            /// time since last request (milliseconds)
-            t_ulong last_request_;
+            /// time since last request (seconds)
+            t_uint last_request_;
 
-            /// time since last download or upload (milliseconds)
-            t_ulong last_active_;
+            /// time since last download or upload (seconds)
+            t_uint last_active_;
             
             /// the number of failed hashes for this peer
             t_uint num_hashfails_;

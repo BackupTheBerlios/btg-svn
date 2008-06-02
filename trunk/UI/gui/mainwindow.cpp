@@ -68,6 +68,9 @@
 #include <bcore/btg_assert.h>
 #include <bcore/os/sleep.h>
 
+#include <bcore/hrr.h>
+#include <bcore/hru.h>
+
 #define GET_HANDLER_INST \
    boost::shared_ptr<boost::mutex> ptr = handlerthread.mutex(); \
    boost::mutex::scoped_lock interface_lock(*ptr); \
@@ -722,43 +725,31 @@ namespace btg
                            }
                         case btg::core::URLS_WORKING:
                            {
-                              std::stringstream ssmsg;
                               t_uint progress = 10;
-                              t_float total, now, speed;
+                              t_uint total, now, speed;
                               
-                              ssmsg << "Working";
+                              std::string msg = "Working";
                               
                               if (handler->getUrlDlProgress(total, now, speed))
                               {
-                                 progress += total > 0 ? now / total * 80 : 40;
-                                 
-                                 std::string unit;
-                                 
-                                 ssmsg << std::fixed;
-                                 ssmsg << std::setprecision(2);
-                                 
-                                 now = btg::core::Util::valueUnit(now, unit);                                    
-                                 ssmsg << " (" << now << unit << "b";
-                                 
+                                 progress += t_uint(total > 0 ? (float)now / total * 80 : 40);
+                                 msg += " (" + core::humanReadableUnit::convert(now).toString();
                                  if (total > 0)
                                  {
-                                    total = btg::core::Util::valueUnit(total, unit);                                    
-                                    ssmsg << "/" << total << unit << "b";
+                                    msg += "/" + core::humanReadableUnit::convert(total).toString();
                                  }
                                  else
                                  {
-                                    ssmsg << "/?";
+                                    msg += "/?";
                                  }
-                                 
-                                 speed = btg::core::Util::valueUnit(speed, unit);                                    
-                                 ssmsg << " " << speed << unit << "b/sec)";                                    
+                                 msg += " - " + core::humanReadableRate::convert(speed).toString(true) + ")";
                               }
                               else
                               {
-                                 ssmsg << ".";
+                                 msg += ".";
                               }
                               
-                              pd.updateProgress(progress, ssmsg.str());
+                              pd.updateProgress(progress, msg);
                               break;
                            }
                         case btg::core::URLS_FINISHED:

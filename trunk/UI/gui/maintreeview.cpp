@@ -29,8 +29,6 @@
 #include <bcore/hrr.h>
 #include <bcore/t_string.h>
 
-#include "gtkmm_ver.h"
-
 namespace btg
 {
    namespace UI
@@ -192,13 +190,8 @@ namespace btg
                         // Not downloading.
                         progress = done_str;
                      }
-#if GTKMM_2_6_OR_BETTER
                   row[statusrecord.done]     = _status.done();
                   row[statusrecord.doneText] = progress;
-#else
-                  row[statusrecord.done] = progress;
-#endif // GTKMM_2_6_OR_BETTER
-
                } // Update progress
 
             // Convert the filesize to human readable form.

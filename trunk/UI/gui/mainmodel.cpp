@@ -24,11 +24,7 @@
 
 #include <UI/gui/guiutils.h>
 
-#include <gtkmm/treeview.h>
-
-#if GTKMM_2_6_OR_BETTER
-#  include <gtkmm/cellrendererprogress.h>
-#endif // GTKMM_2_6_OR_BETTER
+#include <gtkmm.h>
 
 namespace btg
 {
@@ -42,12 +38,8 @@ namespace btg
               filename(),
               filesize(),
               status(),
-#if GTKMM_2_6_OR_BETTER
               done(),
               doneText(),
-#else
-              done(),
-#endif // GTKMM_2_6_OR_BETTER
               dn_rate(),
               ul_rate(),
               peers()
@@ -57,9 +49,7 @@ namespace btg
             add(filesize);
             add(status);
             add(done);
-#if GTKMM_2_6_OR_BETTER
             add(doneText);
-#endif // GTKMM_2_6_OR_BETTER
             add(dn_rate);
             add(ul_rate);
             add(peers);
@@ -70,9 +60,8 @@ namespace btg
             _treeview->append_column("Filename", filename);
             
             _treeview->append_column("Status",   status);
-#if GTKMM_2_6_OR_BETTER
-            // Add a progress bar, showing status.
 
+            // Add a progress bar, showing status.
             Gtk::CellRendererProgress* cell = Gtk::manage(new Gtk::CellRendererProgress);
             int last_count = _treeview->append_column("Progress", *cell);
 
@@ -82,11 +71,6 @@ namespace btg
                   column->add_attribute(cell->property_value(), done);
                   column->add_attribute(cell->property_text(), doneText);
                }
-
-#else
-            // Old gtkmm version, so use boring text.
-            _treeview->append_column("Progress", done);
-#endif // GTKMM_2_6_OR_BETTER
 
             _treeview->append_column("Download", dn_rate);
             _treeview->append_column("Upload",   ul_rate);

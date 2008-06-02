@@ -69,6 +69,12 @@ namespace btg
                
                /// Check whether all bits is set to 1
                bool full() const;
+               
+               /// Aggregate the data into the smaller size
+               /// @param [in] src Source vector
+               /// @param [in] max_size Maximum target data size (in bits)
+               /// @note Previous contents will be erased.
+               void aggregate(const std::vector<bool> & src, size_t max_size);
             };
 
          /** @} */

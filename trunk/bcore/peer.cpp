@@ -272,10 +272,10 @@ namespace btg
          download_limit_(), upload_limit_(),
          load_balancing_(),
          download_queue_length_(), upload_queue_length_(),
-         downloading_piece_index_(-1), downloading_block_index_(),
+         downloading_piece_index_((t_uint)-1), downloading_block_index_(),
          downloading_progress_(), downloading_total_(),
          client_(),
-         connection_type_(-1),
+         connection_type_((t_uint)-1),
          /* LT-13 -related */
          last_request_(), last_active_(),
          num_hashfails_(), failcount_(),
@@ -302,7 +302,7 @@ namespace btg
          const std::string & _client,
          const t_uint _connection_type,
          /* LT-13 -related */
-         const t_ulong _last_request, const t_ulong _last_active,
+         const t_uint _last_request, const t_uint _last_active,
          const t_uint _num_hashfails, const t_uint _failcount,
          const t_uint _target_dl_queue_length,
          const t_uint _remote_dl_rate
@@ -325,43 +325,7 @@ namespace btg
             target_dl_queue_length_(_target_dl_queue_length),
             remote_dl_rate_(_remote_dl_rate)
       {
-         if (_pieces.size() > max_pieces_cnt)
-         {
-            /*
-             * aggregate pieces to max_pieces_cnt ones
-             * 
-             * e.g.
-             * max_pieces_cnt = 5
-             * 
-             * _pieces = 11111 11110 00001 11100 00110 10001 1
-             * aggr_cnt = 31 / ( 5 - 1 ) = 7 (remainder 3)
-             * (_pieces = 1111111 1100000 1111000 0110100 011)
-             * pieces_ = 1 0 1 0 1
-             * 
-             * _pieces = 00 01 10 11
-             * aggr_cnt = 8 / (5 - 1) = 2
-             * pieces_ = 0 1 1 1
-             */
-            pieces_.resize( max_pieces_cnt - (_pieces.size() % (max_pieces_cnt - 1) ? 1 : 0), 0);
-            for (size_t isrc = 0, idst = 0, aggr_cnt = _pieces.size() / (max_pieces_cnt - 1);
-               idst < pieces_.size() && isrc < _pieces.size();
-               ++idst, isrc+=aggr_cnt)
-            {
-               int cnt = 0, all_cnt = 0;
-               for (size_t i = isrc; i < isrc + aggr_cnt && i < _pieces.size(); ++i)
-               {
-                  ++all_cnt;
-                  if (_pieces[i])
-                     ++cnt;
-               }
-               if (cnt >= all_cnt / 2)
-                  pieces_[idst] = 1;
-            }
-         }
-         else
-         {
-            pieces_ = _pieces;
-         }
+         pieces_.aggregate(_pieces, max_pieces_cnt);
          
          if (_country && _country[0])
          {
@@ -474,9 +438,9 @@ namespace btg
           * LT-13 -related parameters
           */
          
-         _e->uLongToBytes(&last_request_);
+         _e->uintToBytes(&last_request_);
          BTG_RCHECK(_e->status());
-         _e->uLongToBytes(&last_active_);
+         _e->uintToBytes(&last_active_);
          BTG_RCHECK(_e->status());
 
          _e->uintToBytes(&num_hashfails_);
@@ -575,9 +539,9 @@ namespace btg
           * LT-13 -related parameters
           */
          
-         _e->bytesToULong(&last_request_);
+         _e->bytesToUint(&last_request_);
          BTG_RCHECK(_e->status());
-         _e->bytesToULong(&last_active_);
+         _e->bytesToUint(&last_active_);
          BTG_RCHECK(_e->status());
          
          _e->bytesToUint(&num_hashfails_);
@@ -732,22 +696,34 @@ namespace btg
       
       std::string PeerEx::downloading_piece_index() const
       {
-         return convertToString(downloading_piece_index_);
+         if (downloading_piece_index_ != (t_uint)-1)
+            return convertToString(downloading_piece_index_);
+         else
+            return "";
       }
       
       std::string PeerEx::downloading_block_index() const
       {
-         return convertToString(downloading_block_index_);
+         if (downloading_piece_index_ != (t_uint)-1)
+            return convertToString(downloading_block_index_);
+         else
+            return "";
       }
       
       t_float PeerEx::downloading_progress() const
       {
-         return (t_float)downloading_progress_ / downloading_total_;
+         if (downloading_piece_index_ != (t_uint)-1)
+            return (t_float)downloading_progress_ / downloading_total_;
+         else
+            return 0;
       }
       
       std::string PeerEx::downloading_total() const
       {
-         return humanReadableUnit::convert(downloading_total_).toString();
+         if (downloading_piece_index_ != (t_uint)-1)
+            return humanReadableUnit::convert(downloading_total_).toString();
+         else
+            return "";
       }
       
       std::string PeerEx::client() const
@@ -764,36 +740,56 @@ namespace btg
          case web_seed:
             return "W";
          }
+
+         return "?";
       }
       
       std::string PeerEx::last_request() const
       {
-         return humanReadableTime::convert(last_request_).toString();
+         if (last_request_ != (t_uint)-1)
+            return humanReadableTime::convert(last_request_).toString();
+         else
+            return "";
       }
       
       std::string PeerEx::last_active() const
       {
-         return humanReadableTime::convert(last_active_).toString();
+         if (last_active_ != (t_uint)-1)
+            return humanReadableTime::convert(last_active_).toString();
+         else
+            return "";
       }
       
       std::string PeerEx::num_hashfails() const
       {
-         return convertToString(num_hashfails_);
+         if (num_hashfails_ != (t_uint)-1)
+            return convertToString(num_hashfails_);
+         else
+            return "";
       }
       
       std::string PeerEx::failcount() const
       {
-         return convertToString(failcount_);
+         if (failcount_ != (t_uint)-1)
+            return convertToString(failcount_);
+         else
+            return "";
       }
       
       std::string PeerEx::target_dl_queue_length() const
       {
-         return convertToString(target_dl_queue_length_);
+         if (target_dl_queue_length_ != (t_uint)-1)
+            return convertToString(target_dl_queue_length_);
+         else
+            return "";
       }
       
       std::string PeerEx::remote_dl_rate() const
       {
-         return humanReadableRate::convert(remote_dl_rate_).toString(true);
+         if (remote_dl_rate_ != (t_uint)-1)
+            return humanReadableRate::convert(remote_dl_rate_).toString(true);
+         else
+            return "";
       }
       
    } // namespace core

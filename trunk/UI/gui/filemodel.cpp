@@ -20,19 +20,13 @@
  * $Id$
  */
 
-#include <gtkmm/treeview.h>
+#include <gtkmm.h>
 #include "filemodel.h"
 
 #include "mainfiletreeview.h"
 #include "selectfiletreeview.h"
 
 #include <UI/gui/guiutils.h>
-
-#include "gtkmm_ver.h"
-
-#if GTKMM_2_6_OR_BETTER
-#  include <gtkmm/cellrenderertoggle.h>
-#endif // GTKMM_2_6_OR_BETTER
 
 namespace btg
 {

@@ -23,9 +23,9 @@
 #ifndef PROGRESSDIALOG_H
 #define PROGRESSDIALOG_H
 
-#include <gtkmm/dialog.h>
+#include <bcore/type.h>
 
-#include <string>
+#include <gtkmm.h>
 
 namespace Gtk
 {

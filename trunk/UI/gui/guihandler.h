@@ -143,7 +143,7 @@ namespace btg
                      
                      /// Get URL download progress info (if available)
                      /// @return false if wl progress info unavailable
-                     bool getUrlDlProgress(t_float &_total, t_float &_now, t_float &_speed);
+                     bool getUrlDlProgress(t_uint &_total, t_uint &_now, t_uint &_speed);
 
                      /// Destructor.
                      virtual ~guiHandler();
@@ -178,7 +178,7 @@ namespace btg
                                       btg::core::urlStatus const _status);
                      void onUrlStatusError(std::string const& _message);
                      void onUrlDlProgress(t_uint const _id,
-                                          t_float _dltotal, t_float _dlnow, t_float _dlspeed);
+                                          t_uint _dltotal, t_uint _dlnow, t_uint _dlspeed);
                      void onAbort();
                      void onStart();
                      void onStop();
@@ -270,11 +270,11 @@ namespace btg
                      bool           UrlDlProgress;
                      
                      /// total bytes to download
-                     t_float        UrlDlTotal;
+                     t_uint         UrlDlTotal;
                      /// bytes downloaded
-                     t_float        UrlDlNow;
+                     t_uint         UrlDlNow;
                      /// Download speed (bytes/sec)
-                     t_float        UrlDlSpeed;
+                     t_uint         UrlDlSpeed;
                   private:
                      /// Copy constructor.
                      guiHandler(guiHandler const& _gh);

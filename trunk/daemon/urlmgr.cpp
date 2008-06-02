@@ -307,7 +307,7 @@ namespace btg
          return true;
       }
 
-      bool urlManager::getDlProgress(const t_uint _id, t_float & _dltotal, t_float & _dlnow, t_float & _dlspeed)
+      bool urlManager::getDlProgress(const t_uint _id, t_uint & _dltotal, t_uint & _dlnow, t_uint & _dlspeed)
       {
          std::vector<UrlIdSessionMapping>::iterator mapping = getUrlMapping(_id);
 

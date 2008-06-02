@@ -24,7 +24,7 @@ mainmodel.h mainmenubar.h mainstatusbar.h maintreeview.h \
 peermodel.h peertreeview.h \
 detailsmodel.h detailstreeview.h \
 mainwindow.h sig_button_menu.h \
-gtkmm_ver.h usermessage.h guiutils.h
+usermessage.h guiutils.h
 
 btgui_LDADD   = $(top_builddir)/bcore/libbtgcore.la \
                 $(top_builddir)/bcore/client/libbtgclient.la \

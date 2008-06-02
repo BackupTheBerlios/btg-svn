@@ -74,12 +74,6 @@ namespace btg
                /// @param [out] _output The output, a file name.
                /// @return True if the file part could be extracted, false otherwise.
                static bool getFileFromPath(std::string const& _input, std::string & _output);
-
-               /// Returns the maximum unit for the value.
-               /// @param [in] _value The value.
-               /// @param [out] _unit The unit.
-               /// @return value with unit applied (_value = 10240, return 10, _unit = 'k')
-               static t_float valueUnit(t_float _value, std::string &_unit);
             };
 
          /// Convert a string to a number.

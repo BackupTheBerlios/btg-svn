@@ -107,5 +107,65 @@ namespace btg
          return true;
       }
       
+      void bitvector::aggregate(const std::vector<bool> & _src, size_t _max_size)
+      {
+         if (_src.size() > _max_size)
+         {
+            /*
+             * aggregate bits in _src to _max_size ones
+             * 
+             * e.g.
+             * _max_size = 5
+             * 
+             * (case 1)
+             * _src = 11111 11110 00001 11100 00110 10001 1
+             * aggr_cnt = 31 / ( 5 - 1 ) = 7 (remainder 3)
+             * (_src = 1111111 1100000 1111000 0110100 011)
+             * pieces_ = 1 0 1 1(cnt>=all_cnt/2) 1
+             * 
+             * (case 2)
+             * _src = 00 01 10 11
+             * aggr_cnt = 8 / (5 - 1) = 2
+             * pieces_ = 0 1 1 1   (trailing 0 is removed)
+             * 
+             * (case 3)
+             * _src = 11111 11100 11000 10000 00001 10101
+             * aggr_cnt = 30 / (5 - 0) = 6
+             * (_src = 111111 110011 000100 000000 110101)
+             * pieces_ = 1 1 0 0 1
+             */
+            
+            // fighting against trailing 0 in case 2
+            if (_src.size() % _max_size)
+            {
+               resize(_max_size - (_src.size() % (_max_size - 1) ? 0 : 1) );
+            }
+            else
+            {
+               resize(_max_size);
+            }
+            std::fill(begin(), end(), 0);
+            
+            for (size_t isrc = 0, idst = 0, aggr_cnt = _src.size() / (_max_size - (_src.size() % _max_size ? 1 : 0));
+               idst < size() && isrc < _src.size();
+               ++idst, isrc+=aggr_cnt)
+            {
+               int cnt = 0, all_cnt = 0;
+               for (size_t i = isrc; i < isrc + aggr_cnt && i < _src.size(); ++i)
+               {
+                  ++all_cnt;
+                  if (_src[i])
+                     ++cnt;
+               }
+               if (cnt >= all_cnt / 2)
+                  at(idst) = 1;
+            }
+         }
+         else
+         {
+            *this = _src;
+         }
+      }
+      
    } // namespace core
 } // namespace btg

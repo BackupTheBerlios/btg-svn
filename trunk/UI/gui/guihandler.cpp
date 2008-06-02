@@ -178,7 +178,7 @@ namespace btg
             UrlDlProgress = false;
          }
 
-         void guiHandler::onUrlDlProgress(t_uint const, t_float _dltotal, t_float _dlnow, t_float _dlspeed)
+         void guiHandler::onUrlDlProgress(t_uint const, t_uint _dltotal, t_uint _dlnow, t_uint _dlspeed)
          {
             UrlDlProgress = true;
             UrlDlTotal = _dltotal;
@@ -514,7 +514,7 @@ namespace btg
             return selected_files;
          }
          
-         bool guiHandler::getUrlDlProgress(t_float &_total, t_float &_now, t_float &_speed)
+         bool guiHandler::getUrlDlProgress(t_uint &_total, t_uint &_now, t_uint &_speed)
          {
             _total = UrlDlTotal;
             _now = UrlDlNow;

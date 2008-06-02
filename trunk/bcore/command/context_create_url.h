@@ -171,7 +171,7 @@ namespace btg
          }
          
          /// Get progress information.
-         bool getDlProgress(t_float &_dltotal, t_float &_dlnow, t_float &_dlspeed) const
+         bool getDlProgress(t_uint &_dltotal, t_uint &_dlnow, t_uint &_dlspeed) const
          {
             _dltotal = dltotal_;
             _dlnow = dlnow_;
@@ -180,7 +180,7 @@ namespace btg
          }
          
          /// Set the download progress info
-         void setDlProgress(t_float _dltotal, t_float _dlnow, t_float _dlspeed)
+         void setDlProgress(t_uint _dltotal, t_uint _dlnow, t_uint _dlspeed)
          {
             bDlProgress_ = true;
             dltotal_ = _dltotal;
@@ -198,11 +198,11 @@ namespace btg
          /// Whether download progress info present
          bool bDlProgress_;
          /// Total bytes to go
-         t_float dltotal_;
+         t_uint dltotal_;
          /// Bytes already downloaded
-         t_float dlnow_;
+         t_uint dlnow_;
          /// download speed
-         t_float dlspeed_;
+         t_uint dlspeed_;
       };
 
       /// Get the status of a URL download.

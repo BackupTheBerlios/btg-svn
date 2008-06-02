@@ -91,51 +91,5 @@ namespace btg
          return false;
       }
 
-      t_float Util::valueUnit(t_float _value, std::string &_unit)
-      {
-         if (_value > 1024)
-         {
-            _value /= 1024;
-            _unit = 'k';
-         }
-         if (_value > 1024)
-         {
-            _value /= 1024;
-            _unit = 'M';
-         }
-         if (_value > 1024)
-         {
-            _value /= 1024;
-            _unit = 'G';
-         }
-         if (_value > 1024)
-         {
-            _value /= 1024;
-            _unit = 'T';
-         }
-         if (_value > 1024)
-         {
-            _value /= 1024;
-            _unit = 'P';
-         }
-         // http://en.wikipedia.org/wiki/SI_unit
-         if (_value > 1024)
-         {
-            _value /= 1024;
-            _unit = 'E'; // exa-
-         }
-         if (_value > 1024)
-         {
-            _value /= 1024;
-            _unit = 'Z'; // zetta-
-         }
-         if (_value > 1024)
-         {
-            _value /= 1024;
-            _unit = 'Y'; // yotta-
-         }
-         return _value;
-      }
-
    } // namespace core
 } // namespace btg

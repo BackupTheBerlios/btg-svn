@@ -211,7 +211,7 @@ namespace btg
 
             clientcallback.onUrlStatus(cusrc->id(), cusrc->status());
             
-            t_float dltotal, dlnow, dlspeed;
+            t_uint dltotal, dlnow, dlspeed;
             if (cusrc->getDlProgress(dltotal, dlnow, dlspeed))
             {
                clientcallback.onUrlDlProgress(cusrc->id(), dltotal, dlnow, dlspeed);

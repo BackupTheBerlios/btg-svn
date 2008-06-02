@@ -1572,15 +1572,15 @@ namespace btg
                            peerinfolist[i].client,
                            peerinfolist[i].connection_type,
 #if !BTG_LT_0_12
-                           peerinfolist[i].last_request.diff, peerinfolist[i].last_active.diff,
+                           libtorrent::total_seconds(peerinfolist[i].last_request), libtorrent::total_seconds(peerinfolist[i].last_active),
                            peerinfolist[i].num_hashfails, peerinfolist[i].failcount,
                            peerinfolist[i].target_dl_queue_length,
                            peerinfolist[i].remote_dl_rate
 #else
-                           -1, -1,
-                           -1, -1,
-                           -1,
-                           -1
+                           (t_uint)-1, (t_uint)-1,
+                           (t_uint)-1, (t_uint)-1,
+                           (t_uint)-1,
+                           (t_uint)-1
 #endif
                            );
                         _peerExList->push_back(peerEx);

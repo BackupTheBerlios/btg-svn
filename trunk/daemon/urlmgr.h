@@ -99,7 +99,7 @@ namespace btg
 
             /// Get download progress.
             bool getDlProgress(const t_uint _id, 
-               t_float & _dltotal, t_float & _dlnow, t_float & _dlspeed);
+               t_uint & _dltotal, t_uint & _dlnow, t_uint & _dlspeed);
 
             /// Start downloading.
             t_uint addMapping(std::string const& _url, 

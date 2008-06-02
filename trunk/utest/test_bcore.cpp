@@ -1813,6 +1813,27 @@ void testBcore::testPIDFile()
    }
 }
 
+#define PRINT_BITVECTOR(v) \
+{ \
+   std::cout << __FILE__ ":" << __LINE__ << " " #v ": "; \ 
+   for (int i = 0; i < v.size(); ++i) \
+   { \
+      std::cout << v[i]; \
+      if (i % 8 == 7) \
+         std::cout << " "; \
+   } \
+   std::cout << std::endl; \
+}
+
+#define PRINT_STRING(s) \
+{ \
+   std::cout << __FILE__ ":" << __LINE__ << " " #s ": "; \
+   std::cout << std::hex << std::setfill('0'); \
+   for (int i = 0; i < s.size(); ++i) \
+      std::cout << "0x" << std::setw(2) << (unsigned short)s[i] << " "; \
+   std::cout << std::dec << std::endl; \
+}
+
 void testBcore::test_bitvector()
 {
    btg::core::bitvector bv1;
@@ -1824,40 +1845,17 @@ void testBcore::test_bitvector()
    bv1[88] = true;
    bv1[99] = true;
    
-   /*
-   for (int i = 0; i < bv1.size(); ++i)
-   {
-      std::cout << bv1[i];
-      if (i % 8 == 7)
-         std::cout << " ";
-   }
-   std::cout << std::endl;
-   */
+   //PRINT_BITVECTOR(bv1);
    
    std::string s = bv1.toString();
    CPPUNIT_ASSERT(s.size() == bv1.size() / 8 + (bv1.size() % 8 ? 1 : 0) );
    
-   /*
-   std::cout << std::hex;
-   for (int i = 0; i < s.size(); ++i)
-   {
-      std::cout << "0x" << (unsigned short)s[i] << " ";
-   }
-   std::cout << std::dec << std::endl;
-   */
+   //PRINT_STRING(s);
    
    btg::core::bitvector bv2;
    bv2.fromString(s,bv1.size());
 
-   /*
-   for (int i = 0; i < bv2.size(); ++i)
-   {
-      std::cout << bv2[i];
-      if (i % 8 == 7)
-         std::cout << " ";
-   }
-   std::cout << std::endl;
-   */
+   //PRINT_BITVECTOR(bv2);
    
    CPPUNIT_ASSERT(bv2 == bv1);
    
@@ -1866,9 +1864,86 @@ void testBcore::test_bitvector()
    CPPUNIT_ASSERT(bv1.toString() == bv2.toString());
    
    std::fill(bv1.begin(), bv1.end(), 1);
-   assert(bv1.full());
+   CPPUNIT_ASSERT(bv1.full());
    bv1[23] = 0;
-   assert(!bv1.full());
+   CPPUNIT_ASSERT(!bv1.full());
+   
+   /*
+    * aggregate() test, mostly copy-pasted
+    */
+   
+   {
+      const char data1[] = {
+         1,1,1,1,1, 1,1,1,1,0, 0,0,0,0,1, 1,1,1,0,0, 0,0,1,1,0, 1,0,0,0,1, 1
+//         1,1,1,1,1,1,1, 1,1,0,0,0,0,0, 1,1,1,1,0,0,0, 0,1,1,0,1,0,0, 0,1,1
+      };
+      const int max_size = 5;
+      const char data2[] = {
+         1, 0, 1, 1, 1
+      };
+      
+      bv2.resize(sizeof(data1));
+      for (int i = 0; i < sizeof(data1); ++i)
+         bv2[i] = data1[i];
+      bv1.aggregate(bv2, max_size);
+
+      bv2.resize(sizeof(data2));
+      for (int i = 0; i < sizeof(data2); ++i)
+         bv2[i] = data2[i];
+
+      //PRINT_BITVECTOR(bv1);
+      //PRINT_BITVECTOR(bv2);
+      
+      CPPUNIT_ASSERT(bv1 == bv2);
+   }
+   
+   {
+      const char data1[] = {
+         0, 0,  0, 1,  1, 0,  1, 1
+      };
+      const int max_size = 5;
+      const char data2[] = {
+         0, 1, 1, 1
+      };
+      
+      bv2.resize(sizeof(data1));
+      for (int i = 0; i < sizeof(data1); ++i)
+         bv2[i] = data1[i];
+      bv1.aggregate(bv2, max_size);
+
+      bv2.resize(sizeof(data2));
+      for (int i = 0; i < sizeof(data2); ++i)
+         bv2[i] = data2[i];
+      
+      //PRINT_BITVECTOR(bv1);
+      //PRINT_BITVECTOR(bv2);
+      
+      CPPUNIT_ASSERT(bv1 == bv2);
+   }
+   
+   {
+      const char data1[] = {
+         1,1,1,1,1, 1,1,1,0,0, 1,1,0,0,0, 1,0,0,0,0, 0,0,0,0,1, 1,0,1,0,1
+      };
+      const int max_size = 5;
+      const char data2[] = {
+         1, 1, 0, 0, 1
+      };
+      
+      bv2.resize(sizeof(data1));
+      for (int i = 0; i < sizeof(data1); ++i)
+         bv2[i] = data1[i];
+      bv1.aggregate(bv2, max_size);
+
+      bv2.resize(sizeof(data2));
+      for (int i = 0; i < sizeof(data2); ++i)
+         bv2[i] = data2[i];
+      
+      //PRINT_BITVECTOR(bv1);
+      //PRINT_BITVECTOR(bv2);
+      
+      CPPUNIT_ASSERT(bv1 == bv2);
+   }
 }
 
 void testBcore::XmlRpcSerializeDeserialize(btg::core::externalization::Externalization* _eSource,

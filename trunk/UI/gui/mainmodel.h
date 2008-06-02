@@ -25,11 +25,6 @@
 
 #include <gtkmm.h>
 #include <bcore/type.h>
-#include "gtkmm_ver.h"
-
-#if GTKMM_2_6_OR_BETTER
-#include <gtkmm/progressbar.h>
-#endif // GTKMM_2_6_OR_BETTER
 
 namespace Gtk
 {
@@ -71,12 +66,8 @@ namespace btg
                      Gtk::TreeModelColumn<Glib::ustring> status;
 
                      /// Percent done.
-#if GTKMM_2_6_OR_BETTER
                      Gtk::TreeModelColumn<int> done;
                      Gtk::TreeModelColumn<Glib::ustring> doneText;
-#else
-                     Gtk::TreeModelColumn<Glib::ustring> done;
-#endif // GTKMM_2_6_OR_BETTER
 
                      /// Download rate.
                      Gtk::TreeModelColumn<Glib::ustring> dn_rate;

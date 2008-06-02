@@ -20,14 +20,9 @@
  * $Id$
  */
 
-
-#include <bcore/project.h>
-
-#include "gtkmm_ver.h"
-
 #include "progressdialog.h"
 
-#include <gtkmm.h>
+#include <bcore/project.h>
 
 namespace btg
 {
@@ -68,9 +63,7 @@ namespace btg
             label->set_line_wrap(false);
             label->set_use_markup(false);
             label->set_selectable(false);
-#if GTKMM_2_6_OR_BETTER
             label->set_max_width_chars(50);
-#endif // GTKMM_2_6_OR_BETTER
 
             title_label->set_alignment(0.5,0.5);
             title_label->set_padding(0,5);
@@ -78,9 +71,7 @@ namespace btg
             title_label->set_line_wrap(false);
             title_label->set_use_markup(false);
             title_label->set_selectable(false);
-#if GTKMM_2_6_OR_BETTER
             title_label->set_max_width_chars(50);
-#endif // GTKMM_2_6_OR_BETTER
 
             vbox->pack_start(*title_label, Gtk::PACK_SHRINK, 0);
             vbox->pack_start(*label,       Gtk::PACK_SHRINK, 0);

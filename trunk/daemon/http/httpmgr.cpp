@@ -89,7 +89,7 @@ namespace btg
             return httpInterface::ERROR;
          }
 
-         bool httpDlManager::getDlProgress(const t_uint _id, t_float &_dltotal, t_float &_dlnow, t_float &_dlspeed)
+         bool httpDlManager::getDlProgress(const t_uint _id, t_uint & _dltotal, t_uint & _dlnow, t_uint & _dlspeed)
          {
             std::map<t_uint, boost::shared_ptr<httpProcess> >::const_iterator i = 
                processes.find(_id);

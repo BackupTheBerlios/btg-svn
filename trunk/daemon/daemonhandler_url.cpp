@@ -56,7 +56,7 @@ namespace btg
 
          if (urlstat == URLS_WORKING)
          {
-            t_float dltotal, dlnow, dlspeed;
+            t_uint dltotal, dlnow, dlspeed;
             if (!urlmgr.getDlProgress(id, dltotal, dlnow, dlspeed))
                {
                   sendError(_command->getType(), "Unknown URL id (by getDlProgress).");

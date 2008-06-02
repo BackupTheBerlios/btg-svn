@@ -188,9 +188,9 @@ namespace btg
            id_(_id),
            status_(_status),
            bDlProgress_(false),
-           dltotal_(0.0),
-           dlnow_(0.0),
-           dlspeed_(0.0)
+           dltotal_(),
+           dlnow_(),
+           dlspeed_()
       {}
 
       bool contextUrlStatusResponseCommand::serialize(btg::core::externalization::Externalization* _e) const
@@ -239,15 +239,15 @@ namespace btg
          if (bDlProgress_)
          {
             _e->setParamInfo("total bytes to download", false);
-            _e->floatToBytes(&dltotal_);
+            _e->uintToBytes(&dltotal_);
             BTG_RCHECK(_e->status());
             
             _e->setParamInfo("bytes downloaded", false);
-            _e->floatToBytes(&dlnow_);
+            _e->uintToBytes(&dlnow_);
             BTG_RCHECK(_e->status());
             
             _e->setParamInfo("download speed (bytes/sec)", false);
-            _e->floatToBytes(&dlspeed_);
+            _e->uintToBytes(&dlspeed_);
             BTG_RCHECK(_e->status());
          }
 
@@ -303,15 +303,15 @@ namespace btg
          if (bDlProgress_)
          {
             _e->setParamInfo("total bytes to download", false);
-            _e->bytesToFloat(&dltotal_);
+            _e->bytesToUint(&dltotal_);
             BTG_RCHECK(_e->status());
             
             _e->setParamInfo("bytes downloaded", false);
-            _e->bytesToFloat(&dlnow_);
+            _e->bytesToUint(&dlnow_);
             BTG_RCHECK(_e->status());
             
             _e->setParamInfo("download speed (bytes/sec)", false);
-            _e->bytesToFloat(&dlspeed_);
+            _e->bytesToUint(&dlspeed_);
             BTG_RCHECK(_e->status());
          }
          

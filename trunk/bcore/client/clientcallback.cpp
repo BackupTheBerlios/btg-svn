@@ -52,6 +52,12 @@ namespace btg
          
          void clientCallback::onLast(t_int)
          {
+            
+         }
+         
+         void clientCallback::onUrlDlProgress(t_uint const, t_uint, t_uint, t_uint)
+         {
+            
          }
          
          void clientCallback::onPeersEx(t_uint, t_peerExList const&)

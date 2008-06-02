@@ -60,7 +60,8 @@ namespace btg
             
             /// Get download progress of a download.
             /// @return true - success, false - wrong _id
-            bool getDlProgress(const t_uint _id, t_float &_dltotal, t_float &_dlnow, t_float &_dlspeed);
+            bool getDlProgress(const t_uint _id,
+               t_uint & _dltotal, t_uint & _dlnow, t_uint & _dlspeed);
 
             /// Get the downloaded file.
             bool Result(const t_uint _id, 

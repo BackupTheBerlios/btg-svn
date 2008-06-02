@@ -82,13 +82,13 @@ namespace btg
             return status;
          }
          
-         void httpProcess::DlProgress(t_float &_dltotal, t_float &_dlnow, t_float &_dlspeed)
+         void httpProcess::DlProgress(t_uint &_dltotal, t_uint &_dlnow, t_uint &_dlspeed)
          {
             boost::mutex::scoped_lock interface_lock(interfaceMutex);
 
-            _dltotal = dltotal;
-            _dlnow = dlnow;
-            _dlspeed = dlspeed;
+            _dltotal = (t_uint)dltotal;
+            _dlnow = (t_uint)dlnow;
+            _dlspeed = (t_uint)dlspeed;
          }
 
 
@@ -117,7 +117,7 @@ namespace btg
             return terminate;
          }
          
-         void httpProcess::ReportDownloadProgress(t_float _dltotal, t_float _dlnow, t_float _dlspeed)
+         void httpProcess::ReportDownloadProgress(double _dltotal, double _dlnow, double _dlspeed)
          {
             boost::mutex::scoped_lock interface_lock(interfaceMutex);
             
