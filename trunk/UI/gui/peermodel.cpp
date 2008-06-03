@@ -103,10 +103,10 @@ namespace btg
             _treeview->append_column("Connection type", connection_type);
             _treeview->append_column("Last request", last_request);
             _treeview->append_column("Last active", last_active);
-            _treeview->append_column("Hashfalis", num_hashfails);
-            _treeview->append_column("Failcount", failcount);
-            _treeview->append_column("Target dl q len", target_dl_queue_length);
-            _treeview->append_column("Remt dl rate", remote_dl_rate);
+            _treeview->append_column("Hash fails", num_hashfails);
+            _treeview->append_column("Fail count", failcount);
+            _treeview->append_column("Target dl que length", target_dl_queue_length);
+            _treeview->append_column("Remote dl rate", remote_dl_rate);
 
             headersSetResizable(*_treeview);
          }
