@@ -97,10 +97,11 @@ namespace btg
 
          delete auth;
          auth = 0;
+         
 #if BTG_OPTION_EVENTCALLBACK
          delete callbackmgr;
          callbackmgr = 0;
-#endif // BTG_OPTION_EVENTCALLBACK
+#endif
          
 #if BTG_OPTION_SAVESESSIONS
          ss_file.close();

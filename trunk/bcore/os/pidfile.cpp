@@ -89,12 +89,12 @@ namespace btg
             m_error = false;
             m_exists = false;
             m_pid = 0;
-            m_fname = 0;
+            m_fname.clear();
          }
          
          void PIDFile::write()
          {
-            if (!m_fname)
+            if (m_fname.empty())
                return;
             if (m_error || m_exists)
                return;
@@ -114,9 +114,9 @@ namespace btg
                m_pidfile.flush();
                m_pidfile.truncate(0);
             }
-            if (m_fname)
+            if (!m_fname.empty())
             {
-               unlink(m_fname); // try to unlink, but probably fail
+               unlink(m_fname.c_str()); // try to unlink, but probably fail
             }
          }
          

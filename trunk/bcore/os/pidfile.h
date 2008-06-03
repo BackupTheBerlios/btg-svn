@@ -78,7 +78,7 @@ namespace btg
                      /// current or existing(from file) PID.
                      pid_type m_pid; 
                      /// PID-file name.
-                     const char * m_fname; 
+                     std::string m_fname; 
                   };
 
                /** @} */

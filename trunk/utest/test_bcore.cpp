@@ -1730,7 +1730,7 @@ void testBcore::stressTestXmlRpcCommands()
 // also tests btg::core::os::fstream
 void testBcore::testPIDFile()
 {
-   char fname[] = "/tmp/testPIDFileXXXXXX";
+   char fname[] = "testPIDFileXXXXXX";
    CPPUNIT_ASSERT(mkstemp(fname) != -1);
    
    {
@@ -1811,11 +1811,21 @@ void testBcore::testPIDFile()
       CPPUNIT_ASSERT(unlink(ss.str().c_str()) == 0);
       CPPUNIT_ASSERT(pid == getpid());
    }
+   
+   // test for unlink even when source changes
+   const char * fname2 = "testPIDfile";
+   strcpy(fname,fname2);
+   {
+      btg::core::os::PIDFile pf(fname);
+      pf.write();
+      strcpy(fname,"testPIDFile2");
+   }
+   CPPUNIT_ASSERT(unlink(fname2) == -1);
 }
 
 #define PRINT_BITVECTOR(v) \
 { \
-   std::cout << __FILE__ ":" << __LINE__ << " " #v ": "; \ 
+   std::cout << __FILE__ ":" << __LINE__ << " " #v ": "; \
    for (int i = 0; i < v.size(); ++i) \
    { \
       std::cout << v[i]; \
