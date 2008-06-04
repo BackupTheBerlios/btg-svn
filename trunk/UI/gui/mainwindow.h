@@ -23,7 +23,7 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#include <gtkmm/window.h>
+#include <gtkmm.h>
 
 #include <bcore/type.h>
 #include <bcore/status.h>
@@ -40,10 +40,8 @@
 #include <bcore/client/clientdynconfig.h>
 #include <bcore/client/filephelper.h>
 
-namespace Gtk
-{
-   class ToolButton;
-}
+#include "mainnotebook.h" // for enum CurrentSelection
+
 
 namespace btg
 {
@@ -58,7 +56,6 @@ namespace btg
 
          class mainTreeview;
          class mainFileTreeview;
-         class mainNotebook;
          class aboutDialog;
          class limitDialog;
          class preferencesDialog;
@@ -281,6 +278,17 @@ namespace btg
                /// Dialog used to show progress when creating new
                /// contexts.
                progressDialog*             upload_progressdialog;
+               
+               /// Counter, used to decide when peers should be updated.
+               t_uint                      peersCounter;
+               /// Max, decides when peers should be updated.
+               t_uint const                peersMax;
+               
+               /// Selection ID which was at the last update, used in peers update
+               t_int                       last_selection_id;
+               
+               /// The last mnb tab selected
+               mainNotebook::CurrentSelection last_mnb_selection;
             private:
                /// Copy constructor.
                mainWindow(mainWindow const& _mw);
@@ -293,6 +301,8 @@ namespace btg
                virtual bool on_window_state_event (GdkEventWindowState* event);
                /// Callback: resize.
                virtual bool on_configure_event (GdkEventConfigure* event);
+               /// Callback: peers vscroll value changed
+               void on_peers_scrolled();
             };
 
          /** @} */

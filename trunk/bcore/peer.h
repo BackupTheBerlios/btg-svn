@@ -219,7 +219,7 @@ namespace btg
             std::string downloading_block_index() const;
             
             /// Number of bytes of this block we have received from the peer.
-            t_float downloading_progress() const;
+            t_uint downloading_progress() const;
             
             /// Total number of bytes in this block
             std::string downloading_total() const;

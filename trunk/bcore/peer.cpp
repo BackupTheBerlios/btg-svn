@@ -241,7 +241,7 @@ namespace btg
          queued = 0x100, // Q
          on_parole = 0x200, // P
          seed = 0x400, // S
-         optimistic_unchoke = 0x800, // U
+         optimistic_unchoke = 0x800, // uCh
          rc4_encrypted = 0x100000, // E4
          plaintext_encrypted = 0x200000 // Ep
       };
@@ -589,7 +589,7 @@ namespace btg
          if (flags_ & seed)
             flags += "S";
          if (flags_ & optimistic_unchoke)
-            flags += "U";
+            flags += "uCh";
          if (flags_ & rc4_encrypted)
             flags += "E4";
          if (flags_ & plaintext_encrypted)
@@ -710,10 +710,10 @@ namespace btg
             return "";
       }
       
-      t_float PeerEx::downloading_progress() const
+      t_uint PeerEx::downloading_progress() const
       {
          if (downloading_piece_index_ != (t_uint)-1)
-            return (t_float)downloading_progress_ / downloading_total_;
+            return downloading_progress_ * 100 / downloading_total_;
          else
             return 0;
       }

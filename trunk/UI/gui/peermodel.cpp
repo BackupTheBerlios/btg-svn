@@ -97,15 +97,23 @@ namespace btg
             _treeview->append_column("Download queue length", download_queue_length);
             _treeview->append_column("Downloading piece index", downloading_piece_index);
             _treeview->append_column("Downloading block index", downloading_block_index);
-            _treeview->append_column("Dwonloading progress", downloading_progress);
-            _treeview->append_column("Downloading total", downloading_total);
+            
+            Gtk::CellRendererProgress* cell = Gtk::manage(new Gtk::CellRendererProgress);
+            int last_count = _treeview->append_column("Downloading block progress", *cell);
+            Gtk::TreeViewColumn* column = _treeview->get_column(last_count - 1);
+            if (column)
+               {
+                  column->add_attribute(cell->property_value(), downloading_progress);
+                  column->add_attribute(cell->property_text(), downloading_total);
+               }
+
             _treeview->append_column("Client", client);
             _treeview->append_column("Connection type", connection_type);
             _treeview->append_column("Last request", last_request);
             _treeview->append_column("Last active", last_active);
             _treeview->append_column("Hash fails", num_hashfails);
             _treeview->append_column("Fail count", failcount);
-            _treeview->append_column("Target dl que length", target_dl_queue_length);
+            _treeview->append_column("Target dl queue length", target_dl_queue_length);
             _treeview->append_column("Remote dl rate", remote_dl_rate);
 
             headersSetResizable(*_treeview);

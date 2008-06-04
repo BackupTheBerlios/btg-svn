@@ -113,7 +113,7 @@ namespace btg
                      Gtk::TreeModelColumn<Glib::ustring> downloading_block_index;
 
                      /// @see btg::core::PeerEx.
-                     Gtk::TreeModelColumn<Glib::ustring> downloading_progress;
+                     Gtk::TreeModelColumn<t_uint>        downloading_progress;
 
                      /// @see btg::core::PeerEx.
                      Gtk::TreeModelColumn<Glib::ustring> downloading_total;

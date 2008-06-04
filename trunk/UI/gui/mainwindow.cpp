@@ -21,17 +21,13 @@
  */
 
 #include "mainwindow.h"
-#include <gtkmm.h>
-
-#include <gtkmm/toolbar.h>
-#include <gtkmm/scrolledwindow.h>
 
 #include "mainmenubar.h"
 #include "maintreeview.h"
 #include "mainfiletreeview.h"
 #include "selectfiletreeview.h"
 #include "mainstatusbar.h"
-#include "mainnotebook.h"
+//#include "mainnotebook.h" // included in header
 #include "traficplot.h"
 #include "peertreeview.h"
 #include "detailstreeview.h"
@@ -114,7 +110,11 @@ namespace btg
               last_url(),
               last_url_file(),
               urlDlEnabled(true),
-              upload_progressdialog(0)
+              upload_progressdialog(0),
+              peersCounter(0),
+              peersMax(5),
+              last_selection_id(-1),
+              last_mnb_selection(mainNotebook::GRAPH)
          {
             {
                GET_HANDLER_INST;
@@ -234,6 +234,9 @@ namespace btg
 
             // When the main window is closed, call this signal.
             signal_delete_event().connect(sigc::mem_fun(*this, &mainWindow::onWindowClose));
+            
+            // When peersTreeView scrolled - refresh peers immediately
+            mnb->peersVScrollbar()->signal_value_changed().connect(sigc::mem_fun(*this, &mainWindow::on_peers_scrolled));
 
             /// Tell the gui handler about the statusbar, so it can
             /// write messages on it.  As for now only used for daemon
@@ -357,11 +360,9 @@ namespace btg
                               updateFiles(id);
                               break;
                            case mainNotebook::SELECTED_FILES:
-                              {
-                                 checkSelectedFiles();
-                                 updateSelectedFiles(id);
-                                 break;
-                              }
+                              checkSelectedFiles();
+                              updateSelectedFiles(id);
+                              break;
                            case mainNotebook::PEERS:
                               updatePeers(id);
                               break;
@@ -370,8 +371,12 @@ namespace btg
                            default:
                               break;
                            }
-
                         
+                        /* *************************************
+                         * Use mtw selection _before_ this point
+                         * *************************************/
+                        
+                        last_selection_id = id;
                      }
                   else if (numberOfSelectedItems == 0)
                      {
@@ -388,6 +393,12 @@ namespace btg
                {
                   setControlFunction(false);
                }
+            
+            /* *************************************
+             * Use mnb selection _before_ this point
+             * *************************************/
+            
+            last_mnb_selection = currentselection;
 
             t_intList idstoremove;
             {
@@ -742,7 +753,7 @@ namespace btg
                                  {
                                     msg += "/?";
                                  }
-                                 msg += " - " + core::humanReadableRate::convert(speed).toString(true) + ")";
+                                 msg += " - " + core::humanReadableRate::convert(speed).toString() + ")";
                               }
                               else
                               {
@@ -956,13 +967,31 @@ namespace btg
 
          void mainWindow::updatePeers(t_int const _id)
          {
+            if (_id == last_selection_id // still staying on the same torrent
+               && ++peersCounter < peersMax // no timeout elapsed
+               && last_mnb_selection == mainNotebook::PEERS // still staying on the Peers tab
+               )
+               return; // no update needed
+
+            peersCounter = 0;
+            
             GET_HANDLER_INST;
 
-            t_uint offset = 0;
-            t_uint count = 20;
+            Gtk::TreeModel::Path pbegin, pend;
+            if (mnb->getPeerTreeview()->get_visible_range(pbegin, pend))
+            {
+               t_uint offset = *pbegin.begin();
+               t_uint count = *pend.begin() - *pbegin.begin();
+               
+               // Get a list of peers with extended info.
+               handler->reqPeers(_id, false, &offset, &count);
+            }
+            else
+            {
+               // Get a list of peers.
+               handler->reqPeers(_id);
+            }
             
-            // Get a list of peers.
-            handler->reqPeers(_id, false, &offset, &count);
             if (handler->commandSuccess())
                {
                   mnb->getPeerTreeview()->clear();
@@ -1645,6 +1674,11 @@ namespace btg
 
             delete upload_progressdialog;
             upload_progressdialog = 0;
+         }
+         
+         void mainWindow::on_peers_scrolled()
+         {
+            peersCounter = peersMax; // update peers immediately (this second, actually)
          }
 
       } // namespace gui

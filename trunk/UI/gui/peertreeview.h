@@ -23,7 +23,8 @@
 #ifndef PEERTREEVIEW_H
 #define PEERTREEVIEW_H
 
-#include <gtkmm/treeview.h>
+#include <gtkmm.h>
+
 #include <bcore/type_btg.h>
 
 #include "peermodel.h"
@@ -61,6 +62,7 @@ namespace btg
 
                      /// Destructor.
                      virtual ~peerTreeview();
+                  
                   private:
                      enum
                         {
@@ -79,6 +81,21 @@ namespace btg
 
                      /// The store.
                      Glib::RefPtr<Gtk::ListStore>      refListStore;
+                     
+                     /// Column tooltips
+                     static const char * tooltips[];
+                     /// Safe function to get a tooltip for the column
+                     /// @param [in] n Column number
+                     const char * get_tooltip(unsigned n);
+                     
+                     /// Contains IP-address (in text) of selected peer.
+                     Glib::ustring                     selected_peer;
+
+                  protected:
+#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 12)
+                     /// Callback, triggered when tooltip should appear
+                     bool on_query_tooltip(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
+#endif
 
                      /// Callback, triggered when a selection is made.
                      void on_selection_changed();

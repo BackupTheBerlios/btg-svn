@@ -1482,7 +1482,9 @@ namespace btg
                              t_uint * _peerExCount,
                              t_peerExList * _peerExList)
       {
-         BTG_MENTER(logWrapper(), "getPeers", "id = " << _torrent_id);
+         BTG_MENTER(logWrapper(), "getPeers", "id = " << _torrent_id
+            << ", offset = " << (_peerExOffset ? *_peerExOffset : (t_uint)-1)
+            << ", count = " << (_peerExCount ? *_peerExCount : (t_uint)-1));
 
          torrentInfo *ti;
          if ((ti = getTorrentInfo(_torrent_id)) == 0)
@@ -1550,7 +1552,7 @@ namespace btg
                            *_peerExCount = peerinfolist.size();
                         *_peerExOffset = peerinfolist.size() - *_peerExCount;
                      }
-                     for(t_uint i = *_peerExOffset; i < *_peerExCount; ++i)
+                     for(t_uint i = *_peerExOffset, endi = *_peerExOffset + *_peerExCount; i < endi; ++i)
                      {
                         PeerEx peerEx(
                            peerinfolist[i].flags,
@@ -1589,7 +1591,9 @@ namespace btg
                }
             }
 
-         BTG_MEXIT(logWrapper(), "getPeers", status);
+         BTG_MEXIT(logWrapper(), "getPeers", "return = " << status
+            << ", offset = " << (_peerExOffset ? *_peerExOffset : (t_uint)-1)
+            << ", count = " << (_peerExList ? _peerExList->size() : (t_uint)-1));
          return status;
       }
 

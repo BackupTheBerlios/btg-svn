@@ -23,7 +23,8 @@
 #ifndef MAINNOTEBOOK_H
 #define MAINNOTEBOOK_H
 
-#include <gtkmm/notebook.h>
+#include <gtkmm.h>
+
 #include <bcore/type_btg.h>
 #include <bcore/logger/logif.h>
 #include <bcore/file_info.h>
@@ -108,6 +109,8 @@ namespace btg
 
                      /// Pointer to the combo used to display peers.
                      peerTreeview*       peerList;
+                     /// Scrolled window that contains peerTreeView
+                     Gtk::ScrolledWindow* peerScrolledwindow;
 
                      /// Pointer to the object used for plotting
                      /// bandwidth usage.
@@ -127,6 +130,10 @@ namespace btg
                      mainNotebook(mainNotebook const& _mn);
                      /// Assignment operator.
                      mainNotebook& operator=(mainNotebook const& _mn);
+                  
+                  public:
+                     /// Get peerTreeView vertical scrollbar (to attach value-changed signal handler)
+                     Gtk::VScrollbar * peersVScrollbar();
                   };
 
                /** @} */
