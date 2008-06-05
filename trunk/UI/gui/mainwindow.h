@@ -285,7 +285,7 @@ namespace btg
                t_uint const                peersMax;
                
                /// Selection ID which was at the last update, used in peers update
-               t_int                       last_selection_id;
+               t_int                       last_mtw_selection;
                
                /// The last mnb tab selected
                mainNotebook::CurrentSelection last_mnb_selection;

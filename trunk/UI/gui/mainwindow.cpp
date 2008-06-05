@@ -113,7 +113,7 @@ namespace btg
               upload_progressdialog(0),
               peersCounter(0),
               peersMax(5),
-              last_selection_id(-1),
+              last_mtw_selection(-1),
               last_mnb_selection(mainNotebook::GRAPH)
          {
             {
@@ -376,7 +376,7 @@ namespace btg
                          * Use mtw selection _before_ this point
                          * *************************************/
                         
-                        last_selection_id = id;
+                        last_mtw_selection = id;
                      }
                   else if (numberOfSelectedItems == 0)
                      {
@@ -967,7 +967,7 @@ namespace btg
 
          void mainWindow::updatePeers(t_int const _id)
          {
-            if (_id == last_selection_id // still staying on the same torrent
+            if (_id == last_mtw_selection // still staying on the same torrent
                && ++peersCounter < peersMax // no timeout elapsed
                && last_mnb_selection == mainNotebook::PEERS // still staying on the Peers tab
                )
@@ -990,6 +990,10 @@ namespace btg
             {
                // Get a list of peers.
                handler->reqPeers(_id);
+               
+               // No extended info requested, refresh immediately,
+               // (will refresh with extended info)
+               peersCounter = peersMax;
             }
             
             if (handler->commandSuccess())
