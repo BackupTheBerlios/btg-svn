@@ -1,3 +1,9 @@
+btg-0.9.8 (RC2-410svn) stable; urgency=low
+
+  * RC2 released
+
+ -- Roman Rybalko <btg@romanr.info>  Fri, 06 Jun 2008 23:53:26 +0400
+
 btg-0.9.8 (406svn) unstable; urgency=low
 
   * The following bugs were fixed:
