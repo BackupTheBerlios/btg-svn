@@ -67,6 +67,7 @@ namespace btg
 
                      /// Percent done.
                      Gtk::TreeModelColumn<int> done;
+                     /// some text in progressbar's background (remaining time, actually)
                      Gtk::TreeModelColumn<Glib::ustring> doneText;
 
                      /// Download rate.

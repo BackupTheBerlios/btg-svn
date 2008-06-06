@@ -2,8 +2,11 @@
 
 # $Id$
 
-# backup default config data
-cp -f /var/lib/btg/auth /var/lib/btg/auth.bak
-cp -f /var/lib/btg/sessions /var/lib/btg/sessions.bak
+# backup existent config data
+for file in /var/lib/btg/auth /var/lib/btg/sessions ; do
+	echo -n "Backupping config file $file ..."
+	cp -f $file $file.bak && echo "OK" || echo "error/skipped"
+done
+true # discard any errors
 
 #DEBHELPER#

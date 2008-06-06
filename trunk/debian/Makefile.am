@@ -1,5 +1,6 @@
 EXTRA_DIST = \
 	README \
+	build.sh \
 	extra/etc/btg/client.ini extra/etc/btg/daemon.ini extra/etc/btg/config.php \
 	extra/var/lib/btg/auth \
 	compat \

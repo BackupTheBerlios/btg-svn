@@ -66,7 +66,9 @@ function report_exit()
 function rotate()
 {
 	obj=$1
-	rm -Rf $obj.7
+	rm -Rf $obj.9
+	mv -f $obj.8 $obj.9
+	mv -f $obj.7 $obj.8
 	mv -f $obj.6 $obj.7
 	mv -f $obj.5 $obj.6
 	mv -f $obj.4 $obj.5
@@ -152,8 +154,12 @@ if [ "$oldver" != "$newver" ] ; then
 	fi >>$reportfile
 	
 	rm -f $reportfile.*
-
-	report_exit "Update SVN rev. $newver"
+	
+	report_subj="Update SVN rev. $newver"
+	[ $fail_cnt -gt 0 ] && report_subj="$report_subj F:$fail_cnt"
+	[ $warn_cnt -gt 0 ] && report_subj="$report_subj W:$warn_cnt"
+	[ $err_cnt -gt 0 ] && report_subj="$report_subj E:$err_cnt"
+	report_exit "$report_subj"
 else
 	rm -f $reportfile
 fi

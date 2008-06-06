@@ -39,7 +39,7 @@ case $1 in
 		echo -n "."
 		cnt=$(($cnt+1))
 	done
-	[ $cnt -ge 30 ] && echo "ERROR. You can wait or kill it yourself." || echo "DONE"
+	[ $cnt -ge 60 ] && echo "ERROR. You can wait or kill it yourself." || echo "DONE"
     ;;
     restart|reload|force-reload)
     	echo "Not implemented yet."

@@ -313,7 +313,7 @@ namespace btg
                      }
                      else
                      {
-                        return false;
+                        break;
                      }
                   }
                }

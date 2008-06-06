@@ -1556,7 +1556,11 @@ namespace btg
                      {
                         PeerEx peerEx(
                            peerinfolist[i].flags,
+#if !BTG_LT_0_12 // should be >= 0.13
                            peerinfolist[i].source,
+#else
+                           0,
+#endif
                            (t_uint)peerinfolist[i].down_speed, (t_uint)peerinfolist[i].up_speed,
                            (t_uint)peerinfolist[i].payload_down_speed, (t_uint)peerinfolist[i].payload_up_speed,
                            peerinfolist[i].total_download, peerinfolist[i].total_upload,
@@ -1570,20 +1574,20 @@ namespace btg
                            peerinfolist[i].load_balancing,
                            peerinfolist[i].download_queue_length, peerinfolist[i].upload_queue_length,
                            peerinfolist[i].downloading_piece_index, peerinfolist[i].downloading_block_index,
-                              peerinfolist[i].downloading_progress, peerinfolist[i].downloading_total,
+                           peerinfolist[i].downloading_progress, peerinfolist[i].downloading_total,
                            peerinfolist[i].client,
                            peerinfolist[i].connection_type,
-#if !BTG_LT_0_12
+#if !BTG_LT_0_12 // should be >= 0.13
                            libtorrent::total_seconds(peerinfolist[i].last_request), libtorrent::total_seconds(peerinfolist[i].last_active),
                            peerinfolist[i].num_hashfails, peerinfolist[i].failcount,
                            peerinfolist[i].target_dl_queue_length,
                            peerinfolist[i].remote_dl_rate
-#else
+#else // !BTG_LT_0_12
                            (t_uint)-1, (t_uint)-1,
                            (t_uint)-1, (t_uint)-1,
                            (t_uint)-1,
                            (t_uint)-1
-#endif
+#endif // !BTG_LT_0_12
                            );
                         _peerExList->push_back(peerEx);
                      }

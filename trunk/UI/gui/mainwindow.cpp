@@ -981,7 +981,7 @@ namespace btg
             if (mnb->getPeerTreeview()->get_visible_range(pbegin, pend))
             {
                t_uint offset = *pbegin.begin();
-               t_uint count = *pend.begin() - *pbegin.begin();
+               t_uint count = *pend.begin() - *pbegin.begin() + 1;
                
                // Get a list of peers with extended info.
                handler->reqPeers(_id, false, &offset, &count);
