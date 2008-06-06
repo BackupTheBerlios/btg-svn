@@ -1,0 +1,77 @@
+.TH BTGDAEMON 1 "01 Nov 2006"
+.SH NAME
+btgdaemon \- daemon part of the btg project.
+.SH SYNOPSIS
+.B "btgdaemon" 
+[-h] 
+[-D] 
+[-v] 
+[--syntax]
+[-c FILE|--config FILE]
+[-n|--nodetach]
+[-s FILE|--session-file FILE]
+[-N]
+
+.SH DESCRIPTION
+.B "btgdaemon" 
+acts as a backend which performs bittorrent operations for a number of clients.
+
+.B "btgdaemon" 
+accepts connections using a transport. Currently the following transports are implemented: TCP/IP, secure TCP/IP, XML-RPC and secure XML-RPC. The secure transports are using TLS, provided by GNU TLS.
+
+The daemon 
+.B "must" 
+be started before using one of the clients.
+
+.SH OPTIONS
+
+.TP
+.BI "-h | --help"
+\- Print a short help.
+
+.TP
+.BI "-D"
+\- Write extensive debug information.
+
+.TP
+.BI "-v" 
+\- Be verbose.
+
+.TP
+.BI "--syntax"
+\- Output syntax of the configuration file used to standard out.
+
+.TP
+.BI "-c FILE | --config FILE"
+\- Configuration file, FILE, to use.
+
+.TP
+.BI "-n | --nodetach"
+\- Do not detach from TTY.
+
+.TP
+.BI "-s FILE | --session-file FILE"
+\- Use session file FILE.
+
+.TP
+.BI "-N"
+\- Do not reload sessions.
+
+.TP
+.BI "-p FILE | --pid-file FILE"
+\- Write PID to file FILE.
+
+.SH FILES
+.TP
+No config files are used by the daemon. 
+.TP
+~/.btg/daemon - the default IPC que filename used for accepting connections from clients.
+
+.SH AUTHOR
+Written by Michael Wojciechowski.
+
+.SH "SEE ALSO"
+btg(5), btg_config(5), btgcallback(5), btgcli(1), btgui(1)
+
+.SH BUGS
+No known bugs.

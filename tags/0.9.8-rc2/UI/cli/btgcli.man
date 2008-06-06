@@ -1,0 +1,129 @@
+.TH BTGCLI 1 "28 May 2007"
+.SH NAME
+btgcli \- bittorrent client, part of the btg project.
+.SH SYNOPSIS
+.B "btgcli" 
+[-o 
+.I "<filename>"
+]
+[-u 
+.I "<URL>"
+]
+[--nostart]
+[-l]
+[--noutput]
+[--command 
+.I "<command>"
+]
+[-A]
+[-a]
+[-s 
+.I "<session ID>"
+]
+[--config 
+.I "<filename>"
+]
+[--dht]
+[--no-dht]
+[--encryption]
+[--no-encryption]
+[-v] 
+[-h]
+
+.SH DESCRIPTION
+.B "btgcli" 
+is a console bittorrent client. Ncurses is used for screen and input handling.
+
+If started without any arguments, it will attempt to connect to the
+daemon (btgdaemon) and start a new session.
+
+After the client connects to the daemon and initializes, it will
+present a prompt which can be used to enter commands. Type "help" at
+the prompt to list available commands.
+
+.SH OPTIONS
+
+.TP
+.BI "-o" 
+.I "<filename>"
+\- Name of a torrent file to open after initializing the client.
+
+.TP
+.BI "-u" 
+.I "<URL>"
+\- URL to open after initializing the client. The URL should point to a torrent file.
+
+.TP
+.BI "--nostart" 
+\- Do not start torrents after opening them. The default is to start a torrent after it was opened.
+
+.TP
+.BI "-l" 
+\- List running sessions.
+
+.TP
+.BI "--noutput" 
+\- Do not output anything. Useful in connection with --command.
+
+.TP
+.BI "--command" 
+.I "<command>"
+\- Execute one or more commands, separated by ";". To list available commands, type "help" in the client. For the syntax used, type "syntax <command>" in the client.
+
+.TP
+.BI "-A" 
+\- Attach to the first available session.
+
+.TP
+.BI "-a" 
+\- Show a list of sessions and let the user choose which session to attach to.
+
+.TP
+.BI "-s" 
+.I "<session ID>"
+\- Attach to a session described by the session ID.
+
+.TP
+.BI "--config" 
+.I "<filename>"
+\- Name of a client configuration file to use.
+
+.TP
+.BI "--dht"
+\- Enable DHT.
+
+.TP
+.BI "--no-dht"
+\- Disable DHT.
+
+.TP
+.BI "--encryption"
+\- Enable encryption.
+
+.TP
+.BI "--no-encryption"
+\- Disable encryption.
+
+.TP
+.BI "-v"
+\- Be verbose.
+
+.TP
+.BI "-h|--help"
+\- Print a short help.
+
+.SH FILES
+See btg_config(1).
+
+.SH CONFIGURATION
+.TP 
+See btg_config(1).
+
+.SH AUTHOR
+Written by Michael Wojciechowski.
+
+.SH "SEE ALSO"
+btg(5), btg_config(5), btgui(1), btgdaemon(1)
+
+.SH BUGS
+No known bugs.
