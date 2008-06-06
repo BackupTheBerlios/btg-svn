@@ -1,3 +1,14 @@
+btg-0.9.8 (406svn) unstable; urgency=low
+
+  * The following bugs were fixed:
+    013708 Seeder/Leecher counts incorrect
+    013852 Use torrent-ip to create lt sessions.
+    013833 Convert projectDefaults to a non-singleton.
+    013814 Configure script does not detect lt upnp in lt 0.14.
+    013774 Add amd64 architecture to the packages.
+
+ -- Roman Rybalko <btg@romanr.info>  Fri, 06 Jun 2008 01:54:16 +0400
+
 btg-0.9.8 (357svn) unstable; urgency=low
 
   * The following bugs were fixed:

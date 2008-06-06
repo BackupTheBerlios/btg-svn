@@ -1,0 +1,9 @@
+#! /bin/sh
+
+# $Id$
+
+# backup default config data
+cp -f /var/lib/btg/auth /var/lib/btg/auth.bak
+cp -f /var/lib/btg/sessions /var/lib/btg/sessions.bak
+
+#DEBHELPER#

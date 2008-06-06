@@ -23,7 +23,7 @@ Description: common files for BTG
 
 Package: btg-cli-common@SUFFIX@
 Depends: btg-common@SUFFIX@ (= @VERSION@)
-Recommends: btg-gui@SUFFIX@ | btg-cli@SUFFIX@
+Recommends: btg-gui@SUFFIX@, btg-ncli@SUFFIX@, btg-cli@SUFFIX@
 Architecture: i386 i586 i686 amd64
 Section: net
 Priority: extra
@@ -37,22 +37,34 @@ Description: common files for BTG clients
  http://btg.berlios.de
 
 Package: btg-cli@SUFFIX@
-Depends: btg-cli-common@SUFFIX@ (= @VERSION@), libncurses5 (>= 5.6)
-Recommends: btg-gui@SUFFIX@
+Depends: btg-cli-common@SUFFIX@ (= @VERSION@)
+Recommends: btg-gui@SUFFIX@, btg-ncli@SUFFIX@
 Architecture: i386 i586 i686 amd64
 Section: net
 Priority: extra
 Description: command line interface to the BTG daemon
  BTG is a BitTorrent client that separates the interface
  from the actual client. This is the command line interface
- to the daemon. It includes both a "pure" command line client
- and a ncurses based one.
+ to the daemon.
+ .
+ http://btg.berlios.de
+
+Package: btg-ncli@SUFFIX@
+Depends: btg-cli-common@SUFFIX@ (= @VERSION@), libncurses5 (>= 5.6)
+Recommends: btg-gui@SUFFIX@, btg-cli@SUFFIX@
+Architecture: i386 i586 i686 amd64
+Section: net
+Priority: extra
+Description: text (ncurses) interface to the BTG daemon
+ BTG is a BitTorrent client that separates the interface
+ from the actual client. This is the text interface
+ to the daemon.
  .
  http://btg.berlios.de
 
 Package: btg-gui@SUFFIX@
 Depends: btg-cli-common@SUFFIX@ (= @VERSION@), libgtkmm-2.4 (>= 2.12) | libgtkmm-2.4-1c2a (>= 1:2.12)
-Recommends: btg-cli@SUFFIX@
+Recommends: btg-cli@SUFFIX@, btg-ncli@SUFFIX@
 Architecture: i386 i586 i686 amd64
 Section: net
 Priority: extra
@@ -78,7 +90,7 @@ Description: web interface to the BTG daemon
  http://btg.berlios.de
 
 Package: btg-daemon@SUFFIX@
-Depends: btg-common@SUFFIX@ (= @VERSION@), sysvutils | sysvinit-utils, libclinkcc (>= 1.7.1), libtorrent-rasterbar (>= 0.13) | libtorrent-rasterbar-0.13
+Depends: btg-common@SUFFIX@ (= @VERSION@), libclinkcc (>= 1.7.1), libtorrent-rasterbar (>= 0.13) | libtorrent-rasterbar-0.13
 Replaces: btg-daemon
 Recommends: btg-gui@SUFFIX@ | btg-cli@SUFFIX@ | btg-www@SUFFIX@
 Architecture: i386 i586 i686 amd64

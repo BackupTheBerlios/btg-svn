@@ -11,8 +11,8 @@ suffix=$2
 [ -z "$version" ] && { echo "USAGE: $0 <version> [suffix]"; exit 1; }
 [ -z "$suffix" ] && exit 0
 
-for pkg in btg-common btg-cli-common btg-cli btg-gui btg-www btg-daemon ; do
-	for file in install init postinst postrm ; do
+for pkg in btg-common btg-cli-common btg-cli btg-ncli btg-gui btg-www btg-daemon ; do
+	for file in install init conffiles preinst postinst prerm postrm ; do
 		rm -f ${pkg}${suffix}.$file
 		[ -e $pkg.$file ] && ln -s $pkg.$file ${pkg}${suffix}.$file
 	done

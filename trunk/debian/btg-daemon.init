@@ -20,12 +20,6 @@ CONFFILE=/etc/btg/daemon.ini
 
 case $1 in
     start)
-    	[ -e $PIDFILE ] && pid=`cat $PIDFILE`
-    	if [ -n "$pid" ] && kill -0 $pid ; then
-	    echo "BTG already running. PID=$pid."
-	    exit 0
-	fi
-	
 	echo "Starting BTG ..."	
 	exec /usr/bin/btgdaemon --verbose --config $CONFFILE --pid-file $PIDFILE
     ;;

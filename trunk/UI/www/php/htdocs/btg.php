@@ -776,9 +776,7 @@ class BTG
 					if($r2 instanceof contextGetTrackersResponseCommand)
 					{
 						$arr = $r2->getTrackers();
-						$output .= "<tracker>"
-							. str_replace("\"","&quot;",str_replace(">","&gt;",str_replace("<","&lt;",str_replace("&","&amp;",$arr[0]))))
-							. "</tracker>\n";
+						$output .= "<tracker>".htmlspecialchars($arr[0])."</tracker>\n";
 					}
 
                // Get the list of contained files.
@@ -826,7 +824,7 @@ class BTG
                            $output .= "<id>".$fileId."</id>\n";
                            $fileId++;
                            
-                           $output .= "<name>".$f."</name>\n";
+                           $output .= "<name>".htmlspecialchars($f)."</name>\n";
                            $output .= "<selected>".$selected."</selected>\n";
                            $output .= "<size>".$fs."</size>\n";
                            $output .= "<percent>".$pc."</percent>\n";
@@ -875,9 +873,7 @@ class BTG
 				if($r2 instanceof contextGetTrackersResponseCommand)
 				{
 					$arr = $r2->getTrackers();
-					$output .= "<tracker>"
-						. str_replace("\"","&quot;",str_replace(">","&gt;",str_replace("<","&lt;",str_replace("&","&amp;",$arr[0]))))
-						. "</tracker>\n";
+					$output .= "<tracker>".htmlspecialchars($arr[0])."</tracker>\n";
 				}
 
 				$output .= "</context>\n";
@@ -1091,7 +1087,7 @@ class BTG
 				foreach($r->getFileInfoList() as $file)
 				{
 					$output .= "<file>\n";
-					$output .= "<filename>".$file->getFilename()."</filename>\n";
+					$output .= "<filename>".htmlspecialchars($file->getFilename())."</filename>\n";
 					$output .= "<filesize>".$file->getFileSize()."</filesize>\n";
 					$output .= "<pieces>".$file->size()."</pieces>\n";
 					// Save ont the sent data..

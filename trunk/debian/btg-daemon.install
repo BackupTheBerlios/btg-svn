@@ -3,5 +3,5 @@ usr/bin/btgpasswd*
 usr/share/man/man1/btgdaemon.*
 usr/share/man/man1/btgpasswd.*
 usr/share/man/man5/btgcallback.*
-etc/btg/*.ini
-var
+etc/btg/daemon.ini
+var/lib/btg/auth

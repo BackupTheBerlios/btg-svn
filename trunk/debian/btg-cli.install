@@ -1,2 +1,2 @@
-usr/bin/*cli
-usr/share/man/man1/*cli.*
+usr/bin/btgcli
+usr/share/man/man1/btgcli.*
