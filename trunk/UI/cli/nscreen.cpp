@@ -25,6 +25,7 @@
 #include <bcore/util.h>
 #include <bcore/os/sleep.h>
 #include <bcore/logmacro.h>
+#include <bcore/t_string.h>
 
 #include <iostream>
 
@@ -42,9 +43,12 @@ namespace btg
          using namespace btg::core;
 
          Screen::Screen(bool const _pretend)
-            : pretend(_pretend),
-              input_init_str("# "),
-              last_input()
+            : 
+#if BTG_DEBUG
+            counter(0),
+#endif
+            pretend(_pretend),
+            last_input()
          {
          }
 
@@ -70,29 +74,32 @@ namespace btg
             return done;
          }
 
-         void Screen::toUser(std::string const& _s)
-         {
-            if (pretend)
-               {
-                  return;
-               }
-
-            std::cout << _s << std::endl;
-         }
-
          std::string Screen::getInput()
          {
             return last_input;
          }
 
-         void Screen::setOutput(std::string const& _s)
+         void Screen::setOutput(std::string const& _s, bool const _appendNewline)
          {
-            toUser(_s);
-         }
+            if (pretend)
+               {
+                  return;
+               }
+#if BTG_DEBUG
+            std::cout << btg::core::convertToString<t_uint>(counter) << " ";
+            counter++;
 
-         void Screen::setInput(std::string const& _s)
-         {
+            if (counter > 254)
+               {
+                  counter = 0;
+               }
+#endif
             std::cout << _s;
+
+            if (_appendNewline)
+               {
+                  std::cout << std::endl;
+               }
          }
 
          void Screen::writeLog(std::string const& _string)

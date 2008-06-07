@@ -1357,14 +1357,9 @@ namespace btg
          {
             std::string output;
 
-            t_uint const width = 79;
-            t_uint charcounter = 0;
-
             t_fileInfoListCI iter;
             for (iter = _fileinfolist.begin(); iter != _fileinfolist.end(); iter++)
                {
-                  charcounter = 0;
-
                   output     += "Filename: " + iter->getFilename() + "\n";
                   output     += "Bits: \n";
 
@@ -1373,13 +1368,6 @@ namespace btg
                         for (t_uint counter=0; counter<iter->size(); counter++)
                            {
                               output += "X";
-
-                              if (charcounter >= width)
-                                 {
-                                    output     += "\n";
-                                    charcounter = 0;
-                                 }
-                              charcounter++;
                            }
                      }
                   else if(iter->isEmpty())
@@ -1387,13 +1375,6 @@ namespace btg
                         for (t_uint counter=0; counter<iter->size(); counter++)
                            {
                               output += "_";
-
-                              if (charcounter >= width)
-                                 {
-                                    output     += "\n";
-                                    charcounter = 0;
-                                 }
-                              charcounter++;
                            }
                      }
                   else
@@ -1410,13 +1391,6 @@ namespace btg
                                  {
                                     output += "_";
                                  }
-
-                              if (charcounter >= width)
-                                 {
-                                    output     += "\n";
-                                    charcounter = 0;
-                                 }
-                              charcounter++;
                            } // for piece iter
                      }
                   output += "\n";

@@ -62,10 +62,7 @@ namespace btg
                      std::string getInput();
 
                      /// Write a string to the output window.
-                     void setOutput(std::string const& _s);
-
-                     /// Set text in the input window.
-                     void setInput(std::string const& _s);
+                     void setOutput(std::string const& _s, bool const _appendNewline = true);
 
                      /// Write a string to the log.
                      void writeLog(std::string const& _string);
@@ -73,14 +70,12 @@ namespace btg
                      /// Destructor.
                      ~Screen();
                   private:
-                     /// Print a string on the output window.
-                     void toUser(std::string const& _s);
-
+#if BTG_DEBUG
+                     /// Command counter.
+                     t_uint counter;
+#endif
                      /// If true, do not output anything, only pretend.
-                     bool const  pretend;
-
-                     /// Written to the screen to init the command line.
-                     std::string input_init_str;
+                     bool const pretend;
 
                      /// Used by getInput() to return the last entered input.
                      std::string last_input;

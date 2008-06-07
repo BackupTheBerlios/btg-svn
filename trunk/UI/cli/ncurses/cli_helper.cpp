@@ -128,6 +128,7 @@ namespace btg
                         if (input >= 0 && input < session_no)
                            {
                               done = true;
+                              std::cin.get();
                            }
                      }
                }
@@ -196,10 +197,12 @@ namespace btg
                               done       = true;
                               _attach    = true;
                               _sessionId = _sessionsIDs[input-1];
+                              std::cin.get();
                            }
                         else if (input == 0)
                            {
                               done = true;
+                              std::cin.get();
                            }
                      }
                }

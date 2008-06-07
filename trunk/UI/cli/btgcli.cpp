@@ -402,11 +402,13 @@ int main(int argc, char* argv[])
             }
       }
 
+   std::cin.clear();
+
    std::string line = "";
 
    while (global_btg_run > 0)
       {
-         apnscr->setInput("# ");
+         apnscr->setOutput("# ", false);
 
          if (apnscr->getLine())
             {
