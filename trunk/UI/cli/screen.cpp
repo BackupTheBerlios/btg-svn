@@ -20,14 +20,12 @@
  * $Id$
  */
 
-#include "nscreen.h"
+#include "screen.h"
 
 #include <bcore/util.h>
 #include <bcore/os/sleep.h>
 #include <bcore/logmacro.h>
 #include <bcore/t_string.h>
-
-#include <iostream>
 
 #include "runstate.h"
 
@@ -42,13 +40,14 @@ namespace btg
 
          using namespace btg::core;
 
-         Screen::Screen(bool const _pretend)
+         Screen::Screen(bool const _pretend, std::istream & _istream)
             : 
 #if BTG_DEBUG
             counter(0),
 #endif
             pretend(_pretend),
-            last_input()
+            last_input(),
+            istream(_istream)
          {
          }
 
@@ -61,7 +60,7 @@ namespace btg
 
             std::string input;
 
-            std::getline (std::cin, input);
+            std::getline (istream, input);
 
             bool done = false;
 
@@ -74,7 +73,7 @@ namespace btg
             return done;
          }
 
-         std::string Screen::getInput()
+         std::string const& Screen::getInput()
          {
             return last_input;
          }
@@ -126,7 +125,7 @@ namespace btg
             while (!gotExpectedResponse)
                {
                   std::string input;
-                  std::cin >> input;
+                  istream >> input;
 
                   if (input == "n" || input == "N")
                      {
@@ -143,6 +142,11 @@ namespace btg
             return status;
          }
 
+         bool Screen::good() const
+         {
+            return istream.good();
+         }
+         
          Screen::~Screen()
          {
          }

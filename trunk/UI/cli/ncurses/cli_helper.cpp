@@ -64,16 +64,19 @@ namespace btg
          {
             bool status = true;
 
-            std::cout << "Username:" << std::endl;
-
             std::string username;
-
+            std::cout << "Username:" << std::endl;
             std::cin >> username;
+            if (!std::cin.good())
+            {
+               std::cout << "Unable to get user name." << std::endl;
 
-            std::cout << "Password:" << std::endl;
+               status = false;
+               return status;
+            }
 
             std::string password;
-
+            std::cout << "Password:" << std::endl;
             if (!btg::core::os::stdIn::getPassword(password))
                {
                   std::cout << "Unable to get password." << std::endl;
@@ -118,18 +121,24 @@ namespace btg
                         std::cout << "Enter a number: " << std::endl;
                      }
 
-                  if(!(std::cin >> input))
+                  std::cin >> input;
+                  
+                  if (std::cin.eof())
+                  {
+                     return false;
+                  }
+                  
+                  if (!std::cin)
                      {
                         std::cin.clear();
-                        std::cin.ignore(254, '\n');
+                        std::cin.ignore(256, '\n');
+                        continue;
                      }
-                  else
+                  
+                  if (input >= 0 && input < session_no)
                      {
-                        if (input >= 0 && input < session_no)
-                           {
-                              done = true;
-                              std::cin.get();
-                           }
+                        done = true;
+                        std::cin.get();
                      }
                }
 
@@ -185,25 +194,31 @@ namespace btg
                {
                   std::cout << "Enter a number: " << std::endl;
 
-                  if (!(std::cin >> input))
+                  std::cin >> input;
+                  
+                  if (std::cin.eof())
+                  {
+                     return false;
+                  }
+                  
+                  if (!std::cin)
                      {
                         std::cin.clear();
-                        std::cin.ignore(254, '\n');
+                        std::cin.ignore(256, '\n');
+                        continue;
                      }
-                  else
+
+                  if (input >= 1 && input < session_no)
                      {
-                        if (input >= 1 && input < session_no)
-                           {
-                              done       = true;
-                              _attach    = true;
-                              _sessionId = _sessionsIDs[input-1];
-                              std::cin.get();
-                           }
-                        else if (input == 0)
-                           {
-                              done = true;
-                              std::cin.get();
-                           }
+                        done       = true;
+                        _attach    = true;
+                        _sessionId = _sessionsIDs[input-1];
+                        std::cin.get();
+                     }
+                  else if (input == 0)
+                     {
+                        done = true;
+                        std::cin.get();
                      }
                }
 

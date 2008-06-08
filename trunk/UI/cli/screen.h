@@ -20,9 +20,10 @@
  * $Id$
  */
 
-#ifndef NSCREEN_H
-#define NSCREEN_H
+#ifndef SCREEN_H
+#define SCREEN_H
 
+#include <iostream>
 #include <vector>
 #include <string>
 #include <bcore/type.h>
@@ -47,7 +48,8 @@ namespace btg
                   public:
                      /// Constructor.
                      /// @param [in] _pretend Only pretend, do no actual drawing.
-                     Screen(bool const _pretend);
+                     /// @param [in] _istream The stream to read the user input from
+                     Screen(bool const _pretend, std::istream & _istream = std::cin);
 
                      /// Handle input until the user presses enter.
                      /// @return True when user pressed enter.
@@ -59,13 +61,18 @@ namespace btg
                      bool isUserSure();
 
                      /// Get the entered line, after getKeys() returned true.
-                     std::string getInput();
+                     std::string const& getInput();
 
                      /// Write a string to the output window.
                      void setOutput(std::string const& _s, bool const _appendNewline = true);
 
                      /// Write a string to the log.
                      void writeLog(std::string const& _string);
+                     
+                     /// Check whether the input stream is good for reading operations
+                     /// @return false - impossible further reading from the stream, true - otherwise
+                     /// @see std::istream::good()
+                     bool good() const;
 
                      /// Destructor.
                      ~Screen();
@@ -79,6 +86,9 @@ namespace btg
 
                      /// Used by getInput() to return the last entered input.
                      std::string last_input;
+                     
+                     /// The stream to read user input from
+                     std::istream & istream;
                   private:
                      /// Copy constructor.
                      Screen(Screen const& _ns);
@@ -91,4 +101,4 @@ namespace btg
       } // namespace UI
 } // namespace btg
 
-#endif
+#endif // SCREEN_H

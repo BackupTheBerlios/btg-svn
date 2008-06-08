@@ -20,7 +20,7 @@
  * $Id$
  */
 
-#include "nscreen_log.h"
+#include "screen_log.h"
 
 extern "C"
 {
@@ -39,16 +39,16 @@ namespace btg
       namespace cli
       {
 
-         nscreenLogger::nscreenLogger(logInterface *_target)
+         screenLogger::screenLogger(logInterface *_target)
             : logBuffer(_target, 1024)
          {
          }
 
-         nscreenLogger::~nscreenLogger()
+         screenLogger::~screenLogger()
          {
          }
 
-         void nscreenLogger::put_buffer(void)
+         void screenLogger::put_buffer(void)
          {
             if (pbase() != pptr())
                {
@@ -66,7 +66,7 @@ namespace btg
                }
          }
 
-         void nscreenLogger::put_char(int _char)
+         void screenLogger::put_char(int _char)
          {
             char* c = new char;
             *c = _char;

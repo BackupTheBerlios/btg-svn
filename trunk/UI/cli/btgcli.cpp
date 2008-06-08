@@ -34,8 +34,8 @@
 
 #include <bcore/verbose.h>
 
-#include "nscreen.h"
-#include "nscreen_log.h"
+#include "screen.h"
+#include "screen_log.h"
 
 extern "C"
 {
@@ -174,10 +174,10 @@ int main(int argc, char* argv[])
 
    cliHandler clihandler(logwrapper,
                          *apExternalization,
-                         *apTransport, 
-                         config, 
-                         dynconfig, 
-                         verboseFlag, 
+                         *apTransport,
+                         config,
+                         dynconfig,
+                         verboseFlag,
                          cla.automaticStart());
 
    std::string initialStatusMessage("");
@@ -404,15 +404,13 @@ int main(int argc, char* argv[])
 
    std::cin.clear();
 
-   std::string line = "";
-
-   while (global_btg_run > 0)
+   while (global_btg_run > 0 && apnscr->good())
       {
          apnscr->setOutput("# ", false);
 
          if (apnscr->getLine())
             {
-               line = apnscr->getInput();
+               std::string line = apnscr->getInput();
                BTG_NOTICE(logwrapper, "Got input: '" << line << "'");
                handleInput(line, clihandler, *apnscr, neverAskFlag);
             }

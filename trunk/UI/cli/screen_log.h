@@ -20,12 +20,12 @@
  * $Id$
  */
 
-#ifndef NSCREEN_LOGGER_H
-#define NSCREEN_LOGGER_H
+#ifndef SCREEN_LOGGER_H
+#define SCREEN_LOGGER_H
 
 #include <bcore/logger/logger.h>
 #include <bcore/logger/logif.h>
-#include "nscreen.h"
+#include "screen.h"
 
 namespace btg
 {
@@ -34,14 +34,14 @@ namespace btg
          namespace cli
             {
                /// Logger which writes output using my ncurses wrapper class.
-               class nscreenLogger : public btg::core::logger::logBuffer
+               class screenLogger : public btg::core::logger::logBuffer
                   {
                   public:
                      /// Constructor.
                      /// @param [in] _target Pointer to where to write the debug data.
-                     nscreenLogger(btg::core::logger::logInterface *_target);
+                     screenLogger(btg::core::logger::logInterface *_target);
                      /// Destructor.
-                     virtual ~nscreenLogger();
+                     virtual ~screenLogger();
                   private:
                      /// Write the buffer using the ncurses wrapper.
                      void put_buffer(void);
@@ -52,4 +52,4 @@ namespace btg
             } // namespace cli
       } // namespace UI
 } // namespace btg
-#endif
+#endif // SCREEN_LOGGER_H

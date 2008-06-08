@@ -2,7 +2,8 @@ BTG version 0.9.8
 -----------------
 The following bugs were fixed:
 
-013708 Seeder/Leecher counts incorrect
+013987 btgcli can't read commands from file.
+013708 Seeder/Leecher counts incorrect.
 013852 Use torrent-ip to create lt sessions.
 013833 Convert projectDefaults to a non-singleton.
 013814 Configure script does not detect lt upnp in lt 0.14.
