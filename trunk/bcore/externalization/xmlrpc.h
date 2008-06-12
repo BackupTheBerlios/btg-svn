@@ -29,7 +29,11 @@
 #include "externalization.h"
 extern "C"
 {
-#include <external/xmlrpc-epi/src/xmlrpc.h>
+#if BTG_INTERNAL_XMLRPC
+#  include <xmlrpc-epi/src/xmlrpc.h>
+#else
+#  include <xmlrpc-epi/xmlrpc.h>
+#endif
 }
 
 namespace btg

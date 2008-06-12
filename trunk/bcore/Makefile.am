@@ -127,10 +127,13 @@ $(EXTERNALIZATION_SOURCES) \
 $(AUTH_SOURCES) \
 bitvector.cpp
 
-libbtgcore_la_LIBADD = $(top_builddir)/external/xmlrpc-epi/src/libxmlrpc.la \
-@LIBTORRENT_LIBS@ @BOOST_IOSTREAMS_LIB@ \
+libbtgcore_la_LIBADD = @XMLRPC_LDFLAGS@ @LIBTORRENT_LIBS@ @BOOST_IOSTREAMS_LIB@ \
 @LIBGNUTLS_LIBS@ @BOOST_PROGRAM_OPTIONS_LIB@ \
 @BOOST_THREAD_LIB@ @BOOST_FILESYSTEM_LIB@ @BOOST_SYSTEM_LIB@
+
+if BUILDINTERNALXMLRPC
+  libbtgcore_la_LIBADD += $(top_builddir)/external/xmlrpc-epi/src/libxmlrpc.la
+endif
 
 OS_HEADER=os/sleep.h \
 os/fileop.h \
@@ -241,17 +244,19 @@ $(EXTERNALIZATION_HEADER) \
 $(AUTH_HEADER) \
 bitvector.h
 
-AM_CFLAGS           = @CFLAGS@   @DEBUG_CFLAGS@ \
-                    -DBTG_DEBUG=@BTG_DEBUG@ \
-                    -DBTG_VERSION="@VERSION@" \
-                    -DBTG_BUILD="@BTG_BUILD@" \
-                    -DBTG_REV="@BTG_REV@"
-
-AM_CXXFLAGS         = @CXXFLAGS@ @DEBUG_CXXFLAGS@ \
+AM_CFLAGS           = @CFLAGS@   @DEBUG_CFLAGS@ @XMLRPC_CFLAGS@ \
                     -DBTG_DEBUG=@BTG_DEBUG@ \
                     -DBTG_VERSION="@VERSION@" \
                     -DBTG_BUILD="@BTG_BUILD@" \
                     -DBTG_REV="@BTG_REV@" \
+                    -DBTG_INTERNAL_XMLRPC="@BTG_INTERNAL_XMLRPC@"
+
+AM_CXXFLAGS         = @CXXFLAGS@ @DEBUG_CXXFLAGS@ @XMLRPC_CFLAGS@ \
+                    -DBTG_DEBUG=@BTG_DEBUG@ \
+                    -DBTG_VERSION="@VERSION@" \
+                    -DBTG_BUILD="@BTG_BUILD@" \
+                    -DBTG_REV="@BTG_REV@" \
+                    -DBTG_INTERNAL_XMLRPC="@BTG_INTERNAL_XMLRPC@" \
                     -DPREFIX=\"@prefix@\"
 
 INCLUDES            = -I$(top_srcdir) 
