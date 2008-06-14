@@ -31,8 +31,14 @@ loglevel.h \
 ratio.h \
 urlhelper.h filephelper.h
 
-libbtgclient_la_CFLAGS   = @DEBUG_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ -DBTG_REV="@BTG_REV@"
-libbtgclient_la_CXXFLAGS = @DEBUG_CXXFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ -DBTG_REV="@BTG_REV@"
+libbtgclient_la_CFLAGS   = @DEBUG_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ \
+                           -DBTG_REV="@BTG_REV@" \
+                           -DBTG_INTERNAL_XMLRPC="@BTG_INTERNAL_XMLRPC@"
+
+libbtgclient_la_CXXFLAGS = @DEBUG_CXXFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ \
+                           -DBTG_REV="@BTG_REV@" \
+                           -DBTG_INTERNAL_XMLRPC="@BTG_INTERNAL_XMLRPC@"
+
 #libbtgclient_la_LIBADD   = @BOOST_PROGRAM_OPTIONS_LIB@ @BOOST_THREAD_LIB@
 
 INCLUDES             = -I$(top_srcdir)

@@ -30,7 +30,7 @@
 extern "C"
 {
 #if BTG_INTERNAL_XMLRPC
-#  include <xmlrpc-epi/src/xmlrpc.h>
+#  include <external/xmlrpc-epi/src/xmlrpc.h>
 #else
 #  include <xmlrpc-epi/xmlrpc.h>
 #endif
