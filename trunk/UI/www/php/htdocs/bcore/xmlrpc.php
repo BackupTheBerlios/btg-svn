@@ -212,7 +212,10 @@ class XMLRPC_Message
 	function parse()
 	{
 		//first remove the XML declaration
-		$this->xml = preg_replace('/<\?xml(.*)?\?'.'>/', '', $this->xml);
+      // Bug: 13832, uncommented the following line, since it makes
+      // invalid xml in some cases.
+      // Probably if input is over some lenght.
+		//$this->xml = preg_replace('/<\?xml(.*)?\?'.'>/', '', $this->xml);
 		if(trim($this->xml) == '')
 		{
 			return false;

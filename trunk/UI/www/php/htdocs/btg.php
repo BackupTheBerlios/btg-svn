@@ -792,6 +792,8 @@ class BTG
                      // !!!
                      $fileId = 0;
 
+                     $saved_dir = "";
+
                      foreach($selected_files as $entry)
                         {
                            $f  = $entry->getFilename();
@@ -818,13 +820,28 @@ class BTG
                               {
                                  $selected = 0;
                               }
-                           
+
                            $output .= "<file>\n";
                            
                            $output .= "<id>".$fileId."</id>\n";
                            $fileId++;
                            
-                           $output .= "<name>".htmlspecialchars($f)."</name>\n";
+
+                           $dir = dirname($f);
+
+                           if ($dir != $saved_dir)
+                              {
+                                 $output .= "<dir>";
+                                 $output .= htmlspecialchars($dir);
+                                 $output .= "</dir>\n";
+                                 $saved_dir = $dir;
+                              }
+                           else
+                              {
+                                 $output .= "<dir></dir>\n";
+                              }
+
+                           $output .= "<name>".htmlspecialchars(basename($f))."</name>\n";
                            $output .= "<selected>".$selected."</selected>\n";
                            $output .= "<size>".$fs."</size>\n";
                            $output .= "<percent>".$pc."</percent>\n";

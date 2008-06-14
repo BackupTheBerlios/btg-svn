@@ -1961,10 +1961,28 @@ function addFileInfoList(status)
 	 tableStr+='<th>Size</th>';
 	 tableStr+='<th>Done %</th>';
 
+	 currentDir = "";
 	 for (var count = 0; count < fileinfolist.length; count++)
 		  {
+				// !!!
+				if (fileinfolist[count].dir != "")
+					 {
+						  tableStr+='<tr>\n';
+						  tableStr+='<td colspan="4">\n';
+						  tableStr+= fileinfolist[count].dir;
+						  tableStr+= '</td>\n';
+						  tableStr+='</tr>\n';
+
+						  currentDir = fileinfolist[count].dir;
+						  if (currentDir != "")
+								{
+									 currentDir = currentDir + "/";
+								}
+					 }
+
 				tableStr+='<tr>\n';
 				tableStr+=addFileInfoEntry(status.contextID,
+													currentDir,
 													fileinfolist[count].name, 
 													fileinfolist[count].selected, 
 													fileinfolist[count].size, 
@@ -1977,7 +1995,7 @@ function addFileInfoList(status)
 	 return tableStr;
 }
 
-function addFileInfoEntry(context_id, filename, sel, filesize, percentdone)
+function addFileInfoEntry(context_id, dir, filename, sel, filesize, percentdone)
 {
 	 var output = "";
 	 output += '<tr>\n';
@@ -1988,7 +2006,8 @@ function addFileInfoEntry(context_id, filename, sel, filesize, percentdone)
 		  {
 				output += '666" checked onClick="unSelectFile(';
 				output += context_id;
-				output += ',\''
+				output += ',\'';
+				output += dir;
 				output += filename;
 				output += '\');"/>';
 		  }
@@ -1996,7 +2015,8 @@ function addFileInfoEntry(context_id, filename, sel, filesize, percentdone)
 		  {
 				output += '666" onClick="selectFile(';
 				output += context_id;
-				output += ',\''
+				output += ',\'';
+				output += dir;
 				output += filename;
 				output += '\');"/>';
 		  }
@@ -2009,7 +2029,7 @@ function addFileInfoEntry(context_id, filename, sel, filesize, percentdone)
 	 output += '<td>';
 	 if (sel == true)
 	     {
-		 output += filesize;
+				output += humanizeSize(filesize, 2);
 	     }
 	 output += '</td>';
 
@@ -2227,8 +2247,9 @@ ts_seeding = 5;
 ts_stopped = 6;
 ts_finished = 7;
 
-function fileInfo(name, selected, size, percent)
+function fileInfo(dir, name, selected, size, percent)
 {
+	 this.dir      = dir;
 	 this.name     = name;
 	 this.selected = selected;
 	 this.size     = size;
@@ -2309,6 +2330,7 @@ function Status(dom)
 		for (var count = 0; count < files.length ; count++)
 			 {
 				  var filename = getFirstChildValue(files[count], 'name');
+				  var dir      = getFirstChildValue(files[count], 'dir');
 				  var selected = getFirstChildValue(files[count], 'selected');
 				  var sel = false;
 				  if (selected == 1)
@@ -2318,7 +2340,7 @@ function Status(dom)
 				  var size     = getFirstChildValue(files[count], 'size');
 				  var percent  = getFirstChildValue(files[count], 'percent');
 
-				  this.fileinfolist.push(new fileInfo(filename, sel, size, percent));
+				  this.fileinfolist.push(new fileInfo(dir, filename, sel, size, percent));
 			 }
 	}
 
