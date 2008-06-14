@@ -1,3 +1,5 @@
+if BUILDINTERNALPLOTMM
+
 pkglib_LTLIBRARIES = libplotmm.la
 
 libplotmm_la_SOURCES = \
@@ -18,3 +20,6 @@ libplotmm_la_SOURCES = \
 libplotmm_la_CXXFLAGS = @GTKMM_CFLAGS@ -I$(top_srcdir)/external
 
 # CLEANFILES = *~
+
+endif
+

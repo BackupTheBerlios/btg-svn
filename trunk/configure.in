@@ -395,6 +395,21 @@ AC_MSG_CHECKING([whether the GUI should be built])
 if test "$buildgui" == "true"; then
         AC_MSG_RESULT([yes])
         PKG_CHECK_MODULES(GTKMM, gtkmm-2.4 >= 2.6.0)
+
+        PLOTMM_CHECK
+
+        if test -z "$PLOTMM_LDFLAGS" ; then
+          AC_MSG_NOTICE([Using internal PlotMM implementation.])
+          dnl BTG_INTERNAL_PLOTMM=1
+          AM_CONDITIONAL(BUILDINTERNALPLOTMM, true)
+        else
+          AC_MSG_NOTICE([Using system PlotMM implementation (jay!).])
+          dnl BTG_INTERNAL_PLOTMM=0
+          AM_CONDITIONAL(BUILDINTERNALPLOTMM, false)
+        fi
+
+        dnl AC_SUBST(BTG_INTERNAL_PLOTMM)
+
 else
         AC_MSG_RESULT([no])
 fi
