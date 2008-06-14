@@ -24,7 +24,15 @@ session_start();
 <script language="javascript" src="btg.js" type="text/javascript"></script>
 <script language="javascript" src="ajaxjs.php" type="text/javascript"></script>
 <script language="javascript" src="csshover.js" type="text/javascript"></script>
-<title>BTG</title>
+<title>BTG <?
+   print BTG_VERSION;
+if (BTG_REV != "")
+   {
+      print " (";
+      print BTG_REV;
+      print ")";
+   }
+?></title>
 <!--[if IE]>
 <script type="text/javascript">
 var t = document.getElementsByTagName("tr");

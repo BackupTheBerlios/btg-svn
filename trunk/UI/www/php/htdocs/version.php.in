@@ -1,3 +1,5 @@
 <?php
 define("BTG_BUILD", "@BTG_BUILD@");
+define("BTG_VERSION", "@VERSION@");
+define("BTG_REV", "@BTG_REV@");
 ?>
