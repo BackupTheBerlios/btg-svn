@@ -119,7 +119,7 @@ namespace btg
                   /// Destructor.
                   virtual ~viewerHandler();
                private:
-
+                  void onTimeout();
                   void onTransportInit();
                   void onSetup(t_long const _session);
                   void onSetupError(std::string const& _message);

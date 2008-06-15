@@ -257,6 +257,12 @@ namespace btg
          {
             handler.reqSetupAttach(_sessionId);
 
+            if (handler.Timeout())
+               {
+                  addMessage("Unable to attach to session. Timeout");
+                  return false;
+               }
+
             if (!handler.isAttachDone())
                {
                   addMessage("Unable to attach to session.");
@@ -276,6 +282,12 @@ namespace btg
                {
                   std::string errorMessage;
                   handler.reqSetupAttach(temp_session);
+
+                  if (handler.Timeout())
+                     {
+                        addMessage("Unable to attach to session. Timeout");
+                        return false;
+                     }
 
                   if (!handler.isAttachDone())
                      {
@@ -315,6 +327,12 @@ namespace btg
                         std::string errorMessage;
 
                         handler.reqSetupAttach(temp_session);
+
+                        if (handler.Timeout())
+                           {
+                              addMessage("Unable to attach to session. Timeout");
+                              return false;
+                           }
 
                         if (!handler.isAttachDone())
                            {
@@ -420,6 +438,12 @@ namespace btg
                              useDHT,
                              useEncryption);
             
+            if (handler.Timeout())
+               {
+                  addMessage("Unable to establish a session. Timeout");
+                  return false;
+               }
+
             if (!handler.isSetupDone())
                {
                   addMessage(handler.getSetupFailtureMessage());

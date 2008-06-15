@@ -67,6 +67,11 @@ namespace btg
 
             }
 
+            void viewerHandler::onTimeout()
+            {
+               setTimeout();
+            }
+            
             void viewerHandler::onTransportInit()
             {
 
@@ -321,7 +326,7 @@ namespace btg
                BTG_NOTICE(logWrapper(),
                           "viewerHandler::onAttachError:" << _message);
                setSession(ILLEGAL_ID);
-               attachFailtureMessage = _message;
+               setAttachFailtureMessage(_message);
                attachDone            = false;
             }
 

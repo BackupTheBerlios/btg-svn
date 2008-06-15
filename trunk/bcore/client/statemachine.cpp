@@ -1917,6 +1917,7 @@ namespace btg
             if (counter_command >= counter_command_max)
                {
                   // Nothing to be done. This machine is quite dead.
+                  clientcallback.onTimeout();
                   changeState(SM_ERROR);
                   _status = true;
                   return;
@@ -1967,6 +1968,7 @@ namespace btg
             if (counter_ack >= counter_ack_max)
                {
                   // Nothing to be done.
+                  clientcallback.onTimeout();
                   changeState(SM_ERROR);
                   _status = true;
                   return;
@@ -2098,6 +2100,7 @@ namespace btg
             if (counter_attach >= counter_attach_max)
                {
                   // Nothing to be done. This machine is quite dead.
+                  clientcallback.onTimeout();
                   changeState(SM_ERROR);
                   _status = true;
                   return;

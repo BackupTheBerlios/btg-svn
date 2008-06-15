@@ -70,6 +70,11 @@ namespace btg
          {
          }
 
+         void guiHandler::onTimeout()
+         {
+            setTimeout();
+         }
+
          void guiHandler::onTransportInit()
          {
          }
@@ -356,7 +361,7 @@ namespace btg
             BTG_NOTICE(logWrapper(), 
                        "guiHandler::onAttachError:" << _message);
             setSession(ILLEGAL_ID);
-            attachFailtureMessage = _message;
+            setAttachFailtureMessage(_message);
             attachDone            = false;
          }
 

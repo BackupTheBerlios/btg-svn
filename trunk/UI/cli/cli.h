@@ -186,6 +186,7 @@ namespace btg
                      /// Instruct the daemon to download an URL.
                      cliHandler::cliResponse handleLoadUrl(std::string const& _url);
 
+                     void onTimeout();
                      void onTransportInit();
                      void onTransinitwaitError(std::string const& _message);
                      void onSetup(t_long const _session);

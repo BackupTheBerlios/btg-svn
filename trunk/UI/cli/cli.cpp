@@ -859,6 +859,11 @@ namespace btg
             return commandlist.resolve(first);
          }
 
+         void cliHandler::onTimeout()
+         {
+            setTimeout();
+         }
+
          void cliHandler::onTransportInit()
          {
 
@@ -892,7 +897,7 @@ namespace btg
          {
             std::cout << _message << std::endl;
             setSession(ILLEGAL_ID);
-            attachFailtureMessage = _message;
+            setAttachFailtureMessage(_message);
             attachDone            = false;
          }
 

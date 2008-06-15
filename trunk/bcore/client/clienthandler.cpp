@@ -95,7 +95,8 @@ namespace btg
               last_file_id(FILES_INVALID_FILEID),
               lastfiles(_logwrapper, _dynconfig),
               lasturls(_logwrapper, _dynconfig),
-              trackerlist()
+              trackerlist(),
+              timeout(false)
          {
          }
 
@@ -529,7 +530,12 @@ namespace btg
             return setupFailtureMessage;
          }
 
-         std::string clientHandler::getAttachFailtureMessage()
+         void clientHandler::setAttachFailtureMessage(std::string const& _message)
+         {
+            attachFailtureMessage = _message;
+         }
+
+         std::string clientHandler::getAttachFailtureMessage() const
          {
             return attachFailtureMessage;
          }
@@ -688,6 +694,16 @@ namespace btg
          t_strList clientHandler::getTrackerList() const
          {
             return trackerlist;
+         }
+
+         void clientHandler::setTimeout()
+         {
+            timeout = true;
+         }
+
+         bool clientHandler::Timeout() const
+         {
+            return timeout;
          }
 
          clientHandler::~clientHandler()

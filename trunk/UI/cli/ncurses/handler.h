@@ -78,6 +78,7 @@ namespace btg
                      /// Destructor.
                      virtual ~Handler();
                   private:
+                     void onTimeout();
                      void onTransportInit();
                      void onSetup(t_long const _session);
                      void onSetupError(std::string const& _message);

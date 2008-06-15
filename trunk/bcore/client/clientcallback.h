@@ -54,6 +54,9 @@ namespace btg
                      /// Constructor.
                      clientCallback();
 
+                     /// Called when a timeout is detected.
+                     virtual void onTimeout() = 0;
+
                      /// The client completed initialization of the transport which is used.
                      virtual void onTransportInit() = 0;
 

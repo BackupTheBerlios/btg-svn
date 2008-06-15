@@ -276,7 +276,10 @@ namespace btg
 
             /// If setup fails, this function will return a
             /// textual description of why it failed.
-            virtual std::string getAttachFailtureMessage();
+            virtual std::string getAttachFailtureMessage() const;
+
+            /// Set textual description of why attach failed.
+            virtual void setAttachFailtureMessage(std::string const& _message);
 
             /// Returns true if a fatal error was discovered.
             virtual bool fatalError() const { return fatalerror; };
@@ -290,6 +293,14 @@ namespace btg
 
             /// Call to make the client discover a session error.
             virtual void setSessionError() { sessionerror = true; };
+
+            /// Tell the client that a timeout in the communication
+            /// with the daemon has occured.
+            virtual void setTimeout();
+
+            /// Returns true, if a timeout in the communication with
+            /// the daemon has occured.
+            virtual bool Timeout() const;
 
             /// Get the session ID used by this handler.
             virtual t_long session() const;
@@ -508,6 +519,10 @@ namespace btg
 
             /// List of trackers used.
             t_strList                         trackerlist;
+
+            /// Indicates if a timeout in the communication with
+            /// the daemon has occured.
+            bool                              timeout;
          private:
             /// Copy constructor.
             clientHandler(clientHandler const& _ch);

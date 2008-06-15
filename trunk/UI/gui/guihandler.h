@@ -147,7 +147,7 @@ namespace btg
                      /// Destructor.
                      virtual ~guiHandler();
                   private:
-
+                     void onTimeout();
                      void onTransportInit();
                      void onSetup(t_long const _session);
                      void onSetupError(std::string const& _message);

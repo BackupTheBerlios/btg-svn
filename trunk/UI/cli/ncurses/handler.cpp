@@ -77,6 +77,11 @@ namespace btg
          {
          }
 
+         void Handler::onTimeout()
+         {
+            setTimeout();
+         }
+
          void Handler::onTransportInit()
          {
 
@@ -103,7 +108,7 @@ namespace btg
          void Handler::onAttachError(std::string const& _message)
          {
             setSession(ILLEGAL_ID);
-            attachFailtureMessage = _message;
+            setAttachFailtureMessage(_message);
             attachDone            = false;
          }
 
