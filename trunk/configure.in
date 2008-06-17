@@ -411,6 +411,7 @@ if test "$buildgui" == "true"; then
         dnl AC_SUBST(BTG_INTERNAL_PLOTMM)
 
 else
+        AM_CONDITIONAL(BUILDINTERNALPLOTMM, false)
         AC_MSG_RESULT([no])
 fi
 
