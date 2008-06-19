@@ -84,27 +84,29 @@ testrunner_LDADD   = $(top_builddir)/bcore/libbtgcore.la $(BCORE_CLIENT_TEST_LIB
 testrunner_LDFLAGS  = @LIBS@ $(CPPUNIT_LIBS) @LIBTORRENT_LIBS@ @BOOST_SYSTEM_LIB@ \
                       @BOOST_IOSTREAMS_LIB@ @BOOST_FILESYSTEM_LIB@ \
                       @BOOST_PROGRAM_OPTIONS_LIB@ @BOOST_THREAD_LIB@ \
-                      @LIBGNUTLS_LIBS@ $(URL_LIBS)
+                      @LIBGNUTLS_LIBS@ @XMLRPC_LDFLAGS@ $(URL_LIBS)
 
 testrunner_CFLAGS   = @CFLAGS@   $(CPPUNIT_CFLAGS) @LIBTORRENT_CFLAGS@ @LIBGNUTLS_CFLAGS@ \
-                      -DBTG_DEBUG=@BTG_DEBUG@ \
+                      @XMLRPC_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ \
                       -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \
                       -DBTG_OPTION_EVENTCALLBACK=@BTG_OPTION_EVENTCALLBACK@ \
+                      -DBTG_INTERNAL_XMLRPC="@BTG_INTERNAL_XMLRPC@" \
                       -DBTG_REV="@BTG_REV@" $(URL_DEFINES)
 
 testrunner_CXXFLAGS = @CXXFLAGS@ $(CPPUNIT_CFLAGS) @LIBTORRENT_CFLAGS@ @LIBGNUTLS_CFLAGS@ \
-                      -DBTG_DEBUG=@BTG_DEBUG@ \
+                      @XMLRPC_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ \
                       -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \
                       -DBTG_OPTION_EVENTCALLBACK=@BTG_OPTION_EVENTCALLBACK@ \
+                      -DBTG_INTERNAL_XMLRPC="@BTG_INTERNAL_XMLRPC@" \
                       -DBTG_REV="@BTG_REV@" $(URL_DEFINES)
 
-AM_CFLAGS         = @CFLAGS@   @DEBUG_CFLAGS@ \
+AM_CFLAGS         = @CFLAGS@   @DEBUG_CFLAGS@ @XMLRPC_CFLAGS@ \
                     -DBTG_DEBUG=@BTG_DEBUG@ \
                     -DBTG_VERSION="@VERSION@" \
                     -DBTG_BUILD="@BTG_BUILD@" \
                     -DBTG_REV="@BTG_REV@" $(URL_DEFINES)
 
-AM_CXXFLAGS       = @CXXFLAGS@ @DEBUG_CXXFLAGS@ \
+AM_CXXFLAGS       = @CXXFLAGS@ @DEBUG_CXXFLAGS@ @XMLRPC_CFLAGS@ \
                     -DBTG_DEBUG=@BTG_DEBUG@ \
                     -DBTG_VERSION="@VERSION@" \
                     -DBTG_BUILD="@BTG_BUILD@" \
