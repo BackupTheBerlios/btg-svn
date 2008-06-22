@@ -25,13 +25,14 @@
 #include <bcore/verbose.h>
 #include <daemon/modulelog.h>
 #include <bcore/os/sleep.h>
+#include <bcore/btg_assert.h>
 
 #include <libtorrent/socket.hpp>
 #include <libtorrent/connection_queue.hpp>
 #include <libtorrent/time.hpp>
 #include <boost/ref.hpp>
 #include <boost/intrusive_ptr.hpp>
-#include <asio/basic_deadline_timer.hpp>
+#include <boost/asio/basic_deadline_timer.hpp>
 
 namespace btg
 {
@@ -45,6 +46,62 @@ namespace btg
                                                   bool const _verboseFlag,
                                                   libtorrent::address const& _addr)
                   : upnpIf(_logwrapper, _verboseFlag),
+                    logwrapper(_logwrapper),
+                    verboseFlag(_verboseFlag),
+                    addr(_addr),
+                    impl(new libtorrentUpnpIfImpl(_logwrapper, _verboseFlag, _addr, 0)),
+                    state(0)
+               {
+               }
+
+               bool libtorrentUpnpIf::open(std::pair<t_int, t_int> const& _range)
+               {
+                  btg::core::btg_assert(impl != 0, logwrapper, "UPnP impl pointer is null"); 
+                  return impl->open(_range);
+               }
+
+               void libtorrentUpnpIf::suspend()
+               {
+                  btg::core::btg_assert(state == 0, logwrapper, "UPnP state pointer is not null"); 
+
+                  impl->suspend(state);
+
+                  delete impl;
+                  impl = 0;
+
+                  MVERBOSE_LOG(logWrapper(), verboseFlag_, 
+                               "Libtorrent UPnP interface suspended.");
+               }
+                  
+               void libtorrentUpnpIf::resume()
+               {
+                  btg::core::btg_assert(state != 0, logwrapper, "UPnP state pointer is null"); 
+
+                  impl = new libtorrentUpnpIfImpl(logwrapper, verboseFlag, addr, state);
+
+                  MVERBOSE_LOG(logWrapper(), verboseFlag_, 
+                               "Libtorrent UPnP interface resumed.");
+               }
+                  
+               bool libtorrentUpnpIf::close()
+               {
+                  btg::core::btg_assert(impl != 0, logwrapper, "UPnP impl pointer is null"); 
+                  return impl->close();
+               }
+                     
+               libtorrentUpnpIf::~libtorrentUpnpIf()
+               {
+                  delete impl;
+                  impl = 0;
+               }
+
+               /* */
+
+               libtorrentUpnpIfImpl::libtorrentUpnpIfImpl(btg::core::LogWrapperType _logwrapper,
+                                                          bool const _verboseFlag,
+                                                          libtorrent::address const& _addr,
+                                                          void* _state)
+                  : upnpIf(_logwrapper, _verboseFlag),
                     agent("BTG"),
                     io(),
                     queue(io), 
@@ -52,11 +109,13 @@ namespace btg
                                               queue, 
                                               _addr, 
                                               agent, 
-                                              boost::bind(&libtorrentUpnpIf::portMap, this, _1, _2, _3),
-                                              false)),
+                                              boost::bind(&libtorrentUpnpIfImpl::portMap, this, _1, _2, _3),
+                                              false,
+                                              _state)),
                     indicesMutex(),
                     indices(),
-                    pi()
+                    pi(),
+                    lt_drained_state(0)
                {
                   upnp->discover_device();
 
@@ -75,7 +134,7 @@ namespace btg
                   initialized_ = true;
                }
 
-               void libtorrentUpnpIf::portMap(int _index, 
+               void libtorrentUpnpIfImpl::portMap(int _index, 
                                               int _externalPort, 
                                               std::string const& _errorMessage)
                {
@@ -113,7 +172,7 @@ namespace btg
                      }
                }
 
-               bool libtorrentUpnpIf::open(std::pair<t_int, t_int> const& _range)
+               bool libtorrentUpnpIfImpl::open(std::pair<t_int, t_int> const& _range)
                {
                   if (!initialized_)
                      {
@@ -158,18 +217,15 @@ namespace btg
                   return true;
                }
 
-               void libtorrentUpnpIf::suspend()
+               void libtorrentUpnpIfImpl::suspend(void* _state)
                {
                   io.reset();
                   io.stop();
+
+                  _state = upnp->drain_state(); 
                }
 
-               void libtorrentUpnpIf::resume()
-               {
-
-               }
-
-               bool libtorrentUpnpIf::close()
+               bool libtorrentUpnpIfImpl::close()
                {
                   if (!initialized_)
                      {
@@ -219,7 +275,7 @@ namespace btg
                   return true;
                }
                      
-               libtorrentUpnpIf::~libtorrentUpnpIf()
+               libtorrentUpnpIfImpl::~libtorrentUpnpIfImpl()
                {
                   if (initialized_)
                      {

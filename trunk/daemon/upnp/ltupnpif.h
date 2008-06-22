@@ -28,8 +28,8 @@
 #include <bcore/addrport.h>
 #include <bcore/logable.h>
 
-#include <asio.hpp>
-#include <asio/io_service.hpp>
+#include <boost/asio.hpp>
+#include <boost/asio/io_service.hpp>
 #include <libtorrent/upnp.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/intrusive_ptr.hpp>
@@ -47,23 +47,47 @@ namespace btg
                /** @{ */
 
                class libtorrentUpnpIf: public upnpIf
+               {
+               public:
+                  libtorrentUpnpIf(btg::core::LogWrapperType _logwrapper,
+                                   bool const _verboseFlag,
+                                   libtorrent::address const& _addr);
+                  
+                  bool open(std::pair<t_int, t_int> const& _range);
+                  
+                  void suspend();
+                  
+                  void resume();
+                  
+                  bool close();
+                     
+                  /// Destructor.
+                  virtual ~libtorrentUpnpIf();
+               protected:
+                  btg::core::LogWrapperType   logwrapper;
+                  bool const                  verboseFlag;
+                  libtorrent::address const   addr;
+                  class libtorrentUpnpIfImpl* impl;
+                  void*                       state;
+               };
+
+               class libtorrentUpnpIfImpl: public upnpIf
                   {
                   public:
                      /// Constructor.
-                     libtorrentUpnpIf(btg::core::LogWrapperType _logwrapper,
-                                      bool const _verboseFlag,
-                                      libtorrent::address const& _addr);
+                     libtorrentUpnpIfImpl(btg::core::LogWrapperType _logwrapper,
+                                          bool const _verboseFlag,
+                                          libtorrent::address const& _addr,
+                                          void* _state = 0);
                      
                      bool open(std::pair<t_int, t_int> const& _range);
 
-                     void suspend();
-
-                     void resume();
+                     void suspend(void* _state);
 
                      bool close();
                      
                      /// Destructor.
-                     virtual ~libtorrentUpnpIf();
+                     virtual ~libtorrentUpnpIfImpl();
 
                   private:
                      /// Callback, indicates if a port was mapped.
@@ -116,6 +140,9 @@ namespace btg
                      std::vector<portIndex>       indices;
                      /// Current port index.
                      portIndex                    pi;
+
+                     /// State information saved in suspend().
+                     void*                        lt_drained_state;
                   };
 
                /** @} */

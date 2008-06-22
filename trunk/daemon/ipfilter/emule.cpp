@@ -30,7 +30,11 @@
 
 #include <fstream>
 
-#include <asio/ip/address_v4.hpp>
+#if BTG_LT_0_14
+#  include <boost/asio/ip/address_v4.hpp>
+#else
+#  include <asio/ip/address_v4.hpp>
+#endif
 
 #include <bcore/verbose.h>
 

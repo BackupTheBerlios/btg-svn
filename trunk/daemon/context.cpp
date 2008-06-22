@@ -517,6 +517,24 @@ namespace btg
 #if BTG_LT_0_12
          libtorrent::torrent_info tinfo;
          if (!entryToInfo(torrent_entry, tinfo))
+#elif BTG_LT_0_13
+         boost::intrusive_ptr<libtorrent::torrent_info> tinfo(new libtorrent::torrent_info);
+         if (!entryToInfo(torrent_entry, *tinfo))
+#elif BTG_LT_0_14
+         boost::intrusive_ptr<libtorrent::torrent_info> tinfo;
+         bool gotInfo = true;
+         try
+            {
+               tinfo.reset(new libtorrent::torrent_info(torrent_entry));
+            }
+         catch (std::exception& e)
+            {
+               gotInfo = false;
+            }
+         
+         if (!gotInfo)
+            // if (!entryToInfo(torrent_entry, tinfo))
+#endif
             {
                // Unable to convert the entry to a torrent info.
                // Adding files cannot continue.
@@ -526,20 +544,7 @@ namespace btg
                BTG_MEXIT(logWrapper(), "add", status);
                return status;
             }
-#elif (BTG_LT_0_13 || BTG_LT_0_14)
-         boost::intrusive_ptr<libtorrent::torrent_info> tinfo(new libtorrent::torrent_info);
-         // libtorrent::torrent_info tinfo;
-         if (!entryToInfo(torrent_entry, *tinfo))
-            {
-               // Unable to convert the entry to a torrent info.
-               // Adding files cannot continue.
 
-               filetrack_->remove(tempDir_, fileTrackFilename);
-               status = Context::ERR_LIBTORRENT;
-               BTG_MEXIT(logWrapper(), "add", status);
-               return status;
-            }
-#endif
          std::vector<std::string> contained_files;
          if (!entryToFiles(torrent_entry, contained_files))
             {
@@ -1406,8 +1411,14 @@ namespace btg
 
          libtorrent::torrent_status status = ti->handle.status();
          libtorrent::torrent_info t_i      = ti->handle.get_torrent_info();
+#if (BTG_LT_0_12 || BTG_LT_0_13)
          const std::vector<bool>* pieces   = status.pieces;
-
+#elif BTG_LT_0_14
+         /// !!!
+         std::vector<bool> piecevector;
+         bitfieldToVector(status.pieces, piecevector);
+         const std::vector<bool>* pieces   = &piecevector;
+#endif
          if (pieces->size() > 0)
             {
                t_ulong piece_len        = t_i.piece_length();
@@ -1549,45 +1560,65 @@ namespace btg
                      if (*_peerExOffset + *_peerExCount > peerinfolist.size())
                      {
                         if (*_peerExCount > peerinfolist.size())
-                           *_peerExCount = peerinfolist.size();
+                           {
+                              *_peerExCount = peerinfolist.size();
+                           }
                         *_peerExOffset = peerinfolist.size() - *_peerExCount;
                      }
                      for(t_uint i = *_peerExOffset, endi = *_peerExOffset + *_peerExCount; i < endi; ++i)
                      {
+#if BTG_LT_0_14
+                        std::vector<bool> fpieces;
+                        bitfieldToVector(peerinfolist[i].pieces, fpieces);
+#endif
+
                         PeerEx peerEx(
                            peerinfolist[i].flags,
-#if !BTG_LT_0_12 // should be >= 0.13
+#if BTG_LT_0_13 || BTG_LT_0_14
                            peerinfolist[i].source,
-#else
+#elif BTG_LT_0_12
                            0,
 #endif
-                           (t_uint)peerinfolist[i].down_speed, (t_uint)peerinfolist[i].up_speed,
-                           (t_uint)peerinfolist[i].payload_down_speed, (t_uint)peerinfolist[i].payload_up_speed,
-                           peerinfolist[i].total_download, peerinfolist[i].total_upload,
+                           (t_uint)peerinfolist[i].down_speed, 
+                           (t_uint)peerinfolist[i].up_speed,
+                           (t_uint)peerinfolist[i].payload_down_speed, 
+                           (t_uint)peerinfolist[i].payload_up_speed,
+                           peerinfolist[i].total_download, 
+                           peerinfolist[i].total_upload,
+#if BTG_LT_0_12 || BTG_LT_0_13
                            peerinfolist[i].pieces,
-                           peerinfolist[i].download_limit, peerinfolist[i].upload_limit,
+#elif BTG_LT_0_14
+                           fpieces,
+#endif
+                           peerinfolist[i].download_limit, 
+                           peerinfolist[i].upload_limit,
 #ifndef TORRENT_DISABLE_RESOLVE_COUNTRIES
                            peerinfolist[i].country,
 #else
                            0,
 #endif
                            peerinfolist[i].load_balancing,
-                           peerinfolist[i].download_queue_length, peerinfolist[i].upload_queue_length,
-                           peerinfolist[i].downloading_piece_index, peerinfolist[i].downloading_block_index,
-                           peerinfolist[i].downloading_progress, peerinfolist[i].downloading_total,
+                           peerinfolist[i].download_queue_length, 
+                           peerinfolist[i].upload_queue_length,
+                           peerinfolist[i].downloading_piece_index, 
+                           peerinfolist[i].downloading_block_index,
+                           peerinfolist[i].downloading_progress, 
+                           peerinfolist[i].downloading_total,
                            peerinfolist[i].client,
                            peerinfolist[i].connection_type,
-#if !BTG_LT_0_12 // should be >= 0.13
-                           libtorrent::total_seconds(peerinfolist[i].last_request), libtorrent::total_seconds(peerinfolist[i].last_active),
-                           peerinfolist[i].num_hashfails, peerinfolist[i].failcount,
+#if BTG_LT_0_13 || BTG_LT_0_14
+                           libtorrent::total_seconds(peerinfolist[i].last_request), 
+                           libtorrent::total_seconds(peerinfolist[i].last_active),
+                           peerinfolist[i].num_hashfails, 
+                           peerinfolist[i].failcount,
                            peerinfolist[i].target_dl_queue_length,
                            peerinfolist[i].remote_dl_rate
-#else // !BTG_LT_0_12
+#elif BTG_LT_0_12
                            (t_uint)-1, (t_uint)-1,
                            (t_uint)-1, (t_uint)-1,
                            (t_uint)-1,
                            (t_uint)-1
-#endif // !BTG_LT_0_12
+#endif
                            );
                         _peerExList->push_back(peerEx);
                      }

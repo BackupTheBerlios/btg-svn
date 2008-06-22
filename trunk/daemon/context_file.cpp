@@ -28,6 +28,7 @@
 #include <bcore/util.h>
 #include "lt_version.h"
 #include <libtorrent/identify_client.hpp>
+#include <algorithm>
 
 namespace btg
 {
@@ -355,6 +356,7 @@ namespace btg
          return status && found;
       }
 
+#if (BTG_LT_0_12 || BTG_LT_0_13)
       bool Context::entryToInfo(libtorrent::entry const& _input,
                                 libtorrent::torrent_info & _output) const
       {
@@ -362,7 +364,6 @@ namespace btg
 
          bool status = false;
 
-         libtorrent::torrent_info tinfo;
          try
             {
                _output = libtorrent::torrent_info(_input);
@@ -383,6 +384,7 @@ namespace btg
          BTG_MEXIT(logWrapper(), "entryToInfo", status);
          return status;
       }
+#endif
 
       bool Context::getListOfEntities(t_int const _torrent_id,
                                       std::string const& _directory,
@@ -620,6 +622,14 @@ namespace btg
          BTG_MEXIT(logWrapper(), "entryToFiles", status);
          return status;
       }
+
+#if (BTG_LT_0_14)
+      void Context::bitfieldToVector(libtorrent::bitfield const& _input, 
+                                     std::vector<bool> & _output) const
+      {
+         std::copy(_input.begin(), _input.end(), _output.begin());
+      }
+#endif
 
       /// Compare two directories, return true if the first directory
       /// is the longest path of the two arguments.

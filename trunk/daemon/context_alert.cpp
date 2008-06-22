@@ -25,7 +25,11 @@
 #include <bcore/trackerstatus.h>
 #include <bcore/logmacro.h>
 
-#include <asio/ip/address_v4.hpp>
+#if BTG_LT_0_14
+#  include <boost/asio/ip/address_v4.hpp>
+#else
+#  include <asio/ip/address_v4.hpp>
+#endif
 
 #if BTG_OPTION_EVENTCALLBACK
 #  include "callbackmgr.h"

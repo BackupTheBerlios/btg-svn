@@ -56,6 +56,16 @@ namespace btg
             return terminate_;
          }
 
+         void upnpIf::suspend()
+         {
+
+         }
+
+         void upnpIf::resume()
+         {
+            
+         }
+
          upnpIf::~upnpIf()
          {
             

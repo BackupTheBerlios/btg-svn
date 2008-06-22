@@ -657,9 +657,10 @@ namespace btg
 
                /// Convert an entry into a torrent info.
                /// @return True - converted. False - conversion failed.
+#if (BTG_LT_0_12 || BTG_LT_0_13)
                bool entryToInfo(libtorrent::entry const& _input,
                                 libtorrent::torrent_info & _output) const;
-
+#endif
                /// Convert an entry to a list of contained files.
                /// @return True - converted. False - conversion failed.
                bool entryToFiles(libtorrent::entry const& _input,
@@ -701,6 +702,14 @@ namespace btg
                /// Set peer ID (read from configuration, converting it
                /// to a format used by libtorrent).
                void setPeerIdFromConfig();
+#if (BTG_LT_0_14)
+               /// Convert a libtorrent bitfield into a vector of bits.
+               /// 
+               /// Libtorrent 0.14 changed the way a torrent's pieces
+               /// are represented.
+               void bitfieldToVector(libtorrent::bitfield const& _input, 
+                                     std::vector<bool> & _output) const;
+#endif
             private:
                /// Copy constructor.
                Context(Context const& _c);

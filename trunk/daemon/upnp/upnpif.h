@@ -38,6 +38,15 @@ namespace btg
                 */
                /** @{ */
 
+               struct upnpIfState
+               {
+                  upnpIfState()
+                  : p(0)
+                  {}
+
+                  void* p;
+               };
+
                /// Interface: UPNP.
                class upnpIf: public btg::core::Logable
                   {
@@ -57,10 +66,10 @@ namespace btg
                      
                      /// Stop any threads or resources which cannot survive a fork.
                      /// Called just before forking the daemon. 
-                     virtual void suspend() = 0;
+                     virtual void suspend();
 
                      /// Resume operation. Called after the fork. 
-                     virtual void resume() = 0;
+                     virtual void resume();
 
                      /// Close an already opened port range.
                      virtual bool close() = 0;
