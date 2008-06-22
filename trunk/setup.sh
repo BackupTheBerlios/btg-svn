@@ -39,6 +39,10 @@ else
   echo "NOT building GUI viewer."
 fi
 
+# For xmlrpc installed system wide, on debian.
+export CFLAGS=-I/usr/include/xmlrpc-epi
+export CXXFLAGS=$CFLAGS
+
 for arg in "$@"
 do
     case "$arg" in

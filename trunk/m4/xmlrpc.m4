@@ -24,7 +24,7 @@ AC_DEFUN([XMLRPC_CHECK],
   AC_MSG_CHECKING([whether XML-RPC headers can be used])
   AC_COMPILE_IFELSE([
   AC_LANG_PROGRAM([
-    # include <xmlrpc-epi/xmlrpc.h>
+    # include <xmlrpc.h>
   ], [
     XMLRPC_REQUEST xmlrpc_request = XMLRPC_RequestNew();
     return 0;
@@ -38,7 +38,7 @@ AC_DEFUN([XMLRPC_CHECK],
 
   AC_MSG_CHECKING([whether XML-RPC library can be used])
   AC_TRY_LINK([
-    # include <xmlrpc-epi/xmlrpc.h>
+    # include <xmlrpc.h>
   ], [
     XMLRPC_REQUEST xmlrpc_request = XMLRPC_RequestNew();
     return 0;
