@@ -52,6 +52,7 @@ extern "C"
 
 #if BTG_OPTION_URL
 #  include <daemon/http/httpmgr.h>
+#include <daemon/opid.h>
 #  include <bcore/os/sleep.h>
 #endif // BTG_OPTION_URL
 
@@ -441,7 +442,8 @@ void testDaemon::testHttpDownload()
    using namespace btg::daemon::http;
    using namespace btg::core::os;
 
-   httpDlManager httpm(logwrapper);
+   btg::daemon::opId opid(logwrapper);
+   httpDlManager httpm(logwrapper, opid);
 
    // Download a non existing file.
    t_uint serial = httpm.Fetch(TEST_HTTPADDR "test.torrent", "test.torrent");
@@ -489,3 +491,14 @@ void testDaemon::testHttpDownload()
    CPPUNIT_ASSERT(unlink("test2.torrent") != -1);
 }
 #endif // BTG_OPTION_URL
+
+void testDaemon::testOpId()
+{
+   btg::daemon::opId opid(logwrapper);
+
+   t_uint id0 = opid.id();
+   t_uint id1 = opid.id();
+
+   CPPUNIT_ASSERT(id0 < id1);
+}
+

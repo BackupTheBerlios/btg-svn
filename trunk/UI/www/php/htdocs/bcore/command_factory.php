@@ -101,12 +101,15 @@ class commandFactory
 		case Command::CN_CCREATEFROMURLRSP:
 			$c = new contextCreateFromUrlResponseCommand();
 			break;
+         /*
+          TODO: implement this, since the interface changed.
 		case Command::CN_CURLSTATUS:
 			$c = new contextUrlStatusCommand();
 			break;
 		case Command::CN_CURLSTATUSRSP:
 			$c = new contextUrlStatusResponseCommand();
 			break;
+         */
 		case Command::CN_CLAST: // last context
 			$c = new lastCIDCommand();
 			break;

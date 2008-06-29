@@ -54,6 +54,9 @@ class testDaemon : public CppUnit::TestFixture
    CPPUNIT_TEST( testFileTracker );
 
    CPPUNIT_TEST( testCommandLineHandler );
+
+   CPPUNIT_TEST( testOpId );
+
 #if BTG_OPTION_URL
    CPPUNIT_TEST( testHttpDownload );
 #endif // BTG_OPTION_URL
@@ -100,6 +103,9 @@ class testDaemon : public CppUnit::TestFixture
                     std::vector<std::string> const& _files2);
 
    void testCommandLineHandler();
+
+   void testOpId();
+
 #if BTG_OPTION_URL
    void testHttpDownload();
 #endif // BTG_OPTION_URL
