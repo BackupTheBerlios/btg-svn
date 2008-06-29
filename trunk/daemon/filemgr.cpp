@@ -52,26 +52,18 @@ namespace btg
       /* */
 
       fileManager::fileManager(btg::core::LogWrapperType _logwrapper,
-                               fileTrack* _filetrack)
+                               fileTrack* _filetrack,
+                               btg::daemon::opId & _opid)
          : btg::core::Logable(_logwrapper),
            filetrack(_filetrack),
-           current_id(min_id),
-           max_id(0xFFFFFF)
+           opid(_opid)
       {
          BTG_MNOTICE(logWrapper(), "constructed");
       }
 
       t_uint fileManager::getCurrentId()
       {
-         t_uint id = current_id;
-         current_id++;
-
-         if (id > max_id)
-            {
-               current_id = min_id;
-            }
-
-         return id;
+         return opid.id();
       }
 
       t_uint fileManager::addFile(std::string const& _dir, 

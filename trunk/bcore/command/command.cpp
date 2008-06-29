@@ -87,15 +87,12 @@ namespace btg
             t_IdToNameElem(Command::CN_CMOVE,           "(c) Move"),
             t_IdToNameElem(Command::CN_CCREATEFROMURL,      "(c) Create context from URL"),
             t_IdToNameElem(Command::CN_CCREATEFROMURLRSP,   "(c) Create context from URL response"),
-            t_IdToNameElem(Command::CN_CCREATEURLABORT,     "(c) Abort creation of context from URL."),
-            t_IdToNameElem(Command::CN_CURLSTATUS,          "(c) URL download status"),
-            t_IdToNameElem(Command::CN_CURLSTATUSRSP,       "(c) URL download status response"),
             t_IdToNameElem(Command::CN_CCREATEFROMFILE,     "(c) Create context from file"),
             t_IdToNameElem(Command::CN_CCREATEFROMFILERSP,  "(c) Create context from file response"),
-            t_IdToNameElem(Command::CN_CCREATEFFABORT,      "(c) Abort creation of context from file."),
             t_IdToNameElem(Command::CN_CCREATEFROMFILEPART, "(c) Create context from file, part of file"),
-            t_IdToNameElem(Command::CN_CCRFILESTATUS,       "(c) File download status"),
-            t_IdToNameElem(Command::CN_CCRFILESTATUSRSP,    "(c) File download status response"),
+            t_IdToNameElem(Command::CN_OPABORT,     "(g) Abort operation"),
+            t_IdToNameElem(Command::CN_OPSTATUS,    "(g) Status of operation"),
+            t_IdToNameElem(Command::CN_OPSTATUSRSP, "(g) Status of operation response"),
 
             // General:
             t_IdToNameElem(Command::CN_ERROR,           "(g) Error"),

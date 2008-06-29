@@ -20,10 +20,8 @@
  * $Id$
  */
 
-#ifndef URLSTATUS_H
-#define URLSTATUS_H
-
-#include <bcore/command/opstat.h>
+#ifndef OPSTATUS_H
+#define OPSTATUS_H
 
 namespace btg
 {
@@ -34,21 +32,34 @@ namespace btg
           */
          /** @{ */
 
-         bool getDlProgress(btg::core::opStatusResponseCommand const & _cosrc,
-                            t_uint & _dltotal, 
-                            t_uint & _dlnow, 
-                            t_uint & _dlspeed);
-         
-         /// Set the download progress info.
-         void setDlProgress(btg::core::opStatusResponseCommand & _cosrc,
-                            t_uint const _dltotal, 
-                            t_uint const _dlnow, 
-                            t_uint const _dlspeed);
+         /// Invalid URL id.
+         const t_uint OPSTAT_INVALID_ID = 0;
+
+         /// Defined operation status.
+         enum statusType
+         {
+            ST_UNDEF  = 0, //!< Unknown.
+            ST_URL    = 1, //!< URLs.
+            ST_FILE   = 2  //!< Files.
+            // ..
+         };
+
+         /// Status of an url or file upload to the daemon.
+         enum opStatus
+         {
+            OP_UNDEF      = 0, //!< Unknown.
+            OP_WORKING    = 1, //!< Upload in progress.
+            OP_FINISHED   = 2, //!< Upload finished.
+            OP_ERROR      = 3, //!< Unable to upload.
+            OP_CREATE     = 4, //!< Context created.
+            OP_CREATE_ERR = 5, //!< Context not created.
+            OP_ABORTED    = 6  //!< Context aborted (user cancelled).
+         };
 
          /** @} */
 
       } // namespace core
 } // namespace btg
 
-#endif // URLSTATUS_H
+#endif // OPSTATUS_H
 

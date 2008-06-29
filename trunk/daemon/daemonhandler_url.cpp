@@ -25,6 +25,7 @@
 #include <bcore/command/context_create_url.h>
 #include <bcore/verbose.h>
 #include <bcore/util.h>
+#include <bcore/opstatus.h>
 
 #include "modulelog.h"
 #include "filetrack.h"
@@ -41,10 +42,10 @@ namespace btg
       {
          MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
 
-         contextUrlStatusCommand* cusc = dynamic_cast<contextUrlStatusCommand*>(_command);
-         t_uint id = cusc->id();
+         opStatusCommand* cosc = dynamic_cast<opStatusCommand*>(_command);
+         t_uint id = cosc->id();
 
-         btg::core::urlStatus urlstat = URLS_UNDEF;
+         t_uint urlstat = btg::core::OP_UNDEF;
 
          if (!urlmgr.getStatus(id, urlstat))
             {
@@ -52,9 +53,11 @@ namespace btg
                return;
             }
          
-         contextUrlStatusResponseCommand *usrc = new contextUrlStatusResponseCommand(id, urlstat);
+         opStatusResponseCommand* cosrc = new opStatusResponseCommand(id, 
+                                                                                    btg::core::ST_URL, 
+                                                                                    urlstat);
 
-         if (urlstat == URLS_WORKING)
+         if (urlstat == btg::core::OP_WORKING)
          {
             t_uint dltotal, dlnow, dlspeed;
             if (!urlmgr.getDlProgress(id, dltotal, dlnow, dlspeed))
@@ -62,13 +65,16 @@ namespace btg
                   sendError(_command->getType(), "Unknown URL id (by getDlProgress).");
                   return;
                }
-            usrc->setDlProgress(dltotal, dlnow, dlspeed);
+
+            btg::core::setDlProgress(*cosrc, dltotal, dlnow, dlspeed);
          }
          
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << "Sending id=" << id << ", stat=" << urlstat << ".");
+
          sendCommand(dd_->externalization,
                      dd_->transport,
                      connectionID_,
-                     usrc);
+                     cosrc);
       }
 
       void daemonHandler::handle_CN_CCREATEFROMURL(eventHandler* _eventhandler, 
@@ -117,9 +123,9 @@ namespace btg
       {
          MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
 
-         contextUrlAbortCommand* cuac = dynamic_cast<contextUrlAbortCommand*>(_command);
+         opAbortCommand* coac = dynamic_cast<opAbortCommand*>(_command);
 
-         t_uint id = cuac->id();
+         t_uint id = coac->id();
 
          if (urlmgr.abort(id))
             {

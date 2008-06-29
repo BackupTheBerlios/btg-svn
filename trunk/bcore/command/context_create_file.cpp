@@ -22,6 +22,7 @@
 
 #include "context_create_file.h"
 #include <bcore/helpermacro.h>
+#include <bcore/opstatus.h>
 #include <iostream>
 
 namespace btg
@@ -89,7 +90,7 @@ namespace btg
       
       contextCreateFromFileResponseCommand::contextCreateFromFileResponseCommand()
          : Command(Command::CN_CCREATEFROMFILERSP),
-           id_(FILES_INVALID_FILEID)
+           id_(btg::core::OPSTAT_INVALID_ID)
       {}
 
       contextCreateFromFileResponseCommand::contextCreateFromFileResponseCommand(t_uint const _id)
@@ -128,7 +129,7 @@ namespace btg
 
       contextCreateFromFilePartCommand::contextCreateFromFilePartCommand()
          : Command(Command::CN_CCREATEFROMFILEPART),
-           id_(FILES_INVALID_FILEID),
+           id_(btg::core::OPSTAT_INVALID_ID),
            part_(0),
            data_()
       {
@@ -188,188 +189,5 @@ namespace btg
 
       }
 
-      /* */
-      
-      contextFileStatusCommand::contextFileStatusCommand()
-         : Command(Command::CN_CCRFILESTATUS),
-           id_(FILES_INVALID_FILEID)
-      {}
-
-      contextFileStatusCommand::contextFileStatusCommand(t_uint const _id)
-         : Command(Command::CN_CCRFILESTATUS),
-           id_(_id)
-      {}
-
-      bool contextFileStatusCommand::serialize(btg::core::externalization::Externalization* _e) const
-      {
-         Command::serialize(_e);
-         BTG_RCHECK(_e->status());
-
-         _e->setParamInfo("file id", true);
-         _e->uintToBytes(&id_);
-         BTG_RCHECK(_e->status());
-
-         return true;
-      }
-
-      bool contextFileStatusCommand::deserialize(btg::core::externalization::Externalization* _e)
-      {
-         Command::deserialize(_e);
-         BTG_RCHECK(_e->status());
-
-         _e->setParamInfo("file id", true);
-         _e->bytesToUint(&id_);
-         BTG_RCHECK(_e->status());
-
-         return true;
-      }
-
-      contextFileStatusCommand::~contextFileStatusCommand()
-      {}
-
-      /* */
-
-      contextFileStatusResponseCommand::contextFileStatusResponseCommand()
-         : Command(Command::CN_CCRFILESTATUSRSP),
-           id_(FILES_INVALID_FILEID),
-           status_(FILES_UNDEF)
-      {}
-
-      contextFileStatusResponseCommand::contextFileStatusResponseCommand(t_uint const _id,
-                                                                         btg::core::fileStatus const _status)
-         : Command(Command::CN_CCRFILESTATUSRSP),
-           id_(_id),
-           status_(_status)
-      {}
-
-      bool contextFileStatusResponseCommand::serialize(btg::core::externalization::Externalization* _e) const
-      {
-         Command::serialize(_e);
-         BTG_RCHECK(_e->status());
-
-         _e->setParamInfo("file id", true);
-         _e->uintToBytes(&id_);
-         BTG_RCHECK(_e->status());
-
-         t_uint temp_status = 0;
-         switch (status_)
-            {
-            case FILES_UNDEF:
-               temp_status = FILES_UNDEF;
-               break;
-            case FILES_WORKING:
-               temp_status = FILES_WORKING;
-               break;
-            case FILES_FINISHED:
-               temp_status = FILES_FINISHED;
-               break;
-            case FILES_ERROR:
-               temp_status = FILES_ERROR;
-               break;
-            case FILES_CREATE:
-               temp_status = FILES_CREATE;
-               break;
-            case FILES_CREATE_ERR:
-               temp_status = FILES_CREATE_ERR;
-               break;
-            case FILES_ABORTED:
-               temp_status = FILES_ABORTED;
-               break;
-            }
-
-         _e->setParamInfo("file status", true);
-         _e->uintToBytes(&temp_status);
-         BTG_RCHECK(_e->status());
-
-         return true;
-      }
-
-      bool contextFileStatusResponseCommand::deserialize(btg::core::externalization::Externalization* _e)
-      {
-         Command::deserialize(_e);
-         BTG_RCHECK(_e->status());
-
-         _e->setParamInfo("file id", true);
-         _e->bytesToUint(&id_);
-         BTG_RCHECK(_e->status());
-
-         t_uint temp_status = 0;
-         _e->setParamInfo("file status", true);
-         _e->bytesToUint(&temp_status);
-         BTG_RCHECK(_e->status());
-         
-         switch (temp_status)
-            {
-            case FILES_UNDEF:
-               status_ = FILES_UNDEF;
-               break;
-            case FILES_WORKING:
-               status_ = FILES_WORKING;
-               break;
-            case FILES_FINISHED:
-               status_ = FILES_FINISHED;
-               break;
-            case FILES_ERROR:
-               status_ = FILES_ERROR;
-               break;
-            case FILES_CREATE:
-               status_ = FILES_CREATE;
-               break;
-            case FILES_CREATE_ERR:
-               status_ = FILES_CREATE_ERR;
-               break;
-            case FILES_ABORTED:
-               status_ = FILES_ABORTED;
-               break;
-            default:
-               status_ = FILES_UNDEF;
-               break;
-            }
-
-         return true;
-      }
-
-      contextFileStatusResponseCommand::~contextFileStatusResponseCommand()
-      {}
-
-      /* */
-
-      contextFileAbortCommand::contextFileAbortCommand()
-         : Command(Command::CN_CCREATEFFABORT),
-           id_(FILES_INVALID_FILEID)
-      {}
-
-      contextFileAbortCommand::contextFileAbortCommand(t_uint const _id)
-         : Command(Command::CN_CCREATEFFABORT),
-           id_(_id)
-      {}
-
-      bool contextFileAbortCommand::serialize(btg::core::externalization::Externalization* _e) const
-      {
-         Command::serialize(_e);
-         BTG_RCHECK(_e->status());
-
-         _e->setParamInfo("file id", true);
-         _e->uintToBytes(&id_);
-         BTG_RCHECK(_e->status());
-
-         return true;
-      }
-
-      bool contextFileAbortCommand::deserialize(btg::core::externalization::Externalization* _e)
-      {
-         Command::deserialize(_e);
-         BTG_RCHECK(_e->status());
-
-         _e->setParamInfo("file id", true);
-         _e->bytesToUint(&id_);
-         BTG_RCHECK(_e->status());
-
-         return true;
-      }
-
-      contextFileAbortCommand::~contextFileAbortCommand()
-      {}
-      
    } // namespace core
 } // namespace btg

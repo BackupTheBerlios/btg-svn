@@ -98,17 +98,15 @@ namespace btg
                      CN_CGETTRACKERSRSP = 65, //!< List of trackers used for a context.
                      CN_CMOVE           = 66, //!< Move a context from one session to another.
                      CN_CCREATEFROMURL  = 67, //!< Create context from an URL.
-                     CN_CCREATEFROMURLRSP = 68, //!< Create context from an URL, response.
-                     CN_CCREATEURLABORT   = 69, //!< Abort loading an URL.
-                     CN_CURLSTATUS        = 70, //!< Request URL download status.
-                     CN_CURLSTATUSRSP     = 71, //!< URL download status response.
-
-                     CN_CCREATEFROMFILE      = 80, //!< Create context from a file.
-                     CN_CCREATEFROMFILERSP   = 81, //!< Create context from a file, response.
-                     CN_CCREATEFFABORT       = 82, //!< Abort creating context from file.
-                     CN_CCREATEFROMFILEPART  = 83, //!< Create context from a file, file part.
-                     CN_CCRFILESTATUS        = 84, //!< Request file download status.
-                     CN_CCRFILESTATUSRSP     = 85, //!< File download status response.
+                     CN_CCREATEFROMURLRSP    = 68, //!< Create context from an URL, response.
+                     CN_CCREATEFROMFILE      = 69, //!< Create context from a file.
+                     CN_CCREATEFROMFILERSP   = 70, //!< Create context from a file, response.
+                     CN_CCREATEFROMFILEPART  = 71, //!< Create context from a file, file part.
+                     
+                     /* Operations */
+                     CN_OPABORT             = 80, //!< Abort an operation.
+                     CN_OPSTATUS            = 81, //!< Request status of an operation status.
+                     CN_OPSTATUSRSP         = 82, //!< Status of an operation, response.
 
                      /* General commands. */ 
                      CN_ERROR           = 100, //!< General error.

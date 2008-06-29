@@ -272,6 +272,9 @@ namespace btg
             /// Indicates if the statemachine should do verbose logging.
             bool const                            verboseFlag_;
 
+            /// Saved type of current operation status.
+            t_uint                                opType_;
+
             /// Convert a state to a std::string.
             /// @param [in] _state The state.
             /// @return String representing the state.
@@ -418,10 +421,12 @@ namespace btg
             void cb_CN_SINFO(btg::core::Command* _command);
             /// Call a callback. URL downloading.
             void cb_CN_CCREATEFROMURL(btg::core::Command* _command);
-            /// Call a callback. URL status.
-            void cb_CN_CURLSTATUS(btg::core::Command* _command);
-            /// Call a callback, file status.
-            void cb_CN_CCRFILESTATUS(btg::core::Command* _command);
+            /// Call a callback. Operation status.
+            void cb_CN_OPSTATUS(btg::core::Command* _command);
+            /// Call a callback. Url status.
+            void cb_urlOpStatus(btg::core::Command* _command);
+            /// Call a callback. File status.
+            void cb_fileOpStatus(btg::core::Command* _command);
             /// Call a callback, file upload.
             void cb_CN_CCREATEFROMFILERSP(btg::core::Command* _command);
             /// Call a callback, list of trackers.

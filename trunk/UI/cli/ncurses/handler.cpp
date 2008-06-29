@@ -341,7 +341,7 @@ namespace btg
          }
 
          void Handler::onFileStatus(t_uint const _id, 
-                                    btg::core::fileStatus const _status)
+                                    t_uint const _status)
          {
             commandStatus = true;
             setFileStatusResponse(_id, _status);
@@ -353,7 +353,7 @@ namespace btg
          }
 
          void Handler::onUrlStatus(t_uint const _id, 
-                                   btg::core::urlStatus const _status)
+                                   t_uint const _status)
          {
             commandStatus = true;
             setUrlStatusResponse(_id, _status);

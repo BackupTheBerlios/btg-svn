@@ -80,6 +80,7 @@ command/session_error.cpp \
 command/session_name.cpp \
 command/session_rw.cpp \
 command/session_info.cpp \
+command/opstat.cpp \
 command/setup.cpp \
 command/version.cpp \
 command/kill.cpp \
@@ -125,7 +126,8 @@ command_factory.cpp \
 $(LOGGER_SOURCES) \
 $(EXTERNALIZATION_SOURCES) \
 $(AUTH_SOURCES) \
-bitvector.cpp
+bitvector.cpp \
+urlstatus.cpp
 
 libbtgcore_la_LIBADD = @XMLRPC_LDFLAGS@ @LIBTORRENT_LIBS@ @BOOST_IOSTREAMS_LIB@ \
 @LIBGNUTLS_LIBS@ @BOOST_PROGRAM_OPTIONS_LIB@ \
@@ -202,6 +204,7 @@ command/session_error.h \
 command/session_name.h \
 command/session_rw.h \
 command/session_info.h \
+command/opstat.h \
 command/setup.h \
 command/version.h \
 command/kill.h \
@@ -226,7 +229,7 @@ AUTH_HEADER=auth/hash.h
 noinst_HEADERS     = t_string.h type.h type_btg.h project.h \
 hru.h hrr.h hrt.h \
 sigh.h \
-logmacro.h util.h status.h urlstatus.h filestatus.h trackerstatus.h peer.h file_info.h dbuf.h sbuf.h \
+logmacro.h util.h status.h opstatus.h trackerstatus.h peer.h file_info.h dbuf.h sbuf.h \
 logable.h \
 crashlog.h \
 serializable.h printable.h addrport.h \
@@ -242,7 +245,8 @@ command_factory.h \
 $(LOGGER_HEADER) \
 $(EXTERNALIZATION_HEADER) \
 $(AUTH_HEADER) \
-bitvector.h
+bitvector.h \
+urlstatus.h
 
 AM_CFLAGS           = @CFLAGS@   @DEBUG_CFLAGS@ @XMLRPC_CFLAGS@ \
                     -DBTG_DEBUG=@BTG_DEBUG@ \

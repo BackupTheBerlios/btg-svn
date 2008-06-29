@@ -20,35 +20,45 @@
  * $Id$
  */
 
-#ifndef URLHELPER_H
-#define URLHELPER_H
-
-#include <string>
-#include <bcore/command/opstat.h>
+#include "opid.h"
+#include <daemon/modulelog.h>
 
 namespace btg
 {
-   namespace core
+   namespace daemon
    {
-      namespace client
+      const t_uint min_id = 1;
+      const std::string moduleName("opid");
+
+      opId::opId(btg::core::LogWrapperType _logwrapper)
+         : btg::core::Logable(_logwrapper),
+           current_id(min_id),
+           max_id(0xFFFFFF)
       {
-         /**
-          * \addtogroup gencli
-          */
-         /** @{ */
+         BTG_MNOTICE(logWrapper(), "constructed");
+      }
 
-         /// Return true if the URL is valid.
-         bool isUrlValid(std::string const& _url);
+      t_uint opId::id()
+      {
+         t_uint id = current_id;
 
-         /// Return true and update _filename, if the url ends with a
-         /// file name.
-         bool getFilenameFromUrl(std::string const& _url, std::string & _filename);
+         BTG_MNOTICE(logWrapper(), "Operation id = " << id);
 
-         /** @} */
+         current_id++;
 
-      } // client
-   } // core
-} // btg
+         if (id > max_id)
+            {
+               current_id = min_id;
+            }
 
-#endif // URLHELPER_H
+         return id;
+      }
+
+      opId::~opId()
+      {
+         BTG_MNOTICE(logWrapper(), "destructed");
+      }
+
+   } // namespace daemon
+} // namespace btg
 

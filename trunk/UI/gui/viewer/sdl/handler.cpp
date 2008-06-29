@@ -157,7 +157,7 @@ namespace btg
             }
             
             void viewerHandler::onFileStatus(t_uint const _id, 
-                                             btg::core::fileStatus const _status)
+                                             t_uint const _status)
             {
                // Not used.
             }
@@ -168,7 +168,7 @@ namespace btg
             }
 
             void viewerHandler::onUrlStatus(t_uint const _id, 
-                                            btg::core::urlStatus const _status)
+                                            t_uint const _status)
             {
                
             }

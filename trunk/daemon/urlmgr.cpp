@@ -28,6 +28,7 @@
 #include "session_list.h"
 
 #include <bcore/command/context_create.h>
+#include <bcore/opstatus.h>
 
 namespace btg
 {
@@ -59,12 +60,13 @@ namespace btg
       urlManager::urlManager(btg::core::LogWrapperType _logwrapper,
                              bool const _verboseFlag,
                              fileTrack* _filetrack,
-                             sessionList* _sessionlist)
+                             sessionList* _sessionlist,
+                             btg::daemon::opId & _opid)
          : btg::core::Logable(_logwrapper),
            verboseFlag(_verboseFlag),
            filetrack(_filetrack),
            sessionlist(_sessionlist),
-           httpmgr(_logwrapper),
+           httpmgr(_logwrapper, _opid),
            urlIdSessions()
       {
 
@@ -253,7 +255,7 @@ namespace btg
          return u;
       }
 
-      bool urlManager::getStatus(const t_uint _id, btg::core::urlStatus & _urlstat)
+      bool urlManager::getStatus(const t_uint _id, t_uint & _urlstat)
       {
          std::vector<UrlIdSessionMapping>::iterator mapping = getUrlMapping(_id);
 
@@ -269,37 +271,37 @@ namespace btg
             case btg::daemon::http::httpInterface::ERROR:
                {
                   removeUrl(*mapping);
-                  _urlstat = URLS_ERROR;
+                  _urlstat = btg::core::OP_ERROR;
                   break;
                }
             case btg::daemon::http::httpInterface::INIT:
-               _urlstat = URLS_WORKING;
+               _urlstat = btg::core::OP_WORKING;
                break;
             case btg::daemon::http::httpInterface::WAIT:
-               _urlstat = URLS_WORKING;
+               _urlstat = btg::core::OP_WORKING;
                break;
             case btg::daemon::http::httpInterface::FINISH:
                {
-                  _urlstat = URLS_FINISHED;
+                  _urlstat = btg::core::OP_FINISHED;
 
                   // The http download finished, add the torrent.
                   addUrl(_id);
 
                   if (mapping->status == UCS_CREATED)
                      {
-                        _urlstat = URLS_CREATE;
+                        _urlstat = btg::core::OP_CREATE;
                      }
 
                   if (mapping->status == UCS_CREATE_FAILED)
                      {
-                        _urlstat = URLS_CREATE_ERR;
+                        _urlstat = btg::core::OP_CREATE_ERR;
                      }
 
                   break;
                }
             case btg::daemon::http::httpInterface::ABORTED:
                {
-                  _urlstat = URLS_ABORTED;
+                  _urlstat = btg::core::OP_ABORTED;
                   break;
                }
             }

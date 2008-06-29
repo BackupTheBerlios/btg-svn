@@ -65,6 +65,7 @@
 #include <bcore/command/session_info.h>
 #include <bcore/command/setup.h>
 #include <bcore/command/version.h>
+#include <bcore/command/opstat.h>
 
 #include <bcore/command/initconnection.h>
 
@@ -153,26 +154,6 @@ namespace btg
                   c = new contextCreateFromUrlResponseCommand;
                   break;
                }
-            case Command::CN_CURLSTATUS:
-               {
-                  c = new contextUrlStatusCommand;
-                  break;
-               }
-            case Command::CN_CURLSTATUSRSP:
-               {
-                  c = new contextUrlStatusResponseCommand;
-                  break;
-               }
-            case Command::CN_CCREATEURLABORT:
-               {
-                  c = new contextUrlAbortCommand;
-                  break;
-               }
-            case Command::CN_CCREATEFFABORT:
-               {
-                  c = new contextFileAbortCommand;
-                  break;
-               }
             case Command::CN_CCREATEFROMFILE:
                {
                   c = new contextCreateFromFileCommand;
@@ -186,16 +167,6 @@ namespace btg
             case Command::CN_CCREATEFROMFILEPART:
                {
                   c = new contextCreateFromFilePartCommand;
-                  break;
-               }
-            case Command::CN_CCRFILESTATUS:
-               {
-                  c = new contextFileStatusCommand;
-                  break;
-               }
-            case Command::CN_CCRFILESTATUSRSP:
-               {
-                  c = new contextFileStatusResponseCommand;
                   break;
                }
             case Command::CN_CLAST:
@@ -470,6 +441,21 @@ namespace btg
                   c = new versionResponseCommand;
                   break;
                }
+            case Command::CN_OPSTATUS:
+               {
+                  c = new opStatusCommand;
+                  break;
+               }
+            case Command::CN_OPSTATUSRSP:
+               {
+                  c = new opStatusResponseCommand;
+                  break;
+               }
+            case Command::CN_OPABORT:
+               {
+                  c = new opAbortCommand;
+                  break;
+               }
             default:
                BTG_ERROR_LOG(logWrapper(), "createFromBytes: wrong command type: " << cmdid << ".");
                _status = commandFactory::DS_UNKNOWN;
@@ -516,15 +502,9 @@ namespace btg
             case Command::CN_CCREATEWITHDATA:
             case Command::CN_CCREATEFROMURL:
             case Command::CN_CCREATEFROMURLRSP:
-            case Command::CN_CURLSTATUS:
-            case Command::CN_CURLSTATUSRSP:
-            case Command::CN_CCREATEURLABORT:
             case Command::CN_CCREATEFROMFILE:
             case Command::CN_CCREATEFROMFILERSP:
-            case Command::CN_CCREATEFFABORT:
             case Command::CN_CCREATEFROMFILEPART:
-            case Command::CN_CCRFILESTATUS:
-            case Command::CN_CCRFILESTATUSRSP:
             case Command::CN_CLAST:
             case Command::CN_CLASTRSP:
             case Command::CN_CSTART:
@@ -573,6 +553,9 @@ namespace btg
             case Command::CN_MOWRITE:
             case Command::CN_VERSION:
             case Command::CN_VERSIONRSP:
+            case Command::CN_OPSTATUS:
+            case Command::CN_OPSTATUSRSP:
+            case Command::CN_OPABORT:
                {
                   status = _command->serialize(&e);
                   break;

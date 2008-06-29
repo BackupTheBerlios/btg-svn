@@ -56,6 +56,7 @@
 
 #include "filemgr.h"
 #include <bcore/logable.h>
+#include "opid.h"
 
 namespace btg
 {
@@ -157,6 +158,12 @@ namespace btg
             /// Move a context from one session to another.
             void handleMoveContext(eventHandler* _eventhandler, 
                                    btg::core::Command* _command);
+
+            /// Handle operation status or operation abort messages.
+            /// These can be both about URL downloads and file
+            /// uploads.
+            void handleOpMessages(eventHandler* _eventhandler,
+                                  btg::core::Command* _command);
 
             /// Handle URL messages - download and status.
             void handleUrlMessages(eventHandler* _eventhandler, 
@@ -336,6 +343,9 @@ namespace btg
 #endif // BTG_OPTION_URL
             /// File manager.
             btg::daemon::fileManager filemgr;
+            /// Used to create unique ids used for tracking status of
+            /// commands or aborting the same commands.
+            btg::daemon::opId        opid;
          private:
             /// Copy constructor.
             daemonHandler(daemonHandler const& _dh);

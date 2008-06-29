@@ -24,7 +24,7 @@
 #include "clienthandler.h"
 #include "clientcallback.h"
 #include <bcore/util.h>
-#include <bcore/filestatus.h>
+#include <bcore/opstatus.h>
 #include <bcore/os/fileop.h>
 #include <bcore/os/sleep.h>
 
@@ -165,47 +165,47 @@ namespace btg
                      }
 
                   t_uint id = 0;
-                  btg::core::fileStatus status;
+                  t_uint status;
 
                   _ch->fileStatusResponse(id, status);
 
                   switch (status)
                      {
-                     case btg::core::FILES_UNDEF:
+                     case btg::core::OP_UNDEF:
                         {
                            break;
                         }
-                     case btg::core::FILES_WORKING:
+                     case btg::core::OP_WORKING:
                         {
                            _cpri->CPRI_wait("Working..");
                            break;
                         }
-                     case btg::core::FILES_FINISHED:
+                     case btg::core::OP_FINISHED:
                         {
                            _cpri->CPRI_wait("Loading finished");
                            break;
                         }
-                     case btg::core::FILES_ERROR:
+                     case btg::core::OP_ERROR:
                         {
                            op_status = false;
                            _cpri->CPRI_error("Upload failed.");
                            cont = false;
                            break;
                         }
-                     case btg::core::FILES_CREATE:
+                     case btg::core::OP_CREATE:
                         {
                            _cpri->CPRI_success(filename);
                            cont = false;
                            break;
                         }
-                     case btg::core::FILES_CREATE_ERR:
+                     case btg::core::OP_CREATE_ERR:
                         {
                            op_status = false;
                            _cpri->CPRI_error("Unable to create torrent.");
                            cont = false;
                            break;
                         }
-                     case btg::core::FILES_ABORTED:
+                     case btg::core::OP_ABORTED:
                         {
                            op_status = false;
                            _cpri->CPRI_error("Aborted.");

@@ -26,6 +26,7 @@
 #include <daemon/http/httpmgr.h>
 #include <bcore/logable.h>
 #include <bcore/urlstatus.h>
+#include <daemon/opid.h>
 
 namespace btg
 {
@@ -78,7 +79,8 @@ namespace btg
             urlManager(btg::core::LogWrapperType _logwrapper,
                        bool const _verboseFlag,
                        fileTrack* _filetrack,
-                       sessionList* _sessionlist);
+                       sessionList* _sessionlist,
+                       btg::daemon::opId & _opid);
 
             /// Handle downloads - called by timer.
             void checkUrlDownloads();
@@ -95,11 +97,13 @@ namespace btg
 
             /// Get status of a download.
             bool getStatus(const t_uint _id, 
-                           btg::core::urlStatus & _urlstat);
+                           t_uint & _urlstat);
 
             /// Get download progress.
             bool getDlProgress(const t_uint _id, 
-               t_uint & _dltotal, t_uint & _dlnow, t_uint & _dlspeed);
+                               t_uint & _dltotal, 
+                               t_uint & _dlnow, 
+                               t_uint & _dlspeed);
 
             /// Start downloading.
             t_uint addMapping(std::string const& _url, 

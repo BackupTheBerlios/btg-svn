@@ -17,40 +17,42 @@
  */
 
 /*
- * $Id: urlstatus.h 222 2008-03-21 00:55:17Z wojci $
+ * $Id$
  */
 
-#ifndef FILESTATUS_H
-#define FILESTATUS_H
+#ifndef OPID_H
+#define OPID_H
+
+#include <bcore/type.h>
+#include <bcore/logable.h>
 
 namespace btg
 {
-   namespace core
+   namespace daemon
       {
-         /**
-          * \addtogroup core
-          */
-         /** @{ */
+         /// Generate a operation ID. This is used each time a file or
+         /// url is uploaded to the daemon to track the status of the
+         /// file or url by the clients.
+         class opId: public btg::core::Logable
+            {
+            public:
+               /// Constructor.
+               opId(btg::core::LogWrapperType _logwrapper);
 
-         /// Invalid file id.
-         const t_uint FILES_INVALID_FILEID = 0;
+               /// Get a new id.
+               t_uint id();
 
-         /// Status of a download.
-         enum fileStatus
-         {
-            FILES_UNDEF      = 0, //!< Unknown.
-            FILES_WORKING    = 1, //!< Download in progress.
-            FILES_FINISHED   = 2, //!< Download finished.
-            FILES_ERROR      = 3, //!< Unable to download.
-            FILES_CREATE     = 4, //!< Context created.
-            FILES_CREATE_ERR = 5, //!< Context not created.
-            FILES_ABORTED    = 6  //!< Context aborted.
-         };
+               /// Destructor.
+               ~opId();
+            protected:
+               /// Current id.
+               t_uint current_id;
+               /// Max id.
+               const t_uint max_id;
+            };
 
-         /** @} */
-
-      } // namespace core
+      } // namespace daemon
 } // namespace btg
 
-#endif // FILESTATUS_H
+#endif // OPID_H
 

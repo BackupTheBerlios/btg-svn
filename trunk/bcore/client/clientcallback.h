@@ -29,7 +29,6 @@
 #include <bcore/trackerstatus.h>
 #include <bcore/file_info.h>
 #include <bcore/urlstatus.h>
-#include <bcore/filestatus.h>
 #include <bcore/copts.h>
 
 #include <string>
@@ -105,7 +104,7 @@ namespace btg
                      virtual void OnCreateFromFilePartError(std::string const& _errorDescription) = 0;
                      /// Received status for a download.
                      virtual void onUrlStatus(t_uint const _id, 
-                                              btg::core::urlStatus const _status) = 0;
+                                              t_uint const _status) = 0;
                      /// Received URL download progress info
                      virtual void onUrlDlProgress(t_uint const _id,
                                                   t_uint _dltotal, t_uint _dlnow, t_uint _dlspeed);
@@ -115,7 +114,7 @@ namespace btg
 
                      /// Received status for a download.
                      virtual void onFileStatus(t_uint const _id, 
-                                              btg::core::fileStatus const _status) = 0;
+                                               t_uint const _status) = 0;
 
                      /// Could not receive status for a download.
                      virtual void onFileStatusError(std::string const& _errorDescription) = 0;

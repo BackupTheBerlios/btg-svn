@@ -326,19 +326,19 @@ namespace btg
 
             /// Set URL status response.
             virtual void setUrlStatusResponse(t_uint const _id, 
-                                              btg::core::urlStatus const _status);
+                                              t_uint const _status);
 
             /// Get last received URL status.
             virtual void UrlStatusResponse(t_uint & _id, 
-                                           btg::core::urlStatus & _status) const;
+                                           t_uint & _status) const;
 
             /// Set File status response.
             virtual void setFileStatusResponse(t_uint const _id, 
-                                              btg::core::fileStatus const _status);
+                                              t_uint const _status);
 
             /// Get last received file status.
             virtual void fileStatusResponse(t_uint & _id, 
-                                           btg::core::fileStatus & _status) const;
+                                           t_uint & _status) const;
 
             /// Wait for URL loading to complete.
             /// @return true - success, URL loaded. false - URL not loaded.
@@ -497,13 +497,13 @@ namespace btg
             /// Last received URL status id.
             t_uint                            last_surl_id; 
             /// Last received URL status.
-            btg::core::urlStatus              last_surl_status;
+            t_uint                            last_surl_status;
 
             /// Last file id - the id of the file upload in progress.
             t_uint                            last_sfile_id;
 
             /// Last file status received.
-            btg::core::fileStatus             last_sfile_status;
+            t_uint                            last_sfile_status;
 
             /// Received options.
             btg::core::OptionBase             options;

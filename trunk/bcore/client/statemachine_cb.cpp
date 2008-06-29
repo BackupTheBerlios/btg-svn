@@ -43,6 +43,7 @@
 #include <bcore/command/uptime.h>
 #include <bcore/command/list.h>
 #include <bcore/command/version.h>
+#include <bcore/command/opstat.h>
 
 #include <bcore/command/context_last.h>
 #include <bcore/command/context_create.h>
@@ -60,8 +61,9 @@
 #include <bcore/command/context_stop.h>
 #include <bcore/command/context_file.h>
 #include <bcore/command/context_tracker.h>
-
 #include <bcore/command/limit.h>
+#include <bcore/opstatus.h>
+#include <bcore/client/urlhelper.h>
 
 #if BTG_STATEMACHINE_DEBUG
 #include <bcore/logmacro.h>
@@ -205,24 +207,47 @@ namespace btg
             clientcallback.onCreateFromUrl(ccfurc->id());
          }
 
-         void stateMachine::cb_CN_CURLSTATUS(btg::core::Command* _command)
+         void stateMachine::cb_CN_OPSTATUS(btg::core::Command* _command)
          {
-            contextUrlStatusResponseCommand* cusrc = dynamic_cast<contextUrlStatusResponseCommand*>(_command);
+            opStatusResponseCommand* cosrc = dynamic_cast<opStatusResponseCommand*>(_command);
 
-            clientcallback.onUrlStatus(cusrc->id(), cusrc->status());
-            
-            t_uint dltotal, dlnow, dlspeed;
-            if (cusrc->getDlProgress(dltotal, dlnow, dlspeed))
-            {
-               clientcallback.onUrlDlProgress(cusrc->id(), dltotal, dlnow, dlspeed);
-            }
+            if (cosrc->type() != opType_)
+               {
+                  // Not the expected type. 
+                  return;
+               }
+ 
+            switch (cosrc->type())
+               {
+               case btg::core::ST_URL:
+                  cb_urlOpStatus(cosrc);
+                  break;
+               case btg::core::ST_FILE:
+                  cb_fileOpStatus(cosrc);
+                  break;
+               default:
+                  break;
+               }
          }
 
-         void stateMachine::cb_CN_CCRFILESTATUS(btg::core::Command* _command)
+         void stateMachine::cb_urlOpStatus(btg::core::Command* _command)
          {
-            contextFileStatusResponseCommand* cfsrc = dynamic_cast<contextFileStatusResponseCommand*>(_command);
+            opStatusResponseCommand* cosrc = dynamic_cast<opStatusResponseCommand*>(_command);
 
-            clientcallback.onFileStatus(cfsrc->id(), cfsrc->status());
+            clientcallback.onUrlStatus(cosrc->id(), cosrc->status());
+
+            t_uint dltotal, dlnow, dlspeed;            
+            if (getDlProgress(*cosrc, dltotal, dlnow, dlspeed))
+               {
+                  clientcallback.onUrlDlProgress(cosrc->id(), dltotal, dlnow, dlspeed);
+               }
+         }
+
+         void stateMachine::cb_fileOpStatus(btg::core::Command* _command)
+         {
+            opStatusResponseCommand* cosrc = dynamic_cast<opStatusResponseCommand*>(_command);
+
+            clientcallback.onFileStatus(cosrc->id(), cosrc->status());
          }
 
          void stateMachine::cb_CN_CCREATEFROMFILERSP(btg::core::Command* _command)

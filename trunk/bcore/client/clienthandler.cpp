@@ -31,7 +31,7 @@
 #include <bcore/client/urlhelper.h>
 #include <bcore/os/sleep.h>
 #include <bcore/sbuf.h>
-#include <bcore/filestatus.h>
+#include <bcore/opstatus.h>
 
 #include "clienthandler.h"
 
@@ -86,13 +86,13 @@ namespace btg
               autoStartFlag_(_autoStartFlag),
               dht_enabled_(false),
               encryption_enabled_(false),
-              last_url_id(URLS_INVALID_URLID),
-              last_surl_id(URLS_INVALID_URLID), 
-              last_surl_status(URLS_UNDEF),
-              last_sfile_id(FILES_INVALID_FILEID),
-              last_sfile_status(FILES_UNDEF),
+              last_url_id(OPSTAT_INVALID_ID),
+              last_surl_id(OPSTAT_INVALID_ID), 
+              last_surl_status(OP_UNDEF),
+              last_sfile_id(OPSTAT_INVALID_ID),
+              last_sfile_status(OP_UNDEF),
               options(),
-              last_file_id(FILES_INVALID_FILEID),
+              last_file_id(OPSTAT_INVALID_ID),
               lastfiles(_logwrapper, _dynconfig),
               lasturls(_logwrapper, _dynconfig),
               trackerlist(),
@@ -571,28 +571,28 @@ namespace btg
          }
 
          void clientHandler::UrlStatusResponse(t_uint & _id, 
-                                               btg::core::urlStatus & _status) const
+                                               t_uint & _status) const
          {
             _id     = last_surl_id; 
             _status = last_surl_status;
          }
 
          void clientHandler::setUrlStatusResponse(t_uint const _id, 
-                                                  btg::core::urlStatus const _status)
+                                                  t_uint const _status)
          {
             last_surl_id     = _id;
             last_surl_status = _status;
          }
 
          void clientHandler::setFileStatusResponse(t_uint const _id, 
-                                                   btg::core::fileStatus const _status)
+                                                   t_uint const _status)
          {
             last_sfile_id     = _id;
             last_sfile_status = _status;
          }
 
          void clientHandler::fileStatusResponse(t_uint & _id, 
-                                                btg::core::fileStatus & _status) const
+                                                t_uint & _status) const
          {
             _id     = last_sfile_id; 
             _status = last_sfile_status;
@@ -611,39 +611,39 @@ namespace btg
                         return res;
                      }
                   t_uint id = 0;
-                  btg::core::urlStatus status;
+                  t_uint status;
 
                   UrlStatusResponse(id, status);
                   
                   switch (status)
                      {
-                     case btg::core::URLS_UNDEF:
+                     case btg::core::OP_UNDEF:
                         {
                            break;
                         }
-                     case btg::core::URLS_WORKING:
-                     case btg::core::URLS_FINISHED:
+                     case btg::core::OP_WORKING:
+                     case btg::core::OP_FINISHED:
                         {
                            break;
                         }
-                     case btg::core::URLS_ERROR:
+                     case btg::core::OP_ERROR:
                         {
                            cont = false;
                            break;
                         }
-                     case btg::core::URLS_CREATE:
+                     case btg::core::OP_CREATE:
                         {
                            res  = true;
                            cont = false;
                            break;
                         }
-                     case btg::core::URLS_CREATE_ERR:
+                     case btg::core::OP_CREATE_ERR:
                         {
                            res  = false;
                            cont = false;
                            break;
                         }
-                     case btg::core::URLS_ABORTED:
+                     case btg::core::OP_ABORTED:
                         {
                            res = false;
                            cont = false;

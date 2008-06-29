@@ -22,28 +22,26 @@
 
 #include "ui.h"
 
+#include <bcore/client/handlerthr.h>
+#include <bcore/client/urlhelper.h>
+#include <bcore/command/limit_base.h>
+#include <bcore/hrr.h>
+#include <bcore/os/sleep.h>
+#include <bcore/opstatus.h>
 #include <bcore/logmacro.h>
 
+#include "handler.h"
 #include "detailwindow.h"
 #include "helpwindow.h"
 #include "filelist.h"
 #include "fileview.h"
 #include "fileselect.h"
 #include "peerlist.h"
-
 #include "basemenu.h"
 #include "limitwindow.h"
 #include "snwindow.h"
 #include "textinput.h"
 #include "progress.h"
-
-#include <bcore/client/handlerthr.h>
-#include <bcore/client/urlhelper.h>
-#include "handler.h"
-
-#include <bcore/command/limit_base.h>
-#include <bcore/hrr.h>
-#include <bcore/os/sleep.h>
 #include "sessionselect.h"
 
 #define GET_HANDLER_INST                                                \
@@ -830,40 +828,40 @@ namespace btg
                         return res;
                      }
                   t_uint id = 0;
-                  btg::core::urlStatus status;
+                  t_uint status;
 
                   handler->UrlStatusResponse(id, status);
                   
                   switch (status)
                      {
-                     case btg::core::URLS_UNDEF:
+                     case btg::core::OP_UNDEF:
                         {
                            break;
                         }
-                     case btg::core::URLS_WORKING:
+                     case btg::core::OP_WORKING:
                         {
                            pwin.updateProgress(50, "Working.");
                            break;
                         }
-                     case btg::core::URLS_FINISHED:
+                     case btg::core::OP_FINISHED:
                         {
                            pwin.updateProgress(80, "Loaded URL.");
                            break;
                         }
-                     case btg::core::URLS_ERROR:
+                     case btg::core::OP_ERROR:
                         {
                            pwin.updateProgress(100, "Error loading URL.");
                            cont = false;
                            break;
                         }
-                     case btg::core::URLS_CREATE:
+                     case btg::core::OP_CREATE:
                         {
                            pwin.updateProgress(100, "Torrent created.");
                            res  = true;
                            cont = false;
                            break;
                         }
-                     case btg::core::URLS_CREATE_ERR:
+                     case btg::core::OP_CREATE_ERR:
                         {
                            pwin.updateProgress(100, "Unable to create torrent.");
                            res  = false;

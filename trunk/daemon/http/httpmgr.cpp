@@ -32,12 +32,11 @@ namespace btg
       {
 
          const std::string moduleName("hmgr");
-         const t_uint min_id = 1;
 
-         httpDlManager::httpDlManager(btg::core::LogWrapperType _logwrapper)
+         httpDlManager::httpDlManager(btg::core::LogWrapperType _logwrapper,
+                                      btg::daemon::opId & _opid)
          : btg::core::Logable(_logwrapper),
-           current_id(min_id),
-           max_id(0xFFFFFF),
+           opid(_opid),
            processes()
          {
             BTG_MNOTICE(logWrapper(), "constructed");
@@ -45,15 +44,7 @@ namespace btg
 
          t_uint httpDlManager::getCurrentId()
          {
-            t_uint id = current_id;
-            current_id++;
-
-            if (id > max_id)
-               {
-                  current_id = min_id;
-               }
-
-            return id;
+            return opid.id();
          }
 
          t_uint httpDlManager::Fetch(std::string const& _url,

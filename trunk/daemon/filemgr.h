@@ -34,6 +34,8 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/condition.hpp>
 
+#include <daemon/opid.h>
+
 namespace btg
 {
    namespace daemon
@@ -97,7 +99,8 @@ namespace btg
          public:
             /// Constructor.
             fileManager(btg::core::LogWrapperType _logwrapper,
-                        fileTrack* _filetrack);
+                        fileTrack* _filetrack,
+                        btg::daemon::opId & _opid);
 
             /// Add a file.
             t_uint addFile(std::string const& _dir,
@@ -154,15 +157,13 @@ namespace btg
             /// File tracker used.
             fileTrack* filetrack;
 
+            /// Used to create unique ids used for tracking status of
+            /// commands or aborting the same commands.
+            btg::daemon::opId & opid;
+
             /// Get the current ID - start() returns this ID each time
             /// its called.
             t_uint getCurrentId();
-
-            /// The current ID.
-            t_uint         current_id;
-
-            /// The max ID - used to decide when to wrap.
-            const t_uint   max_id;
             
             /// Maps ID to file information.
             std::map<t_uint, fileData> files;

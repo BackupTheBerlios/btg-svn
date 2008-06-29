@@ -59,6 +59,8 @@
 #include <bcore/command/setup.h>
 #include <bcore/command/version.h>
 #include <bcore/command/uptime.h>
+#include <bcore/command/opstat.h>
+#include <bcore/opstatus.h>
 
 #include "ext_printer.h"
 
@@ -280,20 +282,20 @@ int main(int argc, char* argv[])
                 new contextCreateFromUrlResponseCommand(urlId)
                 );
 
-   // Command::CN_CURLSTATUS
+   // Command::CN_OPSTATUS
    printCommand(cf, e, 
-                new contextUrlStatusCommand(urlId)
+                new opStatusCommand(urlId, 2 /* type */)
                 );
 
-   // Command::CN_CURLSTATUSRSP
-   btg::core::urlStatus urlstatus = URLS_WORKING;
-   btg::core::contextUrlStatusResponseCommand *usrc = new contextUrlStatusResponseCommand(urlId, urlstatus);
-   usrc->setDlProgress(0,0,0);
-   printCommand(cf, e, usrc);
+   // Command::CN_OPSTATUSRSP
+   t_uint urlstatus = btg::core::OP_WORKING;
+   btg::core::opStatusResponseCommand* cosrc = new opStatusResponseCommand(urlId, 2 /* type */, urlstatus);
+   cosrc->setData("test");
+   printCommand(cf, e, cosrc);
 
-   // Command::CN_CCREATEURLABORT
+   // Command::CN_OPABORT
    printCommand(cf, e,
-                new contextFileAbortCommand(urlId)
+                new opAbortCommand(urlId, 2 /* type */)
                 );
 
    t_uint fileId = 1;
@@ -309,30 +311,12 @@ int main(int argc, char* argv[])
                 new contextCreateFromFileResponseCommand(fileId)
                 );
 
-   // Command::CN_CCREATEFFABORT
-   printCommand(cf, e,
-                new contextFileAbortCommand(fileId)
-                );
-
    // Command::CN_CCREATEFROMFILEPART
    sBuffer data;
    printCommand(cf, e,
                 new contextCreateFromFilePartCommand(fileId,
                                                      1,
                                                      data)
-                );
-
-   // Command::CN_CCRFILESTATUS
-   printCommand(cf, e,
-                new contextFileStatusCommand(fileId)
-                );
-
-   // Command::CN_CCRFILESTATUSRSP
-   btg::core::fileStatus file_status = btg::core::FILES_WORKING;
-
-   printCommand(cf, e,
-                new contextFileStatusResponseCommand(fileId, 
-                                                     file_status)
                 );
 
    // Command::CN_VERSION

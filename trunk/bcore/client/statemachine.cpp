@@ -58,6 +58,7 @@
 #include <bcore/command/uptime.h>
 #include <bcore/command/list.h>
 #include <bcore/command/version.h>
+#include <bcore/command/opstat.h>
 
 #include <bcore/command/context_last.h>
 #include <bcore/command/context_create.h>
@@ -76,10 +77,9 @@
 #include <bcore/command/context_file.h>
 #include <bcore/command/context_move.h>
 #include <bcore/command/context_tracker.h>
-
 #include <bcore/command/limit.h>
-
 #include <bcore/btg_assert.h>
+#include <bcore/opstatus.h>
 
 #if BTG_STATEMACHINE_DEBUG
 #include <bcore/logmacro.h>
@@ -127,7 +127,8 @@ namespace btg
               read_counter(0),
               max_read_counter(15),
               min_sleep_in_ms(10),
-              verboseFlag_(_verboseFlag)
+              verboseFlag_(_verboseFlag),
+              opType_(ST_UNDEF)
          {
             expectedReply[0] = Command::CN_UNDEFINED;
             expectedReply[1] = Command::CN_UNDEFINED;
@@ -978,7 +979,8 @@ namespace btg
          {
             if (checkState(SM_COMMAND))
                {
-                  commands.push_back(new contextFileStatusCommand(_id));
+                  commands.push_back(new opStatusCommand(_id, btg::core::ST_FILE));
+                  opType_ = btg::core::ST_FILE;
                }
             SM_REQUEST_LOSS;
          }
@@ -987,7 +989,8 @@ namespace btg
          {
             if (checkState(SM_COMMAND))
                {
-                  commands.push_back(new contextFileAbortCommand(_id));
+                  commands.push_back(new opAbortCommand(_id, btg::core::ST_FILE));
+                  opType_ = btg::core::ST_FILE;
                }
             SM_REQUEST_LOSS;
          }
@@ -996,7 +999,8 @@ namespace btg
          {
             if (checkState(SM_COMMAND))
                {
-                  commands.push_back(new contextUrlAbortCommand(_id));
+                  commands.push_back(new opAbortCommand(_id, btg::core::ST_URL));
+                  opType_ = btg::core::ST_URL;
                }
             SM_REQUEST_LOSS;
          }
@@ -1005,7 +1009,8 @@ namespace btg
          {
             if (checkState(SM_COMMAND))
                {
-                  commands.push_back(new contextUrlStatusCommand(_id));
+                  commands.push_back(new opStatusCommand(_id, btg::core::ST_URL));
+                  opType_ = btg::core::ST_URL;
                }
             SM_REQUEST_LOSS;
          }
@@ -1225,15 +1230,9 @@ namespace btg
                      expectedReply[1] = Command::CN_UNDEFINED;
                      break;
                   }
-               case Command::CN_CURLSTATUS:
+               case Command::CN_OPSTATUS:
                   {
-                     expectedReply[0] = Command::CN_CURLSTATUSRSP;
-                     expectedReply[1] = Command::CN_UNDEFINED;
-                     break;
-                  }
-               case Command::CN_CCRFILESTATUS:
-                  {
-                     expectedReply[0] = Command::CN_CCRFILESTATUSRSP;
+                     expectedReply[0] = Command::CN_OPSTATUSRSP;
                      expectedReply[1] = Command::CN_UNDEFINED;
                      break;
                   }
@@ -1257,8 +1256,7 @@ namespace btg
                case Command::CN_CSETFILES:
                case Command::CN_CMOVE:
                case Command::CN_CCREATEFROMFILEPART:
-               case Command::CN_CCREATEURLABORT:
-               case Command::CN_CCREATEFFABORT:
+               case Command::CN_OPABORT:
                   {
                      ackForCommand = static_cast<Command::commandType>(_type);
                      expectedReply[0] = Command::CN_ACK;
@@ -1375,14 +1373,19 @@ namespace btg
                      clientcallback.OnCreateFromFilePart();
                      break;
                   }
-               case Command::CN_CCREATEURLABORT:
+               case Command::CN_OPABORT:
                   {
-                     clientcallback.onUrlCancel();
-                     break;
-                  }
-               case Command::CN_CCREATEFFABORT:
-                  {
-                     clientcallback.onFileCancel();
+                     switch (opType_)
+                        {
+                        case btg::core::ST_URL:
+                           clientcallback.onUrlCancel();
+                           break;
+                        case btg::core::ST_FILE:
+                           clientcallback.onFileCancel();
+                           break;
+                        default:
+                           break;
+                        }
                      break;
                   }
                default:
@@ -1486,14 +1489,9 @@ namespace btg
                      cb_CN_CCREATEFROMFILERSP(_command);
                      break;
                   }
-               case Command::CN_CURLSTATUS:
+               case Command::CN_OPSTATUS:
                   {
-                     cb_CN_CURLSTATUS(_command);
-                     break;
-                  }
-               case Command::CN_CCRFILESTATUS:
-                  {
-                     cb_CN_CCRFILESTATUS(_command);
+                     cb_CN_OPSTATUS(_command);
                      break;
                   }
                case Command::CN_CGETTRACKERS:
@@ -1588,24 +1586,34 @@ namespace btg
                               clientcallback.OnCreateFromFilePartError(errmessage);
                               break;
                            }
-                        case Command::CN_CURLSTATUS:
+                        case Command::CN_OPSTATUS:
                            {
-                              clientcallback.onUrlStatusError(errmessage);
+                              switch (opType_)
+                                 {
+                                 case btg::core::ST_URL:
+                                    clientcallback.onUrlStatusError(errmessage);
+                                    break;
+                                 case btg::core::ST_FILE:
+                                    clientcallback.onFileStatusError(errmessage);
+                                    break;
+                                 default:
+                                    break;
+                                 }
                               break;
                            }
-                        case Command::CN_CCRFILESTATUS:
+                        case Command::CN_OPABORT:
                            {
-                              clientcallback.onFileStatusError(errmessage);
-                              break;
-                           }
-                        case Command::CN_CCREATEURLABORT:
-                           {
-                              clientcallback.onUrlCancelError(errmessage);
-                              break;
-                           }
-                        case Command::CN_CCREATEFFABORT:
-                           {
-                              clientcallback.onFileCancelError(errmessage);
+                              switch (opType_)
+                                 {
+                                 case btg::core::ST_URL:
+                                    clientcallback.onUrlCancelError(errmessage);
+                                    break;
+                                 case btg::core::ST_FILE:
+                                    clientcallback.onFileCancelError(errmessage);
+                                    break;
+                                 default:
+                                    break;
+                                 }
                               break;
                            }
                            // General error callback to fallback on.

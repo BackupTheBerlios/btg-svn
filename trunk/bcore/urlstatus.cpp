@@ -20,35 +20,56 @@
  * $Id$
  */
 
-#ifndef URLSTATUS_H
-#define URLSTATUS_H
-
-#include <bcore/command/opstat.h>
+#include "urlstatus.h"
+#include "t_string.h"
+#include "util.h"
 
 namespace btg
 {
    namespace core
       {
-         /**
-          * \addtogroup core
-          */
-         /** @{ */
 
          bool getDlProgress(btg::core::opStatusResponseCommand const & _cosrc,
                             t_uint & _dltotal, 
                             t_uint & _dlnow, 
-                            t_uint & _dlspeed);
+                            t_uint & _dlspeed)
+         {
+            std::string input = _cosrc.data();
+
+            if (input.size() == 0)
+               {
+                  return false;
+               }
+
+            t_strList sl = btg::core::Util::splitLine(input, ",");
+            
+            if (sl.size() < 2)
+               {
+                  return false;
+               }
+
+            _dltotal = btg::core::convertStringTo<t_uint>(sl[0]);
+            _dlnow   = btg::core::convertStringTo<t_uint>(sl[1]);
+            _dlspeed = btg::core::convertStringTo<t_uint>(sl[2]);
+
+            return true;
+         }
          
-         /// Set the download progress info.
          void setDlProgress(btg::core::opStatusResponseCommand & _cosrc,
                             t_uint const _dltotal, 
                             t_uint const _dlnow, 
-                            t_uint const _dlspeed);
+                            t_uint const _dlspeed)
+         {
+            std::string output = 
+               btg::core::convertToString<t_uint>(_dltotal) + "," + 
+               btg::core::convertToString<t_uint>(_dlnow) + "," + 
+               btg::core::convertToString<t_uint>(_dlspeed);
 
-         /** @} */
+            _cosrc.setData(output);
+         }
 
       } // namespace core
 } // namespace btg
 
-#endif // URLSTATUS_H
+
 

@@ -39,8 +39,9 @@
 #include <bcore/command/context_move.h>
 #include <bcore/command/context_create.h>
 #include <bcore/command/context_create_url.h>
-
 #include <bcore/verbose.h>
+#include <bcore/opstatus.h>
+
 #include "modulelog.h"
 
 #include <bcore/btg_assert.h>
@@ -107,9 +108,10 @@ namespace btg
            sendBuffer_(),
            cf_(_logwrapper, *_dd->externalization),
 #if BTG_OPTION_URL
-           urlmgr(_logwrapper, _verboseFlag, _dd->filetrack, &sessionlist_),
+           urlmgr(_logwrapper, _verboseFlag, _dd->filetrack, &sessionlist_, opid),
 #endif
-           filemgr(_logwrapper, _dd->filetrack)
+           filemgr(_logwrapper, _dd->filetrack, opid),
+           opid(_logwrapper)
       {
          /// Set the initial limits.
          limitManager_.set(_dd->config->getUploadRateLimit(),
@@ -274,9 +276,14 @@ namespace btg
                               break;
                            }
 
+                        case Command::CN_OPABORT:
+                        case Command::CN_OPSTATUS:
+                           {
+                              handleOpMessages(eventhandler, currentCmd);
+                              break;
+                           }
+
                         case Command::CN_CCREATEFROMURL:
-                        case Command::CN_CURLSTATUS:
-                        case Command::CN_CCREATEURLABORT:
                            {
                               handleUrlMessages(eventhandler, currentCmd);
                               break;
@@ -284,8 +291,6 @@ namespace btg
 
                         case Command::CN_CCREATEFROMFILE:
                         case Command::CN_CCREATEFROMFILEPART:
-                        case Command::CN_CCRFILESTATUS:
-                        case Command::CN_CCREATEFFABORT:
                            {
                               handleCreateFileMessages(eventhandler, currentCmd);
                               break;
@@ -1012,6 +1017,43 @@ namespace btg
          return status;
       }
 
+      void daemonHandler::handleOpMessages(eventHandler* _eventhandler,
+                                           btg::core::Command* _command)
+      {
+         // Find out which kind of op message was received.
+         switch (_command->getType())
+            {
+            case Command::CN_OPABORT:
+               {
+                  opAbortCommand* coac = dynamic_cast<opAbortCommand*>(_command);
+                  switch (coac->type())
+                     {
+                     case btg::core::ST_URL:
+                        handleUrlMessages(_eventhandler, _command);
+                        break;
+                     case btg::core::ST_FILE:
+                        handleCreateFileMessages(_eventhandler, _command);
+                        break;
+                     }
+                  break;
+               }
+            case Command::CN_OPSTATUS:
+               {
+                  opStatusCommand* cosc = dynamic_cast<opStatusCommand*>(_command);
+                  switch (cosc->type())
+                     {
+                     case btg::core::ST_URL:
+                        handleUrlMessages(_eventhandler, _command);
+                        break;
+                     case btg::core::ST_FILE:
+                        handleCreateFileMessages(_eventhandler, _command);
+                        break;
+                     }
+                  break;
+               }
+            }
+      }
+
       void daemonHandler::handleUrlMessages(eventHandler* _eventhandler, 
                                             btg::core::Command* _command)
       {
@@ -1026,12 +1068,12 @@ namespace btg
                   handle_CN_CCREATEFROMURL(_eventhandler, _command);
                   break;
                }
-            case Command::CN_CURLSTATUS:
+            case Command::CN_OPSTATUS:
                {
                   handle_CN_CURLSTATUS(_command);
                   break;
                }
-            case Command::CN_CCREATEURLABORT:
+            case Command::CN_OPABORT:
                {
                   handle_CN_CCREATEURLABORT(_command);
                   break;
@@ -1063,12 +1105,12 @@ namespace btg
                   handle_CN_CCREATEFROMFILEPART(_eventhandler, _command);
                   break;
                }
-            case Command::CN_CCRFILESTATUS:
+            case Command::CN_OPSTATUS:
                {
                   handle_CN_CCRFILESTATUS(_command);
                   break;
                }
-            case Command::CN_CCREATEFFABORT:
+            case Command::CN_OPABORT:
                {
                   handle_CN_CCREATEFFABORT(_command);
                   break;

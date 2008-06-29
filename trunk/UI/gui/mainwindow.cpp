@@ -66,6 +66,7 @@
 
 #include <bcore/hrr.h>
 #include <bcore/hru.h>
+#include <bcore/opstatus.h>
 
 #define GET_HANDLER_INST \
    boost::shared_ptr<boost::mutex> ptr = handlerthread.mutex(); \
@@ -724,17 +725,17 @@ namespace btg
                            return;
                         }
                      t_uint id = 0;
-                     btg::core::urlStatus status;
+                     t_uint status;
    
                      handler->UrlStatusResponse(id, status);
    
                      switch (status)
                         {
-                        case btg::core::URLS_UNDEF:
+                        case btg::core::OP_UNDEF:
                            {
                               break;
                            }
-                        case btg::core::URLS_WORKING:
+                        case btg::core::OP_WORKING:
                            {
                               t_uint progress = 10;
                               t_uint total, now, speed;
@@ -763,12 +764,12 @@ namespace btg
                               pd.updateProgress(progress, msg);
                               break;
                            }
-                        case btg::core::URLS_FINISHED:
+                        case btg::core::OP_FINISHED:
                            {
                               pd.updateProgress(90, "Loaded URL.");
                               break;
                            }
-                        case btg::core::URLS_ERROR:
+                        case btg::core::OP_ERROR:
                            {
                               pd.updateProgress(0, "Error loading URL.");
 
@@ -778,7 +779,7 @@ namespace btg
 
                               break;
                            }
-                        case btg::core::URLS_CREATE:
+                        case btg::core::OP_CREATE:
                            {
                               pd.updateProgress(100, "Torrent created.");
 
@@ -788,7 +789,7 @@ namespace btg
 
                               break;
                            }
-                        case btg::core::URLS_CREATE_ERR:
+                        case btg::core::OP_CREATE_ERR:
                            {
                               pd.updateProgress(0, "Unable to create torrent.");
 

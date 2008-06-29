@@ -24,7 +24,6 @@
 #define COMMAND_CREATE_CONTEXT_FILE_H
 
 #include <bcore/command/context.h>
-#include <bcore/filestatus.h>
 #include <bcore/sbuf.h>
 #include <string>
 
@@ -157,97 +156,6 @@ namespace btg
          t_uint  part_;
          /// Data.
          sBuffer data_;
-      };
-
-      /// Get the status of a file download.
-      class contextFileStatusCommand: public Command
-      {
-      public:
-         /// Constructor.
-         contextFileStatusCommand();
-
-         /// Constructor.
-         /// @param [in] _id The id of the file the daemon is downloading.
-         contextFileStatusCommand(t_uint const _id);
-
-         bool serialize(btg::core::externalization::Externalization* _e) const;
-         bool deserialize(btg::core::externalization::Externalization* _e);
-
-         /// Get the contained id.
-         t_uint id() const
-         {
-            return id_;
-         }
-
-         /// Destructor.
-         virtual ~contextFileStatusCommand();
-      private:
-         /// The id of the file to load.
-         t_uint id_;
-      };
-
-      /// Status of a file download.
-      class contextFileStatusResponseCommand: public Command
-      {
-      public:
-         /// Constructor.
-         contextFileStatusResponseCommand();
-
-         /// Constructor.
-         /// @param [in] _id     The ID of the file the daemon is downloading.
-         /// @param [in] _status The status.
-         contextFileStatusResponseCommand(t_uint _id, 
-                                          btg::core::fileStatus const _status);
-
-         bool serialize(btg::core::externalization::Externalization* _e) const;
-         bool deserialize(btg::core::externalization::Externalization* _e);
-
-         /// Get the contained id.
-         t_uint id() const
-         {
-            return id_;
-         }
-         
-         /// Get the contained status.
-         btg::core::fileStatus status() const
-            {
-               return status_;
-            }
-
-         /// Destructor.
-         virtual ~contextFileStatusResponseCommand();
-      private:
-         /// The id of the file to load.
-         t_uint id_;
-         /// Status.
-         btg::core::fileStatus status_;
-      };
-
-      /// Get the status of a URL download.
-      class contextFileAbortCommand: public Command
-      {
-      public:
-         /// Constructor.
-         contextFileAbortCommand();
-
-         /// Constructor.
-         /// @param [in] _id The id of the URL the daemon is downloading.
-         contextFileAbortCommand(t_uint const _id);
-
-         bool serialize(btg::core::externalization::Externalization* _e) const;
-         bool deserialize(btg::core::externalization::Externalization* _e);
-
-         /// Get the contained id.
-         t_uint id() const
-         {
-            return id_;
-         }
-
-         /// Destructor.
-         virtual ~contextFileAbortCommand();
-      private:
-         /// The id of the url to load.
-         t_uint id_;
       };
 
       /** @} */

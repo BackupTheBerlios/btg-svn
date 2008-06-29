@@ -32,6 +32,7 @@
 #include "httpif.h"
 #include "curlif.h"
 #include "httpproc.h"
+#include <daemon/opid.h>
 
 namespace btg
 {
@@ -49,7 +50,8 @@ namespace btg
          {
          public:
             /// Constructor.
-            httpDlManager(btg::core::LogWrapperType _logwrapper);
+            httpDlManager(btg::core::LogWrapperType _logwrapper,
+                          btg::daemon::opId & _opid);
 
             /// Download an URL.
             t_uint Fetch(std::string const& _url,
@@ -80,10 +82,9 @@ namespace btg
             /// its called.
             t_uint getCurrentId();
 
-            /// The current ID.
-            t_uint         current_id;
-            /// The max ID - used to decide when to wrap.
-            const t_uint   max_id;
+            /// Used to create unique ids used for tracking status of
+            /// commands or aborting the same commands.
+            btg::daemon::opId & opid;
 
             /// Threads used to download.
             std::map<t_uint, boost::shared_ptr<httpProcess> > processes;

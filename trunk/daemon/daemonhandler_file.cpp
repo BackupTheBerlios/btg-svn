@@ -25,6 +25,7 @@
 #include <bcore/command/context_create_file.h>
 #include <bcore/verbose.h>
 #include <bcore/util.h>
+#include <bcore/opstatus.h>
 
 #include "modulelog.h"
 #include "filetrack.h"
@@ -141,55 +142,55 @@ namespace btg
       {
          MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
 
-         contextFileStatusCommand* cfsc = dynamic_cast<contextFileStatusCommand*>(_command);
+         opStatusCommand* cosc = dynamic_cast<opStatusCommand*>(_command);
 
-         t_uint id = cfsc->id();
+         t_uint id = cosc->id();
          fileData::Status s = filemgr.getStatus(id);
 
-         btg::core::fileStatus status = FILES_UNDEF;
+         t_uint status = btg::core::OP_UNDEF;
 
          switch (s)
             {
             case fileData::UNDEF:
                {
                   // Wrong ID.
-                  status = FILES_UNDEF;
+                  status = btg::core::OP_UNDEF;
                   break;
                }
             case fileData::INIT:
             case fileData::WORK:
                {
-                  status = FILES_WORKING;
+                  status = btg::core::OP_WORKING;
                   break;
                }
             case fileData::DONE:
                {
-                  status = FILES_FINISHED;
+                  status = btg::core::OP_FINISHED;
                   break;
                }
             case fileData::DLERROR:
                {
-                  status = FILES_ERROR;
+                  status = btg::core::OP_ERROR;
                   break;
                }
             case fileData::CREATED:
                {
-                  status = FILES_CREATE;
+                  status = btg::core::OP_CREATE;
                   break;
                }
             case fileData::CREATE_ERROR:
                {
-                  status = FILES_CREATE_ERR;
+                  status = btg::core::OP_CREATE_ERR;
                   break;
                }
             case fileData::ABORTED:
                {
-                  status = FILES_ABORTED;
+                  status = btg::core::OP_ABORTED;
                   break;
                }
             }
          
-         if (status == FILES_UNDEF)
+         if (status == btg::core::OP_UNDEF)
             {
                sendError(_command->getType(), "Unknown file id.");
             }
@@ -198,7 +199,10 @@ namespace btg
                sendCommand(dd_->externalization,
                            dd_->transport,
                            connectionID_,
-                           new contextFileStatusResponseCommand(id, status));
+
+                           new opStatusResponseCommand(id, 
+                                                              btg::core::ST_FILE, 
+                                                              status));
             }
       }
 
@@ -206,9 +210,9 @@ namespace btg
       {
          MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
 
-         contextFileAbortCommand* cfac = static_cast<contextFileAbortCommand*>(_command);
+         opAbortCommand* coac = static_cast<opAbortCommand*>(_command);
 
-         t_uint id = cfac->id();
+         t_uint id = coac->id();
 
          if (filemgr.abort(id))
             {

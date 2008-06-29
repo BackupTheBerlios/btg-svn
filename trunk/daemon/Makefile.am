@@ -28,6 +28,7 @@ noinst_LTLIBRARIES   = libdaemon.la
 
 noinst_HEADERS = $(CALLBACKHEADERS) $(SSHEADERS) filetrackdata.h filetrack.h connectionhandler.h context.h \
                  eventhandler.h darg.h \
+                 opid.h \
                  dconfig.h daemon.h daemondata.h \
                  daemonhandler.h \
                  filemgr.h $(URL_HEADER) \
@@ -40,6 +41,7 @@ noinst_HEADERS = $(CALLBACKHEADERS) $(SSHEADERS) filetrackdata.h filetrack.h con
                  connectionextrastate.h
 
 libdaemon_la_SOURCES = dconfig.cpp darg.cpp \
+                       opid.cpp \
                        filetrackdata.cpp filetrack.cpp connectionhandler.cpp \
                        session_list.cpp portmgr.cpp \
                        limitval.cpp limitmgr.cpp daemondata.cpp \

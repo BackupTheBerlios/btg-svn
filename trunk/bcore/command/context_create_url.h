@@ -24,7 +24,6 @@
 #define COMMAND_CREATE_CONTEXT_URL_H
 
 #include <bcore/command/context.h>
-#include <bcore/urlstatus.h>
 #include <string>
 
 namespace btg
@@ -114,124 +113,7 @@ namespace btg
          /// The id of the url to load.
          t_uint id_;
       };
-
-      /// Get the status of a URL download.
-      class contextUrlStatusCommand: public Command
-      {
-      public:
-         /// Constructor.
-         contextUrlStatusCommand();
-
-         /// Constructor.
-         /// @param [in] _id The id of the URL the daemon is downloading.
-         contextUrlStatusCommand(t_uint const _id);
-
-         bool serialize(btg::core::externalization::Externalization* _e) const;
-         bool deserialize(btg::core::externalization::Externalization* _e);
-
-         /// Get the contained id.
-         t_uint id() const
-         {
-            return id_;
-         }
-
-         /// Destructor.
-         virtual ~contextUrlStatusCommand();
-      private:
-         /// The id of the url to load.
-         t_uint id_;
-      };
-
-      /// Status of a URL download.
-      class contextUrlStatusResponseCommand: public Command
-      {
-      public:
-         /// Constructor.
-         contextUrlStatusResponseCommand();
-
-         /// Constructor.
-         /// @param [in] _id     The ID of the URL the daemon is downloading.
-         /// @param [in] _status The status.
-         contextUrlStatusResponseCommand(t_uint _id, 
-                                         btg::core::urlStatus const _status);
-
-         bool serialize(btg::core::externalization::Externalization* _e) const;
-         bool deserialize(btg::core::externalization::Externalization* _e);
-
-         /// Get the contained id.
-         t_uint id() const
-         {
-            return id_;
-         }
-         
-         /// Get the contained status.
-         btg::core::urlStatus status() const
-         {
-            return status_;
-         }
-         
-         /// Get progress information.
-         bool getDlProgress(t_uint &_dltotal, t_uint &_dlnow, t_uint &_dlspeed) const
-         {
-            _dltotal = dltotal_;
-            _dlnow = dlnow_;
-            _dlspeed = dlspeed_;
-            return bDlProgress_;
-         }
-         
-         /// Set the download progress info
-         void setDlProgress(t_uint _dltotal, t_uint _dlnow, t_uint _dlspeed)
-         {
-            bDlProgress_ = true;
-            dltotal_ = _dltotal;
-            dlnow_ = _dlnow;
-            dlspeed_ = _dlspeed;
-         }
-
-         /// Destructor.
-         virtual ~contextUrlStatusResponseCommand();
-      private:
-         /// The id of the url to load.
-         t_uint id_;
-         /// Status.
-         btg::core::urlStatus status_;
-         /// Whether download progress info present
-         bool bDlProgress_;
-         /// Total bytes to go
-         t_uint dltotal_;
-         /// Bytes already downloaded
-         t_uint dlnow_;
-         /// download speed
-         t_uint dlspeed_;
-      };
-
-      /// Get the status of a URL download.
-      class contextUrlAbortCommand: public Command
-      {
-      public:
-         /// Constructor.
-         contextUrlAbortCommand();
-
-         /// Constructor.
-         /// @param [in] _id The id of the URL the daemon is downloading.
-         contextUrlAbortCommand(t_uint const _id);
-
-         bool serialize(btg::core::externalization::Externalization* _e) const;
-         bool deserialize(btg::core::externalization::Externalization* _e);
-
-         /// Get the contained id.
-         t_uint id() const
-         {
-            return id_;
-         }
-
-         /// Destructor.
-         virtual ~contextUrlAbortCommand();
-      private:
-         /// The id of the url to load.
-         t_uint id_;
-      };
-
+      
       /** @} */
 
    } // namespace core
