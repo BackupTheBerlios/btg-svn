@@ -142,7 +142,7 @@ namespace btg
       {
          MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
 
-         opStatusCommand* cosc = dynamic_cast<opStatusCommand*>(_command);
+         btg::core::opStatusCommand* cosc = dynamic_cast<btg::core::opStatusCommand*>(_command);
 
          t_uint id = cosc->id();
          fileData::Status s = filemgr.getStatus(id);
@@ -200,9 +200,9 @@ namespace btg
                            dd_->transport,
                            connectionID_,
 
-                           new opStatusResponseCommand(id, 
-                                                              btg::core::ST_FILE, 
-                                                              status));
+                           new btg::core::opStatusResponseCommand(id, 
+                                                                  btg::core::ST_FILE, 
+                                                                  status));
             }
       }
 
@@ -210,7 +210,7 @@ namespace btg
       {
          MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
 
-         opAbortCommand* coac = static_cast<opAbortCommand*>(_command);
+         btg::core::opAbortCommand* coac = static_cast<btg::core::opAbortCommand*>(_command);
 
          t_uint id = coac->id();
 
