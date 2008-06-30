@@ -60,6 +60,7 @@
 #include <bcore/file_info.h>
 
 #include <bcore/client/clientdynconfig.h>
+#include <bcore/client/filephelper.h>
 #include <bcore/project.h>
 #include <bcore/btg_assert.h>
 #include <bcore/os/sleep.h>
@@ -674,7 +675,7 @@ namespace btg
          {
             GET_HANDLER_INST;
 
-            if (btg::core::client::createParts(logWrapper(), handler, this, _filename))
+            if (btg::core::client::createParts(logWrapper(), *handler, *this, _filename))
                {
                   msb->set(USERMESSAGE_ADDED_B + _filename + USERMESSAGE_ADDED_E);
                   logVerboseMessage(USERMESSAGE_ADDED_B + _filename + USERMESSAGE_ADDED_E);

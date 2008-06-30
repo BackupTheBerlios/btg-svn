@@ -35,7 +35,7 @@
 #include <bcore/client/clientcallback.h>
 #include <bcore/client/clienthandler.h>
 #include <bcore/client/configuration.h>
-#include <bcore/client/filephelper.h>
+#include <bcore/client/cpif.h>
 #include <bcore/client/helper.h>
 
 #include "clicmd.h"
@@ -57,7 +57,7 @@ namespace btg
                class cliHandler : 
                public btg::core::client::clientCallback, 
                   public btg::core::client::clientHandler,
-                  private btg::core::client::createPartsReportInterface
+                  private btg::core::client::createProgressIf
                   {
                   public:
                      /// Used to react to the different kinds of inputs from the user.
@@ -114,11 +114,14 @@ namespace btg
                      /// Destructor.
                      virtual ~cliHandler();
                   private:
-                     void CPRI_init(std::string const& _filename);
-                     void CPRI_pieceUploaded(t_uint _number, t_uint _parts);
-                     void CPRI_error(std::string const& _error);
-                     void CPRI_wait(std::string const& _msg);
-                     void CPRI_success(std::string const& _filename);
+                     void CPIF_begin(std::string const& _filename);
+                     void CPIF_begin(std::string const& _filename, 
+                                     std::string const& _url);
+                     void CPIF_filePiece(t_uint _number, t_uint _parts);
+                     void CPIF_urlDlStatus(t_uint _total, t_uint _now, t_uint _speed);
+                     void CPIF_error(std::string const& _error);
+                     void CPIF_wait(std::string const& _msg);
+                     void CPIF_success(std::string const& _filename);
                   private:
                      /// Read, deserialize and act on a response for a specific command.
                      /// Responses: specific, ack, error.

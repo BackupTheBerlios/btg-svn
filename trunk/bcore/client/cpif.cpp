@@ -20,51 +20,58 @@
  * $Id$
  */
 
-#include "cli.h"
+#include "cpif.h"
 
 namespace btg
 {
-   namespace UI
+   namespace core
    {
-      namespace cli
+      namespace client
       {
-         void cliHandler::CPIF_begin(std::string const& _filename)
+
+         createProgressIf::createProgressIf()
+            : url_(false),
+              continue_(true)
          {
-            
          }
 
-         void cliHandler::CPIF_begin(std::string const& _filename, 
-                                     std::string const& _url)
+         void createProgressIf::CPIF_init(bool _url)
          {
-
+            url_ = _url;
          }
 
-         void cliHandler::CPIF_filePiece(t_uint _number, t_uint _parts)
+         void createProgressIf::CPIF_reset()
          {
-
+            continue_ = true;
          }
 
-         void cliHandler::CPIF_urlDlStatus(t_uint _total, t_uint _now, t_uint _speed)
+         void createProgressIf::CPIF_cancel()
          {
-
+            continue_ = false;
          }
 
-         void cliHandler::CPIF_error(std::string const& _error)
+         bool createProgressIf::CPIF_continue() const
          {
-            setError(_error);
+            return continue_;
          }
 
-         void cliHandler::CPIF_wait(std::string const& _msg)
+         bool createProgressIf::CPIF_url() const
          {
-            
+            return url_;
+         }
+         
+         bool createProgressIf::CPIF_file() const
+         {
+            return !url_;
          }
 
-         void cliHandler::CPIF_success(std::string const& _filename)
+         createProgressIf::~createProgressIf()
          {
-            setOutput("Created '" + _filename + "'");
          }
 
-      } // namespace cli
-   } // namespace UI
-} // namespace btg
+      } // client
+   } // core
+} // btg
+
+
 

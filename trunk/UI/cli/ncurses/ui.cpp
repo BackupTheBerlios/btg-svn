@@ -61,7 +61,7 @@ namespace btg
                 Colors & _colors,
                 btg::core::client::handlerThread& _handlerthread)
             : btg::core::Logable(_logwrapper),
-              btg::core::client::createPartsReportInterface(),
+              btg::core::client::createProgressIf(),
               progress_(0),
               session_(_session),
               neverAskQuestions_(_neverAskQuestions),

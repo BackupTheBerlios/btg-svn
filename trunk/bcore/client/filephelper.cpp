@@ -36,35 +36,9 @@ namespace btg
    {
       namespace client
       {
-         createPartsReportInterface::createPartsReportInterface()
-            : continue_(true)
-         {
-         }
-
-         void createPartsReportInterface::CPRI_reset()
-         {
-            continue_ = true;
-         }
-
-         void createPartsReportInterface::CPRI_cancel()
-         {
-            continue_ = false;
-         }
-
-         bool createPartsReportInterface::CPRI_continue() const
-         {
-            return continue_;
-         }
-
-         createPartsReportInterface::~createPartsReportInterface()
-         {
-         }
-
-         /* */
-
          bool createParts(btg::core::LogWrapperType _logwrapper,
-                          clientHandler* _ch,
-                          createPartsReportInterface* _cpri,
+                          clientHandler & _ch,
+                          createProgressIf & _cpif,
                           std::string const& _filename,
                           t_uint const _partSize)
          {
@@ -74,11 +48,13 @@ namespace btg
             std::string filename;
             Util::getFileFromPath(_filename, filename);
 
-            _cpri->CPRI_init(filename);
+            _cpif.CPIF_init(false /* file */);
+            _cpif.CPIF_begin(filename);
+            
 
-            if (!_cpri->CPRI_continue())
+            if (!_cpif.CPIF_continue())
                {
-                  _cpri->CPRI_error("Cancelled.");
+                  _cpif.CPIF_error("Cancelled.");
                   return false;
                }
 
@@ -86,7 +62,7 @@ namespace btg
             sBuffer tf;
             if (!tf.read(fullfilename))
                {
-                  _cpri->CPRI_error("Unable to read input file.");
+                  _cpif.CPIF_error("Unable to read input file.");
                   BTG_NOTICE(_logwrapper, "Error: Unable to read file '" << _filename << "'.");
                   return false;
                }
@@ -96,30 +72,30 @@ namespace btg
             std::vector<sBuffer> buffers;
             if (!tf.split(_partSize, buffers))
                {
-                  _cpri->CPRI_error("Unable to split buffer.");
+                  _cpif.CPIF_error("Unable to split buffer.");
                   BTG_NOTICE(_logwrapper, "Error: Unable to split buffer.");
                   return false;
                }
 
-            if (!_cpri->CPRI_continue())
+            if (!_cpif.CPIF_continue())
                {
-                  _cpri->CPRI_error("Cancelled.");
+                  _cpif.CPIF_error("Cancelled.");
                   return false;
                }
             
             t_uint part = 0;
             t_uint nop  = buffers.size();
 
-            _ch->reqCreateFromFile(filename, nop);
+            _ch.reqCreateFromFile(filename, nop);
 
-            if (!_ch->commandSuccess())
+            if (!_ch.commandSuccess())
                {
-                  _cpri->CPRI_error("(daemon) Unable to create file.");
+                  _cpif.CPIF_error("(daemon) Unable to create file.");
                   BTG_NOTICE(_logwrapper, "Error: Creating file failed.");
                   return false;
                }
 
-            t_uint id = _ch->getFileId();
+            t_uint id = _ch.getFileId();
 
             for (std::vector<sBuffer>::const_iterator iter = buffers.begin();
                  iter != buffers.end();
@@ -127,47 +103,47 @@ namespace btg
                {
                   BTG_NOTICE(_logwrapper, "Sending part " << part << ".");
 
-                  _ch->reqTransmitFilePart(id, 
-                                           part,
-                                           *iter);
+                  _ch.reqTransmitFilePart(id, 
+                                          part,
+                                          *iter);
 
-                  if (!_ch->commandSuccess())
+                  if (!_ch.commandSuccess())
                      {
-                        _cpri->CPRI_error("Sending file parts failed.");
+                        _cpif.CPIF_error("Sending file parts failed.");
                         BTG_NOTICE(_logwrapper, "Sending part failed.");
                         return false;
                      }
 
-                  if (!_cpri->CPRI_continue())
+                  if (!_cpif.CPIF_continue())
                      {
-                        _ch->reqCancelFile(id);
-                        _cpri->CPRI_error("Cancelled.");
+                        _ch.reqCancelFile(id);
+                        _cpif.CPIF_error("Cancelled.");
                         return false;
                      }
 
-                  _cpri->CPRI_pieceUploaded(part, nop);
+                  _cpif.CPIF_filePiece(part, nop);
                   part++;
                }
 
             BTG_NOTICE(_logwrapper, "All parts sent.");
-            _cpri->CPRI_wait("File sent.");
+            _cpif.CPIF_wait("File sent.");
 
             // Wait for the daemon to create the file.
             bool op_status = true;
             bool cont = true;
             while (cont)
                {
-                  _ch->reqFileStatus(id);
-                  if (!_ch->commandSuccess())
+                  _ch.reqFileStatus(id);
+                  if (!_ch.commandSuccess())
                      {
-                        _cpri->CPRI_error("Comm error.");
+                        _cpif.CPIF_error("Comm error.");
                         return false;
                      }
 
                   t_uint id = 0;
                   t_uint status;
 
-                  _ch->fileStatusResponse(id, status);
+                  _ch.fileStatusResponse(id, status);
 
                   switch (status)
                      {
@@ -177,38 +153,38 @@ namespace btg
                         }
                      case btg::core::OP_WORKING:
                         {
-                           _cpri->CPRI_wait("Working..");
+                           _cpif.CPIF_wait("Working..");
                            break;
                         }
                      case btg::core::OP_FINISHED:
                         {
-                           _cpri->CPRI_wait("Loading finished");
+                           _cpif.CPIF_wait("Loading finished");
                            break;
                         }
                      case btg::core::OP_ERROR:
                         {
                            op_status = false;
-                           _cpri->CPRI_error("Upload failed.");
+                           _cpif.CPIF_error("Upload failed.");
                            cont = false;
                            break;
                         }
                      case btg::core::OP_CREATE:
                         {
-                           _cpri->CPRI_success(filename);
+                           _cpif.CPIF_success(filename);
                            cont = false;
                            break;
                         }
                      case btg::core::OP_CREATE_ERR:
                         {
                            op_status = false;
-                           _cpri->CPRI_error("Unable to create torrent.");
+                           _cpif.CPIF_error("Unable to create torrent.");
                            cont = false;
                            break;
                         }
                      case btg::core::OP_ABORTED:
                         {
                            op_status = false;
-                           _cpri->CPRI_error("Aborted.");
+                           _cpif.CPIF_error("Aborted.");
                            cont = false;
                            break;
                         }

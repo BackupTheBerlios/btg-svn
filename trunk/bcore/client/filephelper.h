@@ -25,8 +25,8 @@
 
 #include <bcore/type.h>
 #include <bcore/logable.h>
-
 #include <string>
+#include "cpif.h"
 
 namespace btg
 {
@@ -39,46 +39,6 @@ namespace btg
           */
          /** @{ */
 
-         /// Interface used to report status of a file upload to an
-         /// application.
-         class createPartsReportInterface
-         {
-         public:
-            /// Constructor.
-            createPartsReportInterface();
-
-            /// Initialize.
-            virtual void CPRI_init(std::string const& _filename) = 0;
-
-            /// Piece a of b total uploaded.
-            virtual void CPRI_pieceUploaded(t_uint _number, t_uint _parts) = 0;
-
-            /// Error.
-            virtual void CPRI_error(std::string const& _error) = 0;
-
-            /// Waiting for the daemon to create the context.
-            virtual void CPRI_wait(std::string const& _msg) = 0;
-
-            /// File uploaded and created.
-            virtual void CPRI_success(std::string const& _filename) = 0;
-
-            /// Reset the cancel flag.
-            virtual void CPRI_reset();
-
-            /// Cancel the current download.
-            virtual void CPRI_cancel();
-
-            /// Indicate if the current download should be cancelled.
-            virtual bool CPRI_continue() const;
-
-            /// Destructor.
-            virtual ~createPartsReportInterface();
-         protected:
-            /// Flag used to indicate if the download should be
-            /// cancelled.
-            bool continue_;
-         };
-
          /// Create a context, sending parts of it one at a time.
          /// @param [in] _logwrapper Log wrapper object.
          /// @param [in] _ch         Pointer to client handler instance. 
@@ -87,8 +47,8 @@ namespace btg
          /// @param [in] _partSize   The size of the chunks the upload consists of.
          /// @return True - torrent uploaded and created, false - otherwise.
          bool createParts(btg::core::LogWrapperType _logwrapper,
-                          class clientHandler* _ch,
-                          createPartsReportInterface* _cpri,
+                          class clientHandler & _ch,
+                          createProgressIf & _cpif,
                           std::string const& _filename,
                           t_uint const _partSize = (64*1024));
 

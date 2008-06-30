@@ -52,7 +52,7 @@ namespace btg
                /** @{ */
 
                /// Main UI class.
-               class UI: private btg::core::Logable, private btg::core::client::createPartsReportInterface
+               class UI: private btg::core::Logable, private btg::core::client::createProgressIf
                   {
                   public:
                      /// Constructor.
@@ -134,11 +134,14 @@ namespace btg
                      /// Destructor.
                      virtual ~UI();
                   private:
-                     void CPRI_init(std::string const& _filename);
-                     void CPRI_pieceUploaded(t_uint _number, t_uint _parts);
-                     void CPRI_error(std::string const& _error);
-                     void CPRI_wait(std::string const& _msg);
-                     void CPRI_success(std::string const& _filename);
+                     void CPIF_begin(std::string const& _filename);
+                     void CPIF_begin(std::string const& _filename, 
+                                     std::string const& _url);
+                     void CPIF_filePiece(t_uint _number, t_uint _parts);
+                     void CPIF_urlDlStatus(t_uint _total, t_uint _now, t_uint _speed);
+                     void CPIF_error(std::string const& _error);
+                     void CPIF_wait(std::string const& _msg);
+                     void CPIF_success(std::string const& _filename);
 
                      /// Pointer to a progress window used.
                      progressWindow* progress_;

@@ -30,7 +30,7 @@ namespace btg
    {
       namespace cli
       {
-         void UI::CPRI_init(std::string const& _filename)
+         void UI::CPIF_begin(std::string const& _filename)
          {
             windowSize dimensions;
             mainwindow_.getSize(dimensions);
@@ -38,7 +38,16 @@ namespace btg
             progress_ = new progressWindow(dimensions, keymap_);
          }
 
-         void UI::CPRI_pieceUploaded(t_uint _number, t_uint _parts)
+         void UI::CPIF_begin(std::string const& _filename, 
+                             std::string const& _url)
+         {
+            windowSize dimensions;
+            mainwindow_.getSize(dimensions);
+
+            progress_ = new progressWindow(dimensions, keymap_);
+         }
+
+         void UI::CPIF_filePiece(t_uint _number, t_uint _parts)
          {
             if (progress_)
                {
@@ -51,7 +60,22 @@ namespace btg
                }
          }
 
-         void UI::CPRI_error(std::string const& _error)
+         void UI::CPIF_urlDlStatus(t_uint _total, t_uint _now, t_uint _speed)
+         {
+            if (_total > 0)
+               {
+                  t_uint p = static_cast<t_uint>(((_now * 100) / _total) * 0.9);
+
+                  std::string percent = btg::core::convertToString<t_uint>(p);
+                  progress_->updateProgress(p, "Downloading URL.");
+               }
+            else
+               {
+                  progress_->updateProgress(0, "Downloading URL.");
+               }
+         }
+
+         void UI::CPIF_error(std::string const& _error)
          {
             if (progress_)
                {
@@ -62,7 +86,7 @@ namespace btg
             progress_ = 0;
          }
 
-         void UI::CPRI_wait(std::string const& _msg)
+         void UI::CPIF_wait(std::string const& _msg)
          {
             if (progress_)
                {
@@ -70,7 +94,7 @@ namespace btg
                }
          }
 
-         void UI::CPRI_success(std::string const& _filename)
+         void UI::CPIF_success(std::string const& _filename)
          {
             if (progress_)
                {

@@ -53,6 +53,7 @@ extern t_int global_btg_run;
 
 #include <bcore/client/ratio.h>
 #include <bcore/client/urlhelper.h>
+#include <bcore/client/filephelper.h>
 #include <bcore/os/sleep.h>
 
 #include "runstate.h"
@@ -444,12 +445,12 @@ namespace btg
                                       iter != filelist.end();
                                       iter++)
                                     {
-                                       btg::core::client::createParts(logWrapper(), this, this, *iter);
+                                       btg::core::client::createParts(logWrapper(), *this, *this, *iter);
                                     }
                               }
                            else
                               {
-                                 btg::core::client::createParts(logWrapper(), this, this, parts.at(1));
+                                 btg::core::client::createParts(logWrapper(), *this, *this, parts.at(1));
                               }
                         }
                      else
