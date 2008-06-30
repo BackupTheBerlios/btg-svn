@@ -24,6 +24,7 @@
 
 #include <bcore/client/handlerthr.h>
 #include <bcore/client/urlhelper.h>
+#include <bcore/client/loadhelper.h>
 #include <bcore/command/limit_base.h>
 #include <bcore/hrr.h>
 #include <bcore/os/sleep.h>

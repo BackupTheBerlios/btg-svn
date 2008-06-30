@@ -53,7 +53,7 @@ extern t_int global_btg_run;
 
 #include <bcore/client/ratio.h>
 #include <bcore/client/urlhelper.h>
-#include <bcore/client/filephelper.h>
+#include <bcore/client/loadhelper.h>
 #include <bcore/os/sleep.h>
 
 #include "runstate.h"

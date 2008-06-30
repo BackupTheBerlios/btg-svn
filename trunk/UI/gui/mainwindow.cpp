@@ -60,7 +60,7 @@
 #include <bcore/file_info.h>
 
 #include <bcore/client/clientdynconfig.h>
-#include <bcore/client/filephelper.h>
+#include <bcore/client/loadhelper.h>
 #include <bcore/project.h>
 #include <bcore/btg_assert.h>
 #include <bcore/os/sleep.h>

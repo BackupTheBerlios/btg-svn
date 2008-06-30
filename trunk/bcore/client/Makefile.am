@@ -15,7 +15,7 @@ clientdynconfig.cpp \
 loglevel.cpp \
 ratio.cpp \
 cpif.cpp \
-urlhelper.cpp filephelper.cpp
+urlhelper.cpp loadhelper.cpp
 
 noinst_HEADERS = carg.h \
 configuration.h \
@@ -31,7 +31,7 @@ clientdynconfig.h \
 loglevel.h \
 ratio.h \
 cpif.h \
-urlhelper.h filephelper.h
+urlhelper.h loadhelper.h
 
 libbtgclient_la_CFLAGS   = @DEBUG_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ \
                            -DBTG_REV="@BTG_REV@" \

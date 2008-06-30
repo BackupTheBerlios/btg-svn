@@ -32,7 +32,7 @@
 #include <bcore/file_info.h>
 #include <bcore/logable.h>
 #include <bcore/client/handlerthr.h>
-#include <bcore/client/filephelper.h>
+#include <bcore/client/cpif.h>
 
 #include "mainwindow.h"
 #include "topwindow.h"

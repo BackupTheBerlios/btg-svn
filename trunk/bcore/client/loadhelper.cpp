@@ -20,7 +20,7 @@
  * $Id$
  */
 
-#include "filephelper.h"
+#include "loadhelper.h"
 #include "clienthandler.h"
 #include "clientcallback.h"
 #include <bcore/util.h>
