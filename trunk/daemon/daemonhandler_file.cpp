@@ -23,6 +23,7 @@
 #include "daemonhandler.h"
 #include <bcore/command/context_create.h>
 #include <bcore/command/context_create_file.h>
+#include <bcore/command/opstat.h>
 #include <bcore/verbose.h>
 #include <bcore/util.h>
 #include <bcore/opstatus.h>
