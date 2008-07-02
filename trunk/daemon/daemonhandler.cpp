@@ -36,6 +36,7 @@
 #include <bcore/command/uptime.h>
 #include <bcore/command/limit.h>
 #include <bcore/command/version.h>
+#include <bcore/command/opstat.h>
 #include <bcore/command/context_move.h>
 #include <bcore/command/context_create.h>
 #include <bcore/command/context_create_url.h>
@@ -1025,7 +1026,7 @@ namespace btg
             {
             case Command::CN_OPABORT:
                {
-                  opAbortCommand* coac = dynamic_cast<opAbortCommand*>(_command);
+                  btg::core::opAbortCommand* coac = dynamic_cast<btg::core::opAbortCommand*>(_command);
                   switch (coac->type())
                      {
                      case btg::core::ST_URL:
@@ -1039,7 +1040,7 @@ namespace btg
                }
             case Command::CN_OPSTATUS:
                {
-                  opStatusCommand* cosc = dynamic_cast<opStatusCommand*>(_command);
+                  btg::core::opStatusCommand* cosc = dynamic_cast<btg::core::opStatusCommand*>(_command);
                   switch (cosc->type())
                      {
                      case btg::core::ST_URL:
