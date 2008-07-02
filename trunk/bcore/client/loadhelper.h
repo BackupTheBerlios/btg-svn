@@ -52,6 +52,19 @@ namespace btg
                           std::string const& _filename,
                           t_uint const _partSize = (64*1024));
 
+         /// Create a context, by downloading an URL.
+         /// @param [in] _logwrapper Log wrapper object.
+         /// @param [in] _ch         Pointer to client handler instance. 
+         /// @param [in] _cpri       Callback interface.
+         /// @param [in] _filename   The filename to save the URL to.
+         /// @param [in] _url        The URL to download.
+         /// @return True - torrent downloaded and created, false - otherwise.
+         bool createUrl(btg::core::LogWrapperType _logwrapper,
+                        class clientHandler & _ch,
+                        createProgressIf & _cpif,
+                        std::string const& _filename,
+                        std::string const& _url);
+
          /** @} */
 
       } // client

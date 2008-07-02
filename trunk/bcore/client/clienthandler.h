@@ -344,6 +344,18 @@ namespace btg
             /// @return true - success, URL loaded. false - URL not loaded.
             bool handleUrlProgress(t_uint _hid);
 
+            void setUrlDlProgress(t_uint const _total, 
+                                  t_uint const _now, 
+                                  t_uint const _speed);
+
+            void disableUrlDlProgress();
+
+            /// Get URL download progress info (if available)
+            /// @return false if wl progress info unavailable
+            bool getUrlDlProgress(t_uint & _total, 
+                                  t_uint & _now, 
+                                  t_uint & _speed);
+
             /// Helper function, used to set the options used by the daemon.
             virtual void setOption(btg::core::OptionBase const & _options);
 
@@ -523,6 +535,15 @@ namespace btg
             /// Indicates if a timeout in the communication with
             /// the daemon has occured.
             bool                              timeout;
+
+            /// Whether download progress was received.
+            bool           UrlDlProgress;
+            /// Total bytes to download.
+            t_uint         UrlDlTotal;
+            /// Bytes downloaded.
+            t_uint         UrlDlNow;
+            /// Download speed (bytes/sec).
+            t_uint         UrlDlSpeed;
          private:
             /// Copy constructor.
             clientHandler(clientHandler const& _ch);

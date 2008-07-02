@@ -96,7 +96,11 @@ namespace btg
               lastfiles(_logwrapper, _dynconfig),
               lasturls(_logwrapper, _dynconfig),
               trackerlist(),
-              timeout(false)
+              timeout(false),
+              UrlDlProgress(true),
+              UrlDlTotal(0),
+              UrlDlNow(0),
+              UrlDlSpeed(0)
          {
          }
 
@@ -704,6 +708,32 @@ namespace btg
          bool clientHandler::Timeout() const
          {
             return timeout;
+         }
+
+         void clientHandler::setUrlDlProgress(t_uint const _total, 
+                                              t_uint const _now, 
+                                              t_uint const _speed)
+         {
+            UrlDlProgress = true;
+            UrlDlTotal    = _total;
+            UrlDlNow      = _now;
+            UrlDlSpeed    = _speed;
+         }
+
+         void clientHandler::disableUrlDlProgress()
+         {
+            UrlDlProgress = false;
+         }
+
+         bool clientHandler::getUrlDlProgress(t_uint & _total, 
+                                              t_uint & _now, 
+                                              t_uint & _speed)
+         {
+            _total = UrlDlTotal;
+            _now   = UrlDlNow;
+            _speed = UrlDlSpeed;
+
+            return UrlDlProgress;
          }
 
          clientHandler::~clientHandler()

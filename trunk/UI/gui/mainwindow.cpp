@@ -64,9 +64,6 @@
 #include <bcore/project.h>
 #include <bcore/btg_assert.h>
 #include <bcore/os/sleep.h>
-
-#include <bcore/hrr.h>
-#include <bcore/hru.h>
 #include <bcore/opstatus.h>
 
 #define GET_HANDLER_INST \
@@ -692,137 +689,23 @@ namespace btg
             msb->set("Loading URL: " + _url);
             logVerboseMessage("Loading URL: " + _url);
 
-            t_uint hid;
-            
-            {
-               GET_HANDLER_INST;
-
-               handler->reqCreateFromUrl(_filename, _url);
-
-               if (!handler->commandSuccess())
-                  {
-                     msb->set("Unable to load: " + _filename);
-                     logVerboseMessage("Unable to load: " + _filename);
-                     return;
-                  }
-
-               hid = handler->UrlId();
-            }
-
-            last_url      = _url;
-            last_url_file = _filename;
-            
-            progressDialog pd("Adding URL", true);
-
-            bool cont = true;
-            while (cont)
+            GET_HANDLER_INST;
+            bool created = btg::core::client::createUrl(logWrapper(),
+                                                        *handler,
+                                                        *this,
+                                                        _filename,
+                                                        _url);
+            if (created)
                {
-                  {
-                     GET_HANDLER_INST;
-                     
-                     handler->reqUrlStatus(hid);
-                     if (!handler->commandSuccess())
-                        {
-                           return;
-                        }
-                     t_uint id = 0;
-                     t_uint status;
-   
-                     handler->UrlStatusResponse(id, status);
-   
-                     switch (status)
-                        {
-                        case btg::core::OP_UNDEF:
-                           {
-                              break;
-                           }
-                        case btg::core::OP_WORKING:
-                           {
-                              t_uint progress = 10;
-                              t_uint total, now, speed;
-                              
-                              std::string msg = "Working";
-                              
-                              if (handler->getUrlDlProgress(total, now, speed))
-                              {
-                                 progress += t_uint(total > 0 ? (float)now / total * 80 : 40);
-                                 msg += " (" + core::humanReadableUnit::convert(now).toString();
-                                 if (total > 0)
-                                 {
-                                    msg += "/" + core::humanReadableUnit::convert(total).toString();
-                                 }
-                                 else
-                                 {
-                                    msg += "/?";
-                                 }
-                                 msg += " - " + core::humanReadableRate::convert(speed).toString() + ")";
-                              }
-                              else
-                              {
-                                 msg += ".";
-                              }
-                              
-                              pd.updateProgress(progress, msg);
-                              break;
-                           }
-                        case btg::core::OP_FINISHED:
-                           {
-                              pd.updateProgress(90, "Loaded URL.");
-                              break;
-                           }
-                        case btg::core::OP_ERROR:
-                           {
-                              pd.updateProgress(0, "Error loading URL.");
-
-                              msb->set("Error loading URL: " + _url);
-                              logVerboseMessage("Error loading URL: " + _url);
-                              cont = false;
-
-                              break;
-                           }
-                        case btg::core::OP_CREATE:
-                           {
-                              pd.updateProgress(100, "Torrent created.");
-
-                              msb->set("Torrent created: " + _filename);
-                              logVerboseMessage("Torrent created: " + _filename);
-                              cont = false;
-
-                              break;
-                           }
-                        case btg::core::OP_CREATE_ERR:
-                           {
-                              pd.updateProgress(0, "Unable to create torrent.");
-
-                              msb->set("Unable to create torrent: " + _filename);
-                              logVerboseMessage("Unable to create torrent: " + _filename);
-                              cont = false;
-
-                              break;
-                           }
-                        }
-   
-                     if (pd.cancelPressed())
-                        {
-                           // Cancel URL loading.
-                           handler->reqCancelUrl(hid);
-   
-                           if (handler->commandSuccess())
-                              {
-                                 msb->set("URL loading cancelled.");
-                                 logVerboseMessage("URL loading cancelled.");
-                                 return;
-                              }
-                        }
-                  }
-
-                  for (int i=0; i<25; ++i)
-                  {
-                     Gtk::Main::iteration(false);
-                     btg::core::os::Sleep::sleepMiliSeconds(10);
-                  }
+                  msb->set("Created torrent from URL '" +_url + "'.");
+                  logVerboseMessage("Created torrent from URL '" + _url + "'.");
                }
-
+            else
+               {
+                  msb->set("Unable to load URL: " + _filename);
+                  logVerboseMessage("Unable to load URL: " + _filename);
+               }
+            
             // sleep for a second so user can see our message
             for (int i=0; i<100; ++i)
             {
@@ -1090,7 +973,7 @@ namespace btg
             std::string filename;
             {
                GET_HANDLER_INST;
-               url = handler->getLastURLs().at(_which_item);
+               url      = handler->getLastURLs().at(_which_item);
                filename = handler->getLastURLFiles().at(_which_item);
             }
             openURL(url,filename);

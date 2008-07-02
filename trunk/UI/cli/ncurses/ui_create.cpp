@@ -71,7 +71,7 @@ namespace btg
                }
             else
                {
-                  progress_->updateProgress(0, "Downloading URL.");
+                  progress_->updateProgress(50, "Downloading URL.");
                }
          }
 

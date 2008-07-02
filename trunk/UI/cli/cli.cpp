@@ -1105,6 +1105,15 @@ namespace btg
             commandStatus = false;
          }
          
+         void cliHandler::onUrlDlProgress(t_uint const _id,
+                                          t_uint _dltotal, 
+                                          t_uint _dlnow, 
+                                          t_uint _dlspeed)
+         {
+            commandStatus = true;
+            setUrlDlProgress(_dltotal, _dlnow, _dlspeed);
+         }
+
          void cliHandler::onAbort()
          {
             if (eraseFlag)

@@ -195,6 +195,106 @@ namespace btg
            return op_status;
          }
 
+         bool createUrl(btg::core::LogWrapperType _logwrapper,
+                        class clientHandler & _ch,
+                        createProgressIf & _cpif,
+                        std::string const& _filename,
+                        std::string const& _url)
+         {
+            bool res = false;
+
+            _cpif.CPIF_init(true /* url */);
+            _cpif.CPIF_begin(_filename, _url);
+
+            _ch.reqCreateFromUrl(_filename, _url);
+            if (!_ch.commandSuccess())
+               {
+                  BTG_NOTICE(_logwrapper, "Unable to load URL '" << _url << "', filename '" << _filename << "'");
+                  _cpif.CPIF_error("Unable to load URL");
+                  return res;
+               }
+
+            if (!_cpif.CPIF_continue())
+               {
+                  _cpif.CPIF_error("Cancelled.");
+                  return false;
+               }
+
+            t_uint hid = _ch.UrlId();
+
+            bool cont = true;
+            while (cont)
+               {
+                  if (!_cpif.CPIF_continue())
+                     {
+                        _cpif.CPIF_error("Cancelled.");
+                        return false;
+                     }
+                  
+
+                  _ch.reqUrlStatus(hid);
+                  if (!_ch.commandSuccess())
+                     {
+                        BTG_NOTICE(_logwrapper, "Getting status for id " << hid << " failed.");
+                        _cpif.CPIF_error("Unable to load URL");
+                        return res;
+                     }
+
+                  t_uint id     = 0;
+                  t_uint status = 0;
+
+                  _ch.UrlStatusResponse(id, status);
+                  
+                  switch (status)
+                     {
+                     case btg::core::OP_UNDEF:
+                        {
+                           break;
+                        }
+                     case btg::core::OP_WORKING:
+                        {
+                           t_uint total = 0;
+                           t_uint now   = 0;
+                           t_uint speed = 0;
+
+                           if (_ch.getUrlDlProgress(total, now, speed))
+                              {
+                                 _cpif.CPIF_urlDlStatus(total, now, speed);
+                              }
+                           break;
+                        }
+                     case btg::core::OP_FINISHED:
+                        {
+                           _cpif.CPIF_wait("Created URL.");
+                           break;
+                        }
+                     case btg::core::OP_ERROR:
+                        {
+                           _cpif.CPIF_error("Error loading URL.");
+                           cont = false;
+                           break;
+                        }
+                     case btg::core::OP_CREATE:
+                        {
+                           _cpif.CPIF_success("Torrent created.");
+                           res  = true;
+                           cont = false;
+                           break;
+                        }
+                     case btg::core::OP_CREATE_ERR:
+                        {
+                           _cpif.CPIF_error("Error creating context.");
+                           res  = false;
+                           cont = false;
+                           break;
+                        }
+                     }
+                  btg::core::os::Sleep::sleepMiliSeconds(500);
+               }
+ 
+           return res;
+         }
+
       } // client
    } // core
 } // btg

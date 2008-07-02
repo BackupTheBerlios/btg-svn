@@ -146,6 +146,10 @@ namespace btg
                   void onUrlStatus(t_uint const _id, 
                                    t_uint const _status);
                   void onUrlStatusError(std::string const& _message);
+                  void onUrlDlProgress(t_uint const _id,
+                                       t_uint _dltotal, 
+                                       t_uint _dlnow, 
+                                       t_uint _dlspeed);
                   void onAbort();
                   void onStart();
                   void onStop();

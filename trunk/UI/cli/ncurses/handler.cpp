@@ -364,6 +364,13 @@ namespace btg
             commandStatus = false;
          }
 
+         void Handler::onUrlDlProgress(t_uint const _id,
+                                       t_uint _dltotal, t_uint _dlnow, t_uint _dlspeed)
+         {
+            commandStatus = true;
+            setUrlDlProgress(_dltotal, _dlnow, _dlspeed);
+         }
+
          void Handler::onCreateFromFile(t_uint const _id)
          {
             commandStatus = true;

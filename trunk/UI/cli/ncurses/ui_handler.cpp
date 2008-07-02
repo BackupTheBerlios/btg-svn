@@ -737,20 +737,15 @@ namespace btg
             {
                GET_HANDLER_INST;
 
-               handler->reqCreateFromUrl(url_filename, url);
-               
-               if (handler->commandSuccess())
-                  {
-                     t_uint hid = handler->UrlId();
+               bool created = btg::core::client::createUrl(logWrapper(),
+                                                           *handler,
+                                                           *this,
+                                                           url_filename,
+                                                           url);
 
-                     if (handleUrlProgress(hid))
-                        {
-                           actionSuccess("Load URL", url_filename);
-                        }
-                     else
-                        {
-                           actionFailture("Load URL", url_filename);
-                        }
+               if (created)
+                  {
+                     actionSuccess("Load URL", url_filename);
                   }
                else
                   {

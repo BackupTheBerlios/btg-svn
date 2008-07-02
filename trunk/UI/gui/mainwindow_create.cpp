@@ -21,13 +21,12 @@
  */
 
 #include "mainwindow.h"
-
+#include "progressdialog.h"
+#include <gtkmm.h>
 #include <bcore/t_string.h>
 #include <bcore/os/sleep.h>
-
-#include "progressdialog.h"
-
-#include <gtkmm.h>
+#include <bcore/hru.h>
+#include <bcore/hrr.h>
 
 namespace btg
 {
@@ -39,6 +38,12 @@ namespace btg
          {
             CPIF_reset();
 
+            if (upload_progressdialog)
+               {
+                  delete upload_progressdialog;
+                  upload_progressdialog = 0;
+               }
+
             upload_progressdialog = new progressDialog("Uploading '" + _filename + "' to the daemon.", true);
             upload_progressdialog->updateProgress(0, "Initalizing..");
          }
@@ -46,7 +51,16 @@ namespace btg
          void mainWindow::CPIF_begin(std::string const& _filename, 
                                      std::string const& _url)
          {
+            CPIF_reset();
 
+            if (upload_progressdialog)
+               {
+                  delete upload_progressdialog;
+                  upload_progressdialog = 0;
+               }
+
+            upload_progressdialog = new progressDialog("Downloading URL '" + _url + "'.", true);
+            upload_progressdialog->updateProgress(0, "Initalizing..");
          }
 
          void mainWindow::CPIF_filePiece(t_uint _number, t_uint _parts)
@@ -70,7 +84,33 @@ namespace btg
 
          void mainWindow::CPIF_urlDlStatus(t_uint _total, t_uint _now, t_uint _speed)
          {
-            
+            if (upload_progressdialog)
+               {
+                  if (upload_progressdialog->cancelPressed())
+                     {
+                        CPIF_cancel();
+                     }
+
+                  t_uint p = 10;
+                  std::string msg = "Working";
+                              
+                  p += t_uint(_total > 0 ? (float)_now / _total * 80 : 40);
+                  msg += " (" + core::humanReadableUnit::convert(_now).toString();
+                  if (_total > 0)
+                     {
+                        msg += "/" + core::humanReadableUnit::convert(_total).toString();
+                     }
+                  else
+                     {
+                        msg += "/?";
+                     }
+                  msg += " - " + core::humanReadableRate::convert(_speed).toString() + ")";
+
+                  upload_progressdialog->updateProgress(p, msg);
+
+                  //Gtk::Main::iteration(false);
+                  //btg::core::os::Sleep::sleepMiliSeconds(10);
+               }
          }
 
          void mainWindow::CPIF_error(std::string const& _error)
@@ -107,7 +147,7 @@ namespace btg
          {
             if (upload_progressdialog)
                {
-                  upload_progressdialog->updateProgress(100, "Upload done.");
+                  upload_progressdialog->updateProgress(100, "Created '" + _filename + "'.");
 
                   for(int i=0; i<100; ++i)
                   {

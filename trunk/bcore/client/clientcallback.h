@@ -105,9 +105,11 @@ namespace btg
                      /// Received status for a download.
                      virtual void onUrlStatus(t_uint const _id, 
                                               t_uint const _status) = 0;
-                     /// Received URL download progress info
+                     /// Received URL download progress info.
                      virtual void onUrlDlProgress(t_uint const _id,
-                                                  t_uint _dltotal, t_uint _dlnow, t_uint _dlspeed);
+                                                  t_uint _dltotal, 
+                                                  t_uint _dlnow, 
+                                                  t_uint _dlspeed) = 0;
 
                      /// Could not receive status for a download.
                      virtual void onUrlStatusError(std::string const& _errorDescription) = 0;
