@@ -50,9 +50,10 @@ extern "C"
 #include <bcore/logger/logger.h>
 #include <bcore/logger/console_log.h>
 
+#include <daemon/opid.h>
+
 #if BTG_OPTION_URL
 #  include <daemon/http/httpmgr.h>
-#include <daemon/opid.h>
 #  include <bcore/os/sleep.h>
 #endif // BTG_OPTION_URL
 
