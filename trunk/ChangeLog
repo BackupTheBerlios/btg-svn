@@ -2,16 +2,32 @@ BTG version 0.9.8
 -----------------
 The following bugs were fixed:
 
+014067 BTG SVN fails to compile with SVN Libtorrent.
+014061 XMLRPC_Client fails to parse some XMLs.
 013987 btgcli can't read commands from file.
-013708 Seeder/Leecher counts incorrect.
+013985 Installed xmlrpc-epi should be tested.
+013984 Remove bundled expat.
+013983 Installed plotmm should be tested.
+013975 Incorrect torrent statuses.
+013971 Display build and revision numbers on the wwwUI pages.
+013964 btgcli: Do not print LF when displaying downloaded pieces.
+013932 btg-daemon-0.9.8 not installable on debian.
+013931 Bad URL displayed after DEB install.
+013859 Remove ncurses from btgcli.
 013852 Use torrent-ip to create lt sessions.
 013833 Convert projectDefaults to a non-singleton.
+013832 XMLRPC response parse error.
 013814 Configure script does not detect lt upnp in lt 0.14.
 013774 Add amd64 architecture to the packages.
+013720 Daemon hangup on incorrect torrent file.
+013708 Seeder/Leecher counts incorrect.
 013701 Keys for "Quit" and "Back" should be separate.
 013700 Reload filter list w/o restarting daemon.
+013678 Update openwrt makefiles.
+013645 Smooth URL loading indicator.
 013644 Ports opened by UPnP when it is disabled.
 013643 Daemon starts without rewriting unexistent pid.
+013642 btgui incorrect behavior during init. when comm. error.
 013618 btgncli, show sessions when invoked without arguments.
 013557 CyberLink UPnP, automatic internal IP detection.
 013555 UPnP, added separate config-file parameter for internal-ip.
@@ -20,12 +36,13 @@ The following bugs were fixed:
 013490 Provide source-packages in deb-src.
 013460 Showing file pieces for torrents missing from wwwui.
 013459 File selection missing from wwwui.
-013454 Writing PID-file (daemon).
-013435 Open all necessary files before switching EUID (daemon).
+013454 Writing PID-file.
 013450 Logging optimization - static conditions.
 013436 btgui, resizable headers.
+013435 Open all necessary files before switching EUID (daemon).
 013434 Log messsages loss when logging not initialized.
 013433 Configuration file search paths.
+013430 Saving opened urls in history.
 013412 Additional command: supported options.
 013411 BTGWWW, load a torrent from an URL.
 013399 Merge Miklos Vajna's GCC 4.3 patch.
