@@ -1021,6 +1021,8 @@ namespace btg
       void daemonHandler::handleOpMessages(eventHandler* _eventhandler,
                                            btg::core::Command* _command)
       {
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
+
          // Find out which kind of op message was received.
          switch (_command->getType())
             {

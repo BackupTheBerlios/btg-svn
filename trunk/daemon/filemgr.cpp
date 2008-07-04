@@ -29,8 +29,7 @@ namespace btg
 {
    namespace daemon
    {
-      const t_uint max_file_age = 30;
-      const t_uint min_id = 1;
+      const t_uint max_file_age = 1;
       const std::string moduleName("fmgr");
 
       fileData::fileData(std::string const& _dir,
@@ -178,6 +177,18 @@ namespace btg
          iter->second.valid = false;
       }
 
+      void fileManager::resetAge(const t_uint _id)
+      {
+         std::map<t_uint, fileData>::iterator iter = files.find(_id);
+
+         if (iter == files.end())
+            {
+               return;
+            }
+
+         iter->second.age = 0;
+      }
+
       void fileManager::setState(const t_uint _id, 
                                  fileData::Status const _status)
       {
@@ -244,6 +255,8 @@ namespace btg
               iter != files.end();
               iter++)
             {
+               BTG_MNOTICE(logWrapper(), "filename: " << iter->second.filename << ", age: " << iter->second.age);
+               
                iter->second.age++;
                if (iter->second.age > max_file_age)
                   {

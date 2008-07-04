@@ -211,6 +211,10 @@ namespace btg
          _e->uintToBytes(&id_);
          BTG_RCHECK(_e->status());
 
+         _e->setParamInfo("type", true);
+         _e->uintToBytes(&type_);
+         BTG_RCHECK(_e->status());
+
          return true;
       }
 
@@ -221,6 +225,10 @@ namespace btg
 
          _e->setParamInfo("url id", true);
          _e->bytesToUint(&id_);
+         BTG_RCHECK(_e->status());
+
+         _e->setParamInfo("type", true);
+         _e->bytesToUint(&type_);
          BTG_RCHECK(_e->status());
 
          return true;

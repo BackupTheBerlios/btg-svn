@@ -126,6 +126,9 @@ namespace btg
             /// Invalidate an upload.
             void invalidate(const t_uint _id);
 
+            /// Set the age to 0.
+            void resetAge(const t_uint _id);
+
             /// Set state of an upload.
             void setState(const t_uint _id, 
                           fileData::Status const _status);

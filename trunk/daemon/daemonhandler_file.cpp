@@ -90,6 +90,8 @@ namespace btg
             }
          else
             {
+               filemgr.resetAge(id);
+
                sendAck(_command->getType());
                BTG_MNOTICE(logWrapper(), 
                            "File ID: " << id << ", added part " << ccffpc->part() << ".");
