@@ -38,15 +38,6 @@ namespace btg
                 */
                /** @{ */
 
-               struct upnpIfState
-               {
-                  upnpIfState()
-                  : p(0)
-                  {}
-
-                  void* p;
-               };
-
                /// Interface: UPNP.
                class upnpIf: public btg::core::Logable
                   {

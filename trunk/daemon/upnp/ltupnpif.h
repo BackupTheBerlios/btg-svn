@@ -46,9 +46,11 @@ namespace btg
                 */
                /** @{ */
 
+               /// UPnP implementation, can use libtorrent 0.14 or better.
                class libtorrentUpnpIf: public upnpIf
                {
                public:
+                  /// Constructor.
                   libtorrentUpnpIf(btg::core::LogWrapperType _logwrapper,
                                    bool const _verboseFlag,
                                    libtorrent::address const& _addr);
@@ -64,13 +66,20 @@ namespace btg
                   /// Destructor.
                   virtual ~libtorrentUpnpIf();
                protected:
+                  /// Pointer to the log wrapper used by this class.
                   btg::core::LogWrapperType   logwrapper;
+                  /// Indicates if this interface should do verbose
+                  /// logging.
                   bool const                  verboseFlag;
+                  /// The internal address used.
                   libtorrent::address const   addr;
+                  /// The implementation.
                   class libtorrentUpnpIfImpl* impl;
+                  /// State information from libtorrent.
                   void*                       state;
                };
 
+               /// UPnP implementation, can use libtorrent 0.14 or better.
                class libtorrentUpnpIfImpl: public upnpIf
                   {
                   public:
@@ -82,6 +91,7 @@ namespace btg
                      
                      bool open(std::pair<t_int, t_int> const& _range);
 
+                     /// Suspend, saving state information to _state.
                      void suspend(void* _state);
 
                      bool close();

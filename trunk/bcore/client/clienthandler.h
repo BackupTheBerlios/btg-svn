@@ -344,10 +344,12 @@ namespace btg
             /// @return true - success, URL loaded. false - URL not loaded.
             bool handleUrlProgress(t_uint _hid);
 
+            /// Store received URL progress information.
             void setUrlDlProgress(t_uint const _total, 
                                   t_uint const _now, 
                                   t_uint const _speed);
 
+            /// Disable the last received URL progress information.
             void disableUrlDlProgress();
 
             /// Get URL download progress info (if available)

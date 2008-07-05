@@ -83,7 +83,7 @@ namespace btg
             /// Indicates if an URL is being downloaded.
             bool CPIF_url() const;
 
-            // Indicates if a file is being uploaded.
+            /// Indicates if a file is being uploaded.
             bool CPIF_file() const;
 
             /// Destructor.

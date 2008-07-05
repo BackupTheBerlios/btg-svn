@@ -42,7 +42,7 @@ namespace btg
          /// Create a context, sending parts of it one at a time.
          /// @param [in] _logwrapper Log wrapper object.
          /// @param [in] _ch         Pointer to client handler instance. 
-         /// @param [in] _cpri       Callback interface.
+         /// @param [in] _cpif       Callback interface.
          /// @param [in] _filename   The filename to read data from.
          /// @param [in] _partSize   The size of the chunks the upload consists of.
          /// @return True - torrent uploaded and created, false - otherwise.
@@ -55,7 +55,7 @@ namespace btg
          /// Create a context, by downloading an URL.
          /// @param [in] _logwrapper Log wrapper object.
          /// @param [in] _ch         Pointer to client handler instance. 
-         /// @param [in] _cpri       Callback interface.
+         /// @param [in] _cpif       Callback interface.
          /// @param [in] _filename   The filename to save the URL to.
          /// @param [in] _url        The URL to download.
          /// @return True - torrent downloaded and created, false - otherwise.
