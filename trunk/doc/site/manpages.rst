@@ -8,8 +8,8 @@ BTG Man Pages
  - `btg-config.man`_
  - `btg.man`_
  - `btg_config.man`_
- - `btgui.man`_
  - `btgvs.man`_
+ - `btgui.man`_
  - `btgncli.man`_
  - `btgcli.man`_
 
@@ -19,8 +19,8 @@ BTG Man Pages
 .. _btg-config.man: manpages/btg-config.man.html
 .. _btg.man: manpages/btg.man.html
 .. _btg_config.man: manpages/btg_config.man.html
-.. _btgui.man: manpages/btgui.man.html
 .. _btgvs.man: manpages/btgvs.man.html
+.. _btgui.man: manpages/btgui.man.html
 .. _btgncli.man: manpages/btgncli.man.html
 .. _btgcli.man: manpages/btgcli.man.html
 
