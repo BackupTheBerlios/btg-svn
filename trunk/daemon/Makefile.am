@@ -77,7 +77,7 @@ if BUILDCYBERLINK
 endif
 
 if BUILDURL
-  HTTP_LDADD = $(top_builddir)/daemon/http/libhttp.la 
+  HTTP_LDADD = $(top_builddir)/daemon/http/libhttp.la @LIBCURL@
 endif
 
 btgdaemon_LDADD   = $(top_builddir)/bcore/libbtgcore.la \
