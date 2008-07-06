@@ -1,0 +1,52 @@
+#! /bin/sh
+
+#
+# Start or stop the BTG daemon.
+# Written by Roman Rybalko <btg@romanr.info>
+# $Id$
+#
+
+### BEGIN INIT INFO
+# Provides:          btgdaemon
+# Required-Start:    $local_fs $remote_fs $syslog
+# Required-Stop:     $local_fs $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: BitTorrent network client daemon.
+### END INIT INFO
+
+PIDFILE=/var/run/btgdaemon.pid
+CONFFILE=/etc/btg/daemon.ini
+
+case $1 in
+    start)
+	echo "Starting BTG ..."	
+	exec /usr/bin/btgdaemon --verbose --config $CONFFILE --pid-file $PIDFILE
+    ;;
+    stop)
+    	[ -e $PIDFILE ] && pid=`cat $PIDFILE`
+    	if [ -z "$pid" ] ; then
+	    echo "BTG isn't running."
+	    exit 0
+	fi
+	
+	echo -n "Stopping BTG ..."
+	kill $pid || { echo "ERROR"; exit 1; }
+	cnt=0
+	while [ -n "$pid" -a $cnt -le 30 ] ; do
+		pid=`cat $PIDFILE`
+		sleep 1
+		echo -n "."
+		cnt=$(($cnt+1))
+	done
+	[ $cnt -ge 60 ] && echo "ERROR. You can wait or kill it yourself." || echo "DONE"
+    ;;
+    restart|reload|force-reload)
+    	echo "Not implemented yet."
+	exit 1
+    ;;
+    *)
+	echo "USAGE: $0 {start|stop|restart|reload|force-reload}"
+	exit 1
+    ;;
+esac

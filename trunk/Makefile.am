@@ -2,7 +2,7 @@ if BTG_UNITTEST
   BTG_UNITTEST_DIR = utest
 endif
 
-SUBDIRS = external bcore daemon UI doc script $(BTG_UNITTEST_DIR) stest debian
+SUBDIRS = external bcore daemon UI doc script $(BTG_UNITTEST_DIR) stest
 
 GENTOO_PKG = gentoo/net-libs/rblibtorrent/README \
 gentoo/net-libs/rblibtorrent/rblibtorrent.ebuild \

@@ -1,0 +1,15 @@
+#! /bin/sh
+
+# $Id$
+
+if [ "$1" = "configure" ]; then
+	id btg || adduser --system --home /nonexistent --shell /bin/false --disabled-login --no-create-home --group btg
+fi
+
+#DEBHELPER#
+
+echo "************************************"
+echo "Default user: admin, password: admin"
+echo "Don't forget to change the password."
+echo " - btgpasswd(1)"
+echo "************************************"
