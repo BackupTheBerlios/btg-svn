@@ -2,6 +2,7 @@ BTG version 0.9.8
 -----------------
 The following bugs were fixed:
 
+014142 Compilation broke on curl link with --as-needed LDFLAG.
 013961 race-condition in btgui (in peer-list)
 014067 BTG SVN fails to compile with SVN Libtorrent.
 014061 XMLRPC_Client fails to parse some XMLs.
