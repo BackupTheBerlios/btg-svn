@@ -1,0 +1,129 @@
+.TH BTGPASSWD 1 "16 May 2006"
+.SH NAME
+btgpasswd \- application for managing btg daemon password file.
+.SH SYNOPSIS
+.B "btgpasswd" 
+[-a] [-m] [-r] [-l]
+[-t 
+.I "directory"
+]
+[-w 
+.I "directory"
+]
+[-s 
+.I "directory"
+]
+[-d 
+.I "directory"
+]
+[-p 
+.I "password"
+]
+[-u 
+.I "username"
+]
+[--control 
+.I "1"
+| --control 
+.I "0"
+]
+[-c | --create]
+[-n]
+[-f 
+.I "FILE"
+|--config 
+.I "FILE"
+]
+[-v] 
+[-h]
+
+.SH DESCRIPTION
+.B "btgpasswd" 
+manages the password file used by the btg daemon. It supports adding, modifying, removing and listing entries.
+
+.B "btgpasswd" 
+reads the btg daemon config file, to find out which password file should be used. 
+.B It will not work without it.
+
+.SH OPTIONS
+.TP
+.BI "-a"
+\- add a new entry.
+.TP
+.BI "-m"
+\- modify an entry.
+.TP
+.BI "-r"
+\- remove an entry.
+.TP
+.BI "-l"
+\- List entries.
+
+.TP
+.BI "-t directory"
+\- Use temp 
+.I directory.
+
+.TP
+.BI "-w directory"
+\- Use work 
+.I directory.
+
+.TP
+.BI "-s directory"
+\- Use seed 
+.I directory.
+
+.TP
+.BI "-d directory"
+\- Use destination 
+.I "directory".
+
+.TP
+.BI "-p password"
+\- Use the argument as the password.
+
+.TP
+.BI "-u username"
+\- Use the argument as the username.
+
+.TP
+.BI "--control 1|--control 0"
+\- Enable/disable the control flag. It allows an user to: shutdown btgdaemon, set global limits.
+
+.TP
+.BI "-c | --create"
+\- Create a new file. 
+.BI "This is to be used in connection with the -a switch, for creating new users."
+
+.TP
+.BI "-f filename | --config filename"
+\- Specify the daemon configuration file to use.
+
+.TP
+.BI "-v"
+\- Print the version.
+.TP
+.BI "-h|--help"
+\- Print a short help.
+
+.SH EXAMPLES
+.TP 
+Creating a new file (Done by adding a new user).
+btgpasswd --create -a -u username -p password -d /path/to/dest -w /path/to/work -s /path/to/seed -t /path/to/temp
+.TP
+Adding a new user (passwd file exists).
+btgpasswd -a -u username2 -p password2 -d /path/to/dest -w /path/to/work -s /path/to/seed -t /path/to/temp
+
+.SH FILES
+.TP
+~/.btg/daemon.ini - default daemon configuration file is used, unless --config is used to provide another daemon configuration file.
+
+.SH AUTHOR
+Written by Michael Wojciechowski.
+
+.SH "SEE ALSO"
+btg(5), btg_config(5)
+
+.SH BUGS
+No known bugs.

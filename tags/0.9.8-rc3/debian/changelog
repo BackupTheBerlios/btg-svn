@@ -1,0 +1,137 @@
+btg-0.9.8 (411svn-RC2) stable; urgency=low
+
+  * RC2 released
+
+ -- Roman Rybalko <btg@romanr.info>  Fri, 06 Jun 2008 23:53:26 +0400
+
+btg-0.9.8 (406svn) unstable; urgency=low
+
+  * The following bugs were fixed:
+    013708 Seeder/Leecher counts incorrect
+    013852 Use torrent-ip to create lt sessions.
+    013833 Convert projectDefaults to a non-singleton.
+    013814 Configure script does not detect lt upnp in lt 0.14.
+    013774 Add amd64 architecture to the packages.
+
+ -- Roman Rybalko <btg@romanr.info>  Fri, 06 Jun 2008 01:54:16 +0400
+
+btg-0.9.8 (357svn) unstable; urgency=low
+
+  * The following bugs were fixed:
+    013701 Keys for "Quit" and "Back" should be separate.
+    013700 Reload filter list w/o restarting daemon.
+    013644 Ports opened by UPnP when it is disabled.
+    013643 Daemon starts without rewriting unexistent pid.
+    013618 btgncli, show sessions when invoked without arguments.
+    013490 Provide source-packages in deb-src.
+    013460 Showing file pieces for torrents missing from wwwui.
+    013459 File selection missing from wwwui.
+
+ -- Roman Rybalko <btg@romanr.info>  Sat, 17 May 2008 14:09:28 +0400
+
+btg-0.9.8 (305svn-RC1) stable; urgency=low
+
+  * The following bugs were fixed:
+    013557 CyberLink UPnP, automatic internal IP detection.
+    013555 UPnP, added separate config-file parameter for internal-ip.
+    013538 Issues with native FreeBSD dialog.
+    013501 Implement better torrent loading.
+    013454 Writing PID-file (daemon).
+    013435 Open all necessary files before switching EUID (daemon).
+    013450 Logging optimization - static conditions.
+    013436 btgui, resizable headers.
+    013434 Log messsages loss when logging not initialized.
+    013433 Configuration file search paths.
+    013412 Additional command: supported options.
+    013411 BTGWWW, load a torrent from an URL.
+    013399 Merge Miklos Vajna's GCC 4.3 patch.
+    013381 URL loading in daemon and non-www clients.
+    013307 btgui, no error message on incorrect login (also btgcli/ncli).
+    013198 Unable to load huge torrent files.
+
+ -- Roman Rybalko <btg@romanr.info>  Wed, 16 Apr 2008 22:35:03 +0400
+
+btg (0.9.7) stable; urgency=low
+
+  * The following bugs were fixed:
+    013359 Compilation error: numinput.h.
+    013315 btgui, torrent remains after moving to another session.
+    013306 btgui, executing operations on multiple torrents.
+    013272 Add support for libtorrent 0.12.1.
+    013267 btgcli, incorrect seed limit.
+    013266 btgui, global limit setting.
+    013265 btgui, limit settings dialog doesn't correctly display limits.
+    013248 btgncli, add dialog used for entering numbers.
+    013216 Session saving, add saving of global limits.
+    013147 Handle octets set to 255 in Address/addressPort.
+    013146 XML Pasing error (wwwui).
+    013142 Restore file priorities after restart.
+    013136 Change of peer id / useragent (feature req).
+    013007 Show session settings.
+    012997 Session saving, fix saving of dht/encryption settings.
+    012975 Externalization, simple, exorcism.
+    012970 Add moving torrents to another sessions.
+    012952 Add switch to disable generating btg-config.
+    012839 DHT + encryption support in wwwbtg.
+    012814 Daemon segfaults when starting client with DHT (0.9.6).
+    012784 Remove singleton object used for logging.
+    012771 Add openwrt packages to SVN.
+    012762 Embed svn version into release information.
+    012761 Callback manager: execute calls from a thread.
+    012685 btgdaemon/btgpassswd segfaulting upon start.
+    012676 Fix boost iostreams detection.
+    012616 Remove btgq and btgd.
+    012598 Write man page for btgvs.
+    012557 Make fails on FreeBSD 6.2.
+    012545 Update SDL viewer to AGAR 1.3.1.
+    012544 BTGWWW, add missing files in bcore/command.
+    012535 btgncli: show peers/seeds in the list of torrents.
+    012330 Add another version of contextStatusCommand.
+    012329 Add "stop autoupdating" button in wwwbtg.
+    012308 Clean up daemon/limitval.cpp.
+    012301 Update doxygen.
+    012241 Use pkglib_LTLIBRARIES instead of lib_LTLIBRARIES.
+    012226 btgui, files showing as 100%.
+    012208 Add logging using syslog to wwwui.
+    012205 torrent files which contain same files but different tracker.
+    012190 Fix "warning: 'add_torrent' is deprecated".
+    012125 Update SDL viewer, after refactoring of last files.
+    012124 Add command line interface(s) unittest.
+    012120 Update to libtorrent 0.13 aka SVN.
+    012118 Add session naming.
+    012108 btgui: buttons OK and Cancel are equivalent when logging-in.
+    012106 Can't set files to download in btgui.
+    012055 File checking fails on torrents that contain directories.
+    012004 Show tracker for each context.
+    011784 More users can't download same torrent at same time.
+    011781 FBSD, btgncli does not show the status bar.
+    011557 Peer_id sent to tracker (feature req).
+
+ -- Roman Rybalko <btg@romanr.info>  Sun, 16 Mar 2008 00:16:04 +0300
+
+btg (0.9.6-p1-1) unstable; urgency=low
+
+  * New upstream release 
+
+ -- Felipe Sateler <fsateler@gmail.com>  Fri, 05 Oct 2007 23:17:00 -0400
+
+btg (0.9.5-1) unstable; urgency=low
+
+  * New upstream release:
+  	manpage sections were fixed.
+  	upstream removed the debian/ subdirectory.
+  * Build with event callbacks.
+
+ -- Felipe Sateler <fsateler@gmail.com>  Wed, 09 May 2007 23:21:37 -0400
+
+btg (0.9.0-1) UNRELEASED; urgency=low
+
+  * Initial release (Closes: #402466)
+  * Move config.php to /etc to comply with the FHS and put dummy
+    file in it's place which includes the real one.
+  * Include a lintian warning for libplotmm (if someone decides to
+    package it for debian, we remove the library and the override).
+  * Fix manpage section for btgcallback, btg_config and btg.
+  * Add menu items for btgcli and btgui.
+
+ -- Felipe Sateler <fsateler@gmail.com>  Tue, 17 Apr 2007 19:11:48 -0400
