@@ -1,11 +1,14 @@
-btg-0.9.8 (442svn) UNRELEASED; urgency=low
+btg-0.9.8 (445svn) UNRELEASED; urgency=low
 
   * Increased the client read-timout.
     More communication stability on high daemon loads
       but long hangups on wrong responses.
     TESTING.
 
- -- Roman Rybalko <btg@romanr.info>  Sun, 06 Jul 2008 16:53:55 +0400
+  * The following bugs were fixed:
+    013961 race-condition in btgui (in peer-list)
+
+ -- Roman Rybalko <btg@romanr.info>  Sun, 06 Jul 2008 20:21:34 +0400
 
 btg-0.9.8 (439svn-RC3) stable; urgency=low
 
