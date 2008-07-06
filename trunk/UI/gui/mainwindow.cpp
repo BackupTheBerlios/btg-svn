@@ -863,7 +863,9 @@ namespace btg
             GET_HANDLER_INST;
 
             Gtk::TreeModel::Path pbegin, pend;
-            if (mnb->getPeerTreeview()->get_visible_range(pbegin, pend))
+            if (mnb->getPeerTreeview()->get_visible_range(pbegin, pend)
+               && pbegin.begin() && pend.begin() // sometimes can be NULL
+               )
             {
                t_uint offset = *pbegin.begin();
                t_uint count = *pend.begin() - *pbegin.begin() + 1;
