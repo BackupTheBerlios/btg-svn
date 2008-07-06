@@ -14,6 +14,6 @@ suffix=$2
 for pkg in btg-common btg-cli-common btg-cli btg-ncli btg-gui btg-www btg-daemon ; do
 	for file in install init conffiles preinst postinst prerm postrm ; do
 		rm -f ${pkg}${suffix}.$file
-		[ -e $pkg.$file ] && ln -s $pkg.$file ${pkg}${suffix}.$file
+		[ -e $pkg.$file ] && ln $pkg.$file ${pkg}${suffix}.$file
 	done
 done

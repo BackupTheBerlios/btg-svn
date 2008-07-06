@@ -4,7 +4,7 @@
 
 # backup existing config data
 for file in /var/lib/btg/auth /var/lib/btg/sessions ; do
-	echo -n "Backupping config file $file ..."
+	echo -n "Creating reserve copy for config file $file ..."
 	cp -f $file $file.bak && echo "OK" || echo "error/skipped"
 done
 true # discard any errors

@@ -1,3 +1,38 @@
+btg-0.9.8 (442svn) UNRELEASED; urgency=low
+
+  * Increased the client read-timout.
+    More communication stability on high daemon loads
+      but long hangups on wrong responses.
+    TESTING.
+
+ -- Roman Rybalko <btg@romanr.info>  Sun, 06 Jul 2008 16:53:55 +0400
+
+btg-0.9.8 (439svn-RC3) stable; urgency=low
+
+  * The following bugs were fixed:
+    014067 BTG SVN fails to compile with SVN Libtorrent.
+    014061 XMLRPC_Client fails to parse some XMLs.
+    013987 btgcli can't read commands from file.
+    013985 Installed xmlrpc-epi should be tested.
+    013984 Remove bundled expat.
+    013983 Installed plotmm should be tested.
+    013975 Incorrect torrent statuses.
+    013971 Display build and revision numbers on the wwwUI pages.
+    013964 btgcli: Do not print LF when displaying downloaded pieces.
+    013932 btg-daemon-0.9.8 not installable on debian.
+    013931 Bad URL displayed after DEB install.
+    013859 Remove ncurses from btgcli.
+    013832 XMLRPC response parse error.
+    013720 Daemon hangup on incorrect torrent file.
+    013708 Seeder/Leecher counts incorrect.
+    013678 Update openwrt makefiles.
+    013645 Smooth URL loading indicator.
+    013642 btgui incorrect behavior during init. when comm. error.
+    013454 Writing PID-file.
+    013430 Saving opened urls in history.
+
+ -- Roman Rybalko <btg@romanr.info>  Sun, 06 Jul 2008 14:22:05 +0400
+
 btg-0.9.8 (411svn-RC2) stable; urgency=low
 
   * RC2 released
