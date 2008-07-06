@@ -261,10 +261,10 @@ namespace btg
             clientCallback&                     clientcallback;
 
             /// Used to keep the number of calls to read.
-            t_int                                 read_counter;
+            t_int                                 counter_read;
 
             /// The max number of reads before this machine gives up.
-            t_int const                           max_read_counter;
+            t_int const                           counter_read_max;
 
             /// The minimum amount of sleeping betweeen reads.
             t_int const                           min_sleep_in_ms;

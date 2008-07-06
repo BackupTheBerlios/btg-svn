@@ -124,8 +124,7 @@ namespace btg
               currentCommand(Command::CN_UNDEFINED),
               ackForCommand(Command::CN_UNDEFINED),
               clientcallback(_clientcallback),
-              read_counter(0),
-              max_read_counter(15),
+              counter_read(0), counter_read_max(1000),
               min_sleep_in_ms(10),
               verboseFlag_(_verboseFlag),
               opType_(ST_UNDEF)
@@ -314,9 +313,9 @@ namespace btg
 #if BTG_STATEMACHINE_DEBUG
             BTG_NOTICE(logWrapper(), "Reading from transport ..");
 #endif // BTG_STATEMACHINE_DEBUG
-            read_counter = 0;
+            counter_read = 0;
             while (
-                   ((read_counter < max_read_counter) && (!read_status)) ||
+                   ((counter_read < counter_read_max) && (!read_status)) ||
                    ((_waitforever) && (!read_status))
                    )
                {
@@ -324,17 +323,17 @@ namespace btg
                   if (count == messageTransport::OPERATION_FAILED)
                      {
                         read_status = false;
-                        btg::core::os::Sleep::sleepMiliSeconds(min_sleep_in_ms + read_counter);
+                        btg::core::os::Sleep::sleepMiliSeconds(min_sleep_in_ms);
                      }
                   else
                      {
                         read_status = true;
 #if BTG_STATEMACHINE_DEBUG
-                        BTG_NOTICE(logWrapper(), "Got data after " << read_counter << " read attempts");
+                        BTG_NOTICE(logWrapper(), "Got data after " << counter_read << " read attempts");
 #endif // BTG_STATEMACHINE_DEBUG
                      }
 
-                  read_counter++;
+                  counter_read++;
                }
 
             if (!read_status)
