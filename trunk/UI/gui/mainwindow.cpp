@@ -236,6 +236,8 @@ namespace btg
             
             // When peersTreeView scrolled - refresh peers immediately
             mnb->peersVScrollbar()->signal_value_changed().connect(sigc::mem_fun(*this, &mainWindow::on_peers_scrolled));
+            // Also when it's window's size changed
+            mnb->peersVScrollbar()->signal_size_allocate().connect(sigc::hide(sigc::mem_fun(*this, &mainWindow::on_peers_scrolled)));
 
             /// Tell the gui handler about the statusbar, so it can
             /// write messages on it.  As for now only used for daemon
