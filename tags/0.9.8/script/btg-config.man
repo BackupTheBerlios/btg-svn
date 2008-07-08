@@ -1,0 +1,27 @@
+.TH BTG-CONFIG 1 "26 July 2005"
+.SH NAME
+btg-config \- based on answers given by the user, produce client and daemon config files.
+.SH SYNOPSIS
+.B "btg-config" 
+
+.SH DESCRIPTION
+.B "btg-config" 
+is a script that queries the user and based on the answers received
+generates "client.ini" and "daemon.ini" in the directory the script is
+executed in. 
+
+The produced files should be moved to a directory where the daemon and
+clients will find them - the default directory used by the BTG
+applications is "~/.btg".
+
+.SH OPTIONS
+No options are supported.
+
+.SH AUTHOR
+Written by Michael Wojciechowski.
+
+.SH "SEE ALSO"
+btg(5)
+
+.SH BUGS
+No known bugs.
