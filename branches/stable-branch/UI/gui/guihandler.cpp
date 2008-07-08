@@ -43,19 +43,19 @@ namespace btg
          using namespace btg::core::client;
 
          guiHandler::guiHandler(btg::core::LogWrapperType _logwrapper,
-                                btg::core::externalization::Externalization* _e,
-                                messageTransport*             _transport,
-                                clientConfiguration*          _config,
-                                btg::core::client::lastFiles* _lastfiles,
+                                btg::core::externalization::Externalization& _e,
+                                messageTransport&             _transport,
+                                clientConfiguration&          _config,
+                                clientDynConfig&              _dynconfig,
                                 bool const                    _verboseFlag,
                                 bool const                    _autoStartFlag,
-                                mainStatusbar*                _status_bar
+                                mainStatusbar*                _pstatus_bar
                                 )
             : handlerThreadIf(_logwrapper,
                               _e,
                               _transport,
                               _config,
-                              _lastfiles,
+                              _dynconfig,
                               _verboseFlag,
                               _autoStartFlag),
               contextIDs(0),
@@ -64,15 +64,18 @@ namespace btg
               idToFilenameMap(),
               fileinfolist(0),
               cleanedFilenames(0),
-              status_bar(_status_bar),
+              pstatus_bar(_pstatus_bar),
               peerlist(0)
          {
+         }
 
+         void guiHandler::onTimeout()
+         {
+            setTimeout();
          }
 
          void guiHandler::onTransportInit()
          {
-
          }
 
          void guiHandler::onSetup(t_long const _session)
@@ -136,10 +139,98 @@ namespace btg
          void guiHandler::onCreateWithData()
          {
             commandStatus = true;
-            lastfiles->addLastFile(last_filename);
+            lastfiles.add(last_filename);
             BTG_NOTICE(logWrapper(), 
                        "Added a new torrent with data, filename = " << last_filename << ".");
             last_filename.clear();
+         }
+         
+         void guiHandler::onCreateFromUrl(t_uint const _id)
+         {
+            commandStatus = true;
+            setUrlId(_id);
+         }
+         
+         void guiHandler::onCreateFromUrlError(std::string const& _message)
+         {
+            commandStatus = false;
+         }
+         
+         void guiHandler::onFileStatus(t_uint const _id, 
+                                       t_uint const _status)
+         {
+            commandStatus = true;
+            setFileStatusResponse(_id, _status);
+         }
+         
+         void guiHandler::onFileStatusError(std::string const& _errorDescription)
+         {
+            commandStatus = false;
+         }
+
+         void guiHandler::onUrlStatus(t_uint const _id, 
+                                      t_uint const _status)
+         {
+            commandStatus = true;
+            disableUrlDlProgress();
+            setUrlStatusResponse(_id, _status);
+         }
+         
+         void guiHandler::onUrlStatusError(std::string const& _message)
+         {
+            commandStatus = false;
+            disableUrlDlProgress();
+         }
+
+         void guiHandler::onUrlDlProgress(t_uint const, t_uint _dltotal, t_uint _dlnow, t_uint _dlspeed)
+         {
+            commandStatus = true;
+            setUrlDlProgress(_dltotal, _dlnow, _dlspeed);
+         }
+         
+         void guiHandler::onCreateFromFile(t_uint const _id)
+         {
+            commandStatus = true;
+            setFileId(_id);
+         }
+
+         void guiHandler::onCreateFromFileError(std::string const& _errorDescription)
+         {
+            commandStatus = false;
+            BTG_NOTICE(logWrapper(), 
+                       "Error: " << _errorDescription);
+         }
+
+         void guiHandler::OnCreateFromFilePart()
+         {
+            commandStatus = true;
+         }
+
+         void guiHandler::OnCreateFromFilePartError(std::string const& _errorDescription)
+         {
+            commandStatus = false;
+            BTG_NOTICE(logWrapper(), 
+                       "Error: " << _errorDescription);
+         }
+         
+         void guiHandler::onFileCancel()
+         {
+            commandStatus = true;
+         }
+
+         void guiHandler::onFileCancelError(std::string const& _errorDescription)
+         {
+            commandStatus = false;
+         }
+
+         void guiHandler::onUrlCancel()
+         {
+            commandStatus = true;
+         }
+
+         void guiHandler::onUrlCancelError(std::string const& _errorDescription)
+         {
+            commandStatus = false;
          }
 
          void guiHandler::onAbort()
@@ -216,6 +307,14 @@ namespace btg
          {
             commandStatus = true;
             peerlist      = _peerlist;
+            peerEx = false;
+         }
+
+         void guiHandler::onPeersEx(t_uint _offset, t_peerExList const& _peerExList)
+         {
+            peerEx = true;
+            peerExList = _peerExList;
+            peerExOffset = _offset;
          }
 
          void guiHandler::onPeersError(std::string const& _errorDescription)
@@ -243,7 +342,7 @@ namespace btg
                {
                   // Since the torrent finished downloading, remove it
                   // from the list of last opened files.
-                  lastfiles->removeLastFile(*vsci);
+                  lastfiles.remove(*vsci);
                }
 
             cleanedFilenames = _filenames;
@@ -259,7 +358,7 @@ namespace btg
             BTG_NOTICE(logWrapper(), 
                        "guiHandler::onAttachError:" << _message);
             setSession(ILLEGAL_ID);
-            attachFailtureMessage = _message;
+            setAttachFailtureMessage(_message);
             attachDone            = false;
          }
 
@@ -273,13 +372,13 @@ namespace btg
          void guiHandler::onListSessionsError(std::string const& _errorDescription)
          {
             BTG_FATAL_ERROR(logWrapper(),
-                            GPD->sGUI_CLIENT(), _errorDescription);
+                            btg::core::projectDefaults::sGUI_CLIENT(), _errorDescription);
          }
 
          void guiHandler::onSessionError()
          {
             BTG_FATAL_ERROR(logWrapper(), 
-                            GPD->sGUI_CLIENT(), "Invalid session. Quitting.");
+                            btg::core::projectDefaults::sGUI_CLIENT(), "Invalid session. Quitting.");
             setSessionError();
          }
 
@@ -306,9 +405,9 @@ namespace btg
          void guiHandler::onUptime(t_ulong const _uptime)
          {
             commandStatus = true;
-            if (status_bar != 0)
+            if (pstatus_bar != 0)
                {
-                  status_bar->set("Daemon uptime: " + convertToString<t_ulong>(_uptime) + " sec.");
+                  pstatus_bar->set("Daemon uptime: " + convertToString<t_ulong>(_uptime) + " sec.");
                }
          }
 
@@ -349,9 +448,19 @@ namespace btg
             return status;
          }
 
-         t_strList guiHandler::getLastFiles() const
+         t_strList const& guiHandler::getLastFiles() const
          {
-            return lastfiles->getLastFiles();
+            return lastfiles.get();
+         }
+         
+         t_strList const& guiHandler::getLastURLs() const
+         {
+            return lasturls.getURLs();
+         }
+         
+         t_strList const& guiHandler::getLastURLFiles() const
+         {
+            return lasturls.getFiles();
          }
 
          t_strList guiHandler::getCleanedFilenames()
@@ -361,14 +470,9 @@ namespace btg
             return temp_cfn;
          }
 
-         void guiHandler::setStatusBar(mainStatusbar* _status_bar)
+         void guiHandler::setStatusBar(mainStatusbar* _pstatus_bar)
          {
-            status_bar = _status_bar;
-         }
-
-         t_peerList guiHandler::getPeers() const
-         {
-            return peerlist;
+            pstatus_bar = _pstatus_bar;
          }
 
          void guiHandler::onSetFiles()
@@ -383,6 +487,12 @@ namespace btg
             commandStatus = true;
             idsToRemove.push_back(last_id);
             last_id = ILLEGAL_ID;
+         }
+
+         void guiHandler::onVersion(btg::core::OptionBase const& _ob)
+         {
+            setOption(_ob);
+            commandStatus = true;
          }
 
          void guiHandler::onSetFilesError(std::string const& _errorDescription)
@@ -405,97 +515,20 @@ namespace btg
          {
             return selected_files;
          }
-
+         
          void guiHandler::onSessionInfo(bool const _encryption, bool const _dht)
          {
             dht_enabled_        = _dht;
             encryption_enabled_ = _encryption;
          }
          
+         void guiHandler::onTrackerInfo(t_strList const& _trackerlist)
+         {
+            commandStatus = true;
+            setTrackerList(_trackerlist);
+         }
+         
          guiHandler::~guiHandler()
-         {
-
-         }
-
-         guiStartupHelper::guiStartupHelper(btg::core::LogWrapperType _logwrapper,
-                                            btg::core::client::clientConfiguration*        _config,
-                                            btg::core::client::commandLineArgumentHandler* _clah,
-                                            btg::core::messageTransport*                   _messageTransport,
-                                            btg::core::client::clientHandler*              _handler)
-            : btg::core::client::startupHelper(_logwrapper,
-                                               GPD->sGUI_CLIENT(),
-                                               _config,
-                                               _clah,
-                                               _messageTransport,
-                                               _handler)
-         {
-
-         }
-
-         t_long guiStartupHelper::queryUserAboutSession(t_longList const& _sessions,
-                                                        t_strList const& _sessionIds) const
-         {
-            // Assumption: An instance of Gtk::Main was constructed before the call to
-            // sessionSelectionDialog::run().
-
-            sessionSelectionDialog* ssd = new sessionSelectionDialog("Select session to attach to", _sessions, _sessionIds);
-            ssd->run();
-
-            t_long selected_session;
-            if (!ssd->getSelectedSession(selected_session))
-               {
-                  // Pressed cancel.
-                  BTG_FATAL_ERROR(logWrapper(), 
-                                  GPD->sGUI_CLIENT(), "Cancelled.");
-
-                  selected_session = Command::INVALID_SESSION;
-               }
-
-            delete ssd;
-            ssd = 0;
-
-            return selected_session;
-         }
-
-         bool guiStartupHelper::authUserQuery()
-         {
-            bool status = false;
-
-            authDialog* authdialog = new authDialog();
-
-            if (authdialog->run() == Gtk::RESPONSE_OK)
-            {
-               std::string username;
-               std::string password;
-
-               if (authdialog->getUsernameAndPassword(username, password))
-                  {
-                     setAuth(username, password);
-
-                     status = true;
-                  }
-            }
-
-            delete authdialog;
-            authdialog = 0;
-
-            return status;
-         }
-
-         void guiStartupHelper::showSessions(t_longList const& _sessions,
-                                             t_strList const& _sessionNames) const
-         {
-            sessionSelectionDialog* ssd = new sessionSelectionDialog("Available sessions",
-                                                                     _sessions, 
-                                                                     _sessionNames, 
-                                                                     true /* no selection. */);
-            ssd->run();
-
-            delete ssd;
-            ssd = 0;
-         }
-
-         guiStartupHelper::~guiStartupHelper()
          {
 
          }

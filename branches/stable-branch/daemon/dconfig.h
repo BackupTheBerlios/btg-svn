@@ -28,6 +28,7 @@
 #include <bcore/transport/transport.h>
 #include <bcore/addrport.h>
 #include <bcore/logger/logger.h>
+#include <bcore/os/fileop.h>
 
 #include "ipfilter/ipfilterif.h"
 
@@ -109,6 +110,9 @@ namespace btg
 
                /// Get the proxy IPv4:port to be used.
                btg::core::addressPort getProxy() const;
+               
+               /// Get PID-file name (file to write the PID to)
+               const std::string & getPIDFile() const;
 
                /// Set the filename of the file used for IPv4 filtering.
                void setFilterFilename(std::string const& _filename);
@@ -133,6 +137,9 @@ namespace btg
                /// Get the IPv4 used by libtorrent.
                btg::core::Address getLTListenTo() const;
 
+               /// Get the IPv4 set as internal-IP to UPnP gateway
+               btg::core::Address getUPNPInternalIP() const;
+               
                /* Limit */
                /// Set the upload rate limit
                void setUploadRateLimit(t_int const _value);
@@ -378,6 +385,12 @@ namespace btg
 
                /// User agent used.
                std::string                                 def_userAgent;
+               
+               /// PID-file name
+               std::string                                 def_pidfname;
+               
+               /// Internal IP for UPnP gateway
+               btg::core::Address                          def_upnp_ip;
             };
 
       } // namespace daemon

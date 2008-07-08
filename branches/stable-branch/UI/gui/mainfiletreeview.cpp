@@ -120,8 +120,8 @@ namespace btg
                   fi_iter = _fileinfolist.begin();
                   Gtk::TreeModel::Children children = refListStore->children();
 
-                  for(child_iter iter = children.begin(); 
-                      iter != children.end(); 
+                  for(child_iter iter = children.begin();
+                      iter != children.end();
                       ++iter)
                      {
                         Gtk::TreeModel::Row row  = *iter;

@@ -36,4 +36,3 @@
 #define BTG_UTEST_DAEMON  1
 // Run os specific tests.
 #define BTG_UTEST_OS      1
-

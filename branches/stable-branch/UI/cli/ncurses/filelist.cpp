@@ -62,7 +62,7 @@ namespace btg
             std::vector<keyMapping::KEYLABEL> labels;
 
             labels.push_back(keyMapping::K_HELP);
-            labels.push_back(keyMapping::K_QUIT);
+            labels.push_back(keyMapping::K_BACK);
             labels.push_back(keyMapping::K_DOWN);
             labels.push_back(keyMapping::K_UP);
             labels.push_back(keyMapping::K_LIST_START);
@@ -114,7 +114,7 @@ namespace btg
                               }
                            break;
                         }
-                     case keyMapping::K_QUIT:
+                     case keyMapping::K_BACK:
                         {
                            cont = false;
                            break;
@@ -603,7 +603,7 @@ namespace btg
                }
 
             if (helpWindow::generateHelpForKey(kmap_,
-                                               keyMapping::K_QUIT,
+                                               keyMapping::K_BACK,
                                                "",
                                                keyDescr,
                                                false))

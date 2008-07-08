@@ -29,74 +29,74 @@
 namespace btg
 {
    namespace UI
+   {
+      namespace gui
       {
-         namespace gui
-            {
-               /**
-                * \addtogroup gui
-                */
-               /** @{ */
+         /**
+          * \addtogroup gui
+          */
+         /** @{ */
 
-               /// Implements a model of the data used for graphing
-               /// upload/download traffic.
-               class traficModel
-                  {
-                  public:
-                     /// Constructor.
-                     /// @param [in] _resolutionX X-resolution.
-                     traficModel(t_int const _resolutionX);
+         /// Implements a model of the data used for graphing
+         /// upload/download traffic.
+         class traficModel
+         {
+         public:
+            /// Constructor.
+            /// @param [in] _resolutionX X-resolution.
+            traficModel(t_int const _resolutionX);
 
-                     /// Add a sample.
-                     void add(t_int const _downloadBytesPerSecond, 
-                              t_int const _uploadBytesPerSecond);
+            /// Add a sample.
+            void add(t_int const _downloadBytesPerSecond, 
+                     t_int const _uploadBytesPerSecond);
                      
-		     /// Get vectors of the contained download rate
-		     /// data.
-                     void getDownload(std::vector<double> & _x,
-                                      std::vector<double> & _y) const;
+            /// Get vectors of the contained download rate
+            /// data.
+            void getDownload(std::vector<double> & _x,
+                             std::vector<double> & _y) const;
 
-		     /// Get vectors of the contained upload rate
-		     /// data.
-                     void getUpload(std::vector<double> & _x,
-                                    std::vector<double> & _y) const;
+            /// Get vectors of the contained upload rate
+            /// data.
+            void getUpload(std::vector<double> & _x,
+                           std::vector<double> & _y) const;
 
-		     /// Get the current upload.
-                     t_int getCurrentUpload() const;
+            /// Get the current upload.
+            t_int getCurrentUpload() const;
 
-		     /// Get the current download.
-                     t_int getCurrentDownload() const;
+            /// Get the current download.
+            t_int getCurrentDownload() const;
 
-                     /// Get the max download in B/sec.
-                     t_int getMaxDownload() const;
+            /// Get the max download in B/sec.
+            t_int getMaxDownload() const;
 
-                     /// Get the max upload in B/sec.
-                     t_int getMaxUpload() const;
+            /// Get the max upload in B/sec.
+            t_int getMaxUpload() const;
 
-                     /// Destructor.
-                     ~traficModel();
-                  private:
-		     /// The resolution.
-                     t_int                     resolutionX;
+            /// Destructor.
+            ~traficModel();
+         private:
+            /// The resolution.
+            t_int                     resolutionX;
 
-                     /// Current position.
-                     t_int                     position;
+            /// Current position.
+            t_int                     position;
 
-                     /// Upload samples.
-                     std::vector<double>       upload;
+            /// Upload samples.
+            std::vector<double>       upload;
 
-                     /// Download samples.
-                     std::vector<double>       download;
+            /// Download samples.
+            std::vector<double>       download;
 
-		     /// The current download rate.
-                     t_int                     current_dl;
-		     /// The current upload rate.
-                     t_int                     current_ul;
-                  };
+            /// The current download rate.
+            t_int                     current_dl;
+            /// The current upload rate.
+            t_int                     current_ul;
+         };
 
-               /** @} */
+         /** @} */
 
-            } // namespace gui
-      } // namespace UI
+      } // namespace gui
+   } // namespace UI
 } // namespace btg
 
 #endif

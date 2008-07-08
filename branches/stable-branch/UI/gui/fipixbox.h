@@ -24,10 +24,15 @@
 #define FILEINFOPIXBOX_H
 
 #include <gtkmm.h>
-#include <bcore/file_info.h>
+#include <bcore/bitvector.h>
 
 namespace btg
 {
+   namespace core
+   {
+      class fileInformation;
+   }
+
    namespace UI
       {
          namespace gui
@@ -46,6 +51,12 @@ namespace btg
                                     int const _sizeX,
                                     int const _sizeY,
                                     btg::core::fileInformation const& _fileinfo);
+
+                     /// Another constructor (is used in extended list of peers).
+                     fileInfoPixbox(int const _bits_per_sample,
+                                                    int const _sizeX,
+                                                    int const _sizeY,
+                                                    t_bitVector const& _bits);
 
                      /// Constructor. Takes an existing Gdk::Pixbuf
                      /// which is used for drawing on.
@@ -98,7 +109,7 @@ namespace btg
 
                      /// Copy of the bits from the fileInformation
                      /// object given in constructor.
-                     t_bitList                  bits;
+                     t_bitVector                  bits;
 
                      /// Number of bits.
                      int                        fileinfoSize;

@@ -54,7 +54,7 @@ namespace btg
 
       std::string initConnectionCommand::toString() const
       {
-         std::string output = Command::toString() + GPD->sSPACE() + "initConnectionCommand.";
+         std::string output = Command::toString() + " " + "initConnectionCommand.";
          return output;
       }
 

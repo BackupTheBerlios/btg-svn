@@ -47,9 +47,21 @@ extern "C"
 #include <daemon/darg.h>
 #include <bcore/logable.h>
 
+#include <bcore/logger/logger.h>
+#include <bcore/logger/console_log.h>
+
+#include <daemon/opid.h>
+
+#if BTG_OPTION_URL
+#  include <daemon/http/httpmgr.h>
+#  include <bcore/os/sleep.h>
+#endif // BTG_OPTION_URL
+
 #if BTG_UTEST_DAEMON
 CPPUNIT_TEST_SUITE_REGISTRATION( testDaemon );
 #endif // BTG_UTEST_DAEMON
+
+#include <iostream>
 
 void testDaemon::setUp()
 {
@@ -61,6 +73,10 @@ void testDaemon::setUp()
       }
 
    logwrapper = btg::core::LogWrapperType(new btg::core::logger::logWrapper);
+   logwrapper->setMinMessagePriority(btg::core::logger::logWrapper::PRIO_DEBUG);
+
+   boost::shared_ptr<btg::core::logger::logStream> l(new btg::core::logger::logStream(new btg::core::logger::consoleLogger()));
+   logwrapper->setLogStream(l);
 }
 
 void testDaemon::tearDown()
@@ -181,14 +197,16 @@ void testDaemon::testSessionSaver()
       dd.filter = ;
    */
 
+   btg::core::os::fstream sf(TESTFILE_DAEMON_SESSIONSAVE, std::ios_base::out);
+
    SessionSaver *ss = new SessionSaver(logwrapper, false, *portMgr, *limitMgr, sessionlist, dd);
-   CPPUNIT_ASSERT(ss->saveSessions(TESTFILE_DAEMON_SESSIONSAVE, false) == 1);
+   CPPUNIT_ASSERT(ss->saveSessions(sf, false) == 1);
 
    delete ss;
    ss=0;
 
    ss = new SessionSaver(logwrapper, false, *portMgr, *limitMgr, sessionlist, dd);
-   CPPUNIT_ASSERT(ss->loadSessions(TESTFILE_DAEMON_SESSIONSAVE) == 0);
+   CPPUNIT_ASSERT(ss->loadSessions(sf) == 0);
 
    std::vector<t_long> sessions;
 
@@ -365,19 +383,33 @@ void testDaemon::testCommandLineHandler()
 
    clah->setup();
 #if BTG_DEBUG
-   int argc = 4;
-   char* args[argc];
-   args[0] = "test_daemon";
-   args[1] = "-v";
-   args[2] = "-n";
-   args[3] = "-D";
+   const int argc = 4;
+   const char* coarg[argc] = {
+      "test_daemon",
+      "-v",
+      "-n",
+      "-D"
+   };
+   char* args[argc] = {0, 0, 0, 0};
 #else
-   int argc = 3;
-   char* args[argc];
-   args[0] = "test_daemon";
-   args[1] = "-v";
-   args[2] = "-n";
+   const int argc = 3;
+   const char* coarg[argc] = {
+      "test_daemon",
+      "-v",
+      "-n"
+   };
+   char* args[argc] = {0, 0, 0};
 #endif
+
+   for (int count = 0;
+        count < argc;
+        count++)
+      {
+         int len = strlen(coarg[count]);
+         args[count] = new char[len + 1];
+         memset(args[count], 0, len+1);
+         strncpy(args[count], coarg[count], len);
+      }
 
    char** argv = &args[0];
 
@@ -393,4 +425,81 @@ void testDaemon::testCommandLineHandler()
 
    delete clah;
    clah = 0;
+
+   for (int count = 0;
+        count < argc;
+        count++)
+      {
+         delete [] args[count];
+         args[count] = 0;
+      }
 }
+
+#if BTG_OPTION_URL
+// Note: these tests can fail if the required files are not present on
+// the http server they are downloaded from.
+void testDaemon::testHttpDownload()
+{
+   using namespace btg::daemon::http;
+   using namespace btg::core::os;
+
+   btg::daemon::opId opid(logwrapper);
+   httpDlManager httpm(logwrapper, opid);
+
+   // Download a non existing file.
+   t_uint serial = httpm.Fetch(TEST_HTTPADDR "test.torrent", "test.torrent");
+   
+   bool done = false;
+   httpInterface::Status stat = httpInterface::ERROR;
+   while (!done)
+      {
+         stat = httpm.getStatus(serial);
+         if ((stat == httpInterface::FINISH) || (stat == httpInterface::ERROR))
+            {
+               done = true;
+               break;
+            }
+
+         Sleep::sleepSecond(1);
+      }
+   CPPUNIT_ASSERT(stat == httpInterface::ERROR);
+
+   btg::core::sBuffer buffer;
+   CPPUNIT_ASSERT(!httpm.Result(serial, buffer));
+
+   // Download a file which exists.
+   serial = httpm.Fetch(TEST_HTTPADDR "test2.torrent", "test2.torrent");
+   done = false;
+   while (!done)
+      {
+         stat = httpm.getStatus(serial);
+         if ((stat == httpInterface::FINISH) || (stat == httpInterface::ERROR))
+            {
+               done = true;
+               break;
+            }
+
+         Sleep::sleepSecond(1);
+      }
+   CPPUNIT_ASSERT(stat == httpInterface::FINISH);
+
+   btg::core::sBuffer buffer2;
+   CPPUNIT_ASSERT(httpm.Result(serial, buffer2));
+   CPPUNIT_ASSERT(buffer2.size() > 0);
+
+   std::cout << "Got bytes: " << buffer2.size() << std::endl;
+   
+   CPPUNIT_ASSERT(unlink("test2.torrent") != -1);
+}
+#endif // BTG_OPTION_URL
+
+void testDaemon::testOpId()
+{
+   btg::daemon::opId opid(logwrapper);
+
+   t_uint id0 = opid.id();
+   t_uint id1 = opid.id();
+
+   CPPUNIT_ASSERT(id0 < id1);
+}
+

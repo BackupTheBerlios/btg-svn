@@ -24,9 +24,12 @@
 #define SESSION_DIALOG_H
 
 #include <gtkmm/dialog.h>
-#include <gtkmm/comboboxtext.h>
-
 #include <bcore/type.h>
+
+namespace Gtk
+{
+   class ComboBoxText;
+}
 
 namespace btg
 {

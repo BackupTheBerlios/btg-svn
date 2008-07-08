@@ -49,7 +49,10 @@ namespace btg
                      mainMenubar(mainWindow* _mainwindow);
 
                      /// Update the list of last opened files.
-                     void updateLastFileList(t_strList const& _lastFileList);
+                     void updateLastFileList(t_strList const& _FileList);
+
+                     /// Update the list of last opened files.
+                     void updateLastURLList(t_strList const& _URLList, t_strList const& _URLFileList);
 
                      /// Enable the control menu.
                      void enableControlFunction();
@@ -78,6 +81,12 @@ namespace btg
                      /// List of menu items representing last opened files.
                      std::vector<Gtk::MenuItem*> lastFiles;
 
+                     /// Menu item for the list of last URLs.
+                     Gtk::Menu*                  lastURLsMenu;
+
+                     /// List of menu items representing last opened URLs.
+                     std::vector<Gtk::MenuItem*> lastURLs;
+
                      /// Item in the control menu.
                      Gtk::MenuItem*              startMenuitem;
                      /// Item in the control menu.
@@ -92,6 +101,9 @@ namespace btg
                      Gtk::MenuItem*              limitMenuitem;
                      /// Item in the control menu.
                      Gtk::MenuItem*              moveMenuitem;
+
+                     /// Indicates if URL downloading is enabled.
+                     bool                        urlDlEnabled;
                   private:
                      /// Copy constructor.
                      mainMenubar(mainMenubar const& _mm);

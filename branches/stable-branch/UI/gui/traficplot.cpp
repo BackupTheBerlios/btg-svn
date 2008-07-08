@@ -20,6 +20,8 @@
  * $Id$
  */
 
+#include "traficplot.h"
+
 #include <pangomm/layout.h>
 
 #include <iostream>
@@ -32,7 +34,8 @@
 
 #include <plotmm/paint.h>
 
-#include "traficplot.h"
+#include <gtkmm/label.h>
+#include <gtkmm/box.h>
 
 namespace btg
 {

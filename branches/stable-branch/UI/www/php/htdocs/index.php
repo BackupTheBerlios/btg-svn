@@ -24,7 +24,15 @@ session_start();
 <script language="javascript" src="btg.js" type="text/javascript"></script>
 <script language="javascript" src="ajaxjs.php" type="text/javascript"></script>
 <script language="javascript" src="csshover.js" type="text/javascript"></script>
-<title>BTG</title>
+<title>BTG <?
+   print BTG_VERSION;
+if (BTG_REV != "")
+   {
+      print " (";
+      print BTG_REV;
+      print ")";
+   }
+?></title>
 <!--[if IE]>
 <script type="text/javascript">
 var t = document.getElementsByTagName("tr");
@@ -51,6 +59,12 @@ for(var i=0;i<t.length;i++) {
 		<input class="btn" type="file" id="upload_input" name="torrent_file"/>
 		<input id="upload_button" type="submit" value="Upload"/>
 		</form>
+		<div id="loadurl">
+			<input class="textinput" type="text" id="loadurl_input"/>
+			<input id="loadurl_button" type="button" value="Load URL" onClick="loadUrl()"/>
+		</div>
+		<div id="loadurl_status" onClick="resetUrl()">
+		</div>
 	</div>
 
 	<input id="logout_button" class="control_buttons" type="button" onClick="deauth();" value="Logout"/>

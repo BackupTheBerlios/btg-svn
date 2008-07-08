@@ -6,6 +6,9 @@ btgui \- bittorrent client, part of the btg project.
 [-o 
 .I "<filename>"
 ]
+[-u 
+.I "<URL>"
+]
 [--nostart]
 [-l]
 [-A]
@@ -40,6 +43,11 @@ present an empty list of torrents. Use the File menu to open a
 .BI "-o" 
 .I "<filename>"
 \- Name of a torrent file to open after initializing the client.
+
+.TP
+.BI "-u" 
+.I "<URL>"
+\- URL to open after initializing the client. The URL should point to a torrent file.
 
 .TP
 .BI "--nostart" 

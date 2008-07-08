@@ -21,6 +21,7 @@
  */
 
 #include "questiondialog.h"
+#include <memory>
 
 namespace btg
 {

@@ -9,7 +9,10 @@ The debian packages are currently being maintained by Felipe Sateler.
 They can be found in our `debian repository`_. For easy installation, 
 add the following line to your ``/etc/apt/sources.list``:
 
-        ``deb ftp://ftp.berlios.de/pub/btg/debian unstable main``
+::
+
+ deb ftp://ftp.berlios.de/pub/btg/debian main stable unstable
+ deb ftp://ftp.berlios.de/pub/btg/debian other stable unstable
 
 This repository is gpg-signed. This means apt can check the validity of the
 packages against a gpg signature. You can find more information on gpg-signed 
@@ -17,7 +20,7 @@ repositories at the `the Debian wiki`_. To use this feature you must add the
 key to the apt keyring. To do that you must:
 
 1. Download the `public key`_.
-2. Verify that the md5sum of the file you downloaded is ``00f252f6c6da68f32972750db70ff262``
+2. Verify that the md5sum of the file you downloaded is ``0773d61b03fda0204e9db4577ee9aa1b``
         ``md5sum public_key.asc``
 3. Insert it into the apt keyring. As root, do the following:
         ``apt-key add public_key.asc``

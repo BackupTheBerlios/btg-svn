@@ -70,7 +70,7 @@ namespace btg
 
       std::string sessionInfoResponseCommand::toString() const
       {
-         std::string output = Command::toString() + GPD->sSPACE();
+         std::string output = Command::toString() + " ";
 
          if (encryption_)
             {

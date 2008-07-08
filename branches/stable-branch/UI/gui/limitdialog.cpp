@@ -31,6 +31,8 @@
 #include <gtkmm/button.h>
 #include <gtkmm/buttonbox.h>
 #include <gtkmm/adjustment.h>
+#include <gtkmm/comboboxtext.h>
+#include <gtkmm/spinbutton.h>
 
 #include <bcore/project.h>
 
@@ -46,8 +48,13 @@ namespace btg
       namespace gui
       {
 
-         limitDialog::limitDialog(const char * _szUploadLabel, const char * _szDownloadLabel, const char * _szParam3Label, const char * _szParam4Label)
-            : Gtk::Dialog(GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() + " / Limit", true /* modal */, true /* use_separator aka set_has_separator() */ ),
+         limitDialog::limitDialog(const char * _szUploadLabel, 
+                                  const char * _szDownloadLabel, 
+                                  const char * _szParam3Label, 
+                                  const char * _szParam4Label)
+            : Gtk::Dialog(btg::core::projectDefaults::sGUI_CLIENT() + " " + btg::core::projectDefaults::sFULLVERSION() + " / Limit", 
+                          true /* modal */, 
+                          true /* use_separator aka set_has_separator() */ ),
               limit_interval(5),
               limit_selected(false),
               selected_upload_disable(false),
@@ -176,7 +183,7 @@ namespace btg
                                   t_long const _currentParam4)
          {
 
-            set_title( GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() + " / Limit: " + _filename );
+            set_title( btg::core::projectDefaults::sGUI_CLIENT() + " " + btg::core::projectDefaults::sFULLVERSION() + " / Limit: " + _filename );
 
             limit_selected = false;
 

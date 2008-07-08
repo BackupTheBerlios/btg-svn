@@ -37,6 +37,9 @@ extern "C"
 #include <vector>
 #include <string>
 
+#include <bcore/dbuf.h>
+#include <bcore/sbuf.h>
+
 #include <bcore/status.h>
 #include <bcore/file_info.h>
 #include <bcore/hru.h>
@@ -47,6 +50,7 @@ extern "C"
 #include <bcore/auth/hash.h>
 
 #include <bcore/os/fileop.h>
+#include <bcore/os/pidfile.h>
 
 #include <bcore/project.h>
 
@@ -77,6 +81,7 @@ extern "C"
 #include <bcore/command/session_list_rsp.h>
 #include <bcore/command/session_quit.h>
 #include <bcore/command/setup.h>
+#include <bcore/command/version.h>
 
 #include <bcore/command/kill.h>
 #include <bcore/command/limit.h>
@@ -86,6 +91,8 @@ extern "C"
 #include <bcore/command/context_file.h>
 
 #include <bcore/logger/console_log.h>
+
+#include <bcore/bitvector.h>
 
 #include "files.h"
 
@@ -121,7 +128,7 @@ void testBcore::tearDown()
 
 void testBcore::testCommand()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
    // A most basic command. This command cannot be serialized, its
    // serialize/deserialize methods are used by its children to store
    // session and command type.
@@ -177,7 +184,7 @@ void testBcore::testListCommandRange(t_uint _start, t_uint _end)
 
 void testBcore::testListCommand()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    // List command
    listCommand *lc = new listCommand();
@@ -197,7 +204,7 @@ void testBcore::testListCommand()
 
 void testBcore::testListCommandResponse()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    std::vector<t_int> ids;
    std::vector<std::string> files;
@@ -234,7 +241,7 @@ void testBcore::testListCommandResponse()
 
 void testBcore::testErrorCommand()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    // List response command:
    std::string const message = "Message. \nTestMessage. TestTestTest Message          0x0\\\\\0";
@@ -260,7 +267,7 @@ void testBcore::testErrorCommand()
 
 void testBcore::testListContextCommand()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    listSessionCommand *lcc = new listSessionCommand();
    lcc->serialize(externalization);
@@ -281,7 +288,7 @@ void testBcore::testListContextCommand()
 
 void testBcore::testListSessionResponseCommand()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    std::vector<t_long> vl;
    std::vector<std::string> sn;
@@ -313,7 +320,7 @@ void testBcore::testListSessionResponseCommand()
 
 void testBcore::testAttachSessionCommand()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    for (t_long trySession=0; trySession<512; trySession++)
       {
@@ -345,7 +352,7 @@ void testBcore::testContextStatusResponseCommand()
    btg::core::externalization::Externalization* eSource = 
       new btg::core::externalization::XMLRPC(logwrapper);
    
-   btg::core::commandFactory cf1(logwrapper, eSource);
+   btg::core::commandFactory cf1(logwrapper, *eSource);
 
    trackerStatus ts(-1, 0);
    Status status(100, 
@@ -381,7 +388,7 @@ void testBcore::testContextStatusResponseCommand()
       new btg::core::externalization::XMLRPC(logwrapper);
    eDestin->setBuffer(dbuffer);
 
-   btg::core::commandFactory cf2(logwrapper, eDestin);
+   btg::core::commandFactory cf2(logwrapper, *eDestin);
 
    // csrc->serialize(externalization);
 
@@ -413,7 +420,7 @@ void testBcore::testContextStatusResponseCommand()
 
 void testBcore::testContextAllStatusResponseCommand()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    std::vector<Status> vstatus;
    for (t_int i=0; i<9; i++)
@@ -446,7 +453,7 @@ void testBcore::testContextAllStatusResponseCommand()
 
 void testBcore::testUtil_simple_types()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    dBuffer output_buffer;
    bool bool_value = false;
@@ -549,9 +556,91 @@ void testBcore::testDbuffer()
    delete [] p;
 }
 
+void testBcore::testSbuffer()
+{
+   {
+      sBuffer sbuf;
+      CPPUNIT_ASSERT(sbuf.size() == 0);
+   }
+
+   // Test reading.
+   {
+      sBuffer read_sbuf;
+      CPPUNIT_ASSERT(read_sbuf.read(TESTFILE_FILLED));
+      CPPUNIT_ASSERT(read_sbuf.size() > 0);
+   }
+
+   const t_int size = 1024;
+   t_byte bytes[size];
+   memset(&bytes[0], 0, size);
+
+   bytes[0] = 1;
+   bytes[1] = 2;
+
+   bytes[511] = 3;
+   bytes[512] = 4;
+
+   bytes[1022] = 5;
+   bytes[1023] = 6;
+   
+   // Test splitting.
+   {
+      const t_int partSize = 510;
+
+      sBuffer sbuf(bytes, size);
+      CPPUNIT_ASSERT(sbuf.size() == size);
+
+      t_byte b = 0;
+      CPPUNIT_ASSERT(sbuf.getByte(0, b));
+      CPPUNIT_ASSERT(b == 1);
+      CPPUNIT_ASSERT(sbuf.getByte(1, b));
+      CPPUNIT_ASSERT(b == 2);
+
+      CPPUNIT_ASSERT(sbuf.getByte(511, b));
+      CPPUNIT_ASSERT(b == 3);
+      CPPUNIT_ASSERT(sbuf.getByte(512, b));
+      CPPUNIT_ASSERT(b == 4);
+
+      CPPUNIT_ASSERT(sbuf.getByte(1022, b));
+      CPPUNIT_ASSERT(b == 5);
+      CPPUNIT_ASSERT(sbuf.getByte(1023, b));
+      CPPUNIT_ASSERT(b == 6);
+
+      std::vector<sBuffer> dest;
+      sbuf.split(partSize, dest);
+      CPPUNIT_ASSERT(dest.size() == 3);
+
+      for (std::vector<sBuffer>::const_iterator iter = dest.begin();
+           iter != dest.end();
+           iter++)
+         {
+            CPPUNIT_ASSERT(iter->size() <= partSize);
+         }
+
+      sBuffer sbuf2(dest);
+      CPPUNIT_ASSERT(sbuf2.size() == size);
+
+      CPPUNIT_ASSERT(sbuf2 == sbuf);
+
+      CPPUNIT_ASSERT(sbuf2.getByte(0, b));
+      CPPUNIT_ASSERT(b == 1);
+      CPPUNIT_ASSERT(sbuf2.getByte(1, b));
+      CPPUNIT_ASSERT(b == 2);
+
+      CPPUNIT_ASSERT(sbuf2.getByte(511, b));
+      CPPUNIT_ASSERT(b == 3);
+      CPPUNIT_ASSERT(sbuf2.getByte(512, b));
+      CPPUNIT_ASSERT(b == 4);
+
+      CPPUNIT_ASSERT(sbuf2.getByte(1022, b));
+      CPPUNIT_ASSERT(b == 5);
+      CPPUNIT_ASSERT(sbuf2.getByte(1023, b));
+      CPPUNIT_ASSERT(b == 6);
+   }
+}
 void testBcore::testStatus()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    t_int context_id     = 1024;
    std::string filename("/tmp/test.torrent");
@@ -608,7 +697,7 @@ void testBcore::testStatus()
 
 void testBcore::testContextCleanCommand()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    contextCleanCommand* ccc = new contextCleanCommand();
 
@@ -630,7 +719,7 @@ void testBcore::testContextCleanCommand()
 
 void testBcore::testContextCleanResponseCommand()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    std::vector<std::string> filenames;
    std::vector<t_int>  ids;
@@ -825,7 +914,7 @@ void testBcore::testFileInfo()
    t_uint const bytesPerPiece = 1024;
    t_ulong const filesize     = 1024 * 1024 * 1024;
 
-   std::vector<bool> boolvect;
+   t_bitVector boolvect;
 
    for (t_uint i=0; i<(bits / 2); i++)
       {
@@ -888,9 +977,9 @@ void testBcore::testFileInfo()
 
 void testBcore::testFileInfoResponseCommand()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
-   std::vector<bool> boolvect;
+   t_bitVector boolvect;
 
    for (t_int i=0; i<256; i++)
       {
@@ -1112,6 +1201,23 @@ void testBcore::testSelectedFileEntryList()
 
 }
 
+void testBcore::testAddressPort()
+{
+   Address i;
+   CPPUNIT_ASSERT(!i.valid());
+
+   Address ii(0, 0, 0, 0);
+   CPPUNIT_ASSERT(!ii.valid());
+
+   Address a(192, 168, 0, 1);
+   CPPUNIT_ASSERT(a.valid());
+
+   std::string input("127.0.0.1");
+
+   CPPUNIT_ASSERT(a.fromString(input));
+   CPPUNIT_ASSERT(a.valid());
+}
+
 void testBcore::testAddrPort()
 {
    std::string input("127.0.0.1:60000");
@@ -1152,13 +1258,14 @@ void testBcore::testAddrPort()
 
 void testBcore::testPeer()
 {
-   btg::core::commandFactory cf(logwrapper, externalization);
+   btg::core::commandFactory cf(logwrapper, *externalization);
 
    t_peerList peerlist;
+   t_peerExList peerExList;
 
    for (t_int i = 0; i<12; i++)
       {
-         peerAddress pa(i, 127, i, 254);
+         peerAddress pa(i, 127, i, 255 /* it's possible */);
 
          bool seed = false;
          if (i % 2)
@@ -1169,9 +1276,36 @@ void testBcore::testPeer()
          Peer peer(pa, seed, "info");
 
          peerlist.push_back(peer);
+         
+         std::vector<bool> pieces(10+i);
+         pieces[3] = 1;
+         pieces[5] = 1;
+         pieces[i] = 1;
+         std::string client("test client");
+         PeerEx peerEx(
+            1,
+            11,
+            2, 3,
+            4, 5,
+            123, 321,
+            pieces,
+            333, 444,
+            "BT",
+            10,
+            12, 13,
+            10, 8, 1000, 2000,
+            client,
+            1,
+            102034, 123123,
+            3, 5,
+            10,
+            43235);
+         
+         peerExList.push_back(peerEx);
       }
 
    contextPeersResponseCommand* cprc = new contextPeersResponseCommand(0, peerlist);
+   cprc->setExList(3, peerExList);
 
    cprc->serialize(externalization);
 
@@ -1187,6 +1321,10 @@ void testBcore::testPeer()
 
    CPPUNIT_ASSERT(dynamic_cast<contextPeersResponseCommand*>(command_pointer)->getList() == peerlist);
 
+   CPPUNIT_ASSERT(dynamic_cast<contextPeersResponseCommand*>(command_pointer)->isEx());
+   CPPUNIT_ASSERT(dynamic_cast<contextPeersResponseCommand*>(command_pointer)->getExOffset() == 3);
+   CPPUNIT_ASSERT(dynamic_cast<contextPeersResponseCommand*>(command_pointer)->getExList() == peerExList);
+   
    delete cprc;
    cprc = 0;
 
@@ -1305,14 +1443,35 @@ void testBcore::testOsFileOp()
 void testBcore::testVersion()
 {
    CPPUNIT_ASSERT((
-                   GPD->iMAJORVERSION() != 0 ||
-                   GPD->iMINORVERSION() != 0 ||
-                   GPD->iREVISIONVERSION() != 0));
+                   btg::core::projectDefaults::iMAJORVERSION() != 0 ||
+                   btg::core::projectDefaults::iMINORVERSION() != 0 ||
+                   btg::core::projectDefaults::iREVISIONVERSION() != 0));
 
    // This is required by libtorrent.
-   CPPUNIT_ASSERT( (GPD->iMAJORVERSION() >= 0) && (GPD->iMAJORVERSION() <= 9) );
-   CPPUNIT_ASSERT( (GPD->iMINORVERSION() >= 0) && (GPD->iMINORVERSION() <= 9) );
-   CPPUNIT_ASSERT( (GPD->iREVISIONVERSION() >= 0 ) && (GPD->iREVISIONVERSION() <= 9) );
+   CPPUNIT_ASSERT( (btg::core::projectDefaults::iMAJORVERSION() >= 0) && (btg::core::projectDefaults::iMAJORVERSION() <= 9) );
+   CPPUNIT_ASSERT( (btg::core::projectDefaults::iMINORVERSION() >= 0) && (btg::core::projectDefaults::iMINORVERSION() <= 9) );
+   CPPUNIT_ASSERT( (btg::core::projectDefaults::iREVISIONVERSION() >= 0 ) && (btg::core::projectDefaults::iREVISIONVERSION() <= 9) );
+
+   // Test the version command.
+   versionResponseCommand vrc(btg::core::projectDefaults::iMAJORVERSION(), 
+                              btg::core::projectDefaults::iMINORVERSION(),
+                              btg::core::projectDefaults::iREVISIONVERSION());
+
+   vrc.setOption(versionResponseCommand::SS);
+   vrc.setOption(versionResponseCommand::PERIODIC_SS);
+   vrc.setOption(versionResponseCommand::UPNP);
+   vrc.setOption(versionResponseCommand::DHT);
+   vrc.setOption(versionResponseCommand::ENCRYPTION);
+   vrc.setOption(versionResponseCommand::URL);
+   // vrc.setOption(versionResponseCommand::SELECTIVE_DL);
+   vrc.setOption(versionResponseCommand::OPTION_7);
+   vrc.setOption(versionResponseCommand::OPTION_8);
+
+   CPPUNIT_ASSERT( vrc.getOption(versionResponseCommand::SS));
+   CPPUNIT_ASSERT( vrc.getOption(versionResponseCommand::URL));
+   CPPUNIT_ASSERT( !vrc.getOption(versionResponseCommand::SELECTIVE_DL));
+   CPPUNIT_ASSERT( vrc.getOption(versionResponseCommand::OPTION_7));
+   CPPUNIT_ASSERT( vrc.getOption(versionResponseCommand::OPTION_8));
 }
 
 void testBcore::testXmlRpc()
@@ -1568,11 +1727,240 @@ void testBcore::stressTestXmlRpcCommands()
    eDestin = 0;
 }
 
+// also tests btg::core::os::fstream
+void testBcore::testPIDFile()
+{
+   char fname[] = "testPIDFileXXXXXX";
+   CPPUNIT_ASSERT(mkstemp(fname) != -1);
+   
+   {
+      btg::core::os::PIDFile pf(fname);
+      CPPUNIT_ASSERT(pf.error() == false);
+      CPPUNIT_ASSERT(pf.exists() == false);
+      
+      pf.write();
+      
+      {
+         btg::core::os::PIDFile pf(fname);
+         CPPUNIT_ASSERT(pf.error() == false);
+         CPPUNIT_ASSERT(pf.exists() == true);
+      }
+      
+      {
+         // test that file isn't deleted
+         std::ifstream ifs(fname);
+         CPPUNIT_ASSERT(ifs.is_open() == true);
+      }
+      int a = 1;
+   }
+
+   {
+      // test that file is deleted
+      std::ifstream ifs(fname);
+      CPPUNIT_ASSERT(ifs.is_open() == false);
+   }
+   
+   {
+      btg::core::os::PIDFile pf(fname);
+      pf.clear();
+   }
+
+   {
+      // test that file isn't deleted
+      std::ifstream ifs(fname);
+      CPPUNIT_ASSERT(ifs.is_open() == true);
+   }
+   
+   {
+      // empty file, should be OK
+      btg::core::os::PIDFile pf(fname);
+      CPPUNIT_ASSERT(pf.error() == false);
+      CPPUNIT_ASSERT(pf.exists() == false);
+      pf.write();
+      
+      int pid;
+      std::ifstream ifs(fname);
+      ifs >> pid;
+      CPPUNIT_ASSERT(pid == getpid());
+   }
+   
+   {
+      // correct pidfile re-writing
+      std::ofstream ofs(fname);
+      ofs << "999999"; // unexistent PID, hope
+      ofs.close();
+      
+      btg::core::os::PIDFile pf(fname);
+      CPPUNIT_ASSERT(pf.error() == false);
+      CPPUNIT_ASSERT(pf.exists() == false);
+      pf.write();
+      
+      /* 
+       * fighting against filesystem cache
+       */
+      
+      std::stringstream ss;
+      ss << "cp " << fname << " " << fname << ".new";
+      CPPUNIT_ASSERT(system(ss.str().c_str()) == 0);
+      
+      int pid = 0;
+      ss.str("");
+      ss << fname << ".new";
+      std::ifstream ifs(ss.str().c_str());
+      ifs >> pid;
+      CPPUNIT_ASSERT(unlink(ss.str().c_str()) == 0);
+      CPPUNIT_ASSERT(pid == getpid());
+   }
+   
+   // test for unlink even when source changes
+   const char * fname2 = "testPIDfile";
+   strcpy(fname,fname2);
+   {
+      btg::core::os::PIDFile pf(fname);
+      pf.write();
+      strcpy(fname,"testPIDFile2");
+   }
+   CPPUNIT_ASSERT(unlink(fname2) == -1);
+}
+
+#define PRINT_BITVECTOR(v) \
+{ \
+   std::cout << __FILE__ ":" << __LINE__ << " " #v ": "; \
+   for (int i = 0; i < v.size(); ++i) \
+   { \
+      std::cout << v[i]; \
+      if (i % 8 == 7) \
+         std::cout << " "; \
+   } \
+   std::cout << std::endl; \
+}
+
+#define PRINT_STRING(s) \
+{ \
+   std::cout << __FILE__ ":" << __LINE__ << " " #s ": "; \
+   std::cout << std::hex << std::setfill('0'); \
+   for (int i = 0; i < s.size(); ++i) \
+      std::cout << "0x" << std::setw(2) << (unsigned short)s[i] << " "; \
+   std::cout << std::dec << std::endl; \
+}
+
+void testBcore::test_bitvector()
+{
+   btg::core::bitvector bv1;
+   bv1.resize(100,false);
+   bv1[3] = true;
+   bv1[33] = true;
+   bv1[50] = true;
+   bv1[58] = true;
+   bv1[88] = true;
+   bv1[99] = true;
+   
+   //PRINT_BITVECTOR(bv1);
+   
+   std::string s = bv1.toString();
+   CPPUNIT_ASSERT(s.size() == bv1.size() / 8 + (bv1.size() % 8 ? 1 : 0) );
+   
+   //PRINT_STRING(s);
+   
+   btg::core::bitvector bv2;
+   bv2.fromString(s,bv1.size());
+
+   //PRINT_BITVECTOR(bv2);
+   
+   CPPUNIT_ASSERT(bv2 == bv1);
+   
+   bv1.erase(bv1.begin(), bv1.begin() + 30);
+   bv2.erase(bv2.begin(), bv2.begin() + 30);
+   CPPUNIT_ASSERT(bv1.toString() == bv2.toString());
+   
+   std::fill(bv1.begin(), bv1.end(), 1);
+   CPPUNIT_ASSERT(bv1.full());
+   bv1[23] = 0;
+   CPPUNIT_ASSERT(!bv1.full());
+   
+   /*
+    * aggregate() test, mostly copy-pasted
+    */
+   
+   {
+      const char data1[] = {
+         1,1,1,1,1, 1,1,1,1,0, 0,0,0,0,1, 1,1,1,0,0, 0,0,1,1,0, 1,0,0,0,1, 1
+//         1,1,1,1,1,1,1, 1,1,0,0,0,0,0, 1,1,1,1,0,0,0, 0,1,1,0,1,0,0, 0,1,1
+      };
+      const int max_size = 5;
+      const char data2[] = {
+         1, 0, 1, 1, 1
+      };
+      
+      bv2.resize(sizeof(data1));
+      for (int i = 0; i < sizeof(data1); ++i)
+         bv2[i] = data1[i];
+      bv1.aggregate(bv2, max_size);
+
+      bv2.resize(sizeof(data2));
+      for (int i = 0; i < sizeof(data2); ++i)
+         bv2[i] = data2[i];
+
+      //PRINT_BITVECTOR(bv1);
+      //PRINT_BITVECTOR(bv2);
+      
+      CPPUNIT_ASSERT(bv1 == bv2);
+   }
+   
+   {
+      const char data1[] = {
+         0, 0,  0, 1,  1, 0,  1, 1
+      };
+      const int max_size = 5;
+      const char data2[] = {
+         0, 1, 1, 1
+      };
+      
+      bv2.resize(sizeof(data1));
+      for (int i = 0; i < sizeof(data1); ++i)
+         bv2[i] = data1[i];
+      bv1.aggregate(bv2, max_size);
+
+      bv2.resize(sizeof(data2));
+      for (int i = 0; i < sizeof(data2); ++i)
+         bv2[i] = data2[i];
+      
+      //PRINT_BITVECTOR(bv1);
+      //PRINT_BITVECTOR(bv2);
+      
+      CPPUNIT_ASSERT(bv1 == bv2);
+   }
+   
+   {
+      const char data1[] = {
+         1,1,1,1,1, 1,1,1,0,0, 1,1,0,0,0, 1,0,0,0,0, 0,0,0,0,1, 1,0,1,0,1
+      };
+      const int max_size = 5;
+      const char data2[] = {
+         1, 1, 0, 0, 1
+      };
+      
+      bv2.resize(sizeof(data1));
+      for (int i = 0; i < sizeof(data1); ++i)
+         bv2[i] = data1[i];
+      bv1.aggregate(bv2, max_size);
+
+      bv2.resize(sizeof(data2));
+      for (int i = 0; i < sizeof(data2); ++i)
+         bv2[i] = data2[i];
+      
+      //PRINT_BITVECTOR(bv1);
+      //PRINT_BITVECTOR(bv2);
+      
+      CPPUNIT_ASSERT(bv1 == bv2);
+   }
+}
+
 void testBcore::XmlRpcSerializeDeserialize(btg::core::externalization::Externalization* _eSource,
                                            btg::core::externalization::Externalization* _eDestin)
 {
-   btg::core::commandFactory cf1(logwrapper, _eSource);
-   btg::core::commandFactory cf2(logwrapper, _eDestin);
+   btg::core::commandFactory cf1(logwrapper, *_eSource);
+   btg::core::commandFactory cf2(logwrapper, *_eDestin);
 
    std::vector<btg::core::Command*> org_commands;
    std::vector<btg::core::Command*> restored_commands;
@@ -1760,7 +2148,7 @@ void testBcore::createCommands(std::vector<btg::core::Command*> & commands)
                       new contextFileInfoCommand(cid, false)
                       );
 
-   t_bitList pieces;
+   t_bitVector pieces;
    pieces.push_back(true);
    pieces.push_back(true);
    pieces.push_back(true);

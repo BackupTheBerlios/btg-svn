@@ -35,6 +35,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <cstring>
 
 extern "C"
 {

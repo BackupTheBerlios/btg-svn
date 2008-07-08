@@ -40,6 +40,7 @@ namespace btg
 
 #define nodetachLabel         "nodetach,n"
 #define nodetachLabelKey      "nodetach"
+
 #if BTG_OPTION_SAVESESSIONS
 #  define sessionFileLabel    "session-file,s"
 #  define sessionFileLabelKey "session-file"
@@ -47,6 +48,9 @@ namespace btg
 #  define noreloadLabel       "no-reload,N"
 #  define noreloadLabelKey    "no-reload"
 #endif // BTG_OPTION_SAVESESSIONS
+
+#define PIDFileLabel    "pid-file,p"
+#define PIDFileLabelKey "pid-file"
 
       commandLineArgumentHandler::commandLineArgumentHandler(std::string const& _config_file)
          : btg::core::argumentInterface("BTG daemon", true),
@@ -72,6 +76,7 @@ namespace btg
             (sessionFileLabel, boost::program_options::value<std::string>(), "File with saved sessions.")
             (noreloadLabel, "Do not reload saved sessions.")
 #endif // BTG_OPTION_SAVESESSIONS
+            (PIDFileLabel, boost::program_options::value<std::string>(), "PID-file.")
             ;
       }
 
@@ -135,45 +140,18 @@ namespace btg
 
 #endif // BTG_OPTION_SAVESESSIONS
 
+         if (vm.count(PIDFileLabelKey))
+            {
+               PIDFileName    = vm[PIDFileLabelKey].as<std::string>();
+            }
+         
          return true;
       }
-
-      bool commandLineArgumentHandler::doNotDetach() const
-      {
-         return doNotDetach_present;
-      }
-
-      bool commandLineArgumentHandler::configFileSet() const
-      {
-         return config_file_present;
-      }
-
-      std::string commandLineArgumentHandler::configFile() const
-      {
-         return config_file;
-      }
-
-#if BTG_OPTION_SAVESESSIONS
-      bool commandLineArgumentHandler::doNotReloadSessions() const
-      {
-         return noReloadSessions_present_;
-      }
-
-      bool commandLineArgumentHandler::saveSessionsFileSet() const
-      {
-         return saveSessionsFile_present_;
-      }
-
-      std::string commandLineArgumentHandler::saveSessionsFile() const
-      {
-         return saveSessionsFile_;
-      }
-#endif // BTG_OPTION_SAVESESSIONS
 
       std::string commandLineArgumentHandler::getCompileTimeOptions() const
       {
          std::string output = argumentInterface::getCompileTimeOptions();
-         output            += GPD->sNEWLINE();
+         output            += "\n";
 
          btg::core::getCompileTimeOptions(output);
 

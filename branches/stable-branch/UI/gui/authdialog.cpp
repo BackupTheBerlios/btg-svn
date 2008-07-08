@@ -22,6 +22,13 @@
 
 #include "authdialog.h"
 
+#include <gtkmm/button.h>
+#include <gtkmm/buttonbox.h>
+#include <gtkmm/label.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/table.h>
+#include <gtkmm/box.h>
+
 #include <bcore/logmacro.h>
 
 namespace btg

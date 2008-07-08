@@ -13,8 +13,8 @@ PKG_VERSION:=0.13
 PKG_RELEASE:=1
 
 PKG_SOURCE:=libtorrent-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=ftp://ftp.berlios.de/pub/btg/openwrt
-PKG_MD5SUM:=63cf5ac3b07fd6e70712b3758c271da2
+PKG_SOURCE_URL:=http://dfn.dl.sourceforge.net/sourceforge/libtorrent/
+PKG_MD5SUM:=571a91a98c7426321681dd9f767a87de
 PKG_BUILD_DIR:=$(BUILD_DIR)/libtorrent-$(PKG_VERSION)
 PKG_BUILD_DEPENDS:=libtool
 
@@ -25,7 +25,7 @@ define Package/rblibtorrent
   CATEGORY:=Libraries
   TITLE:=Rasterbar BitTorrent library
   URL:=http://www.rasterbar.com/products/libtorrent/
-  DEPENDS:=+boost +libopenssl +libsigcxx
+  DEPENDS:=+boost +libopenssl 
 endef
 
 define Package/rblibtorrent/description
@@ -37,12 +37,12 @@ CONFIGURE_ARGS+= \
 	--disable-debug \
 	--with-ssl=$(STAGING_DIR)/usr/include \
 	--with-zlib=system \
-	--with-boost-date-time=gcc41-mt-1_34_1 \
-	--with-boost-filesystem=gcc41-mt-1_34_1 \
-	--with-boost-thread=gcc41-mt-1_34_1 \
-	--with-boost-regex=gcc41-mt-1_34_1 \
-	--with-boost-program_options=gcc41-mt-1_34_1 \
-	--with-boost-iostreams=gcc41-mt-1_34_1 \
+	--with-boost-date-time=gcc42-mt-1_34_1 \
+	--with-boost-filesystem=gcc42-mt-1_34_1 \
+	--with-boost-thread=gcc42-mt-1_34_1 \
+	--with-boost-regex=gcc42-mt-1_34_1 \
+	--with-boost-program_options=gcc42-mt-1_34_1 \
+	--with-boost-iostreams=gcc42-mt-1_34_1 \
 
 CONFIGURE_VARS += \
 	CC="$(GNU_TARGET_NAME)-gcc" \

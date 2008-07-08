@@ -61,10 +61,10 @@ namespace btg
                Address(Address const& _address);
 
                /// Get a string represenation of this class.
-               std::string getIp() const;
+               std::string getIp() const { return toString(); }
 
                /// Setup an instance of this class with information
-               /// contained in a string. The string should contain "a.b.c.d:port".
+               /// contained in a string. The string should contain "a.b.c.d".
                /// @return True if successful, false otherwise.
                bool fromString(std::string const& _input);
 

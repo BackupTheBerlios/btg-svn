@@ -24,9 +24,12 @@
 #define DETAILSMODEL_H
 
 #include <gtkmm.h>
-#include <string>
-
 #include <bcore/type.h>
+
+namespace Gtk
+{
+   class TreeView;
+}
 
 namespace btg
 {
@@ -38,8 +41,6 @@ namespace btg
                 * \addtogroup gui
                 */
                /** @{ */
-
-               class Gtk::TreeView;
 
                /// Record used in connection with mainTreeview
                /// (table). Represents a detailed view of a torrent.

@@ -45,8 +45,33 @@ namespace btg
                /// Constructs a valid command which requests a list of peers for a context.
                contextPeersCommand(t_int const _context_id,
                                    bool const _allContexts = false);
+
+               bool serialize(btg::core::externalization::Externalization* _e) const;
+               bool deserialize(btg::core::externalization::Externalization* _e);
+               
+               /// Requests extended info in response, sets the range of this response
+               /// @param _offset [in] offset in the server's peer list
+               /// @param _count [in] peers count
+               void setExRange(t_uint _offset, t_uint _count);
+               
+               /// Get requested range of extended response data
+               /// @param [out] _offset offset from the beginning in the peer lis
+               /// @param [out] _count count peers to return
+               /// @return whether extended response was requested
+               bool getExRange(t_uint& _offset, t_uint& _count) const;
+               
                /// The destructor.
                virtual ~contextPeersCommand();
+               
+            private:
+               /// whether limit requested
+               bool bExtended_;
+               
+               /// offset in the server's peer-list
+               t_uint offset_;
+               
+               /// count peers to return
+               t_uint count_;
             };
 
          /** @} */

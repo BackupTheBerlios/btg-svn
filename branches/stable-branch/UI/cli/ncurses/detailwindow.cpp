@@ -36,7 +36,7 @@ namespace btg
    {
       namespace cli
       {
-         detailWindow::detailWindow(keyMapping const& _kmap, mainWindow const& _mainwindow)
+         detailWindow::detailWindow(keyMapping const& _kmap, mainWindow & _mainwindow)
             : baseWindow(_kmap),
               mainwindow_(_mainwindow),
               counter_(0)
@@ -44,7 +44,8 @@ namespace btg
             // Keys used by this window.
             std::vector<keyMapping::KEYLABEL> labels;
 
-            labels.push_back(keyMapping::K_QUIT);
+            labels.push_back(keyMapping::K_SELECT);
+            labels.push_back(keyMapping::K_BACK);
             labels.push_back(keyMapping::K_HELP);
             labels.push_back(keyMapping::K_RESIZE);
 
@@ -86,8 +87,8 @@ namespace btg
 
             // Draw.
             btg::core::Status currentStatus;
-
-            if (mainwindow_.getSelection(currentStatus))
+            t_strList trackers;
+            if (mainwindow_.getSelection(currentStatus, trackers))
                {
                   // Print the status of a context.
                   setColor(Colors::C_NORMAL);
@@ -203,6 +204,18 @@ namespace btg
                   addTopic("Seeds:");
                   std::string st_s = btg::core::convertToString<t_int>(currentStatus.seeders());
                   addValue(st_s);
+
+                  addTopic("Tracker:");
+                  std::string tracker;
+                  if (trackers.size() > 0)
+                     {
+                        tracker = trackers[0];
+                     }
+                  else
+                     {
+                        tracker = "Unknown";
+                     }
+                  addValue(tracker);
 
                   unSetColor(Colors::C_NORMAL);
                }

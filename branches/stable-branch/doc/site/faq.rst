@@ -13,7 +13,8 @@ This is a FAQ for BTG.
 What does BTG stand for?
 ------------------------
 
-BTG used to stand for BitTorrent GUI, but it evolved and currently the name has no meaning.
+BTG used to stand for BitTorrent GUI, but it evolved and currently the
+name has no meaning.
 
 What is BTG?
 ------------
@@ -35,8 +36,8 @@ Why do I have to read the documentation?
 Some people expect software to just work, without any
 configuration. If you expect this, BTG is _not_ for you. Give up now.
 
-Building and setting up BTG requires you to read the howto and
-possibly the man pages.
+Building and setting up BTG requires you to read the `howto`_ and
+possibly the `man pages`_.
 
 What is a BTG session?
 ----------------------
@@ -54,9 +55,11 @@ possible to use all the provided clients at the same time with a
 BTG session.
 
 A session belongs to an user - the user is not able to see other users
-sessions, unless it has an control flag set (see description in the `howto`_).
+sessions, unless it has an control flag set (see description in the
+`howto`_).
 
 .. _howto: howto.html
+.. _man pages: manpages.html
 
 Why is BTG so feature bloated?
 ------------------------------
@@ -79,7 +82,8 @@ No.
 Why does BTG require so many different libraries?
 -------------------------------------------------
 
-Because its pointless to create the required functionality from scratch.
+Because its pointless to create the required functionality from
+scratch.
 
 Link Check: error: libtorrent/session.hpp: No such file or directory
 --------------------------------------------------------------------
@@ -87,37 +91,58 @@ Link Check: error: libtorrent/session.hpp: No such file or directory
 Make sure the `Rasterbar Libtorrent`_ library is installed.
 Using `Rakshasa Libtorrent`_ is NOT supported.
 
+Error while loading shared libraries
+------------------------------------
+If you see errors like 
+
+::
+
+ btgpasswd: error while loading shared libraries: libtorrent-0.12.1.so: 
+ cannot open shared object file: No such file or directory
+
+You should really read the ld.so man page.
+
 Feature X does not work, what now?
 ----------------------------------
 
-- Read the howto/man pages. Maybe its described in the documentation.
+- Read the `howto`_/`man pages`_. Maybe its described in the documentation.
 - File a bug rapport (or send a patch against trunk in SVN).
 
 Libtorrent asserts
 ------------------
 
-Libtorrent _will_ assert if its compiled with debug. Build a release,
-unless you want to test libtorrent.
+`Rasterbar Libtorrent`_ _will_ assert if its compiled with
+debug. Build a release, unless you want to test `Rasterbar Libtorrent`_.
 
-Kindly report libtorrent bugs to the libtorrent mailing list or bug
-tracker. The asserts, unless triggered by BTG will not be handled as
-BTG bugs.
- 
+Kindly report `Rasterbar Libtorrent`_ bugs to the `Rasterbar
+Libtorrent`_ mailing list or bug tracker. The asserts, unless
+triggered by BTG will not be handled as BTG bugs.
+
+Can I expect SVN trunk to work?
+-------------------------------
+
+No. Trunk is being used for active development. Use a release or
+release candidate.
+
 How about adding feature X?
 ---------------------------
 
-BTG accepts patches. Make sure that its against the trunk of the SVN repository.
+BTG accepts `patches`_. Make sure that its against the trunk of the SVN
+repository.
+
+.. _patches: http://developer.berlios.de/patch/?group_id=3293
 
 How can I help?
 ---------------
 
-The WWW frontend seems to require a lot of attention. If you know
-PHP/javascript and have time to spare, consider implementing one of
-the requested features.
+- The WWW frontend seems to require a lot of attention. If you know PHP/javascript and have time to spare, consider implementing one of the requested features.
 
-As always, more/better documentation is needed.
+- Update/add documentation.
 
-Code gets better, when reviewed by others than the developers.
+- Review/refactor existing code.
+
+Join the #libtorrent IRC channel on irc.freenode.net and let us know
+that you plan to help.
 
 .. footer:: `BTG home page`_
 .. _BTG home page: http://btg.berlios.de/

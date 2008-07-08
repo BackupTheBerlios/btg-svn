@@ -20,9 +20,6 @@
  * $Id$
  */
 
-#include <gtkmm/scrolledwindow.h>
-#include <gtkmm/label.h>
-
 #include "mainnotebook.h"
 #include "mainfiletreeview.h"
 #include "selectfiletreeview.h"
@@ -44,6 +41,7 @@ namespace btg
               mftv(0),
               sftv(0),
               peerList(0),
+              peerScrolledwindow(0),
               details(0)
          {
             Gtk::Label* bw_label = Gtk::manage(new class Gtk::Label("Bandwidth (all)"));
@@ -108,7 +106,7 @@ namespace btg
             peersLabel->set_use_markup(false);
             peersLabel->set_selectable(false);
             peerList = Gtk::manage(new peerTreeview());
-            Gtk::ScrolledWindow* peerScrolledwindow = Gtk::manage(new class Gtk::ScrolledWindow());
+            peerScrolledwindow = Gtk::manage(new class Gtk::ScrolledWindow());
             peerScrolledwindow->set_flags(Gtk::CAN_FOCUS);
             peerScrolledwindow->set_shadow_type(Gtk::SHADOW_NONE);
             peerScrolledwindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
@@ -235,6 +233,11 @@ namespace btg
          {
             delete plot;
             plot = 0;
+         }
+         
+         Gtk::VScrollbar * mainNotebook::peersVScrollbar()
+         {
+            return peerScrolledwindow->get_vscrollbar();
          }
 
       } // namespace gui

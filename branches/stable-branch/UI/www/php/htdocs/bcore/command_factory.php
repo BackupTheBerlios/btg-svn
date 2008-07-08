@@ -31,12 +31,14 @@ require_once(BTG_BCORE_PATH."/command/list.php");
 require_once(BTG_BCORE_PATH."/command/list_rsp.php");
 require_once(BTG_BCORE_PATH."/command/setup.php");
 require_once(BTG_BCORE_PATH."/command/context_create.php");
+require_once(BTG_BCORE_PATH."/command/context_create_url.php");
 require_once(BTG_BCORE_PATH."/command/context_last.php");
 require_once(BTG_BCORE_PATH."/command/context_start.php");
 require_once(BTG_BCORE_PATH."/command/context_stop.php");
 require_once(BTG_BCORE_PATH."/command/context_abort.php");
 require_once(BTG_BCORE_PATH."/command/context_status.php");
 require_once(BTG_BCORE_PATH."/command/context_status_rsp.php");
+require_once(BTG_BCORE_PATH."/command/context_file.php");
 require_once(BTG_BCORE_PATH."/command/context_fi.php");
 require_once(BTG_BCORE_PATH."/command/context_fi_rsp.php");
 require_once(BTG_BCORE_PATH."/command/context_clean.php");
@@ -93,6 +95,21 @@ class commandFactory
 		case Command::CN_CCREATEWITHDATA:
 			$c = new contextCreateWithDataCommand();
 			break;
+		case Command::CN_CCREATEFROMURL:
+			$c = new contextCreateFromUrlCommand();
+			break;
+		case Command::CN_CCREATEFROMURLRSP:
+			$c = new contextCreateFromUrlResponseCommand();
+			break;
+         /*
+          TODO: implement this, since the interface changed.
+		case Command::CN_CURLSTATUS:
+			$c = new contextUrlStatusCommand();
+			break;
+		case Command::CN_CURLSTATUSRSP:
+			$c = new contextUrlStatusResponseCommand();
+			break;
+         */
 		case Command::CN_CLAST: // last context
 			$c = new lastCIDCommand();
 			break;
@@ -198,6 +215,15 @@ class commandFactory
 		case Command::CN_SSETNAME:
 			$c = new setSessionNameCommand();
 			break;
+      case Command::CN_CSETFILES:
+         $c = new contextSetFilesCommand();
+			break;
+      case Command::CN_CGETFILES:
+         $c = new contextGetFilesCommand();
+         break;
+      case Command::CN_CGETFILESRSP:
+         $c = new contextGetFilesResponseCommand();
+         break;
 		default:
 			throw new BTGException("Wrong command type: " . $cmdid ."\n");
 			break;

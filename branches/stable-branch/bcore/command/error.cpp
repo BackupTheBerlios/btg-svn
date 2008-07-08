@@ -41,8 +41,8 @@ namespace btg
       std::string errorCommand::toString() const
       {
          std::string output = Command::toString() +
-            GPD->sSPACE() + "Failed command=" + Command::getName(this->which_command) + "." +
-            GPD->sSPACE() + "Message='" + this->message + "'.";
+            " " + "Failed command=" + Command::getName(this->which_command) + "." +
+            " " + "Message='" + this->message + "'.";
 
          return output;
       }

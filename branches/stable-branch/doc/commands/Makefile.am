@@ -11,15 +11,15 @@ noinst_HEADERS       = ext_printer.h
 gen_cmd_docs_LDADD   = $(top_builddir)/bcore/libbtgcore.la \
                        $(top_builddir)/external/ini/libini.la
 
-gen_cmd_docs_LDFLAGS = @LIBS@ @LIBTORRENT_LIBS@ -l@BOOST_IOSTREAMS_LIB@ -l@BOOST_PROGRAM_OPTIONS_LIB@ @LIBGNUTLS_LIBS@ 
+gen_cmd_docs_LDFLAGS = @LIBS@ @BOOST_SYSTEM_LIB@ @LIBTORRENT_LIBS@ @BOOST_IOSTREAMS_LIB@ @BOOST_PROGRAM_OPTIONS_LIB@ @BOOST_FILESYSTEM_LIB@ @BOOST_THREAD_LIB@ @LIBGNUTLS_LIBS@ 
 
 gen_cmd_docs_CFLAGS   = @CFLAGS@ \
 -DBTG_DEBUG=@BTG_DEBUG@ \
--DBTG_SVNREV="@BTG_SVNREV@"
+-DBTG_REV="@BTG_REV@"
 
 gen_cmd_docs_CXXFLAGS = @CXXFLAGS@ \
 -DBTG_DEBUG=@BTG_DEBUG@ \
--DBTG_SVNREV="@BTG_SVNREV@"
+-DBTG_REV="@BTG_REV@"
 
 INCLUDES = -I$(top_srcdir)
 

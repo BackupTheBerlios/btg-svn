@@ -97,6 +97,17 @@ namespace btg
                      CN_CGETTRACKERS    = 64, //!< Get the list of used trackers.
                      CN_CGETTRACKERSRSP = 65, //!< List of trackers used for a context.
                      CN_CMOVE           = 66, //!< Move a context from one session to another.
+                     CN_CCREATEFROMURL  = 67, //!< Create context from an URL.
+                     CN_CCREATEFROMURLRSP    = 68, //!< Create context from an URL, response.
+                     CN_CCREATEFROMFILE      = 69, //!< Create context from a file.
+                     CN_CCREATEFROMFILERSP   = 70, //!< Create context from a file, response.
+                     CN_CCREATEFROMFILEPART  = 71, //!< Create context from a file, file part.
+                     
+                     /* Operations */
+                     CN_OPABORT             = 80, //!< Abort an operation.
+                     CN_OPSTATUS            = 81, //!< Request status of an operation status.
+                     CN_OPSTATUSRSP         = 82, //!< Status of an operation, response.
+
                      /* General commands. */ 
                      CN_ERROR           = 100, //!< General error.
                      CN_ACK             = 101, //!< General acknowlegment.
@@ -114,6 +125,10 @@ namespace btg
                      CN_SSETNAME        = 130, //!< Set current session name.
                      CN_MOREAD          = 131, //!< Only read only access. Usefull for writing monitor applets.
                      CN_MOWRITE         = 132, //!< Default write mode.
+
+                     CN_VERSION         = 133, //!< Get daemon version and settings.
+                     CN_VERSIONRSP      = 134, //!< Get daemon version and settings response.
+
                      CN_UNDEFINED       = 254  //!< Undefined command.
                   };
 

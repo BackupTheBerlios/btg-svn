@@ -23,6 +23,9 @@
 #ifndef TYPE_BTG_H
 #define TYPE_BTG_H
 
+#include <list>
+#include <vector>
+
 #include "status.h"
 #include "command/command.h"
 #include "file_info.h"
@@ -56,13 +59,22 @@ typedef std::vector<btg::core::fileInformation>::iterator       t_fileInfoListI;
 typedef std::vector<btg::core::fileInformation>::const_iterator t_fileInfoListCI;
 
 /// List of peer objects.
-typedef std::vector<btg::core::Peer>                            t_peerList;
+typedef std::list<btg::core::Peer>                              t_peerList;
 
 /// List of peer objects - iterator.
-typedef std::vector<btg::core::Peer>::iterator                  t_peerListI;
+typedef std::list<btg::core::Peer>::iterator                    t_peerListI;
 
 /// List of peer objects - const iterator.
-typedef std::vector<btg::core::Peer>::const_iterator            t_peerListCI;
+typedef std::list<btg::core::Peer>::const_iterator              t_peerListCI;
+
+/// List of extended peer objects.
+typedef std::list<btg::core::PeerEx>                            t_peerExList;
+
+/// List of extended peer objects - iterator.
+typedef std::list<btg::core::PeerEx>::iterator                  t_peerExListI;
+
+/// List of extended peer objects - const iterator.
+typedef std::list<btg::core::PeerEx>::const_iterator            t_peerExListCI;
 
 /// List of command pointers.
 typedef std::vector<btg::core::Command*>                        t_commandPointerList;
@@ -76,4 +88,3 @@ typedef std::vector<btg::core::Command*>::const_iterator        t_commandPointer
 /** @} */
 
 #endif // TYPE_BTG_H
-

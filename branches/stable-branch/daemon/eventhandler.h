@@ -70,6 +70,8 @@ namespace btg
                /// @param [in] _seedDir        Seeding directory.
                /// @param [in] _outputDir      Output directory.
                /// @param [in] _callback       Callback to use, if enabled.
+               /// @param [in] _interface_used Indicates if the session shall bind to a specific interface.
+               /// @param [in] _interface      Interface to bind to.
                /// @param [in] _portMgr        Pointer to the port manager to use to obtain ports.
                /// @param [in] _limitMgr       Pointer to the global limit manager.
                /// @param [in] _e              The externalization to use.
@@ -92,6 +94,8 @@ namespace btg
 #if BTG_OPTION_EVENTCALLBACK
                             std::string const& _callback,
 #endif // BTG_OPTION_EVENTCALLBACK
+                            bool _interface_used,
+                            std::string const& _interface,
                             portManager* _portMgr,
                             limitManager* _limitMgr,
                             btg::core::externalization::Externalization* _e,
@@ -175,7 +179,13 @@ namespace btg
                          eventHandler* _eventhandler);
 
                /// Create a new context.
-               bool createWithData(btg::core::Command* _command, t_int _connectionID);
+               bool createWithData(btg::core::Command* _command, 
+                                   t_int _connectionID = btg::core::messageTransport::NO_CONNECTION_ID);
+               /// Get the temp directory used by this event handler.
+               std::string getTempDir() const;
+
+               /// Update the IP filter used.
+               void updateFilter(IpFilterIf* _filter);
 
                /// Destructor.
                ~eventHandler();
@@ -225,6 +235,7 @@ namespace btg
                /// Buffer used to send responses back to client which
                /// uses this event handler.
                btg::core::dBuffer           buffer;
+
                /// Send a command using the messageTransport. Delete the memory used
                /// by the command afterwards.
                /// @param [in] _connectionID The ID of the connection used.
@@ -263,7 +274,7 @@ namespace btg
                void handle_CN_CCREATEWITHDATA(btg::core::Command* _command, t_int _connectionID);
 
                /// Get the last created context Id.
-               void handle_CN_CLAST(btg::core::Command* _command, t_int _connectionID);
+               void handle_CN_CLAST(t_int _connectionID);
 
                /// Start a context.
                void handle_CN_CSTART(btg::core::Command* _command, t_int _connectionID);

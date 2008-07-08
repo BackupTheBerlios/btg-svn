@@ -14,6 +14,13 @@ library.
 Provides a Ncurses_, SDL_, Gtkmm_ and WWW GUI, which communicate with a
 common backend running the actual bittorrent operation.
 
+License
+-------
+
+BTG is released under the `GNU GPL license`_.
+
+.. _GNU GPL license: http://www.gnu.org/licenses/gpl.html
+
 Features
 --------
 - Daemonized backend.
@@ -24,7 +31,7 @@ Features
 - Session saving.
 - Per user event callback.
 - IPv4 filter (level1.txt and Emule lists).
-- Port forwarding using UPnP.
+- Port forwarding using UPnP (Using Cyberlink or Libtorrent).
 - Periodic session saving.
 - DHT and encryption (since libtorrent supports both).
 
@@ -35,6 +42,12 @@ Clients
 - btgcli (Ncurses_ client, command line).
 - btgui (Gtkmm_ GUI).
 - btgvs (SDL_ viewer GUI using AGAR_).
+
+Third Party Clients
+-------------------
+- `BTGFox`_ - a Firefox extension written by Nelson Silva.
+
+.. _BTGFox: http://www.bakanl.net/btgfox/
 
 Platforms
 ---------
@@ -47,8 +60,8 @@ BTG is being used or was tested on:
 Screenshots
 ~~~~~~~~~~~
 
-Upcoming 0.9.7 Release
-----------------------
+0.9.7
+-----
 - `btgui #1`_.
 - `btgui #2`_.
 
@@ -90,6 +103,7 @@ Stable Releases
 ======================= ========================== ======================= ============================================
 **Source**              **Release note**           **Changelog**           **Rasterbar Libtorrent version**
 ----------------------- -------------------------- ----------------------- --------------------------------------------
+`btg-0.9.7.tar.gz`_     `0.9.7 release note`_      `0.9.7 changelog`_      0.12.x/0.13rc1
 `btg-0.9.6.tar.gz`_     `0.9.6 release note`_      `0.9.6 changelog`_      0.12
 `btg-0.9.5.tar.gz`_     `0.9.5 release note`_      `0.9.5 changelog`_      0.9/0.10/0.11/0.12
 `btg-0.9.0.tar.gz`_     `0.9.0 release note`_      `0.9.0 changelog`_      0.9/0.10/0.11
@@ -112,33 +126,32 @@ Stable Releases
 .. _0.9.6 release note: http://developer.berlios.de/project/shownotes.php?release_id=13428
 .. _0.9.6 changelog: http://developer.berlios.de/project/shownotes.php?release_id=13428
 
+.. _btg-0.9.7.tar.gz: http://download.berlios.de/btg/btg-0.9.7.tar.gz
+.. _0.9.7 release note: http://developer.berlios.de/project/shownotes.php?release_id=14349
+.. _0.9.7 changelog: http://developer.berlios.de/project/shownotes.php?release_id=14349
+
 Experimental Releases
 ---------------------
 
 ======================= ========================== ======================= ==================================
 **Source**              **Release note**           **Changelog**           **Rasterbar Libtorrent version**
 ----------------------- -------------------------- ----------------------- ----------------------------------
-`btg-0.9.7-rc4.tar.gz`_ `0.9.7 RC4 release note`_  `0.9.7 RC4 changelog`_  0.12.1/0.13RC/SVN
-`btg-0.9.7-rc3.tar.gz`_ `0.9.7 RC3 release note`_  `0.9.7 RC3 changelog`_  0.13RC/SVN
-`btg-0.9.7-rc2.tar.gz`_ `0.9.7 RC2 release note`_  `0.9.7 RC2 changelog`_  0.13RC/SVN
-`btg-0.9.7-rc1.tar.gz`_ `0.9.7 RC1 release note`_  `0.9.7 RC1 changelog`_  0.13RC/SVN
+`btg-0.9.8-rc3.tar.gz`_ `0.9.8 RC3 release note`_  `0.9.8 RC3 changelog`_  0.12.1/0.13/0.13.1
+`btg-0.9.8-rc2.tar.gz`_ `0.9.8 RC2 release note`_  `0.9.8 RC2 changelog`_  0.12.1/0.13
+`btg-0.9.8-rc1.tar.gz`_ `0.9.8 RC1 release note`_  `0.9.8 RC1 changelog`_  0.12.1/0.13/SVN
 ======================= ========================== ======================= ==================================
 
-.. _btg-0.9.7-rc4.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.7-rc4.tar.gz
-.. _0.9.7 RC4 release note: http://developer.berlios.de/project/shownotes.php?release_id=14318
-.. _0.9.7 RC4 changelog: http://developer.berlios.de/project/shownotes.php?release_id=14318
+.. _btg-0.9.8-rc3.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.8-rc3.tar.gz
+.. _0.9.8 RC3 release note: http://developer.berlios.de/project/shownotes.php?release_id=14856
+.. _0.9.8 RC3 changelog: http://developer.berlios.de/project/shownotes.php?release_id=14856
 
-.. _btg-0.9.7-rc3.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.7-rc3.tar.gz
-.. _0.9.7 RC3 release note: http://developer.berlios.de/project/shownotes.php?release_id=14299
-.. _0.9.7 RC3 changelog: http://developer.berlios.de/project/shownotes.php?release_id=14299
+.. _btg-0.9.8-rc2.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.8-rc2.tar.gz
+.. _0.9.8 RC2 release note: http://developer.berlios.de/project/shownotes.php?release_id=14736
+.. _0.9.8 RC2 changelog: http://developer.berlios.de/project/shownotes.php?release_id=14736
 
-.. _btg-0.9.7-rc2.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.7-rc2.tar.gz
-.. _0.9.7 RC2 release note: http://developer.berlios.de/project/shownotes.php?release_id=14078
-.. _0.9.7 RC2 changelog: http://developer.berlios.de/project/shownotes.php?release_id=14078
-
-.. _btg-0.9.7-rc1.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.7-rc1.tar.gz
-.. _0.9.7 RC1 release note: http://developer.berlios.de/project/shownotes.php?release_id=13992
-.. _0.9.7 RC1 changelog: http://developer.berlios.de/project/shownotes.php?release_id=13992
+.. _btg-0.9.8-rc1.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.8-rc1.tar.gz
+.. _0.9.8 RC1 release note: http://developer.berlios.de/project/shownotes.php?release_id=14498
+.. _0.9.8 RC1 changelog: http://developer.berlios.de/project/shownotes.php?release_id=14498
 
 
 Packages
@@ -152,6 +165,7 @@ Documentation
 ~~~~~~~~~~~~~
 - `BTG FAQ`_.
 - `BTG howto (current)`_.
+- `BTG howto (0.9.7)`_.
 - `BTG howto (0.9.6)`_.
 - `BTG howto (0.7)`_.
 - `BTG howto (0.6)`_.
@@ -168,7 +182,7 @@ Authors
 ~~~~~~~
 - Michael Wojciechowski.
 - Johan Ström (XML-RPC_ transport and externalization, WWW UI, session saving, porting).
-- Roman Rybalko (btgui bugfixes).
+- Roman Rybalko (making btgui look pretty, countless bugfixes, packaging).
 - Rodolphe Saugier (bugfix #10588).
 - Gabor Tanka (DHT fixes).
 - Jesper Nyholm Jensen (Testing).
@@ -178,16 +192,15 @@ Getting Help
 
 Do not use the forums, as they are not monitored. 
 
-Instead use the #libtorrent IRC channel on irc.freenode.net.
+Instead use the `mailing list`_.
+
+.. _mailing list: http://developer.berlios.de/mail/?group_id=3293
 
 Links
 ~~~~~
 
 - `BTG project page`_ / `BTG bugtracker`_ / `BTG blog`_.
 - `Rasterbar Libtorrent`_.
-- `BTGFox`_ - a Firefox extension written by Nelson Silva.
-
-.. _BTGFox: http://www.bakanl.net/btgfox/
 
 .. _BTG bugtracker: http://developer.berlios.de/bugs/?group_id=3293
 .. _BTG blog: http://developer.berlios.de/blog/categories/32-BTG
@@ -201,6 +214,7 @@ Links
 .. _BTG Howto (0.6): howto-0.6.html
 .. _BTG Howto (0.7): howto-0.7.html
 .. _BTG Howto (0.9.6): howto-0.9.6.html
+.. _BTG Howto (0.9.7): howto-0.9.7.html
 .. _Rasterbar Libtorrent: http://www.rasterbar.com/products/libtorrent.html
 .. _Gtkmm: http://www.gtkmm.org/
 .. _SDL: http://libsdl.org/

@@ -32,25 +32,25 @@ namespace btg
          : Command(Command::CN_CCREATEWITHDATA),
            filename(),
            torrent_file(),
-	   start(false)
+           start(false)
       {}
 
       contextCreateWithDataCommand::contextCreateWithDataCommand(std::string const& _filename,
                                                                  sBuffer const& _torrent_file,
-								 bool const _start)
+                                                                 bool const _start)
          : Command(Command::CN_CCREATEWITHDATA),
            filename(_filename),
            torrent_file(_torrent_file),
-	   start(_start)
+           start(_start)
       {}
 
       std::string contextCreateWithDataCommand::toString() const
       {
-         std::string output = Command::toString() + GPD->sSPACE() + "Filename = " + filename + ".";
-	 if (start)
-	   {
-	     output += " Start flag set.";
-	   }
+         std::string output = Command::toString() + " " + "Filename = " + filename + ".";
+         if (start)
+            {
+               output += " Start flag set.";
+            }
 
          return output;
       }
@@ -67,7 +67,7 @@ namespace btg
          _e->setParamInfo("torrent file data", true);
          BTG_RCHECK( torrent_file.serialize(_e) );
 
-	 _e->setParamInfo("flag: start torrent", true);
+         _e->setParamInfo("flag: start torrent", true);
          BTG_RCHECK( _e->boolToBytes(start) );
 
          return true;
@@ -85,7 +85,7 @@ namespace btg
          _e->setParamInfo("torrent file data", true);
          BTG_RCHECK( torrent_file.deserialize(_e) );
 
-	 _e->setParamInfo("flag: start torrent", true);
+         _e->setParamInfo("flag: start torrent", true);
          BTG_RCHECK( _e->bytesToBool(start) );
 
          return true;

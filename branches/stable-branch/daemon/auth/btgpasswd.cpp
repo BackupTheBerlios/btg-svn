@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
 {
    LogWrapperType logwrapper(new btg::core::logger::logWrapper);
 
-   commandLineArgumentHandler* cla = new commandLineArgumentHandler(GPD->sDEFAULT_DAEMON_CONFIG());
+   commandLineArgumentHandler* cla = new commandLineArgumentHandler(projectDefaults::sDAEMON_CONFIG());
    cla->setup();
    if (!cla->parse(argc, argv))
       {
@@ -66,14 +66,13 @@ int main(int argc, char* argv[])
 
    bool verboseFlag = cla->beVerbose();
 
-   std::string configFile = GPD->sDEFAULT_DAEMON_CONFIG();
+   std::string configFile = projectDefaults::sDAEMON_CONFIG();
    if (cla->configFileSet())
       {
          configFile = cla->configFile();
       }
-#if BTG_AUTH_DEBUG
-   BTG_NOTICE(logwrapper, "Config: '" << configFile << "'");
-#endif //BTG_AUTH_DEBUG
+
+   VERBOSE_LOG(logwrapper, verboseFlag, "config: '" << configFile << "'.");
 
    std::string errorString;
    if (!btg::core::os::fileOperation::check(configFile, errorString, false))
@@ -258,14 +257,14 @@ int main(int argc, char* argv[])
             h.get(hashed);
 
             VERBOSE_LOG(logwrapper,
-                        verboseFlag, "Adding user '" << user << "' with:" << GPD->sNEWLINE() <<
-                        "hash '" << hashed << "'" << GPD->sNEWLINE() <<
-                        "temp directory '" << temp_dir << "'" << GPD->sNEWLINE() <<
-                        "work directory '" << work_dir << "'" << GPD->sNEWLINE() <<
-                        "seed directory '" << seed_dir << "'" << GPD->sNEWLINE() <<
-                        "destination directory '" << dest_dir << "'" << GPD->sNEWLINE() << 
-                        "control flag '" << control_flag << "'" << GPD->sNEWLINE() <<
-                        "callback '" << callback << "'" << GPD->sNEWLINE()
+                        verboseFlag, "Adding user '" << user << "' with:" << "\n" <<
+                        "hash '" << hashed << "'" << "\n" <<
+                        "temp directory '" << temp_dir << "'" << "\n" <<
+                        "work directory '" << work_dir << "'" << "\n" <<
+                        "seed directory '" << seed_dir << "'" << "\n" <<
+                        "destination directory '" << dest_dir << "'" << "\n" << 
+                        "control flag '" << control_flag << "'" << "\n" <<
+                        "callback '" << callback << "'" << "\n"
                         );
 
             // Create the directories used.
@@ -367,11 +366,11 @@ int main(int argc, char* argv[])
                }
 
             BTG_NOTICE(logwrapper,
-                       "Mod user '" << user << "', using directories:" << GPD->sNEWLINE() <<
-                       "temp directory '" << temp_dir << "'" << GPD->sNEWLINE() <<
-                       "work directory '" << work_dir << "'" << GPD->sNEWLINE() <<
-                       "seed directory '" << seed_dir << "'" << GPD->sNEWLINE() <<
-                       "destination directory '" << dest_dir << "'" << GPD->sNEWLINE()
+                       "Mod user '" << user << "', using directories:" << "\n" <<
+                       "temp directory '" << temp_dir << "'" << "\n" <<
+                       "work directory '" << work_dir << "'" << "\n" <<
+                       "seed directory '" << seed_dir << "'" << "\n" <<
+                       "destination directory '" << dest_dir << "'" << "\n"
                        );
             std::string hashedPassword;
             if (cla->readPassword())
@@ -410,45 +409,45 @@ int main(int argc, char* argv[])
                {
                   std::string output;
 
-                  output += "Modyfying user '" + user + "', setting:" + GPD->sNEWLINE();
+                  output += "Modyfying user '" + user + "', setting:" + "\n";
 
                   if (password.size() > 0)
                      {
-                        output += "hash '" + hashedPassword + "'" + GPD->sNEWLINE();
+                        output += "hash '" + hashedPassword + "'" + "\n";
                      }
 
                   if (temp_dir.size() > 0)
                      {
-                        output += "temp directory '" + temp_dir + "'" + GPD->sNEWLINE();
+                        output += "temp directory '" + temp_dir + "'" + "\n";
                      }
 
                   if (work_dir.size() > 0)
                      {
-                        output += "work directory '" + work_dir + "'" + GPD->sNEWLINE();
+                        output += "work directory '" + work_dir + "'" + "\n";
                      }
 
                   if (seed_dir.size() > 0)
                      {
-                        output += "seed directory '" + seed_dir + "'" + GPD->sNEWLINE();
+                        output += "seed directory '" + seed_dir + "'" + "\n";
                      }
 
                   if (dest_dir.size() > 0)
                      {
-                        output += "destination directory '" + dest_dir + "'" + GPD->sNEWLINE();
+                        output += "destination directory '" + dest_dir + "'" + "\n";
                      }
 
                   if (control_flag)
                      {
-                        output += "control flag '1'" + GPD->sNEWLINE();
+                        output += "control flag '1'\n";
                      }
                   else
                      {
-                        output += "control flag '0'" + GPD->sNEWLINE();
+                        output += "control flag '0'\n";
                      }
 
                   if (callback.size() > 0)
                      {
-                        output += "callback '" + callback + "'" + GPD->sNEWLINE();
+                        output += "callback '" + callback + "'\n";
                      }
 
                   VERBOSE_LOG(logwrapper, verboseFlag, output);
@@ -538,7 +537,7 @@ bool createDirectory(LogWrapperType _logwrapper,
    return result;
 }
 
-bool uniqueDirectories(LogWrapperType _logwrapper,
+bool uniqueDirectories(LogWrapperType,
                        std::string const& _temp_dir,
                        std::string const& _work_dir,
                        std::string const& _seed_dir,

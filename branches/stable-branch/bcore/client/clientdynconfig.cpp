@@ -1,5 +1,5 @@
 /*
- * btg Copyright (C) 2007 Roman Rybalko.
+ * btg Copyright (C) 2005 Michael Wojciechowski.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,6 @@
 #include <bcore/os/fileop.h>
 #include <bcore/logmacro.h>
 
-const t_uint cfg_format_version = 0xFF88FF22; // some magic number, mean nothing
-
 namespace btg
 {
    namespace core
@@ -41,6 +39,8 @@ namespace btg
          using namespace btg::core::externalization;
          using namespace btg::core;
          
+         const t_uint clientDynConfig::file_format_version = 0xFF88FF22; // some magic number, mean nothing
+
          clientDynConfig::clientDynConfig(LogWrapperType _logwrapper,
                                           std::string const& _file_name)
             : Logable(_logwrapper),
@@ -50,8 +50,7 @@ namespace btg
               m_gui_window_height(450),
               m_gui_window_xpos(20),
               m_gui_window_ypos(20),
-              m_gui_window_maximized(false),
-              lastFiles_(0)
+              m_gui_window_maximized(false)
          {
             if (btg::core::os::fileOperation::check(m_file_name))
             {
@@ -62,7 +61,7 @@ namespace btg
             }
             else
             {
-               BTG_NOTICE(logWrapper(), "Cauldn't find file " << m_file_name);
+               BTG_NOTICE(logWrapper(), "Can't find file " << m_file_name);
             }
          }
          
@@ -142,7 +141,9 @@ namespace btg
                !ext->bytesToInt(&m_gui_window_width) ||
                !ext->bytesToInt(&m_gui_window_height) ||
                !ext->bytesToBool(m_gui_window_maximized) ||
-               !ext->bytesToStringList(&lastFiles_)
+               !ext->bytesToStringList(&lastFiles_) ||
+               !ext->bytesToStringList(&lastURLs_) ||
+               !ext->bytesToStringList(&lastURLFiles_)
                )
             {
                BTG_ERROR_LOG(logWrapper(), "load(), parsing error.");
@@ -160,7 +161,7 @@ namespace btg
             std::auto_ptr<Externalization> ext(Factory::createExternalization(logWrapper()));
 
             // store signature
-            t_uint sig = cfg_format_version;
+            t_uint sig = file_format_version;
             ext->uintToBytes(&sig);
             sig = ~sig;
             ext->uintToBytes(&sig);
@@ -172,7 +173,9 @@ namespace btg
                !ext->intToBytes(&m_gui_window_width) ||
                !ext->intToBytes(&m_gui_window_height) ||
                !ext->boolToBytes(m_gui_window_maximized) ||
-               !ext->stringListToBytes(&lastFiles_)
+               !ext->stringListToBytes(&lastFiles_) ||
+               !ext->stringListToBytes(&lastURLs_) ||
+               !ext->stringListToBytes(&lastURLFiles_)
                )
             {
                BTG_ERROR_LOG(logWrapper(), "save(), parsing error.");

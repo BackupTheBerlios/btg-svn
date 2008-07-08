@@ -28,13 +28,17 @@
 #include <bcore/status.h>
 #include <bcore/addrport.h>
 #include <bcore/file_info.h>
+#include <bcore/urlstatus.h>
 
 #include "clientcallback.h"
 #include "statemachine.h"
 #include "configuration.h"
+#include "clientdynconfig.h"
 #include "lastfiles.h"
+#include "lasturls.h"
 
 #include <bcore/logable.h>
+#include <bcore/copts.h>
 
 #include <string>
 
@@ -61,27 +65,20 @@ namespace btg
          {
          public:
             /// Constructor.
-            ///
             /// @param [in] _logwrapper Pointer used to send logs to.
             /// @param [in] _e          Pointer to the externalization which is used.
             /// @param [in] _callback   Pointer to an implementation of the client callback interface.
-            ///
             /// @param [in] _transport Pointer to an implementation of the transport interface.
-            ///
             /// @param [in] _config Pointer to the class holding the client configuration.
-            ///
-            /// \note This class owns this pointer and
-            /// deletes it in the destructor.
-            /// @param [in] _lastfiles Pointer to the class
-            /// holding a list of last accessed files.
+            /// @param [in] _dynconfig Pointer to the class holding the client dynamic configuration.
             /// @param [in] _verboseFlag Instructs this class to do verbose logging.
             /// @param [in] _autoStartFlag Indicates that the handler should start torrents automatically after loading them.
             clientHandler(LogWrapperType _logwrapper,
-                          btg::core::externalization::Externalization* _e,
-                          btg::core::client::clientCallback* _callback,
-                          btg::core::messageTransport*       _transport,
-                          btg::core::client::clientConfiguration*  _config,
-                          btg::core::client::lastFiles*            _lastfiles,
+                          btg::core::externalization::Externalization& _e,
+                          btg::core::client::clientCallback& _callback,
+                          btg::core::messageTransport&       _transport,
+                          clientConfiguration&  _config,
+                          clientDynConfig&      _dynconfig,
                           bool const _verboseFlag,
                           bool const _autoStartFlag);
 
@@ -119,6 +116,32 @@ namespace btg
             /// Used to open a number of filenames.
             virtual void reqCreate(t_strList const& _filenames);
 
+            /// Download a file, then open it.
+            virtual void reqCreateFromUrl(std::string const& _filename,
+                                          std::string const& _url);
+
+            /// Upload a torrent to the daemon. This is done in a
+            /// number of parts assembed by the daemon.
+            virtual void reqCreateFromFile(std::string const& _filename,
+                                           t_uint const _numberOfParts);
+
+            /// Upload a part of a file identified by _id.
+            virtual void reqTransmitFilePart(t_uint const _id, 
+                                             t_uint const _part,
+                                             sBuffer const& _buffer);
+
+            /// Get the status of an URL download.
+            virtual void reqUrlStatus(t_uint _id);
+
+            /// Get the status of a file download.
+            virtual void reqFileStatus(t_uint _id);
+
+            /// Cancel a file upload in progress.
+            virtual void reqCancelFile(t_uint _id);
+
+            /// Cancel an URL download in progress.
+            virtual void reqCancelUrl(t_uint _id);
+
             /// Get status from the daemon.
             virtual void reqStatus(t_int const _id, bool const _allContexts = false);
 
@@ -135,7 +158,8 @@ namespace btg
             virtual void reqFileInfo(t_int const _id, bool const _allContexts = false);
 
             /// Request a list of peers.
-            virtual void reqPeers(t_int const _id, bool const _allContexts = false);
+            virtual void reqPeers(t_int const _id, bool const _allContexts = false,
+               t_uint const *const _ex_offset = 0, t_uint const *const _ex_count = 0);
 
             /// Limit a context.
             virtual void reqLimit(t_int const _id,
@@ -192,6 +216,13 @@ namespace btg
             virtual void reqMoveContext(t_int const _id,
                                         t_long const _toSession);
 
+            /// Request version information.
+            virtual void reqVersion();
+
+            /// Request list of trackers used by a context.
+            virtual void reqTrackers(t_int const _id);
+
+         public:
             /// Returns true if the statemachine thinks that
             /// it completed the setup of the client.
             virtual bool isSetupDone() const;
@@ -239,17 +270,16 @@ namespace btg
             /// Get the name of the current session.
             std::string getCurrentSessionName() const;
 
-            /// Get a pointer to the contained client
-            /// configuration object.
-            virtual btg::core::client::clientConfiguration* getConfig() const;
-
             /// If setup fails, this function will return a
             /// textual description of why it failed.
             virtual std::string getSetupFailtureMessage();
 
             /// If setup fails, this function will return a
             /// textual description of why it failed.
-            virtual std::string getAttachFailtureMessage();
+            virtual std::string getAttachFailtureMessage() const;
+
+            /// Set textual description of why attach failed.
+            virtual void setAttachFailtureMessage(std::string const& _message);
 
             /// Returns true if a fatal error was discovered.
             virtual bool fatalError() const { return fatalerror; };
@@ -264,6 +294,14 @@ namespace btg
             /// Call to make the client discover a session error.
             virtual void setSessionError() { sessionerror = true; };
 
+            /// Tell the client that a timeout in the communication
+            /// with the daemon has occured.
+            virtual void setTimeout();
+
+            /// Returns true, if a timeout in the communication with
+            /// the daemon has occured.
+            virtual bool Timeout() const;
+
             /// Get the session ID used by this handler.
             virtual t_long session() const;
 
@@ -277,6 +315,75 @@ namespace btg
             /// session.
             virtual bool encryption();
             
+            /// Indicates that was transport init error from the server side. (auth failure)
+            virtual bool transinitwaitError() const { return m_bTransinitwaitError; };
+            
+            /// Get the last received URL id.
+            virtual t_uint UrlId() const;
+
+            /// Set URL id.
+            virtual void setUrlId(t_uint const _id);
+
+            /// Set URL status response.
+            virtual void setUrlStatusResponse(t_uint const _id, 
+                                              t_uint const _status);
+
+            /// Get last received URL status.
+            virtual void UrlStatusResponse(t_uint & _id, 
+                                           t_uint & _status) const;
+
+            /// Set File status response.
+            virtual void setFileStatusResponse(t_uint const _id, 
+                                              t_uint const _status);
+
+            /// Get last received file status.
+            virtual void fileStatusResponse(t_uint & _id, 
+                                           t_uint & _status) const;
+
+            /// Wait for URL loading to complete.
+            /// @return true - success, URL loaded. false - URL not loaded.
+            bool handleUrlProgress(t_uint _hid);
+
+            /// Store received URL progress information.
+            void setUrlDlProgress(t_uint const _total, 
+                                  t_uint const _now, 
+                                  t_uint const _speed);
+
+            /// Disable the last received URL progress information.
+            void disableUrlDlProgress();
+
+            /// Get URL download progress info (if available)
+            /// @return false if wl progress info unavailable
+            bool getUrlDlProgress(t_uint & _total, 
+                                  t_uint & _now, 
+                                  t_uint & _speed);
+
+            /// Helper function, used to set the options used by the daemon.
+            virtual void setOption(btg::core::OptionBase const & _options);
+
+            /// Get the version and options used by the daemon.
+            const btg::core::OptionBase& getOption() const;
+
+            /// Set current file id (upload).
+            void setFileId(t_uint const _id);
+
+            /// Get current file id (upload).
+            t_uint getFileId() const;
+            
+            /// Add opened torrent file to the recent-list.
+            void addLastFile(const std::string& _filename);
+            
+            /// Add opened URL to the recent-list.
+            /// @param _url [in] torrent URL
+            /// @param _filename [in] Corresponding file name.
+            void addLastURL(const std::string& _url, const std::string& _filename);
+            
+            /// Set list of trackers.
+            void setTrackerList(t_strList const& _trackerlist);
+
+            /// Get list of trackers.
+            t_strList getTrackerList() const;
+
             /// Destructor.
             virtual ~clientHandler();
 
@@ -287,7 +394,7 @@ namespace btg
             };
 
             /// The transport used to communicate with the daemon.
-            btg::core::messageTransport*      transport;
+            btg::core::messageTransport&      transport;
 
             /// The state machine used by this client.
             btg::core::client::stateMachine   statemachine;
@@ -361,10 +468,10 @@ namespace btg
             std::string                       currentSessionName;
 
             /// Pointer to the object holding the client configuration.
-            btg::core::client::clientConfiguration* config;
+            btg::core::client::clientConfiguration& config;
 
-            /// List of last accessed files.
-            btg::core::client::lastFiles*     lastfiles;
+            /// Pointer to the object holding the dynamic client configuration.
+            btg::core::client::clientDynConfig&  dynconfig;
 
             /// If setup fails, this member will contain a
             /// textual description of why it failed.
@@ -394,6 +501,51 @@ namespace btg
             /// Indicates if encryption is enabled for the current
             /// session.
             bool                              encryption_enabled_;
+            
+            /// Trainport init error from the server side. Auth failure.
+            bool                              m_bTransinitwaitError;
+
+            /// Last received URL id.
+            t_uint                            last_url_id;
+
+            /// Last received URL status id.
+            t_uint                            last_surl_id; 
+            /// Last received URL status.
+            t_uint                            last_surl_status;
+
+            /// Last file id - the id of the file upload in progress.
+            t_uint                            last_sfile_id;
+
+            /// Last file status received.
+            t_uint                            last_sfile_status;
+
+            /// Received options.
+            btg::core::OptionBase             options;
+
+            /// File id of the current file upload.
+            t_uint                            last_file_id;
+            
+            /// last opened files history
+            lastFiles                         lastfiles;
+            
+            /// last opened urls history
+            lastURLs                          lasturls;
+
+            /// List of trackers used.
+            t_strList                         trackerlist;
+
+            /// Indicates if a timeout in the communication with
+            /// the daemon has occured.
+            bool                              timeout;
+
+            /// Whether download progress was received.
+            bool           UrlDlProgress;
+            /// Total bytes to download.
+            t_uint         UrlDlTotal;
+            /// Bytes downloaded.
+            t_uint         UrlDlNow;
+            /// Download speed (bytes/sec).
+            t_uint         UrlDlSpeed;
          private:
             /// Copy constructor.
             clientHandler(clientHandler const& _ch);

@@ -105,7 +105,7 @@ namespace btg
                // Add .torrent file
                btg::core::sBuffer sbuf;
                std::string fullFilename;
-               fullFilename = tempDir_ + GPD->sPATH_SEPARATOR() + ti->filename;
+               fullFilename = tempDir_ + projectDefaults::sPATH_SEPARATOR() + ti->filename;
                if (!sbuf.read(fullFilename))
                   {
                      BTG_MNOTICE(logWrapper(), "failed to read .torrent file from '" << fullFilename << "' (serializing)");
@@ -127,15 +127,15 @@ namespace btg
                ti->selected_files.serialize(_e);
 
                // Peer ID.
-               libtorrent::peer_id pid = 0;
+               libtorrent::peer_id pid;
 #if BTG_LT_0_12
                pid = 0;
-#elif BTG_LT_0_13
+#elif (BTG_LT_0_13 || BTG_LT_0_14)
                pid = torrent_session->id();
 #endif
                std::string peerid = btg::core::convertToString<libtorrent::peer_id>(pid);
 
-               MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Peer ID used: '" << peerid << "'.");
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Peer ID used: '" << peerid << "'.");
                _e->stringToBytes(&peerid);
             }
 
@@ -160,7 +160,7 @@ namespace btg
 
       bool Context::deserialize(btg::core::externalization::Externalization* _e, t_uint _version)
       {
-         BTG_MENTER(logWrapper(), "deserialize", "version = " << std::hex << _version);
+         BTG_MENTER(logWrapper(), "deserialize", "version = " << std::hex << _version << std::dec);
          bool status = true;
          std::string filename;
          bool paused;
@@ -231,7 +231,7 @@ namespace btg
                BTG_CDC(!sbuf.deserialize(_e), "torrent file");
 
                std::string fullFilename;
-               fullFilename = tempDir_ + GPD->sPATH_SEPARATOR() + filename;
+               fullFilename = tempDir_ + projectDefaults::sPATH_SEPARATOR() + filename;
                if (!sbuf.write(fullFilename))
                   {
                      BTG_MNOTICE(logWrapper(), "failed to write .torrent file '" << fullFilename << "' after deserialization");
@@ -240,7 +240,7 @@ namespace btg
 
                // Deserialize .fast file
                BTG_CDC(!sbuf.deserialize(_e), "fast file");
-               fullFilename = tempDir_ + GPD->sPATH_SEPARATOR() + filename + fastResumeFileNameEnd;
+               fullFilename = tempDir_ + projectDefaults::sPATH_SEPARATOR() + filename + fastResumeFileNameEnd;
                if (!sbuf.write(fullFilename))
                   {
                      BTG_MNOTICE(logWrapper(), "failed to write .fast file '" << fullFilename << "' after deserialization");
@@ -290,7 +290,7 @@ namespace btg
 
                      BTG_CDC(!_e->bytesToString(&peerid), "Peer ID");
 
-                     MVERBOSE_LOG(logWrapper(), moduleName, verboseFlag_, "Using peer ID: '" << peerid << "'.");
+                     MVERBOSE_LOG(logWrapper(), verboseFlag_, "Using peer ID: '" << peerid << "'.");
 
                      libtorrent::peer_id pid = btg::core::convertStringTo<libtorrent::peer_id>(peerid);
                      torrent_session->set_peer_id(pid);
@@ -313,7 +313,7 @@ namespace btg
 							if (_version >= 0x89)
 							{
                         bool asfr = applySelectedFiles(ti,aSelectedFileEntryList);
-#if BTG_LT_0_13
+#if (BTG_LT_0_13 || BTG_LT_0_14)
 								BTG_CDC(!asfr, "call applySelectedFiles");
 #elif BTG_LT_0_12
                         // Selecting files is not supported by 0.12.x, so ignore this.

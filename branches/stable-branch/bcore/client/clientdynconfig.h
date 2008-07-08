@@ -1,5 +1,5 @@
 /*
- * btg Copyright (C) 2007 Roman Rybalko.
+ * btg Copyright (C) 2005 Michael Wojciechowski.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ namespace btg
          namespace client
             {
                class lastFiles;
+               class lastURLs;
 
                /**
                 * \addtogroup gencli Generic client
@@ -45,9 +46,11 @@ namespace btg
                /// configuretion data (like client window position and dimensions, etc.)
                class clientDynConfig: public Logable
                   {
-                     // Allow to handle some data to lastFiles
-                     friend class lastFiles;
+                     friend class lastFiles; ///< uses lastFiles_
+                     friend class lastURLs; ///< uses lastURLs_ and lastURLFiles_
                   
+                     static const t_uint file_format_version; ///< config file firmat version
+
                   public:
                      /// Constructor.
                      /// @param [in] _logwrapper Pointer used to send logs to.
@@ -124,6 +127,11 @@ namespace btg
 
                      /// List of last opened files. (handled by lastFiles)
                      t_strList lastFiles_;
+                     
+                     /// List of last opened URLs. (handled by lastURLs)
+                     t_strList lastURLs_;
+                     /// List of last opened URL files. (handled by lastURLs)
+                     t_strList lastURLFiles_;
                   };
 
                /** @} */

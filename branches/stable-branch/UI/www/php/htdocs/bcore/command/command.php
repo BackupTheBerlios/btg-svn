@@ -78,6 +78,15 @@ class Command extends BTGSerializable
 	const CN_CGETTRACKERS    = 64;
 	const CN_CGETTRACKERSRSP = 65;
 	const CN_CMOVE           = 66;
+	const CN_CCREATEFROMURL      = 67;
+	const CN_CCREATEFROMURLRSP   = 68;
+   const CN_CCREATEFROMFILE     = 69;
+   const CN_CCREATEFROMFILERSP  = 70;
+   const CN_CCREATEFROMFILEPART = 71;
+
+   const CN_OPABORT             = 80;
+   const CN_OPSTATUS            = 81;
+   const CN_OPSTATUSRSP         = 82;
 
 	const CN_ERROR           = 100;
 	const CN_ACK             = 101;
@@ -141,6 +150,16 @@ class Command extends BTGSerializable
          Command::CN_CGETTRACKERS    => "(c) Get used trackers",
          Command::CN_CGETTRACKERSRSP => "(c) Get used trackers response",
 			Command::CN_CMOVE           => "(c) Move",
+
+			Command::CN_CCREATEFROMURL      => "(c) Create context from URL",
+			Command::CN_CCREATEFROMURLRSP   => "(c) Create context from URL response",
+         Command::CN_CCREATEFROMFILE     => "(c) Create context from file",
+         Command::CN_CCREATEFROMFILERSP  => "(c) Create context from file response",
+         Command::CN_CCREATEFROMFILEPART => "(c) Create context from file, part of file",
+         Command::CN_OPABORT             => "(g) Abort operation",
+         Command::CN_OPSTATUS            => "(g) Status of operation",
+         Command::CN_OPSTATUSRSP         => "(g) Status of operation response",
+
          // General:
          Command::CN_ERROR           => "(g) Error",
          Command::CN_ACK             => "(g) Ack",
@@ -206,6 +225,16 @@ class Command extends BTGSerializable
             Command::CN_CGETTRACKERS    => "context.gettrackers",
             Command::CN_CGETTRACKERSRSP => "context.gettrackersrsp",
 				Command::CN_CMOVE           => "context.move",
+
+            Command::CN_CCREATEFROMURL      => "context.createfromurl",
+            Command::CN_CCREATEFROMURLRSP   => "context.createfromurlrsp",
+            Command::CN_CCREATEFROMFILE     => "context.createfromfile",
+            Command::CN_CCREATEFROMFILERSP  => "context.createfromfilersp",
+            Command::CN_CCREATEFROMFILEPART => "context.createfromfilepart",
+            Command::CN_OPABORT             => "general.opabort",
+            Command::CN_OPSTATUS            => "general.opstatus",
+            Command::CN_OPSTATUSRSP         => "general.opstatusrsp",
+
             // General:
             Command::CN_ERROR           => "general.error",
             Command::CN_ACK             => "general.ack",

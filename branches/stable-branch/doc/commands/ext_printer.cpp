@@ -167,7 +167,7 @@ namespace btg
             return addByte(_command);
          }
 
-         void externalizationPrinter::setParamInfo(std::string const& _name, bool _required)
+         void externalizationPrinter::setParamInfo(const char * _name, bool _required)
          {
             current_param_name = _name;
             if(_required)

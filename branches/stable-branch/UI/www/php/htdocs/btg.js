@@ -152,6 +152,9 @@ function sessionQuit()
 
 function cleanAllContexts()
 {
+	if(!confirm("Are you sure you want to clean all torrents?"))
+		return;
+
 	setStatus("Cleaning session...");
 	btg_cleanAll(cb_cleanAll, cb_cleanAll_err);
 }
@@ -617,6 +620,31 @@ function uploadDone()
 	refreshContextList();
 }
 
+function loadUrl()
+{
+	var f = document.getElementById('loadurl_input');
+	var url = f.value;
+	var filename = url;
+
+	if(!url.match('^http[s]?://(.+)'))
+		return alert("Invalid URL");
+
+	// Extract filename from URL
+	if(filename.indexOf('?') != -1)
+		filename = filename.substr(0, filename.indexOf('?'));
+
+	if(filename.lastIndexOf('/') != -1)
+		filename = filename.substr(filename.lastIndexOf('/') + 1);
+
+	if(filename.length == 0 || filename.indexOf('.torrent') == -1)
+		filename = prompt('Enter filename');
+
+	if(filename == null)
+		return;
+
+	btg_contextCreateFromUrl(cb_contextCreateFromUrl, cb_contextCreateFromUrl_err, filename, url);
+}
+
 /**
  * This function is called every second, is used for misc stuff like refresh, age counter etc.
  */
@@ -731,6 +759,97 @@ function cb_globallimitstatus(response)
 function cb_globallimitstatus_err(error, errStr)
 {
 	setStatus("Unable to get global limit status...");
+}
+
+var pendingDownloadID = -1;
+function cb_contextCreateFromUrl(response)
+{
+	pendingDownloadID = parseInt(getFirstChildValue(response.getElementsByTagName('url')[0], 'id'));
+
+	var i = document.getElementById('loadurl');
+	var f = document.getElementById('loadurl_input');
+	var s = document.getElementById('loadurl_status');
+	f.value = '';
+	i.style.display='none';
+	s.style.display='block';
+	s.innerHTML='Downloading URL...';
+
+	setTimeout('checkUrlStatus();', 1000);
+}
+
+function cb_contextCreateFromUrl_err(error, errStr)
+{
+	pendingDownloadID = -1;
+	alert(errStr);
+}
+
+// Called by timer
+function checkUrlStatus()
+{
+	if(pendingDownloadID == -1)
+		return;
+
+	btg_contextUrlStatus(cb_contextUrlStatus, cb_contextUrlStatus_err, pendingDownloadID);
+}
+
+function cb_contextUrlStatus(response)
+{
+	var ss = parseInt(getFirstChildValue(response.getElementsByTagName('url')[0], 'status'));
+	/*
+	const URLS_UNDEF      = 0; //!<  Unknown.
+	const URLS_WORKING    = 1; //!<  Download in progress.
+	const URLS_FINISHED   = 2; //!<  Download finished.
+	const URLS_ERROR      = 3; //!<  Unable to download.
+	const URLS_CREATE     = 4; //!<  Context created.
+	const URLS_CREATE_ERR = 5; //!<  Context not created.
+	*/
+	var i = document.getElementById('loadurl');
+	var s = document.getElementById('loadurl_status');
+	var done = false;
+	switch(ss)
+	{
+		case 1:
+			s.innerHTML='Downloading URL...';
+			break;
+		case 2:
+			done = true;
+			s.innerHTML = 'Failed to download URL.<br/>(Click here to continue)';
+			break;
+		case 4:
+			done = true;
+			s.innerHTML = 'URL downloaded and created successfully.<br/>(Click here to continue)';
+			refreshContextList();
+			break;
+		case 5:
+			done = true;
+			s.innerHTML = 'Failed to create context from URL.<br/>(Click here to continue)';
+			break;
+		case 0:
+		default:
+			s.innerHTML='Unknown';
+			break;
+	}
+	
+	if(!done)
+		setTimeout('checkUrlStatus();', 1000);
+	else
+		pendingDownloadID = -1;
+}
+
+function resetUrl()
+{
+	if(pendingDownloadID > 0)
+		return;
+
+	var i = document.getElementById('loadurl');
+	var s = document.getElementById('loadurl_status');
+	i.style.display='block';
+	s.style.display='none';
+}
+
+function cb_contextUrlStatus_err(error, errStr)
+{
+	alert(errStr);
 }
 
 /**
@@ -901,7 +1020,7 @@ function cb_contextStatus(response)
 	 * updateContextTable do the work.
 	 */
 	var contexts = response.getElementsByTagName('contexts')[0];
-	if(contexts == null)
+	if (contexts == null)
 	{
 		setStatus("Server didnt provide any contexts!");
 		return;
@@ -913,10 +1032,14 @@ function cb_contextStatus(response)
 	{
 		var s = new Status(contexts.getElementsByTagName('context')[i]);
 		newContextList.push(s);
-		if(strContexts == "")
-			strContexts += s.contextID;
+		if (strContexts == "")
+		{
+			 strContexts += s.contextID;
+		}
 		else
-			strContexts += ","+s.contextID;
+		{
+			 strContexts += ","+s.contextID;
+		}
 	}
 
 	updateContextTable(newContextList);
@@ -1302,7 +1425,7 @@ function updateContextTable(newList)
 	var table = document.getElementById('torrent_table');
 	var evenOrUneven = 'uneven';
 	/* Iterate over all new items */
-	for(var i=0; i < newList.length; i++)
+	for (var i=0; i < newList.length; i++)
 	{
 		var s = newList[i];
 
@@ -1310,9 +1433,9 @@ function updateContextTable(newList)
 		tempList.push(s);
 
 		/* Remove it from the current list (isn't there any better way to do this???) */
-		for(var y=0; y < contextList.length; y++)
+		for (var y=0; y < contextList.length; y++)
 		{
-			if(s.compare(contextList[y]))
+			if (s.compare(contextList[y]))
 			{
 				contextList.splice(y, 1);
 				break;
@@ -1320,37 +1443,37 @@ function updateContextTable(newList)
 		}
 
 		/* Determine the state of the torrent */
-		if(s.status == ts_queued)
+		if (s.status == ts_queued)
 		{
 			/* Some other torrent is checking its data and this torrent is in the wait queue */
 			s.statusMessage = "Queued for check"
 		}
-		else if(s.status == ts_checking)
+		else if (s.status == ts_checking)
 		{
 			/* This torrent is currently checking its data */
 			s.statusMessage = "Checking data (" + s.done + "%)"
 		}
-		else if(s.status == ts_connecting)
+		else if (s.status == ts_connecting)
 		{
 			/* Connecting to tracker or peers  */
 			s.statusMessage = "Connecting"
 		}
-		else if(s.status == ts_downloading)
+		else if (s.status == ts_downloading)
 		{
 			/* This torrent is currently downloading data, not finished */
 			s.statusMessage = "Downloading (" + humanizeSpeed(s.downloadrate,1) + "): "+ round1(s.done) +"% (" + s.timeleft + " left)"
 		}
-		else if(s.status == ts_seeding)
+		else if (s.status == ts_seeding)
 		{
 			/* This torrent is fully downloaded and is seeding */
 			s.statusMessage = "Seeding (" + humanizeSpeed(s.uploadrate,1) + "): "+ round1(s.done) + "%";
 		}
-		else if(s.status == ts_stopped)
+		else if (s.status == ts_stopped)
 		{
 			/* User has stopped torrent, not finished */
 			s.statusMessage = "Stopped ("+ round1(s.done) +"%)"
 		}
-		else if(s.status == ts_finished)
+		else if (s.status == ts_finished)
 		{
 			/* Torrent is fully downloaded and is stopped */
 			s.statusMessage = "Finished ("+ round1(s.done)+"%)"
@@ -1361,10 +1484,10 @@ function updateContextTable(newList)
 			s.statusMessage = s.statustext
 		}
 
-		if(s.trackerstatus != 200 && s.trackerstatus != -1)
+		if (s.trackerstatus != 200 && s.trackerstatus != -1)
 			s.statusMessage+='. Error '+s.trackerstatus + ': '+s.trackerstatustext;
 
-		if(s.trackerstatusmessage != "")
+		if (s.trackerstatusmessage != "")
 		{
 			s.statusMessage+='. '+s.trackerstatusmessage;
 		}
@@ -1376,18 +1499,27 @@ function updateContextTable(newList)
 		var details = document.getElementById('context_'+s.contextID+'_details');
 
 		/* Not found, create it */
-		if(!row)
+		if (!row)
 		{
-			/* This torrent is new! Create a new row at index 0 */
+			/* 
+			 * This torrent is new! 
+			 * Create a new row at index 0.
+			 */
 			row = createTorrentTableRow(table, s);
 
-			/* Create a hidden details row. Insert this as THIRD row! (headers, main row, info row..) */
+			/* 
+			 * Create a hidden details row. 
+			 * Insert this as THIRD row! 
+			 * (headers, main row, info row..) 
+			 */
 			detailsRow = table.insertRow(2);
 			detailsRow.className = "ctx_details";
 			detailsRow.style.display = 'none'; 
 			detailsRow.id = 'context_'+s.contextID+'_details_row';
 			detailsRow.contextID = s.contextID;
-			detailsRow.onclick = function(){ toogleContextDetails(this.contextID); }
+			// wojci: do not use this, as file selection cannot work if
+			// the details are hidden when one clicks anywhere on the details.
+			//detailsRow.onclick = function(){ toogleContextDetails(this.contextID); }
 
 			/* Create the details cell and insert a detailsTable in it */
 			detailsCell = detailsRow.insertCell(-1);
@@ -1413,10 +1545,14 @@ function updateContextTable(newList)
 			
 		}
 
-		if(evenOrUneven == 'even')
-			evenOrUneven = 'uneven'
+		if (evenOrUneven == 'even')
+		{
+			 evenOrUneven = 'uneven';
+		}
 		else
-			evenOrUneven = 'even'
+		{
+			 evenOrUneven = 'even';
+		}
 
 		/* Update the data */
 		updateTorrentTableRow(row, s);
@@ -1786,6 +1922,23 @@ function createTorrentDetails()
 	c.className = 'extrainfo_value';
 	c.innerHTML = '';
 
+	/* */
+
+	r = tbl.insertRow(-1);
+	r.className='extra_uneven_row';
+
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_type';
+	c.innerHTML='Files:';
+
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_value';
+
+	/* Files (!!!). */
+
+	c.innerHTML="No files present.";
+	c.colSpan = 5;
+
 	// Not used right now.
 	/*
 	c = r.insertCell(-1);
@@ -1796,6 +1949,155 @@ function createTorrentDetails()
 	c.innerHTML = '';
 	*/
 	return tbl;
+}
+
+function addFileInfoList(status)
+{
+	 var fileinfolist = status.fileinfolist;
+
+	 var tableStr = '<table>';
+	 tableStr+='<th>Selected</th>';
+	 tableStr+='<th>Filename</th>';
+	 tableStr+='<th>Size</th>';
+	 tableStr+='<th>Done %</th>';
+
+	 currentDir = "";
+	 for (var count = 0; count < fileinfolist.length; count++)
+		  {
+				// !!!
+				if (fileinfolist[count].dir != "")
+					 {
+						  tableStr+='<tr>\n';
+						  tableStr+='<td colspan="4">\n';
+						  tableStr+= fileinfolist[count].dir;
+						  tableStr+= '</td>\n';
+						  tableStr+='</tr>\n';
+
+						  currentDir = fileinfolist[count].dir;
+						  if (currentDir != "")
+								{
+									 currentDir = currentDir + "/";
+								}
+					 }
+
+				tableStr+='<tr>\n';
+				tableStr+=addFileInfoEntry(status.contextID,
+													currentDir,
+													fileinfolist[count].name, 
+													fileinfolist[count].selected, 
+													fileinfolist[count].size, 
+													fileinfolist[count].percent);
+				tableStr+='</tr>\n';
+		  }
+	 
+	 tableStr += '</table>';
+
+	 return tableStr;
+}
+
+function addFileInfoEntry(context_id, dir, filename, sel, filesize, percentdone)
+{
+	 var output = "";
+	 output += '<tr>\n';
+
+	 output += '<td>';
+	 output += '<input type="checkbox" value="';
+	 if (sel == true)
+		  {
+				output += '666" checked onClick="unSelectFile(';
+				output += context_id;
+				output += ',\'';
+				output += dir;
+				output += filename;
+				output += '\');"/>';
+		  }
+	 else
+		  {
+				output += '666" onClick="selectFile(';
+				output += context_id;
+				output += ',\'';
+				output += dir;
+				output += filename;
+				output += '\');"/>';
+		  }
+	 output += '</td>';
+
+	 output += '<td>';
+	 output += filename;
+	 output += '</td>';
+	 
+	 output += '<td>';
+	 if (sel == true)
+	     {
+				output += humanizeSize(filesize, 2);
+	     }
+	 output += '</td>';
+
+	 output+='<td>';
+
+	 if (sel == true)
+	     {
+		 output+='<div class="gr" style="border-left: ';
+		 var barsize = percentdone;
+		 
+		 output+=barsize;
+		 output+='px solid ';
+		 
+		 if (percentdone == 100)
+		     {
+			 // Green.
+			 output += '#6f0';
+		     }
+		 else if (percentdone >= 50)
+		     {
+			 output += '#FFFF00';
+		     }
+		 else
+		     {
+			 output += '#FF0000';
+		     }
+		 
+		 output += ';">';
+		 output += percentdone;
+		 output += "%";
+
+		 output+='&nbsp;</div>';
+	     }
+	 output+='</td>\n';
+	 output+='</tr>\n';
+	 
+	 return output;
+}
+
+// !!!
+function selectFile(context_id, filename)
+{
+	 btg_contextSelectFile(cb_contextSelectFile, cb_contextSelectFile_err, context_id, filename);
+}
+
+function cb_contextSelectFile(response)
+{
+	 // TODO: do something here.
+}
+
+function cb_contextSelectFile_err(error, errStr)
+{
+	 setError(error, 'Failed to select file.');
+}
+
+function unSelectFile(context_id, filename)
+{
+	 btg_contextUnSelectFile(cb_contextUnSelectFile, cb_contextUnSelectFile_err, context_id, filename);
+}
+
+function cb_contextUnSelectFile(response)
+{
+	 // TODO: do something here.
+}
+
+function cb_contextUnSelectFile_err(error, errStr)
+{
+	 setError(error, 'Failed to un-select file.');
 }
 
 /**
@@ -1868,8 +2170,10 @@ function createTorrentExtendedControls(contextID)
 function updateTorrentDetails(t, s)
 {
 	var f = s.filename;
-	if(f.length > 60)
-		f = f.substr(0,60) + '...';
+	if (f.length > 60)
+	{
+		 f = f.substr(0,60) + '...';
+	}
 
 	t.rows[0].cells[1].innerHTML = s.statusMessage;
 
@@ -1920,9 +2224,12 @@ function updateTorrentDetails(t, s)
 
 	t.rows[5].cells[3].innerHTML = ratio_tr.toString();
 
+	// Update file list (!!!).
+	t.rows[6].cells[1].innerHTML = addFileInfoList(s)
+
 	// Not used right now.
-//	t.rows[5].cells[4].innerHTML = "";
-//	t.rows[5].cells[5].innerHTML = "";
+	//	t.rows[5].cells[4].innerHTML = "";
+	//	t.rows[5].cells[5].innerHTML = "";
 }
 
 /**************************************************
@@ -1940,6 +2247,16 @@ ts_seeding = 5;
 ts_stopped = 6;
 ts_finished = 7;
 
+function fileInfo(dir, name, selected, size, percent)
+{
+	 this.dir      = dir;
+	 this.name     = name;
+	 this.selected = selected;
+	 this.size     = size;
+	 this.percent  = percent;
+}
+
+// Status object (!!!).
 function Status(dom)
 {
 	this.contextID = -1;
@@ -1961,7 +2278,9 @@ function Status(dom)
 	this.trackerstatusmessage = "";
 	this.activitycounter = 0;
 	this.tracker = "";
-	if(dom)
+	this.fileinfolist = new Array();
+
+	if (dom)
 	{
 	    <!-- Defaults set, try to parse dom -->
 	    this.contextID = parseInt(getFirstChildValue(dom, 'id'));
@@ -1987,14 +2306,42 @@ function Status(dom)
 	    this.tracker = getFirstChildValue(dom, 'tracker');
 
 		/* Recalculate done */
-		if(this.status == ts_seeding || this.status == ts_finished)
+		if (this.status == ts_seeding || this.status == ts_finished)
 		{
-			if(this.downloadtotal < this.filesize)
-				// User has probably added this torrent with data currently available (readded it), use filesize instead of downloadtotal..
-				this.done = 100 * (this.uploadtotal / this.filesize)
+			if (this.downloadtotal < this.filesize)
+				 {
+					  // User has probably added this torrent with data
+					  // currently available, use filesize instead of
+					  // download total..
+					  this.done = 100 * (this.uploadtotal / this.filesize);
+				 }
 			else
-				this.done = 100 * (this.uploadtotal / this.downloadtotal)
+				 {
+					  this.done = 100 * (this.uploadtotal / this.downloadtotal);
+				 }
 		}
+
+		/* Get list of files */
+
+		var fi = dom.getElementsByTagName('fileinfo');
+
+		var files = dom.getElementsByTagName('file');
+
+		for (var count = 0; count < files.length ; count++)
+			 {
+				  var filename = getFirstChildValue(files[count], 'name');
+				  var dir      = getFirstChildValue(files[count], 'dir');
+				  var selected = getFirstChildValue(files[count], 'selected');
+				  var sel = false;
+				  if (selected == 1)
+						{
+							 sel = true;
+						}
+				  var size     = getFirstChildValue(files[count], 'size');
+				  var percent  = getFirstChildValue(files[count], 'percent');
+
+				  this.fileinfolist.push(new fileInfo(dir, filename, sel, size, percent));
+			 }
 	}
 
 	this.toString = function()
@@ -2026,32 +2373,32 @@ function Status(dom)
 	<!-- Test if this status object represents the same context as another status object s -->
 	this.compare = function(s)
 	{
-		if(!(s instanceof Status))
+		if (!(s instanceof Status))
 			return false;
-		if(s.contextID != this.contextID)	return false;
-		if(s.filename != this.filename)	return false;
+		if (s.contextID != this.contextID)	return false;
+		if (s.filename != this.filename)	return false;
 		return true;
 	}
 
 	<!-- Test if the other Status object passed in s is newer than this (updated data) -->
 	this.isOld = function(s)
 	{
-		if(this.status != s.status)	return true;
-		if(this.dn_total != s.dn_total)	return true;
-		if(this.ul_total != s.ul_total)	return true;
-		if(this.failed_bytes != s.failed_bytes)	return true;
-		if(this.dn_rate != s.dn_rate)	return true;
-		if(this.ul_rate != s.ul_rate)	return true;
-		if(this.done != s.done)	return true;
-		if(this.filesize != s.filesize)	return true;
-		if(this.leechers != s.leechers)	return true;
-		if(this.seeders != s.seeders)	return true;
-		if(this.timeleft != s.timeleft)	return true;
-		if(this.trackerstatus != s.trackerstatus)	return true;
-		if(this.trackerstatustext != s.trackerstatustext)	return true;
-		if(this.trackerstatusmessage != s.trackerstatusmessage)	return true;
-		if(this.activitycounter != s.activitycounter) return true;
-		if(this.tracker != s.tracker) return true;
+		if (this.status != s.status)	return true;
+		if (this.dn_total != s.dn_total)	return true;
+		if (this.ul_total != s.ul_total)	return true;
+		if (this.failed_bytes != s.failed_bytes)	return true;
+		if (this.dn_rate != s.dn_rate)	return true;
+		if (this.ul_rate != s.ul_rate)	return true;
+		if (this.done != s.done)	return true;
+		if (this.filesize != s.filesize)	return true;
+		if (this.leechers != s.leechers)	return true;
+		if (this.seeders != s.seeders)	return true;
+		if (this.timeleft != s.timeleft)	return true;
+		if (this.trackerstatus != s.trackerstatus)	return true;
+		if (this.trackerstatustext != s.trackerstatustext)	return true;
+		if (this.trackerstatusmessage != s.trackerstatusmessage)	return true;
+		if (this.activitycounter != s.activitycounter) return true;
+		if (this.tracker != s.tracker) return true;
 		return false;
 	}
 }

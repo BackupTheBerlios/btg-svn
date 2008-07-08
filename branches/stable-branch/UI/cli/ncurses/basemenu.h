@@ -85,7 +85,7 @@ namespace btg
 
                      /// Show the menu.
                      ///
-                     /// \note When K_QUIT or K_SELECT is pressed,
+                     /// \note When K_BACK or K_SELECT is pressed,
                      /// this function will return.
                      dialog::RESULT run();
 

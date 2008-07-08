@@ -30,6 +30,8 @@
 #include <bcore/command/context_clean.h>
 #include <bcore/command/context_clean_rsp.h>
 #include <bcore/command/context_create.h>
+#include <bcore/command/context_create_url.h>
+#include <bcore/command/context_create_file.h>
 #include <bcore/command/context_last.h>
 #include <bcore/command/context_fi.h>
 #include <bcore/command/context_fi_rsp.h>
@@ -53,8 +55,12 @@
 #include <bcore/command/session_list.h>
 #include <bcore/command/session_list_rsp.h>
 #include <bcore/command/session_quit.h>
+#include <bcore/command/session_rw.h>
 #include <bcore/command/setup.h>
+#include <bcore/command/version.h>
 #include <bcore/command/uptime.h>
+#include <bcore/command/opstat.h>
+#include <bcore/opstatus.h>
 
 #include "ext_printer.h"
 
@@ -75,7 +81,7 @@ int main(int argc, char* argv[])
 
    btg::core::externalization::Externalization* e = new externalizationPrinter(logwrapper);
 
-   btg::core::commandFactory cf(logwrapper, e);
+   btg::core::commandFactory cf(logwrapper, *e);
 
    // Create a number of commands and serialize/print them.
 
@@ -162,7 +168,7 @@ int main(int argc, char* argv[])
    // Command::CN_CFILEINFORSP
 
    t_fileInfoList fileinfolist;
-   t_bitList pieces;
+   t_bitVector pieces;
    pieces.push_back(true);
    pieces.push_back(false);
    pieces.push_back(false);
@@ -202,16 +208,23 @@ int main(int argc, char* argv[])
    printCommand(cf, e, new contextLimitStatusResponseCommand(context_id, 10, 5));
 
    // Command::CN_CPEERS
+   contextPeersCommand *cpc = new contextPeersCommand(context_id, false);
+   cpc->setExRange(0, 10);
    e->setDirection(TO_SERVER);
-   printCommand(cf, e, new contextPeersCommand(context_id, false));
+   printCommand(cf, e, cpc);
 
    // Command::CN_CPEERSRSP
    peerAddress peeraddress(127,0,0,1);
    Peer peer(peeraddress, true, "info");
    t_peerList peerlist;
    peerlist.push_back(peer);
+   contextPeersResponseCommand *cprc = new contextPeersResponseCommand(context_id, peerlist);
+   PeerEx peerEx;
+   t_peerExList peerExList;
+   peerExList.push_back(peerEx);
+   cprc->setExList(0,peerExList);
    e->setDirection(FROM_SERVER);
-   printCommand(cf, e, new contextPeersResponseCommand(context_id, peerlist));
+   printCommand(cf, e, cprc);
 
    // Command::CN_ERROR
    e->setDirection(FROM_SERVER);
@@ -251,11 +264,67 @@ int main(int argc, char* argv[])
    printCommand(cf, e, new listSessionResponseCommand(sessions, sessionNames));
 
    // Command::CN_MOREAD
-   // Above is not implemented.
+   printCommand(cf, e, new sessionROCommand());
 
    // Command::CN_MOWRITE
-   // Above is not implemented.
+   printCommand(cf, e, new sessionRWCommand());
 
+   // Command::CN_CCREATEFROMURL
+   t_uint urlId = 1;
+   printCommand(cf, e, 
+                new contextCreateFromUrlCommand("filename",
+                                                "http://url",
+                                                true)
+                );
+
+   // Command::CN_CCREATEFROMURLRSP
+   printCommand(cf, e, 
+                new contextCreateFromUrlResponseCommand(urlId)
+                );
+
+   // Command::CN_OPSTATUS
+   printCommand(cf, e, 
+                new opStatusCommand(urlId, 2 /* type */)
+                );
+
+   // Command::CN_OPSTATUSRSP
+   t_uint urlstatus = btg::core::OP_WORKING;
+   btg::core::opStatusResponseCommand* cosrc = new opStatusResponseCommand(urlId, 2 /* type */, urlstatus);
+   cosrc->setData("test");
+   printCommand(cf, e, cosrc);
+
+   // Command::CN_OPABORT
+   printCommand(cf, e,
+                new opAbortCommand(urlId, 2 /* type */)
+                );
+
+   t_uint fileId = 1;
+   // Command::CN_CCREATEFROMFILE
+   printCommand(cf, e,
+                new contextCreateFromFileCommand("filename.torrent",
+                                                 50,
+                                                 true)
+                );
+
+   // Command::CN_CCREATEFROMFILERSP
+   printCommand(cf, e,
+                new contextCreateFromFileResponseCommand(fileId)
+                );
+
+   // Command::CN_CCREATEFROMFILEPART
+   sBuffer data;
+   printCommand(cf, e,
+                new contextCreateFromFilePartCommand(fileId,
+                                                     1,
+                                                     data)
+                );
+
+   // Command::CN_VERSION
+   printCommand(cf, e, new versionCommand);
+
+   // Command::CN_VERSIONRSP
+   printCommand(cf, e, new versionResponseCommand(1, 2, 3));
+   
    delete e;
    e = 0;
 

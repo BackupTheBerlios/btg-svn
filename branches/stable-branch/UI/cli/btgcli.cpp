@@ -32,8 +32,10 @@
 
 #include <bcore/t_string.h>
 
-#include "nscreen.h"
-#include "nscreen_log.h"
+#include <bcore/verbose.h>
+
+#include "screen.h"
+#include "screen_log.h"
 
 extern "C"
 {
@@ -41,10 +43,10 @@ extern "C"
 
 #include "runstate.h"
 
-   t_int global_btg_run = GR_RUN;
+t_int global_btg_run = GR_RUN;
 
-   /* React on the signals from the outside world. */
-   void global_signal_handler(int _signal_no)
+/* React on the signals from the outside world. */
+void global_signal_handler(int _signal_no)
    {
       if (_signal_no == SIGINT || _signal_no == SIGTERM)
          {
@@ -58,386 +60,238 @@ extern "C"
 #include "cli.h"
 
 #include <bcore/client/helper.h>
+#include <bcore/client/urlhelper.h>
 #include <bcore/logger/file_log.h>
 
 #include <bcore/logable.h>
 #include <bcore/crashlog.h>
+#include <UI/cli/ncurses/cli_helper.h>
 
 using namespace btg::core;
 using namespace btg::core::logger;
 using namespace btg::core::client;
 using namespace btg::UI::cli;
 
-void handleInput(std::string const& _line, cliHandler* _clihandler, ncursesScreen* _nscr, bool const _neverAskFlag);
+void handleInput(std::string const& _line, 
+                 cliHandler& _clihandler, 
+                 Screen& _nscr, 
+                 bool const _neverAskFlag);
+
+void OpenUrls(Screen& _nscr, 
+              cliHandler& _clihandler, 
+              t_strList const& _filelist);
+
+void OpenFiles(Screen& _nscr, 
+               cliHandler& _clihandler, 
+               lastFiles& _lastfiles,
+               t_strList const& _filelist);
 
 // Main file for the client.
 int main(int argc, char* argv[])
 {
+   btg::core::crashLog::init();
    LogWrapperType logwrapper(new btg::core::logger::logWrapper);
 
-   btg::core::crashLog::init();
-
    // Parse command line arguments.
-   commandLineArgumentHandler* cla = new commandLineArgumentHandler(GPD->sCLI_CONFIG(),
-                                                                    true /* Extra option used to pass commands. */);
-   cla->setup();
+   commandLineArgumentHandler cla(btg::core::projectDefaults::sCLI_CONFIG(),
+                                  true /* Extra option used to pass commands. */);
+   cla.setup();
 
-   if (!cla->parse(argc, argv))
+   if (!cla.parse(argc, argv))
       {
-         delete cla;
-         cla = 0;
-
-         projectDefaults::killInstance();
-
          return BTG_ERROR_EXIT;
       }
 
    // Before doing anything else, check if the user wants to get the
    // syntax of the configuration file.
-   if (cla->listConfigFileSyntax())
+   if (cla.listConfigFileSyntax())
       {
          clientConfiguration non_existing(logwrapper, "non_existing");
 
          std::cout << non_existing.getSyntax() << std::endl;
 
-         delete cla;
-         cla = 0;
-
-         projectDefaults::killInstance();
-
          return BTG_NORMAL_EXIT;
       }
 
-   bool verboseFlag  = cla->beVerbose();
+   bool verboseFlag  = cla.beVerbose();
 
    // Open the configuration file:
-   std::string config_filename = GPD->sCLI_CONFIG();
+   std::string config_filename = btg::core::projectDefaults::sCLI_CONFIG();
 
-   if (cla->configFileSet())
+   if (cla.configFileSet())
       {
-         config_filename = cla->configFile();
+         config_filename = cla.configFile();
       }
+
+   VERBOSE_LOG(logwrapper, verboseFlag, "config: '" << config_filename << "'.");
 
    std::string errorString;
    if (!btg::core::os::fileOperation::check(config_filename, errorString, false))
       {
-         BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Could not open file '" << config_filename << "'.");
-
-         delete cla;
-         cla = 0;
-
-         projectDefaults::killInstance();
+         BTG_FATAL_ERROR(logwrapper, btg::core::projectDefaults::sCLI_CLIENT(), "Could not open file '" << config_filename << "'.");
 
          return BTG_ERROR_EXIT;
       }
 
-   clientConfiguration* config = new clientConfiguration(logwrapper, config_filename);
-   bool const gotConfig = config->read();
+   clientConfiguration config(logwrapper, config_filename);
+   clientDynConfig dynconfig(logwrapper, btg::core::projectDefaults::sCLI_DYNCONFIG());
 
-   clientDynConfig cliDynConf(logwrapper, GPD->sCLI_DYNCONFIG());
-   lastFiles* lastfiles = new lastFiles(logwrapper, cliDynConf);
-
-   if (!gotConfig)
+   if (!config.read())
       {
-         BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Could not read the config file, '" << GPD->sCLI_CONFIG() << "'. Create one.");
-
-         delete config;
-         config = 0;
-
-         delete lastfiles;
-         lastfiles = 0;
-
-         delete cla;
-         cla    = 0;
-
-         projectDefaults::killInstance();
+         BTG_FATAL_ERROR(logwrapper, btg::core::projectDefaults::sCLI_CLIENT(), "Could not read the config file, '" << btg::core::projectDefaults::sCLI_CONFIG() << "'. Create one.");
 
          return BTG_ERROR_EXIT;
       }
 
-   bool neverAskFlag = config->getNeverAskQuestions();
+   bool neverAskFlag = config.getNeverAskQuestions();
 
+   std::auto_ptr<btg::core::externalization::Externalization> apExternalization;
+   std::auto_ptr<messageTransport> apTransport;
    // Create a transport to the daemon:
-   btg::core::externalization::Externalization* externalization = 0;
-   messageTransport* transport                                  = 0;
+   {
+      btg::core::externalization::Externalization* externalization = 0;
+      messageTransport* transport                                  = 0;
 
-   transportHelper* transporthelper = new transportHelper(logwrapper,
-                                                          GPD->sCLI_CLIENT(),
-                                                          config,
-                                                          cla);
+      transportHelper transporthelper(logwrapper,
+                                      btg::core::projectDefaults::sCLI_CLIENT(),
+                                      config,
+                                      cla);
 
-   if (!transporthelper->initTransport(externalization, transport))
-      {
-         delete config;
-         config = 0;
+      if (!transporthelper.initTransport(externalization, transport))
+         {
+            delete transport;
+            transport = 0;
 
-         delete lastfiles;
-         lastfiles = 0;
+            delete externalization;
+            externalization = 0;
 
-         delete cla;
-         cla    = 0;
+            return BTG_ERROR_EXIT;
+         }
+      
+      apExternalization.reset(externalization);
+      apTransport.reset(transport);
+   }
 
-         delete transport;
-         transport = 0;
-
-         delete externalization;
-         externalization = 0;
-
-         projectDefaults::killInstance();
-
-         return BTG_ERROR_EXIT;
-      }
-
-   delete transporthelper;
-   transporthelper = 0;
-
-   cliHandler* clihandler = new cliHandler(logwrapper,
-                                           externalization, 
-                                           transport, 
-                                           config, 
-                                           lastfiles, 
-                                           verboseFlag, 
-                                           cla->automaticStart());
+   cliHandler clihandler(logwrapper,
+                         *apExternalization,
+                         *apTransport,
+                         config,
+                         dynconfig,
+                         verboseFlag,
+                         cla.automaticStart());
 
    std::string initialStatusMessage("");
 
    // Create a helper to do the initial setup of this client.
-   startupHelper* starthelper = new cliStartupHelper(logwrapper,
-                                                     config,
-                                                     cla,
-                                                     transport,
-                                                     clihandler);
+   std::auto_ptr<startupHelper> starthelper(new cliStartupHelper(logwrapper,
+                                                                 config,
+                                                                 cla,
+                                                                 *apTransport,
+                                                                 clihandler));
 
-   if (!starthelper->init())
+   if (!starthelper->Init())
       {
-         BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Internal error: start up helper not initialized.");
-
-         delete starthelper;
-         starthelper = 0;
-
-         delete clihandler;
-         clihandler = 0;
-
-         delete externalization;
-         externalization = 0;
-
-         delete cla;
-         cla = 0;
-
-         delete config;
-         config = 0;
-
-         delete lastfiles;
-         lastfiles = 0;
-
-         projectDefaults::killInstance();
+         BTG_FATAL_ERROR(logwrapper, btg::core::projectDefaults::sCLI_CLIENT(), "Internal error: start up helper not initialized.");
 
          return BTG_ERROR_EXIT;
       }
 
-   setDefaultLogLevel(logwrapper, cla->doDebug(), verboseFlag);
+   setDefaultLogLevel(logwrapper, cla.doDebug(), verboseFlag);
 
    // Initialize logging.
-   if (starthelper->execute(startupHelper::op_log) != startupHelper::or_log_success)
+   if (!starthelper->SetupLogging())
       {
-         BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Unable to initialize logging");
-         delete starthelper;
-         starthelper = 0;
-
-         delete clihandler;
-         clihandler = 0;
-
-         delete externalization;
-         externalization = 0;
-
-         delete cla;
-         cla = 0;
-
-         delete config;
-         config = 0;
-
-         delete lastfiles;
-         lastfiles = 0;
-
-         projectDefaults::killInstance();
+         BTG_FATAL_ERROR(logwrapper, btg::core::projectDefaults::sCLI_CLIENT(), "Unable to initialize logging");
 
          return BTG_ERROR_EXIT;
       }
 
-   if (config->authSet())
-      {
-         // Auth info is in the config.
-         starthelper->setUser(config->getUserName());
-         starthelper->setPasswordHash(config->getPasswordHash());
-      }
-   else
-      {
-         // Ask the user about which username and password to use.
-         if (starthelper->execute(startupHelper::op_auth) != startupHelper::or_auth_success)
-            {
-               BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Unable to initialize auth");
-
-               delete starthelper;
-               starthelper = 0;
-
-               delete clihandler;
-               clihandler = 0;
-
-               delete externalization;
-               externalization = 0;
-
-               delete cla;
-               cla = 0;
-
-               delete config;
-               config = 0;
-
-               delete lastfiles;
-               lastfiles = 0;
-
-               projectDefaults::killInstance();
-
-               return BTG_ERROR_EXIT;
-            }
-      }
-
-   /// Initialize the transport.
-   starthelper->execute(startupHelper::op_init);
+   bool attach      = cla.doAttach();
+   bool attachFirst = cla.doAttachFirst();
 
    // Handle command line options:
-   if (cla->doList())
+   if (cla.doList())
       {
-         starthelper->execute(startupHelper::op_list);
-
-         // Clean up, before quitting.
-         delete starthelper;
-         starthelper = 0;
-
-         delete clihandler;
-         clihandler = 0;
-
-         delete externalization;
-         externalization = 0;
-
-         delete cla;
-         cla = 0;
-
-         delete config;
-         config = 0;
-
-         delete lastfiles;
-         lastfiles = 0;
-
-         projectDefaults::killInstance();
-
+         starthelper->ListSessions();
          return BTG_NORMAL_EXIT;
       }
-   else if (cla->doAttachFirst())
+   else if (cla.doAttachFirst())
       {
+         t_long sessionId;
          // Attach to the first available session.
-
-         if (starthelper->execute(startupHelper::op_attach_first) == startupHelper::or_attach_first_failture)
+         if (!starthelper->AttachFirstSession(sessionId))
             {
-               BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Unable to attach to session");
-
-               // Clean up, before quitting.
-               delete starthelper;
-               starthelper = 0;
-
-               delete clihandler;
-               clihandler = 0;
-
-               delete externalization;
-               externalization = 0;
-
-               delete cla;
-               cla = 0;
-
-               delete config;
-               config = 0;
-
-               delete lastfiles;
-               lastfiles = 0;
-
-               projectDefaults::killInstance();
+               BTG_FATAL_ERROR(logwrapper, btg::core::projectDefaults::sCLI_CLIENT(), "Unable to attach to session");
 
                return BTG_ERROR_EXIT;
             }
 
-         t_long session = clihandler->session();
+         t_long session         = clihandler.session();
          std::string strSession = btg::core::convertToString<t_long>(session);
-         initialStatusMessage = "Attached to session #" + strSession + ".";
+         initialStatusMessage   = "Attached to session #" + strSession + ".";
       }
-   else if (cla->doAttach())
+   else if (cla.doAttach())
       {
          // Attach to a certain session, either specified on the
          // command line or chosen by the user from a list.
 
-         if (starthelper->execute(startupHelper::op_attach) == startupHelper::or_attach_failture)
+         t_long sessionId;
+
+         if (!starthelper->AttachSession(sessionId))
             {
-               BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Unable to attach to session");
-
-               // Clean up, before quitting.
-               delete starthelper;
-               starthelper = 0;
-
-               delete clihandler;
-               clihandler = 0;
-
-               delete externalization;
-               externalization = 0;
-
-               delete cla;
-               cla = 0;
-
-               delete config;
-               config = 0;
-
-               delete lastfiles;
-               lastfiles = 0;
-
-               projectDefaults::killInstance();
+               BTG_FATAL_ERROR(logwrapper, btg::core::projectDefaults::sCLI_CLIENT(), "Unable to attach to session");
 
                return BTG_ERROR_EXIT;
             }
 
-         t_long session = clihandler->session();
+         t_long session         = clihandler.session();
          std::string strSession = btg::core::convertToString<t_long>(session);
-         initialStatusMessage = "Attached to session #" + strSession + ".";
+         initialStatusMessage   = "Attached to session #" + strSession + ".";
+      }
+   else 
+      {
+         // No options, show list of sessions or allow to create a new one.
+
+         bool action_attach = false;
+         t_long session;
+
+         if (!starthelper->DefaultAction(action_attach, session))
+            {
+               BTG_FATAL_ERROR(logwrapper, btg::core::projectDefaults::sCLI_CLIENT(), "Cancelled.");
+
+               return BTG_ERROR_EXIT;
+            }
+
+         if (action_attach)
+            {
+               attach = action_attach;
+
+               if (!starthelper->AttachToSession(session))
+                  {
+                     BTG_FATAL_ERROR(logwrapper, btg::core::projectDefaults::sCLI_CLIENT(), "Unable to attach to session.");
+
+                     return BTG_ERROR_EXIT;
+                  }
+               t_long session         = clihandler.session();
+               std::string strSession = btg::core::convertToString<t_long>(session);
+               initialStatusMessage   = "Attached to session #" + strSession + ".";
+            }
       }
 
    // Only execute setup if we are not attaching to an existing session.
-   if ((!cla->doAttach()) && (!cla->doAttachFirst()))
+   if ((!attach) && (!attachFirst))
       {
-         if (starthelper->execute(startupHelper::op_setup) == startupHelper::or_setup_failture)
+         t_long sessionId;
+         if (!starthelper->NewSession(sessionId))
             {
-               BTG_FATAL_ERROR(logwrapper, GPD->sCLI_CLIENT(), "Unable to connect to daemon.");
-
-               // Clean up, before quitting.
-               delete starthelper;
-               starthelper = 0;
-
-               delete clihandler;
-               clihandler = 0;
-
-               delete externalization;
-               externalization = 0;
-
-               delete cla;
-               cla = 0;
-
-               delete config;
-               config = 0;
-
-               delete lastfiles;
-               lastfiles = 0;
+               BTG_FATAL_ERROR(logwrapper, btg::core::projectDefaults::sCLI_CLIENT(), "Unable to create new session.");
 
                return BTG_ERROR_EXIT;
             }
-
-         t_long session = clihandler->session();
+         
+         t_long session         = clihandler.session();
          std::string strSession = btg::core::convertToString<t_long>(session);
-         initialStatusMessage = "Established session #" + strSession + ".";
+         initialStatusMessage   = "Established session #" + strSession + ".";
       }
 
 #if defined(__APPLE__) && defined(__MACH__)
@@ -455,18 +309,17 @@ int main(int argc, char* argv[])
 #endif
 
    // Done using the start up helper.
-   delete starthelper;
-   starthelper = 0;
+   starthelper.reset();
 
-   ncursesScreen* nscr = 0;
+   std::auto_ptr<Screen> apnscr;
 
-   if ((cla->CommandPresent()) && (cla->NoOutputPresent()))
+   if ((cla.CommandPresent()) && (cla.NoOutputPresent()))
       {
-         nscr = new ncursesScreen(true /* no output to screen */);
+         apnscr.reset(new Screen(true /* no output to screen */));
       }
    else
       {
-         nscr = new ncursesScreen(false);
+         apnscr.reset(new Screen(false));
       }
 
    // Generated with http://www.network-science.de/ascii/.
@@ -475,23 +328,35 @@ int main(int argc, char* argv[])
    // Adjustment: left.
    // Stretch   : no.
 
-   nscr->setOutput(" @@@@@@@  @@@@@@@  @@@@@@@   @@@@@@@ @@@      @@@ ");
-   nscr->setOutput(" @@!  @@@   @@!   !@@       !@@      @@!      @@! ");
-   nscr->setOutput(" @!@!@!@    @!!   !@! @!@!@ !@!      @!!      !!@ ");
-   nscr->setOutput(" !!:  !!!   !!:   :!!   !!: :!!      !!:      !!: ");
-   nscr->setOutput(" :: : ::     :     :: :: :   :: :: : : ::.: : :   ");
-   nscr->setOutput("                                                  ");
+   apnscr->setOutput(" @@@@@@@  @@@@@@@  @@@@@@@   @@@@@@@ @@@      @@@ ");
+   apnscr->setOutput(" @@!  @@@   @@!   !@@       !@@      @@!      @@! ");
+   apnscr->setOutput(" @!@!@!@    @!!   !@! @!@!@ !@!      @!!      !!@ ");
+   apnscr->setOutput(" !!:  !!!   !!:   :!!   !!: :!!      !!:      !!: ");
+   apnscr->setOutput(" :: : ::     :     :: :: :   :: :: : : ::.: : :   ");
+   apnscr->setOutput("                                                  ");
 
-   nscr->setOutput(GPD->sCLI_CLIENT() +" version " + GPD->sFULLVERSION() + ", build " + GPD->sBUILD() + " initializing ..");
-   nscr->setOutput(initialStatusMessage);
+   apnscr->setOutput(btg::core::projectDefaults::sCLI_CLIENT() +" version " + btg::core::projectDefaults::sFULLVERSION() + ", build " + btg::core::projectDefaults::sBUILD() + " initializing ..");
+   apnscr->setOutput(initialStatusMessage);
+
+   clihandler.reqVersion();
+   if (clihandler.commandSuccess())
+      {
+         const btg::core::OptionBase & o = clihandler.getOption();
+         apnscr->setOutput(o.toString());
+
+         if (!o.getOption(btg::core::OptionBase::URL))
+            {
+               clihandler.DisableUrlDownload();
+            }
+      }
 
    // Get some info about the current session, so it can be displayed
    // to the user.
-   clihandler->reqSessionInfo();
+   clihandler.reqSessionInfo();
    
    initialStatusMessage = "Session settings: ";
 
-   if (clihandler->dht())
+   if (clihandler.dht())
       {
          initialStatusMessage += "DHT: on.";
       }
@@ -500,7 +365,7 @@ int main(int argc, char* argv[])
          initialStatusMessage += "DHT: off.";
       }
 
-   if (clihandler->encryption())
+   if (clihandler.encryption())
       {
          initialStatusMessage += " Encryption: on.";
       }
@@ -509,114 +374,70 @@ int main(int argc, char* argv[])
          initialStatusMessage += " Encryption: off.";
       }
 
-   nscr->setOutput(initialStatusMessage);
+   apnscr->setOutput(initialStatusMessage);
 
    // If the user requested to open any files, do it.
-   if (cla->inputFilenamesPresent())
+   if (cla.inputFilenamesPresent())
       {
-         t_strList filelist = cla->getInputFilenames();
-         t_strListCI iter;
-         for (iter = filelist.begin(); iter != filelist.end(); iter++)
-            {
-               nscr->setOutput("Creating '" + *iter + "'");
-               clihandler->reqCreate(*iter);
-               // Check if the remote command produced a response.
-               if (clihandler->outputAvailable())
-                  {
-                     nscr->setOutput("Response: " + clihandler->getOutput());
-                     // Update the list of last opened files.
-                     lastfiles->addLastFile(*iter);
-                  }
-               else if (clihandler->errorAvailable())
-                  {
-                     nscr->setOutput("Response: " + clihandler->getError());
-                  }
-            }
+         t_strList filelist = cla.getInputFilenames();
+         lastFiles lastfiles(logwrapper, dynconfig);
+         OpenFiles(*apnscr, clihandler, lastfiles, filelist);
+      }
+
+   // Open URLs.
+   if (cla.urlsPresent())
+      {
+         t_strList filelist = cla.getUrls();
+         OpenUrls(*apnscr, clihandler, filelist);
       }
 
    // One or more commands to execute are present.
-   if (cla->CommandPresent())
+   if (cla.CommandPresent())
       {
-         t_strList cmdlist = cla->getCommand();
+         t_strList cmdlist = cla.getCommand();
          t_strListCI iter;
          for (iter = cmdlist.begin(); iter != cmdlist.end(); iter++)
             {
-               handleInput(*iter, clihandler, nscr, neverAskFlag);
+               handleInput(*iter, clihandler, *apnscr, neverAskFlag);
             }
       }
 
-   std::string line = "";
+   std::cin.clear();
 
-   while (global_btg_run > 0)
+   while (global_btg_run > 0 && apnscr->good())
       {
-         nscr->setInput("# ");
+         apnscr->setOutput("# ", false);
 
-         switch (nscr->getKeys())
+         if (apnscr->getLine())
             {
-            case ncursesScreen::EVENT_RESIZE:
-               {
-                  BTG_NOTICE(logwrapper, "Resize event received (2).");
-                  nscr->resize();
-                  nscr->clear();
-                  nscr->refresh();
-                  break;
-               }
-            case ncursesScreen::EVENT_KEY:
-               {
-                  line = nscr->getInput();
-                  BTG_NOTICE(logwrapper, "Got input: '" << line << "'");
-                  handleInput(line, clihandler, nscr, neverAskFlag);
-                  break;
-               }
-            case ncursesScreen::EVENT_NO_KEY:
-               {
-                  break;
-               }
+               std::string line = apnscr->getInput();
+               BTG_NOTICE(logwrapper, "Got input: '" << line << "'");
+               handleInput(line, clihandler, *apnscr, neverAskFlag);
             }
       } // while
 
-   if (config->modified())
+   if (config.modified())
       {
-         config->write();
+         config.write();
       }
-
-   delete config;
-   config = 0;
-
-   delete lastfiles;
-   lastfiles = 0;
-
-   delete clihandler;
-   clihandler = 0;
-
-   delete externalization;
-   externalization = 0;
-
-   delete cla;
-   cla = 0;
-
-   delete nscr;
-   nscr = 0;
-
-   projectDefaults::killInstance();
 
    return BTG_NORMAL_EXIT;
 }
 
-void handleInput(std::string const& _line, cliHandler* _clihandler, ncursesScreen* _nscr, bool const _neverAskFlag)
+void handleInput(std::string const& _line, cliHandler& _clihandler, Screen& _nscr, bool const _neverAskFlag)
 {
-   switch (_clihandler->handleInput(_line))
+   switch (_clihandler.handleInput(_line))
       {
       case cliHandler::INPUT_OK:
          {
             // Check if the remote command produced a response.
-            if (_clihandler->outputAvailable())
+            if (_clihandler.outputAvailable())
                {
-                  _nscr->setOutput("Response: " + _clihandler->getOutput());
+                  _nscr.setOutput("Response: " + _clihandler.getOutput());
                }
-            else if (_clihandler->errorAvailable())
+            else if (_clihandler.errorAvailable())
                {
-                  _nscr->setOutput("Response: " + _clihandler->getError());
+                  _nscr.setOutput("Response: " + _clihandler.getError());
 
                   if ((global_btg_run == GR_QUIT) || (global_btg_run == GR_FATAL))
                      {
@@ -634,9 +455,9 @@ void handleInput(std::string const& _line, cliHandler* _clihandler, ncursesScree
          }
       case cliHandler::INPUT_LOCAL:
          {
-            if (_clihandler->outputAvailable())
+            if (_clihandler.outputAvailable())
                {
-                  _nscr->setOutput("Response: " + _clihandler->getOutput());
+                  _nscr.setOutput("Response: " + _clihandler.getOutput());
                   if (global_btg_run == GR_QUIT)
                      {
                         sleep(1);
@@ -649,40 +470,109 @@ void handleInput(std::string const& _line, cliHandler* _clihandler, ncursesScree
             if (!_neverAskFlag)
                {
                   // Ask the user if he is sure.
-                  if (_nscr->isUserSure())
+                  if (_nscr.isUserSure())
                      {
                         // The user is sure, use handle a saved command.
                         // This is used for handling quit and kill at this
                         // point.
-                        _clihandler->handleInput(_line, true /* Handle saved command. */);
+                        _clihandler.handleInput(_line, true /* Handle saved command. */);
                      }
                }
             else
                {
                   // Not asking questions.
-                  _clihandler->handleInput(_line, true);
+                  _clihandler.handleInput(_line, true);
                }
             break;
          }
       case cliHandler::INPUT_ERROR:
          {
             // The entered text was not a command.
-            if (_clihandler->errorAvailable())
+            if (_clihandler.errorAvailable())
                {
-                  _nscr->setOutput("Error: " + _clihandler->getError());
+                  _nscr.setOutput("Error: " + _clihandler.getError());
                }
             break;
          }
       case cliHandler::INPUT_NOT_A_COMMAND:
          {
             // No error was specified, so write a default error.
-            _nscr->setOutput("Error: '" + _line + "', wrong syntax or command.");
+            _nscr.setOutput("Error: '" + _line + "', wrong syntax or command.");
             break;
          }
       case cliHandler::UNDEFINED_RESPONSE:
          {
-            _nscr->setOutput("Undefined message. Something is really wrong.");
+            _nscr.setOutput("Undefined message. Something is really wrong.");
             break;
          }
+      }
+}
+
+void OpenFiles(Screen& _nscr, 
+               cliHandler& _clihandler, 
+               lastFiles& _lastfiles,
+               t_strList const& _filelist)
+{
+   for (t_strListCI iter = _filelist.begin(); 
+        iter != _filelist.end(); 
+        iter++)
+      {
+         _nscr.setOutput("Creating '" + *iter + "'");
+         _clihandler.reqCreate(*iter);
+         // Check if the remote command produced a response.
+         if (_clihandler.outputAvailable())
+            {
+               _nscr.setOutput("Response: " + _clihandler.getOutput());
+               // Update the list of last opened files.
+               _lastfiles.add(*iter);
+            }
+         else if (_clihandler.errorAvailable())
+            {
+               _nscr.setOutput("Response: " + _clihandler.getError());
+            }
+      }
+}
+
+void OpenUrls(Screen& _nscr, 
+              cliHandler& _clihandler, 
+              t_strList const& _filelist)
+{
+   for (t_strListCI iter = _filelist.begin(); 
+        iter != _filelist.end(); 
+        iter++)
+      {
+         if (!btg::core::client::isUrlValid(*iter))
+            {
+               _nscr.setOutput("Response: Invalid URL.");
+               continue;
+            }
+         
+         // Get a file name.
+         std::string filename;
+
+         if (!btg::core::client::getFilenameFromUrl(*iter, filename))
+            {
+               _nscr.setOutput("Response: Unable to find a file name in URL.");
+               continue;
+            }
+
+         _nscr.setOutput("Creating '" + filename + "' from URL '" + *iter + "'.");
+
+         _clihandler.reqCreateFromUrl(filename, *iter);
+         if (_clihandler.commandSuccess())
+            {
+               if (_clihandler.handleUrlProgress(_clihandler.UrlId()))
+                  {
+                     _nscr.setOutput("Response: created " + filename + ".");
+                  }
+               else
+                  {
+                     _nscr.setOutput("Response: unable to create " + filename + ".");
+                  }
+            }
+         else
+            {
+               _nscr.setOutput("Response: unable to create " + filename + ".");
+            }
       }
 }

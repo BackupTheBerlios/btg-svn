@@ -57,9 +57,13 @@
 #include <bcore/command/session_info.h>
 #include <bcore/command/uptime.h>
 #include <bcore/command/list.h>
+#include <bcore/command/version.h>
+#include <bcore/command/opstat.h>
 
 #include <bcore/command/context_last.h>
 #include <bcore/command/context_create.h>
+#include <bcore/command/context_create_file.h>
+#include <bcore/command/context_create_url.h>
 #include <bcore/command/context_abort.h>
 
 #include <bcore/command/context_clean.h>
@@ -72,10 +76,10 @@
 #include <bcore/command/context_stop.h>
 #include <bcore/command/context_file.h>
 #include <bcore/command/context_move.h>
-
+#include <bcore/command/context_tracker.h>
 #include <bcore/command/limit.h>
-
 #include <bcore/btg_assert.h>
+#include <bcore/opstatus.h>
 
 #if BTG_STATEMACHINE_DEBUG
 #include <bcore/logmacro.h>
@@ -101,9 +105,9 @@ namespace btg
          using namespace btg::core;
 
          stateMachine::stateMachine(LogWrapperType _logwrapper,
-                                    btg::core::externalization::Externalization* _e,
-                                    messageTransport *_transport,
-                                    clientCallback *_clientcallback,
+                                    btg::core::externalization::Externalization& _e,
+                                    messageTransport& _transport,
+                                    clientCallback& _clientcallback,
                                     bool const _verboseFlag)
             : Logable(_logwrapper),
               externalization_(_e),
@@ -120,10 +124,10 @@ namespace btg
               currentCommand(Command::CN_UNDEFINED),
               ackForCommand(Command::CN_UNDEFINED),
               clientcallback(_clientcallback),
-              read_counter(0),
-              max_read_counter(15),
+              counter_read(0), counter_read_max(1000),
               min_sleep_in_ms(10),
-              verboseFlag_(_verboseFlag)
+              verboseFlag_(_verboseFlag),
+              opType_(ST_UNDEF)
          {
             expectedReply[0] = Command::CN_UNDEFINED;
             expectedReply[1] = Command::CN_UNDEFINED;
@@ -288,7 +292,7 @@ namespace btg
             dBuffer dbuffer;
             cf.getBytes(TO_SERVER, dbuffer);
 
-            if (transport->write(dbuffer) == messageTransport::OPERATION_FAILED)
+            if (transport.write(dbuffer) == messageTransport::OPERATION_FAILED)
                {
                   return false;
                }
@@ -309,27 +313,27 @@ namespace btg
 #if BTG_STATEMACHINE_DEBUG
             BTG_NOTICE(logWrapper(), "Reading from transport ..");
 #endif // BTG_STATEMACHINE_DEBUG
-            read_counter = 0;
+            counter_read = 0;
             while (
-                   ((read_counter < max_read_counter) && (!read_status)) ||
+                   ((counter_read < counter_read_max) && (!read_status)) ||
                    ((_waitforever) && (!read_status))
                    )
                {
-                  t_int count = transport->read(dbuffer);
+                  t_int count = transport.read(dbuffer);
                   if (count == messageTransport::OPERATION_FAILED)
                      {
                         read_status = false;
-                        btg::core::os::Sleep::sleepMiliSeconds(min_sleep_in_ms + read_counter);
+                        btg::core::os::Sleep::sleepMiliSeconds(min_sleep_in_ms);
                      }
                   else
                      {
                         read_status = true;
 #if BTG_STATEMACHINE_DEBUG
-                        BTG_NOTICE(logWrapper(), "Got data after " << read_counter << " read attempts");
+                        BTG_NOTICE(logWrapper(), "Got data after " << counter_read << " read attempts");
 #endif // BTG_STATEMACHINE_DEBUG
                      }
 
-                  read_counter++;
+                  counter_read++;
                }
 
             if (!read_status)
@@ -337,7 +341,7 @@ namespace btg
                   return status;
                }
 
-            if (externalization_->setBuffer(dbuffer))
+            if (externalization_.setBuffer(dbuffer))
                {
                   commandFactory::decodeStatus dstatus;
                   c = cf.createFromBytes(dstatus);
@@ -416,6 +420,9 @@ namespace btg
                         {
                         case SM_TRANSPORT_READY:
                            currentState = SM_TRANSPORT_READY;
+                           break;
+                        case SM_INIT:
+                           currentState = SM_INIT;
                            break;
                         default:
                            DEFAULT_ERROR_ACTION;
@@ -709,6 +716,18 @@ namespace btg
 
                } // switch currentstate
          }
+         
+#define SM_REQUEST_LOSS \
+   else \
+      { \
+         BTG_ERROR_LOG(logWrapper(), "SM Request lost!"); \
+      }
+
+#define SM_REQUEST_ERROR \
+   else \
+      { \
+         changeState(SM_ERROR); \
+      }
 
          void stateMachine::doInit(std::string const& _username,
                                    btg::core::Hash const& _hash)
@@ -718,6 +737,7 @@ namespace btg
                   commands.push_back(new initConnectionCommand(_username, _hash));
                   changeState(SM_TRANSINIT);
                }
+            SM_REQUEST_ERROR;
          }
 
          void stateMachine::doSetup(setupCommand* _command)
@@ -730,6 +750,7 @@ namespace btg
                   changeState(SM_SETUP);
                   commands.push_back(_command);
                }
+            SM_REQUEST_ERROR;
          }
 
          void stateMachine::doQuit()
@@ -738,6 +759,7 @@ namespace btg
                {
                   changeState(SM_QUIT);
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doKill()
@@ -746,6 +768,7 @@ namespace btg
                {
                   changeState(SM_KILL);
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doGlobalLimit(t_int const  _limitBytesUpld,
@@ -760,6 +783,7 @@ namespace btg
                                                       _maxUplds,
                                                       _maxConnections));
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doGlobalLimitStatus()
@@ -768,6 +792,7 @@ namespace btg
                {
                   commands.push_back(new limitStatusCommand());
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doUptime()
@@ -776,6 +801,7 @@ namespace btg
                {
                   commands.push_back(new uptimeCommand());
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doSessionInfo()
@@ -784,6 +810,7 @@ namespace btg
                {
                   commands.push_back(new sessionInfoCommand());
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doSessionName()
@@ -792,6 +819,7 @@ namespace btg
                {
                   commands.push_back(new sessionNameCommand());
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doSetSessionName(std::string const& _name)
@@ -800,6 +828,7 @@ namespace btg
                {
                   commands.push_back(new setSessionNameCommand(_name));
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doMoveContext(t_int const _id,
@@ -809,6 +838,16 @@ namespace btg
                {
                   commands.push_back(new contextMoveToSessionCommand(_id, _toSession));
                }
+            SM_REQUEST_LOSS;
+         }
+
+         void stateMachine::doVersion()
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(new versionCommand());
+               }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doAttach(attachSessionCommand* _command)
@@ -822,6 +861,7 @@ namespace btg
                   BTG_NOTICE(logWrapper(), "Trying to attach to session " << _command->getSession());
 #endif // BTG_STATEMACHINE_DEBUG
                }
+            SM_REQUEST_ERROR;
          }
 
          void stateMachine::doDetach()
@@ -830,6 +870,7 @@ namespace btg
                {
                   changeState(SM_DETACH);
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doListSessions()
@@ -843,6 +884,7 @@ namespace btg
                {
                   commands.push_back(new listSessionCommand());
                }
+            SM_REQUEST_ERROR;
          }
 
          void stateMachine::doList()
@@ -852,6 +894,7 @@ namespace btg
                   // Send the command.
                   commands.push_back(new listCommand());
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doCreate(std::string const& _pathToTorrent,
@@ -886,6 +929,89 @@ namespace btg
                         BTG_ERROR_LOG(logWrapper(), "Unable to read '" << _pathToTorrent << "'");
                      }
                }
+            SM_REQUEST_LOSS;
+         }
+
+         void stateMachine::doCreateFromFile(std::string const& _filename,
+                                             t_uint const _numberOfParts,
+                                             bool const _start)
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(new contextCreateFromFileCommand(_filename,
+                                                                      _numberOfParts,
+                                                                      _start));
+               }
+            SM_REQUEST_LOSS;
+         }
+
+         void stateMachine::doTransmitFilePart(t_uint const _id, 
+                                               t_uint const _part,
+                                               btg::core::sBuffer const& _buffer)
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(
+                                     new contextCreateFromFilePartCommand(_id, 
+                                                                          _part, 
+                                                                          _buffer)
+                                     );
+               }
+            SM_REQUEST_LOSS;
+         }
+
+         void stateMachine::doCreateFromUrl(std::string const& _filename,
+                                            std::string const& _url,
+                                            bool const _start)
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(
+                                     new contextCreateFromUrlCommand(_filename,
+                                                                     _url,
+                                                                     _start));
+               }
+            SM_REQUEST_LOSS;
+         }
+
+         void stateMachine::doFileStatus(t_uint const _id)
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(new opStatusCommand(_id, btg::core::ST_FILE));
+                  opType_ = btg::core::ST_FILE;
+               }
+            SM_REQUEST_LOSS;
+         }
+
+         void stateMachine::doCancelFile(t_uint const _id)
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(new opAbortCommand(_id, btg::core::ST_FILE));
+                  opType_ = btg::core::ST_FILE;
+               }
+            SM_REQUEST_LOSS;
+         }
+
+         void stateMachine::doCancelUrl(t_uint const _id)
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(new opAbortCommand(_id, btg::core::ST_URL));
+                  opType_ = btg::core::ST_URL;
+               }
+            SM_REQUEST_LOSS;
+         }
+
+         void stateMachine::doUrlStatus(t_uint const _id)
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(new opStatusCommand(_id, btg::core::ST_URL));
+                  opType_ = btg::core::ST_URL;
+               }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doLast()
@@ -894,6 +1020,7 @@ namespace btg
                {
                   commands.push_back(new lastCIDCommand());
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doAbort(t_int const _contextID, bool const _eraseData, bool const _allContexts)
@@ -903,6 +1030,7 @@ namespace btg
                   // Send the command.
                   commands.push_back(new contextAbortCommand(_contextID, _eraseData, _allContexts));
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doStart(t_int const _contextID, bool const _allContexts)
@@ -912,6 +1040,7 @@ namespace btg
                   // Send the command.
                   commands.push_back(new contextStartCommand(_contextID, _allContexts));
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doStop(t_int const _contextID, bool const _allContexts)
@@ -921,6 +1050,7 @@ namespace btg
                   // Send the command.
                   commands.push_back(new contextStopCommand(_contextID, _allContexts));
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doStatus(t_int const _contextID, bool const _allContexts)
@@ -930,6 +1060,7 @@ namespace btg
                   // Send the command.
                   commands.push_back(new contextStatusCommand(_contextID, _allContexts));
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doFileInfo(t_int const _contextID, bool const _allContexts)
@@ -939,15 +1070,21 @@ namespace btg
                   // Send the command.
                   commands.push_back(new contextFileInfoCommand(_contextID, _allContexts));
                }
+            SM_REQUEST_LOSS;
          }
 
-         void stateMachine::doPeers(t_int const _contextID, bool const _allContexts)
+         void stateMachine::doPeers(t_int const _contextID, bool const _allContexts,
+            t_uint const *const _offset, t_uint const *const _count)
          {
             if (checkState(SM_COMMAND))
                {
+                  contextPeersCommand * cpc = new contextPeersCommand(_contextID, _allContexts);
+                  if (_offset && _count)
+                     cpc->setExRange(*_offset, *_count);
                   // Send the command.
-                  commands.push_back(new contextPeersCommand(_contextID, _allContexts));
+                  commands.push_back(cpc);
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doLimit(t_int const _contextID,
@@ -967,6 +1104,7 @@ namespace btg
                                                              _seedTimeout,
                                                              _allContexts));
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doLimitStatus(t_int const _contextID, bool const _allContexts)
@@ -977,6 +1115,7 @@ namespace btg
                   commands.push_back(new contextLimitStatusCommand(_contextID,
                                                                    _allContexts));
                }
+            SM_REQUEST_LOSS;
          }
          
          void stateMachine::doSetFiles(t_int const _contextID, 
@@ -986,6 +1125,7 @@ namespace btg
                {
                   commands.push_back(new contextSetFilesCommand(_contextID, _files));
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doGetFiles(t_int const _contextID)
@@ -994,15 +1134,25 @@ namespace btg
                {
                   commands.push_back(new contextGetFilesCommand(_contextID));
                }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::doClean(t_int const _contextID, bool const _allContexts)
          {
             if (checkState(SM_COMMAND))
                {
-                  // Send the command.
                   commands.push_back(new contextCleanCommand(_contextID, _allContexts));
                }
+            SM_REQUEST_LOSS;
+         }
+
+         void stateMachine::doTrackers(t_int const _contextID, bool const _allContexts)
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(new contextGetTrackersCommand(_contextID, _allContexts));
+               }
+            SM_REQUEST_LOSS;
          }
 
          void stateMachine::setExpectedReply(Command::commandType _type)
@@ -1067,7 +1217,36 @@ namespace btg
                      expectedReply[1] = Command::CN_UNDEFINED;
                      break;
                   }
-                     
+               case Command::CN_CCREATEFROMURL:
+                  {
+                     expectedReply[0] = Command::CN_CCREATEFROMURLRSP;
+                     expectedReply[1] = Command::CN_UNDEFINED;
+                     break;
+                  }
+               case Command::CN_CCREATEFROMFILE:
+                  {
+                     expectedReply[0] = Command::CN_CCREATEFROMFILERSP;
+                     expectedReply[1] = Command::CN_UNDEFINED;
+                     break;
+                  }
+               case Command::CN_OPSTATUS:
+                  {
+                     expectedReply[0] = Command::CN_OPSTATUSRSP;
+                     expectedReply[1] = Command::CN_UNDEFINED;
+                     break;
+                  }
+               case Command::CN_CGETTRACKERS:
+                  {
+                     expectedReply[0] = Command::CN_CGETTRACKERSRSP;
+                     expectedReply[1] = Command::CN_UNDEFINED;
+                     break;
+                  }
+               case Command::CN_VERSION:
+                  {
+                     expectedReply[0] = Command::CN_VERSIONRSP;
+                     expectedReply[1] = Command::CN_UNDEFINED;
+                     break;
+                  }
                case Command::CN_CCREATEWITHDATA:
                case Command::CN_CSTART:
                case Command::CN_CSTOP:
@@ -1075,6 +1254,8 @@ namespace btg
                case Command::CN_CLIMIT:
                case Command::CN_CSETFILES:
                case Command::CN_CMOVE:
+               case Command::CN_CCREATEFROMFILEPART:
+               case Command::CN_OPABORT:
                   {
                      ackForCommand = static_cast<Command::commandType>(_type);
                      expectedReply[0] = Command::CN_ACK;
@@ -1143,47 +1324,67 @@ namespace btg
                {
                case Command::CN_CCREATEWITHDATA:
                   {
-                     clientcallback->onCreateWithData();
+                     clientcallback.onCreateWithData();
                      break;
                   }
                case Command::CN_CSTART:
                   {
-                     clientcallback->onStart();
+                     clientcallback.onStart();
                      break;
                   }
                case Command::CN_CSTOP:
                   {
-                     clientcallback->onStop();
+                     clientcallback.onStop();
                      break;
                   }
                case Command::CN_CABORT:
                   {
-                     clientcallback->onAbort();
+                     clientcallback.onAbort();
                      break;
                   }
                case Command::CN_CLIMIT:
                   {
-                     clientcallback->onLimit();
+                     clientcallback.onLimit();
                      break;
                   }
                case Command::CN_GLIMIT:
                   {
-                     clientcallback->onGlobalLimit();
+                     clientcallback.onGlobalLimit();
                      break;
                   }
                case Command::CN_CSETFILES:
                   {
-                     clientcallback->onSetFiles();
+                     clientcallback.onSetFiles();
                      break;
                   }
                case Command::CN_CMOVE:
                   {
-                     clientcallback->onMove();
+                     clientcallback.onMove();
                      break;
                   }
                case Command::CN_SSETNAME:
                   {
-                     clientcallback->onSetSessionName();
+                     clientcallback.onSetSessionName();
+                     break;
+                  }
+               case Command::CN_CCREATEFROMFILEPART:
+                  {
+                     clientcallback.OnCreateFromFilePart();
+                     break;
+                  }
+               case Command::CN_OPABORT:
+                  {
+                     switch (opType_)
+                        {
+                        case btg::core::ST_URL:
+                           clientcallback.onUrlCancel();
+                           break;
+                        case btg::core::ST_FILE:
+                           clientcallback.onFileCancel();
+                           break;
+                        default:
+                           break;
+                        }
                      break;
                   }
                default:
@@ -1205,7 +1406,7 @@ namespace btg
                   return;
                }
 
-            switch(currentCommand)
+            switch (currentCommand)
                {
                case Command::CN_GLIST:
                   {
@@ -1277,6 +1478,31 @@ namespace btg
                      cb_CN_SINFO(_command);
                      break;
                   }
+               case Command::CN_CCREATEFROMURL:
+                  {
+                     cb_CN_CCREATEFROMURL(_command);
+                     break;
+                  }
+               case Command::CN_CCREATEFROMFILE:
+                  {
+                     cb_CN_CCREATEFROMFILERSP(_command);
+                     break;
+                  }
+               case Command::CN_OPSTATUS:
+                  {
+                     cb_CN_OPSTATUS(_command);
+                     break;
+                  }
+               case Command::CN_CGETTRACKERS:
+                  {
+                     cb_CN_CGETTRACKERS(_command);
+                     break;
+                  }
+               case Command::CN_VERSION:
+                  {
+                     cb_CN_VERSION(_command);
+                     break;
+                  }
                default:
                   {
                      BTG_ERROR_LOG(logWrapper(), "callCallback(), unexpected command, " << Command::getName(currentCommand) << ".");
@@ -1293,61 +1519,106 @@ namespace btg
                      errorCommand* errcmd   = dynamic_cast<errorCommand*>(_command);
                      std::string errmessage = errcmd->getMessage();
 
-                     switch(currentCommand)
+                     switch (currentCommand)
                         {
                            // Listing failed.
                         case Command::CN_GLIST:
                            {
-                              clientcallback->onListError();
+                              clientcallback.onListError();
                               break;
                            }
                            // Status or status for all context failed.
                         case Command::CN_CSTATUS:
                            {
-                              clientcallback->onStatusError(errmessage);
+                              clientcallback.onStatusError(errmessage);
                               break;
                            }
                            // File infor request failed.
                         case Command::CN_CFILEINFO:
                            {
-                              clientcallback->onFileInfoError(errmessage);
+                              clientcallback.onFileInfoError(errmessage);
                               break;
                            }
                            // Peer request failed.
                         case Command::CN_CPEERS:
                            {
-                              clientcallback->onPeersError(errmessage);
+                              clientcallback.onPeersError(errmessage);
                               break;
                            }
                         case Command::CN_CLIMITSTATUS:
                            {
-                              clientcallback->onLimitStatusError(errmessage);
+                              clientcallback.onLimitStatusError(errmessage);
                               break;
                            }
                         case Command::CN_CSETFILES:
                            {
-                              clientcallback->onSetFilesError(errmessage);
+                              clientcallback.onSetFilesError(errmessage);
                               break;
                            }
                         case Command::CN_CGETFILES:
                            {
-                              clientcallback->onSelectedFilesError(errmessage);
+                              clientcallback.onSelectedFilesError(errmessage);
                               break;
                            }
                         case Command::CN_GLIMIT:
                            {
-                              clientcallback->onGlobalLimitError(errmessage);
+                              clientcallback.onGlobalLimitError(errmessage);
                               break;
                            }
                         case Command::CN_GLIMITSTAT:
                            {
-                              clientcallback->onGlobalLimitResponseError(errmessage);
+                              clientcallback.onGlobalLimitResponseError(errmessage);
+                              break;
+                           }
+                        case Command::CN_CCREATEFROMURL:
+                           {
+                              clientcallback.onCreateFromUrlError(errmessage);
+                              break;
+                           }
+                        case Command::CN_CCREATEFROMFILE:
+                           {
+                              clientcallback.onCreateFromFileError(errmessage);
+                              break;
+                           }
+                        case Command::CN_CCREATEFROMFILEPART:
+                           {
+                              clientcallback.OnCreateFromFilePartError(errmessage);
+                              break;
+                           }
+                        case Command::CN_OPSTATUS:
+                           {
+                              switch (opType_)
+                                 {
+                                 case btg::core::ST_URL:
+                                    clientcallback.onUrlStatusError(errmessage);
+                                    break;
+                                 case btg::core::ST_FILE:
+                                    clientcallback.onFileStatusError(errmessage);
+                                    break;
+                                 default:
+                                    break;
+                                 }
+                              break;
+                           }
+                        case Command::CN_OPABORT:
+                           {
+                              switch (opType_)
+                                 {
+                                 case btg::core::ST_URL:
+                                    clientcallback.onUrlCancelError(errmessage);
+                                    break;
+                                 case btg::core::ST_FILE:
+                                    clientcallback.onFileCancelError(errmessage);
+                                    break;
+                                 default:
+                                    break;
+                                 }
                               break;
                            }
                            // General error callback to fallback on.
                         default:
                            {
-                              clientcallback->onError(errmessage);
+                              clientcallback.onError(errmessage);
                               break;
                            }
                         } // switch
@@ -1355,7 +1626,7 @@ namespace btg
                   }
                case Command::CN_SERROR:
                   {
-                     clientcallback->onSessionError();
+                     clientcallback.onSessionError();
                      break;
                   }
                default:
@@ -1470,7 +1741,7 @@ namespace btg
             if (counter_transinit >= counter_transinit_max)
                {
                   // Nothing to be done. This machine is quite dead.
-                  clientcallback->onSetupError("No reply.");
+                  clientcallback.onSetupError("No reply.");
                   changeState(SM_ERROR);
                   _status = true;
                   return;
@@ -1489,7 +1760,7 @@ namespace btg
                                  // Reset the counter.
                                  counter_transinit = 0;
                                  // Call the setup callback.
-                                 clientcallback->onTransportInit();
+                                 clientcallback.onTransportInit();
                                  // Change state, ready to accept commands.
                                  changeState(SM_TRANSPORT_READY);
                                  _status = true;
@@ -1501,13 +1772,13 @@ namespace btg
                         {
                            if (dynamic_cast<errorCommand*>(c)->getErrorCommand() == Command::CN_GINITCONNECTION)
                               {
-                                 clientcallback->onSetupError(
+                                 clientcallback.onTransinitwaitError(
                                                               dynamic_cast<errorCommand*>(c)->getMessage()
                                                               );
 #if BTG_STATEMACHINE_DEBUG
                                  BTG_NOTICE(logWrapper(), "Error: " << dynamic_cast<errorCommand*>(c)->getMessage());
 #endif // BTG_STATEMACHINE_DEBUG
-                                 changeState(SM_ERROR);
+                                 changeState(SM_INIT); // try to auth again
                                  _status = true;
                               }
                         }
@@ -1553,7 +1824,7 @@ namespace btg
             if (counter_setup >= counter_setup_max)
                {
                   // Nothing to be done. This machine is quite dead.
-                  clientcallback->onSetupError("No reply.");
+                  clientcallback.onSetupError("No reply.");
                   changeState(SM_ERROR);
                   _status = true;
                   return;
@@ -1568,7 +1839,7 @@ namespace btg
                            // Reset the counter.
                            counter_setup = 0;
                            // Call the setup callback.
-                           clientcallback->onSetup(dynamic_cast<setupResponseCommand*>(c)->getSession());
+                           clientcallback.onSetup(dynamic_cast<setupResponseCommand*>(c)->getSession());
                            // Change state, ready to accept commands.
                            changeState(SM_COMMAND);
                            _status = true;
@@ -1576,7 +1847,7 @@ namespace btg
                         }
                      case Command::CN_ERROR:
                         {
-                           clientcallback->onSetupError(
+                           clientcallback.onSetupError(
                                                         dynamic_cast<errorCommand*>(c)->getMessage()
                                                         );
 #if BTG_STATEMACHINE_DEBUG
@@ -1653,6 +1924,7 @@ namespace btg
             if (counter_command >= counter_command_max)
                {
                   // Nothing to be done. This machine is quite dead.
+                  clientcallback.onTimeout();
                   changeState(SM_ERROR);
                   _status = true;
                   return;
@@ -1693,7 +1965,8 @@ namespace btg
                      {
                         BTG_ERROR_LOG(logWrapper(), "Not the expected reply: '" << c->getName() << "'");
                      }
-                  counter_command++;
+                  ++counter_command;
+                  btg::core::os::Sleep::sleepMiliSeconds(min_sleep_in_ms + counter_command);
                }
          }
 
@@ -1702,6 +1975,7 @@ namespace btg
             if (counter_ack >= counter_ack_max)
                {
                   // Nothing to be done.
+                  clientcallback.onTimeout();
                   changeState(SM_ERROR);
                   _status = true;
                   return;
@@ -1727,7 +2001,7 @@ namespace btg
                         // Not the expected result.
                         if (c->getType() == Command::CN_ERROR)
                            {
-                              clientcallback->onError(dynamic_cast<errorCommand*>(c)->getMessage());
+                              clientcallback.onError(dynamic_cast<errorCommand*>(c)->getMessage());
                               changeState(SM_COMMAND);
                               delete c;
                            }
@@ -1745,7 +2019,7 @@ namespace btg
 
          void stateMachine::step_SM_ERROR(bool & _status)
          {
-            clientcallback->onFatalError("Waited for an ack. Never got it.");
+            clientcallback.onFatalError("Fatal error. (Waited for an ack. Never got it. | Inappropriate state.)");
             _status = true;
          }
 
@@ -1769,7 +2043,7 @@ namespace btg
             if (counter_session_list >= counter_session_list_max)
                {
                   // Nothing to be done. This machine is quite dead.
-                  clientcallback->onSetupError("No reply.");
+                  clientcallback.onSetupError("No reply.");
                   changeState(SM_ERROR);
                   _status = true;
                   return;
@@ -1791,7 +2065,7 @@ namespace btg
                         btg_assert(sessions.size() == sessionIds.size(), 
                                    logWrapper(),
                                    "Session list and Id list must have same size.");
-                        clientcallback->onListSessions(sessions, sessionIds);
+                        clientcallback.onListSessions(sessions, sessionIds);
 
                         // Change state, ready to accept commands.
                         changeState(SM_TRANSPORT_READY);
@@ -1800,7 +2074,7 @@ namespace btg
                   else if ((c->getType() == Command::CN_ERROR))
                      {
                         // Call the error callback.
-                        clientcallback->onListSessionsError(dynamic_cast<errorCommand*>(c)->getMessage());
+                        clientcallback.onListSessionsError(dynamic_cast<errorCommand*>(c)->getMessage());
                         changeState(SM_TRANSPORT_READY);
                         _status = true;
                      }
@@ -1833,6 +2107,7 @@ namespace btg
             if (counter_attach >= counter_attach_max)
                {
                   // Nothing to be done. This machine is quite dead.
+                  clientcallback.onTimeout();
                   changeState(SM_ERROR);
                   _status = true;
                   return;
@@ -1846,7 +2121,7 @@ namespace btg
                         // Reset the counter.
                         counter_attach = 0;
                         // Call the setup callback.
-                        clientcallback->onAttach();
+                        clientcallback.onAttach();
                         // Change state, ready to accept commands.
                         changeState(SM_COMMAND);
                         _status = true;
@@ -1856,7 +2131,7 @@ namespace btg
                         // Reset the counter.
                         counter_attach = 0;
                         // Call the setup callback.
-                        clientcallback->onAttachError(dynamic_cast<errorCommand*>(c)->getMessage());
+                        clientcallback.onAttachError(dynamic_cast<errorCommand*>(c)->getMessage());
                         // Change state, ready to accept commands.
                         changeState(SM_ERROR);
                         _status = true;
@@ -1889,7 +2164,7 @@ namespace btg
                   delete c;
                }
             changeState(SM_FINISHED);
-            clientcallback->onDetach();
+            clientcallback.onDetach();
             _status = true;
          }
 
@@ -1944,7 +2219,7 @@ namespace btg
                   // command state.
                   if (c->getType() == Command::CN_ERROR)
                      {
-                        clientcallback->onKillError(dynamic_cast<errorCommand*>(c)->getMessage());
+                        clientcallback.onKillError(dynamic_cast<errorCommand*>(c)->getMessage());
                         changeState(SM_COMMAND);
                         _status = true;
                         delete c;
@@ -1957,7 +2232,7 @@ namespace btg
                   delete c;
                }
 
-            clientcallback->onKill();
+            clientcallback.onKill();
 
             changeState(SM_FINISHED);
             _status = false;
@@ -1965,7 +2240,7 @@ namespace btg
 
          void stateMachine::step_SM_FINISHED(bool & _status)
          {
-            clientcallback->onQuit();
+            clientcallback.onQuit();
             _status = true;
          }
 

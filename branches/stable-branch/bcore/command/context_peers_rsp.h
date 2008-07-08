@@ -47,21 +47,44 @@ namespace btg
 
                /// Constructor.
                /// @param [in] _context_id      The context ID of the context of which a status is required.
-               /// @param [in] _peerlist        List of peers.
+               /// @param [in] _peerList        List of peers.
                contextPeersResponseCommand(t_int const  _context_id,
-                                           t_peerList const& _peerlist);
+                                           t_peerList const& _peerList);
+               
+               /// Set extended peer information
+               /// @param [in] offset     Offset of specified peers in the full peer list
+               /// @param [in] peerExList The list of extended peers
+               void setExList(t_uint offset, t_peerExList const& peerExList);
 
                bool serialize(btg::core::externalization::Externalization* _e) const;
                bool deserialize(btg::core::externalization::Externalization* _e);
 
                /// Get the contained list of peers.
-               t_peerList getList() const;
+               const t_peerList & getList() const { return peerList_; }
+               
+               /// Get extended response flag
+               bool isEx() const { return bExtended_; }
+               
+               /// Get offset of the extended peers in the full peer list
+               t_uint getExOffset() const { return offset_; }
+               
+               /// Get extended peer list
+               const t_peerExList & getExList() const { return peerExList_; }
 
                /// Destructor.
                virtual ~contextPeersResponseCommand();
             private:
                /// List of peers.
-               t_peerList peerlist_;
+               t_peerList peerList_;
+               
+               /// Whether extended peer list is included in the response
+               bool bExtended_;
+               
+               /// Offset of the extended peer list in the full peer list
+               t_uint offset_;
+               
+               /// List of extended peers.
+               t_peerExList peerExList_;
             };
 
          /** @} */

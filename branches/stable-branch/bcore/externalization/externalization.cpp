@@ -81,6 +81,16 @@ namespace btg
                t_IdToNameElem(Command::CN_CGETTRACKERS,    "context.gettrackers"),
                t_IdToNameElem(Command::CN_CGETTRACKERSRSP, "context.gettrackersrsp"),
                t_IdToNameElem(Command::CN_CMOVE,           "context.move"),
+               t_IdToNameElem(Command::CN_CCREATEFROMURL,      "context.createfromurl"),
+               t_IdToNameElem(Command::CN_CCREATEFROMURLRSP,   "context.createfromurlrsp"),
+               t_IdToNameElem(Command::CN_CCREATEFROMFILE,     "context.createfromfile"),
+               t_IdToNameElem(Command::CN_CCREATEFROMFILERSP,  "context.createfromfilersp"),
+               t_IdToNameElem(Command::CN_CCREATEFROMFILEPART, "context.createfromfilepart"),
+
+               t_IdToNameElem(Command::CN_OPABORT,             "general.opabort"),
+               t_IdToNameElem(Command::CN_OPSTATUS,            "general.opstatus"),
+               t_IdToNameElem(Command::CN_OPSTATUSRSP,         "general.opstatusrsp"),
+
                // General:
                t_IdToNameElem(Command::CN_ERROR,           "general.error"),
                t_IdToNameElem(Command::CN_ACK,             "general.ack"),
@@ -98,6 +108,9 @@ namespace btg
                t_IdToNameElem(Command::CN_SSETNAME,        "session.setname"),
                t_IdToNameElem(Command::CN_MOREAD,          "session.romode"),
                t_IdToNameElem(Command::CN_MOWRITE,         "session.rwmode"),
+               t_IdToNameElem(Command::CN_VERSION,         "session.version"),
+               t_IdToNameElem(Command::CN_VERSIONRSP,      "session.versionrsp"),
+
                // Undefined.
                t_IdToNameElem(Command::CN_UNDEFINED,       "Undefined")
             };
@@ -162,10 +175,6 @@ namespace btg
             status_ = true;
          }
 
-         void Externalization::setParamInfo(std::string const& _name, bool _required)
-         {
-            // Not used in most externalizations
-         }
       } // namespace externalization
    } // namespace core
 } // namespace btg

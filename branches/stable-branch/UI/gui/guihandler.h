@@ -70,21 +70,20 @@ namespace btg
                      ///
                      /// @param [in] _config Pointer to the class
                      /// holding the client configuration.
-                     /// @param [in] _lastfiles Pointer to the class
-                     /// holding the list of last accessed files.
+                     /// @param [in] _dynconfig Pointer to the class
+                     /// holding the dynamic client configuration.
                      /// @param [in] _verboseFlag Be verbose.
                      /// @param [in] _autoStartFlag Auto start loaded torrents.
-                     /// @param [in] _status_bar Pointer to the class
-                     /// representing a statusbar.
+                     /// @param [in] _pstatus_bar Pointer to the class representing a statusbar.
 
                      guiHandler(btg::core::LogWrapperType _logwrapper,
-                                btg::core::externalization::Externalization* _e,
-                                btg::core::messageTransport*            _transport,
-                                btg::core::client::clientConfiguration* _config,
-                                btg::core::client::lastFiles*           _lastfiles,
+                                btg::core::externalization::Externalization& _e,
+                                btg::core::messageTransport&            _transport,
+                                btg::core::client::clientConfiguration& _config,
+                                btg::core::client::clientDynConfig&     _dynconfig,
                                 bool const                              _verboseFlag,
                                 bool const                              _autoStartFlag,
-                                mainStatusbar*                          _status_bar
+                                mainStatusbar*                          _pstatus_bar
                                 );
 
                      /// Returns the list of contexts from the daemon.
@@ -102,7 +101,13 @@ namespace btg
                      bool idToFilename(t_int const _id, std::string & _filename);
 
                      /// Get the list of files which were opened last.
-                     t_strList getLastFiles() const;
+                     t_strList const& getLastFiles() const;
+                     
+                     /// Get the list of URLs from URL-history.
+                     t_strList const& getLastURLs() const;
+                     
+                     /// Get the list of files from URL-history.
+                     t_strList const& getLastURLFiles() const;
 
                      /// Return the list of files cleaned by the last
                      /// clean operation.
@@ -113,16 +118,32 @@ namespace btg
                      void setStatusBar(mainStatusbar* _status_bar);
 
                      /// Get the last received list of peers.
-                     t_peerList getPeers() const;
+                     t_peerList const& getPeers() const { return peerlist; }
+                     
+                     
+                     /*
+                      * Ugly interface.
+                      * Needs refactoring.
+                      */
+                     
+                     /// Whether we received extended list of peers or not.
+                     bool haveExPeers() const { return peerEx; }
+                     
+                     /// Get offset of the last received extended peers.
+                     t_uint getExPeersOffset() const { return peerExOffset; }
+                     
+                     /// Get the last received extended peers.
+                     t_peerExList const& getExPeers() const { return peerExList; }
 
+                     
                      /// Get a list of selected files, updated by the
                      /// last command to the daemon.
                      btg::core::selectedFileEntryList getLastSelectedFiles() const;
-
+                     
                      /// Destructor.
                      virtual ~guiHandler();
                   private:
-
+                     void onTimeout();
                      void onTransportInit();
                      void onSetup(t_long const _session);
                      void onSetupError(std::string const& _message);
@@ -131,6 +152,28 @@ namespace btg
                      void onError(std::string const& _errorDescription);
                      void onFatalError(std::string const& _errorDescription);
                      void onCreateWithData();
+                     void onCreateFromUrl(t_uint const _id);
+                     void onCreateFromUrlError(std::string const& _message);
+                     
+                     void onCreateFromFile(t_uint const _id);
+                     void onCreateFromFileError(std::string const& _errorDescription);
+                     void OnCreateFromFilePart();
+                     void OnCreateFromFilePartError(std::string const& _errorDescription);
+                     
+                     void onFileCancel(); 
+                     void onFileCancelError(std::string const& _errorDescription);
+                     void onUrlCancel();
+                     void onUrlCancelError(std::string const& _errorDescription);
+
+                     void onFileStatus(t_uint const _id, 
+                                       t_uint const _status);
+                     void onFileStatusError(std::string const& _errorDescription);
+
+                     void onUrlStatus(t_uint const _id, 
+                                      t_uint const _status);
+                     void onUrlStatusError(std::string const& _message);
+                     void onUrlDlProgress(t_uint const _id,
+                                          t_uint _dltotal, t_uint _dlnow, t_uint _dlspeed);
                      void onAbort();
                      void onStart();
                      void onStop();
@@ -140,11 +183,14 @@ namespace btg
                      void onFileInfo(t_fileInfoList const& _fileinfolist);
                      void onFileInfoError(std::string const& _errorDescription);
                      void onPeers(t_peerList const& _peerlist);
+                     void onPeersEx(t_uint _offset, t_peerExList const& _peerExList);
                      void onPeersError(std::string const& _errorDescription);
 
                      void onSetFiles();
 
                      void onMove();
+
+                     void onVersion(btg::core::OptionBase const& _ob);
 
                      void onSetFilesError(std::string const& _errorDescription);
 
@@ -173,6 +219,8 @@ namespace btg
                      void onSetSessionName();
 
                      void onSessionInfo(bool const _encryption, bool const _dht);
+                     
+                     void onTrackerInfo(t_strList const& _trackerlist);
 
                      /// List of context IDs.
                      t_intList      contextIDs;
@@ -196,11 +244,18 @@ namespace btg
 
                      /// Pointer to the statusbar used for showing
                      /// short status messages.
-                     mainStatusbar* status_bar;
+                     mainStatusbar* pstatus_bar;
 
                      /// List of peers, got from the last request to
                      /// get peers.
                      t_peerList     peerlist;
+                     
+                     /// Extended peers flag.
+                     bool           peerEx;
+                     /// Extended list of peers.
+                     t_peerExList   peerExList;
+                     /// Offset of extended peer list in the full peer list.
+                     t_uint         peerExOffset;
 
                      /// A list of selected files, updated by the
                      /// last command to the daemon.
@@ -213,28 +268,6 @@ namespace btg
                   };
 
                /** @} */
-
-               /// Helper: executes a number of tasks when this client
-               /// starts.
-               class guiStartupHelper: public btg::core::client::startupHelper
-                  {
-                  public:
-                     /// Constructor.
-                     guiStartupHelper(btg::core::LogWrapperType _logwrapper,
-                                      btg::core::client::clientConfiguration*        _config,
-                                      btg::core::client::commandLineArgumentHandler* _clah,
-                                      btg::core::messageTransport*                   _messageTransport,
-                                      btg::core::client::clientHandler*              _handler);
-
-                     /// Query the user about which session to attach to.
-                     virtual t_long queryUserAboutSession(t_longList const& _sessions,
-                                                          t_strList const& _sessionIds) const;
-                     virtual bool authUserQuery();
-                     virtual void showSessions(t_longList const& _sessions,
-                                               t_strList const& _sessionNames) const;
-                     /// Destructor.
-                     virtual ~guiStartupHelper();
-                  };
 
             } // namespace gui
       } // namespace UI

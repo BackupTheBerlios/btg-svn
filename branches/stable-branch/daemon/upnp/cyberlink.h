@@ -26,6 +26,7 @@
 #include "upnpif.h"
 #include "portmap.h"
 #include <bcore/addrport.h>
+#include <bcore/logable.h>
 
 #include <cybergarage/upnp/ControlPoint.h>
 #include <cybergarage/upnp/device/NotifyListener.h>
@@ -53,11 +54,13 @@ namespace btg
                   public CyberLink::ControlPoint,
                   public CyberLink::NotifyListener,
                   public CyberLink::SearchResponseListener,
-                  public CyberLink::DeviceChangeListener
+                  public CyberLink::DeviceChangeListener,
+                  public btg::core::Logable
                   {
                   public:
                      /// Constructor.
-                     cyberLinkCtrlPoint(bool const _verboseFlag,
+                     cyberLinkCtrlPoint(btg::core::LogWrapperType _logwrapper,
+                                        bool const _verboseFlag,
                                         btg::core::Address const& _addr);
 
                      /// Initialize.
@@ -150,6 +153,11 @@ namespace btg
                      /// removed, it will be used to unmap forwarded
                      /// ports.
                      CyberLink::Service* service_;
+                     
+                     /// mapping of UUID to local addres, which (local addr.) is seen by Device.
+                     /// Filled in deviceSearchResponseReceived
+                     /// Used by mapPorts
+                     std::map<std::string /* UUID */, btg::core::Address /* local IP */ > UUID2localAddr_;
                   };
 
                /// Upnp interface using the CyberLink UPnP library.
@@ -160,12 +168,17 @@ namespace btg
                   {
                   public:
                      /// Constructor.
-                     cyberlinkUpnpIf(bool const _verboseFlag,
+                     cyberlinkUpnpIf(btg::core::LogWrapperType _logwrapper,
+                                     bool const _verboseFlag,
                                      btg::core::Address const& _addr);
 
                      bool open(std::pair<t_int, t_int> const& _range);
 
                      bool close();
+                     
+                     void suspend();
+
+                     void resume();
 
                      /// Destructor.
                      virtual ~cyberlinkUpnpIf();
@@ -206,7 +219,7 @@ namespace btg
                      bool             result_ready_;
 
                      /// The thread used by this interface.
-                     boost::thread    thread_;
+                     std::auto_ptr<boost::thread>    pthread_;
 
                      /// Port range.
                      std::pair<t_int, t_int> range_;
@@ -228,6 +241,9 @@ namespace btg
 
                      /// Wait for at least one device to become available.
                      bool waitForDevice();
+                     
+                     /// ctl point
+                     cyberLinkCtrlPoint ctrl;
                   };
 
                /** @} */

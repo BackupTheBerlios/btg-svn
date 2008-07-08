@@ -20,17 +20,13 @@
  * $Id$
  */
 
-#include <gtkmm/treeview.h>
+#include <gtkmm.h>
 #include "filemodel.h"
 
 #include "mainfiletreeview.h"
 #include "selectfiletreeview.h"
 
-#include "gtkmm_ver.h"
-
-#if GTKMM_2_6_OR_BETTER
-#  include <gtkmm/cellrenderertoggle.h>
-#endif // GTKMM_2_6_OR_BETTER
+#include <UI/gui/guiutils.h>
 
 namespace btg
 {
@@ -58,6 +54,8 @@ namespace btg
             iconcolumn->set_renderer(*imagerenderer, filepieces);
             _treeview->append_column (*iconcolumn);
             _treeview->append_column("Filesize", filesize);
+            
+            headersSetResizable(*_treeview);
          }
 
          fileRecord::~fileRecord()
@@ -86,6 +84,8 @@ namespace btg
             Gtk::TreeViewColumn* togglecolumn = Gtk::manage(new Gtk::TreeViewColumn("Selected", *toggle_renderer));
             togglecolumn->set_renderer(*toggle_renderer, selected);
             _treeview->append_column(*togglecolumn);
+            
+            headersSetResizable(*_treeview);
          }
 
          selectRecord::~selectRecord()

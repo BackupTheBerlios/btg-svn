@@ -21,14 +21,13 @@
  */
 
 #include "mainwindow.h"
-#include <gtkmm.h>
 
 #include "mainmenubar.h"
 #include "maintreeview.h"
 #include "mainfiletreeview.h"
 #include "selectfiletreeview.h"
 #include "mainstatusbar.h"
-#include "mainnotebook.h"
+//#include "mainnotebook.h" // included in header
 #include "traficplot.h"
 #include "peertreeview.h"
 #include "detailstreeview.h"
@@ -47,6 +46,8 @@
 #include "sndialog.h"
 #include "sessionselection.h"
 #include "logtextview.h"
+#include "progressdialog.h"
+#include "urldialog.h"
 
 #include "usermessage.h"
 
@@ -59,13 +60,16 @@
 #include <bcore/file_info.h>
 
 #include <bcore/client/clientdynconfig.h>
+#include <bcore/client/loadhelper.h>
 #include <bcore/project.h>
 #include <bcore/btg_assert.h>
+#include <bcore/os/sleep.h>
+#include <bcore/opstatus.h>
 
 #define GET_HANDLER_INST \
-   boost::shared_ptr<boost::mutex> ptr = handlerthread->mutex(); \
+   boost::shared_ptr<boost::mutex> ptr = handlerthread.mutex(); \
    boost::mutex::scoped_lock interface_lock(*ptr); \
-   guiHandler* handler = dynamic_cast<guiHandler*>(handlerthread->handler());
+   guiHandler* handler = dynamic_cast<guiHandler*>(&handlerthread.handler());
 
 namespace btg
 {
@@ -79,8 +83,8 @@ namespace btg
                                 std::string const& _session,
                                 bool const _verboseFlag,
                                 bool const _neverAskFlag,
-                                btg::core::client::handlerThread* _handlerthread,
-                                btg::core::client::clientDynConfig & dc)
+                                btg::core::client::handlerThread& _handlerthread,
+                                btg::core::client::clientDynConfig& _CDC)
             : Gtk::Window(Gtk::WINDOW_TOPLEVEL),
               btg::core::Logable(_logwrapper),
               verboseFlag(_verboseFlag),
@@ -98,11 +102,29 @@ namespace btg
               progressCounter(0),
               progressMax(5),
               trackerstatSerial(),
-              m_clientDynConfig(dc),
+              m_clientDynConfig(_CDC),
               m_bMultipleContinue(false), // actually not necessary
               m_limitDialog(new limitDialog()),
-              m_sessionSelectionDialog(0)
+              m_sessionSelectionDialog(0),
+              last_url(),
+              last_url_file(),
+              urlDlEnabled(true),
+              upload_progressdialog(0),
+              peersCounter(0),
+              peersMax(5),
+              last_mtw_selection(-1),
+              last_mnb_selection(mainNotebook::GRAPH)
          {
+            {
+               GET_HANDLER_INST;
+               handler->reqVersion();
+               if (handler->commandSuccess())
+                  {
+                     const btg::core::OptionBase & o = handler->getOption();
+                     urlDlEnabled = o.getOption(btg::core::OptionBase::URL); 
+                  }
+            }
+
             mmb                       = Gtk::manage(new mainMenubar(this));
             mtw                       = Gtk::manage(new mainTreeview);
             Gtk::ScrolledWindow* mtsw = Gtk::manage(new Gtk::ScrolledWindow);
@@ -126,13 +148,23 @@ namespace btg
             Gtk::Toolbar *tbar = Gtk::manage(new Gtk::Toolbar);
             Gtk::ToolButton *tbutton;
 
+            // Open file.
             tbutton = Gtk::manage(new Gtk::ToolButton);
             tbutton->set_label("Open");
             tbutton->set_stock_id(Gtk::Stock::NEW);
             tbar->append(*tbutton,sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*this, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LOAD ));
-            
-            tbar->append(*Gtk::manage(new Gtk::SeparatorToolItem));
-            
+
+            if (urlDlEnabled)
+               {
+                  // Open URL.
+                  tbutton = Gtk::manage(new Gtk::ToolButton);
+                  tbutton->set_label("Open URL");
+                  tbutton->set_stock_id(Gtk::Stock::NEW);
+                  tbar->append(*tbutton,sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*this, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LOAD_URL ));
+                  
+                  tbar->append(*Gtk::manage(new Gtk::SeparatorToolItem));
+               }
+
             tbutton = Gtk::manage(new Gtk::ToolButton);
             tbutton->set_label("Start");
             tbutton->set_stock_id(Gtk::Stock::MEDIA_PLAY);
@@ -182,10 +214,10 @@ namespace btg
 
             {
                GET_HANDLER_INST;
-
-               // Update the last opened file list in menubar.
+               // Update the last opened file list and URL list in menubar.
                // can hide items, so should be called after show_all()
                mmb->updateLastFileList(handler->getLastFiles());
+               mmb->updateLastURLList(handler->getLastURLs(),handler->getLastURLFiles());
             }
 
             // Restore window geometry
@@ -201,6 +233,11 @@ namespace btg
 
             // When the main window is closed, call this signal.
             signal_delete_event().connect(sigc::mem_fun(*this, &mainWindow::onWindowClose));
+            
+            // When peersTreeView scrolled - refresh peers immediately
+            mnb->peersVScrollbar()->signal_value_changed().connect(sigc::mem_fun(*this, &mainWindow::on_peers_scrolled));
+            // Also when it's window's size changed
+            mnb->peersVScrollbar()->signal_size_allocate().connect(sigc::hide(sigc::mem_fun(*this, &mainWindow::on_peers_scrolled)));
 
             /// Tell the gui handler about the statusbar, so it can
             /// write messages on it.  As for now only used for daemon
@@ -213,14 +250,18 @@ namespace btg
             // Start with the torrent controls disabled.
             setControlFunction(false);
             
-            // BTG_NOTICE("Main window created.\n");
+            {
+               // Log the options the daemon uses.
+               GET_HANDLER_INST;
+               const btg::core::OptionBase & o = handler->getOption();
+               logVerboseMessage(o.toString());
+            }
          }
 
          bool mainWindow::on_refresh_timeout(int)
          {
             if (!updateContexts)
                {
-                  // BTG_NOTICE("Not updating contexts");
                   return true;
                }
 
@@ -320,11 +361,9 @@ namespace btg
                               updateFiles(id);
                               break;
                            case mainNotebook::SELECTED_FILES:
-                              {
-                                 checkSelectedFiles();
-                                 updateSelectedFiles(id);
-                                 break;
-                              }
+                              checkSelectedFiles();
+                              updateSelectedFiles(id);
+                              break;
                            case mainNotebook::PEERS:
                               updatePeers(id);
                               break;
@@ -333,8 +372,12 @@ namespace btg
                            default:
                               break;
                            }
-
                         
+                        /* *************************************
+                         * Use mtw selection _before_ this point
+                         * *************************************/
+                        
+                        last_mtw_selection = id;
                      }
                   else if (numberOfSelectedItems == 0)
                      {
@@ -351,6 +394,12 @@ namespace btg
                {
                   setControlFunction(false);
                }
+            
+            /* *************************************
+             * Use mnb selection _before_ this point
+             * *************************************/
+            
+            last_mnb_selection = currentselection;
 
             t_intList idstoremove;
             {
@@ -376,39 +425,21 @@ namespace btg
          {
             bool non_context = false;
 
-            // BTG_NOTICE("updateContexts = " << updateContexts);
-
             // During execution of this function, no updates of
             // contexts should be done.
-            this->updateContexts = false;
-
+            updateContexts = false;
+            
             switch (_which_item)
                {
-               case buttonMenuIds::BTN_LASTFILE0:
-               case buttonMenuIds::BTN_LASTFILE1:
-               case buttonMenuIds::BTN_LASTFILE2:
-               case buttonMenuIds::BTN_LASTFILE3:
-               case buttonMenuIds::BTN_LASTFILE4:
-               case buttonMenuIds::BTN_LASTFILE5:
-               case buttonMenuIds::BTN_LASTFILE6:
-               case buttonMenuIds::BTN_LASTFILE7:
-               case buttonMenuIds::BTN_LASTFILE8:
-               case buttonMenuIds::BTN_LASTFILE9:
-                  {
-                     handle_btn_lastfile(_which_item);
-                     non_context = true;
-                     break;
-                  }
-               case buttonMenuIds::BTN_ALL_LAST:
-                  {
-                     handle_btn_lastfile_all(_which_item);
-                     non_context = true;
-                     break;
-                  }
                case buttonMenuIds::BTN_LOAD:
                   {
                      handle_btn_load();
-                     // BTG_NOTICE("(global) mainToolbar::BTN_LOAD");
+                     non_context = true;
+                     break;
+                  }
+               case buttonMenuIds::BTN_LOAD_URL:
+                  {
+                     handle_btn_load_url();
                      non_context = true;
                      break;
                   }
@@ -462,7 +493,18 @@ namespace btg
                      non_context = true;
                      break;
                   }
-
+               case buttonMenuIds::BTN_LASTFILE:
+                  {
+                     handle_btn_lastfile_all();
+                     non_context = true;
+                     break;
+                  }
+               case buttonMenuIds::BTN_LASTURL:
+                  {
+                     handle_btn_lasturl_all();
+                     non_context = true;
+                     break;
+                  }
                default:
                   {
                      // Ignore the rest of buttons, handled elsewhere.
@@ -470,9 +512,23 @@ namespace btg
                   }
                } // switch
 
+            if (_which_item > buttonMenuIds::BTN_LASTFILE && \
+               _which_item < buttonMenuIds::BTN_LASTFILE + btg::core::projectDefaults::iMAXLASTFILES() + 1)
+            {
+               handle_btn_lastfile(_which_item - buttonMenuIds::BTN_LASTFILE - 1);
+               non_context = true;
+            }
+            
+            if (_which_item > buttonMenuIds::BTN_LASTURL && \
+               _which_item < buttonMenuIds::BTN_LASTURL + btg::core::projectDefaults::iMAXLASTURLS() + 1)
+            {
+               handle_btn_lasturl(_which_item - buttonMenuIds::BTN_LASTURL - 1);
+               non_context = true;
+            }
+            
             if (non_context)
                {
-                  this->updateContexts = true;
+                  updateContexts = true;
                   return;
                }
 
@@ -525,7 +581,7 @@ namespace btg
                   // enable controls
                   setControlFunction(true);
                }
-            this->updateContexts = true;
+            updateContexts = true;
          }
 
          void mainWindow::handle_btn_load()
@@ -562,37 +618,66 @@ namespace btg
                {
                case(Gtk::RESPONSE_OK):
                   {
-                     this->lastOpenDirectory = dialog.get_current_folder();
-                     this->openFile(dialog.get_filename());
+                     lastOpenDirectory = dialog.get_current_folder();
+                     openFile(dialog.get_filename());
+                     {
+                        GET_HANDLER_INST;
+                        handler->addLastFile(dialog.get_filename());
+                        mmb->updateLastFileList(handler->getLastFiles());
+                     }
                      break;
                   }
                case(Gtk::RESPONSE_CANCEL):
                   {
-                     // BTG_NOTICE("Cancel clicked.");
                      break;
                   }
                default:
                   {
-                     // BTG_NOTICE("Unexpected button clicked.");
                      break;
                   }
                } // switch
+         }
+
+         void mainWindow::handle_btn_load_url()
+         {
+            // Show a dialog where one can input the URL and filename.
+            urlDialog ud(last_url, last_url_file);
+            if (ud.run() != Gtk::RESPONSE_APPLY)
+               {
+                  ud.hide();
+                  msb->set("Loading URL aborted.");
+                  logVerboseMessage("Loading URL aborted.");
+                  return;
+               }
+            ud.hide();
+
+            std::string filename;
+            std::string url;
+
+            if (!ud.GetResult(url, filename))
+               {
+                  msb->set("Loading URL aborted.");
+                  logVerboseMessage("Loading URL aborted.");
+                  return;
+               }
+            
+            openURL(url, filename);
+
+            {
+               GET_HANDLER_INST;
+               handler->addLastURL(url, filename);
+               mmb->updateLastURLList(handler->getLastURLs(), handler->getLastURLFiles());
+            }
          }
 
          void mainWindow::openFile(std::string const& _filename)
          {
             GET_HANDLER_INST;
 
-            handler->reqCreate(_filename);
-
-            if (handler->commandSuccess())
+            if (btg::core::client::createParts(logWrapper(), *handler, *this, _filename))
                {
-                  // Update the status bar.
                   msb->set(USERMESSAGE_ADDED_B + _filename + USERMESSAGE_ADDED_E);
                   logVerboseMessage(USERMESSAGE_ADDED_B + _filename + USERMESSAGE_ADDED_E);
-
-                  // Update the last opened file list in menubar.
-                  mmb->updateLastFileList(handler->getLastFiles());
                }
             else
                {
@@ -601,6 +686,36 @@ namespace btg
                }
          }
 
+         void mainWindow::openURL(std::string const& _url, std::string const& _filename)
+         {
+            msb->set("Loading URL: " + _url);
+            logVerboseMessage("Loading URL: " + _url);
+
+            GET_HANDLER_INST;
+            bool created = btg::core::client::createUrl(logWrapper(),
+                                                        *handler,
+                                                        *this,
+                                                        _filename,
+                                                        _url);
+            if (created)
+               {
+                  msb->set("Created torrent from URL '" +_url + "'.");
+                  logVerboseMessage("Created torrent from URL '" + _url + "'.");
+               }
+            else
+               {
+                  msb->set("Unable to load URL: " + _filename);
+                  logVerboseMessage("Unable to load URL: " + _filename);
+               }
+            
+            // sleep for a second so user can see our message
+            for (int i=0; i<100; ++i)
+            {
+               Gtk::Main::iteration(false);
+               btg::core::os::Sleep::sleepMiliSeconds(10);
+            }
+         }
+         
          bool mainWindow::onWindowClose(GdkEventAny *)
          {
             on_menu_item_selected(buttonMenuIds::BTN_DETACH);
@@ -622,8 +737,7 @@ namespace btg
                {
                   return;
                }
-
-            // VERBOSE_LOG(verboseFlag, _msg);
+            VERBOSE_LOG(logWrapper(), verboseFlag, _msg);
             logMessage(_msg);
          }
 
@@ -740,16 +854,43 @@ namespace btg
 
          void mainWindow::updatePeers(t_int const _id)
          {
+            if (_id == last_mtw_selection // still staying on the same torrent
+               && ++peersCounter < peersMax // no timeout elapsed
+               && last_mnb_selection == mainNotebook::PEERS // still staying on the Peers tab
+               )
+               return; // no update needed
+
+            peersCounter = 0;
+            
             GET_HANDLER_INST;
 
-            // Get a list of peers.
-            handler->reqPeers(_id);
+            Gtk::TreeModel::Path pbegin, pend;
+            if (mnb->getPeerTreeview()->get_visible_range(pbegin, pend)
+               && pbegin.begin() && pend.begin() // sometimes can be NULL
+               )
+            {
+               t_uint offset = *pbegin.begin();
+               t_uint count = *pend.begin() - *pbegin.begin() + 1;
+               
+               // Get a list of peers with extended info.
+               handler->reqPeers(_id, false, &offset, &count);
+            }
+            else
+            {
+               // Get a list of peers.
+               handler->reqPeers(_id);
+               
+               // No extended info requested, refresh immediately,
+               // (will refresh with extended info)
+               peersCounter = peersMax;
+            }
+            
             if (handler->commandSuccess())
                {
-                  t_peerList peerlist = handler->getPeers();
-                  
                   mnb->getPeerTreeview()->clear();
-                  mnb->getPeerTreeview()->update(peerlist);
+                  mnb->getPeerTreeview()->update(handler->getPeers());
+                  if (handler->haveExPeers())
+                     mnb->getPeerTreeview()->update(handler->getExPeersOffset(), handler->getExPeers());
                }
             else
                {
@@ -805,31 +946,55 @@ namespace btg
                }
          }
 
-         void mainWindow::handle_btn_lastfile(buttonMenuIds::MENUID _which_item)
+         void mainWindow::handle_btn_lastfile(int _which_item)
          {
             std::string filename;
             {
                GET_HANDLER_INST;
                filename = handler->getLastFiles().at(_which_item);
             }
-            this->openFile(filename);
+            openFile(filename);
          }
 
-         void mainWindow::handle_btn_lastfile_all(buttonMenuIds::MENUID _which_item)
+         void mainWindow::handle_btn_lastfile_all()
          {
             t_strList lastfiles;
             {
                GET_HANDLER_INST;
-
-               // Open all last files.
                lastfiles = handler->getLastFiles();
             }
-
             for (t_strListCI lastIter=lastfiles.begin();
                  lastIter != lastfiles.end();
                  lastIter++)
                {
-                  this->openFile(*lastIter);
+                  openFile(*lastIter);
+               }
+         }
+
+         void mainWindow::handle_btn_lasturl(int _which_item)
+         {
+            std::string url;
+            std::string filename;
+            {
+               GET_HANDLER_INST;
+               url      = handler->getLastURLs().at(_which_item);
+               filename = handler->getLastURLFiles().at(_which_item);
+            }
+            openURL(url,filename);
+         }
+
+         void mainWindow::handle_btn_lasturl_all()
+         {
+            t_strList lastURLs;
+            t_strList lastURLFiles;
+            {
+               GET_HANDLER_INST;
+               lastURLs = handler->getLastURLs();
+               lastURLFiles = handler->getLastURLFiles();
+            }
+            for (int i=0; i<lastURLs.size(); ++i)
+               {
+                  openURL(lastURLs[i],lastURLFiles[i]);
                }
          }
 
@@ -972,7 +1137,6 @@ namespace btg
                   }
                default:
                   {
-                     // BTG_NOTICE("Unexpected button clicked.");
                      break;
                   }
                } // switch
@@ -1069,8 +1233,6 @@ namespace btg
             std::string filename;
             handler->idToFilename(_id, filename);
 
-            // BTG_NOTICE("mainToolbar::BTN_START");
-            
             handler->reqStart(_id);
             if (handler->commandSuccess())
                {
@@ -1091,8 +1253,6 @@ namespace btg
 
             std::string filename;
             handler->idToFilename(_id, filename);
-            
-            // BTG_NOTICE("mainToolbar::BTN_STOP");
             
             handler->reqStop(_id);
             if (handler->commandSuccess())
@@ -1122,8 +1282,6 @@ namespace btg
             std::string filename;
             handler->idToFilename(_id, filename);
 
-            // BTG_NOTICE("mainToolbar::BTN_ERASE");
-            
             handler->reqAbort(_id, true /* erase data */, false);
             if (handler->commandSuccess())
                {
@@ -1153,8 +1311,6 @@ namespace btg
             std::string filename;
             handler->idToFilename(_id, filename);
             
-            // BTG_NOTICE("mainToolbar::BTN_ABORT");
-
             handler->reqAbort(_id, false, false);
             if (handler->commandSuccess())
                {
@@ -1176,8 +1332,6 @@ namespace btg
             
             std::string filename;
             handler->idToFilename(_id, filename);
-
-            // BTG_NOTICE("(global) mainToolbar::BTN_CLEAN");
 
             handler->reqClean(_id, false);
             if (handler->commandSuccess())
@@ -1268,8 +1422,6 @@ namespace btg
                   seed_timeout = m_limitDialog->getParam4();
                }
 
-            // BTG_NOTICE("mainToolbar::BTN_LIMIT");
-
             handler->reqLimit(_id,
                              up_limit, down_limit,
                              seed_percent, seed_timeout,
@@ -1279,10 +1431,6 @@ namespace btg
                {
                   msb->set(USERMESSAGE_LIMIT_B + limit_filename + USERMESSAGE_LIMIT_E);
                   logVerboseMessage(USERMESSAGE_LIMIT_B + limit_filename + USERMESSAGE_LIMIT_E);
-                  // BTG_NOTICE("limit set, upload = " << up_limit
-                  //           << ", download = " << down_limit
-                  //           << ", seed percent = " << seed_percent
-                  //           << ", seed timeout = " << seed_timeout);
                }
             else
                {
@@ -1381,6 +1529,28 @@ namespace btg
 
             m_bMultipleContinue = false; // discontinue for multiple selection, show the error only once
          }
+         
+         bool mainWindow::on_window_state_event (GdkEventWindowState* event)
+         {
+            m_clientDynConfig.set_gui_window_maximized(event->new_window_state && Gdk::WINDOW_STATE_MAXIMIZED);
+            return Gtk::Window::on_window_state_event(event);
+         }
+         
+         bool mainWindow::on_configure_event (GdkEventConfigure* event)
+         {
+            // Ugly hack related to state/configure events order.
+            if (event->x)
+            {
+               m_clientDynConfig.set_gui_window_position(event->x,event->y);
+               m_clientDynConfig.set_gui_window_dimensions(event->width,event->height);
+            }
+            return Gtk::Window::on_configure_event(event);
+         }
+
+         bool mainWindow::isUrlDlEnabled() const
+         {
+            return urlDlEnabled;
+         }
 
          mainWindow::~mainWindow()
          {
@@ -1394,25 +1564,14 @@ namespace btg
             
             delete m_limitDialog;
             m_limitDialog = 0;
+
+            delete upload_progressdialog;
+            upload_progressdialog = 0;
          }
          
-         bool mainWindow::on_window_state_event (GdkEventWindowState* event)
+         void mainWindow::on_peers_scrolled()
          {
-            // BTG_NOTICE("Change window state to: " << ((event->new_window_state && Gdk::WINDOW_STATE_MAXIMIZED)?"MAXIMIZED":"unmaximized"));
-            m_clientDynConfig.set_gui_window_maximized(event->new_window_state && Gdk::WINDOW_STATE_MAXIMIZED);
-            return Gtk::Window::on_window_state_event(event);
-         }
-         
-         bool mainWindow::on_configure_event (GdkEventConfigure* event)
-         {
-            // BTG_NOTICE("Resizing to: " << event->x << "x" << event->y << "+" << event->width << "+" << event->height);
-            // ugly hack related to state/configure events order
-            if (event->x)
-            {
-               m_clientDynConfig.set_gui_window_position(event->x,event->y);
-               m_clientDynConfig.set_gui_window_dimensions(event->width,event->height);
-            }
-            return Gtk::Window::on_configure_event(event);
+            peersCounter = peersMax; // update peers immediately (this second, actually)
          }
 
       } // namespace gui

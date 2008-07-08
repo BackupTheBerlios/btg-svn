@@ -20,12 +20,10 @@
  * $Id$
  */
 
-
+#include "initwindow.h"
 #include <bcore/project.h>
 
-#include "gtkmm_ver.h"
-
-#include "initwindow.h"
+#include <gtkmm.h>
 
 namespace btg
 {
@@ -41,8 +39,8 @@ namespace btg
               vbox(0)
          {
             title_label = Gtk::manage(new class Gtk::Label(
-                                                           GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() +
-                                                           ", build " + GPD->sBUILD()
+                                                           btg::core::projectDefaults::sGUI_CLIENT() + " " + btg::core::projectDefaults::sFULLVERSION() +
+                                                           ", build " + btg::core::projectDefaults::sBUILD()
                                                            )
                                       );
             label       = Gtk::manage(new class Gtk::Label());
@@ -55,9 +53,7 @@ namespace btg
             label->set_line_wrap(false);
             label->set_use_markup(false);
             label->set_selectable(false);
-#if GTKMM_2_6_OR_BETTER
             label->set_max_width_chars(50);
-#endif // GTKMM_2_6_OR_BETTER
 
             title_label->set_alignment(0.5,0.5);
             title_label->set_padding(0,5);
@@ -65,9 +61,7 @@ namespace btg
             title_label->set_line_wrap(false);
             title_label->set_use_markup(false);
             title_label->set_selectable(false);
-#if GTKMM_2_6_OR_BETTER
             title_label->set_max_width_chars(50);
-#endif // GTKMM_2_6_OR_BETTER
 
             vbox->pack_start(*title_label, Gtk::PACK_SHRINK, 0);
             vbox->pack_start(*label,       Gtk::PACK_SHRINK, 0);
@@ -80,8 +74,8 @@ namespace btg
 
             set_border_width(20);
             set_title(
-                      GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() +
-                      ", build " + GPD->sBUILD() + " - initializing .."
+                      btg::core::projectDefaults::sGUI_CLIENT() + " " + btg::core::projectDefaults::sFULLVERSION() +
+                      ", build " + btg::core::projectDefaults::sBUILD() + " - initializing .."
                       );
             set_modal(true);
             set_resizable(false);

@@ -24,6 +24,7 @@
 #define UPNPIF_H
 
 #include <bcore/type.h>
+#include <bcore/logable.h>
 #include <utility>
 
 namespace btg
@@ -38,12 +39,13 @@ namespace btg
                /** @{ */
 
                /// Interface: UPNP.
-               class upnpIf
+               class upnpIf: public btg::core::Logable
                   {
                   public:
                      /// Constructor.
+                     /// @param [in] _logwrapper  The log wrapper to use.
                      /// @param [in] verboseFlag_ Indicates if this interface should do verbose logging.
-                     upnpIf(bool const verboseFlag_);
+                     upnpIf(btg::core::LogWrapperType _logwrapper, bool const verboseFlag_);
 
                      /// Return true if the interface is initialized.
                      bool initialized() const;
@@ -52,9 +54,25 @@ namespace btg
                      /// @param [in] _range Reference to a range to open.
                      /// @return True - success. False - failture.
                      virtual bool open(std::pair<t_int, t_int> const& _range) = 0;
+                     
+                     /// Stop any threads or resources which cannot survive a fork.
+                     /// Called just before forking the daemon. 
+                     virtual void suspend();
+
+                     /// Resume operation. Called after the fork. 
+                     virtual void resume();
 
                      /// Close an already opened port range.
                      virtual bool close() = 0;
+
+                     /// Clear internal state - disable destruction
+                     void clear();
+
+                     /// Terminate whatever this interface is doing.
+                     void setTerminate();
+
+                     /// Indicates if this interface should terminate.
+                     bool terminate();
 
                      /// Destructor.
                      virtual ~upnpIf();
@@ -63,8 +81,12 @@ namespace btg
                      /// Indicates if this interface should do verbose
                      /// logging.
                      bool const verboseFlag_;
+
                      /// Indicates if this interface is initialized.
                      bool initialized_;
+
+                     /// Indicates if this interface should terminate.
+                     bool terminate_;
                   };
 
                /** @} */

@@ -20,6 +20,9 @@
  * $Id$
  */
 
+#ifndef _LISTENER_H
+#define _LISTENER_H
+
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/ui/text/TestRunner.h>
 
@@ -38,3 +41,5 @@ public:
  private:
    int number;
 };
+
+#endif // _LISTENER_H

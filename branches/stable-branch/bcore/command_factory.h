@@ -58,7 +58,7 @@ namespace btg
                /// @param [in] _logwrapper Used for logging by this class.
                /// @param [in] _e          Pointer to the externalization which is used.
                commandFactory(LogWrapperType _logwrapper,
-                              btg::core::externalization::Externalization* _e);
+                              btg::core::externalization::Externalization& _e);
 
                /// Create an instance of Command by reading from a byte array.
                /// @param [out] _status Status code.
@@ -78,7 +78,7 @@ namespace btg
 
             protected:
                /// The externalization interface used.
-               btg::core::externalization::Externalization* e;
+               btg::core::externalization::Externalization& e;
             };
 
          /** @} */

@@ -84,6 +84,8 @@ namespace btg
 #if BTG_OPTION_EVENTCALLBACK
                                  std::string const& _callback,
 #endif // BTG_OPTION_EVENTCALLBACK
+                                 bool _interface_used,
+                                 std::string const& _interface,
                                  portManager* _portMgr,
                                  limitManager* _limitMgr,
                                  btg::core::externalization::Externalization* _e,
@@ -124,6 +126,8 @@ namespace btg
                                      _workDir,
                                      _seedDir,
                                      _outputDir,
+                                     _interface_used,
+                                     _interface,
                                      _portMgr,
                                      _limitMgr,
                                      _filetrack,
@@ -166,7 +170,7 @@ namespace btg
                }
             case Command::CN_CLAST:
                {
-                  handle_CN_CLAST(_command, _connectionID);
+                  handle_CN_CLAST(_connectionID);
                   break;
                }
             case Command::CN_CSTART:
@@ -300,13 +304,13 @@ namespace btg
                                                                             );
 
                                     MVERBOSE_LOG(logWrapper(), 
-                                                 moduleName, verboseFlag_, "daemon (" << _connectionID << "): " <<
+                                                 verboseFlag_, "daemon (" << _connectionID << "): " <<
                                                  _command->getName() << " (caused by " << causedBy << ").");
                                  }
                               else
                                  {
                                     MVERBOSE_LOG(logWrapper(), 
-                                                 moduleName, verboseFlag_, "daemon (" << _connectionID << "): " <<
+                                                 verboseFlag_, "daemon (" << _connectionID << "): " <<
                                                  _command->getName() << ".");
                                  }
                            }
@@ -347,12 +351,12 @@ namespace btg
             {
             case true:
                {
-                  this->sendAck(_connectionID, _type);
+                  sendAck(_connectionID, _type);
                   break;
                }
             case false:
                {
-                  this->sendError(_connectionID, _type, _errorDescription);
+                  sendError(_connectionID, _type, _errorDescription);
                   break;
                }
             }
@@ -466,13 +470,19 @@ namespace btg
 
          contextCreateWithDataCommand* ccwdc = dynamic_cast<contextCreateWithDataCommand*>(_command);
          t_int handle_id = -1;
-         Context::addResult res = daemoncontext->add(ccwdc->getFilename(),
+         std::string sFileName = ccwdc->getFilename();
+         btg::core::Util::getFileFromPath(sFileName, sFileName);
+         
+         Context::addResult res = daemoncontext->add(sFileName,
                                                      ccwdc->getFile(),
                                                      handle_id);
 
-         ConnectionExtraState& extraState = this->connHandler->getConnection(_connectionID)->ExtraState();
-         extraState.setLastCreatedContextId(handle_id);
-         
+         if (_connectionID != btg::core::messageTransport::NO_CONNECTION_ID)
+            {
+               ConnectionExtraState& extraState = connHandler->getConnection(_connectionID)->ExtraState();
+               extraState.setLastCreatedContextId(handle_id);
+            }
+
          if (!ccwdc->getStart())
             {
                // Not starting torrents automagically after adding.
@@ -503,11 +513,24 @@ namespace btg
       {
          contextCreateWithDataCommand* ccwdc = dynamic_cast<contextCreateWithDataCommand*>(_command);
          t_int handle_id = -1;
-         Context::addResult res = daemoncontext->add(ccwdc->getFilename(),
+         std::string sFileName;
+         // cut directories from the path (if they are)
+         if (ccwdc->getFilename().rfind('/') == std::string::npos)
+         {
+            sFileName = ccwdc->getFilename();
+         }
+         else
+         {
+            sFileName = ccwdc->getFilename().substr(ccwdc->getFilename().rfind('/')+1);
+         }
+         
+         std::cerr << "FN: " << sFileName << std::endl;
+         
+         Context::addResult res = daemoncontext->add(sFileName,
                                                      ccwdc->getFile(),
                                                      handle_id);
 
-         ConnectionExtraState& extraState = this->connHandler->getConnection(_connectionID)->ExtraState();
+         ConnectionExtraState& extraState = connHandler->getConnection(_connectionID)->ExtraState();
          extraState.setLastCreatedContextId(handle_id);
          
          if (!ccwdc->getStart())
@@ -519,7 +542,7 @@ namespace btg
                   }
             }
          
-         switch(res)
+         switch (res)
             {
             case Context::ERR_OK:
                {
@@ -529,29 +552,29 @@ namespace btg
             case Context::ERR_EXISTS:
                {
                   sendCommand(_connectionID, new errorCommand(Command::CN_CCREATEWITHDATA,
-                                                              "Adding '" + ccwdc->getFilename() +
+                                                              "Adding '" + sFileName +
                                                               "' failed, torrent already exists"));
                   break;
                }
             case Context::ERR_LIBTORRENT:
                {
                   sendCommand(_connectionID, new errorCommand(Command::CN_CCREATEWITHDATA,
-                                                              "Adding '" + ccwdc->getFilename() +
+                                                              "Adding '" + sFileName +
                                                               "' failed, libtorrent didnt like the file."));
                   break;
                }
             default:
                {
                   sendCommand(_connectionID, new errorCommand(Command::CN_CCREATEWITHDATA,
-                                                              "Adding '"+ccwdc->getFilename()+"' failed."));
+                                                              "Adding '"+sFileName+"' failed."));
                   break;
                }
             }
       }
 
-      void eventHandler::handle_CN_CLAST(btg::core::Command* _command, t_int _connectionID)
+      void eventHandler::handle_CN_CLAST(t_int _connectionID)
       {
-         ConnectionExtraState& extraState = this->connHandler->getConnection(_connectionID)->ExtraState();
+         ConnectionExtraState& extraState = connHandler->getConnection(_connectionID)->ExtraState();
          t_int last_context_id = extraState.getLastCreatedContextId();
          sendCommand(_connectionID, new btg::core::lastCIDResponseCommand(last_context_id));
       }
@@ -979,7 +1002,12 @@ namespace btg
          contextPeersCommand* cpc  = dynamic_cast<contextPeersCommand*>(_command);
 
          t_peerList peerlist;
-
+         
+         t_uint peerExOffset;
+         t_uint peerExCount;
+         bool bPeerEx = cpc->getExRange(peerExOffset, peerExCount);
+         t_peerExList peerExList;
+         
          // Get a list of peers.
          if (cpc->isAllContextsFlagSet())
             {
@@ -992,14 +1020,26 @@ namespace btg
             }
          else
             {
-               op_status = daemoncontext->getPeers(cpc->getContextId(), peerlist);
+               if (bPeerEx)
+               {
+                  op_status = daemoncontext->getPeers(cpc->getContextId(), peerlist,
+                     &peerExOffset, &peerExCount, &peerExList);
+               }
+               else
+               {
+                  op_status = daemoncontext->getPeers(cpc->getContextId(), peerlist);
+               }
 
                switch(op_status)
                   {
                   case true:
-                     sendCommand(_connectionID, new contextPeersResponseCommand(
-                                                                                cpc->getContextId(),
-                                                                                peerlist));
+                     {
+                        contextPeersResponseCommand * cprc = \
+                           new contextPeersResponseCommand(cpc->getContextId(), peerlist);
+                        if (bPeerEx)
+                           cprc->setExList(peerExOffset, peerExList);
+                        sendCommand(_connectionID, cprc);
+                     }
                      break;
                   case false:
                      sendError(_connectionID, Command::CN_CPEERS, "Failed to obtain peer information.");
@@ -1077,7 +1117,6 @@ namespace btg
                               t_int context_id, 
                               eventHandler* _eventhandler)
       {
-         /// !!!
          bool status = false;
 
          // Get the data required to recreate the torrent using
@@ -1137,6 +1176,16 @@ namespace btg
          ccwdc = 0;
 
          return status;
+      }
+
+      std::string eventHandler::getTempDir() const
+      {
+         return daemoncontext->getTempDir();
+      }
+
+      void eventHandler::updateFilter(IpFilterIf* _filter)
+      {
+         daemoncontext->updateFilter(_filter);
       }
 
       eventHandler::~eventHandler()

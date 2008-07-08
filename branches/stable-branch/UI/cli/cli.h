@@ -35,8 +35,10 @@
 #include <bcore/client/clientcallback.h>
 #include <bcore/client/clienthandler.h>
 #include <bcore/client/configuration.h>
-
+#include <bcore/client/cpif.h>
 #include <bcore/client/helper.h>
+
+#include "clicmd.h"
 
 namespace btg
 {
@@ -44,133 +46,18 @@ namespace btg
       {
          namespace cli
             {
-
-               /// Represents a CLI command.
-               class CLICommand
-                  {
-                  public:
-                     /// CLI Command IDs.
-                     enum ID
-                        {
-                           cmd_help = 0,      //!< Help.
-                           cmd_quit,          //!< Quit.
-                           cmd_kill,          //!< Kill the daemon.
-                           cmd_uptime,        //!< Request daemon uptime.
-                           cmd_list,          //!< List.
-                           cmd_create,        //!< Create.
-                           cmd_start,         //!< Start.
-                           cmd_stop,          //!< Stop.
-                           cmd_abort,         //!< Abort.
-                           cmd_erase,         //!< Erase.
-                           cmd_status,        //!< Status.
-                           cmd_fileinfo,      //!< File info.
-                           cmd_peers,         //!< List of peers.
-                           cmd_limit,         //!< Per torrent Limit.
-                           cmd_glimit,        //!< Global limit.
-                           cmd_glimitstatus,  //!< Display global limits.
-                           cmd_clean,         //!< Clean.
-                           cmd_last,          //!< Last.
-                           cmd_syntax,        //!< Syntax.
-                           cmd_detach,        //!< Detach.
-                           cmd_sname,         //!< Session name.
-                           cmd_ssname,        //!< Set session name.
-                           cmd_undefined = -1 //!< Undefined.
-                        };
-                  public:
-                     /// Default constructor.
-                     CLICommand(ID const           _id,
-                                std::string const& _name,
-                                std::string const& _shortName,
-                                std::string const& _description,
-                                std::string const& _syntax,
-                                t_uint      const  _numberOfParams
-                                );
-                     /// Copy constructor.
-                     CLICommand(CLICommand const& _clicommand);
-
-                     /// Get the id of a command.
-                     CLICommand::ID getId() const;
-
-                     /// Get the name.
-                     std::string getName() const;
-
-                     /// Get the short name.
-                     std::string getShortName() const;
-
-                     /// Get the description.
-                     std::string getDescription() const;
-
-                     /// Get the syntax.
-                     std::string getSyntax() const;
-
-                     /// Get the number of params.
-                     t_uint      getNumberOfParams() const;
-
-                     /// The destructor.
-                     ~CLICommand();
-                  private:
-                     /// Const members only, assignment is not possible.
-                     CLICommand& operator=(CLICommand const & _rhs);
-
-                     /// The id of a command.
-                     ID          const id;
-                     /// The name.
-                     std::string const name;
-                     /// The short name.
-                     std::string const shortName;
-                     /// The description.
-                     std::string const description;
-                     /// The syntax.
-                     std::string const syntax;
-                     /// The number of parameters.
-                     t_uint      const numberOfParams;
-                  };
-
-               /// Represents a list of commands with methods to resolve strings into commands.
-               class CLICommandList
-                  {
-                  public:
-                     CLICommandList();
-                     /// Add a command to this list.
-                     void addCommand(CLICommand* _clicommand);
-
-                     /// Resolve a string into a command
-                     CLICommand::ID resolve(std::string const& _s) const;
-
-                     /// Returns a string representing a command name.
-                     /// @param [in] _id A command ID.
-                     std::string getName(CLICommand::ID const _id) const;
-
-                     /// Generate help, which is a list of all commands with a short description.
-                     std::string genHelp() const;
-
-                     /// Generate a string which describes the syntax used for a command.
-                     /// @param [in] _id A command ID.
-                     std::string genSyntax(CLICommand::ID const _id) const;
-
-                     /// Get the number of params required by a command.
-                     t_uint getNumberOfParams(CLICommand::ID const _id) const;
-
-                     /// Destructor.
-                     ~CLICommandList();
-                  private:
-                     /// List of commands.
-                     std::vector<CLICommand*>              list;
-                     /// Maps command ID to command pointer.
-                     std::map<CLICommand::ID, CLICommand*> cmap;
-                  };
-
                /**
                 * \addtogroup cli
                 */
                /** @{ */
 
-               class CLICommandList;
+               // class CLICommandList;
 
                /// Client handler class.
                class cliHandler : 
-                  public btg::core::client::clientCallback, 
-                  public btg::core::client::clientHandler
+               public btg::core::client::clientCallback, 
+                  public btg::core::client::clientHandler,
+                  private btg::core::client::createProgressIf
                   {
                   public:
                      /// Used to react to the different kinds of inputs from the user.
@@ -195,10 +82,10 @@ namespace btg
 
                      /// Constructor.
                      cliHandler(btg::core::LogWrapperType _logwrapper,
-                                btg::core::externalization::Externalization* _e,
-                                btg::core::messageTransport*            _transport,
-                                btg::core::client::clientConfiguration* _config,
-                                btg::core::client::lastFiles*           _lastfiles,
+                                btg::core::externalization::Externalization& _e,
+                                btg::core::messageTransport&            _transport,
+                                btg::core::client::clientConfiguration& _config,
+                                btg::core::client::clientDynConfig&     _dynconfig,
                                 bool const _verboseFlag,
                                 bool const _autoStartFlag
                                 );
@@ -221,8 +108,20 @@ namespace btg
                      /// Get an error message.
                      std::string getError();
 
+                     /// Disable URL download - ie not supported by the daemon.
+                     void DisableUrlDownload();
+
                      /// Destructor.
                      virtual ~cliHandler();
+                  private:
+                     void CPIF_begin(std::string const& _filename);
+                     void CPIF_begin(std::string const& _filename, 
+                                     std::string const& _url);
+                     void CPIF_filePiece(t_uint _number, t_uint _parts);
+                     void CPIF_urlDlStatus(t_uint _total, t_uint _now, t_uint _speed);
+                     void CPIF_error(std::string const& _error);
+                     void CPIF_wait(std::string const& _msg);
+                     void CPIF_success(std::string const& _filename);
                   private:
                      /// Read, deserialize and act on a response for a specific command.
                      /// Responses: specific, ack, error.
@@ -286,8 +185,13 @@ namespace btg
 
                      /// Global limit handling.
                      void handleGlobalLimitStatus(cliResponse & _result);
+                     
+                     /// Instruct the daemon to download an URL.
+                     cliHandler::cliResponse handleLoadUrl(std::string const& _url);
 
+                     void onTimeout();
                      void onTransportInit();
+                     void onTransinitwaitError(std::string const& _message);
                      void onSetup(t_long const _session);
                      void onSetupError(std::string const& _message);
 
@@ -301,6 +205,33 @@ namespace btg
                      void onListError();
 
                      void onCreateWithData();
+
+                     void onCreateFromUrl(t_uint const _id);
+                     void onCreateFromUrlError(std::string const& _message);
+
+                     void onCreateFromFile(t_uint const _id);
+                     void onCreateFromFileError(std::string const& _errorDescription);
+                     void OnCreateFromFilePart();
+                     void OnCreateFromFilePartError(std::string const& _errorDescription);
+
+                     void onFileCancel(); 
+                     void onFileCancelError(std::string const& _errorDescription);
+                     void onUrlCancel();
+                     void onUrlCancelError(std::string const& _errorDescription);
+
+                     void onFileStatus(t_uint const _id, 
+                                       t_uint const _status);
+                     void onFileStatusError(std::string const& _errorDescription);
+
+                     void onUrlStatus(t_uint const _id, 
+                                      t_uint const _status);
+                     void onUrlStatusError(std::string const& _message);
+
+                     void onUrlDlProgress(t_uint const _id,
+                                          t_uint _dltotal, 
+                                          t_uint _dlnow, 
+                                          t_uint _dlspeed);
+
                      void onAbort();
                      void onStart();
                      void onStop();
@@ -348,6 +279,8 @@ namespace btg
 
                      void onMove();
 
+                     void onVersion(btg::core::OptionBase const& _ob);
+
                      void onSetFilesError(std::string const& _errorDescription);
 
                      void onSelectedFiles(btg::core::selectedFileEntryList const& _files);
@@ -373,6 +306,8 @@ namespace btg
 
                      void onSessionInfo(bool const _encryption, bool const _dht);
 
+                     void onTrackerInfo(t_strList const& _trackerlist);
+
                      /// Set the current context ID.
                      void setCurrentID(t_int const _currentID);
 
@@ -385,9 +320,6 @@ namespace btg
                      CLICommand::ID findCommand(std::string const& _input) const;
 
                   private:
-                     /// Command history.
-                     t_strList      history;
-
                      /// Set if there is output that should be written to the user.
                      bool           isOutputAvailable;
 
@@ -414,33 +346,15 @@ namespace btg
                      /// about executing a command, this member
                      /// contains the ID of the command to execute.
                      CLICommand::ID savedId;
+
+                     /// Indicates if the daemon can download URLs.
+                     bool           url_enabled;
                   };
 
                /** @} */
-
-               /// Helper: executes a number of tasks when this client starts.
-               class cliStartupHelper: public btg::core::client::startupHelper
-                  {
-                  public:
-                     /// Constructor.
-                     cliStartupHelper(btg::core::LogWrapperType _logwrapper,
-                                      btg::core::client::clientConfiguration*        _config,
-                                      btg::core::client::commandLineArgumentHandler* _clah,
-                                      btg::core::messageTransport*                   _messageTransport,
-                                      btg::core::client::clientHandler*              _handler);
-
-                     /// Query the user about which session to attach to.
-                     virtual t_long queryUserAboutSession(t_longList const& _sessions,
-                                                          t_strList const& _sessionIds) const;
-                     virtual bool authUserQuery();
-                     virtual void showSessions(t_longList const& _sessions,
-                                               t_strList const& _sessionNames) const;
-                     /// Destructor.
-                     virtual ~cliStartupHelper();
-                  };
 
             } // namespace cli
       } // namespace UI
 } // namespace btg
 
-#endif
+#endif // CLI_H

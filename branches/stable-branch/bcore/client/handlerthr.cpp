@@ -41,7 +41,7 @@ namespace btg
 
          handlerThread::handlerThread(LogWrapperType _logwrapper,
                                       bool const _verboseFlag,
-                                      handlerThreadIf* _handler)
+                                      handlerThreadIf& _handler)
             : Logable(_logwrapper),
               verboseFlag_(_verboseFlag),
               interfaceMutex_(),
@@ -72,8 +72,8 @@ namespace btg
 
             BTG_NOTICE(logWrapper(), "Updating status");
             timer_.Reset();
-            handler_->resetStatusList();
-            handler_->reqStatus(-1, true);
+            handler_.resetStatusList();
+            handler_.reqStatus(-1, true);
          }
 
          void handlerThread::work()
@@ -81,8 +81,8 @@ namespace btg
             // Do an initial update first.
             {
                boost::mutex::scoped_lock interface_lock(interfaceMutex_);
-               handler_->resetStatusList();
-               handler_->reqStatus(-1, true);
+               handler_.resetStatusList();
+               handler_.reqStatus(-1, true);
                BTG_NOTICE(logWrapper(), "Initial update.")
             }
 
@@ -100,11 +100,11 @@ namespace btg
 
                               // Update contexts.
 
-                              if (!handler_->statusListUpdated())
+                              if (!handler_.statusListUpdated())
                                  {
                                     // Request status of all contexts.
                                     BTG_NOTICE(logWrapper(), "Updating status");
-                                    handler_->reqStatus(-1, true);
+                                    handler_.reqStatus(-1, true);
                                  }
                            }
                   } // interface locked
@@ -116,7 +116,7 @@ namespace btg
                } // while !die
          }
 
-         handlerThreadIf* handlerThread::handler() const 
+         handlerThreadIf& handlerThread::handler() const 
          {
             return handler_;
          }
@@ -132,26 +132,25 @@ namespace btg
          /* */
 
          handlerThreadIf::handlerThreadIf(LogWrapperType _logwrapper,
-                                          btg::core::externalization::Externalization* _e,
-                                          btg::core::messageTransport*            _transport,
-                                          btg::core::client::clientConfiguration* _config,
-                                          btg::core::client::lastFiles*           _lastfiles,
+                                          btg::core::externalization::Externalization& _e,
+                                          btg::core::messageTransport&            _transport,
+                                          btg::core::client::clientConfiguration& _config,
+                                          btg::core::client::clientDynConfig&     _dynconfig,
                                           bool const _verboseFlag,
                                           bool const _autoStartFlag)
             : clientCallback(),
               clientHandler(_logwrapper,
                             _e,
-                            this,
+                            *this,
                             _transport,
                             _config,
-                            _lastfiles,
+                            _dynconfig,
                             _verboseFlag,
                             _autoStartFlag),
               statusList_(),
               statusListUpdated_(false),
               statusSize_(0)
          {
-
          }
 
          bool handlerThreadIf::statusListUpdated() const
@@ -254,6 +253,11 @@ namespace btg
                        "onLimitStatusError: " << _errorDescription);
          }
 
+         void handlerThreadIf::onTransinitwaitError(std::string const&)
+         {
+            m_bTransinitwaitError = true;
+         }
+         
       } // namespace client
    } // namespace core
 } // namespace btg

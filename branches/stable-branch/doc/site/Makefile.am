@@ -10,9 +10,16 @@ man-pages:
 RST_FILES=index.rst \
 packages.rst \
 howto.rst howto_bfs.rst howto_devel.rst \
-howto-0.3.rst howto-0.4.rst howto-0.5.rst howto-0.6.rst howto-0.7.rst howto-0.9.6.rst
+howto-0.3.rst howto-0.4.rst howto-0.5.rst howto-0.6.rst howto-0.7.rst \
+howto-0.9.6.rst howto-0.9.7.rst
 
-html: man-pages $(RST_FILES)
+commanddoc:
+	cd ../commands && $(MAKE) commanddoc
+
+commanddoc_copy:
+	cp ../commands/commands.html .
+ 
+html: commanddoc commanddoc_copy man-pages $(RST_FILES)
 	$(RST2HTML) index.rst > index.html
 	$(RST2HTML) packages.rst > packages.html
 	$(RST2HTML) howto.rst > howto.html
@@ -27,6 +34,7 @@ html: man-pages $(RST_FILES)
 	$(RST2HTML) howto-0.6.rst > howto-0.6.html
 	$(RST2HTML) howto-0.7.rst > howto-0.7.html
 	$(RST2HTML) howto-0.9.6.rst > howto-0.9.6.html
+	$(RST2HTML) howto-0.9.7.rst > howto-0.9.7.html
 
 # Target used to generate a pdf version of the howto.
 # Assumes that rst2latex and latex is installed.

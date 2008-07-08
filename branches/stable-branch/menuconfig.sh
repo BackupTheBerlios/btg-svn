@@ -18,7 +18,11 @@ dialog --title "BTG configuration" \
     4 "Enable session saving" 'on' \
     5 "Enable event callback" 'off' \
     6 "Enable debug" 'off' \
-    7 "Enable unittest" 'off' 2>$TEMP
+    7 "Enable unittest" 'off' \
+    8 "Enable URL loading by the daemon" 'on' \
+    9 "Enable UPnP" 'off' \
+   10 "Enable btg-config script build" 'on' \
+2>$TEMP
 
 if [ "$?" != "0" ] ; then 
   echo "Aborted."
@@ -38,6 +42,9 @@ do
     "5") CONFIG_ARGUMENTS="$CONFIG_ARGUMENTS --enable-event-callback";;
     "6") CONFIG_ARGUMENTS="$CONFIG_ARGUMENTS --enable-debug";;
     "7") CONFIG_ARGUMENTS="$CONFIG_ARGUMENTS --enable-unittest";;
+    "8") CONFIG_ARGUMENTS="$CONFIG_ARGUMENTS --enable-url";;
+    "9") CONFIG_ARGUMENTS="$CONFIG_ARGUMENTS --enable-upnp";;
+    "10") CONFIG_ARGUMENTS="$CONFIG_ARGUMENTS --enable-btg-config";;
   esac
 done
 

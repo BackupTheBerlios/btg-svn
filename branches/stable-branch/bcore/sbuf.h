@@ -44,11 +44,23 @@ namespace btg
                /// Default constructor.
                sBuffer();
 
+               /// Constructor. Copies data.
+               sBuffer(const t_byteP _buffer, const t_uint _size);
+
+               /// Constructor. Copies data.
+               sBuffer(std::vector<sBuffer> const& _source);
+
                /// Constructor. Copies data from its argument.
                sBuffer(dBuffer & _dbuffer);
 
                /// Copy constructor.
                sBuffer(sBuffer const& _sbuffer);
+
+               /// Get a byte.
+               /// @param [in]  _offset The offset.
+               /// @param [out] _byte   Reference to where to store the result.
+               /// @return True - success, false otherwise.
+               bool getByte(t_uint _offset, t_byte & _byte) const;
 
                /// Read file from _filename.
                /// @param [in] _filename The file name from which the reading is to be done.
@@ -75,6 +87,12 @@ namespace btg
 
                /// Quality operator.
                bool operator== (sBuffer const & _sbuffer) const;
+
+               /// Split a buffer into a number of buffers, each of
+               /// max length specified by _pieceSize.
+               /// @return True - success, false - faiure caused by empty buffer.
+               bool split(t_uint const _pieceSize, 
+                          std::vector<sBuffer> & _destination);
 
                /// Destructor.
                ~sBuffer();

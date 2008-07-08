@@ -24,12 +24,14 @@
 #define SESSIONNAMEDIALOG_H
 
 #include <gtkmm/dialog.h>
-#include <gtkmm/button.h>
-#include <gtkmm/buttonbox.h>
-#include <gtkmm/label.h>
-#include <gtkmm/entry.h>
-#include <gtkmm/table.h>
-#include <gtkmm/box.h>
+
+namespace Gtk
+{
+   class Button;
+   class Label;
+   class Entry;
+   class Table;
+}
 
 namespace btg
 {

@@ -61,41 +61,55 @@ if BUILDCLI
   BCORE_CLIENT_TEST_LIB    = $(top_builddir)/bcore/client/libbtgclient.la
 endif
 
-testrunner_SOURCES = listener.cpp testrunner.cpp test_daemon.cpp test_os.cpp test_gen_transport.cpp test_tcpip.cpp test_http.cpp test_bcore.cpp $(top_srcdir)/bcore/configuration.cpp $(top_srcdir)/bcore/os/gnutlsif.cpp $(BCORE_CLIENT_TEST)
+if BUILDURL
+  URL_DEFINES=-DBTG_OPTION_URL=@BTG_OPTION_URL@ @LIBCURL_CPPFLAGS@
+  URL_LIBS=@LIBCURL@
+  URL_LDADD=$(top_builddir)/daemon/http/libhttp.la
+else
+  URL_DEFINES=-DBTG_OPTION_URL=@BTG_OPTION_URL@
+endif
 
-noinst_HEADERS     = listener.h testrunner.h test_daemon.h test_os.h test_gen_transport.h test_tcpip.h test_http.h test_bcore.h files.h $(top_srcdir)/bcore/configuration.h $(BCORE_CLIENT_TEST_HEADER)
+testrunner_SOURCES = listener.cpp testrunner.cpp synchronize.cpp test_daemon.cpp test_os.cpp test_gen_transport.cpp test_tcpip.cpp test_http.cpp test_bcore.cpp $(top_srcdir)/bcore/configuration.cpp $(top_srcdir)/bcore/os/gnutlsif.cpp $(BCORE_CLIENT_TEST)
 
-noinst_PROGRAMS     = testrunner
+noinst_HEADERS     = listener.h testrunner.h synchronize.h test_daemon.h test_os.h test_gen_transport.h test_tcpip.h test_http.h test_bcore.h files.h $(top_srcdir)/bcore/configuration.h $(BCORE_CLIENT_TEST_HEADER)
+
+check_PROGRAMS     = testrunner
 
 testrunner_LDADD   = $(top_builddir)/bcore/libbtgcore.la $(BCORE_CLIENT_TEST_LIB) \
-                     $(top_builddir)/daemon/libdaemon.la \
+                     $(top_builddir)/daemon/libdaemon.la $(URL_LDADD) \
                      $(top_builddir)/daemon/resource/libresource.la \
                      $(top_builddir)/external/ini/libini.la \
                      $(top_builddir)/bcore/libbtgcore.la
 
-testrunner_LDFLAGS  = @LIBS@ $(CPPUNIT_LIBS) @LIBTORRENT_LIBS@ -l@BOOST_IOSTREAMS_LIB@ -l@BOOST_FILESYSTEM_LIB@ @LIBGNUTLS_LIBS@
+testrunner_LDFLAGS  = @LIBS@ $(CPPUNIT_LIBS) @LIBTORRENT_LIBS@ @BOOST_SYSTEM_LIB@ \
+                      @BOOST_IOSTREAMS_LIB@ @BOOST_FILESYSTEM_LIB@ \
+                      @BOOST_PROGRAM_OPTIONS_LIB@ @BOOST_THREAD_LIB@ \
+                      @LIBGNUTLS_LIBS@ @XMLRPC_LDFLAGS@ $(URL_LIBS)
 
 testrunner_CFLAGS   = @CFLAGS@   $(CPPUNIT_CFLAGS) @LIBTORRENT_CFLAGS@ @LIBGNUTLS_CFLAGS@ \
-                      -DBTG_DEBUG=@BTG_DEBUG@ \
+                      @XMLRPC_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ \
                       -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \
                       -DBTG_OPTION_EVENTCALLBACK=@BTG_OPTION_EVENTCALLBACK@ \
-                      -DBTG_SVNREV="@BTG_SVNREV@"
+                      -DBTG_INTERNAL_XMLRPC="@BTG_INTERNAL_XMLRPC@" \
+                      -DBTG_REV="@BTG_REV@" $(URL_DEFINES)
 
 testrunner_CXXFLAGS = @CXXFLAGS@ $(CPPUNIT_CFLAGS) @LIBTORRENT_CFLAGS@ @LIBGNUTLS_CFLAGS@ \
-                      -DBTG_DEBUG=@BTG_DEBUG@ \
+                      @XMLRPC_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ \
                       -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \
                       -DBTG_OPTION_EVENTCALLBACK=@BTG_OPTION_EVENTCALLBACK@ \
-                      -DBTG_SVNREV="@BTG_SVNREV@"
-AM_CFLAGS         = @CFLAGS@   @DEBUG_CFLAGS@ \
-                    -DBTG_DEBUG=@BTG_DEBUG@ \
-                    -DBTG_VERSION="@VERSION@" \
-                    -DBTG_BUILD="@BTG_BUILD@" \
-                    -DBTG_SVNREV="@BTG_SVNREV@"
+                      -DBTG_INTERNAL_XMLRPC="@BTG_INTERNAL_XMLRPC@" \
+                      -DBTG_REV="@BTG_REV@" $(URL_DEFINES)
 
-AM_CXXFLAGS       = @CXXFLAGS@ @DEBUG_CXXFLAGS@ \
+AM_CFLAGS         = @CFLAGS@   @DEBUG_CFLAGS@ @XMLRPC_CFLAGS@ \
                     -DBTG_DEBUG=@BTG_DEBUG@ \
                     -DBTG_VERSION="@VERSION@" \
                     -DBTG_BUILD="@BTG_BUILD@" \
-                    -DBTG_SVNREV="@BTG_SVNREV@"
+                    -DBTG_REV="@BTG_REV@" $(URL_DEFINES)
+
+AM_CXXFLAGS       = @CXXFLAGS@ @DEBUG_CXXFLAGS@ @XMLRPC_CFLAGS@ \
+                    -DBTG_DEBUG=@BTG_DEBUG@ \
+                    -DBTG_VERSION="@VERSION@" \
+                    -DBTG_BUILD="@BTG_BUILD@" \
+                    -DBTG_REV="@BTG_REV@" $(URL_DEFINES)
 
 INCLUDES = -I$(top_srcdir)

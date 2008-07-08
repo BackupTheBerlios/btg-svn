@@ -39,6 +39,7 @@ class testBcore : public CppUnit::TestFixture
    CPPUNIT_TEST( testUtil_simple_types );
    CPPUNIT_TEST( testUtil_str_nocasecmp );
    CPPUNIT_TEST( testDbuffer );
+   CPPUNIT_TEST( testSbuffer );
    CPPUNIT_TEST( testStatus );
 
 
@@ -71,6 +72,8 @@ class testBcore : public CppUnit::TestFixture
    CPPUNIT_TEST( testSelectedFileEntry );
    CPPUNIT_TEST( testSelectedFileEntryList );
 
+   CPPUNIT_TEST( testAddressPort );
+   
    CPPUNIT_TEST( testAddrPort );
 
    CPPUNIT_TEST( testPeer );
@@ -87,6 +90,10 @@ class testBcore : public CppUnit::TestFixture
 
    CPPUNIT_TEST( stressTestXmlRpcCommands );
 
+   CPPUNIT_TEST( testPIDFile );
+
+   CPPUNIT_TEST( test_bitvector );
+   
    CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -100,6 +107,7 @@ class testBcore : public CppUnit::TestFixture
 
    // Test of dBuf.
    void testDbuffer();
+   void testSbuffer();
    void testStatus();
 
    // Test commands, begin
@@ -129,6 +137,8 @@ class testBcore : public CppUnit::TestFixture
 
    // Test commands, end.
 
+   void testAddressPort();
+
    void testAddrPort();
 
    void testPeer();
@@ -147,6 +157,12 @@ class testBcore : public CppUnit::TestFixture
 
    // Stress test the encoding/decoding of commands using XML-RPC.
    void stressTestXmlRpcCommands();
+   
+   // test btg::core::os::PIDFile
+   void testPIDFile();
+   
+   // the test for btg::core::bitvector
+   void test_bitvector();
  private:
    void createCommands(std::vector<btg::core::Command*> & commands);
    void destroyCommands(std::vector<btg::core::Command*> & commands);

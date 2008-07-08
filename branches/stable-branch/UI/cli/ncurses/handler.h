@@ -58,10 +58,10 @@ namespace btg
                   public:
                      /// Constructor.
                      Handler(btg::core::LogWrapperType _logwrapper,
-                             btg::core::externalization::Externalization* _e,
-                             btg::core::messageTransport*            _transport,
-                             btg::core::client::clientConfiguration* _config,
-                             btg::core::client::lastFiles*           _lastfiles,
+                             btg::core::externalization::Externalization& _e,
+                             btg::core::messageTransport&            _transport,
+                             btg::core::client::clientConfiguration& _config,
+                             btg::core::client::clientDynConfig&     _dynconfig,
                              bool const _verboseFlag,
                              bool const _autoStartFlag);
 
@@ -78,6 +78,7 @@ namespace btg
                      /// Destructor.
                      virtual ~Handler();
                   private:
+                     void onTimeout();
                      void onTransportInit();
                      void onSetup(t_long const _session);
                      void onSetupError(std::string const& _message);
@@ -92,6 +93,30 @@ namespace btg
                      void onListError();
 
                      void onCreateWithData();
+
+                     void onCreateFromUrl(t_uint const _id);
+                     void onCreateFromUrlError(std::string const& _message);
+                     void onUrlStatus(t_uint const _id, 
+                                      t_uint const _status);
+                     void onUrlStatusError(std::string const& _message);
+
+                     void onUrlDlProgress(t_uint const _id,
+                                          t_uint _dltotal, t_uint _dlnow, t_uint _dlspeed);
+
+                     void onFileStatus(t_uint const _id, 
+                                       t_uint const _status);
+                     void onFileStatusError(std::string const& _errorDescription);
+
+                     void onCreateFromFile(t_uint const _id);
+                     void onCreateFromFileError(std::string const& _errorDescription);
+                     void OnCreateFromFilePart();
+                     void OnCreateFromFilePartError(std::string const& _errorDescription);
+
+                     void onFileCancel(); 
+                     void onFileCancelError(std::string const& _errorDescription);
+                     void onUrlCancel();
+                     void onUrlCancelError(std::string const& _errorDescription);
+
                      void onAbort();
                      void onStart();
                      void onStop();
@@ -122,6 +147,8 @@ namespace btg
 
                      void onMove();
 
+                     void onVersion(btg::core::OptionBase const& _ob);
+
                      void onSetFilesError(std::string const& _errorDescription);
 
                      void onSelectedFiles(btg::core::selectedFileEntryList const& _files);
@@ -139,6 +166,8 @@ namespace btg
 
                      void onSessionInfo(bool const _encryption, bool const _dht);
 
+                     void onTrackerInfo(t_strList const& _trackerlist);
+                     
                      /// Last received list of file info objects.
                      t_fileInfoList lastFileinfolist_;
 
@@ -147,29 +176,6 @@ namespace btg
 
                      /// Last received list of peers.
                      t_peerList     lastPeerlist_;
-                  };
-
-               /** @} */
-
-               /// Helper: executes a number of tasks when this client starts.
-               class ncliStartupHelper: public btg::core::client::startupHelper
-                  {
-                  public:
-                     /// Constructor.
-                     ncliStartupHelper(btg::core::LogWrapperType _logwrapper,
-                                       btg::core::client::clientConfiguration*        _config,
-                                       btg::core::client::commandLineArgumentHandler* _clah,
-                                       btg::core::messageTransport*                   _messageTransport,
-                                       btg::core::client::clientHandler*              _handler);
-
-                     /// Query the user about which session to attach to.
-                     virtual t_long queryUserAboutSession(t_longList const& _sessions,
-                                                          t_strList const& _sessionIds) const;
-                     virtual bool authUserQuery();
-                     virtual void showSessions(t_longList const& _sessions,
-                                               t_strList const& _sessionNames) const;
-                     /// Destructor.
-                     virtual ~ncliStartupHelper();
                   };
 
                /** @} */

@@ -28,6 +28,7 @@
 #include <bcore/command/setup.h>
 #include <bcore/addrport.h>
 #include <bcore/logable.h>
+#include <bcore/os/fstream.h>
 
 #include "portmgr.h"
 #include "limitmgr.h"
@@ -61,25 +62,23 @@ namespace btg
                          daemonData & _dd);
 
             /// Load sessions from a file.
-            t_int loadSessions(std::string const& _filename
+            t_int loadSessions(btg::core::os::fstream & _file
 #ifdef OLD_FORMAT
                                , bool useBinaryFormat = false
 #endif
                                );
 
-            /// Save sessions to a file.
-            bool saveSessions(std::string const& _filename, bool const _dumpFastResume);
+            /// Save sessions to a stream.
+            bool saveSessions(btg::core::os::fstream & _file, bool const _dumpFastResume);
          private:
             /// Indicates that the session saver should log verbose
             /// messages.
             bool const verboseFlag_;
 
             /// Handle reading a saved session.
-            /// @param [in] _filename Filename to read from.
             /// @param [in] _e        Pointer to externalization interface to use.
             /// @param [in] _version  Version of the file as indicated by the signature bytes
-            t_int handleSaved(std::string const& _filename,
-                              btg::core::externalization::Externalization* _e,
+            t_int handleSaved(btg::core::externalization::Externalization* _e,
                               t_uint _version);
 
             /// Create a session.

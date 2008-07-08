@@ -29,6 +29,7 @@
 #include <bcore/transport/http.h>
 #include <bcore/transport/shttp.h>
 #include <bcore/os/gnutlsif.h>
+#include <bcore/os/fstream.h>
 
 #include <bcore/externalization/externalization.h>
 
@@ -63,10 +64,7 @@ namespace btg
                daemonData();
 
                /// Destructor.
-               ~daemonData();
-
-               /// Destroy the contained data.
-               void destroy();
+               virtual ~daemonData();
 
                /// The start time of the daemon.
                time_t                                       daemonStartTime;
@@ -85,6 +83,12 @@ namespace btg
 
                /// Port range used by libtorrent.
                std::pair<t_int, t_int>                      portRange;
+
+               /// Interface used by libtorrent.
+               std::string                                  interface;
+
+               /// Indicates if the interface is being used.
+               bool                                         interface_used;
 
                /// Pointer to the externalization i/f used.
                btg::core::externalization::Externalization* externalization;
@@ -113,11 +117,11 @@ namespace btg
                /// Sesson saving: Indicates if session saving is enabled.
                bool                                         ss_enable;
 
-               /// Sesson saving: filename used to save sessions.
-               std::string                                  ss_filename;
+               /// Sesson saving: filestream used to save sessions.
+               btg::core::os::fstream                       ss_file;
 
                /// Sesson saving: Periodic timeout
-	       t_int                                        ss_timeout;
+               t_int                                        ss_timeout;
 #endif // BTG_OPTION_SAVESESSIONS
                /// Pointer to the auth interface to use.
                btg::daemon::auth::Auth*                     auth;

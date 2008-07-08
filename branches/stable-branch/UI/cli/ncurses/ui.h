@@ -29,14 +29,16 @@
 #include <bcore/project.h>
 #include <bcore/type_btg.h>
 #include <bcore/status.h>
+#include <bcore/file_info.h>
+#include <bcore/logable.h>
+#include <bcore/client/handlerthr.h>
+#include <bcore/client/cpif.h>
 
 #include "mainwindow.h"
 #include "topwindow.h"
 #include "statuswindow.h"
+#include "progress.h"
 #include "keys.h"
-
-#include <bcore/file_info.h>
-#include <bcore/client/handlerthr.h>
 
 namespace btg
 {
@@ -50,15 +52,17 @@ namespace btg
                /** @{ */
 
                /// Main UI class.
-               class UI
+               class UI: private btg::core::Logable, private btg::core::client::createProgressIf
                   {
                   public:
                      /// Constructor.
-                     UI(std::string const& _session,
+                     UI(btg::core::LogWrapperType _logwrapper,
+                        std::string const& _session,
                         bool _neverAskQuestions,
+                        bool _urlDlEnabled,
                         keyMapping const& _keymap,
                         Colors & _colors,
-                        btg::core::client::handlerThread* _handlerthread);
+                        btg::core::client::handlerThread& _handlerthread);
 
                      /// Initialize the UI.
                      bool init();
@@ -102,6 +106,17 @@ namespace btg
                      /// command line arguments.
                      void handleLoad(t_strList const& _filelist);
 
+                     /// Instruct the daemon to download an URL.
+                     void handleLoadUrl();
+
+                     /// Instruct the daemon to download the provided URLs.
+                     void handleUrl(t_strList const& _filelist);
+
+                     /// URL downloading progress.
+                     bool handleUrlProgress(t_uint _hid);
+
+
+
                      /// Show a dialog that allows one to set global
                      /// limits.
                      void handleGlobalLimit();
@@ -112,8 +127,24 @@ namespace btg
                      /// Resize all contained windows.
                      void resize();
 
+                     /// Get the trackers used by a context.
+                     void getTrackers(t_int _contextID, 
+                                      t_strList & _trackers);
+
                      /// Destructor.
-                     ~UI();
+                     virtual ~UI();
+                  private:
+                     void CPIF_begin(std::string const& _filename);
+                     void CPIF_begin(std::string const& _filename, 
+                                     std::string const& _url);
+                     void CPIF_filePiece(t_uint _number, t_uint _parts);
+                     void CPIF_urlDlStatus(t_uint _total, t_uint _now, t_uint _speed);
+                     void CPIF_error(std::string const& _error);
+                     void CPIF_wait(std::string const& _msg);
+                     void CPIF_success(std::string const& _filename);
+
+                     /// Pointer to a progress window used.
+                     progressWindow* progress_;
                   private:
                      /// Menu entries.
                      enum menuEntries
@@ -147,6 +178,9 @@ namespace btg
                      /// Flag: if true, no questions are asked. Ever.
                      bool           neverAskQuestions_;
 
+                     /// Indicates if the daemon supports URL downloading.
+                     bool           urlDlEnabled_;
+
                      /// The keys used by the UI.
                      keyMapping     keymap_;
 
@@ -179,7 +213,7 @@ namespace btg
                      std::string    load_directory_;
 
                      /// Thread handling updates.
-                     btg::core::client::handlerThread* handlerthread_;
+                     btg::core::client::handlerThread& handlerthread_;
 
                      /// Set statusbar up to communicate that some action went ok.
                      void actionSuccess(std::string const& _action, 

@@ -33,6 +33,8 @@ namespace btg
 {
    namespace daemon
       {
+         class IpFilterIf;
+
          /// List of sessions.
          /// Maps session IDs to eventhandler instances.
          class sessionList: public btg::core::Logable
@@ -59,7 +61,7 @@ namespace btg
                /// @param [in] _session       The session ID to use.
                /// @param [out] _eventhandler Reference to a pointer to an eventhandler.
                /// @return True - success. False otherwise.
-               bool get(t_long const & _session, eventHandler* & _eventhandler);
+               bool get(t_long const & _session, eventHandler* & _eventhandler) const;
 
 #if BTG_OPTION_SAVESESSIONS
                /// Serialize the contents.
@@ -103,6 +105,9 @@ namespace btg
                /// This was done to avoid waiting for many sessions to
                /// shutdown (first implemented in libtorrent 0.11).
                void shutdown();
+
+               /// Update the IP filter used.
+               void updateFilter(IpFilterIf* _filter);
 
                /// Destructor.
                virtual ~sessionList();

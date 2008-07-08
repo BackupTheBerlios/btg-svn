@@ -33,17 +33,19 @@ following applications are installed:
 Daemon
 ~~~~~~
 - C and C++ compiler.
-- `Rasterbar Libtorrent`_ 0.9, 0.10, 0.11 or SVN. To decide which libtorrent version to use see `Rasterbar Libtorrent Versions`_.
+- `Rasterbar Libtorrent`_ 0.12.x, 0.13rc1-3 or SVN. To decide which libtorrent version to use see `Rasterbar Libtorrent Versions`_.
 - Boost 1.33 or better (Because of the use of Boost IOStreams), 
   multithreaded versions of the libs should be used.
 - `GNU TLS`_ 1.0 or better.
 - `Expat`_ 1.95.8 or better.
 - `CyberLink`_ 1.7.1 or better for UPnP (optional).
+- `CURL`_ 7.15.5 or better for URL downloading (optional).
 
 .. _Rasterbar Libtorrent: http://www.rasterbar.com/products/libtorrent.html
 .. _GNU TLS: http://www.gnu.org/software/gnutls/
 .. _CyberLink: https://sourceforge.net/projects/clinkcc/
 .. _Expat: http://expat.sourceforge.net/
+.. _CURL: http://curl.haxx.se/
 
 UI
 ~~
@@ -569,31 +571,12 @@ that `Bash`_ is installed and used to execute the configure
 script. `Bash`_ should also be used for generating the configure
 script by the way of autogen.sh.
 
-`GNU Make`_ should be used instead of the native make. `GNU Make`_ can be
-installed from ports and is as far as I know is called "gmake".
-
-Most of the build process appears to work using the native FreeBSD
-make with the exception of running unittests. One of the steps leading
-up to executing the tests is not executed (creating files and
-directories) and makes two of the unittests to fail.
-
-If make fails on FreeBSD (observed on 6.2) with
-
-::
-
- "libbtgcore.so: undefined reference to `backtrace_symbols'"
-
-and the libexecinfo (provides the execinfo.h header) package is
-installed, use the following linker flags before running the configure
-script:
-
-::
-
-  LDFLAGS="-L/usr/local/lib -lexecinfo"
+Notice that the native FreeBSD dialog used by btg-config does not work
+- it does not implement --fselect (and some other options).
+So use cdialog from ports instead.
 
 .. _Tcsh: http://www.tcsh.org
 .. _Bash: http://www.gnu.org/software/bash/
-.. _GNU Make: http://www.gnu.org/software/make/
 
 Rasterbar Libtorrent Versions
 =============================
@@ -601,7 +584,9 @@ Rasterbar Libtorrent Versions
 One can use one of the following `Rasterbar Libtorrent`_ versions with
 the trunk the BTG SVN repository:
 
-- SVN (future 0.13).
+- 0.12.x.
+- 0.13rc1-3.
+- SVN.
 
 Supported Directory Structure
 =============================
@@ -914,21 +899,14 @@ OpenWrt
 =======
 
 This section describes how to build BTG for use with `OpenWrt`_
-kamikaze. Note that this procedure is highly experimental.
+kamikaze. Only the daemon is built and please do note that this
+procedure is highly experimental.
 
 Check out the required software:
 
  - BTG SVN in ~/remote-svn/btg.
  - OpenWrt SVN into ~/remote-svn/openwrt (buildroot).
  - OpenWrt package SVN in ~/remote-svn/openwrt-packages.
-
-The following OpenWrt revisions are known to build:
-
-======================= ==========================
-**OpenWrt trunk**       **OpenWrt packages trunk**     
------------------------ --------------------------
-10359                   10359
-======================= ==========================
 
 The method of building a working OpenWrt is described `elsewhere`_.
 
@@ -981,6 +959,33 @@ packages to the device running OpenWrt and install them using ipkg.
 
 .. _OpenWrt: http://openwrt.org/
 .. _elsewhere: http://downloads.openwrt.org/kamikaze/docs/openwrt.html#x1-310002
+
+Revisions
+---------
+
+The following OpenWrt revisions are known to build:
+
+======================= ========================== ===========
+**OpenWrt trunk**       **OpenWrt packages trunk** **BTG SVN**
+----------------------- -------------------------- -----------
+10359                   10359                      210 (0.9.7)
+11011                   11011                      328       
+======================= ========================== ===========
+
+Revision 328 Notes
+------------------
+
+Uses boost 1.34.1, libtorrent 0.13 and BTG from the trunk of SVN.
+
+GCC 4.2.3 is used because other versions had problems compiling
+libtorrent 0.13. To be able to build revision 328 for the
+XScale-IXP42x, the following had to be used in the .config file.
+
+::
+
+ CONFIG_TARGET_OPTIMIZATION="-Os -pipe -march=armv5te -mtune=xscale -funit-at-a-time"
+ CONFIG_GCC_VERSION="4.2.3"
+ CONFIG_UCLIBC_VERSION="0.9.29"
 
 Credits
 =======

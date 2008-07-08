@@ -21,6 +21,7 @@
  */
 
 #include "prefdialog.h"
+
 #include <gdk/gdkkeysyms.h>
 #include <gtkmm/accelgroup.h>
 #include <gtkmm/label.h>
@@ -32,6 +33,9 @@
 #include <gtkmm/buttonbox.h>
 #include <gtkmm/adjustment.h>
 #include <gtkmm/filechooserdialog.h>
+#include <gtkmm/comboboxtext.h>
+#include <gtkmm/spinbutton.h>
+#include <gtkmm/entry.h>
 
 #include <bcore/project.h>
 #include <bcore/logmacro.h>
@@ -227,7 +231,7 @@ namespace btg
 
             preferencesVbox->pack_start(*settingsTable, Gtk::PACK_SHRINK, 0);
 
-            set_title( GPD->sGUI_CLIENT() + " " + GPD->sFULLVERSION() + " / Preferences" );
+            set_title( btg::core::projectDefaults::sGUI_CLIENT() + " " + btg::core::projectDefaults::sFULLVERSION() + " / Preferences" );
             set_modal(true);
             property_window_position().set_value(Gtk::WIN_POS_CENTER);
             set_resizable(true);

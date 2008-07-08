@@ -55,6 +55,15 @@
 
 namespace btg
 {
+   namespace core
+   {
+      class Status;
+      class trackerStatus;
+   }
+}
+
+namespace btg
+{
    namespace daemon
       {
 
@@ -66,9 +75,6 @@ namespace btg
           * \addtogroup daemon
           */
          /** @{ */
-
-         class btg::core::Status;
-         class btg::core::trackerStatus;
 
          /// Used to keep information about a torrent
          class torrentInfo
@@ -164,6 +170,9 @@ namespace btg
                /// @param [in] _workDir        Working directory.
                /// @param [in] _seedDir        Seeding directory.
                /// @param [in] _outputDir      Output directory.
+               /// @param [in] _interface_used Indicates if the session shall bind to a specific interface.
+               /// @param [in] _interface      Interface to bind to.
+
                /// @param [in] _portMgr        Pointer to port manager.
                /// @param [in] _limitMgr       Pointer to limit manager.
                /// @param [in] _filetrack      Pointer to the class keeping track of added/removed torrents.
@@ -179,6 +188,8 @@ namespace btg
                        std::string const& _workDir,
                        std::string const& _seedDir,
                        std::string const& _outputDir,
+                       bool _interface_used,
+                       std::string const& _interface,
                        portManager* _portMgr,
                        limitManager* _limitMgr,
                        fileTrack* _filetrack,
@@ -327,7 +338,18 @@ namespace btg
                bool getFileInfo(t_int const _torrent_id, t_fileInfoList & _vfileinfo);
 
                /// Get a list of peers.
-               bool getPeers(t_int const _torrent_id, t_peerList & _peerlist);
+               /// 
+               /// @param _torrent_id   Get peer for context identified by this id.
+               /// @param _peerlist     Reference to list of peers.
+               /// @param _peerExOffset Extended peer info, offset.
+               /// @param _peerExCount  Extended peer info, count.
+               /// @param _peerExList   Extended peer info, list.
+               /// @return True - success, false - otherwise.
+               bool getPeers(t_int const _torrent_id, 
+                             t_peerList & _peerlist,
+                             t_uint * _peerExOffset = 0, 
+                             t_uint * _peerExCount = 0,
+                             t_peerExList * _peerExList = 0);
 
                /// Get a list of trackers belonging to a certain torrent.
                bool getTrackers(t_int const _torrent_id, t_strList & _trackers);
@@ -422,10 +444,12 @@ namespace btg
 
                /// Handle libtorrent alert.
                void handlePeerError(libtorrent::peer_error_alert* _alert);
-
+#if BTG_LT_0_14
+               void handleTrackerAlert(libtorrent::tracker_error_alert* _alert);
+#else
                /// Handle libtorrent alert.
                void handleTrackerAlert(libtorrent::tracker_alert* _alert);
-
+#endif
                /// Handle libtorrent alert.
                void handleTrackerReplyAlert(libtorrent::tracker_reply_alert* _alert);
 
@@ -454,6 +478,12 @@ namespace btg
                /// Indicates if encryption is enabled.
                bool encryptionEnabled() const;
 
+               /// Get the temp directory used by this context.
+               std::string getTempDir() const;
+
+               /// Update the IP filter which is used.
+               void updateFilter(IpFilterIf* _filter);
+
                /// Destructor.
                ~Context();
             private:
@@ -478,6 +508,12 @@ namespace btg
 
                /// The path to where to save the finished torrent files.
                std::string outputDir_;
+
+               /// Indicates if the session was bound to a specific interface.
+               bool interface_used_;
+
+               /// Session was bound to this specific interface.
+               std::string interface_;
 
                /// Pointer to port manager.
                portManager*  portMgr;
@@ -621,9 +657,10 @@ namespace btg
 
                /// Convert an entry into a torrent info.
                /// @return True - converted. False - conversion failed.
+#if (BTG_LT_0_12 || BTG_LT_0_13)
                bool entryToInfo(libtorrent::entry const& _input,
                                 libtorrent::torrent_info & _output) const;
-
+#endif
                /// Convert an entry to a list of contained files.
                /// @return True - converted. False - conversion failed.
                bool entryToFiles(libtorrent::entry const& _input,
@@ -665,6 +702,14 @@ namespace btg
                /// Set peer ID (read from configuration, converting it
                /// to a format used by libtorrent).
                void setPeerIdFromConfig();
+#if (BTG_LT_0_14)
+               /// Convert a libtorrent bitfield into a vector of bits.
+               /// 
+               /// Libtorrent 0.14 changed the way a torrent's pieces
+               /// are represented.
+               void bitfieldToVector(libtorrent::bitfield const& _input, 
+                                     std::vector<bool> & _output) const;
+#endif
             private:
                /// Copy constructor.
                Context(Context const& _c);

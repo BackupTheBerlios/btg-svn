@@ -8,21 +8,21 @@ BTG Man Pages
  - `btg-config.man`_
  - `btg.man`_
  - `btg_config.man`_
- - `btgui.man`_
  - `btgvs.man`_
+ - `btgui.man`_
  - `btgncli.man`_
  - `btgcli.man`_
 
-.. _btgpasswd.man: files/btgpasswd.man.txt
-.. _btgcallback.man: files/btgcallback.man.txt
-.. _btgdaemon.man: files/btgdaemon.man.txt
-.. _btg-config.man: files/btg-config.man.txt
-.. _btg.man: files/btg.man.txt
-.. _btg_config.man: files/btg_config.man.txt
-.. _btgui.man: files/btgui.man.txt
-.. _btgvs.man: files/btgvs.man.txt
-.. _btgncli.man: files/btgncli.man.txt
-.. _btgcli.man: files/btgcli.man.txt
+.. _btgpasswd.man: manpages/btgpasswd.man.html
+.. _btgcallback.man: manpages/btgcallback.man.html
+.. _btgdaemon.man: manpages/btgdaemon.man.html
+.. _btg-config.man: manpages/btg-config.man.html
+.. _btg.man: manpages/btg.man.html
+.. _btg_config.man: manpages/btg_config.man.html
+.. _btgvs.man: manpages/btgvs.man.html
+.. _btgui.man: manpages/btgui.man.html
+.. _btgncli.man: manpages/btgncli.man.html
+.. _btgcli.man: manpages/btgcli.man.html
 
 .. footer:: `BTG home page`_
 .. _BTG home page: http://btg.berlios.de/

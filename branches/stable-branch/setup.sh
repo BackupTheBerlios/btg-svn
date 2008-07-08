@@ -39,8 +39,9 @@ else
   echo "NOT building GUI viewer."
 fi
 
-export CXXFLAGS="-Wall -W"
-export CFLAGS="-Wall -W"
+# For xmlrpc installed system wide, on debian.
+export CFLAGS=-I/usr/include/xmlrpc-epi
+export CXXFLAGS=$CFLAGS
 
 for arg in "$@"
 do
@@ -71,6 +72,10 @@ do
 	    echo "Enabling static."
 	    export STATIC="--enable-shared=no --enable-static=yes"
 	    ;;
+	"-gentoo-linking")
+	    echo "Enabling gentoo linker flags."
+	    LDFLAGS="$LDFLAGS --as-needed"
+	    ;;
 	"-help")
 	    echo "Help:"
 	    echo "Argument 0:"
@@ -92,13 +97,14 @@ echo "Using CFLAGS: $CFLAGS"
 # 
 
 # Tell the configure script which versions of the boost libs to use.
-BOOST_SUFFIX="gcc41-mt-1_34_1"
+# BOOST_SUFFIX="gcc41-mt-1_34_1"
+BOOST_SUFFIX="mt"
 
 # Use a certain boost suffix. Hopefully it will stay the same on GNU/Debian.
-CONFIGURE_BOOST="--with-boost-date-time=$BOOST_SUFFIX --with-boost-filesystem=$BOOST_SUFFIX --with-boost-thread=$BOOST_SUFFIX --with-boost-regex=$BOOST_SUFFIX --with-boost-program_options=$BOOST_SUFFIX --with-boost-iostreams=$BOOST_SUFFIX"
+CONFIGURE_BOOST="--with-boost-system=$BOOST_SUFFIX --with-boost-date-time=$BOOST_SUFFIX --with-boost-filesystem=$BOOST_SUFFIX --with-boost-thread=$BOOST_SUFFIX --with-boost-regex=$BOOST_SUFFIX --with-boost-program_options=$BOOST_SUFFIX --with-boost-iostreams=$BOOST_SUFFIX"
 
 # Execute this configure command.
-CONFIGURE="./configure $STATIC --disable-static $DEBUG --enable-btg-config --enable-cli $GUI_CLIENT $GUI_VIEWER --enable-unittest --enable-session-saving --enable-command-list --enable-event-callback --enable-upnp --enable-www --prefix=/pack/btg-cvs $CONFIGURE_BOOST"
+CONFIGURE="./configure $STATIC --disable-static $DEBUG --enable-btg-config --enable-cli $GUI_CLIENT $GUI_VIEWER --enable-unittest --enable-session-saving --enable-command-list --enable-event-callback --enable-www --enable-url --enable-upnp --prefix=/pack/btg-cvs $CONFIGURE_BOOST"
 
 case "$1" in
   0.13)
@@ -107,9 +113,9 @@ case "$1" in
     echo "Using $CONFIGURE";
     $CONFIGURE --with-rblibtorrent=$ROOT/$1
     ;;
-  0.13rc1)
+  0.13.1)
     export LIBTORRENT_CFLAGS="-I$ROOT/$1/include -I$ROOT/$1/include/libtorrent" && \
-    export LIBTORRENT_LIBS="-L$ROOT/$1/lib -ltorrent" && \
+    export LIBTORRENT_LIBS="-L$ROOT/$1/lib -ltorrent-rasterbar" && \
     echo "Using $CONFIGURE";
     $CONFIGURE --with-rblibtorrent=$ROOT/$1
     ;;
@@ -120,6 +126,11 @@ case "$1" in
     $CONFIGURE --with-rblibtorrent=$ROOT/$1
     ;;
   svn)
+    # Libtorrent from SVN uses boost 1.3.5, where asio is included.
+    CXXFLAGS_pkgconfig=`export PKG_CONFIG_PATH=/$ROOT/$1/lib/pkgconfig; pkg-config --cflags libtorrent`
+    export CXXFLAGS="$CXXFLAGS -I/pack/boost-1.35.0/include $CXXFLAGS_pkgconfig"
+    export LDFLAGS="$LDFLAGS -L/pack/boost-1.35.0/lib"
+    export LD_LIBRARY_PATH=/pack/boost-1.35.0/lib
     export LIBTORRENT_CFLAGS="-I$ROOT/svn/include -I$ROOT/svn/include/libtorrent" && \
     export LIBTORRENT_LIBS="-L$ROOT/svn/lib -ltorrent" && \
     echo "Using $CONFIGURE";

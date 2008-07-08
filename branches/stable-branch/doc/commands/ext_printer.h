@@ -53,7 +53,7 @@ namespace btg
                void setDirection(btg::core::DIRECTION _dir);
                bool getCommand(t_int & _command);
                bool setCommand(t_int const _command);
-               void setParamInfo(std::string const& _name, bool _required);
+               void setParamInfo(const char * _name, bool _required);
 
                bool boolToBytes(bool const _source);
                bool bytesToBool(bool & _destination);

@@ -23,7 +23,8 @@
 #ifndef PEERTREEVIEW_H
 #define PEERTREEVIEW_H
 
-#include <gtkmm/treeview.h>
+#include <gtkmm.h>
+
 #include <bcore/type_btg.h>
 
 #include "peermodel.h"
@@ -53,17 +54,48 @@ namespace btg
                      /// Update the table with a list of peers.
                      void update(t_peerList const& _peerlist);
 
+                     /// Update the table with an extended list of peers.
+                     void update(t_uint _offset, t_peerExList const& _peerExlist);
+
                      /// Clear the table.
                      void clear();
 
                      /// Destructor.
                      virtual ~peerTreeview();
+                  
                   private:
+                     enum
+                        {
+                           /// The width of the pixmap used to show pieces.
+                           pixmap_size_x          = 200,
+
+                           /// The height of the pixmap used to show pieces.
+                           pixmap_size_y          = 20,
+                           
+                           /// The number of pixels the pixmap used to show pieces.
+                           pixmap_bits_per_sample = 8
+                        };
+                     
                      /// Data this view operates on.
                      peerRecord                        peerrecord;
 
                      /// The store.
                      Glib::RefPtr<Gtk::ListStore>      refListStore;
+                     
+                     /// Column tooltips
+                     static const char * tooltips[];
+                     /// Safe function to get a tooltip for the column
+                     /// @param [in] n Column number
+                     const char * get_tooltip(unsigned n);
+                     
+                     /// Contains IP-address (in text) of selected peer.
+                     Glib::ustring                     selected_peer;
+
+                  protected:
+#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 12)
+                     /// Callback, triggered when tooltip should appear
+                     bool on_query_tooltip(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
+#endif
 
                      /// Callback, triggered when a selection is made.
                      void on_selection_changed();

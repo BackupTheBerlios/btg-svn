@@ -32,6 +32,7 @@
 #include <bcore/client/lastfiles.h>
 #include <bcore/client/clientdynconfig.h>
 #include <bcore/client/carg.h>
+#include <bcore/client/urlhelper.h>
 
 #if BTG_UTEST_CLIENT
 CPPUNIT_TEST_SUITE_REGISTRATION( testBcoreClient );
@@ -132,7 +133,7 @@ void testBcoreClient::testConfigurationLastOpenFiles()
    using namespace btg::core::logger;
 
    std::string dynconfig_filename        = std::string(TESTFILE_CONFIG) + ".dynconfig";
-   std::vector<std::string> last_files;
+   t_strList last_files;
 
    last_files.push_back(TESTFILE_LAST_0);
    last_files.push_back(TESTFILE_LAST_1);
@@ -152,7 +153,8 @@ void testBcoreClient::testConfigurationLastOpenFiles()
    lastFiles *config = new lastFiles(logwrapper,
                                      *cliDynConf);
 
-   config->setLastFiles(last_files);
+   for (t_strListCI i = last_files.begin(); i!= last_files.end(); ++i)
+      config->add(*i);
 
    delete config;
    config = 0;
@@ -164,8 +166,8 @@ void testBcoreClient::testConfigurationLastOpenFiles()
    config = new lastFiles(logwrapper,
                           *cliDynConf);
 
-   CPPUNIT_ASSERT(config->getLastFiles() == last_files);
-   CPPUNIT_ASSERT(config->getLastFiles().size() == last_files.size());
+   CPPUNIT_ASSERT(config->get() == last_files);
+   CPPUNIT_ASSERT(config->get().size() == last_files.size());
 
    delete config;
    config = 0;
@@ -198,27 +200,42 @@ void testBcoreClient::setConfigDefaults(btg::core::client::clientConfiguration* 
 
 void testBcoreClient::testCommandLineHandler()
 {
-   btg::core::client::commandLineArgumentHandler* clah = new btg::core::client::commandLineArgumentHandler("client.ini", false);
+   btg::core::client::commandLineArgumentHandler* clah 
+      = new btg::core::client::commandLineArgumentHandler("client.ini", false);
 
    clah->setup();
 #if BTG_DEBUG
-   int argc = 6;
-   char* args[argc];
-   args[0] = "test_client";
-   args[1] = "-A";
-   args[2] = "-d 127.0.0.1:16001";
-   args[3] = "-o test.torrent";
-   args[4] = "--nostart";
-   args[5] = "-D";
+   const int argc = 6;
+   const char* coarg[argc] = {
+      "test_client", 
+      "-A",
+      "-d 127.0.0.1:16001",
+      "-o test.torrent",
+      "--nostart",
+      "-D"
+   };
+
+   char* args[argc] = {0, 0, 0, 0, 0, 0};
 #else
-   int argc = 5;
-   char* args[argc];
-   args[0] = "test_client";
-   args[1] = "-A";
-   args[2] = "-d 127.0.0.1:16001";
-   args[3] = "-o test.torrent";
-   args[4] = "--nostart";
+   const int argc = 5;
+   const char* coarg[argc] = {
+      "test_client",
+      "-A",
+      "-d 127.0.0.1:16001",
+      "-o test.torrent",
+      "--nostart"
+   };
+   char* args[argc] = {0, 0, 0, 0, 0};
 #endif
+   for (int count = 0;
+        count < argc;
+        count++)
+      {
+         int len = strlen(coarg[count]);
+         args[count] = new char[len + 1];
+         memset(args[count], 0, len+1);
+         strncpy(args[count], coarg[count], len);
+      }
 
    char** argv = &args[0];
 
@@ -239,4 +256,40 @@ void testBcoreClient::testCommandLineHandler()
 
    delete clah;
    clah = 0;
+
+   for (int count = 0;
+        count < argc;
+        count++)
+      {
+         delete [] args[count];
+         args[count] = 0;
+      }
+
+}
+
+void testBcoreClient::testUrlFunctions()
+{
+   std::string invalid_url("hostname.com/blah.torrent");
+   CPPUNIT_ASSERT(!btg::core::client::isUrlValid(invalid_url));
+
+   std::string valid_url("http://hostname.com/blah.torrent");
+   CPPUNIT_ASSERT(btg::core::client::isUrlValid(valid_url));
+
+   std::string valid_url2("https://hostname.com/blah.torrent");
+   CPPUNIT_ASSERT(btg::core::client::isUrlValid(valid_url2));
+
+   std::string valid_file("http://hostname.com/torrents/blah.torrent");
+   std::string valid_file_output("blah.torrent");
+
+   std::string output;
+   CPPUNIT_ASSERT(btg::core::client::getFilenameFromUrl(valid_file, output));
+   CPPUNIT_ASSERT(output == valid_file_output);
+
+   valid_file = "http://hostname.com/blah.torrent";
+   output = "";
+   CPPUNIT_ASSERT(btg::core::client::getFilenameFromUrl(valid_file, output));
+   CPPUNIT_ASSERT(output == valid_file_output);
+
+   std::string invalid_file("http://hostname.com/?torrentind=1");
+   CPPUNIT_ASSERT(!btg::core::client::getFilenameFromUrl(invalid_file, output));
 }

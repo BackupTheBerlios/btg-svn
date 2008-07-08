@@ -71,7 +71,7 @@ namespace btg
 
          if (eraseData_)
             {
-               output += GPD->sSPACE() + "Erase data..";
+               output += " Erase data..";
             }
          return output;
       }

@@ -52,27 +52,30 @@ namespace btg
                bool parse(int argc, char **argv);
 
                /// Returns true if the daemon is not to detach.
-               bool doNotDetach() const;
+               bool doNotDetach() const { return doNotDetach_present; }
 
                /// Returns true if a config file was set.
-               bool configFileSet() const;
+               bool configFileSet() const { return config_file_present; }
 
                /// Get the name of the configuration file used by the daemon.
-               std::string configFile() const;
+               std::string configFile() const { return config_file; }
 
 #if BTG_OPTION_SAVESESSIONS
                /// Returns true if the saved sessions are not to reload.
-               bool doNotReloadSessions() const;
+               bool doNotReloadSessions() const { return noReloadSessions_present_; }
 
                /// Returns true if a saved sessions file was set.
-               bool saveSessionsFileSet() const;
+               bool saveSessionsFileSet() const { return saveSessionsFile_present_; }
 
                /// Returns the name of the file used to save sessions in.
-               std::string saveSessionsFile() const;
+               std::string saveSessionsFile() const { return saveSessionsFile_; }
 #endif // BTG_OPTION_SAVESESSIONS
 
                std::string getCompileTimeOptions() const;
 
+               /// Get the name of the PID-file
+               std::string PIDFile() const { return PIDFileName; }
+               
                /// Destructor.
                virtual ~commandLineArgumentHandler();
 
@@ -93,6 +96,9 @@ namespace btg
 
                /// Switch which indicates that the daemon should detach and deamonize.
                bool                    doNotDetach_present;
+               
+               /// file to write the PID to
+               std::string             PIDFileName;
             };
 
          /** @} */

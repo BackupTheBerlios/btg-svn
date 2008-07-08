@@ -31,53 +31,53 @@
 namespace btg
 {
    namespace UI
+   {
+      namespace gui
       {
-         namespace gui
+         /**
+          * \addtogroup gui
+          */
+         /** @{ */
+
+         /// Iterator, used to access the data contained in this table.
+         typedef Gtk::TreeModel::Children::iterator  child_iter;
+
+         /// Implements a table which shows peers and their
+         /// properties.
+         class detailsTreeview : public Gtk::TreeView
             {
-               /**
-                * \addtogroup gui
-                */
-               /** @{ */
+            public:
+               /// Constructor.
+               detailsTreeview();
 
-               /// Iterator, used to access the data contained in this table.
-               typedef Gtk::TreeModel::Children::iterator  child_iter;
+               /// Update the table using a reference to a
+               /// status object.
+               void update(btg::core::Status const& _status);
 
-               /// Implements a table which shows peers and their
-               /// properties.
-               class detailsTreeview : public Gtk::TreeView
-                  {
-                  public:
-                     /// Constructor.
-                     detailsTreeview();
+               /// Clear the table.
+               void clear();
 
-		     /// Update the table using a reference to a
-		     /// status object.
-                     void update(btg::core::Status const& _status);
+               /// Destructor.
+               virtual ~detailsTreeview();
+            private:
+               /// Data this view operates on.
+               detailsRecord                     detailsrecord;
 
-                     /// Clear the table.
-                     void clear();
+               /// The store.
+               Glib::RefPtr<Gtk::ListStore>      refListStore;
 
-                     /// Destructor.
-                     virtual ~detailsTreeview();
-                  private:
-                     /// Data this view operates on.
-                     detailsRecord                     detailsrecord;
+               /// Callback, triggered when a selection is made.
+               void on_selection_changed();
 
-                     /// The store.
-                     Glib::RefPtr<Gtk::ListStore>      refListStore;
+               /// Add two lines to the table, a topic and some text.
+               void add(std::string const& _topic,
+                        std::string const& _text);
+            };
 
-                     /// Callback, triggered when a selection is made.
-                     void on_selection_changed();
+         /** @} */
 
-		     /// Add two lines to the table, a topic and some text.
-                     void add(std::string const& _topic,
-                              std::string const& _text);
-                  };
-
-               /** @} */
-
-            } // namespace gui
-      } // namespace UI
+      } // namespace gui
+   } // namespace UI
 } // namespace btg
 
 #endif // DETAILSTREEVIEW_H

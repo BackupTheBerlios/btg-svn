@@ -23,9 +23,7 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#include <gtkmm/window.h>
-#include <gtkmm/toolbar.h>
-#include <gtkmm/scrolledwindow.h>
+#include <gtkmm.h>
 
 #include <bcore/type.h>
 #include <bcore/status.h>
@@ -40,6 +38,10 @@
 #include <bcore/client/handlerthr.h>
 
 #include <bcore/client/clientdynconfig.h>
+#include <bcore/client/cpif.h>
+
+#include "mainnotebook.h" // for enum CurrentSelection
+
 
 namespace btg
 {
@@ -54,26 +56,32 @@ namespace btg
 
          class mainTreeview;
          class mainFileTreeview;
-         class mainNotebook;
          class aboutDialog;
          class limitDialog;
          class preferencesDialog;
          class sessionSelectionDialog;
+         class progressDialog;
 
          /// The main window of the gui client.
-         class mainWindow : public Gtk::Window, public btg::core::Logable
+         class mainWindow : 
+            public Gtk::Window, 
+            public btg::core::Logable, 
+            public btg::core::client::createProgressIf
             {
             public:
                /// Constructor.
                mainWindow(btg::core::LogWrapperType logwrapper,
                           std::string const& _session,
-                          bool const _verboseFlag, 
+                          bool const _verboseFlag,
                           bool const _neverAskFlag,
-                          btg::core::client::handlerThread* _handlerthread,
-                          btg::core::client::clientDynConfig & dc);
+                          btg::core::client::handlerThread& _handlerthread,
+                          btg::core::client::clientDynConfig& _CDC);
 
                /// Used when a menu item is selected.
                void on_menu_item_selected(buttonMenuIds::MENUID _which_item);
+
+               /// Indicates if URL downloading is enabled.
+               bool isUrlDlEnabled() const;
 
                /// Destructor.
                virtual ~mainWindow();
@@ -108,6 +116,9 @@ namespace btg
                /// created.
                void openFile(std::string const& _filename);
 
+               /// Load URL
+               void openURL(std::string const& _url, std::string const& _filename);
+               
                /// Log a message to internal application log and
                /// the normal log.
                void logMessage(std::string const& _msg);
@@ -138,16 +149,25 @@ namespace btg
                void setControlFunction(const bool bSensitive = true);
 
                /// Handle opening a last file.
-               void handle_btn_lastfile(buttonMenuIds::MENUID _which_item);
+               void handle_btn_lastfile(int _which_item);
 
                /// Handle opening all last files.
-               void handle_btn_lastfile_all(buttonMenuIds::MENUID _which_item);
+               void handle_btn_lastfile_all();
+
+               /// Handle opening a last URL.
+               void handle_btn_lasturl(int _which_item);
+
+               /// Handle opening all last URLs.
+               void handle_btn_lasturl_all();
 
                /// Create and show a dialog to open a torrent
                /// file.
                /// If the user selects a torrent file, tell the
                /// daemon that it should be created.
                void handle_btn_load();
+
+               /// Download an URL.
+               void handle_btn_load_url();
 
                /// Handle detach.
                void handle_btn_detach();
@@ -193,7 +213,16 @@ namespace btg
 
                /// Handle preferences.
                void handle_btn_prefs(t_int const _id);
-
+            private:
+               void CPIF_begin(std::string const& _filename);
+               void CPIF_begin(std::string const& _filename, 
+                               std::string const& _url);
+               void CPIF_filePiece(t_uint _number, t_uint _parts);
+               void CPIF_urlDlStatus(t_uint _total, t_uint _now, t_uint _speed);
+               void CPIF_error(std::string const& _error);
+               void CPIF_wait(std::string const& _msg);
+               void CPIF_success(std::string const& _filename);
+            private:
                /// Indicates that the client does verbose logging.
                bool                      verboseFlag;
                /// Indicates that the client should never ask
@@ -215,7 +244,7 @@ namespace btg
                /// callback interface and using a statemachine
                /// to talk to the daemon on the other side of a
                /// transport interface.
-               btg::core::client::handlerThread* handlerthread;
+               btg::core::client::handlerThread& handlerthread;
                      
                /// Pointer to the about dialog.
                aboutDialog*              aboutdialog;
@@ -238,11 +267,34 @@ namespace btg
                std::list<Gtk::ToolButton*> torrentControlButtons;
                
                /// Flag used by operations witn multiple selected torrents
-               bool                       m_bMultipleContinue;
+               bool                        m_bMultipleContinue;
                /// limitDialog used to set limits
-               limitDialog                *m_limitDialog;
+               limitDialog*                m_limitDialog;
                /// sessionSelectionDialog used by handle_btn_move
-               sessionSelectionDialog     *m_sessionSelectionDialog;
+               sessionSelectionDialog*     m_sessionSelectionDialog;
+
+               /// Last downloaded URL.
+               std::string                 last_url;
+               /// Last downloaded URL - the filename used.
+               std::string                 last_url_file;
+
+               /// Indicates if URL downloading is enabled.
+               bool                        urlDlEnabled;
+               
+               /// Dialog used to show progress when creating new
+               /// contexts.
+               progressDialog*             upload_progressdialog;
+               
+               /// Counter, used to decide when peers should be updated.
+               t_uint                      peersCounter;
+               /// Max, decides when peers should be updated.
+               t_uint const                peersMax;
+               
+               /// Selection ID which was at the last update, used in peers update
+               t_int                       last_mtw_selection;
+               
+               /// The last mnb tab selected
+               mainNotebook::CurrentSelection last_mnb_selection;
             private:
                /// Copy constructor.
                mainWindow(mainWindow const& _mw);
@@ -255,6 +307,8 @@ namespace btg
                virtual bool on_window_state_event (GdkEventWindowState* event);
                /// Callback: resize.
                virtual bool on_configure_event (GdkEventConfigure* event);
+               /// Callback: peers vscroll value changed
+               void on_peers_scrolled();
             };
 
          /** @} */

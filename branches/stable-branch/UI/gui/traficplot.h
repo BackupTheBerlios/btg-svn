@@ -29,90 +29,93 @@
 #include <plotmm/plot.h>
 #include <plotmm/curve.h>
 
-#include <gtkmm/label.h>
-#include <gtkmm/box.h>
+namespace Gtk
+{
+   class Label;
+   class VBox;
+}
 
 namespace btg
 {
    namespace UI
+   {
+      namespace gui
       {
-         namespace gui
-            {
-               /**
-                * \addtogroup gui
-                */
-               /** @{ */
+         /**
+          * \addtogroup gui
+          */
+         /** @{ */
 
-               /// Implements a trafic plot.
-               class traficPlot
-                  {
-                  public:
-                     /// Constructor.
-                     traficPlot();
+         /// Implements a trafic plot.
+         class traficPlot
+         {
+         public:
+            /// Constructor.
+            traficPlot();
 
-                     /// Redraws the canvas.
-                     void redraw();
+            /// Redraws the canvas.
+            void redraw();
 
-                     /// Reset the contained counters.
-                     void resetCounters();
+            /// Reset the contained counters.
+            void resetCounters();
 
-                     /// Update the counters with information
-                     /// contained in a status object. This does not
-                     /// redraw the canvas.
-                     void updateCounter(btg::core::Status const& _status);
+            /// Update the counters with information
+            /// contained in a status object. This does not
+            /// redraw the canvas.
+            void updateCounter(btg::core::Status const& _status);
 
-                     /// Update the contained model. Called to create
-                     /// the shown graphs.
-                     void updateModel();
+            /// Update the contained model. Called to create
+            /// the shown graphs.
+            void updateModel();
 
-                     /// Get the contained widget that can be added to
-                     /// other containers.
-                     // PlotMM::Plot* getWidget() const;
-                     Gtk::VBox* getWidget() const;
+            /// Get the contained widget that can be added to
+            /// other containers.
+            // PlotMM::Plot* getWidget() const;
+            Gtk::VBox* getWidget() const;
 
-                     /// Show the contained widget.
-                     void show();
+            /// Show the contained widget.
+            void show();
 
-                     /// Destructor.
-                     ~traficPlot();
-                  private:
-                     /// Convert a number of bytes per second to a
-                     /// human readable string.
-                     std::string bytesPerSecondToString(int const _bytes, 
-                                                        bool const _shrt = false);
+            /// Destructor.
+            ~traficPlot();
+         private:
+            /// Convert a number of bytes per second to a
+            /// human readable string.
+            std::string bytesPerSecondToString(int const _bytes, 
+                                               bool const _shrt = false);
 
-                     /// The contained traffic model.
-                     traficModel                 tm;
+            /// The contained traffic model.
+            traficModel                 tm;
 
-                     /// Download rate, counter.
-                     float                       download_rate;
+            /// Download rate, counter.
+            float                       download_rate;
 
-                     /// Upload reate, counter.
-                     float                       upload_rate;
+            /// Upload reate, counter.
+            float                       upload_rate;
 
-		     /// Pointer to a class used for the actual
-		     /// plotting.
-                     PlotMM::Plot*               plot;
+            /// Pointer to a class used for the actual
+            /// plotting.
+            PlotMM::Plot*               plot;
 
-		     /// Reference to the download curve.
-                     Glib::RefPtr<PlotMM::Curve> dl_curve;
+            /// Reference to the download curve.
+            Glib::RefPtr<PlotMM::Curve> dl_curve;
 
-		     /// Reference to the upload curve.
-                     Glib::RefPtr<PlotMM::Curve> ul_curve;
+            /// Reference to the upload curve.
+            Glib::RefPtr<PlotMM::Curve> ul_curve;
 
-		     /// Label used for showing current and max
-		     /// bandwidth.
-                     Gtk::Label*                 label;
+            /// Label used for showing current and max
+            /// bandwidth.
+            Gtk::Label*                 label;
 
-		     /// Vertical box used to keep the plot above the
-		     /// label.
-                     Gtk::VBox*                  box;
-                  };
+            /// Vertical box used to keep the plot above the
+            /// label.
+            Gtk::VBox*                  box;
+         };
 
-               /** @} */
+         /** @} */
 
-            } // namespace gui
-      } // namespace UI
+      } // namespace gui
+   } // namespace UI
 } // namespace btg
 
 #endif

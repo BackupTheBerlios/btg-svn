@@ -29,7 +29,11 @@
 #include "externalization.h"
 extern "C"
 {
-#include <external/xmlrpc-epi/src/xmlrpc.h>
+#if BTG_INTERNAL_XMLRPC
+#  include <external/xmlrpc-epi/src/xmlrpc.h>
+#else
+#  include <xmlrpc.h>
+#endif
 }
 
 namespace btg
@@ -86,6 +90,8 @@ namespace btg
                bool bytesToStringList(t_strList* _destination);
                bool stringToBytes(const std::string* _source);
                bool bytesToString(std::string* _destination);
+
+               void setParamInfo(const char * _name, bool _required);
 
                std::string dumpData() const;
             private:

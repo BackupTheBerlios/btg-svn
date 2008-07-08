@@ -191,7 +191,7 @@ namespace btg
 
                   std::stringstream ss;
                   ss << "HTTP/1.0 200 OK\r\n";
-                  ss << "Server: btg-" << GPD->sBUILD() << "\r\n";
+                  ss << "Server: btg-" << projectDefaults::sBUILD() << "\r\n";
                   ss << "Date: " << createTimestamp() << "\r\n";
                   ss << "Content-Type: text/xml\r\n";
                   ss << "Content-Length: " << data.length() << "\r\n";
@@ -356,7 +356,7 @@ namespace btg
 
                                     std::stringstream ss;
                                     ss << "HTTP/1.0 400 Bad Request\r\n";
-                                    ss << "Server: btg-" << GPD->sBUILD() << "\r\n";
+                                    ss << "Server: btg-" << projectDefaults::sBUILD() << "\r\n";
                                     ss << "Date: " << createTimestamp() << "\r\n";
                                     ss << "Connection: close\r\n";
                                     ss << "\r\n";

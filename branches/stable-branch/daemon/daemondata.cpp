@@ -47,6 +47,8 @@ namespace btg
          config(0),
          connHandler(0),
          portRange(0,0),
+         interface(),
+         interface_used(false),
          externalization(0),
          transport(0),
          secureTransportData(0),
@@ -57,21 +59,17 @@ namespace btg
          logfilename()
 #if BTG_OPTION_SAVESESSIONS
          , ss_enable(0),
-         ss_filename(""),
 			ss_timeout(60)
 #endif // BTG_OPTION_SAVESESSIONS
        , auth(0)
 #if BTG_OPTION_EVENTCALLBACK
        , callbackmgr(0)
 #endif // BTG_OPTION_EVENTCALLBACK
-      {}
+      {
+         
+      }
 
       daemonData::~daemonData()
-      {
-
-      };
-
-      void daemonData::destroy()
       {
          delete filter;
          filter = 0;
@@ -99,10 +97,15 @@ namespace btg
 
          delete auth;
          auth = 0;
+         
 #if BTG_OPTION_EVENTCALLBACK
          delete callbackmgr;
          callbackmgr = 0;
-#endif // BTG_OPTION_EVENTCALLBACK
+#endif
+         
+#if BTG_OPTION_SAVESESSIONS
+         ss_file.close();
+#endif         
       };
 
    } // namespace daemon

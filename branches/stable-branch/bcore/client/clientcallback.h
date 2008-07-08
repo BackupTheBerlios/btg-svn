@@ -28,6 +28,8 @@
 
 #include <bcore/trackerstatus.h>
 #include <bcore/file_info.h>
+#include <bcore/urlstatus.h>
+#include <bcore/copts.h>
 
 #include <string>
 
@@ -51,6 +53,9 @@ namespace btg
                      /// Constructor.
                      clientCallback();
 
+                     /// Called when a timeout is detected.
+                     virtual void onTimeout() = 0;
+
                      /// The client completed initialization of the transport which is used.
                      virtual void onTransportInit() = 0;
 
@@ -59,6 +64,9 @@ namespace btg
                      /// @param [in] _session The session ID that was assigned to this new session
                      virtual void onSetup(t_long const _session) = 0;
 
+                     /// Transport init failed. Server fault (probably incorrect auth).
+                     virtual void onTransinitwaitError(std::string const& _message) = 0;
+                     
                      /// Setup failed.
                      virtual void onSetupError(std::string const& _message) = 0;
 
@@ -76,6 +84,54 @@ namespace btg
 
                      /// The client managed to create a new context with data.
                      virtual void onCreateWithData() = 0;
+
+                     /// The daemon started downloading a torrent.
+                     virtual void onCreateFromUrl(t_uint const _id) = 0;
+
+                     /// The daemon could not start downloading a torrent.
+                     virtual void onCreateFromUrlError(std::string const& _errorDescription) = 0;
+
+                     /// A file was uploaded. The daemon uses _id to refer to it from now on.
+                     virtual void onCreateFromFile(t_uint const _id) = 0;
+
+                     /// A file upload failed.
+                     virtual void onCreateFromFileError(std::string const& _errorDescription) = 0;
+
+                     /// A part of a file was uploaded.
+                     virtual void OnCreateFromFilePart() = 0;
+
+                     /// A part of a file could not be uploaded.
+                     virtual void OnCreateFromFilePartError(std::string const& _errorDescription) = 0;
+                     /// Received status for a download.
+                     virtual void onUrlStatus(t_uint const _id, 
+                                              t_uint const _status) = 0;
+                     /// Received URL download progress info.
+                     virtual void onUrlDlProgress(t_uint const _id,
+                                                  t_uint _dltotal, 
+                                                  t_uint _dlnow, 
+                                                  t_uint _dlspeed) = 0;
+
+                     /// Could not receive status for a download.
+                     virtual void onUrlStatusError(std::string const& _errorDescription) = 0;
+
+                     /// Received status for a download.
+                     virtual void onFileStatus(t_uint const _id, 
+                                               t_uint const _status) = 0;
+
+                     /// Could not receive status for a download.
+                     virtual void onFileStatusError(std::string const& _errorDescription) = 0;
+
+                     /// File upload was cancelled.
+                     virtual void onFileCancel() = 0; 
+                     
+                     /// Unable to cancel a file upload.
+                     virtual void onFileCancelError(std::string const& _errorDescription) = 0; 
+
+                     /// Url download was cancelled.
+                     virtual void onUrlCancel() = 0;
+                     
+                     /// Unable to cancel an url download. 
+                     virtual void onUrlCancelError(std::string const& _errorDescription) = 0; 
 
                      /// The client got the Id of the last context it created.
                      /// Note that implementing this callback is optional.
@@ -112,6 +168,9 @@ namespace btg
 
                      /// The client got a list of peers.
                      virtual void onPeers(t_peerList const& _peerlist) = 0;
+                     
+                     /// The client got an extended list of peers.
+                     virtual void onPeersEx(t_uint _offset, t_peerExList const& _peerExList);
 
                      /// The client could not obtain a list of peers.
                      virtual void onPeersError(std::string const& _errorDescription) = 0;
@@ -128,6 +187,9 @@ namespace btg
 
                      /// A context was moved to another session.
                      virtual void onMove() = 0;
+
+                     /// Version and options for the daemon received.
+                     virtual void onVersion(btg::core::OptionBase const& _ob) = 0;
 
                      /// The files requested by the client could not
                      /// be set.
@@ -214,6 +276,9 @@ namespace btg
 
                      /// Information about the current session.
                      virtual void onSessionInfo(bool const _encryption, bool const _dht) = 0;
+
+                     /// Received a list of trackers used by a context.
+                     virtual void onTrackerInfo(t_strList const& _trackerlist) = 0;
 
                      /// Destructor.
                      virtual ~clientCallback();

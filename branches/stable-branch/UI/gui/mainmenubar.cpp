@@ -51,15 +51,19 @@ namespace btg
               cleanMenuitem(0),
               limitMenuitem(0),
               moveMenuitem(0),
-              preferencesMenuitem(0)
+              preferencesMenuitem(0),
+              urlDlEnabled(_mainwindow->isUrlDlEnabled())
          {
             Gtk::MenuBar *mainMenubar          = this;
-            Gtk::MenuItem *load_menuitem       = 0;
+            
             Gtk::MenuItem *detachMenuitem      = 0;
             Gtk::Menu *fileMenu                = Gtk::manage(new class Gtk::Menu());
 
             lastFilesMenu                      = Gtk::manage(new class Gtk::Menu());
-            Gtk::MenuItem *openAllLastMenuitem = 0;
+            Gtk::MenuItem *openAllLastFilesMenuitem = 0;
+
+            lastURLsMenu                       = Gtk::manage(new class Gtk::Menu());
+            Gtk::MenuItem *openAllLastURLsMenuitem = 0;
 
             Gtk::MenuItem *fileMenuitem        = 0;
 
@@ -93,11 +97,18 @@ namespace btg
              * File menu
              */
             
-            load_menuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::NEW, Gtk::ICON_SIZE_MENU)), "_Open", true);
+            Gtk::MenuItem* load_menuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::NEW, Gtk::ICON_SIZE_MENU)), "_Open", true);
             load_menuitem->signal_activate().connect( sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LOAD ) );
             fileMenu->items().push_back(*load_menuitem);
 
-            fileMenu->items().push_back(Gtk::Menu_Helpers::SeparatorElem());
+            if (urlDlEnabled)
+               {
+                  Gtk::MenuItem* loadurl_menuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::NEW, Gtk::ICON_SIZE_MENU)), "Open _URL", true);
+                  loadurl_menuitem->signal_activate().connect( sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_LOAD_URL ) );
+                  fileMenu->items().push_back(*loadurl_menuitem);
+                  
+                  fileMenu->items().push_back(Gtk::Menu_Helpers::SeparatorElem());
+               }
 
             preferencesMenuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::PROPERTIES, Gtk::ICON_SIZE_MENU)), "_Preferences", true);
             preferencesMenuitem->signal_activate().connect( sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_PREFERENCES ) );
@@ -109,21 +120,42 @@ namespace btg
             fileMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Recent", *lastFilesMenu));
 
             // Used to open all files.
-            openAllLastMenuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::OPEN, Gtk::ICON_SIZE_MENU)), "Open _all files", true);
-            openAllLastMenuitem->signal_activate().connect(sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), buttonMenuIds::BTN_ALL_LAST) );
-            lastFilesMenu->items().push_back(*openAllLastMenuitem);
+            openAllLastFilesMenuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::OPEN, Gtk::ICON_SIZE_MENU)), "Open _all files", true);
+            openAllLastFilesMenuitem->signal_activate().connect(sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), static_cast<buttonMenuIds::MENUID>(buttonMenuIds::BTN_LASTFILE) ));
+            lastFilesMenu->items().push_back(*openAllLastFilesMenuitem);
 
             lastFilesMenu->items().push_back(Gtk::Menu_Helpers::SeparatorElem());
 
             // List of recent files, in the submenu.
-            for (t_int i=0; i<10; i++)
+            for (t_int i=0; i<btg::core::projectDefaults::iMAXLASTFILES(); ++i)
                {
                   lastFilesMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("LastFile"));
 
                   Gtk::MenuItem* temp = & lastFilesMenu->items().back();
-                  temp->signal_activate().connect(sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), static_cast<buttonMenuIds::MENUID>(i) ));
+                  temp->signal_activate().connect(sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), static_cast<buttonMenuIds::MENUID>(buttonMenuIds::BTN_LASTFILE + i + 1) ));
 
                   lastFiles.push_back(temp);
+               }
+
+            // Recent URLs, sub-menu.
+            fileMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Recent URLs", *lastURLsMenu));
+            
+            // Used to open all URLs.
+            openAllLastURLsMenuitem = new Gtk::ImageMenuItem(*Gtk::manage(new Gtk::Image(Gtk::Stock::OPEN, Gtk::ICON_SIZE_MENU)), "Open _all URLs", true);
+            openAllLastURLsMenuitem->signal_activate().connect(sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), static_cast<buttonMenuIds::MENUID>(buttonMenuIds::BTN_LASTURL) ));
+            lastURLsMenu->items().push_back(*openAllLastURLsMenuitem);
+
+            lastURLsMenu->items().push_back(Gtk::Menu_Helpers::SeparatorElem());
+
+            // List of recent files, in the submenu.
+            for (t_int i=0; i<btg::core::projectDefaults::iMAXLASTURLS(); ++i)
+               {
+                  lastURLsMenu->items().push_back(Gtk::Menu_Helpers::MenuElem("LastURL"));
+
+                  Gtk::MenuItem* temp = & lastURLsMenu->items().back();
+                  temp->signal_activate().connect(sigc::bind<buttonMenuIds::MENUID>( sigc::mem_fun(*_mainwindow, &mainWindow::on_menu_item_selected), static_cast<buttonMenuIds::MENUID>(buttonMenuIds::BTN_LASTURL + i + 1) ));
+
+                  lastURLs.push_back(temp);
                }
 
             fileMenu->items().push_back(Gtk::Menu_Helpers::SeparatorElem());
@@ -215,10 +247,9 @@ namespace btg
 
          }
 
-         void mainMenubar::updateLastFileList(t_strList const& _lastFileList)
+         void mainMenubar::updateLastFileList(t_strList const& _FileList)
          {
             std::vector<Gtk::MenuItem*>::iterator iter;
-            t_uint counter = 0;
 
             // First hide all the elements from the array.
             for (iter  = lastFiles.begin();
@@ -231,17 +262,18 @@ namespace btg
             // Then hide the recent file menu item.
             lastFilesMenu->set_sensitive(false);
 
+            t_uint counter = 0;
             // Set the filenames.
             for (iter  = lastFiles.begin();
                  iter != lastFiles.end();
                  iter++)
                {
-                  if (counter < _lastFileList.size())
+                  if (counter < _FileList.size())
                      {
                         Gtk::MenuItem* temp = *iter;
                         Gtk::Label* label = dynamic_cast<Gtk::Label*>(temp->get_child());
                         // Attempt to remove path information, just keep the filename.
-                        std::string long_filename = _lastFileList.at(counter);
+                        std::string long_filename = _FileList.at(counter);
                         std::string short_filename;
                         if (Util::getFileFromPath(long_filename, short_filename))
                            {
@@ -256,9 +288,38 @@ namespace btg
                   counter++;
                }
 
-            if (_lastFileList.size() > 0)
+            if (_FileList.size() > 0)
                {
                   lastFilesMenu->set_sensitive();
+               }
+         }
+
+         void mainMenubar::updateLastURLList(t_strList const& _URLList, t_strList const& _URLFileList)
+         {
+            // hide all the elements from the array
+            for (std::vector<Gtk::MenuItem*>::iterator iter = lastURLs.begin();
+                 iter != lastURLs.end();
+                 iter++)
+               {
+                  Gtk::MenuItem* temp = *iter;
+                  temp->hide();
+               }
+
+            // disable the menu item
+            lastURLsMenu->set_sensitive(false);
+
+            // update the items
+            for (int i = 0; i < _URLList.size(); ++i)
+               {
+                  Gtk::MenuItem* temp = lastURLs[i];
+                  Gtk::Label* label = dynamic_cast<Gtk::Label*>(temp->get_child());
+                  label->set_text(_URLList[i] + " - " + _URLFileList[i]);
+                  temp->show();
+               }
+
+            if (_URLList.size() > 0)
+               {
+                  lastURLsMenu->set_sensitive();
                }
          }
 

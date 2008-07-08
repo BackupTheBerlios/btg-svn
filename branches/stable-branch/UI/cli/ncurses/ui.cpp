@@ -24,7 +24,6 @@
 
 #include <bcore/logmacro.h>
 
-#include "detailwindow.h"
 #include "helpwindow.h"
 #include "filelist.h"
 #include "fileview.h"
@@ -32,6 +31,7 @@
 
 #include "basemenu.h"
 #include "limitwindow.h"
+#include "progress.h"
 
 #include <bcore/client/handlerthr.h>
 #include "handler.h"
@@ -40,9 +40,9 @@
 #include <bcore/hrr.h>
 
 #define GET_HANDLER_INST \
-   boost::shared_ptr<boost::mutex> ptr = handlerthread_->mutex(); \
+   boost::shared_ptr<boost::mutex> ptr = handlerthread_.mutex(); \
    boost::mutex::scoped_lock interface_lock(*ptr); \
-   Handler* handler = dynamic_cast<Handler*>(handlerthread_->handler());
+   Handler* handler = dynamic_cast<Handler*>(&handlerthread_.handler());
 
 namespace btg
 {
@@ -53,16 +53,22 @@ namespace btg
          using namespace btg::core;
          using namespace btg::core::client;
 
-         UI::UI(std::string const& _session,
+         UI::UI(btg::core::LogWrapperType _logwrapper,
+                std::string const& _session,
                 bool _neverAskQuestions,
+                bool _urlDlEnabled,
                 keyMapping const& _keymap,
                 Colors & _colors,
-                btg::core::client::handlerThread* _handlerthread)
-            : session_(_session),
+                btg::core::client::handlerThread& _handlerthread)
+            : btg::core::Logable(_logwrapper),
+              btg::core::client::createProgressIf(),
+              progress_(0),
+              session_(_session),
               neverAskQuestions_(_neverAskQuestions),
+              urlDlEnabled_(_urlDlEnabled),
               keymap_(_keymap),
               colors_(_colors),
-              mainwindow_(_keymap),
+              mainwindow_(_keymap, *this),
               topwindow_(_keymap),
               statuswindow_(_keymap),
               mainwindow_topx(0),
@@ -72,7 +78,6 @@ namespace btg
               load_directory_(),
               handlerthread_(_handlerthread)
          {
-
          }
 
          bool UI::init()
@@ -126,7 +131,8 @@ namespace btg
                   return false;
                }
 
-            topwindow_.setTitle(GPD->sCLI_CLIENT() +" version " + GPD->sFULLVERSION() + 
+            topwindow_.setTitle(btg::core::projectDefaults::sCLI_CLIENT() + 
+                                " version " + btg::core::projectDefaults::sFULLVERSION() + 
                                 " (session #" + session_ + ")");
 
             // Init the status window.
@@ -406,6 +412,8 @@ namespace btg
 
          UI::~UI()
          {
+            delete progress_;
+            progress_ = 0;
          }
 
       } // namespace cli

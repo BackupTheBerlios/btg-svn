@@ -91,7 +91,7 @@ namespace btg
                std::string request_content;
 
                /// Content-length of current request
-               t_long request_content_length;
+               t_ulong request_content_length;
 
                /// Indicates that the method (firts line) was received.
                bool bMethodReceived;

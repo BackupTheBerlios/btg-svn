@@ -81,14 +81,13 @@ namespace btg
 
       bool Util::getFileFromPath(std::string const& _input, std::string & _output)
       {
-         t_strList parts = Util::splitLine(_input, GPD->sPATH_SEPARATOR());
-         t_strListCI lastElem = parts.end();
-         lastElem--;
-         if (lastElem != parts.end())
-            {
-               _output = *lastElem;
-               return true;
-            }
+         std::string ps = projectDefaults::sPATH_SEPARATOR();
+         size_t pos = _input.rfind(ps);
+         if (pos != std::string::npos)
+         {
+            _output = _input.substr( pos + ps.length() );
+            return true;
+         }
          return false;
       }
 

@@ -42,11 +42,11 @@ namespace btg
 
       std::string contextCommand::toString() const
       {
-         std::string output = Command::toString() + GPD->sSPACE() + "Context_id=" + convertToString<t_long>(this->context_id) + ".";
+         std::string output = Command::toString() + " " + "Context_id=" + convertToString<t_long>(this->context_id) + ".";
 
          if (allContexts)
             {
-               output += GPD->sSPACE() + "All contexts flag is set.";
+               output += " All contexts flag is set.";
             }
          return output;
       }

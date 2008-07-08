@@ -123,13 +123,13 @@ namespace btg
       {
          std::stringstream output;
 
-         output << GPD->sNEWLINE();
+         output << "\n";
          output << "Required Data:";
-         output << GPD->sNEWLINE();
+         output << "\n";
          output << "leech mode limit " << seedLimit_ << "%, timeout " << seedTimeout_ << "s.";
-         output << GPD->sNEWLINE();
+         output << "\n";
          output << "use encryption: " << useEncryption_ << ".";
-         output << GPD->sNEWLINE();
+         output << "\n";
          output << "use DHT: " << useDHT_ << ".";
 
          return output.str();

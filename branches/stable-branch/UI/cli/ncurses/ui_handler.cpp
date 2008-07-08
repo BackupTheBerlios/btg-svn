@@ -22,30 +22,33 @@
 
 #include "ui.h"
 
+#include <bcore/client/handlerthr.h>
+#include <bcore/client/urlhelper.h>
+#include <bcore/client/loadhelper.h>
+#include <bcore/command/limit_base.h>
+#include <bcore/hrr.h>
+#include <bcore/os/sleep.h>
+#include <bcore/opstatus.h>
 #include <bcore/logmacro.h>
 
+#include "handler.h"
 #include "detailwindow.h"
 #include "helpwindow.h"
 #include "filelist.h"
 #include "fileview.h"
 #include "fileselect.h"
 #include "peerlist.h"
-
 #include "basemenu.h"
 #include "limitwindow.h"
 #include "snwindow.h"
-
-#include <bcore/client/handlerthr.h>
-#include "handler.h"
-
-#include <bcore/command/limit_base.h>
-#include <bcore/hrr.h>
+#include "textinput.h"
+#include "progress.h"
 #include "sessionselect.h"
 
-#define GET_HANDLER_INST \
-   boost::shared_ptr<boost::mutex> ptr = handlerthread_->mutex(); \
-   boost::mutex::scoped_lock interface_lock(*ptr); \
-   Handler* handler = dynamic_cast<Handler*>(handlerthread_->handler());
+#define GET_HANDLER_INST                                                \
+   boost::shared_ptr<boost::mutex> ptr = handlerthread_.mutex();       \
+   boost::mutex::scoped_lock interface_lock(*ptr);                      \
+   Handler* handler = dynamic_cast<Handler*>(&handlerthread_.handler());
 
 namespace btg
 {
@@ -173,6 +176,20 @@ namespace btg
                      refresh();
                      break;
                   }
+               case keyMapping::K_LOAD_URL:
+                  {
+                     if (urlDlEnabled_)
+                        {
+                           handleLoadUrl();
+                           refresh();
+                        }
+                     else
+                        {
+                           statuswindow_.setError("URL downloading not supported by daemon.");
+                           refresh();
+                        }
+                     break;
+                  }
                case keyMapping::K_GLIMIT:
                   {
                      handleGlobalLimit();
@@ -228,7 +245,7 @@ namespace btg
             std::string keyDescr;
 
             if (helpWindow::generateHelpForKey(keymap_,
-                                               keyMapping::K_QUIT,
+                                               keyMapping::K_BACK,
                                                "to go back",
                                                keyDescr))
                {
@@ -289,7 +306,8 @@ namespace btg
                               }
                               break;
                            }
-                        case keyMapping::K_QUIT:
+                        case keyMapping::K_SELECT:
+                        case keyMapping::K_BACK:
                            {
                               cont = false;
                               dw.clear();
@@ -508,6 +526,16 @@ namespace btg
                }
 
             if (helpWindow::generateHelpForKey(keymap_,
+                                               keyMapping::K_LOAD_URL,
+                                               "",
+                                               keyDescr,
+                                               false))
+               {
+                  helpText.push_back(keyDescr);
+                  helpText.push_back("  to load a torrent from URL");
+               }
+
+            if (helpWindow::generateHelpForKey(keymap_,
                                                keyMapping::K_DOWN,
                                                "",
                                                keyDescr,
@@ -635,6 +663,214 @@ namespace btg
             return hw.run();
          }
 
+         void UI::handleLoadUrl()
+         {
+            std::string helpText;
+            genHelpText(helpText);
+
+            statuswindow_.setStatus("Loading URL. " + helpText);
+
+            windowSize dimensions;
+            mainwindow_.getSize(dimensions);
+
+            textInput ti_url(keymap_, dimensions, "URL", "");
+
+            if (ti_url.run() == dialog::R_RESIZE)
+               {
+                  // the window was resized.
+                  handleResizeMainWindow();
+
+                  statuswindow_.setStatus("Loading URL aborted.");
+
+                  return;
+               }
+
+            std::string url;
+
+            if (!ti_url.getText(url))
+               {
+                  statuswindow_.setStatus("Loading URL aborted.");
+                  return;
+               }
+
+            if (!btg::core::client::isUrlValid(url))
+               {
+                  statuswindow_.setStatus("Invalid URL entered.");
+                  return;
+               }
+
+            bool gotFilename = true;
+            std::string url_filename;
+            if (!btg::core::client::getFilenameFromUrl(url, url_filename))
+               {
+                  gotFilename = false;
+               }
+            
+            if (!gotFilename)
+               {
+                  textInput ti_fn(keymap_, dimensions, "Filename", "url.torrent");
+
+                  if (ti_fn.run() == dialog::R_RESIZE)
+                     {
+                        // the window was resized.
+                        handleResizeMainWindow();
+                        
+                        statuswindow_.setStatus("Loading URL aborted.");
+                        
+                        return;
+                     }
+
+                  if (!ti_fn.getText(url_filename))
+                     {
+                        statuswindow_.setStatus("Loading URL aborted.");
+                        return;
+                     }
+
+                  if (url_filename.size() == 0)
+                     {
+                        statuswindow_.setStatus("Invalid URL entered.");
+                        return;
+                     }
+               }
+
+            // Got both URL and filename.
+            {
+               GET_HANDLER_INST;
+
+               bool created = btg::core::client::createUrl(logWrapper(),
+                                                           *handler,
+                                                           *this,
+                                                           url_filename,
+                                                           url);
+
+               if (created)
+                  {
+                     actionSuccess("Load URL", url_filename);
+                  }
+               else
+                  {
+                     actionFailture("Load URL", url_filename);
+                  }
+            }
+
+            refresh();
+         }
+
+         void UI::handleUrl(t_strList const& _filelist)
+         {
+            t_strListCI iter;
+            for (iter = _filelist.begin(); iter != _filelist.end(); iter++)
+               {
+                  std::string url = *iter;
+
+                  if (!btg::core::client::isUrlValid(url))
+                     {
+                        continue;
+                     }
+
+                  std::string url_filename;
+                  if (!btg::core::client::getFilenameFromUrl(url, url_filename))
+                     {
+                        continue;
+                     }
+
+                  // Got both URL and filename.
+                  {
+                     GET_HANDLER_INST;
+
+                     handler->reqCreateFromUrl(url_filename, url);
+               
+                     if (handler->commandSuccess())
+                        {
+                           t_uint hid = handler->UrlId();
+                              
+                           if (handleUrlProgress(hid))
+                              {
+                                 actionSuccess("Load URL", url_filename);
+                              }
+                           else
+                              {
+                                 actionFailture("Load URL", url_filename);
+                              }
+                        }
+                     else
+                        {
+                           actionFailture("Load URL", url_filename);
+                        }
+                  }
+               }
+            // Force updating of contexts.
+            handlerthread_.forceUpdate();
+         }
+
+         bool UI::handleUrlProgress(t_uint _hid)
+         {
+            bool res = false;
+
+            windowSize dimensions;
+            mainwindow_.getSize(dimensions);
+
+            progressWindow pwin(dimensions, keymap_);
+
+            bool cont = true;
+
+            Handler* handler = dynamic_cast<Handler*>(&handlerthread_.handler());
+
+            while (cont)
+               {
+                  handler->reqUrlStatus(_hid);
+                  if (!handler->commandSuccess())
+                     {
+                        return res;
+                     }
+                  t_uint id = 0;
+                  t_uint status;
+
+                  handler->UrlStatusResponse(id, status);
+                  
+                  switch (status)
+                     {
+                     case btg::core::OP_UNDEF:
+                        {
+                           break;
+                        }
+                     case btg::core::OP_WORKING:
+                        {
+                           pwin.updateProgress(50, "Working.");
+                           break;
+                        }
+                     case btg::core::OP_FINISHED:
+                        {
+                           pwin.updateProgress(80, "Loaded URL.");
+                           break;
+                        }
+                     case btg::core::OP_ERROR:
+                        {
+                           pwin.updateProgress(100, "Error loading URL.");
+                           cont = false;
+                           break;
+                        }
+                     case btg::core::OP_CREATE:
+                        {
+                           pwin.updateProgress(100, "Torrent created.");
+                           res  = true;
+                           cont = false;
+                           break;
+                        }
+                     case btg::core::OP_CREATE_ERR:
+                        {
+                           pwin.updateProgress(100, "Unable to create torrent.");
+                           res  = false;
+                           cont = false;
+                           break;
+                        }
+                     }
+                  btg::core::os::Sleep::sleepMiliSeconds(500);
+               }
+
+            return res;
+         }
+
          void UI::handleLoad()
          {
             std::string helpText;
@@ -666,9 +902,10 @@ namespace btg
                   {
                      GET_HANDLER_INST;
 
-                     handler->reqCreate(filenameToLoad);
-
-                     if (handler->commandSuccess())
+                     if (btg::core::client::createParts(logWrapper(), 
+                                                        *handler, 
+                                                        *this, 
+                                                        filenameToLoad))
                         {
                            actionSuccess("Load", filenameToLoad);
                         }
@@ -679,7 +916,7 @@ namespace btg
                   }
 
                   // Force updating of contexts.
-                  handlerthread_->forceUpdate();
+                  handlerthread_.forceUpdate();
                }
             else
                {
@@ -712,7 +949,7 @@ namespace btg
                   }
                }
             // Force updating of contexts.
-            handlerthread_->forceUpdate();
+            handlerthread_.forceUpdate();
          }
 
          void UI::handleGlobalLimit()
@@ -833,13 +1070,13 @@ namespace btg
                   std::vector<menuEntry> contents;
 
                   enum
-                     {
-                        QUIT_YES = 1,
-                        QUIT_NO  = 2
-                     };
+                  {
+                     QUIT_YES = 1,
+                     QUIT_NO  = 2
+                  };
 
-                  contents.push_back(menuEntry(QUIT_NO,  "No",  "Quit"));
-                  contents.push_back(menuEntry(QUIT_YES, "Yes", "Do not quit"));
+                  contents.push_back(menuEntry(QUIT_NO,  "No",  "Do not quit"));
+                  contents.push_back(menuEntry(QUIT_YES, "Yes", "Quit"));
 
                   windowSize menudimensions;
                   mainwindow_.getSize(menudimensions);
@@ -1016,7 +1253,7 @@ namespace btg
                   {
                      // Got mutex already - in the calling function,
                      // the menu handling.
-                     Handler* handler = dynamic_cast<Handler*>(handlerthread_->handler());
+                     Handler* handler = dynamic_cast<Handler*>(&handlerthread_.handler());
 
                      btg::core::selectedFileEntryList filesToSet;
                      fs.getFiles(filesToSet);
@@ -1103,6 +1340,18 @@ namespace btg
             refresh();
 
             actionSuccess("Move to session", _filename);
+         }
+
+         void UI::getTrackers(t_int _contextID, 
+                              t_strList & _trackers)
+         {
+            GET_HANDLER_INST;
+            handler->reqTrackers(_contextID);
+            
+            if (handler->commandSuccess())
+               {
+                  _trackers = handler->getTrackerList();
+               }
          }
 
       } // namespace cli

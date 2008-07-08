@@ -22,8 +22,6 @@
 
 #include "handler.h"
 
-#include <iostream>
-
 #include <bcore/command_factory.h>
 #include <bcore/util.h>
 #include <bcore/t_string.h>
@@ -62,21 +60,26 @@ namespace btg
          using namespace btg::core::client;
 
          Handler::Handler(btg::core::LogWrapperType _logwrapper,
-                          btg::core::externalization::Externalization* _e,
-                          messageTransport*                       _transport,
-                          clientConfiguration*                    _config,
-                          btg::core::client::lastFiles*           _lastfiles,
+                          btg::core::externalization::Externalization& _e,
+                          messageTransport&                       _transport,
+                          clientConfiguration&                    _config,
+                          clientDynConfig&                        _dynconfig,
                           bool const _verboseFlag,
                           bool const _autoStartFlag)
             : handlerThreadIf(_logwrapper,
                               _e,
                               _transport,
                               _config,
-                              _lastfiles,
+                              _dynconfig,
                               _verboseFlag,
                               _autoStartFlag),
               lastSelected_files_()
          {
+         }
+
+         void Handler::onTimeout()
+         {
+            setTimeout();
          }
 
          void Handler::onTransportInit()
@@ -87,7 +90,7 @@ namespace btg
          void Handler::onSetup(t_long const _session)
          {
             setSession(_session);
-            this->setupDone = true;
+            setupDone = true;
          }
 
          void Handler::onSetupError(std::string const& _message)
@@ -99,13 +102,13 @@ namespace btg
 
          void Handler::onAttach()
          {
-            this->attachDone = true;
+            attachDone = true;
          }
 
          void Handler::onAttachError(std::string const& _message)
          {
             setSession(ILLEGAL_ID);
-            attachFailtureMessage = _message;
+            setAttachFailtureMessage(_message);
             attachDone            = false;
          }
 
@@ -123,14 +126,14 @@ namespace btg
          void Handler::onListError()
          {
             commandStatus = false;
-            this->cmd_failture++;
+            cmd_failture++;
          }
 
          void Handler::onError(std::string const& _errorDescription)
          {
             commandStatus = false;
 
-            this->cmd_failture++;
+            cmd_failture++;
 
             BTG_NOTICE(logWrapper(), 
                        "On error: " << _errorDescription);
@@ -175,8 +178,7 @@ namespace btg
          void Handler::onCreateWithData()
          {
             commandStatus = true;
-
-            lastfiles->addLastFile(last_filename);
+            lastfiles.add(last_filename);
             last_filename.clear();
          }
 
@@ -208,11 +210,11 @@ namespace btg
             statusListUpdated_ = true;
          }
 
-                  void Handler::onStatusError(std::string const& _errorDescription)
+         void Handler::onStatusError(std::string const& _errorDescription)
          {
             commandStatus = false;
             statusSize_         = 0;
-            this->cmd_failture++;
+            cmd_failture++;
          }
 
          void Handler::onFileInfo(t_fileInfoList const& _fileinfolist)
@@ -236,7 +238,7 @@ namespace btg
          void Handler::onPeersError(std::string const& _errorDescription)
          {
             commandStatus = false;
-            this->cmd_failture++;
+            cmd_failture++;
          }
 
          void Handler::onListSessions(t_longList const& _sessions,
@@ -250,7 +252,7 @@ namespace btg
          void Handler::onSessionError()
          {
             commandStatus = false;
-            this->cmd_failture++;
+            cmd_failture++;
          }
 
          void Handler::onClean(t_strList const& _filenames, t_intList const& _contextIDs)
@@ -261,7 +263,7 @@ namespace btg
          void Handler::onListSessionsError(std::string const& _errorDescription)
          {
             commandStatus = false;
-            this->cmd_failture++;
+            cmd_failture++;
 
             // std::cout << _errorDescription << std::endl;
          }
@@ -281,6 +283,12 @@ namespace btg
             commandStatus = true;
          }
 
+         void Handler::onVersion(btg::core::OptionBase const& _ob)
+         {
+            setOption(_ob);
+            commandStatus = true;
+         }
+
          void Handler::onMove()
          {
             commandStatus = true;
@@ -289,7 +297,7 @@ namespace btg
          void Handler::onSetFilesError(std::string const& _errorDescription)
          {
             commandStatus = false;
-            this->cmd_failture++;
+            cmd_failture++;
          }
          
          void Handler::onSelectedFiles(btg::core::selectedFileEntryList const& _files)
@@ -301,7 +309,7 @@ namespace btg
          void Handler::onSelectedFilesError(std::string const& _errorDescription)
          {
             commandStatus = false;
-            this->cmd_failture++;
+            cmd_failture++;
          }
 
          void Handler::getLastSelectedFiles(btg::core::selectedFileEntryList & _selected_files) const
@@ -315,128 +323,97 @@ namespace btg
             encryption_enabled_ = _encryption;
          }
 
+         void Handler::onTrackerInfo(t_strList const& _trackerlist)
+         {
+            commandStatus = true;
+            setTrackerList(_trackerlist);
+         }
+
+         void Handler::onCreateFromUrl(t_uint const _id)
+         {
+            commandStatus = true;
+            setUrlId(_id);
+         }
+
+         void Handler::onCreateFromUrlError(std::string const& _message)
+         {
+            commandStatus = false;
+         }
+
+         void Handler::onFileStatus(t_uint const _id, 
+                                    t_uint const _status)
+         {
+            commandStatus = true;
+            setFileStatusResponse(_id, _status);
+         }
+
+         void Handler::onFileStatusError(std::string const& _errorDescription)
+         {
+            commandStatus = false;
+         }
+
+         void Handler::onUrlStatus(t_uint const _id, 
+                                   t_uint const _status)
+         {
+            commandStatus = true;
+            setUrlStatusResponse(_id, _status);
+         }
+
+         void Handler::onUrlStatusError(std::string const& _message)
+         {
+            commandStatus = false;
+         }
+
+         void Handler::onUrlDlProgress(t_uint const _id,
+                                       t_uint _dltotal, t_uint _dlnow, t_uint _dlspeed)
+         {
+            commandStatus = true;
+            setUrlDlProgress(_dltotal, _dlnow, _dlspeed);
+         }
+
+         void Handler::onCreateFromFile(t_uint const _id)
+         {
+            commandStatus = true;
+            setFileId(_id);
+         }
+
+         void Handler::onCreateFromFileError(std::string const& _errorDescription)
+         {
+            commandStatus = false;
+         }
+
+         void Handler::OnCreateFromFilePart()
+         {
+            commandStatus = true;
+         }
+
+         void Handler::OnCreateFromFilePartError(std::string const& _errorDescription)
+         {
+            commandStatus = false;
+         }
+
+         void Handler::onFileCancel()
+         {
+            
+         } 
+
+         void Handler::onFileCancelError(std::string const& _errorDescription)
+         {
+
+         }
+
+         void Handler::onUrlCancel()
+         {
+            
+         }
+
+         void Handler::onUrlCancelError(std::string const& _errorDescription)
+         {
+            
+         }
+
          Handler::~Handler()
          {
-         }
-
-         /* */
-         /* */
-         /* */
-
-         ncliStartupHelper::ncliStartupHelper(btg::core::LogWrapperType _logwrapper,
-                                              btg::core::client::clientConfiguration*        _config,
-                                              btg::core::client::commandLineArgumentHandler* _clah,
-                                              btg::core::messageTransport*                   _messageTransport,
-                                              btg::core::client::clientHandler*              _handler)
-            : btg::core::client::startupHelper(_logwrapper,
-                                               GPD->sCLI_CLIENT(),
-                                               _config,
-                                               _clah,
-                                               _messageTransport,
-                                               _handler)
-         {
-         }
-
-         t_long ncliStartupHelper::queryUserAboutSession(t_longList const& _sessions,
-                                                         t_strList const& _sessionsIDs) const
-         {
-            std::cout << "Session(s):" << std::endl;
-
-            t_strListCI sessionIdIter = _sessionsIDs.begin();
-            t_int session_no          = 0;
-            for (t_longListCI vlci = _sessions.begin();
-                 vlci != _sessions.end();
-                 vlci++)
-               {
-                  std::cout << session_no << ": " << *vlci << " (" << *sessionIdIter << ")" << std::endl;
-                  sessionIdIter++;
-                  session_no++;
-               }
-
-            // Get user input.
-            bool done = false;
-            t_int input = -1;
-            while (done != true)
-               {
-                  if ((session_no-1) > 0)
-                     {
-                        std::cout << "Enter a number (0-" << (session_no-1) << "): " << std::endl;
-                     }
-                  else
-                     {
-                        std::cout << "Enter a number: " << std::endl;
-                     }
-
-                  if(!(std::cin >> input))
-                     {
-                        std::cin.clear();
-                        std::cin.ignore(254, '\n');
-                     }
-                  else
-                     {
-                        if (input >= 0 && input < session_no)
-                           {
-                              done = true;
-                           }
-                     }
-               }
-
-            return _sessions.at(input);
-         }
-
-         bool ncliStartupHelper::authUserQuery()
-         {
-            bool status = true;
-
-            std::cout << "Username:" << std::endl;
-
-            std::string username;
-
-            std::cin >> username;
-
-            std::cout << "Password:" << std::endl;
-
-            std::string password;
-
-            if (!btg::core::os::stdIn::getPassword(password))
-               {
-                  std::cout << "Unable to get password." << std::endl;
-
-                  status = false;
-                  return status;
-               }
-
-            setAuth(username, password);
-
-            return status;
-         }
-
-         void ncliStartupHelper::showSessions(t_longList const& _sessions,
-                                              t_strList const& _sessionNames) const
-         {
-            t_strListCI sessionNameIter = _sessionNames.begin();
-
-            if (_sessions.size() > 0)
-               {
-                  std::cout << "Session(s):" << std::endl;
-
-                  for (t_longListCI vlci = _sessions.begin();
-                       vlci != _sessions.end();
-                       vlci++)
-                     {
-                        std::cout << *vlci << " (" << *sessionNameIter << ")" << std::endl;
-                        sessionNameIter++;
-                     }
-               }
-            else
-               {
-                  std::cout << "No sessions to list." << std::endl;
-               }
-         }
-
-         ncliStartupHelper::~ncliStartupHelper()
-         {
-
          }
 
       } // namespace cli

@@ -485,6 +485,113 @@ class BTG
 		return $this->addExtraOutput($output);
 	}
 
+   function getFiles($id)
+   {
+      $r = $this->executeCommand(new contextFileInfoCommand((int)$id));
+
+      if($r == NULL)
+         {
+            return array();
+         }
+
+      if ($r instanceof contextFileInfoResponseCommand)
+         {
+            return $r->getFileInfoList();
+         }
+    
+      return array();
+   }
+
+   function fileEntryToPercent($entry)
+   {
+      $percent = 0;
+
+      if ($entry->isFull())
+         {
+            $percent = 100;
+         }
+      else if ($entry->isEmpty())
+         {
+            $percent = 0;
+         }
+      else
+         {
+            $bits      = $entry->getBits();
+            $bit_set   = 0;
+            $bit_unset = 0;
+            
+            foreach($bits as $bit)
+               {
+                  if ($bit)
+                     {
+                        $bit_set++;
+                     }
+                  else
+                     {
+                        $bit_unset++;
+                     }
+               }
+
+            $percent = (integer)($bit_set * 100 / ($bit_set + $bit_unset));
+         }
+
+      return $percent;
+   }
+
+   // !!!
+
+   function genericSelectFile($contextID=contextCommand::UNDEFINED_CONTEXT, $filename, $value)
+   {
+      $this->attachLast();
+		if(!$this->sessionAttached)
+			return $this->addExtraOutput("");
+		
+		$output = "";
+		if(!$this->sessionAttached)
+         {
+            $this->log_error("No session attached, can't set limits.");
+         }
+		else
+		{
+         $entry      = new selectedFileEntry($filename, $value);
+         $filelist   = array();
+         $filelist[] = $entry;
+
+			$r = $this->executeCommand(new contextSetFilesCommand((int)$contextID, $filelist));
+			if($r instanceof ackCommand)
+			{
+				$output .= "<ack/>\n";
+			}
+		}
+		return $this->addExtraOutput($output);
+   }
+
+   function contextSelectFile($contextID=contextCommand::UNDEFINED_CONTEXT, $filename)
+   {
+      return $this->genericSelectFile($contextID, $filename, true);
+	}
+
+   function contextUnSelectFile($contextID=contextCommand::UNDEFINED_CONTEXT, $filename)
+   {
+      return $this->genericSelectFile($contextID, $filename, false);
+   }
+
+   function getSelectedFiles($id)
+   {
+		$r = $this->executeCommand(new contextGetFilesCommand((int)$id, false));
+		if ($r == NULL)
+         {
+            return array();
+         }
+
+		if ($r instanceof contextGetFilesResponseCommand)
+         {
+            return $r->getFileList();
+         }
+      
+		return array();
+   }
+
 	/// Get global limit
 	function globalLimitStatus()
 	{
@@ -549,7 +656,7 @@ class BTG
 		return $this->contextCreateWithData($filename, $file['tmp_name']);
 	}
 
-	/// Start a torrent
+	/// Start a torrent, from data
 	public function contextCreateWithData($torrent_filename, $tmpfile="")
 	{
 		$this->attachLast();
@@ -573,6 +680,42 @@ class BTG
 		$output = "";
 		if($r instanceof ackCommand)
 			$output.="<ack/>";
+
+		return $this->addExtraOutput($output);
+	}
+
+	/// Start a torrent, from URL
+	public function contextCreateFromUrl($filename, $torrent_url)
+	{
+		$this->attachLast();
+		if(!$this->sessionAttached)
+			return $this->addExtraOutput("");
+
+		$r = $this->executeCommand(new contextCreateFromUrlCommand($filename, $torrent_url, $this->autostart));
+		if($r == NULL)
+			return $this->addExtraOutput("");
+
+		$output = "";
+		if($r instanceof contextCreateFromUrlResponseCommand)
+			$output.='<url><id>'.$r->getId().'</id></url>';
+
+		return $this->addExtraOutput($output);
+	}
+
+	/// Check createfromURL status
+	public function contextUrlStatus($id)
+	{
+		$this->attachLast();
+		if(!$this->sessionAttached)
+			return $this->addExtraOutput("");
+
+		$r = $this->executeCommand(new contextUrlStatusCommand((int)$id));
+		if($r == NULL)
+			return $this->addExtraOutput("");
+
+		$output = "";
+		if($r instanceof contextUrlStatusResponseCommand)
+			$output.='<url><id>'.$r->getId().'</id><status>'.$r->getStatus().'</status></url>';
 
 		return $this->addExtraOutput($output);
 	}
@@ -633,14 +776,84 @@ class BTG
 					if($r2 instanceof contextGetTrackersResponseCommand)
 					{
 						$arr = $r2->getTrackers();
-						$output .= "<tracker>"
-							. str_replace("\"","&quot;",str_replace(">","&gt;",str_replace("<","&lt;",str_replace("&","&amp;",$arr[0]))))
-							. "</tracker>\n";
+						$output .= "<tracker>".htmlspecialchars($arr[0])."</tracker>\n";
 					}
 
-					// $output .= contextTrackers($contextStatus->getContextID());
-					$output .= "</context>\n";
-				}
+               // Get the list of contained files.
+               $output .= "<fileinfo>\n";
+
+               // Only get file information in certain states.
+               if ($contextStatus->getStatus() >= 3)
+                  {
+                     // Get list of selected files first,
+                     $selected_files = $this->getSelectedFiles((int)$contextStatus->getContextID());
+                     $files          = $this->getFiles((int)$contextStatus->getContextID());
+               
+                     // !!!
+                     $fileId = 0;
+
+                     $saved_dir = "";
+
+                     foreach($selected_files as $entry)
+                        {
+                           $f  = $entry->getFilename();
+                           $fs = 0;
+                           $pc = 0;
+                           
+                           if ($entry->getSelected() == true)
+                              {
+                                 $selected = 1;
+                                 
+                                 foreach($files as $file_entry)
+                                    {
+                                       if ($file_entry->getFilename() == $f)
+                                          {
+                                             // File size.
+                                             $fs = $file_entry->getFileSize();
+                                             
+                                             // Percent done.
+                                             $pc = $this->fileEntryToPercent($file_entry);
+                                          }
+                                    }
+                              }
+                           else
+                              {
+                                 $selected = 0;
+                              }
+
+                           $output .= "<file>\n";
+                           
+                           $output .= "<id>".$fileId."</id>\n";
+                           $fileId++;
+                           
+
+                           $dir = dirname($f);
+
+                           if ($dir != $saved_dir)
+                              {
+                                 $output .= "<dir>";
+                                 $output .= htmlspecialchars($dir);
+                                 $output .= "</dir>\n";
+                                 $saved_dir = $dir;
+                              }
+                           else
+                              {
+                                 $output .= "<dir></dir>\n";
+                              }
+
+                           $output .= "<name>".htmlspecialchars(basename($f))."</name>\n";
+                           $output .= "<selected>".$selected."</selected>\n";
+                           $output .= "<size>".$fs."</size>\n";
+                           $output .= "<percent>".$pc."</percent>\n";
+                           $output .= "</file>";
+
+                           $this->logMessage("Entry: ".$f.", ".$selected);
+                        }
+                  } // file information
+
+               $output .= "</fileinfo>\n";
+               $output .= "</context>\n";
+            }
 			}else
 			{
 				$output .= "<context>\n";
@@ -677,9 +890,7 @@ class BTG
 				if($r2 instanceof contextGetTrackersResponseCommand)
 				{
 					$arr = $r2->getTrackers();
-					$output .= "<tracker>"
-						. str_replace("\"","&quot;",str_replace(">","&gt;",str_replace("<","&lt;",str_replace("&","&amp;",$arr[0]))))
-						. "</tracker>\n";
+					$output .= "<tracker>".htmlspecialchars($arr[0])."</tracker>\n";
 				}
 
 				$output .= "</context>\n";
@@ -893,7 +1104,7 @@ class BTG
 				foreach($r->getFileInfoList() as $file)
 				{
 					$output .= "<file>\n";
-					$output .= "<filename>".$file->getFilename()."</filename>\n";
+					$output .= "<filename>".htmlspecialchars($file->getFilename())."</filename>\n";
 					$output .= "<filesize>".$file->getFileSize()."</filesize>\n";
 					$output .= "<pieces>".$file->size()."</pieces>\n";
 					// Save ont the sent data..
@@ -945,6 +1156,8 @@ try
 	$ajax->register('btg_sessionQuit', array($btg, 'sessionQuit'));
 	$ajax->register('btg_cleanAll', array($btg, 'cleanAll'));
 	$ajax->register('btg_contextStatus', array($btg, 'contextStatus'));
+	$ajax->register('btg_contextCreateFromUrl', array($btg, 'contextCreateFromUrl'));
+	$ajax->register('btg_contextUrlStatus', array($btg, 'contextUrlStatus'));
 	$ajax->register('btg_contextLimit', array($btg, 'contextLimit'));
 	$ajax->register('btg_contextLimitStatus', array($btg, 'contextLimitStatus'));
 	$ajax->register('btg_contextStart', array($btg, 'contextStart'));
@@ -959,6 +1172,8 @@ try
 	$ajax->register('btg_globallimitstatus', array($btg, 'globalLimitStatus'));
 	$ajax->register('btg_sessionName', array($btg, 'sessionName'));
 	$ajax->register('btg_setSessionName', array($btg, 'setSessionName'));
+   $ajax->register('btg_contextSelectFile', array($btg, 'contextSelectFile'));
+   $ajax->register('btg_contextUnSelectFile', array($btg, 'contextUnSelectFile'));
 
 	// Handle any requests
 	if($ajax->handle_client_request())

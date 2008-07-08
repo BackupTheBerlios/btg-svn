@@ -6,11 +6,15 @@ if BUILDCLI
   BCORE_CLIENT = client
 endif
 
+if BUILDVIEWER
+  BCORE_CLIENT = client
+endif
+
 # Build the current directory first, since the client stuff depends on
 # commands etc.
 SUBDIRS            = . $(BCORE_CLIENT)
 
-pkglib_LTLIBRARIES    = libbtgcore.la
+pkglib_LTLIBRARIES = libbtgcore.la
 
 OS_SOURCES=os/sleep.cpp \
 os/fileop.cpp \
@@ -27,7 +31,9 @@ os/stdin.cpp \
 os/exec.cpp \
 os/timer.cpp \
 os/gzipif.cpp \
-os/gzip.cpp
+os/gzip.cpp \
+os/fstream.cpp \
+os/pidfile.cpp
 
 TRANSPORT_SOURCES=transport/transport.cpp \
 transport/tcpipbase.cpp \
@@ -44,6 +50,8 @@ command/context_abort.cpp \
 command/context_clean.cpp \
 command/context_clean_rsp.cpp \
 command/context_create.cpp \
+command/context_create_url.cpp \
+command/context_create_file.cpp \
 command/context_last.cpp \
 command/context_start.cpp \
 command/context_status.cpp \
@@ -72,7 +80,9 @@ command/session_error.cpp \
 command/session_name.cpp \
 command/session_rw.cpp \
 command/session_info.cpp \
+command/opstat.cpp \
 command/setup.cpp \
+command/version.cpp \
 command/kill.cpp \
 command/limit.cpp \
 command/uptime.cpp \
@@ -115,9 +125,17 @@ $(COMMAND_SOURCES) \
 command_factory.cpp \
 $(LOGGER_SOURCES) \
 $(EXTERNALIZATION_SOURCES) \
-$(AUTH_SOURCES)
+$(AUTH_SOURCES) \
+bitvector.cpp \
+urlstatus.cpp
 
-libbtgcore_la_LIBADD = $(top_builddir)/external/xmlrpc-epi/src/libxmlrpc.la 
+libbtgcore_la_LIBADD = @XMLRPC_LDFLAGS@ @LIBTORRENT_LIBS@ @BOOST_IOSTREAMS_LIB@ \
+@LIBGNUTLS_LIBS@ @BOOST_PROGRAM_OPTIONS_LIB@ \
+@BOOST_THREAD_LIB@ @BOOST_FILESYSTEM_LIB@ @BOOST_SYSTEM_LIB@
+
+if BUILDINTERNALXMLRPC
+  libbtgcore_la_LIBADD += $(top_builddir)/external/xmlrpc-epi/src/libxmlrpc.la
+endif
 
 OS_HEADER=os/sleep.h \
 os/fileop.h \
@@ -136,7 +154,9 @@ os/stdin.h \
 os/exec.h \
 os/timer.h \
 os/gzipif.h \
-os/gzip.h
+os/gzip.h \
+os/fstream.h \
+os/pidfile.h
 
 TRANSPORT_HEADER=transport/transport.h \
 transport/direction.h \
@@ -154,6 +174,8 @@ command/context_abort.h \
 command/context_clean.h \
 command/context_clean_rsp.h \
 command/context_create.h \
+command/context_create_url.h \
+command/context_create_file.h \
 command/context_last.h \
 command/context_start.h \
 command/context_status.h \
@@ -182,7 +204,9 @@ command/session_error.h \
 command/session_name.h \
 command/session_rw.h \
 command/session_info.h \
+command/opstat.h \
 command/setup.h \
+command/version.h \
 command/kill.h \
 command/limit.h \
 command/uptime.h \
@@ -203,12 +227,9 @@ externalization/externalization_factory.h
 AUTH_HEADER=auth/hash.h
 
 noinst_HEADERS     = t_string.h type.h type_btg.h project.h \
-transport/transport.h \
-transport/tcpip.h \
-transport/http.h \
 hru.h hrr.h hrt.h \
 sigh.h \
-logmacro.h util.h status.h trackerstatus.h peer.h file_info.h dbuf.h sbuf.h \
+logmacro.h util.h status.h opstatus.h trackerstatus.h peer.h file_info.h dbuf.h sbuf.h \
 logable.h \
 crashlog.h \
 serializable.h printable.h addrport.h \
@@ -223,18 +244,23 @@ $(COMMAND_HEADER) \
 command_factory.h \
 $(LOGGER_HEADER) \
 $(EXTERNALIZATION_HEADER) \
-$(AUTH_HEADER)
+$(AUTH_HEADER) \
+bitvector.h \
+urlstatus.h
 
-AM_CFLAGS           = @CFLAGS@   @DEBUG_CFLAGS@ \
+AM_CFLAGS           = @CFLAGS@   @DEBUG_CFLAGS@ @XMLRPC_CFLAGS@ \
                     -DBTG_DEBUG=@BTG_DEBUG@ \
                     -DBTG_VERSION="@VERSION@" \
                     -DBTG_BUILD="@BTG_BUILD@" \
-                    -DBTG_SVNREV="@BTG_SVNREV@"
+                    -DBTG_REV="@BTG_REV@" \
+                    -DBTG_INTERNAL_XMLRPC="@BTG_INTERNAL_XMLRPC@"
 
-AM_CXXFLAGS         = @CXXFLAGS@ @DEBUG_CXXFLAGS@ \
+AM_CXXFLAGS         = @CXXFLAGS@ @DEBUG_CXXFLAGS@ @XMLRPC_CFLAGS@ \
                     -DBTG_DEBUG=@BTG_DEBUG@ \
                     -DBTG_VERSION="@VERSION@" \
                     -DBTG_BUILD="@BTG_BUILD@" \
-                    -DBTG_SVNREV="@BTG_SVNREV@"
+                    -DBTG_REV="@BTG_REV@" \
+                    -DBTG_INTERNAL_XMLRPC="@BTG_INTERNAL_XMLRPC@" \
+                    -DPREFIX=\"@prefix@\"
 
 INCLUDES            = -I$(top_srcdir) 

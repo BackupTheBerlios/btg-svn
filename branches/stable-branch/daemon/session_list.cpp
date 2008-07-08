@@ -2,6 +2,7 @@
 #include <bcore/verbose.h>
 
 #include "modulelog.h"
+#include <daemon/ipfilter/ipfilterif.h>
 
 namespace btg
 {
@@ -76,9 +77,9 @@ namespace btg
       }
 
       bool sessionList::get(t_long const & _session, 
-                            eventHandler* & _eventhandler)
+                            eventHandler* & _eventhandler) const
       {
-         std::map<t_long, eventHandler*>::iterator iter = eventhandlers_.find(_session);
+         std::map<t_long, eventHandler*>::const_iterator iter = eventhandlers_.find(_session);
 
          if (iter == eventhandlers_.end())
             {
@@ -242,6 +243,16 @@ namespace btg
       t_uint sessionList::size() const
       {
          return eventhandlers_.size();
+      }
+
+      void sessionList::updateFilter(IpFilterIf* _filter)
+      {
+         for (std::map<t_long, btg::daemon::eventHandler*>::iterator iter = eventhandlers_.begin(); 
+              iter != eventhandlers_.end(); 
+              iter++)
+            {
+               iter->second->updateFilter(_filter);
+            }
       }
 
       sessionList::~sessionList()

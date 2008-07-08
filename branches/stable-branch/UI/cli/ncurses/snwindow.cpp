@@ -47,7 +47,7 @@ namespace btg
          {
             // Keys used by this window.
             std::vector<keyMapping::KEYLABEL> labels;
-            labels.push_back(keyMapping::K_QUITSCREEN);
+            labels.push_back(keyMapping::K_BACK);
             labels.push_back(keyMapping::K_HELP);
             labels.push_back(keyMapping::K_DELETE);
             labels.push_back(keyMapping::K_SELECT);
@@ -81,7 +81,7 @@ namespace btg
 
                   switch (label)
                      {
-                     case keyMapping::K_QUITSCREEN:
+                     case keyMapping::K_BACK:
                         {
                            cont = false;
                            break;
@@ -227,7 +227,7 @@ namespace btg
                }
 
             if (helpWindow::generateHelpForKey(kmap_,
-                                               keyMapping::K_QUIT,
+                                               keyMapping::K_BACK,
                                                "",
                                                keyDescr,
                                                false))

@@ -57,20 +57,6 @@ namespace btg
          ip_[3] = _address.ip_[3];
       }
 
-      std::string Address::getIp() const
-      {
-         std::string output;
-         output += convertToString<t_int>(ip_[0]);
-         output += ".";
-         output += convertToString<t_int>(ip_[1]);
-         output += ".";
-         output += convertToString<t_int>(ip_[2]);
-         output += ".";
-         output += convertToString<t_int>(ip_[3]);
-
-         return output;
-      }
-
       bool Address::fromString(std::string const& _input)
       {
          bool status = false;
@@ -94,7 +80,7 @@ namespace btg
                      
                      btg::core::stringToNumber<t_int>(ip_lst[i], ip_part);
                      
-                     if ((ip_part >= 0) && (ip_part <= 254))
+                     if ((ip_part >= 0) && (ip_part <= 255))
                         {
                            temp_ip[i] = ip_part;
                         }
@@ -207,11 +193,11 @@ namespace btg
 
       bool Address::valid() const
       {
-         bool status = false;
+         bool status = true;
 
-         if ( (ip_[0] > 0) && (ip_[1] > 0) && (ip_[2] > 0) && (ip_[3] > 0))
+         if ( (ip_[0] == 0) && (ip_[1] == 0) && (ip_[2] == 0) && (ip_[3] == 0))
             {
-               status = true;
+               status = false;
             }
 
          return status;

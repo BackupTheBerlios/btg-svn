@@ -32,8 +32,9 @@
 #include <bcore/command/session_attach.h>
 
 #include <bcore/auth/hash.h>
-#include <bcore/logable.h>
+ #include <bcore/logable.h>
 #include <bcore/command_factory.h>
+#include <bcore/sbuf.h>
 
 namespace btg
 {
@@ -59,9 +60,9 @@ namespace btg
             /// @param [in] _clientcallback Pointer to an instance which are used for callbacks.
             /// @param [in] _verboseFlag    Instructs the statemachine to do verbose logging.
             stateMachine(LogWrapperType _logwrapper,
-                         btg::core::externalization::Externalization* _e,
-                         btg::core::messageTransport *_transport,
-                         clientCallback *_clientcallback,
+                         btg::core::externalization::Externalization& _e,
+                         btg::core::messageTransport& _transport,
+                         clientCallback& _clientcallback,
                          bool const _verboseFlag);
 
             /// Make the machine work: change states, call callbacks.
@@ -100,6 +101,8 @@ namespace btg
             void doMoveContext(t_int const _id,
                                t_long const _toSession);
             /// Action.
+            void doVersion();
+            /// Action.
             void doAttach(attachSessionCommand* _command);
             /// Action.
             void doDetach();
@@ -110,6 +113,32 @@ namespace btg
             /// Action.
             void doCreate(std::string const& _pathToTorrent,
                           bool const _start = true);
+            /// Action.
+            void doCreateFromUrl(std::string const& _filename,
+                                 std::string const& _url,
+                                 bool const _start = true);
+            /// Action.
+            void doCreateFromFile(std::string const& _filename,
+                                  t_uint const _numberOfParts,
+                                  bool const _start = true);
+
+            /// Action.
+            void doTransmitFilePart(t_uint const _id, 
+                                    t_uint const _part,
+                                    btg::core::sBuffer const& _buffer);
+
+            /// Action.
+            void doUrlStatus(t_uint const _id);
+
+            /// Action.
+            void doFileStatus(t_uint const _id);
+
+            /// Cancel file upload.
+            void doCancelFile(t_uint const _id);
+
+            /// Cancel URL download.
+            void doCancelUrl(t_uint const _id);
+
             /// Action.
             void doLast();
             /// Action.
@@ -123,7 +152,8 @@ namespace btg
             /// Action.
             void doFileInfo(t_int const _contextID, bool const _allContexts = false);
             /// Action.
-            void doPeers(t_int const _contextID, bool const _allContexts = false);
+            void doPeers(t_int const _contextID, bool const _allContexts = false,
+               t_uint const *const _offset = 0, t_uint const *const _count = 0);
 
             /// Action.
             void doLimit(t_int const _contextID,
@@ -146,13 +176,16 @@ namespace btg
             /// Action.
             void doClean(t_int const _contextID, bool const _allContexts = false);
 
+            /// Action.
+            void doTrackers(t_int const _contextID, bool const _allContexts = false);
+
             /// Destructor.
             virtual ~stateMachine();
 
          private:
 
             /// Pointer to the externalization which is used.
-            btg::core::externalization::Externalization* externalization_;
+            btg::core::externalization::Externalization& externalization_;
 
             /// The command factory used by this class.
             btg::core::commandFactory cf;
@@ -212,7 +245,7 @@ namespace btg
             /// Maximum value of the session list message counter.
             t_int const                           counter_session_list_max;
             /// The message que used to communicate with the daemon.
-            btg::core::messageTransport*        transport;
+            btg::core::messageTransport&        transport;
             /// Do* functions add commands to this vector.
             t_commandPointerList                commands;
             // std::vector<btg::core::Command*> commands;
@@ -225,19 +258,22 @@ namespace btg
             /// The type of command the expected Ack is for.
             btg::core::Command::commandType     ackForCommand;
             /// Pointer to the instance of the client callback class.
-            clientCallback*                     clientcallback;
+            clientCallback&                     clientcallback;
 
             /// Used to keep the number of calls to read.
-            t_int                                 read_counter;
+            t_int                                 counter_read;
 
             /// The max number of reads before this machine gives up.
-            t_int const                           max_read_counter;
+            t_int const                           counter_read_max;
 
             /// The minimum amount of sleeping betweeen reads.
             t_int const                           min_sleep_in_ms;
 
             /// Indicates if the statemachine should do verbose logging.
             bool const                            verboseFlag_;
+
+            /// Saved type of current operation status.
+            t_uint                                opType_;
 
             /// Convert a state to a std::string.
             /// @param [in] _state The state.
@@ -383,6 +419,21 @@ namespace btg
             void cb_CN_SNAME(btg::core::Command* _command);
             /// Call a callback. Session information.
             void cb_CN_SINFO(btg::core::Command* _command);
+            /// Call a callback. URL downloading.
+            void cb_CN_CCREATEFROMURL(btg::core::Command* _command);
+            /// Call a callback. Operation status.
+            void cb_CN_OPSTATUS(btg::core::Command* _command);
+            /// Call a callback. Url status.
+            void cb_urlOpStatus(btg::core::Command* _command);
+            /// Call a callback. File status.
+            void cb_fileOpStatus(btg::core::Command* _command);
+            /// Call a callback, file upload.
+            void cb_CN_CCREATEFROMFILERSP(btg::core::Command* _command);
+            /// Call a callback, list of trackers.
+            void cb_CN_CGETTRACKERS(btg::core::Command* _command);
+
+            /// Call a callback. Version and options.
+            void cb_CN_VERSION(btg::core::Command* _command);
          private:
             /// Copy constructor.
             stateMachine(stateMachine const& _sm);

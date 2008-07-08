@@ -43,23 +43,6 @@ class BTGSerializable
 		$dst = $value;
 	}
 
-	protected function addBytes(&$dst, &$src, $size)
-	{
-		$dst[] = (int)$size;
-		$dst[] = new XMLRPC_Base64($src);
-	}
-
-	protected function getBytes(&$dst, &$src, &$size)
-	{
-		bytesToInt($size, $src);
-
-		$value = array_shift($src);
-		if(!is_string($value))
-			throw new BTGException("BTGSerializable::getBytes failed. Value is '$value' of type ".gettype($value).".");
-
-		$dst = $value;
-	}
-
 	protected function boolToBytes(&$dst, &$src)
 	{
 		if(!is_bool($src))
@@ -239,6 +222,23 @@ class BTGSerializable
 		$value = array_shift($src);
 		if(!is_string($value))
 			throw new BTGException("BTGSerializable::bytesToString failed. Value is '$value' of type ".gettype($value).".");
+
+		$dst = $value;
+	}
+
+	protected function addBytes(&$dst, &$src, $size)
+	{
+		$dst[] = (int)$size;
+		$dst[] = new XMLRPC_Base64($src);
+	}
+
+	protected function getBytes(&$dst, &$src, &$size)
+	{
+		$this->bytesToInt($size, $src);
+
+		$value = array_shift($src);
+		if(!is_string($value))
+			throw new BTGException("BTGSerializable::getBytes failed. Value is '$value' of type ".gettype($value).".");
 
 		$dst = $value;
 	}

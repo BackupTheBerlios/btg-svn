@@ -42,9 +42,13 @@
 #include <bcore/command/session_info.h>
 #include <bcore/command/uptime.h>
 #include <bcore/command/list.h>
+#include <bcore/command/version.h>
+#include <bcore/command/opstat.h>
 
 #include <bcore/command/context_last.h>
 #include <bcore/command/context_create.h>
+#include <bcore/command/context_create_url.h>
+#include <bcore/command/context_create_file.h>
 #include <bcore/command/context_abort.h>
 
 #include <bcore/command/context_clean.h>
@@ -56,8 +60,10 @@
 #include <bcore/command/context_status.h>
 #include <bcore/command/context_stop.h>
 #include <bcore/command/context_file.h>
-
+#include <bcore/command/context_tracker.h>
 #include <bcore/command/limit.h>
+#include <bcore/opstatus.h>
+#include <bcore/client/urlhelper.h>
 
 #if BTG_STATEMACHINE_DEBUG
 #include <bcore/logmacro.h>
@@ -74,7 +80,7 @@ namespace btg
 
          void stateMachine::cb_CN_GLIST(btg::core::Command* _command)
          {
-            clientcallback->onList(
+            clientcallback.onList(
                                    dynamic_cast<listCommandResponse*>(_command)->getIDs(),
                                    dynamic_cast<listCommandResponse*>(_command)->getFilanames()
                                    );
@@ -86,7 +92,7 @@ namespace btg
 #if BTG_STATEMACHINE_DEBUG
             BTG_NOTICE(logWrapper(), "CN_GSETUP called in expectedReply");
 #endif // BTG_STATEMACHINE_DEBUG
-            clientcallback->onSetup(
+            clientcallback.onSetup(
                                     dynamic_cast<setupResponseCommand*>(_command)->getSession()
                                     );
          }
@@ -95,7 +101,7 @@ namespace btg
          {
             limitStatusResponseCommand* lsrc = dynamic_cast<limitStatusResponseCommand*>(_command);
 
-            clientcallback->onGlobalLimitResponse(lsrc->getUploadLimit(),
+            clientcallback.onGlobalLimitResponse(lsrc->getUploadLimit(),
                                                   lsrc->getDownloadLimit(),
                                                   lsrc->getMaxUplds(),
                                                   lsrc->getMaxConnections()
@@ -107,14 +113,14 @@ namespace btg
             contextCleanResponseCommand* ccrc = 
                dynamic_cast<contextCleanResponseCommand*>(_command);
 
-            clientcallback->onClean(ccrc->getFilenames(),
+            clientcallback.onClean(ccrc->getFilenames(),
                                     ccrc->getContextIDs()
                                     );
          }
 
          void stateMachine::cb_CN_GUPTIME(btg::core::Command* _command)
          {
-            clientcallback->onUptime(dynamic_cast<uptimeResponseCommand*>(_command)->getUptime());
+            clientcallback.onUptime(dynamic_cast<uptimeResponseCommand*>(_command)->getUptime());
          }
 
          void stateMachine::cb_CN_CSTATUS(btg::core::Command* _command)
@@ -125,12 +131,12 @@ namespace btg
                {
                case Command::CN_CSTATUSRSP:
                   {
-                     clientcallback->onStatus(dynamic_cast<contextStatusResponseCommand*>(_command)->getStatus());
+                     clientcallback.onStatus(dynamic_cast<contextStatusResponseCommand*>(_command)->getStatus());
                      break;
                   }
                case Command::CN_CALLSTATUSRSP:
                   {
-                     clientcallback->onStatusAll(dynamic_cast<contextAllStatusResponseCommand*>(_command)->getStatus());
+                     clientcallback.onStatusAll(dynamic_cast<contextAllStatusResponseCommand*>(_command)->getStatus());
                      break;
                   }
                }
@@ -138,22 +144,28 @@ namespace btg
 
          void stateMachine::cb_CN_CALLSTATUSRSP(btg::core::Command* _command)
          {
-            clientcallback->onStatusAll(dynamic_cast<contextAllStatusResponseCommand*>(_command)->getStatus());
+            clientcallback.onStatusAll(dynamic_cast<contextAllStatusResponseCommand*>(_command)->getStatus());
          }
 
          void stateMachine::cb_CN_CLASTRSP(btg::core::Command* _command)
          {
-            clientcallback->onLast(dynamic_cast<lastCIDResponseCommand*>(_command)->getContextId());
+            clientcallback.onLast(dynamic_cast<lastCIDResponseCommand*>(_command)->getContextId());
          }
 
          void stateMachine::cb_CN_CFILEINFO(btg::core::Command* _command)
          {
-            clientcallback->onFileInfo(dynamic_cast<contextFileInfoResponseCommand*>(_command)->getFileInfoList());
+            clientcallback.onFileInfo(dynamic_cast<contextFileInfoResponseCommand*>(_command)->getFileInfoList());
          }
 
          void stateMachine::cb_CN_CPEERS(btg::core::Command* _command)
          {
-            clientcallback->onPeers(dynamic_cast<contextPeersResponseCommand*>(_command)->getList());
+            contextPeersResponseCommand *cprc = dynamic_cast<contextPeersResponseCommand*>(_command);
+            assert(cprc);
+
+            clientcallback.onPeers(cprc->getList());
+            
+            if (cprc->isEx())
+               clientcallback.onPeersEx(cprc->getExOffset(), cprc->getExList());
          }
 
          void stateMachine::cb_CN_CLIMITSTATUS(btg::core::Command* _command)
@@ -161,7 +173,7 @@ namespace btg
             contextLimitStatusResponseCommand* clsrc = 
                dynamic_cast<contextLimitStatusResponseCommand*>(_command);
 
-            clientcallback->onLimitStatus(clsrc->getUploadLimit(),
+            clientcallback.onLimitStatus(clsrc->getUploadLimit(),
                                           clsrc->getDownloadLimit(),
                                           clsrc->getSeedLimit(),
                                           clsrc->getSeedTimeout());
@@ -169,7 +181,7 @@ namespace btg
 
          void stateMachine::cb_CN_CGETFILES(btg::core::Command* _command)
          {
-            clientcallback->onSelectedFiles(
+            clientcallback.onSelectedFiles(
                                             dynamic_cast<contextGetFilesResponseCommand*>(_command)->getFiles()
                                             );
          }
@@ -178,14 +190,82 @@ namespace btg
          {
             sessionNameResponseCommand* snrc = dynamic_cast<sessionNameResponseCommand*>(_command);
 
-            clientcallback->onSessionName(snrc->getName());
+            clientcallback.onSessionName(snrc->getName());
          }
 
          void stateMachine::cb_CN_SINFO(btg::core::Command* _command)
          {
             sessionInfoResponseCommand* sirc = dynamic_cast<sessionInfoResponseCommand*>(_command);
 
-            clientcallback->onSessionInfo(sirc->encryption(), sirc->dht());
+            clientcallback.onSessionInfo(sirc->encryption(), sirc->dht());
+         }
+
+         void stateMachine::cb_CN_CCREATEFROMURL(btg::core::Command* _command)
+         {
+            contextCreateFromUrlResponseCommand* ccfurc = dynamic_cast<contextCreateFromUrlResponseCommand*>(_command);
+
+            clientcallback.onCreateFromUrl(ccfurc->id());
+         }
+
+         void stateMachine::cb_CN_OPSTATUS(btg::core::Command* _command)
+         {
+            opStatusResponseCommand* cosrc = dynamic_cast<opStatusResponseCommand*>(_command);
+
+            if (cosrc->type() != opType_)
+               {
+                  // Not the expected type. 
+                  return;
+               }
+ 
+            switch (cosrc->type())
+               {
+               case btg::core::ST_URL:
+                  cb_urlOpStatus(cosrc);
+                  break;
+               case btg::core::ST_FILE:
+                  cb_fileOpStatus(cosrc);
+                  break;
+               default:
+                  break;
+               }
+         }
+
+         void stateMachine::cb_urlOpStatus(btg::core::Command* _command)
+         {
+            opStatusResponseCommand* cosrc = dynamic_cast<opStatusResponseCommand*>(_command);
+
+            clientcallback.onUrlStatus(cosrc->id(), cosrc->status());
+
+            t_uint dltotal, dlnow, dlspeed;            
+            if (getDlProgress(*cosrc, dltotal, dlnow, dlspeed))
+               {
+                  clientcallback.onUrlDlProgress(cosrc->id(), dltotal, dlnow, dlspeed);
+               }
+         }
+
+         void stateMachine::cb_fileOpStatus(btg::core::Command* _command)
+         {
+            opStatusResponseCommand* cosrc = dynamic_cast<opStatusResponseCommand*>(_command);
+
+            clientcallback.onFileStatus(cosrc->id(), cosrc->status());
+         }
+
+         void stateMachine::cb_CN_CCREATEFROMFILERSP(btg::core::Command* _command)
+         {
+            contextCreateFromFileResponseCommand* ccffrc = dynamic_cast<contextCreateFromFileResponseCommand*>(_command);
+
+            clientcallback.onCreateFromFile(ccffrc->id());
+         }
+
+         void stateMachine::cb_CN_CGETTRACKERS(btg::core::Command* _command)
+         {
+            contextGetTrackersResponseCommand* cgtrc = dynamic_cast<contextGetTrackersResponseCommand*>(_command);
+            clientcallback.onTrackerInfo(cgtrc->getTrackers());
+         }
+         void stateMachine::cb_CN_VERSION(btg::core::Command* _command)
+         {
+            versionResponseCommand* vrc = dynamic_cast<versionResponseCommand*>(_command);
+            clientcallback.onVersion(*vrc);
          }
 
       } // namespace client

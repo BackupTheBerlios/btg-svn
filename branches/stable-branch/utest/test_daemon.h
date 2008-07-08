@@ -55,6 +55,11 @@ class testDaemon : public CppUnit::TestFixture
 
    CPPUNIT_TEST( testCommandLineHandler );
 
+   CPPUNIT_TEST( testOpId );
+
+#if BTG_OPTION_URL
+   CPPUNIT_TEST( testHttpDownload );
+#endif // BTG_OPTION_URL
    CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -99,6 +104,11 @@ class testDaemon : public CppUnit::TestFixture
 
    void testCommandLineHandler();
 
+   void testOpId();
+
+#if BTG_OPTION_URL
+   void testHttpDownload();
+#endif // BTG_OPTION_URL
  private:
    btg::core::LogWrapperType logwrapper;
 };

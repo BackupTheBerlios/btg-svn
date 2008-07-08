@@ -38,8 +38,9 @@ namespace btg
 	      std::string const KEY_HELP("KEY_HELP");
 	      std::string const KEY_DETACH("KEY_DETACH");
 	      std::string const KEY_QUIT("KEY_QUIT");
-	      std::string const KEY_QUITSCREEN("KEY_QUITSCREEN");
+	      std::string const KEY_BACK("KEY_BACK");
 	      std::string const KEY_LOAD("KEY_LOAD");
+         std::string const KEY_LOAD_URL("KEY_LOAD_URL");
 	      std::string const KEY_MENU("KEY_MENU");
 	      std::string const KEY_GLIMIT("KEY_GLIMIT");
 	      std::string const KEY_DOWN("KEY_DOWN");
@@ -68,8 +69,9 @@ namespace btg
               helpKey(keyMapping::K_UNDEF),
               detachKey(keyMapping::K_UNDEF),
               quitKey(keyMapping::K_UNDEF),
-              quitscreenKey(keyMapping::K_UNDEF),
+              backKey(keyMapping::K_UNDEF),
               loadKey(keyMapping::K_UNDEF),
+              loadUrlKey(keyMapping::K_UNDEF),
               menuKey(keyMapping::K_UNDEF),
               limitKey(keyMapping::K_UNDEF),
               downKey(keyMapping::K_UNDEF),
@@ -105,11 +107,14 @@ namespace btg
                   key = inifile->GetValue(KEY_QUIT, SECTION_BTGNCLI);
                   convertKey(key, quitKey);
 
-                  key = inifile->GetValue(KEY_QUITSCREEN, SECTION_BTGNCLI);
-                  convertKey(key, quitscreenKey);
+                  key = inifile->GetValue(KEY_BACK, SECTION_BTGNCLI);
+                  convertKey(key, backKey);
 
                   key = inifile->GetValue(KEY_LOAD, SECTION_BTGNCLI);
                   convertKey(key, loadKey);
+
+                  key = inifile->GetValue(KEY_LOAD_URL, SECTION_BTGNCLI);
+                  convertKey(key, loadUrlKey);
 
                   key = inifile->GetValue(KEY_MENU, SECTION_BTGNCLI);
                   convertKey(key, menuKey);
@@ -213,12 +218,17 @@ namespace btg
                       temp,
                       output);
 
-            formatKey(KEY_QUITSCREEN,
+            formatKey(KEY_BACK,
                       keyDescription,
                       temp,
                       output);
 
             formatKey(KEY_LOAD,
+                      keyDescription,
+                      temp,
+                      output);
+
+            formatKey(KEY_LOAD_URL,
                       keyDescription,
                       temp,
                       output);
@@ -347,9 +357,9 @@ namespace btg
                      value = detachKey;
                      break;
                   }
-               case keyMapping::K_QUITSCREEN:
+               case keyMapping::K_BACK:
                   {
-                     value = quitscreenKey;
+                     value = backKey;
                      break;
                   }
                case keyMapping::K_QUIT:
@@ -360,6 +370,11 @@ namespace btg
                case keyMapping::K_LOAD:
                   {
                      value = loadKey;
+                     break;
+                  }
+               case keyMapping::K_LOAD_URL:
+                  {
+                     value = loadUrlKey;
                      break;
                   }
                case keyMapping::K_MENU:

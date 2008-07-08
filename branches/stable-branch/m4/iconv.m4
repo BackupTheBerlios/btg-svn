@@ -1,4 +1,4 @@
-#serial AM2
+dnl #serial AM2
 
 dnl From Bruno Haible.
 

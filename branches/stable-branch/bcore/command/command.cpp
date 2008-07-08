@@ -85,6 +85,15 @@ namespace btg
             t_IdToNameElem(Command::CN_CGETTRACKERS,    "(c) Get used trackers"),
             t_IdToNameElem(Command::CN_CGETTRACKERSRSP, "(c) Get used trackers response"),
             t_IdToNameElem(Command::CN_CMOVE,           "(c) Move"),
+            t_IdToNameElem(Command::CN_CCREATEFROMURL,      "(c) Create context from URL"),
+            t_IdToNameElem(Command::CN_CCREATEFROMURLRSP,   "(c) Create context from URL response"),
+            t_IdToNameElem(Command::CN_CCREATEFROMFILE,     "(c) Create context from file"),
+            t_IdToNameElem(Command::CN_CCREATEFROMFILERSP,  "(c) Create context from file response"),
+            t_IdToNameElem(Command::CN_CCREATEFROMFILEPART, "(c) Create context from file, part of file"),
+            t_IdToNameElem(Command::CN_OPABORT,     "(g) Abort operation"),
+            t_IdToNameElem(Command::CN_OPSTATUS,    "(g) Status of operation"),
+            t_IdToNameElem(Command::CN_OPSTATUSRSP, "(g) Status of operation response"),
+
             // General:
             t_IdToNameElem(Command::CN_ERROR,           "(g) Error"),
             t_IdToNameElem(Command::CN_ACK,             "(g) Ack"),
@@ -103,6 +112,8 @@ namespace btg
             t_IdToNameElem(Command::CN_SSETNAME,        "(s) Set session name"),
             t_IdToNameElem(Command::CN_MOREAD,          "(s) RO mode"),
             t_IdToNameElem(Command::CN_MOWRITE,         "(s) RW mode"),
+            t_IdToNameElem(Command::CN_VERSION,         "(s) Version"),
+            t_IdToNameElem(Command::CN_VERSIONRSP,      "(s) Version response"),
             // Undefined.
             t_IdToNameElem(Command::CN_UNDEFINED,       "Undefined")
          };
