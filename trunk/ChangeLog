@@ -3,7 +3,6 @@ BTG version 0.9.8
 The following bugs were fixed:
 
 014142 Compilation broke on curl link with --as-needed LDFLAG.
-013961 race-condition in btgui (in peer-list)
 014067 BTG SVN fails to compile with SVN Libtorrent.
 014061 XMLRPC_Client fails to parse some XMLs.
 013987 btgcli can't read commands from file.
@@ -13,6 +12,7 @@ The following bugs were fixed:
 013975 Incorrect torrent statuses.
 013971 Display build and revision numbers on the wwwUI pages.
 013964 btgcli: Do not print LF when displaying downloaded pieces.
+013961 Race-condition in btgui (in peer-list).
 013932 btg-daemon-0.9.8 not installable on debian.
 013931 Bad URL displayed after DEB install.
 013859 Remove ncurses from btgcli.
