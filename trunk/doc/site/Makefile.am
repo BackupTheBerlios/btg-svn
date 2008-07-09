@@ -35,6 +35,7 @@ html: commanddoc commanddoc_copy man-pages $(RST_FILES)
 	$(RST2HTML) howto-0.7.rst > howto-0.7.html
 	$(RST2HTML) howto-0.9.6.rst > howto-0.9.6.html
 	$(RST2HTML) howto-0.9.7.rst > howto-0.9.7.html
+	$(RST2HTML) howto-0.9.8.rst > howto-0.9.8.html
 
 # Target used to generate a pdf version of the howto.
 # Assumes that rst2latex and latex is installed.
