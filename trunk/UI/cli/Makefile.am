@@ -25,5 +25,6 @@ btgcli_CXXFLAGS = @CXXFLAGS@ @LIBGNUTLS_CFLAGS@ \
 INCLUDES = -I$(top_srcdir)
 
 man1_MANS  = btgcli.man
-EXTRA_DIST = btgcli.man
 endif # BUILDCLI
+
+EXTRA_DIST = btgcli.man
