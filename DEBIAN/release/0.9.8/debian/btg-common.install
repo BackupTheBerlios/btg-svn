@@ -1,0 +1,5 @@
+usr/bin/btg-config
+usr/lib/btg/libbtgcore.so*
+usr/share/man/man1/btg-config.*
+usr/share/man/man5/btg.*
+usr/share/man/man5/btg_config.*
