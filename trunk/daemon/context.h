@@ -660,12 +660,17 @@ namespace btg
 #if (BTG_LT_0_12 || BTG_LT_0_13)
                bool entryToInfo(libtorrent::entry const& _input,
                                 libtorrent::torrent_info & _output) const;
-#endif
+
                /// Convert an entry to a list of contained files.
                /// @return True - converted. False - conversion failed.
                bool entryToFiles(libtorrent::entry const& _input,
                                  std::vector<std::string> & _output) const;
+#endif
 
+#if BTG_LT_0_14
+               bool torrentInfoToFiles(libtorrent::torrent_info const& _tinfo,
+                                       std::vector<std::string> & _output) const;
+#endif                                                
                /// Find out if data of a torrent is present in the seed dir.
                /// @param [in] _torrent_info Torrent info.
                /// @return True - data is present, false otherwise.

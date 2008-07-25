@@ -292,13 +292,13 @@ namespace btg
               iter++)
             {
                libtorrent::file_entry const& fe = *iter;
-	      
+         
                // The full path.
                boost::filesystem::path file_path = fe.path;
-	      
+         
                // Only the file name.
                std::string filename = file_path.leaf();
-	      
+         
                // Get the first directory name, if it exists.
                if (!file_path.branch_path().empty())
                   {
@@ -334,7 +334,7 @@ namespace btg
 
                BTG_MNOTICE(logWrapper(), "Using directory '" << file_path.string() << "'");
                BTG_MNOTICE(logWrapper(), "Checking file '" << filename << "'");
-	      
+         
                try
                   {
                      if (find_file(boost::filesystem::path(file_path), filename))
@@ -591,7 +591,46 @@ namespace btg
 
          return status;
       }
+#if BTG_LT_0_14
+      bool Context::torrentInfoToFiles(libtorrent::torrent_info const& _tinfo,
+                                       std::vector<std::string> & _output) const
+      {
+         BTG_MENTER(logWrapper(), "torrentInfoToFiles", "");
 
+         bool status = true;
+         try
+            {
+               libtorrent::torrent_info::file_iterator iter;
+
+               for (iter = _tinfo.begin_files();
+                    iter != _tinfo.end_files();
+                    iter++)
+                  {
+                     libtorrent::file_entry const& fe = *iter;
+                     BTG_MNOTICE(logWrapper(), fe.path.string());
+
+                     _output.push_back(fe.path.string());
+                  }
+            }
+         catch (std::exception& e)
+            {
+               BTG_ERROR_LOG(logWrapper(), "libtorrent exception (torrentInfoToFiles): " << e.what() );
+               status = false;
+            }
+
+         if (_output.size() == 0)
+         {
+            // Torrents with no files are not ok.
+            BTG_ERROR_LOG(logWrapper(), "torrentInfoToFiles, attempt to load torrent with no files in it.");
+            status = false;
+         }
+         
+         BTG_MEXIT(logWrapper(), "torrentInfoToFiles", status);
+         return status;
+      }
+#endif
+
+#if BTG_LT_0_12 || BTG_LT_0_13
       bool Context::entryToFiles(libtorrent::entry const& _input,
                                  std::vector<std::string> & _output) const
       {
@@ -615,13 +654,14 @@ namespace btg
             }
          catch (std::exception& e)
             {
-               BTG_ERROR_LOG(logWrapper(), "libtorrent exception: " << e.what() );
+               BTG_ERROR_LOG(logWrapper(), "libtorrent exception (entryToFiles): " << e.what() );
                status = false;
             }
 
          BTG_MEXIT(logWrapper(), "entryToFiles", status);
          return status;
       }
+#endif
 
 #if (BTG_LT_0_14)
       void Context::bitfieldToVector(libtorrent::bitfield const& _input, 

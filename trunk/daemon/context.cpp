@@ -474,7 +474,7 @@ namespace btg
          // tempDir_ + projectDefaults::sPATH_SEPARATOR() + 
          std::string fileTrackFilename = _torrent_filename;
 
-         // Add torrent name to filetracker
+         // Add torrent name to filetracker.
          if (!filetrack_->add(tempDir_, fileTrackFilename))
             {
                status = Context::ERR_EXISTS;
@@ -488,8 +488,11 @@ namespace btg
          libtorrent::entry torrent_entry;
 
          // Prepend tempDir_ to filename.
-         std::string targetPath = tempDir_ + projectDefaults::sPATH_SEPARATOR() + _torrent_filename;
+         std::string targetPath = tempDir_ + 
+            projectDefaults::sPATH_SEPARATOR() + 
+            _torrent_filename;
 
+#if BTG_LT_0_12 || BTG_LT_0_13
          // Read the file:
          try
             {
@@ -503,10 +506,9 @@ namespace btg
             }
          catch (std::exception& e)
             {
-               BTG_MNOTICE(logWrapper(), "libtorrent exception: " << e.what());
+               
                status = Context::ERR_LIBTORRENT;
             }
-
          if (status != Context::ERR_OK)
             {
                // remove it from filetrack
@@ -514,6 +516,10 @@ namespace btg
                BTG_MEXIT(logWrapper(), "add", status);
                return status;
             }
+#elif BTG_LT_0_14
+         status = Context::ERR_OK;
+#endif
+
 #if BTG_LT_0_12
          libtorrent::torrent_info tinfo;
          if (!entryToInfo(torrent_entry, tinfo))
@@ -525,15 +531,17 @@ namespace btg
          bool gotInfo = true;
          try
             {
-               tinfo.reset(new libtorrent::torrent_info(torrent_entry));
+               boost::filesystem::path targetFilename(targetPath);
+               BTG_MNOTICE(logWrapper(), "Attempt to get info from '" << targetPath << "'");
+               tinfo.reset(new libtorrent::torrent_info(targetFilename));
             }
          catch (std::exception& e)
             {
+               BTG_MNOTICE(logWrapper(), "libtorrent exception (torrent_info constructor): " << e.what());
                gotInfo = false;
             }
          
          if (!gotInfo)
-            // if (!entryToInfo(torrent_entry, tinfo))
 #endif
             {
                // Unable to convert the entry to a torrent info.
@@ -546,6 +554,7 @@ namespace btg
             }
 
          std::vector<std::string> contained_files;
+#if BTG_LT_0_12 || BTG_LT_0_13
          if (!entryToFiles(torrent_entry, contained_files))
             {
                filetrack_->remove(tempDir_, fileTrackFilename);
@@ -553,7 +562,15 @@ namespace btg
                BTG_MEXIT(logWrapper(), "add", status);
                return status;
             }
-
+#elif BTG_LT_0_14
+         if (!torrentInfoToFiles(*tinfo, contained_files))
+            {
+               filetrack_->remove(tempDir_, fileTrackFilename);
+               status = Context::ERR_LIBTORRENT;
+               BTG_MEXIT(logWrapper(), "add", status);
+               return status;
+            }
+#endif
          btg_assert(contained_files.size() >= 1, 
                     logWrapper(),
                     "entryToFiles must return at least one file");
@@ -600,28 +617,45 @@ namespace btg
                      std::string fastResumeFileName = tempDir_ + projectDefaults::sPATH_SEPARATOR() + _torrent_filename + fastResumeFileNameEnd;
                      std::ifstream in(fastResumeFileName.c_str(), std::ios_base::binary);
                      in.unsetf(std::ios_base::skipws);
-
+#if (BTG_LT_0_12 || BTG_LT_0_13)
                      libtorrent::entry fastResumeEntry;
-
+#elif BTG_LT_0_14
+                     std::vector<char>* resumeData       = new std::vector<char>;
+#endif
                      try
                         {
+#if (BTG_LT_0_12 || BTG_LT_0_13)
                            fastResumeEntry = libtorrent::bdecode(
                                                                  std::istream_iterator<char>(in),
                                                                  std::istream_iterator<char>()
                                                                  );
+#elif BTG_LT_0_14
+                           std::copy(std::istream_iterator<char>(in), 
+                                     std::istream_iterator<char>(),
+                                     std::back_inserter(*resumeData));
+#endif
                         }
                      catch (std::exception& e)
                         {
                            BTG_MNOTICE(logWrapper(), "libtorrent exception: " << e.what());
                            status = Context::ERR_LIBTORRENT;
                         }
+
                      if (status == Context::ERR_OK)
                         {
                            BTG_MNOTICE(logWrapper(), "using fast resume for '" << _torrent_filename << "'");
 #if BTG_LT_0_12
                            handle = torrent_session->add_torrent(torrent_entry, dataPath, fastResumeEntry);         
-#elif (BTG_LT_0_13 || BTG_LT_0_14)
+#elif BTG_LT_0_13
                            handle = torrent_session->add_torrent(tinfo, dataPath, fastResumeEntry);
+#elif BTG_LT_0_14
+                           libtorrent::add_torrent_params atp;
+                           atp.name        = 0; // "default name";
+                           atp.ti.swap(tinfo);
+                           atp.save_path   = dataPath;
+                           atp.resume_data = resumeData;
+
+                           handle          = torrent_session->add_torrent(atp);
 #endif
 
                         }
@@ -630,8 +664,15 @@ namespace btg
                   {
 #if BTG_LT_0_12
                      handle = torrent_session->add_torrent(torrent_entry, dataPath);
-#elif (BTG_LT_0_13 || BTG_LT_0_14)
+#elif BTG_LT_0_13
                      handle = torrent_session->add_torrent(tinfo, dataPath);
+#elif BTG_LT_0_14
+                     libtorrent::add_torrent_params atp;
+                     atp.name      = 0; // "default name";
+                     atp.ti.swap(tinfo);
+                     atp.save_path = dataPath;
+
+                     handle        = torrent_session->add_torrent(atp);
 #endif
                   }
             }
@@ -2065,7 +2106,7 @@ namespace btg
             {
                torrentInfo* ti = tii->second;
                libtorrent::torrent_status status = ti->handle.status();
-	   
+       
                if (status.state == libtorrent::torrent_status::downloading)
                   {
                      ti->download_counter++;
