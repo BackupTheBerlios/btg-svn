@@ -79,9 +79,9 @@ namespace PlotMM
 	virtual void clear();
 	virtual void end_replot();
 
-	SigC::Signal3<void,int,int,GdkEventButton*> signal_plot_mouse_press;
-	SigC::Signal3<void,int,int,GdkEventButton*> signal_plot_mouse_release;
-	SigC::Signal3<void,int,int,GdkEventMotion*> signal_plot_mouse_move;
+	sigc::signal3<void,int,int,GdkEventButton*> signal_plot_mouse_press;
+	sigc::signal3<void,int,int,GdkEventButton*> signal_plot_mouse_release;
+	sigc::signal3<void,int,int,GdkEventMotion*> signal_plot_mouse_move;
 
     protected:
 	virtual bool on_expose_event(GdkEventExpose* event);
@@ -141,9 +141,9 @@ namespace PlotMM
 	Scale *scale(PlotAxisID id) { return tickMark_[id]; }
 	PlotLabel *label(PlotAxisID id) { return axisLabel_[id]; }
 
-	SigC::Signal3<void,int,int,GdkEventButton*> signal_plot_mouse_press();
-	SigC::Signal3<void,int,int,GdkEventButton*> signal_plot_mouse_release();
-	SigC::Signal3<void,int,int,GdkEventMotion*> signal_plot_mouse_move();
+	sigc::signal3<void,int,int,GdkEventButton*> signal_plot_mouse_press();
+	sigc::signal3<void,int,int,GdkEventButton*> signal_plot_mouse_release();
+	sigc::signal3<void,int,int,GdkEventMotion*> signal_plot_mouse_move();
 
 	void set_selection(const Rectangle &r);
 	Rectangle get_selection() { return select_; }

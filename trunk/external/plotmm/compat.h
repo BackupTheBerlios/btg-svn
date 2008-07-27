@@ -59,7 +59,7 @@ namespace PlotMM {
 #else
 
 namespace PlotMM {
-  typedef SigC::ObjectBase ObjectBase;
+  typedef sigc::ObjectBase ObjectBase;
 }
 
 #endif

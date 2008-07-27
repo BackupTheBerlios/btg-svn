@@ -322,7 +322,7 @@ Plot::Plot() :
       connect(sigc::mem_fun(*this,&Plot::on_canvas_expose_event));
 #else
     canvas_.signal_expose_event().
-      connect(SigC::slot(*this,&Plot::on_canvas_expose_event));
+      connect(sigc::slot(*this,&Plot::on_canvas_expose_event));
 #endif
 
     show_all();
@@ -406,19 +406,19 @@ void Plot::replot()
 }
 
 //! Return the signal owned by plot canvas
-SigC::Signal3<void,int,int,GdkEventButton*> Plot::signal_plot_mouse_press()
+sigc::signal3<void,int,int,GdkEventButton*> Plot::signal_plot_mouse_press()
 {
     return canvas_.signal_plot_mouse_press;
 }
 
 //! Return the signal owned by plot canvas
-SigC::Signal3<void,int,int,GdkEventButton*> Plot::signal_plot_mouse_release()
+sigc::signal3<void,int,int,GdkEventButton*> Plot::signal_plot_mouse_release()
 {
     return canvas_.signal_plot_mouse_release;
 }
 
 //! Return the signal owned by plot canvas
-SigC::Signal3<void,int,int,GdkEventMotion*> Plot::signal_plot_mouse_move()
+sigc::signal3<void,int,int,GdkEventMotion*> Plot::signal_plot_mouse_move()
 {
     return canvas_.signal_plot_mouse_move;
 }

@@ -133,7 +133,7 @@ namespace PlotMM
 	/*! This signal is thrown whenever the scale is enabled or disabled
 	 *  \sa set_enabled, enabled
 	 */
-	SigC::Signal1<void,bool> signal_enabled;
+	sigc::signal1<void,bool> signal_enabled;
 
     protected:
 	virtual void on_realize();
