@@ -1,6 +1,7 @@
 RST2HTML=rst2html --date --strict --stylesheet-path=style.css --link-stylesheet
 RST2LATEX=rst2latex --date --strict
 PDFLATEX=pdflatex
+HTML2TEXT=html2text -nobs -ascii
 
 all: 
 
@@ -23,6 +24,7 @@ html: commanddoc commanddoc_copy man-pages $(RST_FILES)
 	$(RST2HTML) index.rst > index.html
 	$(RST2HTML) packages.rst > packages.html
 	$(RST2HTML) howto.rst > howto.html
+	$(HTML2TEXT) howto.html > howto.txt
 	$(RST2HTML) faq.rst > faq.html
 	$(RST2HTML) manpages.rst > manpages.html
 	$(RST2HTML) release-proc.rst > release-proc.html

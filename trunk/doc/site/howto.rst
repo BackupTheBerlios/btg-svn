@@ -571,6 +571,19 @@ that `Bash`_ is installed and used to execute the configure
 script. `Bash`_ should also be used for generating the configure
 script by the way of autogen.sh.
 
+The following options to configure are needed on FreeBSD 7.0, as boost
+thread (release 1.35) appears to work without the pthread options, but
+has issues with calls to pthread_cond_wait - btgdaemon will hang after
+deamonizing.
+
+::
+
+  ./configure $BTG_OPTIONS \
+  LIBTORRENT_LIBS=-L/usr/local/lib -ltorrent-rasterbar \
+  LIBTORRENT_CFLAGS=-DTORRENT_USE_OPENSSL -D_THREAD_SAFE \
+  -pthread -I/usr/local/include \
+  -I/usr/local/include/libtorrent LIBS=-lpthread
+
 Notice that the native FreeBSD dialog used by btg-config does not work
 - it does not implement --fselect (and some other options).
 So use cdialog from ports instead.
@@ -585,7 +598,8 @@ One can use one of the following `Rasterbar Libtorrent`_ versions with
 the trunk the BTG SVN repository:
 
 - 0.12.x.
-- 0.13rc1-3.
+- 0.13.
+- 0.13.1.
 - SVN.
 
 Supported Directory Structure
