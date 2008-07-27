@@ -636,7 +636,7 @@ function loadUrl()
 	if(filename.lastIndexOf('/') != -1)
 		filename = filename.substr(filename.lastIndexOf('/') + 1);
 
-	if(filename.length == 0 || filename.indexOf('.torrent') == -1)
+	if(filename.length == 0 || filename.indexOf('.torrent') == -1)
 		filename = prompt('Enter filename');
 
 	if(filename == null)
