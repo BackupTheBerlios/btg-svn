@@ -5,7 +5,7 @@ BTG Packages
 Debian Packages
 ~~~~~~~~~~~~~~~
 
-The debian packages are currently being maintained by Felipe Sateler. 
+The debian packages are currently being maintained by Roman Rybalko. 
 They can be found in our `debian repository`_. For easy installation, 
 add the following line to your ``/etc/apt/sources.list``:
 
