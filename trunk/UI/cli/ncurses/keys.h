@@ -61,6 +61,7 @@ namespace btg
                K_MENU,       //!< Show a menu.
                K_GLIMIT,     //!< Show a dialog allowing one to set global limits.
                K_SESNAME,    //!< Name the current session.
+               K_SORT,       //!< Change the way entries are sorted.
                // Generic:
                K_DOWN,       //!< Move down the list.
                K_UP,         //!< Move up the list.

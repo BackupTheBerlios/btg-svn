@@ -220,6 +220,11 @@ namespace btg
                      refresh();
                      break;
                   }
+               case keyMapping::K_SORT:
+                  {
+                     handleSort();
+                     break;
+                  }
                case keyMapping::K_RESIZE:
                   {
                      handleResizeMainWindow();
@@ -627,6 +632,17 @@ namespace btg
                }
 
             if (helpWindow::generateHelpForKey(keymap_,
+                                               keyMapping::K_SORT,
+                                               "",
+                                               keyDescr,
+                                               false))
+               {
+                  helpText.push_back(keyDescr);
+                  helpText.push_back("  to change the way ");
+                  helpText.push_back("  the list of torrents is sorted");
+               }
+
+            if (helpWindow::generateHelpForKey(keymap_,
                                                keyMapping::K_DETACH,
                                                "",
                                                keyDescr,
@@ -950,6 +966,58 @@ namespace btg
                }
             // Force updating of contexts.
             handlerthread_.forceUpdate();
+         }
+
+         void UI::handleSort()
+         {
+            std::string name;
+            switch (sortby_)
+               {
+               case UI::sB_Name:
+                  {
+                     sortby_ = UI::sB_Size;
+                     mainwindow_.setSortBy(statusList::sB_Size);
+                     name    = "size";
+                     break;
+                  }
+               case UI::sB_Size:
+                  {
+                     sortby_ = UI::sB_UlSpeed;
+                     mainwindow_.setSortBy(statusList::sB_UlSpeed);
+                     name    = "upload speed";
+                     break;
+                  }
+               case UI::sB_UlSpeed:
+                  {
+                     sortby_ = UI::sB_DlSpeed;
+                     mainwindow_.setSortBy(statusList::sB_DlSpeed);
+                     name    = "download speed";
+                     break;
+                  }
+               case UI::sB_DlSpeed:
+                  {
+                     sortby_ = UI::sB_Peers;
+                     mainwindow_.setSortBy(statusList::sB_Peers);
+                     name    = "number of peers";
+                     break;
+                  }
+               case UI::sB_Peers:
+                  {
+                     sortby_ = UI::sB_Done;
+                     mainwindow_.setSortBy(statusList::sB_Done);
+                     name    = "percent done";
+                     break;
+                  }
+               case UI::sB_Done:
+                  {
+                     sortby_ = UI::sB_Name;
+                     mainwindow_.setSortBy(statusList::sB_Name);
+                     name    = "name";
+                     break;
+                  }
+               }
+
+            statuswindow_.setStatus("Sorting by '" + name + "'.");
          }
 
          void UI::handleGlobalLimit()

@@ -23,7 +23,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <map>
 #include <string>
 #include <vector>
 
@@ -61,6 +60,8 @@ namespace btg
             /// Default constructor.
             statusEntry();
          public:
+            /// The context id.
+            t_int             id;
             /// The status.
             btg::core::Status status;
 
@@ -84,6 +85,16 @@ namespace btg
          /// with a different color than the unmarked torrents.
          class statusList
          {
+         public:
+            enum sortBy
+            {
+               sB_Name = 0,
+               sB_Size,
+               sB_UlSpeed,
+               sB_DlSpeed,
+               sB_Peers,
+               sB_Done
+            };
          public:
             /// Constructor. Creates an empty list.
             statusList();
@@ -151,14 +162,22 @@ namespace btg
             /// this list.
             t_uint size() const;
 
+            /// Set the method used for sorting the entries.
+            void setSortBy(statusList::sortBy const _sortby);
+
+            /// Sort the entries.
+            void sort();
+
             /// Destructor.
             ~statusList();
          private:
             /// Indicates that the list was changed by a call
             /// to update or remove.
-            bool                               changed_;
-            /// Maps context ID to entries.
-            std::map<t_int, statusEntry> statusList_;
+            bool                         changed_;
+            /// Contexts.
+            std::vector<statusEntry>     statusList_;
+
+            sortBy                       sortby_;
 
             /// Reset the updated flag for the contained
             /// entries.
@@ -166,6 +185,11 @@ namespace btg
 
             /// Remove dead entries.
             void removeDead();
+
+            std::vector<statusEntry>::iterator find(t_int const _id);
+
+            bool isStatusLess(statusEntry const& _l, 
+                              statusEntry const& _r); 
          };
 
          class UI;
@@ -226,6 +250,8 @@ namespace btg
 
             /// Get a status, identified by a context id.
             bool get(t_int const _context_id, btg::core::Status & _status) const;
+
+            void setSortBy(statusList::sortBy const _sortby);
 
             windowSize calculateDimenstions(windowSize const& _ws) const;
 

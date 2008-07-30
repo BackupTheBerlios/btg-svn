@@ -76,7 +76,8 @@ namespace btg
               mainwindow_width(0),
               mainwindow_height(0),
               load_directory_(),
-              handlerthread_(_handlerthread)
+              handlerthread_(_handlerthread),
+              sortby_(UI::sB_Name)
          {
          }
 
