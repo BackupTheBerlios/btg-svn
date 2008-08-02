@@ -1201,7 +1201,7 @@ void testBcore::testSelectedFileEntryList()
 
 }
 
-void testBcore::testAddressPort()
+void testBcore::testAddressv4()
 {
    Address i;
    CPPUNIT_ASSERT(!i.valid());
@@ -1218,7 +1218,24 @@ void testBcore::testAddressPort()
    CPPUNIT_ASSERT(a.valid());
 }
 
-void testBcore::testAddrPort()
+void testBcore::testAddressv6()
+{
+   Address i;
+   CPPUNIT_ASSERT(!i.valid());
+
+   Address ii(0, 0, 0, 0, 0, 0);
+   CPPUNIT_ASSERT(!ii.valid());
+
+   Address a(192, 168, 0, 0, 0, 1);
+   CPPUNIT_ASSERT(a.valid());
+
+   std::string input("127.0.0.0.0.1");
+
+   CPPUNIT_ASSERT(a.fromString(input));
+   CPPUNIT_ASSERT(a.valid());
+}
+
+void testBcore::testAddressPortv4()
 {
    std::string input("127.0.0.1:60000");
 
@@ -1253,7 +1270,49 @@ void testBcore::testAddrPort()
    
    input = "10.255.255.217:16000";
    CPPUNIT_ASSERT(ap.fromString(input));
-   CPPUNIT_ASSERT(ap == addressPort(10,255,255,217,16000));
+
+   addressPort ap5(10,255,255,217,16000);
+   CPPUNIT_ASSERT(ap == ap5);
+}
+
+void testBcore::testAddressPortv6()
+{
+   std::string input("127.0.0.0.0.1:60000");
+
+   addressPort ap;
+
+   CPPUNIT_ASSERT(ap.fromString(input));
+
+   input = "254.254.254.0.0.0:1024";
+   CPPUNIT_ASSERT(ap.fromString(input));
+
+   // Invalid:
+   input = "127.0.0.0.0.1";
+   CPPUNIT_ASSERT(!ap.fromString(input));
+
+   // Invalid:
+   input = "300.400.500.600.700.800:0";
+   CPPUNIT_ASSERT(!ap.fromString(input));
+
+   addressPort ap1(127,0,0,0,0,1,105);
+   addressPort ap2(127,0,0,0,0,1,105);
+   addressPort ap3;
+
+   CPPUNIT_ASSERT(ap1 == ap2);
+
+   ap3 = ap1;
+
+   CPPUNIT_ASSERT(ap3 == ap1);
+
+   addressPort ap4(ap3);
+
+   CPPUNIT_ASSERT(ap4 == ap3);
+   
+   input = "10.11.12.255.255.217:16000";
+   CPPUNIT_ASSERT(ap.fromString(input));
+
+   addressPort ap5(10,11,12,255,255,217,16000);
+   CPPUNIT_ASSERT(ap == ap5);
 }
 
 void testBcore::testPeer()

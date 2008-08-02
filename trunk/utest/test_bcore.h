@@ -72,9 +72,11 @@ class testBcore : public CppUnit::TestFixture
    CPPUNIT_TEST( testSelectedFileEntry );
    CPPUNIT_TEST( testSelectedFileEntryList );
 
-   CPPUNIT_TEST( testAddressPort );
-   
-   CPPUNIT_TEST( testAddrPort );
+   CPPUNIT_TEST( testAddressPortv4 );
+   CPPUNIT_TEST( testAddressPortv6 );
+      
+   CPPUNIT_TEST( testAddressv4 );
+   CPPUNIT_TEST( testAddressv6 );
 
    CPPUNIT_TEST( testPeer );
 
@@ -137,9 +139,11 @@ class testBcore : public CppUnit::TestFixture
 
    // Test commands, end.
 
-   void testAddressPort();
+   void testAddressPortv4();
+   void testAddressPortv6();
 
-   void testAddrPort();
+   void testAddressv4();
+   void testAddressv6();
 
    void testPeer();
 

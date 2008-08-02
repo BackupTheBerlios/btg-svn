@@ -36,7 +36,7 @@ listen-to      \- IPv4:port. Where network transports (tcpip, stcpip, xml-rpc an
 .TP
 torrent-range  \- integer:integer. Which ports to use use for torrent communication and DHT. The daemon will not start unless two ports are available.
 .TP
-torrent-ip     \- IPv4 address. Libtorrent listens to this address.
+torrent-ip     \- IPv4 or IPv6 address. Libtorrent listens to this address.
 .TP
 use-upnp       \- True/false. Enable/disable UPnP (if support for it was selected at compile time).
 .TP
