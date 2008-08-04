@@ -86,14 +86,15 @@ namespace btg
          class statusList
          {
          public:
+            /// Different ways of sorting this list.
             enum sortBy
             {
-               sB_Name = 0,
-               sB_Size,
-               sB_UlSpeed,
-               sB_DlSpeed,
-               sB_Peers,
-               sB_Done
+               sB_Name = 0, /// By name.
+               sB_Size,     /// By file size.
+               sB_UlSpeed,  /// By upload speed.
+               sB_DlSpeed,  /// By download speed.
+               sB_Peers,    /// By number of peers.
+               sB_Done      /// By percent done.
             };
          public:
             /// Constructor. Creates an empty list.
@@ -177,6 +178,7 @@ namespace btg
             /// Contexts.
             std::vector<statusEntry>     statusList_;
 
+            /// Method used for sorting this list.
             sortBy                       sortby_;
 
             /// Reset the updated flag for the contained
@@ -186,8 +188,11 @@ namespace btg
             /// Remove dead entries.
             void removeDead();
 
+            /// Find an entry identified by _id.
             std::vector<statusEntry>::iterator find(t_int const _id);
 
+            /// Function used to compare entries - used for sorting
+            /// this list.
             bool isStatusLess(statusEntry const& _l, 
                               statusEntry const& _r); 
          };
@@ -251,6 +256,7 @@ namespace btg
             /// Get a status, identified by a context id.
             bool get(t_int const _context_id, btg::core::Status & _status) const;
 
+            /// Set the method used for sorting this list.
             void setSortBy(statusList::sortBy const _sortby);
 
             windowSize calculateDimenstions(windowSize const& _ws) const;

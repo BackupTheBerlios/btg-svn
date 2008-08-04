@@ -42,11 +42,12 @@ namespace btg
          class Address: public Serializable
             {
             public:
+               /// Type.
                enum AddrType
                {
-                  ADT_UNKN = 0,
-                  ADT_IPV4,
-                  ADT_IPV6,
+                  ADT_UNKN = 0, /// Unknown.
+                  ADT_IPV4,     /// IPv4.
+                  ADT_IPV6,     /// IPv6.
                };
 
                /// Default constructor.
@@ -64,6 +65,7 @@ namespace btg
                        t_byte const _ip2,
                        t_byte const _ip3);
 
+               /// Constructor.
                /// @param [in] _ip0  IPv6, byte 0.
                /// @param [in] _ip1  IPv6, byte 1.
                /// @param [in] _ip2  IPv6, byte 2.
@@ -107,18 +109,22 @@ namespace btg
 
                virtual bool deserialize(btg::core::externalization::Externalization* _e);
 
-               /// Returns true if, address is not 0.0.0.0.
+               /// Returns true if, address is not 0.0.0.0 or 0.0.0.0.0.0.
                bool valid() const;
 
                /// Destructor.
                virtual ~Address();
             protected:
+               /// Detect the address type represented by the
+               /// argument.
                AddrType detectIpType(std::string const& _input);
-               bool fromStringImpl(std::string const& _input, t_uint const _digits);
-
+               /// Setup an instance by reading an address represented by a string. 
+               bool fromStringImpl(std::string const& _input, 
+                                   t_uint const _digits);
+               /// Type.
                AddrType type_;
 
-               /// IPv4 address.
+               /// IPv4 or IPv6 address.
                t_byte ip_[6];
             };
 
@@ -143,6 +149,14 @@ namespace btg
                            t_byte const _ip3,
                            t_uint const _port);
 
+               /// Constructor.
+               /// @param [in] _ip0  IPv6, byte 0.
+               /// @param [in] _ip1  IPv6, byte 1.
+               /// @param [in] _ip2  IPv6, byte 2.
+               /// @param [in] _ip3  IPv6, byte 3.
+               /// @param [in] _ip4  IPv6, byte 5.
+               /// @param [in] _ip5  IPv6, byte 5.
+               /// @param [in] _port Port.
                addressPort(t_byte const _ip0,
                            t_byte const _ip1,
                            t_byte const _ip2,
