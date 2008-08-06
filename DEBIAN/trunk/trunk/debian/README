@@ -1,6 +1,20 @@
 Package naming policy:
-stable packages: btg-common_x.x.x, btg-cli-common_x.x.x, btg-cli_x.x.x, btg-gui_x.x.x, btg-www_x.x.x, btg-daemon_x.x.x
-unstable packages: btg-common-x.x.x_XXXXsvn, btg-cli-common-x.x.x_XXXXsvn, btg-cli-x.x.x_XXXXsvn, btg-gui-x.x.x_XXXXsvn, btg-www-x.x.x_XXXXsvn, btg-daemon-x.x.x_XXXXsvn
+stable packages:
+    btg-common_x.x.x,
+    btg-cli-common_x.x.x,
+    btg-cli_x.x.x,
+    btg-ncli_x.x.x,
+    btg-gui_x.x.x,
+    btg-www_x.x.x,
+    btg-daemon_x.x.x
+unstable packages:
+    btg-common-x.x.x_XXXXsvn,
+    btg-cli-common-x.x.x_XXXXsvn,
+    btg-cli-x.x.x_XXXXsvn,
+    btg-ncli-x.x.x_XXXXsvn,
+    btg-gui-x.x.x_XXXXsvn,
+    btg-www-x.x.x_XXXXsvn,
+    btg-daemon-x.x.x_XXXXsvn
 x.x.x - version
 XXXX - svn revision
 For unstable releases version becomes suffix and svn revision becomes version.
