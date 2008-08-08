@@ -36,6 +36,7 @@
 #include <bcore/command/uptime.h>
 #include <bcore/command/limit.h>
 #include <bcore/command/version.h>
+#include <bcore/command/setting.h>
 #include <bcore/command/opstat.h>
 #include <bcore/command/context_move.h>
 #include <bcore/command/context_create.h>
@@ -300,6 +301,11 @@ namespace btg
                         case Command::CN_VERSION:
                            {
                               handleVersion(currentCmd);
+                              break;
+                           }
+                        case Command::CN_GETSETTING:
+                           {
+                              handleGetSetting(currentCmd);
                               break;
                            }
                         default:
@@ -637,6 +643,46 @@ namespace btg
                      dd_->transport,
                      connectionID_, 
                      vrc);
+      }
+
+      void daemonHandler::handleGetSetting(btg::core::Command* _command)
+      {
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
+
+         settingCommand* sc = dynamic_cast<settingCommand*>(_command);
+
+         btg::core::daemonSetting ds = sc->getSetting();
+
+         bool sendResponse = true;
+         std::string response;
+
+         switch(ds)
+            {
+            case btg::core::SG_TRANSPORT:
+               response = "transport=;";
+               break;
+            case btg::core::SG_PORT:
+               response = "port=";
+               break;
+            case btg::core::SG_PEERID:
+               response = "peerid=";
+               break;
+            default:
+               sendResponse = false;
+               break;
+            }
+
+         if (sendResponse)
+            {
+               sendCommand(dd_->externalization, 
+                           dd_->transport,
+                           connectionID_, 
+                           new settingResponseCommand(ds, response));
+            }
+         else
+            {
+               sendError(Command::CN_GETSETTING, "Setting not supported.");
+            }
       }
 
       void daemonHandler::handleSessionInfo(eventHandler* _eventhandler, 

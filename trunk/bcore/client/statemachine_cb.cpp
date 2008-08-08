@@ -43,6 +43,7 @@
 #include <bcore/command/uptime.h>
 #include <bcore/command/list.h>
 #include <bcore/command/version.h>
+#include <bcore/command/setting.h>
 #include <bcore/command/opstat.h>
 
 #include <bcore/command/context_last.h>
@@ -266,6 +267,12 @@ namespace btg
          {
             versionResponseCommand* vrc = dynamic_cast<versionResponseCommand*>(_command);
             clientcallback.onVersion(*vrc);
+         }
+
+         void stateMachine::cb_CN_GETSETTING(btg::core::Command* _command)
+         {
+            settingResponseCommand* src = dynamic_cast<settingResponseCommand*>(_command);
+            clientcallback.onSetting(src->getSetting(), src->getResponse());
          }
 
       } // namespace client

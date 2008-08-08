@@ -114,6 +114,8 @@ namespace btg
             t_IdToNameElem(Command::CN_MOWRITE,         "(s) RW mode"),
             t_IdToNameElem(Command::CN_VERSION,         "(s) Version"),
             t_IdToNameElem(Command::CN_VERSIONRSP,      "(s) Version response"),
+            t_IdToNameElem(Command::CN_GETSETTING,      "(s) Daemon setting"),
+            t_IdToNameElem(Command::CN_GETSETTINGRSP,   "(s) Daemon setting response"),
             // Undefined.
             t_IdToNameElem(Command::CN_UNDEFINED,       "Undefined")
          };

@@ -110,7 +110,8 @@ namespace btg
                t_IdToNameElem(Command::CN_MOWRITE,         "session.rwmode"),
                t_IdToNameElem(Command::CN_VERSION,         "session.version"),
                t_IdToNameElem(Command::CN_VERSIONRSP,      "session.versionrsp"),
-
+               t_IdToNameElem(Command::CN_GETSETTING,      "session.setting"),
+               t_IdToNameElem(Command::CN_GETSETTINGRSP,   "session.settingrsp"),
                // Undefined.
                t_IdToNameElem(Command::CN_UNDEFINED,       "Undefined")
             };

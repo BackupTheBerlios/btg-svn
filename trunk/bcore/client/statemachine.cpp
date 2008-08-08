@@ -58,6 +58,7 @@
 #include <bcore/command/uptime.h>
 #include <bcore/command/list.h>
 #include <bcore/command/version.h>
+#include <bcore/command/setting.h>
 #include <bcore/command/opstat.h>
 
 #include <bcore/command/context_last.h>
@@ -850,6 +851,15 @@ namespace btg
             SM_REQUEST_LOSS;
          }
 
+         void stateMachine::doSetting(btg::core::daemonSetting _ds)
+         {
+            if (checkState(SM_COMMAND))
+               {
+                  commands.push_back(new settingCommand(_ds));
+               }
+            SM_REQUEST_LOSS;
+         }
+
          void stateMachine::doAttach(attachSessionCommand* _command)
          {
             if (checkState(SM_TRANSPORT_READY))
@@ -1247,6 +1257,12 @@ namespace btg
                      expectedReply[1] = Command::CN_UNDEFINED;
                      break;
                   }
+               case Command::CN_GETSETTING:
+                  {
+                     expectedReply[0] = Command::CN_GETSETTINGRSP;
+                     expectedReply[1] = Command::CN_UNDEFINED;
+                     break;
+                  }
                case Command::CN_CCREATEWITHDATA:
                case Command::CN_CSTART:
                case Command::CN_CSTOP:
@@ -1501,6 +1517,11 @@ namespace btg
                case Command::CN_VERSION:
                   {
                      cb_CN_VERSION(_command);
+                     break;
+                  }
+               case Command::CN_GETSETTINGRSP:
+                  {
+                     cb_CN_GETSETTING(_command);
                      break;
                   }
                default:

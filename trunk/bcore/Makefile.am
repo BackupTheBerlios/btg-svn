@@ -83,6 +83,7 @@ command/session_info.cpp \
 command/opstat.cpp \
 command/setup.cpp \
 command/version.cpp \
+command/setting.cpp \
 command/kill.cpp \
 command/limit.cpp \
 command/uptime.cpp \
@@ -207,6 +208,8 @@ command/session_info.h \
 command/opstat.h \
 command/setup.h \
 command/version.h \
+command/dsetting.h \
+command/setting.h \
 command/kill.h \
 command/limit.h \
 command/uptime.h \

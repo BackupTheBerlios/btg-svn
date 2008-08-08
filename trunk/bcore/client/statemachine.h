@@ -30,9 +30,10 @@
 #include <bcore/command/command.h>
 #include <bcore/command/setup.h>
 #include <bcore/command/session_attach.h>
+#include <bcore/command/dsetting.h>
 
 #include <bcore/auth/hash.h>
- #include <bcore/logable.h>
+#include <bcore/logable.h>
 #include <bcore/command_factory.h>
 #include <bcore/sbuf.h>
 
@@ -102,6 +103,8 @@ namespace btg
                                t_long const _toSession);
             /// Action.
             void doVersion();
+            /// Action.
+            void doSetting(btg::core::daemonSetting _ds);
             /// Action.
             void doAttach(attachSessionCommand* _command);
             /// Action.
@@ -434,6 +437,8 @@ namespace btg
 
             /// Call a callback. Version and options.
             void cb_CN_VERSION(btg::core::Command* _command);
+            /// Call a callback. Setting.
+            void cb_CN_GETSETTING(btg::core::Command* _command);
          private:
             /// Copy constructor.
             stateMachine(stateMachine const& _sm);

@@ -495,6 +495,12 @@ namespace btg
             commandStatus = true;
          }
 
+         void guiHandler::onSetting(btg::core::daemonSetting const _what, 
+                                    std::string const& _value)
+         {
+            commandStatus = true;
+         }
+
          void guiHandler::onSetFilesError(std::string const& _errorDescription)
          {
             commandStatus = false;

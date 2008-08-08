@@ -72,6 +72,7 @@
 #include <bcore/command/kill.h>
 #include <bcore/command/limit.h>
 #include <bcore/command/uptime.h>
+#include <bcore/command/setting.h>
 
 #include "util.h"
 
@@ -456,6 +457,16 @@ namespace btg
                   c = new opAbortCommand;
                   break;
                }
+            case Command::CN_GETSETTING:
+               {
+                  c = new settingCommand;
+                  break;
+               }
+            case Command::CN_GETSETTINGRSP:
+               {
+                  c = new settingResponseCommand;
+                  break;
+               }
             default:
                BTG_ERROR_LOG(logWrapper(), "createFromBytes: wrong command type: " << cmdid << ".");
                _status = commandFactory::DS_UNKNOWN;
@@ -556,6 +567,8 @@ namespace btg
             case Command::CN_OPSTATUS:
             case Command::CN_OPSTATUSRSP:
             case Command::CN_OPABORT:
+            case Command::CN_GETSETTING:
+            case Command::CN_GETSETTINGRSP:
                {
                   status = _command->serialize(&e);
                   break;
