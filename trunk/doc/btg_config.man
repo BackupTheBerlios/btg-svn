@@ -87,6 +87,8 @@ peer-id          \- String. Override the Peer ID.
 user-agent       \- String. Override the user agent sent to tracker.
 .TP
 pidfile          \- String. PID-file name (file to write the PID to)
+.TP
+announce-ip      \- String, representing IPv4 or IPv6 address. Tell trackers to use this address instead of the one specified using torrent-ip.
 
 .SS
 Section "auth"

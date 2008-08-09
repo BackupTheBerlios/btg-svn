@@ -2260,6 +2260,14 @@ namespace btg
          session_settings_.peer_timeout                    = 512;
          session_settings_.urlseed_timeout                 = 512;
          session_settings_.tracker_maximum_response_length = 1024 * 1024 * 1024;
+
+         std::string announceIp = config_->getAnnounceIp();
+         if (announceIp.size() > 0)
+            {
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Using WAN (announce ip): " << announceIp);
+               session_settings_.announce_ip = asio::ip::address(asio::ip::address_v4::from_string(announceIp));
+            }
+         
          std::string userAgent = config_->getUserAgent();
          if (userAgent.size() > 0)
             {

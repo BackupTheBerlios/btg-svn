@@ -87,6 +87,9 @@ namespace btg
 
 
       std::string const SECTION_MISC("misc");
+
+      std::string const KEY_MISC_ANNOUNCEIP("announce-ip");
+      std::string const DESCR_MISC_ANNOUNCEIP("announce ip (WAN ip)");
       
       std::string const KEY_MISC_PROXY("proxy");
       std::string const DESCR_MISC_PROXY("proxy IPv4:port");
@@ -180,7 +183,8 @@ namespace btg
            def_enc_level(daemonConfiguration::plaintext),
            def_prefer_rc4(false),
            def_peerId(""),
-           def_userAgent("")
+           def_userAgent(""),
+           def_announceIp("")
       {
       }
 
@@ -1678,6 +1682,11 @@ namespace btg
          return def_userAgent;
       }
 
+      std::string daemonConfiguration::getAnnounceIp() const      
+      {
+         return def_announceIp;
+      }
+
       void daemonConfiguration::readPeerIdAndUserAgent()
       {
          std::string peerIdStr = inifile->GetValue(KEY_MISC_PEERID, SECTION_MISC);
@@ -1690,6 +1699,12 @@ namespace btg
          if (userAgentStr.size() > 0)
             {
                def_userAgent = userAgentStr;
+            }
+
+         std::string userAnnounceIp = inifile->GetValue(KEY_MISC_ANNOUNCEIP, SECTION_MISC);
+         if (userAnnounceIp.size() > 0)
+            {
+               def_announceIp = userAnnounceIp;
             }
       }
 
@@ -1715,6 +1730,18 @@ namespace btg
                                       SECTION_MISC))
                   {
                      setErrorDescription(writeOperation, SECTION_MISC, KEY_MISC_USERAGENT);
+                     return false;
+                  }
+            }
+
+         if (def_announceIp.size() > 0)
+            {
+               if (!inifile->SetValue(KEY_MISC_ANNOUNCEIP,
+                                      def_announceIp,
+                                      DESCR_MISC_ANNOUNCEIP,
+                                      SECTION_MISC))
+                  {
+                     setErrorDescription(writeOperation, SECTION_MISC, KEY_MISC_ANNOUNCEIP);
                      return false;
                   }
             }

@@ -223,6 +223,9 @@ namespace btg
                /// Get user agent string.
                std::string getUserAgent() const;
 
+               /// Get announce ip
+               std::string getAnnounceIp() const;
+
                /// Encryption policy used.
                enum encryption_policy
                   {
@@ -385,6 +388,9 @@ namespace btg
 
                /// User agent used.
                std::string                                 def_userAgent;
+
+               /// Announce ip used.
+               std::string                                 def_announceIp;
                
                /// PID-file name
                std::string                                 def_pidfname;
