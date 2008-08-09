@@ -58,6 +58,7 @@
 #include <bcore/command/session_rw.h>
 #include <bcore/command/setup.h>
 #include <bcore/command/version.h>
+#include <bcore/command/setting.h>
 #include <bcore/command/uptime.h>
 #include <bcore/command/opstat.h>
 #include <bcore/opstatus.h>
@@ -324,7 +325,14 @@ int main(int argc, char* argv[])
 
    // Command::CN_VERSIONRSP
    printCommand(cf, e, new versionResponseCommand(1, 2, 3));
-   
+
+   // Command::CN_GETSETTING
+   btg::core::daemonSetting ds = btg::core::SG_TRANSPORT;
+   printCommand(cf, e, new settingCommand(ds));
+
+   // Command::CN_GETSETTINGRSP
+   printCommand(cf, e, new settingResponseCommand(ds, "test"));
+
    delete e;
    e = 0;
 

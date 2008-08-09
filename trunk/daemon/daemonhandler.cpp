@@ -43,6 +43,7 @@
 #include <bcore/command/context_create_url.h>
 #include <bcore/verbose.h>
 #include <bcore/opstatus.h>
+#include <bcore/t_string.h>
 
 #include "modulelog.h"
 
@@ -659,14 +660,49 @@ namespace btg
          switch(ds)
             {
             case btg::core::SG_TRANSPORT:
-               response = "transport=;";
-               break;
+               {
+                  switch (dd_->config->getTransport())
+                     {
+                     case btg::core::messageTransport::TCP:
+                        response = "transport=TCP;";
+                        break;
+                     case btg::core::messageTransport::STCP:
+                        response = "transport=STCP;";
+                        break;
+                     case btg::core::messageTransport::XMLRPC:
+                        response = "transport=XMLRPC";
+                        break;
+                     case btg::core::messageTransport::SXMLRPC:
+                        response = "transport=SXMLRPC";
+                        break;
+                     default:
+                        response = "transport=UNKNOWN";
+                        break;
+                     }
+                  break;
+               }
             case btg::core::SG_PORT:
-               response = "port=";
-               break;
+               {
+                  btg::core::addressPort ap = dd_->config->getListenTo();
+                  t_uint port = ap.getPort();
+                  response = "port=" + convertToString<t_uint>(port);
+                  break;
+               }
             case btg::core::SG_PEERID:
-               response = "peerid=";
-               break;
+               {
+                  // Peer ID contained in the config file.
+                  
+                  std::string peerid = dd_->config->getPeerId();
+                  if (peerid.size() == 0)
+                     {
+                        response = "peerid=NOT_SET";
+                     }
+                  else
+                     {
+                        response = "peerid="+peerid;
+                     }
+                  break;
+               }
             default:
                sendResponse = false;
                break;
