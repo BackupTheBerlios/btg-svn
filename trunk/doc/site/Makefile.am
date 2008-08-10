@@ -1,4 +1,4 @@
-RST2HTML=rst2html --date --strict --stylesheet-path=style.css --link-stylesheet
+RST2HTML=rst2html --date --strict --stylesheet-path=voidspace2.css --link-stylesheet
 RST2LATEX=rst2latex --date --strict
 PDFLATEX=pdflatex
 HTML2TEXT=html2text -nobs -ascii
