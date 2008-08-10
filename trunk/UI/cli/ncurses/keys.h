@@ -55,7 +55,7 @@ namespace btg
                K_HELP,       //!< Get help.
                K_DETACH,     //!< Detach from the daemon.
                K_QUIT,       //!< Quit the application.
-               K_BACK, //!< Quit an entry display.
+               K_BACK,       //!< Quit an entry display.
                K_LOAD,       //!< Load a torrent.
                K_LOAD_URL,   //!< Load a torrent from an URL.
                K_MENU,       //!< Show a menu.
