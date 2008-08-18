@@ -142,6 +142,7 @@ namespace btg
             }
 
          t_byteP message = new t_byte[message_size];
+         memset(message, 0, message_size);
 
          if (message == 0)
             {

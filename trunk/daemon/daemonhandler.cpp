@@ -1281,6 +1281,7 @@ namespace btg
             }
 
          delete _command;
+         _command = 0;
 
          BTG_MNOTICE(logWrapper(), "data (out): " << sendBuffer_.size() << " bytes");
 

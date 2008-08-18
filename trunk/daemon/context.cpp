@@ -62,6 +62,10 @@
 #include <libtorrent/extensions/ut_pex.hpp>
 #endif
 
+#if BTG_LT_0_14
+#include <libtorrent/alert.hpp>
+#endif
+
 namespace btg
 {
    namespace daemon
@@ -220,11 +224,20 @@ namespace btg
 
                this->setNormalHttpSettings();
 
-               // From the libtorrent manual.
-               // Events that can be considered normal, but still deserves
-               // an event. This could be a piece hash that fails.
+#if (BTG_LT_0_12 || BTG_LT_0_13)
                torrent_session->set_severity_level(libtorrent::alert::info);
+#elif BTG_LT_0_14
+               {
+                  int amask = 
+                     libtorrent::alert::error_notification | 
+                     libtorrent::alert::port_mapping_notification | 
+                     libtorrent::alert::tracker_notification | 
+                     libtorrent::alert::status_notification | 
+                     libtorrent::alert::progress_notification;
 
+                  torrent_session->set_alert_mask(amask);
+               }
+#endif
                setPeerIdFromConfig();
             }
       }
@@ -1186,7 +1199,11 @@ namespace btg
             case libtorrent::torrent_status::checking_files:
                ts = Status::ts_checking;
                break;
+#if (BTG_LT_0_12) || (BTG_LT_0_13)
             case libtorrent::torrent_status::connecting_to_tracker:
+#elif BTG_LT_0_14
+            case libtorrent::torrent_status::downloading_metadata:
+#endif
                ts = Status::ts_connecting;
                break;
             case libtorrent::torrent_status::downloading:
@@ -1815,7 +1832,11 @@ namespace btg
             {
             case libtorrent::torrent_status::queued_for_checking:
             case libtorrent::torrent_status::checking_files:
+#if (BTG_LT_0_12) || (BTG_LT_0_13)
             case libtorrent::torrent_status::connecting_to_tracker:
+#elif BTG_LT_0_14
+            case libtorrent::torrent_status::downloading_metadata:
+#endif
             case libtorrent::torrent_status::downloading:
                if (!moveToWorkingDir(_torrent_id))
                   {
@@ -1965,8 +1986,11 @@ namespace btg
 
          // Get the status from libtorrent:
          libtorrent::torrent_status status = ti->handle.status();
-
+#if (BTG_LT_0_12) || (BTG_LT_0_13)
          if ((status.state == libtorrent::torrent_status::connecting_to_tracker)
+#elif BTG_LT_0_14
+         if ((status.state == libtorrent::torrent_status::downloading_metadata)
+#endif
              ||
              (status.state == libtorrent::torrent_status::downloading)
              ||
@@ -2265,7 +2289,11 @@ namespace btg
          if (announceIp.size() > 0)
             {
                MVERBOSE_LOG(logWrapper(), verboseFlag_, "Using WAN (announce ip): " << announceIp);
+#if (BTG_LT_0_13)
                session_settings_.announce_ip = asio::ip::address(asio::ip::address_v4::from_string(announceIp));
+#elif BTG_LT_0_14
+               session_settings_.announce_ip = boost::asio::ip::address(boost::asio::ip::address_v4::from_string(announceIp));
+#endif
             }
          
          std::string userAgent = config_->getUserAgent();

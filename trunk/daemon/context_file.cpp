@@ -521,6 +521,7 @@ namespace btg
             {
                torrentInfo *ti       = tii->second;
 
+#if (BTG_LT_0_12 || BTG_LT_0_13)
                // Get the fast resume data.
                libtorrent::entry torrent_entry = ti->handle.write_resume_data();
 
@@ -559,6 +560,11 @@ namespace btg
 
                BTG_MNOTICE(logWrapper(), "wrote fast resume data for '" << filename << "'");
                out.close();
+#elif BTG_LT_0_14
+               // The actual writting is done using a callback.
+               // TODO: implement this!
+               ti->handle.save_resume_data();
+#endif
             }
 
          op_status = true;
