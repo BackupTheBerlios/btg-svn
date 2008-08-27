@@ -531,14 +531,14 @@ class BTG
                         $bit_unset++;
                      }
                }
-
-            $percent = (integer)($bit_set * 100 / ($bit_set + $bit_unset));
+            if (($bit_set + $bit_unset) > 0)
+            {
+               $percent = (integer)($bit_set * 100 / ($bit_set + $bit_unset));
+            }
          }
 
       return $percent;
    }
-
-   // !!!
 
    function genericSelectFile($contextID=contextCommand::UNDEFINED_CONTEXT, $filename, $value)
    {
@@ -789,7 +789,6 @@ class BTG
                      $selected_files = $this->getSelectedFiles((int)$contextStatus->getContextID());
                      $files          = $this->getFiles((int)$contextStatus->getContextID());
                
-                     // !!!
                      $fileId = 0;
 
                      $saved_dir = "";
