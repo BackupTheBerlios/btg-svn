@@ -81,7 +81,7 @@ $btg_config_debug = 0;
  * Include system config file.
  */
 $system_config = "/etc/btg/config.php";
-if (is_readable($system_config))
+if (@is_readable($system_config))
 {
 	include $system_config;
 }
