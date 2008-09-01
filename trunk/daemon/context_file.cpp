@@ -673,6 +673,7 @@ namespace btg
       void Context::bitfieldToVector(libtorrent::bitfield const& _input, 
                                      std::vector<bool> & _output) const
       {
+         _output.resize(_input.size());
          std::copy(_input.begin(), _input.end(), _output.begin());
       }
 #endif
