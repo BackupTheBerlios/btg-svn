@@ -53,12 +53,14 @@ namespace btg
                bool serialize(btg::core::externalization::Externalization* _e) const;
                bool deserialize(btg::core::externalization::Externalization* _e);
 
+               /// Get the contained setting.
                daemonSetting getSetting() const;
 
                /// Destructor.
                virtual ~settingCommand();
 
             protected:
+               /// The contained setting.
                daemonSetting setting_;
             };
 
@@ -76,13 +78,17 @@ namespace btg
                bool serialize(btg::core::externalization::Externalization* _e) const;
                bool deserialize(btg::core::externalization::Externalization* _e);
 
+               /// Get the contained setting.
                daemonSetting getSetting() const;
+               /// Get the contained response.
                std::string getResponse() const;
 
                /// Destructor.
                virtual ~settingResponseCommand();
             protected:
+               /// The contained setting.
                daemonSetting setting_;
+               /// The contained response.
                std::string   response_;
             };
 
