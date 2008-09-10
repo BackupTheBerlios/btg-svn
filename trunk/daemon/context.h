@@ -707,6 +707,9 @@ namespace btg
                /// Set peer ID (read from configuration, converting it
                /// to a format used by libtorrent).
                void setPeerIdFromConfig();
+               
+               std::string toString(addResult const _addresult) const;
+
 #if (BTG_LT_0_14)
                /// Convert a libtorrent bitfield into a vector of bits.
                /// 

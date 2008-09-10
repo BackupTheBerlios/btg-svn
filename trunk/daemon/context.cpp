@@ -546,7 +546,19 @@ namespace btg
             {
                boost::filesystem::path targetFilename(targetPath);
                BTG_MNOTICE(logWrapper(), "Attempt to get info from '" << targetPath << "'");
-               tinfo.reset(new libtorrent::torrent_info(targetFilename));
+
+               std::vector<char> contents;
+               if (libtorrent::load_file(targetFilename, contents) == 0)
+                  {
+                     BTG_MNOTICE(logWrapper(), "Loaded " << targetFilename << " into buffer, size " << contents.size() << " bytes.");
+                  }
+               else
+                  {
+                     BTG_MNOTICE(logWrapper(), "Failed to load " << targetFilename << " into buffer.");
+                     gotInfo = false;
+                  }
+
+               tinfo.reset(new libtorrent::torrent_info(&contents[0], contents.size()));
             }
          catch (std::exception& e)
             {
@@ -742,7 +754,7 @@ namespace btg
                filetrack_->remove(tempDir_, fileTrackFilename);
             }
 
-         BTG_MEXIT(logWrapper(), "add", "");
+         BTG_MEXIT(logWrapper(), "add", toString(status));
          return status;
       }
 
@@ -774,7 +786,7 @@ namespace btg
                BTG_ERROR_LOG(logWrapper(), "Attempt to write '" << targetPath << "' failed");
             }
 
-         BTG_MEXIT(logWrapper(), "add", status);
+         BTG_MEXIT(logWrapper(), "add", toString(status));
          return status;
       }
 
@@ -2552,6 +2564,27 @@ namespace btg
             }
 
          filter_->set(*torrent_session);
+      }
+      
+      std::string Context::toString(addResult const _addresult) const
+      {
+         std::string s;
+         switch(_addresult)
+            {
+            case ERR_UNDEFINED:
+               s = "ERR_UNDEFINED";
+               break;
+            case ERR_OK:
+               s = "ERR_OK";
+               break;
+            case ERR_EXISTS:
+               s = "ERR_EXISTS";
+               break;
+            case ERR_LIBTORRENT:
+               s = "ERR_LIBTORRENT";
+               break;
+            }
+         return s;
       }
 
       Context::~Context()

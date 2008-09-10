@@ -30,6 +30,8 @@
 #include <libtorrent/identify_client.hpp>
 #include <algorithm>
 
+#include <boost/version.hpp>
+
 namespace btg
 {
    namespace daemon
@@ -264,7 +266,14 @@ namespace btg
                            return true;
                         }
                   }
-               else if (itr->leaf() == file_name) // see below
+
+#if BOOST_VERSION > 103500
+               // 1.36.x and so on.
+               else if (itr->filename() == file_name) // see below
+#else
+               // Below 1.35.x.
+               else if (itr->path() == file_name) // see below
+#endif
                   {
                      BTG_MEXIT(logWrapper(), "find_file", true);
                      return true;
