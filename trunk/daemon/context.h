@@ -708,6 +708,7 @@ namespace btg
                /// to a format used by libtorrent).
                void setPeerIdFromConfig();
                
+               /// Convert an enum to a string, for debugging.
                std::string toString(addResult const _addresult) const;
 
 #if (BTG_LT_0_14)
