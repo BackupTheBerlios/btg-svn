@@ -144,13 +144,12 @@ namespace btg
                         bool  success_udp;
                      };
 
+                     std::vector<portIndex>::iterator findIndex(t_int _index);
+
                      /// Mutex used.
                      boost::mutex                 indicesMutex;
                      /// List of port indices.
                      std::vector<portIndex>       indices;
-                     /// Current port index.
-                     portIndex                    pi;
-
                      /// State information saved in suspend().
                      void*                        lt_drained_state;
                   };
