@@ -124,13 +124,34 @@ Can I expect SVN trunk to work?
 No. Trunk is being used for active development. Use a release or
 release candidate.
 
+Is the project accepting donations?
+-----------------------------------
+
+Yes, use the following button to donate a small amount to BTG development using Paypal.
+
+.. raw:: html
+  
+  <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+  <input type="hidden" name="cmd" value="_s-xclick">
+  <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+  <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+  <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----">
+  </form>
+  
+
 How about adding feature X?
 ---------------------------
 
 BTG accepts `patches`_. Make sure that its against the trunk of the SVN
 repository.
 
+BTG accepts donations, using Paypal. 
+
+Making a donation that covers some of the time used adding a feature
+will improve the chances that your feature will be added to BTG.
+
 .. _patches: http://developer.berlios.de/patch/?group_id=3293
+
 
 How can I help?
 ---------------
