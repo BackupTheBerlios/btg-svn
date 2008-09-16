@@ -144,6 +144,10 @@ namespace btg
                         bool  success_udp;
                      };
 
+                     /// Find port information by searching the list
+                     /// of port information for a certain libtorrent port index.
+                     /// @param [in] _index Libtorrent port index.
+                     /// @return Iterator.
                      std::vector<portIndex>::iterator findIndex(t_int _index);
 
                      /// Mutex used.
