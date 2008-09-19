@@ -56,7 +56,6 @@ namespace btg
             : Gtk::Dialog(btg::core::projectDefaults::sGUI_CLIENT() + " " + btg::core::projectDefaults::sFULLVERSION() + " / Limit", 
                           true /* modal */, 
                           true /* use_separator aka set_has_separator() */ ),
-              limit_interval(5),
               limit_selected(false),
               selected_upload_disable(false),
               selected_download_disable(false),
@@ -263,7 +262,6 @@ namespace btg
                         {
                            // Set upload limit.
                            selected_upload_limit = getValue(selection);
-                           //(selection * limit_interval);
                         }
                      else if (selection < 0)
                         {
@@ -283,7 +281,6 @@ namespace btg
                         {
                            // Set upload limit.
                            selected_download_limit = getValue(selection);
-                           // (selection * limit_interval);
                         }
                      else if (selection < 0)
                         {

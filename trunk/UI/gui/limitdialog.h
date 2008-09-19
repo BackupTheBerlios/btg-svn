@@ -109,9 +109,6 @@ namespace btg
                            MaxParam4Value = 102400  //!< Maximum seed timeout/Maximum connections. (taken out of thin air)
                         };
 
-                     /// The interval in which rates are in.
-                     const t_int        limit_interval;
-
                      /// True if user pressed the "set" button.
                      bool               limit_selected;
 
