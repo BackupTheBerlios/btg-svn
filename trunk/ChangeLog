@@ -2,10 +2,12 @@ BTG version 0.9.9
 -----------------
 The following bugs were fixed:
 
+014407 Show limits ranges in geometrical progression.
 014372 Building issue (at configure step).
 014371 Does not compile against boost 1.36.
 014353 btgncli doc doesn't say what key configuration does.
 014351 WAN annouce ip not used.
+014305 Limits and sel.files persistance when move betw. sessions.
 014280 btgncli, add sorting by..
 014271 Typo in btg.js.
 014268 Update Freebsd notes in howto.
