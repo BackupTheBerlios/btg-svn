@@ -35,6 +35,7 @@
 
 #include "context.h"
 
+#include <bcore/command/limit_base.h>
 #include <bcore/command/context_abort.h>
 #include <bcore/command/context_clean.h>
 #include <bcore/command/context_create.h>
@@ -57,7 +58,7 @@
 #include <bcore/command/context_peers_rsp.h>
 #include <bcore/command/context_status_rsp.h>
 #include <bcore/command/list_rsp.h>
-
+#include <bcore/file_info.h>
 #include <bcore/verbose.h>
 
 #include "connectionextrastate.h"
@@ -748,6 +749,19 @@ namespace btg
             }
       }
 
+      void eventHandler::handle_CN_CLIMIT(t_int const _context_id,
+                                          t_int const _limitUpld,
+                                          t_int const _limitDwnld,
+                                          t_int const _seedLimit,
+                                          t_long const _seedTimeout)
+      {
+         daemoncontext->limit(_context_id,
+                              _limitUpld,
+                              _limitDwnld,
+                              _seedLimit,
+                              _seedTimeout);
+      }
+      
       void eventHandler::handle_CN_CLIMIT(btg::core::Command* _command, t_int _connectionID)
       {
          contextLimitCommand* clc = dynamic_cast<contextLimitCommand*>(_command);
@@ -941,6 +955,13 @@ namespace btg
             }
       }
 
+      void eventHandler::handle_CN_CSETFILES(t_int const _context_id,
+                                             btg::core::selectedFileEntryList const& _file_list)
+      {
+         daemoncontext->setSelectedFiles(_context_id,
+                                         _file_list);
+      }
+
       void eventHandler::handle_CN_CSETFILES(btg::core::Command* _command, t_int _connectionID)
       {
          contextSetFilesCommand* csfc = dynamic_cast<contextSetFilesCommand*>(_command);
@@ -973,7 +994,7 @@ namespace btg
                return;
             }
 
-         selectedFileEntryList file_list;
+         btg::core::selectedFileEntryList file_list;
          
          bool op_status = daemoncontext->getSelectedFiles(cgfc->getContextId(), 
                                                           file_list);
@@ -1114,7 +1135,7 @@ namespace btg
       }
 
       bool eventHandler::move(t_int const _connectionID,
-                              t_int context_id, 
+                              t_int _context_id, 
                               eventHandler* _eventhandler)
       {
          bool status = false;
@@ -1127,14 +1148,14 @@ namespace btg
          // Buffer containing file.
          btg::core::sBuffer sbuf;
 
-         if (!daemoncontext->getFile(context_id, filename, sbuf))
+         if (!daemoncontext->getFile(_context_id, filename, sbuf))
             {
                return status;
             }
 
          // State.
          btg::core::Status state;
-         if (!daemoncontext->getStatus(context_id, state))
+         if (!daemoncontext->getStatus(_context_id, state))
             {
                return status;
             }
@@ -1157,8 +1178,28 @@ namespace btg
                break;
             }
          
+         // Get limit.
+         t_int limitUpld    = btg::core::limitBase::LIMIT_DISABLED;
+         t_int limitDwnld   = btg::core::limitBase::LIMIT_DISABLED;
+         t_int seedLimit    = btg::core::limitBase::LIMIT_DISABLED;
+         t_long seedTimeout = btg::core::limitBase::LIMIT_DISABLED;
+         
+         daemoncontext->getLimit(
+                                 _context_id,
+                                 limitUpld,
+                                 limitDwnld,
+                                 seedLimit,
+                                 seedTimeout
+                                 );
+
+         // Get selected files.
+         selectedFileEntryList file_list;
+         
+         daemoncontext->getSelectedFiles(_context_id, 
+                                         file_list);
+
          // Remove the old torrent.
-         if (!daemoncontext->remove(context_id, false /* do not erase. */))
+         if (!daemoncontext->remove(_context_id, false /* do not erase. */))
             {
                return status;
             }
@@ -1175,6 +1216,21 @@ namespace btg
          delete ccwdc;
          ccwdc = 0;
 
+         // After this point, the torrent was moved, but setting
+         // limits and selecting files can still fail - even if one of
+         // the two operations fail, report success.
+
+
+         // Set limit.
+         _eventhandler->handle_CN_CLIMIT(_context_id,
+                                         limitUpld,
+                                         limitDwnld,
+                                         seedLimit,
+                                         seedTimeout);
+
+         // Selected files.
+         _eventhandler->handle_CN_CSETFILES(_context_id, file_list);
+         
          return status;
       }
 

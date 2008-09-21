@@ -38,6 +38,11 @@
 
 namespace btg
 {
+   namespace core
+      {
+         class selectedFileEntryList;
+      }
+
    namespace daemon
       {
 
@@ -297,6 +302,13 @@ namespace btg
                /// Limit a context.
                void handle_CN_CLIMIT(btg::core::Command* _command, t_int _connectionID);
 
+               /// Limit a context.
+               void handle_CN_CLIMIT(t_int const _context_id,
+                                     t_int const _limitUpld,
+                                     t_int const _limitDwnld,
+                                     t_int const _seedLimit,
+                                     t_long const _seedTimeout);
+
                /// Get limit status of a context.
                void handle_CN_CLIMITSTATUS(btg::core::Command* _command, t_int _connectionID);
 
@@ -305,6 +317,10 @@ namespace btg
 
                /// Set the files in a torrent which shall be downloaded.
                void handle_CN_CSETFILES(btg::core::Command* _command, t_int _connectionID);
+
+               /// Set the files in a torrent which shall be downloaded.
+               void handle_CN_CSETFILES(t_int const _context_id,
+                                        btg::core::selectedFileEntryList const& _file_list);
 
                /// Get the file names in a torrent, which are being downloaded.
                void handle_CN_CGETFILES(btg::core::Command* _command, t_int _connectionID);

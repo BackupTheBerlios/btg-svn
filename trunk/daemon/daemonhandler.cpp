@@ -599,7 +599,7 @@ namespace btg
             {
                t_int context_id   = cmtsc->getContextId();
                t_long old_session = cmtsc->session();
-               eventHandler* new_eventhandler;
+               eventHandler* new_eventhandler = 0;
                if (!sessionlist_.get(old_session, new_eventhandler))
                   {
                      sendError(_command->getType(), "Unable to find target session.");
