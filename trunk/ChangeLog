@@ -12,6 +12,7 @@ The following bugs were fixed:
 014271 Typo in btg.js.
 014268 Update Freebsd notes in howto.
 014223 libsigc++-2.2.* is not supported.
+013963 btgcli limit setting error.
 011275 Use UPnP support from libtorrent.
 
 BTG version 0.9.8
