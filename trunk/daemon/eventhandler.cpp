@@ -762,6 +762,47 @@ namespace btg
                               _seedTimeout);
       }
       
+      void eventHandler::logLimitRemoval(bool const _all,
+                                         bool const _removeDownloadFlag,
+                                         bool const _removeUploadFlag,
+                                         bool const _removeSeedLimitFlag,
+                                         bool const _removeSeedTimeoutFlag,
+                                         t_int const _connectionID)
+      {
+         std::string text;
+         if (_all)
+            {
+               text = " for all contexts";
+            }
+
+         if (_removeDownloadFlag)
+            {
+               MVERBOSE_LOG(logWrapper(), 
+                            verboseFlag_, "client (" << _connectionID << 
+                            "): Remove download limit " << text << ".");
+            }
+         if (_removeUploadFlag)
+            {
+               MVERBOSE_LOG(logWrapper(), 
+                            verboseFlag_, "client (" << _connectionID << 
+                            "): Remove upload limit " << text << ".");
+            }
+         
+         if (_removeSeedLimitFlag)
+            {
+               MVERBOSE_LOG(logWrapper(), 
+                            verboseFlag_, "client (" << _connectionID << 
+                            "): Remove seed limit" << text << ".");
+            }
+         
+         if (_removeSeedTimeoutFlag)
+            {
+               MVERBOSE_LOG(logWrapper(), 
+                            verboseFlag_, "client (" << _connectionID << 
+                            "): Remove seed timeout" << text << ".");
+            }
+      }
+
       void eventHandler::handle_CN_CLIMIT(btg::core::Command* _command, t_int _connectionID)
       {
          contextLimitCommand* clc = dynamic_cast<contextLimitCommand*>(_command);
@@ -798,6 +839,13 @@ namespace btg
                    removeSeedLimitFlag ||
                    removeSeedTimeoutFlag)
                   {
+                     logLimitRemoval(true /* all contexts */,
+                                     removeUploadFlag,
+                                     removeDownloadFlag,
+                                     removeSeedLimitFlag,
+                                     removeSeedTimeoutFlag,
+                                     _connectionID);
+
                      // Clear the limit for all contexts.
                      daemoncontext->removeLimitAll(removeUploadFlag,
                                                    removeDownloadFlag,
@@ -812,6 +860,14 @@ namespace btg
                      return;
                   }
 
+               MVERBOSE_LOG(logWrapper(), 
+                            verboseFlag_, "client (" << _connectionID << 
+                            "): Attempt to set limit on all contexts, ul: " << 
+                            clc->getUploadLimit() << " b/sec, dl: " << 
+                            clc->getDownloadLimit() << " b/sec, seed " << 
+                            clc->getSeedLimit() << " %, seed timeout: " << 
+                            clc->getSeedTimeout() << " second(s).");
+               
                // Set limit for all contexts.
                sendAckOrError(_connectionID,
                               daemoncontext->limitAll(clc->getUploadLimit(),
@@ -856,12 +912,21 @@ namespace btg
                    removeSeedLimitFlag ||
                    removeSeedTimeoutFlag)
                   {
+                     logLimitRemoval(false /* one context */,
+                                     removeUploadFlag,
+                                     removeDownloadFlag,
+                                     removeSeedLimitFlag,
+                                     removeSeedTimeoutFlag,
+                                     _connectionID);
+
                      // Clear the limit for all contexts.
                      daemoncontext->removeLimit(clc->getContextId(),
                                                 removeUploadFlag,
                                                 removeDownloadFlag,
                                                 removeSeedLimitFlag,
                                                 removeSeedTimeoutFlag);
+
+
                   }
 
                // Remove all limits.
@@ -870,6 +935,15 @@ namespace btg
                      sendAck(_connectionID, Command::CN_CLIMIT);
                      return;
                   }
+
+               MVERBOSE_LOG(logWrapper(), 
+                            verboseFlag_, "client (" << _connectionID << 
+                            "): Set limit, ul: " << 
+                            clc->getUploadLimit() << " b/sec, dl: " << 
+                            clc->getDownloadLimit() << " b/sec, seed " << 
+                            clc->getSeedLimit() << " %, seed timeout: " << 
+                            clc->getSeedTimeout() << " second(s).");
+                     
 
                // Set limit for a context.
                sendAckOrError(_connectionID,

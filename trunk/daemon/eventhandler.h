@@ -331,6 +331,14 @@ namespace btg
                /// Get a list of trackers which are used.
                void handle_CN_CGETTRACKERS(btg::core::Command* _command, t_int _connectionID);
 
+               /// Log a message when limits are removed.
+               void logLimitRemoval(bool const _all,
+                                    bool const _removeDownloadFlag,
+                                    bool const _removeUploadFlag,
+                                    bool const _removeSeedLimitFlag,
+                                    bool const _removeSeedTimeoutFlag,
+                                    t_int const _connectionID);
+
             private:
                /// Copy constructor.
                eventHandler(eventHandler const& _eh);
