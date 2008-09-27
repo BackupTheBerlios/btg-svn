@@ -227,6 +227,14 @@ namespace btg
                {
                   hide();
                }
+
+            if (window_ == 0)
+               {
+                  return;
+               }
+
+            destroy();
+            baseWindow::ncursesDestroy();
          }
 
          /** @} */
