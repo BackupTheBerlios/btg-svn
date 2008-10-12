@@ -4,7 +4,8 @@ dnl
 
 AC_PREREQ(2.59)
 
-AC_INIT(bcore/project.h)
+AC_INIT([bcore/project.h])
+AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_SYSTEM
 
 AM_INIT_AUTOMAKE(btg, 0.9.9)
