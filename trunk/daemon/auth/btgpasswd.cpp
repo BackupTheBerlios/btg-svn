@@ -276,7 +276,7 @@ int main(int argc, char* argv[])
                 )
                {
                   // Abort, as some directories failed.
-                  BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Failed to create user directorys.");
+                  BTG_FATAL_ERROR(logwrapper, "btgpasswd", "Failed to create user directories.");
                   break;
                }
 
