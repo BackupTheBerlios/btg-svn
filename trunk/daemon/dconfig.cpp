@@ -112,9 +112,15 @@ namespace btg
       std::string const DESCR_MISC_USERAGENT("user agent string");
 
       std::string const KEY_MISC_PIDFILE("pidfile");
-      std::string const DESCR_MISC_PIDFILE("PID-file");
+      std::string const DESCR_MISC_PIDFILE("filename");
       
-      
+      std::string const KEY_MISC_ALLOCATIONMODE("allocation-mode");
+      std::string const DESCR_MISC_ALLOCATIONMODE("mode");
+
+      std::string const VALUE_ALLOCATIONMODE_SPARSE("sparse");
+      std::string const VALUE_ALLOCATIONMODE_FULL("full");
+      std::string const VALUE_ALLOCATIONMODE_COMPACT("compact");
+
       std::string const SECTION_LIMIT("limit");
       
       std::string const KEY_LIMIT_UPLOAD_RATE_LIMIT("upload_rate_limit");
@@ -184,7 +190,8 @@ namespace btg
            def_prefer_rc4(false),
            def_peerId(""),
            def_userAgent(""),
-           def_announceIp("")
+           def_announceIp(""),
+           def_allocation_mode(SPARSE)
       {
       }
 
@@ -334,6 +341,24 @@ namespace btg
                   {
                      def_pidfname = miscStr;
                      btg::core::os::fileOperation::resolvePath(def_pidfname);
+                  }
+
+               /* Allocation mode */
+               miscStr = inifile->GetValue(KEY_MISC_ALLOCATIONMODE, SECTION_MISC);
+               if (miscStr.size() > 0)
+                  {
+                     if (miscStr == VALUE_ALLOCATIONMODE_SPARSE)
+                        {
+                           def_allocation_mode = SPARSE;
+                        }
+                     else if (miscStr == VALUE_ALLOCATIONMODE_FULL)
+                        {
+                           def_allocation_mode = FULL;
+                        }
+                     else if (miscStr == VALUE_ALLOCATIONMODE_COMPACT)
+                        {
+                           def_allocation_mode = COMPACT;
+                        }
                   }
 
                /* Use torrent name instead of file names. */
@@ -1083,11 +1108,24 @@ namespace btg
          temp.clear();
          temp.push_back(std::string("string"));
 
+         /* PID file. */
          formatKey(KEY_MISC_PIDFILE,
-                   "PID-file name",
+                   DESCR_MISC_PIDFILE,
                    temp,
                    output);
-         
+
+         /* Allocation mode. */ 
+
+         temp.clear();
+         temp.push_back(VALUE_ALLOCATIONMODE_SPARSE);
+         temp.push_back(VALUE_ALLOCATIONMODE_FULL);
+         temp.push_back(VALUE_ALLOCATIONMODE_COMPACT);
+
+         formatKey(KEY_MISC_ALLOCATIONMODE,
+                   DESCR_MISC_ALLOCATIONMODE,
+                   temp,
+                   output);
+
          /* */
 
          formatSection(SECTION_LIMIT, output);
@@ -1747,6 +1785,11 @@ namespace btg
             }
 
          return true;
+      }
+
+      daemonConfiguration::allocation_mode daemonConfiguration::getAllocationMode() const
+      {
+         return def_allocation_mode;
       }
 
       daemonConfiguration::~daemonConfiguration()

@@ -247,7 +247,18 @@ namespace btg
                                           daemonConfiguration::encryption_policy & _out, 
                                           daemonConfiguration::encryption_level & _level,
                                           bool & _preferRc4) const;
-               
+
+               /// Allocation modes.               
+               enum allocation_mode
+                  {
+                     SPARSE = 0, /// Sparse.
+                     FULL,       /// Full.
+                     COMPACT     /// Compact.
+                  };
+
+               /// Get allocation mode used.
+               allocation_mode getAllocationMode() const;
+
                /// Destructor.
                virtual ~daemonConfiguration();
             private:
@@ -397,6 +408,9 @@ namespace btg
                
                /// Internal IP for UPnP gateway
                btg::core::Address                          def_upnp_ip;
+
+               /// Allocation mode used.
+               allocation_mode                             def_allocation_mode;
             };
 
       } // namespace daemon

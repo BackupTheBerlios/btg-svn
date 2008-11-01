@@ -89,6 +89,14 @@ user-agent       \- String. Override the user agent sent to tracker.
 pidfile          \- String. PID-file name (file to write the PID to)
 .TP
 announce-ip      \- String, representing IPv4 or IPv6 address. Tell trackers to use this address instead of the one specified using torrent-ip.
+.TP
+allocation-mode  \- Choice: sparse, full, compact.
+
+sparse: all pieces will be written to the place where they belong and sparse files will be used. This is the recommended, and default mode.
+
+full: all pieces will be allocated, zeroes will be written to the files, before the data is downloaded and written to the file. This might be useful for filesystems that don't support sparse files)
+
+compact: the storage will grow as more pieces are downloaded, and pieces are rearranged to finally be in their correct places once the entire torrent has been downloaded.
 
 .SS
 Section "auth"

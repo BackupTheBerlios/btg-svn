@@ -156,6 +156,10 @@ namespace btg
 #endif // BTG_OPTION_EVENTCALLBACK
          , progress_(),
            useTorrentName_(_useTorrentName)
+#if BTG_LT_0_14
+,
+           allocation_mode_(libtorrent::storage_mode_sparse)
+#endif
       {
          BTG_MNOTICE(logWrapper(),
                      "using libtorrent version: " << LIBTORRENT_VERSION);
@@ -164,7 +168,23 @@ namespace btg
                     "Constructor", "_clientAttached = " << _clientAttached);
 
          portMgr->get(listen_port_range_);
-
+#if BTG_LT_0_14
+         switch (config_->getAllocationMode())
+            {
+            case daemonConfiguration::SPARSE:
+               allocation_mode_ = libtorrent::storage_mode_sparse;
+               break;
+            case daemonConfiguration::FULL:
+               allocation_mode_ = libtorrent::storage_mode_allocate;
+               break;
+            case daemonConfiguration::COMPACT:
+               allocation_mode_ = libtorrent::storage_mode_compact;
+               break;
+            default:
+               allocation_mode_ = libtorrent::storage_mode_sparse;
+               break;
+            }
+#endif
          bool lt_context_created = true;
 
          try
@@ -675,12 +695,12 @@ namespace btg
                            handle = torrent_session->add_torrent(tinfo, dataPath, fastResumeEntry);
 #elif BTG_LT_0_14
                            libtorrent::add_torrent_params atp;
-                           atp.name        = 0; // "default name";
+                           atp.name         = 0; // "default name";
                            atp.ti.swap(tinfo);
-                           atp.save_path   = dataPath;
-                           atp.resume_data = resumeData;
-
-                           handle          = torrent_session->add_torrent(atp);
+                           atp.save_path    = dataPath;
+                           atp.resume_data  = resumeData;
+                           atp.storage_mode = allocation_mode_;
+                           handle           = torrent_session->add_torrent(atp);
 #endif
 
                         }
@@ -693,11 +713,11 @@ namespace btg
                      handle = torrent_session->add_torrent(tinfo, dataPath);
 #elif BTG_LT_0_14
                      libtorrent::add_torrent_params atp;
-                     atp.name      = 0; // "default name";
+                     atp.name         = 0; // "default name";
                      atp.ti.swap(tinfo);
-                     atp.save_path = dataPath;
-
-                     handle        = torrent_session->add_torrent(atp);
+                     atp.save_path    = dataPath;
+                     atp.storage_mode = allocation_mode_;
+                     handle           = torrent_session->add_torrent(atp);
 #endif
                   }
             }

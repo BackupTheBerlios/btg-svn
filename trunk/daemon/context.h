@@ -602,7 +602,10 @@ namespace btg
                /// Enable/disable using the torrent name from the
                /// tracker.
                bool const                                useTorrentName_;
-
+#if BTG_LT_0_14
+               /// Allocation mode used.
+               libtorrent::storage_mode_t                allocation_mode_;
+#endif
                /// Move the data belonging to a torrent file to another directory.
                /// @return True - file was moved, false otherwise.
                bool moveToDirectory(t_int const _torrent_id, std::string const& _destination_dir);
