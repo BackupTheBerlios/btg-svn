@@ -172,17 +172,29 @@ namespace btg
          switch (config_->getAllocationMode())
             {
             case daemonConfiguration::SPARSE:
-               allocation_mode_ = libtorrent::storage_mode_sparse;
-               break;
+               {
+                  allocation_mode_ = libtorrent::storage_mode_sparse;
+                  MVERBOSE_LOG(logWrapper(), verboseFlag_, "Allocation mode: sparse.");
+                  break;
+               }
             case daemonConfiguration::FULL:
-               allocation_mode_ = libtorrent::storage_mode_allocate;
-               break;
+               {
+                  allocation_mode_ = libtorrent::storage_mode_allocate;
+                  MVERBOSE_LOG(logWrapper(), verboseFlag_, "Allocation mode: full.");
+                  break;
+               }
             case daemonConfiguration::COMPACT:
-               allocation_mode_ = libtorrent::storage_mode_compact;
-               break;
+               {
+                  allocation_mode_ = libtorrent::storage_mode_compact;
+                  MVERBOSE_LOG(logWrapper(), verboseFlag_, "Allocation mode: compact.");
+                  break;
+               }
             default:
-               allocation_mode_ = libtorrent::storage_mode_sparse;
-               break;
+               {
+                  allocation_mode_ = libtorrent::storage_mode_sparse;
+                  MVERBOSE_LOG(logWrapper(), verboseFlag_, "Allocation mode: sparse.");
+                  break;
+               }
             }
 #endif
          bool lt_context_created = true;
