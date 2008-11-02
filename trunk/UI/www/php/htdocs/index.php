@@ -128,12 +128,12 @@ for(var i=0;i<t.length;i++) {
 		</tr>
 		<tr>
 			<td>Max uploads</td>
-			<td><input type="text" id="gmaxuploads" name="gmaxuploads" value="0" style="width:40px;"/> KiB/sec</td>
+			<td><input type="text" id="gmaxuploads" name="gmaxuploads" value="0" style="width:40px;"/> uploads</td>
 		</tr>
 
 		<tr>
 			<td>Max connections</td>
-			<td><input type="text" id="gmaxconn" name="gmaxconn" value="0" style="width:30px;"/> KiB/sec</td>
+			<td><input type="text" id="gmaxconn" name="gmaxconn" value="0" style="width:30px;"/> connections </td>
 		</tr>
 
 		<tr>
