@@ -196,6 +196,7 @@ Authors
 - Roman Rybalko (making btgui look pretty, countless bugfixes, packaging).
 - Rodolphe Saugier (bugfix #10588).
 - Gabor Tanka (DHT fixes).
+- Richard S. Allen (bugfix #14751).
 - Jesper Nyholm Jensen (Testing).
 
 Getting Help
