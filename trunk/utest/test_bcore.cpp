@@ -372,7 +372,9 @@ void testBcore::testContextStatusResponseCommand()
                  0, 
                  0, 
                  ts, 
-                 0);
+                 0,
+                 "hash",
+                 "url");
 
    contextStatusResponseCommand* csrc = new contextStatusResponseCommand(5, status);
 
@@ -426,7 +428,7 @@ void testBcore::testContextAllStatusResponseCommand()
    for (t_int i=0; i<9; i++)
       {
          trackerStatus ts(-1, 0);
-         Status status(i, "/path/to/file", Status::ts_queued, 100, 101, 102, 1, 1, 50, 1, 100, 200, 0, 0, 0, 0, ts, 0);
+         Status status(i, "/path/to/file", Status::ts_queued, 100, 101, 102, 1, 1, 50, 1, 100, 200, 0, 0, 0, 0, ts, 0, "hash", "url");
          vstatus.push_back(status);
       }
 
@@ -655,9 +657,11 @@ void testBcore::testStatus()
    t_ulong filesize     = 1024ul * 1024ul * 1024ul * 10ul;
    t_int   leechers     = 100000;
    t_int   seeders      = 500000;
+   std::string h("1234");
+   std::string url("http://url");
 
    trackerStatus ts(-1, 0);
-   Status* status = new Status(context_id, filename, tstatus, dn_total, ul_total, failed_bytes, dn_rate, ul_rate, done, filesize, leechers, seeders, 0, 0, 0, 0, ts, 0);
+   Status* status = new Status(context_id, filename, tstatus, dn_total, ul_total, failed_bytes, dn_rate, ul_rate, done, filesize, leechers, seeders, 0, 0, 0, 0, ts, 0, h, url);
 
    CPPUNIT_ASSERT(status->contextID() == context_id);
    CPPUNIT_ASSERT(status->filename() == filename);
@@ -671,12 +675,14 @@ void testBcore::testStatus()
    CPPUNIT_ASSERT(status->filesize() == filesize);
    CPPUNIT_ASSERT(status->seeders() == seeders);
    CPPUNIT_ASSERT(status->leechers() == leechers);
+   CPPUNIT_ASSERT(status->getHash() == h);
+   CPPUNIT_ASSERT(status->getAnnounceURL() == url);
 
    delete status;
    status = 0;
 
    status = new Status();
-   status->set(context_id, filename, tstatus, dn_total, ul_total, failed_bytes, dn_rate, ul_rate, done, filesize, leechers, seeders, 0, 0, 0, 0, ts, 0);
+   status->set(context_id, filename, tstatus, dn_total, ul_total, failed_bytes, dn_rate, ul_rate, done, filesize, leechers, seeders, 0, 0, 0, 0, ts, 0, h, url);
 
    CPPUNIT_ASSERT(status->contextID() == context_id);
    CPPUNIT_ASSERT(status->filename() == filename);
@@ -690,6 +696,8 @@ void testBcore::testStatus()
    CPPUNIT_ASSERT(status->filesize() == filesize);
    CPPUNIT_ASSERT(status->seeders() == seeders);
    CPPUNIT_ASSERT(status->leechers() == leechers);
+   CPPUNIT_ASSERT(status->getHash() == h);
+   CPPUNIT_ASSERT(status->getAnnounceURL() == url);
 
    delete status;
    status = 0;
@@ -2189,7 +2197,9 @@ void testBcore::createCommands(std::vector<btg::core::Command*> & commands)
                  0, 
                  0, 
                  ts, 
-                 0);
+                 0,
+                 "hash",
+                 "url");
 
    commands.push_back(
                       new contextStatusResponseCommand(cid, status)

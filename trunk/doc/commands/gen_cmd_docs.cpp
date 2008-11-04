@@ -152,7 +152,7 @@ int main(int argc, char* argv[])
 
    // Command::CN_CSTATUSRSP
    trackerStatus ts(-1, 0);
-   Status status(context_id, filename, Status::ts_finished, 0, 0, 0, 0, 0, 100, 1024, 500, 200, 0, 0, 0, 0, ts, 0);
+   Status status(context_id, filename, Status::ts_finished, 0, 0, 0, 0, 0, 100, 1024, 500, 200, 0, 0, 0, 0, ts, 0, "hash", "http://to/url");
    e->setDirection(FROM_SERVER);
    printCommand(cf, e, new contextStatusResponseCommand(context_id, status));
 

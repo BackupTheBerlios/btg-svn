@@ -95,7 +95,9 @@ namespace btg
                       t_int const _time_left_m, 
                       t_int const _time_left_s,
                       btg::core::trackerStatus _trackerStatus,
-                      t_ulong const _activityCounter);
+                      t_ulong const _activityCounter,
+                      std::string const& _hash,
+                      std::string const& _announceURL);
 
                /// Copy constructor.
                /// @param [in] _status       Reference to the object to copy.
@@ -137,7 +139,9 @@ namespace btg
                         t_int const _time_left_m, 
                         t_int const _time_left_s,
                         btg::core::trackerStatus _trackerStatus,
-                        t_ulong const _activityCounter);
+                        t_ulong const _activityCounter,
+                        std::string const& _hash,
+                        std::string const& _announceURL);
 
                /// The equality operator.
                bool operator== (Status const& _status) const;
@@ -205,6 +209,12 @@ namespace btg
 
                /// Get the activity counter.
                t_ulong activityCounter() const { return activityCounter_; };
+
+               /// Get the contained hash.
+               std::string getHash() const { return hash_; };
+
+               /// Get the contained announce URL.
+               std::string getAnnounceURL() const { return announceURL_; };
 
                /// Used to convert this object to a byte array. This does not
                /// create a valid representation, since the session information
@@ -289,6 +299,12 @@ namespace btg
                /// ts_downloading - downloading time.
                /// ts_seeding     - seeding time.
                t_ulong                  activityCounter_;
+
+               /// The contained hash.
+               std::string              hash_;
+
+               /// The contained announce URL.
+               std::string              announceURL_;
             };
 
          /** @} */

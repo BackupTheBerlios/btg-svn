@@ -160,6 +160,9 @@ namespace btg
             
             std::string st_s = btg::core::convertToString<t_int>(_status.seeders());
             add("Seeds:", st_s);
+
+            add("Hash:", _status.getHash());
+            add("Announce URL:", _status.getAnnounceURL());
          }
 
          void detailsTreeview::clear()

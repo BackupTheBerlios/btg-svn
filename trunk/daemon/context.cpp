@@ -1354,6 +1354,30 @@ namespace btg
                counter = ti->seed_counter;
             }
 
+         libtorrent::sha1_hash h = ti->handle.info_hash();
+         
+         std::string shash = btg::core::convertToString<libtorrent::sha1_hash>(h);
+
+         std::string announceUrl("not set");
+
+         std::vector<libtorrent::announce_entry> const& aelist = ti->handle.trackers();
+
+         if (aelist.size() > 0)
+            {
+               announceUrl = "";
+               std::vector<libtorrent::announce_entry>::const_iterator iter;
+               for (iter = aelist.begin();
+                    iter != aelist.end();
+                    iter++)
+                  {
+                     announceUrl += aelist.begin()->url;
+                     if ((iter+1) != aelist.end())
+                        {
+                           announceUrl += " ";
+                        }
+                  }
+            }
+
          BTG_MNOTICE(logWrapper(), 
                      "sending progress info: " <<
                      hour << ":" << minute << ":" << second <<
@@ -1376,7 +1400,9 @@ namespace btg
                           minute,
                           second,
                           ti->trackerStatus,
-                          counter
+                          counter,
+                          shash,
+                          announceUrl
                           );
 
          BTG_MEXIT(logWrapper(), "getStatus", true);
