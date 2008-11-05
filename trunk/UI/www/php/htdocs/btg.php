@@ -771,7 +771,8 @@ class BTG
 					$output .= "<trackerstatustext>".htmlspecialchars($trackerStatus->getDescription())."</trackerstatustext>\n";
 					$output .= "<trackerstatusmessage>".htmlspecialchars($trackerStatus->getMessage())."</trackerstatusmessage>\n";
 					$output .= "<activitycounter>".$contextStatus->getActivityCounter()."</activitycounter>\n";
-
+					$output .= "<fhash>".$contextStatus->getHash()."</fhash>\n";
+					$output .= "<furl>".htmlspecialchars($contextStatus->getAnnounceURL())."</furl>\n";
 					$r2 = $this->executeCommand(new contextGetTrackersCommand((int)$contextStatus->getContextID(), false), false);
 					if($r2 instanceof contextGetTrackersResponseCommand)
 					{

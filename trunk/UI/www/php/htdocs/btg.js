@@ -1915,17 +1915,42 @@ function createTorrentDetails()
 
 	// Add ul/dl ratio.
 	c = r.insertCell(-1);
-	c.className = 'extrainfo_type';
+	c.className = 'extrainfo_type extrainfo_divider';
 	c.innerHTML = 'Ratio';
 
 	c = r.insertCell(-1);
 	c.className = 'extrainfo_value';
 	c.innerHTML = '';
 
-	/* */
+	/* Hash and Url */
 
 	r = tbl.insertRow(-1);
 	r.className='extra_uneven_row';
+
+	// Hash
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_type';
+	c.innerHTML='Hash:';
+
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_value';
+	c.innerHTML='0x00000000000ccdd';
+	//c.colSpan = 3;
+
+	// Url 
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_type extrainfo_divider';
+	c.innerHTML = 'Announce URL';
+
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_value';
+	c.innerHTML = 'http://missing-url';
+	c.colSpan = 2;
+
+	/* Files follow */
+
+	r = tbl.insertRow(-1);
+	r.className='extra_even_row';
 
 	c = r.insertCell(-1);
 	c.className = 'extrainfo_type';
@@ -1934,20 +1959,11 @@ function createTorrentDetails()
 	c = r.insertCell(-1);
 	c.className = 'extrainfo_value';
 
-	/* Files (!!!). */
+	/* Files, contents (!!!). */
 
 	c.innerHTML="No files present.";
 	c.colSpan = 5;
 
-	// Not used right now.
-	/*
-	c = r.insertCell(-1);
-	c.className = 'extrainfo_type';
-	c.innerHTML = '';
-	c = r.insertCell(-1);
-	c.className = 'extrainfo_value';
-	c.innerHTML = '';
-	*/
 	return tbl;
 }
 
@@ -2224,8 +2240,12 @@ function updateTorrentDetails(t, s)
 
 	t.rows[5].cells[3].innerHTML = ratio_tr.toString();
 
+	// Add hash and URL. !!!
+   t.rows[6].cells[1].innerHTML = s.fhash;
+   t.rows[6].cells[3].innerHTML = s.furl;
+
 	// Update file list (!!!).
-	t.rows[6].cells[1].innerHTML = addFileInfoList(s)
+	t.rows[7].cells[1].innerHTML = addFileInfoList(s);
 
 	// Not used right now.
 	//	t.rows[5].cells[4].innerHTML = "";
@@ -2278,6 +2298,8 @@ function Status(dom)
 	this.trackerstatusmessage = "";
 	this.activitycounter = 0;
 	this.tracker = "";
+	this.fhash = "";
+	this.furl = "";
 	this.fileinfolist = new Array();
 
 	if (dom)
@@ -2303,6 +2325,8 @@ function Status(dom)
 	    this.trackerstatustext = getFirstChildValue(dom, 'trackerstatustext');
 	    this.trackerstatusmessage = getFirstChildValue(dom, 'trackerstatusmessage');
 	    this.activitycounter = parseInt(getFirstChildValue(dom, 'activitycounter'));
+	    this.fhash = getFirstChildValue(dom, 'fhash');
+	    this.furl = getFirstChildValue(dom, 'furl');
 	    this.tracker = getFirstChildValue(dom, 'tracker');
 
 		/* Recalculate done */
@@ -2398,6 +2422,8 @@ function Status(dom)
 		if (this.trackerstatustext != s.trackerstatustext)	return true;
 		if (this.trackerstatusmessage != s.trackerstatusmessage)	return true;
 		if (this.activitycounter != s.activitycounter) return true;
+		if (this.fhash != s.fhash) return true;
+		if (this.furl != s.furl) return true;
 		if (this.tracker != s.tracker) return true;
 		return false;
 	}

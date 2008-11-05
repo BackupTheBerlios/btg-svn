@@ -1370,7 +1370,7 @@ namespace btg
                     iter != aelist.end();
                     iter++)
                   {
-                     announceUrl += aelist.begin()->url;
+                     announceUrl += iter->url;
                      if ((iter+1) != aelist.end())
                         {
                            announceUrl += " ";
