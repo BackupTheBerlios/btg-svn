@@ -78,6 +78,8 @@ namespace btg
                /// @param [in] _time_left_s  Estimated seconds left.
                /// @param [in] _trackerStatus Tracker status object.
                /// @param [in] _activityCounter Activity counter.
+               /// @param [in] _hash            Hash.
+               /// @param [in] _announceURL     Announce URL.
                Status(t_int const _contextID,
                       std::string const& _filename,
                       torrent_status const _status,
@@ -122,6 +124,8 @@ namespace btg
                /// @param [in] _time_left_s  Estimated seconds left.
                /// @param [in] _trackerStatus Tracker status object.
                /// @param [in] _activityCounter Activity counter.
+               /// @param [in] _hash            Hash.
+               /// @param [in] _announceURL     Announce URL.
                void set(t_int const _contextID,
                         std::string const& _filename,
                         torrent_status const _status,
