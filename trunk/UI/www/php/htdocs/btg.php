@@ -720,6 +720,199 @@ class BTG
 		return $this->addExtraOutput($output);
 	}
 
+	/// Get list of contexts.
+	function contextList()
+	{
+		$this->attachLast();
+		if(!$this->sessionAttached)
+			return $this->addExtraOutput("");
+
+		$output = "";
+		$r = $this->executeCommand(new listCommand(), true);
+		if($r instanceof listCommandResponse)
+		{
+			$output = "<list>\n";
+			$a = $r->getIDs();
+			foreach($a as $id)
+			{
+				$output .= "<entry><id>$id</id></entry>\n";
+			}
+			$output .= "</list>\n";
+		}
+
+		$this->logMessage("contextList:".$output);
+		
+		return $this->addExtraOutput($output);
+	}
+
+	function contextStatusForIds($contextIDs)
+	{
+		$this->logMessage("Input: ".$contextIDs);
+
+		$this->attachLast();
+		if(!$this->sessionAttached)
+			return $this->addExtraOutput("");
+		
+		$output = "<contexts>\n";
+		$ids    = array();
+
+		if (strstr($contextIDs, ","))
+		{
+			// $contextID is actualy a , delimited list of contextIDs
+			$ids = explode(",", $contextIDs);
+		}
+		else
+		{
+			// A single ID.
+			array_push($ids, $contextIDs);
+		}
+
+		foreach($ids as $id)
+			{
+				if (!is_numeric($id))
+				{
+					continue;
+				}
+				$this->logMessage("Updating context ID: ".$id);
+					
+				$r = $this->executeCommand(new contextStatusCommand((int)$id, (bool)false), true);
+				if($r instanceof contextStatusResponseCommand || $r instanceof contextAllStatusResponseCommand)
+				{
+					$contextStatus = $r->getStatus();
+
+					$output .= "<context>\n";
+					$output .= "<id>".$contextStatus->getContextID()."</id>\n";
+					$output .= "<filename>".htmlspecialchars(basename($contextStatus->getFilename()))."</filename>\n";
+					$output .= "<status>".$contextStatus->getStatus()."</status>\n";
+					$output .= "<statustext>".$contextStatus->getStatusName()."</statustext>\n";
+					$output .= "<downloadtotal>".$contextStatus->getDownloadTotal()."</downloadtotal>\n";
+					$output .= "<uploadtotal>".$contextStatus->getUploadTotal()."</uploadtotal>\n";
+					$output .= "<failedbytes>".$contextStatus->getFailedBytes()."</failedbytes>\n";
+					$output .= "<downloadrate>".$contextStatus->getDownloadRate()."</downloadrate>\n";
+					$output .= "<uploadrate>".$contextStatus->getUploadRate()."</uploadrate>\n";
+					$output .= "<done>".$contextStatus->getDone()."</done>\n";
+					$output .= "<filesize>".$contextStatus->getFilesize()."</filesize>\n";
+					$output .= "<leechers>".$contextStatus->getLeechers()."</leechers>\n";
+					$output .= "<seeders>".$contextStatus->getSeeders()."</seeders>\n";
+
+					$d = $contextStatus->getTimeLeftD();
+					$h = $contextStatus->getTimeLeftH();
+					$m = $contextStatus->getTimeLeftM();
+					$s = $contextStatus->getTimeLeftS();
+					if($d > 0)
+						$timeleft = sprintf("%dd, %dh, %dm", $d, $h, $m);
+					elseif($h > 0)
+						$timeleft = sprintf("%dh, %dm, %ds", $h, $m, $s);
+					elseif($m > 0)
+						$timeleft = sprintf("%dm, %ds", $m, $s);
+					else
+						$timeleft = sprintf("%ds", $s);
+
+					$output .= "<timeleft>".$timeleft."</timeleft>\n";
+					$trackerStatus = $contextStatus->getTrackerStatus();
+					$output .= "<trackerstatus>".$trackerStatus->getStatus()."</trackerstatus>\n";
+					$output .= "<trackerstatustext>".htmlspecialchars($trackerStatus->getDescription())."</trackerstatustext>\n";
+					$output .= "<trackerstatusmessage>".htmlspecialchars($trackerStatus->getMessage())."</trackerstatusmessage>\n";
+					$output .= "<activitycounter>".$contextStatus->getActivityCounter()."</activitycounter>\n";
+					$output .= "<fhash>".$contextStatus->getHash()."</fhash>\n";
+					$output .= "<furl>".htmlspecialchars($contextStatus->getAnnounceURL())."</furl>\n";
+					$r2 = $this->executeCommand(new contextGetTrackersCommand((int)$contextStatus->getContextID(), false), false);
+					if($r2 instanceof contextGetTrackersResponseCommand)
+					{
+						$arr = $r2->getTrackers();
+						$output .= "<tracker>".htmlspecialchars($arr[0])."</tracker>\n";
+					}
+
+			               // Get the list of contained files.
+			               $output .= "<fileinfo>\n";
+
+			               // Only get file information in certain states.
+					if ($contextStatus->getStatus() >= 3)
+			 		{
+					// Get list of selected files first,
+					$selected_files = $this->getSelectedFiles((int)$contextStatus->getContextID());
+					$files          = $this->getFiles((int)$contextStatus->getContextID());
+               
+					$fileId = 0;
+
+					$saved_dir = "";
+
+					foreach($selected_files as $entry)
+					{
+						$f  = $entry->getFilename();
+						$fs = 0;
+						$pc = 0;
+                           
+						if ($entry->getSelected() == true)
+						{
+							$selected = 1;
+							foreach($files as $file_entry)
+							{
+								if ($file_entry->getFilename() == $f)
+                                          			{
+									// File size.
+									$fs = $file_entry->getFileSize();
+									// Percent done.
+									$pc = $this->fileEntryToPercent($file_entry);
+								}
+							}
+						}
+				else
+				{
+					$selected = 0;
+				}
+
+				$output .= "<file>\n";
+                           
+				$output .= "<id>".$fileId."</id>\n";
+				$fileId++;
+
+				$dir = dirname($f);
+
+				if ($dir != $saved_dir)
+				{
+					$output .= "<dir>";
+					$output .= htmlspecialchars($dir);
+					$output .= "</dir>\n";
+					$saved_dir = $dir;
+				}
+				else
+				{
+					$output .= "<dir></dir>\n";
+				}
+
+				$output .= "<name>".htmlspecialchars(basename($f))."</name>\n";
+				$output .= "<selected>".$selected."</selected>\n";
+				$output .= "<size>".$fs."</size>\n";
+				$output .= "<percent>".$pc."</percent>\n";
+				$output .= "</file>";
+
+				// $this->logMessage("Entry: ".$f.", ".$selected);
+			}
+		} // file information
+
+               $output .= "</fileinfo>\n";
+               $output .= "</context>\n";
+            }
+		else if($contextID == contextCommand::UNDEFINED_CONTEXT && $r instanceof errorCommand)
+		{
+			$output .= "<contexts/>";
+			return $this->addExtraOutput($output);
+		}
+		else if($r instanceof errorCommand)
+		{
+			$this->log_error($r->getMessage());
+		}
+		} // foreach
+			
+		$output .= "</contexts>";
+	
+		//$this->logMessage("output: ".$output);
+		
+		return $this->addExtraOutput($output);
+		$this->log_error("No context IDs..");
+	}
+
 	/// Get status of one or more contexts
 	function contextStatus($contextID=contextCommand::UNDEFINED_CONTEXT, $showAll=true)
 	{
@@ -780,76 +973,73 @@ class BTG
 						$output .= "<tracker>".htmlspecialchars($arr[0])."</tracker>\n";
 					}
 
-               // Get the list of contained files.
-               $output .= "<fileinfo>\n";
+			               // Get the list of contained files.
+			               $output .= "<fileinfo>\n";
 
-               // Only get file information in certain states.
-               if ($contextStatus->getStatus() >= 3)
-                  {
-                     // Get list of selected files first,
-                     $selected_files = $this->getSelectedFiles((int)$contextStatus->getContextID());
-                     $files          = $this->getFiles((int)$contextStatus->getContextID());
+			               // Only get file information in certain states.
+					if ($contextStatus->getStatus() >= 3)
+			 		{
+					// Get list of selected files first,
+					$selected_files = $this->getSelectedFiles((int)$contextStatus->getContextID());
+					$files          = $this->getFiles((int)$contextStatus->getContextID());
                
-                     $fileId = 0;
+					$fileId = 0;
 
-                     $saved_dir = "";
+					$saved_dir = "";
 
-                     foreach($selected_files as $entry)
-                        {
-                           $f  = $entry->getFilename();
-                           $fs = 0;
-                           $pc = 0;
+					foreach($selected_files as $entry)
+					{
+						$f  = $entry->getFilename();
+						$fs = 0;
+						$pc = 0;
                            
-                           if ($entry->getSelected() == true)
-                              {
-                                 $selected = 1;
-                                 
-                                 foreach($files as $file_entry)
-                                    {
-                                       if ($file_entry->getFilename() == $f)
-                                          {
-                                             // File size.
-                                             $fs = $file_entry->getFileSize();
-                                             
-                                             // Percent done.
-                                             $pc = $this->fileEntryToPercent($file_entry);
-                                          }
-                                    }
-                              }
-                           else
-                              {
-                                 $selected = 0;
-                              }
+						if ($entry->getSelected() == true)
+						{
+							$selected = 1;
+							foreach($files as $file_entry)
+							{
+								if ($file_entry->getFilename() == $f)
+                                          			{
+									// File size.
+									$fs = $file_entry->getFileSize();
+									// Percent done.
+									$pc = $this->fileEntryToPercent($file_entry);
+								}
+							}
+						}
+				else
+				{
+					$selected = 0;
+				}
 
-                           $output .= "<file>\n";
+				$output .= "<file>\n";
                            
-                           $output .= "<id>".$fileId."</id>\n";
-                           $fileId++;
-                           
+				$output .= "<id>".$fileId."</id>\n";
+				$fileId++;
 
-                           $dir = dirname($f);
+				$dir = dirname($f);
 
-                           if ($dir != $saved_dir)
-                              {
-                                 $output .= "<dir>";
-                                 $output .= htmlspecialchars($dir);
-                                 $output .= "</dir>\n";
-                                 $saved_dir = $dir;
-                              }
-                           else
-                              {
-                                 $output .= "<dir></dir>\n";
-                              }
+				if ($dir != $saved_dir)
+				{
+					$output .= "<dir>";
+					$output .= htmlspecialchars($dir);
+					$output .= "</dir>\n";
+					$saved_dir = $dir;
+				}
+				else
+				{
+					$output .= "<dir></dir>\n";
+				}
 
-                           $output .= "<name>".htmlspecialchars(basename($f))."</name>\n";
-                           $output .= "<selected>".$selected."</selected>\n";
-                           $output .= "<size>".$fs."</size>\n";
-                           $output .= "<percent>".$pc."</percent>\n";
-                           $output .= "</file>";
+				$output .= "<name>".htmlspecialchars(basename($f))."</name>\n";
+				$output .= "<selected>".$selected."</selected>\n";
+				$output .= "<size>".$fs."</size>\n";
+				$output .= "<percent>".$pc."</percent>\n";
+				$output .= "</file>";
 
-                           $this->logMessage("Entry: ".$f.", ".$selected);
-                        }
-                  } // file information
+				$this->logMessage("Entry: ".$f.", ".$selected);
+			}
+		} // file information
 
                $output .= "</fileinfo>\n";
                $output .= "</context>\n";
@@ -1155,7 +1345,9 @@ try
 	$ajax->register('btg_sessionDetach', array($btg, 'sessionDoDetach'));
 	$ajax->register('btg_sessionQuit', array($btg, 'sessionQuit'));
 	$ajax->register('btg_cleanAll', array($btg, 'cleanAll'));
+	$ajax->register('btg_contextList', array($btg, 'contextList'));
 	$ajax->register('btg_contextStatus', array($btg, 'contextStatus'));
+	$ajax->register('btg_contextStatusForIds', array($btg, 'contextStatusForIds'));
 	$ajax->register('btg_contextCreateFromUrl', array($btg, 'contextCreateFromUrl'));
 	$ajax->register('btg_contextUrlStatus', array($btg, 'contextUrlStatus'));
 	$ajax->register('btg_contextLimit', array($btg, 'contextLimit'));
@@ -1172,8 +1364,8 @@ try
 	$ajax->register('btg_globallimitstatus', array($btg, 'globalLimitStatus'));
 	$ajax->register('btg_sessionName', array($btg, 'sessionName'));
 	$ajax->register('btg_setSessionName', array($btg, 'setSessionName'));
-   $ajax->register('btg_contextSelectFile', array($btg, 'contextSelectFile'));
-   $ajax->register('btg_contextUnSelectFile', array($btg, 'contextUnSelectFile'));
+	$ajax->register('btg_contextSelectFile', array($btg, 'contextSelectFile'));
+	$ajax->register('btg_contextUnSelectFile', array($btg, 'contextUnSelectFile'));
 
 	// Handle any requests
 	if($ajax->handle_client_request())
