@@ -34,4 +34,44 @@ class contextStatusCommand extends contextCommand
 	}
 }
 
+class contextMultipleStatusCommand extends contextCommand
+{
+	private $context_ids;
+	public function contextMultipleStatusCommand($context_ids=array())
+	{
+		parent::__construct(Command::CN_CMSTATUS, contextCommand::UNDEFINED_CONTEXT, false);
+		$this->context_ids = $context_ids;
+	}
+
+	public function toString()
+	{
+		$a = "";
+		foreach($this->context_ids as $id)
+		{
+			$a .= " $id";
+		}
+
+		return parent::toString() . " id(s):".$a;
+	}
+
+	public function getIDs()
+	{
+		return $this->context_ids;
+	}
+
+	public function serialize(&$a = array())
+	{
+		$a = parent::serialize();
+		$this->intListToBytes($a, $this->context_ids);
+		return $a;
+	}
+
+	public function deserialize(&$data)
+	{
+		parent::deserialize($data);
+
+		$this->bytesToIntList($this->context_ids, $data);
+	}
+}
+
 ?>

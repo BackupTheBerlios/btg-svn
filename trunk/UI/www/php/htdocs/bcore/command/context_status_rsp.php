@@ -104,4 +104,49 @@ class contextAllStatusResponseCommand extends contextCommand
 		}
 	}
 }
+
+class contextMultipleStatusResponseCommand extends contextCommand
+{
+	/// Array of Status objects
+	private $status;
+	public function contextMultipleStatusResponseCommand($context_id=contextCommand::UNDEFINED_CONTEXT, $status = array())
+	{
+		parent::__construct(Command::CN_CMSTATUSRSP, $context_id);
+		$this->status = $status;
+	}
+
+	public function getStatus()
+	{
+		return $this->status;
+	}
+
+	public function serialize(&$a = array())
+	{
+		$a = parent::serialize();
+
+		// Size of list
+		$this->intToBytes($a, count($this->status));
+
+		foreach($this->status as $status)
+			$status->serialize($a);
+
+		return $a;
+	}
+
+	public function deserialize(&$data)
+	{
+		parent::deserialize($data);
+
+		$size = 0;
+	  	$this->bytesToInt($size, $data);
+
+		for($i=0; $i < $size; $i++)
+		{
+			$status = new Status();
+			$status->deserialize($data);
+			$this->status[] = $status;
+		}
+	}
+}
+
 ?>

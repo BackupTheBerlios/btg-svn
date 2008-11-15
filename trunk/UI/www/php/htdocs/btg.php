@@ -740,8 +740,6 @@ class BTG
 			$output .= "</list>\n";
 		}
 
-		$this->logMessage("contextList:".$output);
-		
 		return $this->addExtraOutput($output);
 	}
 
@@ -767,68 +765,76 @@ class BTG
 			array_push($ids, $contextIDs);
 		}
 
+		$request_ids = array();
+
 		foreach($ids as $id)
-			{
-				if (!is_numeric($id))
+		{
+			if (!is_numeric($id))
 				{
 					continue;
 				}
-				$this->logMessage("Updating context ID: ".$id);
-					
-				$r = $this->executeCommand(new contextStatusCommand((int)$id, (bool)false), true);
-				if($r instanceof contextStatusResponseCommand || $r instanceof contextAllStatusResponseCommand)
+
+			$this->logMessage("id:".$id);
+			$s_id = (int)$id;
+			array_push($request_ids, $s_id);
+		}
+
+		$r = $this->executeCommand(new contextMultipleStatusCommand($request_ids));
+		
+		if ($r instanceof contextMultipleStatusResponseCommand)
+		{
+			$status = $r->getStatus();
+			foreach($status as $contextStatus)
+			{
+				$output .= "<context>\n";
+				$output .= "<id>".$contextStatus->getContextID()."</id>\n";
+				$output .= "<filename>".htmlspecialchars(basename($contextStatus->getFilename()))."</filename>\n";
+				$output .= "<status>".$contextStatus->getStatus()."</status>\n";
+				$output .= "<statustext>".$contextStatus->getStatusName()."</statustext>\n";
+				$output .= "<downloadtotal>".$contextStatus->getDownloadTotal()."</downloadtotal>\n";
+				$output .= "<uploadtotal>".$contextStatus->getUploadTotal()."</uploadtotal>\n";
+				$output .= "<failedbytes>".$contextStatus->getFailedBytes()."</failedbytes>\n";
+				$output .= "<downloadrate>".$contextStatus->getDownloadRate()."</downloadrate>\n";
+				$output .= "<uploadrate>".$contextStatus->getUploadRate()."</uploadrate>\n";
+				$output .= "<done>".$contextStatus->getDone()."</done>\n";
+				$output .= "<filesize>".$contextStatus->getFilesize()."</filesize>\n";
+				$output .= "<leechers>".$contextStatus->getLeechers()."</leechers>\n";
+				$output .= "<seeders>".$contextStatus->getSeeders()."</seeders>\n";
+
+				$d = $contextStatus->getTimeLeftD();
+				$h = $contextStatus->getTimeLeftH();
+				$m = $contextStatus->getTimeLeftM();
+				$s = $contextStatus->getTimeLeftS();
+				if($d > 0)
+					$timeleft = sprintf("%dd, %dh, %dm", $d, $h, $m);
+				elseif($h > 0)
+					$timeleft = sprintf("%dh, %dm, %ds", $h, $m, $s);
+				elseif($m > 0)
+					$timeleft = sprintf("%dm, %ds", $m, $s);
+				else
+					$timeleft = sprintf("%ds", $s);
+
+				$output .= "<timeleft>".$timeleft."</timeleft>\n";
+				$trackerStatus = $contextStatus->getTrackerStatus();
+				$output .= "<trackerstatus>".$trackerStatus->getStatus()."</trackerstatus>\n";
+				$output .= "<trackerstatustext>".htmlspecialchars($trackerStatus->getDescription())."</trackerstatustext>\n";
+				$output .= "<trackerstatusmessage>".htmlspecialchars($trackerStatus->getMessage())."</trackerstatusmessage>\n";
+				$output .= "<activitycounter>".$contextStatus->getActivityCounter()."</activitycounter>\n";
+				$output .= "<fhash>".$contextStatus->getHash()."</fhash>\n";
+				$output .= "<furl>".htmlspecialchars($contextStatus->getAnnounceURL())."</furl>\n";
+				$r2 = $this->executeCommand(new contextGetTrackersCommand((int)$contextStatus->getContextID(), false), false);
+				if($r2 instanceof contextGetTrackersResponseCommand)
 				{
-					$contextStatus = $r->getStatus();
+					$arr = $r2->getTrackers();
+					$output .= "<tracker>".htmlspecialchars($arr[0])."</tracker>\n";
+				}
 
-					$output .= "<context>\n";
-					$output .= "<id>".$contextStatus->getContextID()."</id>\n";
-					$output .= "<filename>".htmlspecialchars(basename($contextStatus->getFilename()))."</filename>\n";
-					$output .= "<status>".$contextStatus->getStatus()."</status>\n";
-					$output .= "<statustext>".$contextStatus->getStatusName()."</statustext>\n";
-					$output .= "<downloadtotal>".$contextStatus->getDownloadTotal()."</downloadtotal>\n";
-					$output .= "<uploadtotal>".$contextStatus->getUploadTotal()."</uploadtotal>\n";
-					$output .= "<failedbytes>".$contextStatus->getFailedBytes()."</failedbytes>\n";
-					$output .= "<downloadrate>".$contextStatus->getDownloadRate()."</downloadrate>\n";
-					$output .= "<uploadrate>".$contextStatus->getUploadRate()."</uploadrate>\n";
-					$output .= "<done>".$contextStatus->getDone()."</done>\n";
-					$output .= "<filesize>".$contextStatus->getFilesize()."</filesize>\n";
-					$output .= "<leechers>".$contextStatus->getLeechers()."</leechers>\n";
-					$output .= "<seeders>".$contextStatus->getSeeders()."</seeders>\n";
+	         // Get the list of contained files.
+	         $output .= "<fileinfo>\n";
 
-					$d = $contextStatus->getTimeLeftD();
-					$h = $contextStatus->getTimeLeftH();
-					$m = $contextStatus->getTimeLeftM();
-					$s = $contextStatus->getTimeLeftS();
-					if($d > 0)
-						$timeleft = sprintf("%dd, %dh, %dm", $d, $h, $m);
-					elseif($h > 0)
-						$timeleft = sprintf("%dh, %dm, %ds", $h, $m, $s);
-					elseif($m > 0)
-						$timeleft = sprintf("%dm, %ds", $m, $s);
-					else
-						$timeleft = sprintf("%ds", $s);
-
-					$output .= "<timeleft>".$timeleft."</timeleft>\n";
-					$trackerStatus = $contextStatus->getTrackerStatus();
-					$output .= "<trackerstatus>".$trackerStatus->getStatus()."</trackerstatus>\n";
-					$output .= "<trackerstatustext>".htmlspecialchars($trackerStatus->getDescription())."</trackerstatustext>\n";
-					$output .= "<trackerstatusmessage>".htmlspecialchars($trackerStatus->getMessage())."</trackerstatusmessage>\n";
-					$output .= "<activitycounter>".$contextStatus->getActivityCounter()."</activitycounter>\n";
-					$output .= "<fhash>".$contextStatus->getHash()."</fhash>\n";
-					$output .= "<furl>".htmlspecialchars($contextStatus->getAnnounceURL())."</furl>\n";
-					$r2 = $this->executeCommand(new contextGetTrackersCommand((int)$contextStatus->getContextID(), false), false);
-					if($r2 instanceof contextGetTrackersResponseCommand)
-					{
-						$arr = $r2->getTrackers();
-						$output .= "<tracker>".htmlspecialchars($arr[0])."</tracker>\n";
-					}
-
-			               // Get the list of contained files.
-			               $output .= "<fileinfo>\n";
-
-			               // Only get file information in certain states.
-					if ($contextStatus->getStatus() >= 3)
-			 		{
+	         // Only get file information in certain states.
+				if ($contextStatus->getStatus() >= 3)
+		 		{
 					// Get list of selected files first,
 					$selected_files = $this->getSelectedFiles((int)$contextStatus->getContextID());
 					$files          = $this->getFiles((int)$contextStatus->getContextID());
@@ -887,30 +893,23 @@ class BTG
 				$output .= "<percent>".$pc."</percent>\n";
 				$output .= "</file>";
 
-				// $this->logMessage("Entry: ".$f.", ".$selected);
+				$this->logMessage("Entry: ".$f.", ".$selected);
 			}
 		} // file information
 
-               $output .= "</fileinfo>\n";
-               $output .= "</context>\n";
-            }
-		else if($contextID == contextCommand::UNDEFINED_CONTEXT && $r instanceof errorCommand)
-		{
-			$output .= "<contexts/>";
-			return $this->addExtraOutput($output);
-		}
-		else if($r instanceof errorCommand)
-		{
-			$this->log_error($r->getMessage());
-		}
-		} // foreach
-			
-		$output .= "</contexts>";
-	
-		//$this->logMessage("output: ".$output);
-		
+		$output .= "</fileinfo>\n";
+		$output .= "</context>\n";
+	}
+}
+else if($r instanceof errorCommand)
+{
+	$this->log_error($r->getMessage());
+}
+
+$output .="</contexts>\n";
+
+
 		return $this->addExtraOutput($output);
-		$this->log_error("No context IDs..");
 	}
 
 	/// Get status of one or more contexts

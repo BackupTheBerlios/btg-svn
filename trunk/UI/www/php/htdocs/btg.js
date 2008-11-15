@@ -48,7 +48,7 @@ var contextIdListUpdated = false;
 var contextIdListNewContexts = new Array();
 
 /* Update this number of context at the same time. */
-var updateNumberOfContexts = 5;
+var updateNumberOfContexts = 1;
 
 /* Indicates if we should autoupdate contexts */
 var doAutoRefresh = 0;

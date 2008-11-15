@@ -134,6 +134,12 @@ class commandFactory
 		case Command::CN_CALLSTATUSRSP: // All status response.
 			$c = new contextAllStatusResponseCommand();
 			break;
+		case Command::CN_CMSTATUS:
+			$c = new contextMultipleStatusCommand();
+			break;
+		case Command::CN_CMSTATUSRSP:
+			$c = new contextMultipleStatusResponseCommand();
+			break;
 		case Command::CN_CFILEINFO: // File info request.
 			$c = new contextFileInfoCommand();
 			break;

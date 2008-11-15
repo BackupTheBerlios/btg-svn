@@ -275,6 +275,7 @@ namespace btg
             case Command::CN_ERROR:
             case Command::CN_ACK:
             case Command::CN_CSTATUSRSP:
+            case Command::CN_CMSTATUSRSP:
             case Command::CN_CALLSTATUSRSP:
             case Command::CN_CFILEINFORSP:
             case Command::CN_CCLEANRSP:
