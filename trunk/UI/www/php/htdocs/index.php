@@ -24,7 +24,7 @@ session_start();
 <script language="javascript" src="btg.js" type="text/javascript"></script>
 <script language="javascript" src="ajaxjs.php" type="text/javascript"></script>
 <script language="javascript" src="csshover.js" type="text/javascript"></script>
-<title>BTG <?
+<title>BTG <?php
    print BTG_VERSION;
 if (BTG_REV != "")
    {
