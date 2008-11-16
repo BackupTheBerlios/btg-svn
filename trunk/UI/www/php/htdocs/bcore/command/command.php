@@ -80,13 +80,13 @@ class Command extends BTGSerializable
 	const CN_CMOVE           = 66;
 	const CN_CCREATEFROMURL      = 67;
 	const CN_CCREATEFROMURLRSP   = 68;
-   const CN_CCREATEFROMFILE     = 69;
-   const CN_CCREATEFROMFILERSP  = 70;
-   const CN_CCREATEFROMFILEPART = 71;
+	const CN_CCREATEFROMFILE     = 69;
+	const CN_CCREATEFROMFILERSP  = 70;
+	const CN_CCREATEFROMFILEPART = 71;
 
-   const CN_OPABORT             = 80;
-   const CN_OPSTATUS            = 81;
-   const CN_OPSTATUSRSP         = 82;
+	const CN_OPABORT             = 80;
+	const CN_OPSTATUS            = 81;
+	const CN_OPSTATUSRSP         = 82;
 
 	const CN_ERROR           = 100;
 	const CN_ACK             = 101;

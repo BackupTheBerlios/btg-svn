@@ -818,7 +818,7 @@ function cb_contextCreateFromUrl_err(error, errStr)
 // Called by timer
 function checkUrlStatus()
 {
-    if(pendingDownloadID == -1)
+    if (pendingDownloadID == -1)
 	return;
 
     btg_contextUrlStatus(cb_contextUrlStatus, cb_contextUrlStatus_err, pendingDownloadID);

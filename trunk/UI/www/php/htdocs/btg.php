@@ -709,12 +709,12 @@ class BTG
 		if(!$this->sessionAttached)
 			return $this->addExtraOutput("");
 
-		$r = $this->executeCommand(new contextUrlStatusCommand((int)$id));
+		$r = $this->executeCommand(new opStatusCommand((int)$id, 1 /* URL */));
 		if($r == NULL)
 			return $this->addExtraOutput("");
 
 		$output = "";
-		if($r instanceof contextUrlStatusResponseCommand)
+		if($r instanceof opStatusResponseCommand)
 			$output.='<url><id>'.$r->getId().'</id><status>'.$r->getStatus().'</status></url>';
 
 		return $this->addExtraOutput($output);
