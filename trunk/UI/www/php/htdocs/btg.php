@@ -823,7 +823,7 @@ class BTG
 				$output .= "<fhash>".$contextStatus->getHash()."</fhash>\n";
 				$output .= "<furl>".htmlspecialchars($contextStatus->getAnnounceURL())."</furl>\n";
 				$r2 = $this->executeCommand(new contextGetTrackersCommand((int)$contextStatus->getContextID(), false), false);
-				if($r2 instanceof contextGetTrackersResponseCommand)
+				if ($r2 instanceof contextGetTrackersResponseCommand)
 				{
 					$arr = $r2->getTrackers();
 					$output .= "<tracker>".htmlspecialchars($arr[0])."</tracker>\n";
@@ -833,7 +833,10 @@ class BTG
 	         $output .= "<fileinfo>\n";
 
 	         // Only get file information in certain states.
-				if ($contextStatus->getStatus() >= 3)
+
+				if ($contextStatus->getStatus() == 4 || 
+					$contextStatus->getStatus() == 5 || 
+					$contextStatus->getStatus() == 7)
 		 		{
 					// Get list of selected files first,
 					$selected_files = $this->getSelectedFiles((int)$contextStatus->getContextID());

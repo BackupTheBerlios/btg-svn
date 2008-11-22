@@ -1237,6 +1237,9 @@ namespace btg
 
          switch (status.state)
             {
+#if BTG_LT_0_14
+            case libtorrent::torrent_status::allocating:
+#endif
             case libtorrent::torrent_status::queued_for_checking:
                ts = Status::ts_queued;
                break;
@@ -1413,6 +1416,11 @@ namespace btg
                               t_statusList & _status)
       {
          BTG_MENTER(logWrapper(), "getStatus(list)", "");
+
+         if (_contexts.size() > 0)
+            {
+               VERBOSE_LOG(logWrapper(), verboseFlag_, "Requested status for " << _contexts.size() << " contexts.");
+            }
 
          bool   result   = true;
          Status status;

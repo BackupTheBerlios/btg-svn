@@ -327,17 +327,18 @@ function contextLimitStatus(id)
 /* toogleContextDetails, toogles the details info for a specific torrent on/off */
 function toogleContextDetails(id)
 {
-    var detailsRow= document.getElementById('context_'+id+'_details_row')
-    var controlRow= document.getElementById('context_'+id+'_control_row')
-    if(detailsRow.style.display == '')
+    var detailsRow= document.getElementById('context_'+id+'_details_row');
+    var controlRow= document.getElementById('context_'+id+'_control_row');
+
+    if (detailsRow.style.display == '')
     {
-	detailsRow.style.display='none';
-	controlRow.style.display='none';
+		  detailsRow.style.display='none';
+		  controlRow.style.display='none';
     }
     else
     {
-	detailsRow.style.display='';
-	controlRow.style.display='';
+		  detailsRow.style.display='';
+		  controlRow.style.display='';
     }
 }
 
@@ -819,7 +820,9 @@ function cb_contextCreateFromUrl_err(error, errStr)
 function checkUrlStatus()
 {
     if (pendingDownloadID == -1)
-	return;
+	 {
+		  return;
+	 }
 
     btg_contextUrlStatus(cb_contextUrlStatus, cb_contextUrlStatus_err, pendingDownloadID);
 }
@@ -1555,7 +1558,7 @@ function refreshContextList()
 
 	    if (cid_number > updateNumberOfContexts)
 	    {
-		break;
+			  break;
 	    }
 
 	    cid_number += 1;
