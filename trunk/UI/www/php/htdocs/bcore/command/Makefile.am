@@ -36,6 +36,7 @@ WWW_UI_FILES = \
 	context_li_status.php \
 	context_limit.php \
 	initconnection.php \
+	opstat.php \
 	session_name.php \
 	session_quit.php \
 	context_clean.php \
