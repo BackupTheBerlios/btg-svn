@@ -2,6 +2,7 @@ BTG version 0.9.9
 -----------------
 The following bugs were fixed:
 
+014834 btgncli, setting limits.
 014794 Regression: short_open_tag=off.
 014792 Popup warning when adding a URL to download.
 014583 Possibility to allocate files.

@@ -289,14 +289,15 @@ namespace btg
                                     limitBase::LIMIT_DISABLED,
                                     65536,
                                     "Download (KiB/sec)",
-                                    seedTimeout,
-                                    limitBase::LIMIT_DISABLED,
-                                    1440,
-                                    "Seed timeout (minutes)",
                                     static_cast<t_int>(seedPercent),
                                     limitBase::LIMIT_DISABLED,
                                     10000,
-                                    "Seed percent (%)");
+                                    "Seed percent (%)",
+                                    seedTimeout,
+                                    limitBase::LIMIT_DISABLED,
+                                    1440,
+                                    "Seed timeout (minutes)"
+                                    );
 
             switch (limitwindow.run())
                {
