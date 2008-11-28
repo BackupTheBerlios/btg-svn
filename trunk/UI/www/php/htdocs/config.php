@@ -77,6 +77,11 @@ $btg_config_autostart = true;
  */
 $btg_config_debug = 0;
 
+/* 
+ * Set to 0 to disable using gzip. 
+ */
+$btg_config_use_gzip = true;
+
 /*
  * Include system config file.
  */
