@@ -221,7 +221,7 @@ Links
 - `Rasterbar Libtorrent`_.
 
 .. _BTG bugtracker: http://developer.berlios.de/bugs/?group_id=3293
-.. _BTG blog: http://developer.berlios.de/blog/categories/32-BTG
+.. _BTG blog: http://developer.berlios.de/devlog/btgdev/
 .. _BTG project page: http://developer.berlios.de/projects/btg/ 
 .. _BTG FAQ: faq.html
 .. _BTG Developer Howto: howto_devel.html
