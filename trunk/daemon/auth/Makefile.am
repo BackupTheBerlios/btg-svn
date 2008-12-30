@@ -25,10 +25,12 @@ bin_PROGRAMS = btgpasswd
 
 btgpasswd_SOURCES = arg.cpp btgpasswd.cpp ../dconfig.cpp
 
+# wojci: added linking with _all_ required libs - 
+# gentoo way of linking does not work on debian.
 btgpasswd_LDADD   = $(top_builddir)/bcore/libbtgcore.la \
                     libauth.la \
                     $(top_builddir)/external/ini/libini.la \
-                    @BOOST_DATE_TIME_LIB@
+                    @BOOST_DATE_TIME_LIB@ @BOOST_PROGRAM_OPTIONS_LIB@ @BOOST_SYSTEM_LIB@ @BOOST_IOSTREAMS_LIB@ @BOOST_FILESYSTEM_LIB@
 
 btgpasswd_CFLAGS   = @CFLAGS@   @DEBUG_CFLAGS@ @LIBGNUTLS_CFLAGS@ \
 -DBTG_DEBUG=@BTG_DEBUG@ -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \
