@@ -713,6 +713,8 @@ namespace btg
                            atp.resume_data  = resumeData;
                            atp.storage_mode = allocation_mode_;
                            atp.auto_managed = false;
+                           atp.paused       = false;
+                           atp.duplicate_is_error = true;
                            handle           = torrent_session->add_torrent(atp);
 #endif
 
@@ -731,6 +733,8 @@ namespace btg
                      atp.save_path    = dataPath;
                      atp.storage_mode = allocation_mode_;
                      atp.auto_managed = false;
+                     atp.paused       = false;
+                     atp.duplicate_is_error = true;
                      handle           = torrent_session->add_torrent(atp);
 #endif
                   }
