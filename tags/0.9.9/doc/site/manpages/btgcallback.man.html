@@ -1,0 +1,385 @@
+<!-- Creator     : groff version 1.18.1 -->
+<!-- CreationDate: Tue Dec 30 00:24:15 2008 -->
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta name="Content-Style" content="text/css">
+<title>BTGCALLBACK</title>
+</head>
+<body>
+
+<h1 align=center>BTGCALLBACK</h1>
+<a href="#NAME">NAME</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#INTERFACE">INTERFACE</a><br>
+<a href="#EVENTS">EVENTS</a><br>
+<a href="#EXAMPLE SCRIPT">EXAMPLE SCRIPT</a><br>
+<a href="#FILES">FILES</a><br>
+<a href="#AUTHOR">AUTHOR</a><br>
+<a href="#SEE ALSO">SEE ALSO</a><br>
+
+<hr>
+<a name="NAME"></a>
+<h2>NAME</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>btg event callback</p>
+</td>
+</table>
+<a name="DESCRIPTION"></a>
+<h2>DESCRIPTION</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>The btg daemon is capable of calling a user specified
+script or executable in order to report events. The location
+of the script or executable is specified in the passwd
+file.</p>
+</td>
+</table>
+<a name="INTERFACE"></a>
+<h2>INTERFACE</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<pre>/path/to/script &lt;EVENT&gt; &lt;EVENTPARAMETERS&gt;
+</pre>
+<!-- INDENTATION -->
+<p>The daemon executes a script or executable specified for
+an user when an event happends. The first parameter is the
+event name. The following parameters depends on the
+event.</p>
+</td>
+</table>
+<a name="EVENTS"></a>
+<h2>EVENTS</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>The following events.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>ADD</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Description</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Event reported when a torrent file is added.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Parameters</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>&lt;EVENT&gt; is set to &quot;ADD&quot;.
+&lt;EVENTPARAMETERS&gt; is set to the file name of the
+torrent file which was added.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>REMOVE</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Description</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Event reported when a torrent file is removed.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Parameters</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>&lt;EVENT&gt; is set to &quot;REMOVE&quot;.
+&lt;EVENTPARAMETERS&gt; is set to the file name of the
+torrent file which was removed.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>FINISHED</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Description</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Event reported when a torrent file finishes downloading
+and is stopped. This can happen because of a set seed
+timer.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Parameters</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>&lt;EVENT&gt; is set to &quot;FINISHED&quot;.
+&lt;EVENTPARAMETERS&gt; is set to the file name of the
+torrent file which finished downloading.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>SEEDING</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Description</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Event reported when a torrent file begins seeding.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Parameters</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>&lt;EVENT&gt; is set to &quot;SEEDING&quot;.</p>
+<!-- INDENTATION -->
+<p>&lt;EVENTPARAMETERS&gt; is set to the file name of the
+torrent file which began seeding.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>CLEAN</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Description</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Event reported when a torrent file is cleaned - which
+means that it is moved from the user work directory to the
+users destination directory.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Parameters</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>&lt;EVENT&gt; is set to &quot;CLEAN&quot;.</p>
+<!-- INDENTATION -->
+<p>&lt;EVENTPARAMETERS&gt; is as follows. The first
+parameter is the name of the torrent file which was cleaned.
+The following parameters are all unique top directories or
+file names contained in the torrent file which was
+cleaned.</p>
+</td>
+</table>
+<a name="EXAMPLE SCRIPT"></a>
+<h2>EXAMPLE SCRIPT</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<pre>#!/bin/sh
+
+LOGFILE=&quot;/tmp/btgdaemon.callback.log&quot;
+
+echo &quot;New event.&quot;    &gt;&gt; $LOGFILE
+date                 &gt;&gt; $LOGFILE
+echo &quot;Arguments: $*&quot; &gt;&gt; $LOGFILE
+
+# Check the different events.
+
+case &quot;$1&quot; in
+  ADD)
+    echo &quot;Torrent file &rsquo;$2&rsquo; was added.&quot; &gt;&gt; $LOGFILE
+    ;;
+
+ REMOVE)
+    echo &quot;Torrent file &rsquo;$2&rsquo; was removed.&quot; &gt;&gt; $LOGFILE
+    ;;
+
+ FINISHED)
+    echo &quot;Torrent file &rsquo;$2&rsquo; finished.&quot; &gt;&gt; $LOGFILE
+    ;;
+
+ SEEDING)
+    echo &quot;Torrent file &rsquo;$2&rsquo; began seeding.&quot; &gt;&gt; $LOGFILE
+    ;;
+
+ CLEAN)
+    echo &quot;Torrent file &rsquo;$2&rsquo; was cleaned.&quot; &gt;&gt; $LOGFILE
+    ;;
+
+ *)
+    echo &quot;Unknown option.&quot; &gt;&gt; $LOGFILE
+    ;;
+esac
+</pre>
+</td>
+</table>
+<a name="FILES"></a>
+<h2>FILES</h2>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>~/.btg/passwd - the daemon passwd file.</p></td>
+</table>
+<a name="AUTHOR"></a>
+<h2>AUTHOR</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Written by Michael Wojciechowski.</p>
+</td>
+</table>
+<a name="SEE ALSO"></a>
+<h2>SEE ALSO</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>btgdaemon(5)</p>
+</td>
+</table>
+<hr>
+</body>
+</html>

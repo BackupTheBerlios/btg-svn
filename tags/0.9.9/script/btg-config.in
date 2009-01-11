@@ -1,0 +1,769 @@
+#!@BASH@
+
+# DESCRIPTION: 
+# Ask the user a number of quiestions, from which a deamon.ini and
+# client.ini files can be generated.
+
+DIALOG="@DIALOG@"
+
+TEMP=/tmp/btg.menuconfig.out
+TITLE="BTG daemon config"
+DAEMON_INI="daemon.ini"
+CLIENT_INI="client.ini"
+
+system=`uname`
+if [ "$system" = "FreeBSD" ]
+then
+  # Native FreeBSD dialog does not support --fselect and other features
+  # so it must be installed from ports
+  DIALOG="/usr/local/bin/cdialog"
+
+  # Default dimensions of a file selection dialog.
+  FSEL_DIM_WIDTH=60
+  FSEL_DIM_HEIGHT=13
+
+  # Default dimenstions of an input box.
+  INPUTBOX_WIDTH=60
+  INPUTBOX_HEIGHT=10
+
+  # Default dimenstions of help and error messageboxes.
+  MESSAGE_DIM_WIDTH=60
+  MESSAGE_DIM_HEIGHT=13
+
+  MENU_DIM_HEIGHT=60
+  MENU_DIM_WIDTH=13
+else
+  # Default dimensions of a file selection dialog.
+  FSEL_DIM_WIDTH=0
+  FSEL_DIM_HEIGHT=0
+
+  # Default dimenstions of an input box.
+  INPUTBOX_WIDTH=0
+  INPUTBOX_HEIGHT=0
+
+  # Default dimenstions of help and error messageboxes.
+  MESSAGE_DIM_WIDTH=0
+  MESSAGE_DIM_HEIGHT=0
+
+  MENU_DIM_HEIGHT=0
+  MENU_DIM_WIDTH=0
+fi
+
+# Make sure that dialog is present:
+if [ ! -x "${DIALOG}" ]
+then
+  echo "This script needs ${DIALOG} to function. Abort."
+  exit -1
+fi
+
+# As returned by dialog.
+HELP_ID=2
+
+# Strings:
+TRANSPORT_SUBTITLE="(required) transport"
+TRANSPORT_HELP_STR="Select the type of transport that is going to be used between BTG client and daemon. Notice that when selecting secure transports, you will be asked to provide files containing CA, certificate and private key for both the client and the daemon."
+
+CA_SUBTITLE="(required) CA certificatate filename"
+CA_HELP_STR="Choose a file which contains the Certificate Authority root certificate. \
+The format of the file must be PEM."
+
+CERT_SUBTITLE="(required) certificatate filename"
+CERT_HELP_STR="Choose a file which contains the certificate to be used. \
+The format of the file must be PEM."
+
+PRIVKEY_SUBTITLE="(required) private key"
+PRIVKEY_HELP_STR="Choose a file which contains the the private key to be used. \
+The format of the file must be PEM."
+
+NETWORK_SUBTITLE="(required) daemon listens to IPv4 address:port"
+NETWORK_HELP_STR="The daemon uses this IPv4 address port pair to listen for incoming connections from clients."
+
+NETWORK_TORRENT_SUBTITLE="(required) libtorrent port range"
+NETWORK_TORRENT_HELP_STR="Libtorrent used by BTG will use the port range specified."
+
+LOGGING_SUBTITLE="(required) logging"
+LOGGING_HELP_STR="The daemon is capable of producing logs using different mechanisms. \
+Select one or disable logging alltogether."
+
+LOGFILENAME_SUBTITLE="(required) log filename"
+LOGFILENAME_HELP_STR="Logging to a file was selected. Enter a name of the logfile."
+
+AUTH_SUBTITLE="(required) auth filename"
+AUTH_HELP_STR="Input a file name of the file containing user/password information. This file can be created and maintained using the btgpasswd utility."
+
+OPT_PROXY_SUBTITLE="(optional) proxy IPv4 address:port"
+OPT_PROXY_HELP_STR="Address port pair of the HTTP proxy which will be used to communicate with trackers."
+
+OPT_FILTER_SUBTITLE="(optional) IPv4 filter"
+OPT_FILTER_HELP_STR="Which format of IPv4 filer will be used."
+
+OPT_FILTER_FILE_SUBTITLE="(optional) IPv4 filter file"
+OPT_FILTER_FILE_HELP_STR="File containing filter rules, the format depends on the filter type selected in the previous step."
+
+OPT_SAVESESSIONS_SUBTITLE="(optional) file used to save sessions in"
+OPT_SAVESESSIONS_STR="BTG can be configured to save the running sessions to a file. Saving sessions is done when the BTG daemon terminates and the saved sessions are re-read when the daemon is started again."
+
+SEL_TRANSPORT=0
+
+# Global variables used by the function which asks the user about
+# locations of certificates and CA files.
+SEL_CERT_USE=0
+SEL_CERT_CA=""
+SEL_CERT_CERT=""
+SEL_CERT_PRIVKEY=""
+
+# daemon certificate info.
+SEL_DCERT_USE=0
+SEL_DCERT_CA=""
+SEL_DCERT_CERT=""
+SEL_DCERT_PRIVKEY=""
+
+# client certificate info.
+SEL_CCERT_USE=0
+SEL_CCERT_CA=""
+SEL_CCERT_CERT=""
+SEL_CCERT_PRIVKEY=""
+
+SEL_LISTEN_TO=""
+
+SEL_RANGE=""
+
+SEL_LOGGING=0
+SEL_LOGGING_FILE=""
+
+SEL_AUTH_FILE=""
+
+SEL_USEPROXY=0
+SEL_PROXYADDRESS=""
+
+SEL_USEIPFILTER=0
+SEL_IPFILTERTYPE=0
+SEL_IPFILTERFILE=""
+
+SEL_SAVE_SESSIONS=0
+SEL_SAVE_SESSIONS_FILE=""
+
+function is_ip() {
+    case "$*" in
+	""|*[!0-9.]*|*[!0-9]) return 1 ;;
+    esac
+    local IFS=.
+    set -- $*
+    [ $# -eq 4 ] &&
+	[ ${1:-666} -le 255 ] && [ ${2:-666} -le 255 ] &&
+	[ ${3:-666} -le 255 ] && [ ${4:-666} -le 254 ]
+} 
+
+function handle_exit_status
+{
+  local STATUS=$1
+  local EXITONUNKNOWN=$2
+  local HELPMESSAGE=$3
+
+  case $STATUS in
+    0) ;;
+    1) exit;;
+    2) ${DIALOG} --title "help" --msgbox "$HELPMESSAGE" $MESSAGE_DIM_HEIGHT $MESSAGE_DIM_WIDTH; \
+       if [ "$EXITONUNKNOWN" -eq "1" ] ; then exit; fi;;
+    *) if [ "$EXITONUNKNOWN" -eq "1" ] ; then exit; fi
+  esac
+
+
+}
+
+function check_for_exit
+{
+  local STATUS=$1
+
+  case $STATUS in
+    "0") ;; # pressed ok.
+    "2") ;; # help message.
+    *) echo "Script aborted by user."; rm -f $TEMP; exit;;
+  esac
+}
+
+function show_help
+{
+  local title=$1
+  local helpstr=$2
+
+  ${DIALOG} --title "help: $title" --msgbox "$helpstr" $MESSAGE_DIM_HEIGHT $MESSAGE_DIM_WIDTH;
+}
+
+function show_error_message
+{
+  ${DIALOG} --title "Error: $1" --msgbox "$2" $MESSAGE_DIM_HEIGHT $MESSAGE_DIM_WIDTH;
+}
+
+function query_transport
+{
+  ${DIALOG} --help-button --title "(required) transport" \
+  --menu "Use the following transport:" $MENU_DIM_WIDTH $MENU_DIM_HEIGHT 4 \
+    1 "TCP/IP" \
+    2 "STCP/IP (Secured using GNUTLS)" \
+    3 "XMLRPC" \
+    4 "SXMLRPC (Secured using GNUTLS)" 2>$TEMP
+
+  local STATUS=$?
+
+  check_for_exit $STATUS
+
+  if [ "$STATUS" == "$HELP_ID" ] ; then 
+    show_help "$TRANSPORT_SUBTITLE" "$TRANSPORT_HELP_STR"
+    query_transport
+    return
+  fi
+
+  SEL_TRANSPORT=`cat $TEMP|sed -e "s/\"//g"`
+
+  case $SEL_TRANSPORT in
+    "2") query_certificates "daemon";;
+    "4") query_certificates "daemon";;
+  esac
+
+if [ "$SEL_CERT_USE" -eq 1 ]
+  then
+    SEL_DCERT_USE=$SEL_CERT_USE
+    SEL_DCERT_CA=$SEL_CERT_CA
+    SEL_DCERT_CERT=$SEL_CERT_CERT
+    SEL_DCERT_PRIVKEY=$SEL_CERT_PRIVKEY
+
+    # Server certificates were set up, now query about the client
+    # certificates.
+
+    query_certificates "client"
+
+    SEL_CCERT_USE=$SEL_CERT_USE
+    SEL_CCERT_CA=$SEL_CERT_CA
+    SEL_CCERT_CERT=$SEL_CERT_CERT
+    SEL_CCERT_PRIVKEY=$SEL_CERT_PRIVKEY
+
+  else
+    SEL_DCERT_USE=0
+  fi
+}
+
+function query_CA
+{
+  ${DIALOG} --help-button --title "$1: $CA_SUBTITLE" \
+  --fselect "$HOME" $FSEL_DIM_HEIGHT $FSEL_DIM_WIDTH 2>$TEMP
+
+  local STATUS=$?
+  check_for_exit $STATUS
+
+  if [ "$STATUS" == "$HELP_ID" ] ; then 
+    show_help "$CA_SUBTITLE" "$CA_HELP_STR"
+    query_CA $1
+    return
+  fi
+
+  SEL_CERT_CA=`cat $TEMP`
+
+}
+
+function query_certificate
+{
+  ${DIALOG} --help-button --title "$1: $CERT_SUBTITLE" \
+  --fselect "$HOME" $FSEL_DIM_HEIGHT $FSEL_DIM_WIDTH 2>$TEMP
+
+  local STATUS=$?
+  check_for_exit $STATUS
+
+  if [ "$STATUS" == "$HELP_ID" ] ; then 
+    show_help "$CERT_SUBTITLE" "$CERT_HELP_STR"
+    query_certificate $1
+    return
+  fi
+
+  SEL_CERT_CERT=`cat $TEMP`
+}
+
+function query_privkey
+{
+  ${DIALOG} --help-button --title "$1: $PRIVKEY_SUBTITLE" \
+  --fselect "$HOME" $FSEL_DIM_HEIGHT $FSEL_DIM_WIDTH 2>$TEMP
+
+  local STATUS=$?
+  check_for_exit $STATUS
+
+  if [ "$STATUS" == "$HELP_ID" ] ; then 
+    show_help "$PRIVKEY_SUBTITLE" "$PRIVKEY_HELP_STR"
+    query_privkey $1
+    return
+  fi
+
+  SEL_CERT_PRIVKEY=`cat $TEMP`
+}
+
+function query_certificates
+{
+  query_CA $1
+  query_certificate $1
+  query_privkey $1
+
+#  echo "Using CA cert from file $SEL_CERT_CA."
+#  echo "Using daemon cert from file $SEL_CERT_CERT."
+#  echo "Using daemon private key from file $SEL_CERT_PRIVKEY."
+
+  SEL_CERT_USE=1
+}
+
+function query_network
+{
+  ${DIALOG} --help-button --title "$NETWORK_SUBTITLE" \
+  --inputbox "IPv4 address:port" $INPUTBOX_HEIGHT $INPUTBOX_WIDTH "127.0.0.1:16000" 2>$TEMP
+
+  local STATUS=$?
+  check_for_exit $STATUS
+
+  if [ "$STATUS" == "$HELP_ID" ] ; then 
+    show_help "$NETWORK_SUBTITLE" "$NETWORK_HELP_STR"
+    query_network
+    return
+  fi
+
+  SEL_LISTEN_TO=`cat $TEMP`
+
+  local IP=`echo "$SEL_LISTEN_TO"|cut -d ":" -f 1`
+  local PORT=`echo "$SEL_LISTEN_TO"|cut -d ":" -f 2`
+
+  # Check that a valid address was returned.
+
+  local PARAM_OK=0
+  local ERRORSTR=""
+
+  if is_ip $IP
+  then
+    PARAM_OK=`expr $PARAM_OK + 1`
+  else
+    ERRORSTR="Invalid IPv4 address."
+  fi
+
+  if [ "$PORT" -gt 1024 ]
+  then
+    PARAM_OK=`expr $PARAM_OK + 1`
+  else
+    ERRORSTR="Invalid port (<1024)."
+  fi
+
+  if [ "$PARAM_OK" -ne 2 ]
+  then
+    show_error_message "Network" "$ERRORSTR"
+    query_network
+    return
+  fi
+}
+
+function query_network_torrent_range
+{
+  ${DIALOG} --help-button --title "$NETWORK_TORRENT_SUBTITLE" \
+  --inputbox "Port range (port:port)" $INPUTBOX_HEIGHT $INPUTBOX_WIDTH "9000:9100" 2>$TEMP
+
+  local STATUS=$?
+  check_for_exit $STATUS
+
+  if [ "$STATUS" == "$HELP_ID" ] ; then 
+    show_help "$NETWORK_TORRENT_SUBTITLE" "$NETWORK_TORRENT_HELP_STR"
+    query_network_torrent_range
+    return
+  fi
+
+  SEL_RANGE=`cat $TEMP`
+
+  # Check the provided parameters:
+  local PORT0=`echo "$SEL_RANGE"|cut -d ":" -f 1`
+  local PORT1=`echo "$SEL_RANGE"|cut -d ":" -f 2`
+
+  # Check that a valid ports.
+
+  local PARAM_OK=0
+  local ERRORSTR=""
+
+  if [ "$PORT0" -gt 1024 ]
+  then
+    PARAM_OK=`expr $PARAM_OK + 1`
+  else
+    ERRORSTR="Invalid port (<1024)."
+  fi
+
+  if [ "$PORT1" -gt 1024 ]
+  then
+    PARAM_OK=`expr $PARAM_OK + 1`
+  else
+    ERRORSTR="Invalid port (<1024)."
+  fi
+
+  if [ "$PARAM_OK" -ne 2 ]
+  then
+    show_error_message "Torrent port range" "$ERRORSTR"
+    query_network_torrent_range
+    return
+  fi
+}
+
+function query_logging
+{
+  ${DIALOG} --help-button --title "$LOGGING_SUBTITLE" \
+  --menu "Use the following logging:" $MENU_DIM_WIDTH $MENU_DIM_HEIGHT 4 \
+    1 "Standard out" \
+    2 "Log file" \
+    3 "Syslog" \
+    4 "Disabled" 2>$TEMP
+
+  local STATUS=$?
+  check_for_exit $STATUS
+
+  if [ "$STATUS" == "$HELP_ID" ] ; then 
+    show_help "$LOGGING_SUBTITLE" "$LOGGING_HELP_STR"
+    query_logging
+    return
+  fi
+
+  SEL_LOGGING=`cat $TEMP|sed -e "s/\"//g"`
+
+  case $SEL_LOGGING in
+    "2") query_logfilename;;
+  esac
+}
+
+function query_logfilename
+{
+  ${DIALOG} --help-button --title "$LOGFILENAME_SUBTITLE" \
+  --fselect "$HOME" $FSEL_DIM_HEIGHT $FSEL_DIM_WIDTH 2>$TEMP
+
+  local STATUS=$?
+  check_for_exit $STATUS
+
+  if [ "$STATUS" == "$HELP_ID" ] ; then 
+    show_help "$LOGFILENAME_SUBTITLE" "$LOGFILENAME_HELP_STR"
+    query_logfilename
+    return
+  fi
+
+  SEL_LOGGING_FILE=`cat $TEMP`
+}
+
+function query_auth
+{
+  ${DIALOG} --help-button --title "$AUTH_SUBTITLE" \
+  --fselect "$HOME" $FSEL_DIM_HEIGHT $FSEL_DIM_WIDTH 2>$TEMP
+
+  local STATUS=$?
+  check_for_exit $STATUS
+
+  if [ "$STATUS" == "$HELP_ID" ] ; then 
+    show_help "$AUTH_SUBTITLE" "$AUTH_HELP_STR"
+    query_auth
+    return
+  fi
+
+  SEL_AUTH_FILE=`cat $TEMP`
+}
+
+function query_opt_proxy
+{
+  ${DIALOG} --help-button --title "$OPT_PROXY_SUBTITLE" \
+  --inputbox "IPv4 address:port" $INPUTBOX_HEIGHT $INPUTBOX_WIDTH "127.0.0.1:8118" 2>$TEMP
+
+  local STATUS=$?
+
+  if [ "$STATUS" == "$HELP_ID" ] ; then 
+    show_help "$OPT_PROXY_SUBTITLE" "$OPT_PROXY_HELP_STR"
+    query_opt_proxy
+    return
+  fi
+
+  if [ "$STATUS" != "0" ] ; then 
+    rm -f $TEMP
+    SEL_USEPROXY=0
+  else
+    SEL_PROXYADDRESS=`cat $TEMP`
+
+    local IP=`echo "$SEL_PROXYADDRESS"|cut -d ":" -f 1`
+    local PORT=`echo "$SEL_PROXYADDRESS"|cut -d ":" -f 2`
+
+    # Check the entered data.
+    local PARAM_OK=0
+    local ERRORSTR=""
+
+    if is_ip $IP
+    then
+      PARAM_OK=`expr $PARAM_OK + 1`
+    else
+      ERRORSTR="Invalid IPv4 address."
+    fi
+
+    if [ "$PORT" -gt 1024 ]
+    then
+      PARAM_OK=`expr $PARAM_OK + 1`
+    else
+      ERRORSTR="Invalid port (<1024)."
+    fi
+
+    if [ "$PARAM_OK" -ne 2 ]
+    then
+      show_error_message "Proxy" "$ERRORSTR"
+      query_opt_proxy
+      return
+    fi
+
+    SEL_USEPROXY=1
+  fi
+}
+
+function query_opt_filter
+{
+  ${DIALOG} --title "$OPT_FILTER_SUBTITLE" --help-button \
+  --menu "Use the following filter:" $MENU_DIM_WIDTH $MENU_DIM_HEIGHT 3 \
+    1 "Level1.txt" \
+    2 "Emule" \
+    3 "Disabled" 2>$TEMP
+
+  local STATUS=$?
+
+  if [ "$STATUS" == "$HELP_ID" ] ; then 
+    show_help "$OPT_FILTER_SUBTITLE" "$OPT_FILTER_HELP_STR"
+    query_opt_filter
+    return
+  fi
+
+  if [ "$STATUS" != "0" ] ; then 
+    rm -f $TEMP
+    SEL_USEIPFILTER=0
+    SEL_IPFILTERTYPE=0
+  fi
+
+  choice=`cat $TEMP|sed -e "s/\"//g"`
+
+  case $choice in
+    "1") SEL_IPFILTERTYPE=1; SEL_USEIPFILTER=1;;
+    "2") SEL_IPFILTERTYPE=2; SEL_USEIPFILTER=1;;
+    *)   SEL_IPFILTERTYPE=0; SEL_USEIPFILTER=0;;
+  esac
+}
+
+function query_opt_filter_file
+{
+  if [ "$SEL_USEIPFILTER" -eq 1 ]
+  then
+    ${DIALOG} --title "$OPT_FILTER_FILE_SUBTITLE" --help-button \
+    --fselect "$HOME" $FSEL_DIM_HEIGHT $FSEL_DIM_WIDTH 2>$TEMP
+
+    local STATUS=$?
+
+    if [ "$STATUS" == "$HELP_ID" ] ; then 
+      show_help "$OPT_FILTER_FILE_SUBTITLE" "$OPT_FILTER_FILE_HELP_STR"
+      query_opt_filter_file
+      return
+    fi
+
+    if [ "$STATUS" != "0" ] ; then 
+      SEL_IPFILTERTYPE=0
+      SEL_USEIPFILTER=0
+      rm -f $TEMP
+    else
+      SEL_IPFILTERFILE=`cat $TEMP`
+    fi
+  fi
+}
+
+function query_opt_savesessions
+{
+  ${DIALOG} --help-button --title "$OPT_SAVESESSIONS_SUBTITLE" \
+  --fselect "$HOME" $FSEL_DIM_HEIGHT $FSEL_DIM_WIDTH 2>$TEMP
+
+  local STATUS=$?
+
+  if [ "$STATUS" == "$HELP_ID" ] ; then 
+    show_help "$OPT_SAVESESSIONS_SUBTITLE" "$OPT_SAVESESSIONS_STR"
+    query_opt_savesessions
+    return
+  fi
+
+  if [ "$STATUS" != "0" ] ; then 
+    rm -f $TEMP
+    SEL_SAVE_SESSIONS=0
+    SEL_SAVE_SESSIONS_FILE=""
+  else
+    SEL_SAVE_SESSIONS=1
+    SEL_SAVE_SESSIONS_FILE=`cat $TEMP`
+  fi
+}
+
+function write_daemon_config
+{
+  echo "; Generated with btg-config." > $DAEMON_INI
+  echo ";" >> $DAEMON_INI
+
+  # Transport.
+
+  echo "[transport]" >> $DAEMON_INI
+  KEY=""
+
+  case $SEL_TRANSPORT in
+    "1") KEY="default=tcpip";;
+    "2") KEY="default=stcpip";;
+    "3") KEY="default=xml-rpc";;
+    "4") KEY="default=sxml-rpc";;
+  esac
+
+  echo "$KEY" >> $DAEMON_INI
+  echo >> $DAEMON_INI
+
+  # Certificate.
+  if [ "$SEL_DCERT_USE" -eq 1 ]
+  then
+    echo "[tls]" >> $DAEMON_INI
+    echo "ca-cert = $SEL_DCERT_CA" >> $DAEMON_INI
+    echo "cert = $SEL_DCERT_CERT" >> $DAEMON_INI
+    echo "cert-privkey = $SEL_DCERT_PRIVKEY" >> $DAEMON_INI
+    echo >> $DAEMON_INI
+  fi
+
+  case $SEL_LOGGING in
+    "1") echo "[logging]" >> $DAEMON_INI; echo "type=stdout" >> $DAEMON_INI;;
+    "2") echo "[logging]" >> $DAEMON_INI; echo "type=file" >> $DAEMON_INI; echo "filename=$SEL_LOGGING_FILE" >> $DAEMON_INI ;;
+    "3") echo "[logging]" >> $DAEMON_INI; echo "type=syslog" >> $DAEMON_INI;;
+  esac
+
+  echo >> $DAEMON_INI
+
+  # Auth.
+
+  echo "[auth]" >> $DAEMON_INI
+  echo "passwd-file=$SEL_AUTH_FILE" >> $DAEMON_INI
+  echo >> $DAEMON_INI
+
+  # Network.
+
+  echo "[network]" >> $DAEMON_INI
+  echo "listen-to=$SEL_LISTEN_TO" >> $DAEMON_INI
+  echo "torrent-range=$SEL_RANGE" >> $DAEMON_INI
+  echo >> $DAEMON_INI
+
+  WRITE_MISC_HEADER=0
+  if [ "$SEL_USEPROXY" -eq 1 ]
+  then
+    WRITE_MISC_HEADER=1
+  fi
+
+  if [ "$SEL_USEIPFILTER" -eq 1 ]
+  then
+    WRITE_MISC_HEADER=1
+  fi
+
+  if [ "$WRITE_MISC_HEADER" -eq 1 ]
+  then
+    echo "[misc]" >> $DAEMON_INI
+  fi
+
+  # Proxy.
+
+  if [ "$SEL_USEPROXY" -eq 1 ]
+  then
+    echo "proxy=$SEL_PROXYADDRESS" >> $DAEMON_INI
+    echo >> $DAEMON_INI
+  fi
+
+  # IPv4 filter.
+
+  if [ "$SEL_USEIPFILTER" -eq 1 ]
+  then
+    case $SEL_IPFILTERTYPE in
+      "1") echo "filter=level1" >> $DAEMON_INI;;
+      "2") echo "filter=emule"  >> $DAEMON_INI;;
+    esac
+    echo "filename = $SEL_IPFILTERFILE" >> $DAEMON_INI
+    echo >> $DAEMON_INI
+  fi
+
+  # Save sessions.
+
+  if [ "$SEL_SAVE_SESSIONS" -eq 1 ]
+  then
+    echo "[savesessions]" >> $DAEMON_INI 
+    echo "enable=true" >> $DAEMON_INI 
+    echo "filename=$SEL_SAVE_SESSIONS_FILE" >> $DAEMON_INI
+    echo >> $DAEMON_INI
+  fi  
+}
+
+function write_client_config
+{
+  echo "; Generated with btg-config." > $CLIENT_INI
+  echo ";" >> $CLIENT_INI
+
+  # Transport.
+
+  echo "[transport]" >> $CLIENT_INI
+  KEY=""
+
+  case $SEL_TRANSPORT in
+    "1") KEY="default=tcpip";;
+    "2") KEY="default=stcpip";;
+    "3") KEY="default=xml-rpc";;
+    "4") KEY="default=sxml-rpc";;
+  esac
+
+  echo "$KEY" >> $CLIENT_INI
+  echo >> $CLIENT_INI
+
+  # Daemon address.
+  echo "[network]" >> $CLIENT_INI
+  echo "daemon-address=$SEL_LISTEN_TO" >> $CLIENT_INI
+  echo >> $CLIENT_INI
+
+  # Certificate.
+  if [ "$SEL_CCERT_USE" -eq 1 ]
+  then
+    echo "[tls]" >> $CLIENT_INI
+    echo "ca-cert = $SEL_CCERT_CA" >> $CLIENT_INI
+    echo "cert = $SEL_CCERT_CERT" >> $CLIENT_INI
+    echo "cert-privkey = $SEL_CCERT_PRIVKEY" >> $CLIENT_INI
+    echo >> $CLIENT_INI
+  fi
+}
+
+
+#
+#
+# 
+
+${DIALOG} --title "Info" \
+--msgbox "This script generates a daemon and client config files based \
+on selection performed by you.\n\n\
+You can press ESC at any time to abort.\n\n\
+The following information is required." \
+$MESSAGE_DIM_HEIGHT $MESSAGE_DIM_WIDTH
+
+check_for_exit $?
+
+query_transport
+query_network
+query_network_torrent_range
+query_logging
+query_auth
+
+${DIALOG} --title "Info" \
+--msgbox "The following information is optional. Press ESC to skip a setting in the following dialogs." \
+$MESSAGE_DIM_HEIGHT $MESSAGE_DIM_WIDTH
+
+check_for_exit $?
+
+query_opt_proxy
+query_opt_filter
+query_opt_filter_file
+
+query_opt_savesessions
+
+${DIALOG} --title "Info" \
+--msgbox "Ready to write BTG daemon config to $DAEMON_INI and BTG client config to $CLIENT_INI. Press ESC to quit." \
+$MESSAGE_DIM_HEIGHT $MESSAGE_DIM_WIDTH
+
+check_for_exit $?
+
+write_daemon_config
+write_client_config
+
+rm -f $TEMP
+

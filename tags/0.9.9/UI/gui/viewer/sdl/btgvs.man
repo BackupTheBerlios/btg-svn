@@ -1,0 +1,101 @@
+.TH BTGVS 1 "02 December 2007"
+.SH NAME
+btgvs \- session viewer, a part of the btg project.
+.SH SYNOPSIS
+.B "btgvs" 
+[-h]
+[-v] 
+[--syntax]
+[-s 
+.I "<session ID>"
+]
+[-d]
+[-a]
+[-A]
+[-f]
+[-x]
+[-l]
+[-u
+.I "<freq>"
+]
+[--config 
+.I "<filename>"
+]
+
+.SH DESCRIPTION
+.B "btgvs" 
+is a session viewer.
+
+If started without any arguments, it will attempt to connect to the
+daemon (btgdaemon) and attach to the first available session.
+
+The application can be useful to for example show the status of a
+session on for example a linux based media player.
+
+The application supports two resolutions and full screen mode. It can
+be terminated by pressing the escape key.
+
+.SH OPTIONS
+
+.TP
+.BI "-h|--help"
+\- Print a short help.
+
+.TP
+.BI "-v"
+\- Be verbose.
+
+.TP
+.BI "-s" 
+.I "<session ID>"
+\- Attach to a session described by the session ID.
+
+.TP
+.BI "-d" 
+.I "<address>"
+\- Use <address> to connect to the daemon.
+
+.TP
+.BI "-a" 
+\- Show a list of sessions and let the user choose which session to attach to.
+
+.TP
+.BI "-A" 
+\- Attach to the first available session.
+
+.TP
+.BI "-l" 
+\- Use 1024x768 as the screen resolution.
+
+.TP
+.BI "-x" 
+\- Use 1440x900 as the screen resolution.
+
+.TP
+.BI "-f" 
+\- Full screen mode.
+
+.TP
+.BI "-u <freq>" 
+\- Update the list of torrents every <freq> seconds.
+
+.TP
+.BI "--config" 
+.I "<filename>"
+\- Name of a client configuration file to use.
+
+.SH FILES
+See btg_config(1).
+
+.SH CONFIGURATION
+.TP 
+See btg_config(1).
+
+.SH AUTHOR
+Written by Michael Wojciechowski.
+
+.SH "SEE ALSO"
+btg(5), btg_config(5), btcli(1), btgui(1), btgdaemon(1)
+
+.SH BUGS
+No known bugs.
