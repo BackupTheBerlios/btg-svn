@@ -104,6 +104,7 @@ Stable Releases
 ======================= ========================== ======================= ============================================
 **Source**              **Release note**           **Changelog**           **Rasterbar Libtorrent version**
 ----------------------- -------------------------- ----------------------- --------------------------------------------
+`btg-0.9.9.tar.gz`_     `0.9.9 release note`_      `0.9.9 changelog`_      0.12.1/0.13/0.13.1/0.14/0.14.1
 `btg-0.9.8.tar.gz`_     `0.9.8 release note`_      `0.9.8 changelog`_      0.12.1/0.13/0.13.1
 `btg-0.9.7.tar.gz`_     `0.9.7 release note`_      `0.9.7 changelog`_      0.12.x/0.13rc1
 `btg-0.9.6.tar.gz`_     `0.9.6 release note`_      `0.9.6 changelog`_      0.12
@@ -135,6 +136,10 @@ Stable Releases
 .. _btg-0.9.8.tar.gz: http://download.berlios.de/btg/btg-0.9.8.tar.gz
 .. _0.9.8 release note: http://developer.berlios.de/project/shownotes.php?release_id=14876
 .. _0.9.8 changelog: http://developer.berlios.de/project/shownotes.php?release_id=14876
+
+.. _btg-0.9.9.tar.gz: http://download.berlios.de/btg/btg-0.9.9.tar.gz
+.. _0.9.9 release note: http://developer.berlios.de/project/shownotes.php?release_id=15680
+.. _0.9.9 changelog: http://developer.berlios.de/project/shownotes.php?release_id=15680
 
 Experimental Releases
 ---------------------
@@ -186,6 +191,7 @@ Documentation
 ~~~~~~~~~~~~~
 - `BTG FAQ`_.
 - `BTG howto (current)`_.
+- `BTG howto (0.9.9)`_.
 - `BTG howto (0.9.8)`_.
 - `BTG howto (0.9.7)`_.
 - `BTG howto (0.9.6)`_.
@@ -239,6 +245,7 @@ Links
 .. _BTG Howto (0.9.6): howto-0.9.6.html
 .. _BTG Howto (0.9.7): howto-0.9.7.html
 .. _BTG Howto (0.9.8): howto-0.9.8.html
+.. _BTG Howto (0.9.9): howto-0.9.9.html
 .. _Rasterbar Libtorrent: http://www.rasterbar.com/products/libtorrent.html
 .. _Gtkmm: http://www.gtkmm.org/
 .. _SDL: http://libsdl.org/
