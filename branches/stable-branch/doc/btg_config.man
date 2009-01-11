@@ -36,7 +36,7 @@ listen-to      \- IPv4:port. Where network transports (tcpip, stcpip, xml-rpc an
 .TP
 torrent-range  \- integer:integer. Which ports to use use for torrent communication and DHT. The daemon will not start unless two ports are available.
 .TP
-torrent-ip     \- IPv4 address. Libtorrent listens to this address.
+torrent-ip     \- IPv4 or IPv6 address. Libtorrent listens to this address.
 .TP
 use-upnp       \- True/false. Enable/disable UPnP (if support for it was selected at compile time).
 .TP
@@ -87,6 +87,16 @@ peer-id          \- String. Override the Peer ID.
 user-agent       \- String. Override the user agent sent to tracker.
 .TP
 pidfile          \- String. PID-file name (file to write the PID to)
+.TP
+announce-ip      \- String, representing IPv4 or IPv6 address. Tell trackers to use this address instead of the one specified using torrent-ip.
+.TP
+allocation-mode  \- Choice: sparse, full, compact.
+
+sparse: all pieces will be written to the place where they belong and sparse files will be used. This is the recommended, and default mode.
+
+full: all pieces will be allocated, zeroes will be written to the files, before the data is downloaded and written to the file. This might be useful for filesystems that don't support sparse files)
+
+compact: the storage will grow as more pieces are downloaded, and pieces are rearranged to finally be in their correct places once the entire torrent has been downloaded.
 
 .SS
 Section "auth"

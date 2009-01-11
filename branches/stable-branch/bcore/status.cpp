@@ -52,7 +52,9 @@ namespace btg
            time_left_m_(0),
            time_left_s_(0),
            trackerStatus_(),
-           activityCounter_(0)
+           activityCounter_(0),
+           hash_(),
+           announceURL_()
       {}
 
       Status::Status(t_int const _contextID,
@@ -72,7 +74,9 @@ namespace btg
                      t_int const _time_left_m,
                      t_int _time_left_s,
                      btg::core::trackerStatus _trackerStatus,
-                     t_ulong const _activityCounter)
+                     t_ulong const _activityCounter,
+                     std::string const& _hash,
+                     std::string const& _announceURL)
          : Serializable(),
            Printable(),
            contextID_(_contextID),
@@ -92,7 +96,9 @@ namespace btg
            time_left_m_(_time_left_m),
            time_left_s_(_time_left_s),
            trackerStatus_(_trackerStatus),
-           activityCounter_(_activityCounter)
+           activityCounter_(_activityCounter),
+           hash_(_hash),
+           announceURL_(_announceURL)
       {}
 
       Status::Status(Status const& _status)
@@ -115,7 +121,9 @@ namespace btg
            time_left_m_(_status.time_left_m_),
            time_left_s_(_status.time_left_s_),
            trackerStatus_(_status.trackerStatus_),
-           activityCounter_(_status.activityCounter_)
+           activityCounter_(_status.activityCounter_),
+           hash_(_status.hash_),
+           announceURL_(_status.announceURL_)
       {}
 
       void Status::set(t_int const _contextID,
@@ -135,7 +143,9 @@ namespace btg
                        t_int const _time_left_m,
                        t_int _time_left_s,
                        btg::core::trackerStatus _trackerStatus,
-                       t_ulong const _activityCounter)
+                       t_ulong const _activityCounter,
+                       std::string const& _hash,
+                       std::string const& _announceURL)
       {
          contextID_         = _contextID;
          filename_          = _filename;
@@ -155,6 +165,8 @@ namespace btg
          time_left_s_       = _time_left_s;
          trackerStatus_     = _trackerStatus;
          activityCounter_   = _activityCounter;
+         hash_              = _hash;
+         announceURL_       = _announceURL;
       }
 
       bool Status::serialize(btg::core::externalization::Externalization* _e) const
@@ -214,6 +226,10 @@ namespace btg
 
          // unsigned long, counter, minutes;
          BTG_RCHECK( _e->uLongToBytes(&this->activityCounter_) );
+
+         BTG_RCHECK( _e->stringToBytes(&this->hash_) );
+         
+         BTG_RCHECK( _e->stringToBytes(&this->announceURL_) );
 
          return true;
       }
@@ -296,6 +312,9 @@ namespace btg
          // unsigned long, counter, minutes;
          BTG_RCHECK( _e->bytesToULong(&this->activityCounter_) );
 
+         BTG_RCHECK( _e->bytesToString(&this->hash_) );
+         BTG_RCHECK( _e->bytesToString(&this->announceURL_) );
+
          return true;
       }
 
@@ -321,7 +340,10 @@ namespace btg
             convertToString<t_int>(time_left_m_) + ":" +
             convertToString<t_int>(time_left_s_) + ", ";
 
-         output += "activity counter:" + convertToString<t_ulong>(activityCounter_);
+         output += "activity counter:" + convertToString<t_ulong>(activityCounter_) + ", ";
+
+         output += "hash:" + hash_ + ", ";
+         output += "announce URL:" + announceURL_;
 
          return output;
       }
@@ -330,24 +352,26 @@ namespace btg
       {
          bool op_status = true;
 
-         if ((this->contextID_ != _status.contextID_) ||
-             (this->filename_ != _status.filename_) || 
-             (this->status_ != _status.status_) || 
-             (this->downloadTotal_ != _status.downloadTotal_) || 
-             (this->uploadTotal_ != _status.uploadTotal_) || 
-             (this->failedBytes_ != _status.failedBytes_) || 
-             (this->downloadRate_ != _status.downloadRate_) || 
-             (this->uploadRate_ != _status.uploadRate_) ||
-             (this->done_ != _status.done_) ||
-             (this->filesize_ != _status.filesize_) ||
-             (this->leechers_ != _status.leechers_) ||
-             (this->seeders_ != _status.seeders_) ||
-             (this->time_left_d_ != _status.time_left_d_) ||
-             (this->time_left_h_ != _status.time_left_h_) ||
-             (this->time_left_m_ != _status.time_left_m_) ||
-             (this->time_left_s_ != _status.time_left_s_) ||
-             (this->trackerStatus_ != _status.trackerStatus_) ||
-             (activityCounter_ != _status.activityCounter_))
+         if ((contextID_ != _status.contextID_) ||
+             (filename_ != _status.filename_) || 
+             (status_ != _status.status_) || 
+             (downloadTotal_ != _status.downloadTotal_) || 
+             (uploadTotal_ != _status.uploadTotal_) || 
+             (failedBytes_ != _status.failedBytes_) || 
+             (downloadRate_ != _status.downloadRate_) || 
+             (uploadRate_ != _status.uploadRate_) ||
+             (done_ != _status.done_) ||
+             (filesize_ != _status.filesize_) ||
+             (leechers_ != _status.leechers_) ||
+             (seeders_ != _status.seeders_) ||
+             (time_left_d_ != _status.time_left_d_) ||
+             (time_left_h_ != _status.time_left_h_) ||
+             (time_left_m_ != _status.time_left_m_) ||
+             (time_left_s_ != _status.time_left_s_) ||
+             (trackerStatus_ != _status.trackerStatus_) ||
+             (activityCounter_ != _status.activityCounter_) ||
+             (hash_ != _status.hash_) || 
+             (announceURL_ != _status.announceURL_))
             {
                op_status = false;
             }
@@ -379,6 +403,8 @@ namespace btg
                time_left_s_    = _status.time_left_s_;
                trackerStatus_   = _status.trackerStatus_;
                activityCounter_ = _status.activityCounter_;
+               hash_            = _status.hash_;
+               announceURL_     = _status.announceURL_;
             }
 
          return *this;

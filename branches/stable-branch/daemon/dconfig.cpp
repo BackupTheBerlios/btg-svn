@@ -87,6 +87,9 @@ namespace btg
 
 
       std::string const SECTION_MISC("misc");
+
+      std::string const KEY_MISC_ANNOUNCEIP("announce-ip");
+      std::string const DESCR_MISC_ANNOUNCEIP("announce ip (WAN ip)");
       
       std::string const KEY_MISC_PROXY("proxy");
       std::string const DESCR_MISC_PROXY("proxy IPv4:port");
@@ -109,9 +112,15 @@ namespace btg
       std::string const DESCR_MISC_USERAGENT("user agent string");
 
       std::string const KEY_MISC_PIDFILE("pidfile");
-      std::string const DESCR_MISC_PIDFILE("PID-file");
+      std::string const DESCR_MISC_PIDFILE("filename");
       
-      
+      std::string const KEY_MISC_ALLOCATIONMODE("allocation-mode");
+      std::string const DESCR_MISC_ALLOCATIONMODE("mode");
+
+      std::string const VALUE_ALLOCATIONMODE_SPARSE("sparse");
+      std::string const VALUE_ALLOCATIONMODE_FULL("full");
+      std::string const VALUE_ALLOCATIONMODE_COMPACT("compact");
+
       std::string const SECTION_LIMIT("limit");
       
       std::string const KEY_LIMIT_UPLOAD_RATE_LIMIT("upload_rate_limit");
@@ -180,7 +189,9 @@ namespace btg
            def_enc_level(daemonConfiguration::plaintext),
            def_prefer_rc4(false),
            def_peerId(""),
-           def_userAgent("")
+           def_userAgent(""),
+           def_announceIp(""),
+           def_allocation_mode(SPARSE)
       {
       }
 
@@ -330,6 +341,24 @@ namespace btg
                   {
                      def_pidfname = miscStr;
                      btg::core::os::fileOperation::resolvePath(def_pidfname);
+                  }
+
+               /* Allocation mode */
+               miscStr = inifile->GetValue(KEY_MISC_ALLOCATIONMODE, SECTION_MISC);
+               if (miscStr.size() > 0)
+                  {
+                     if (miscStr == VALUE_ALLOCATIONMODE_SPARSE)
+                        {
+                           def_allocation_mode = SPARSE;
+                        }
+                     else if (miscStr == VALUE_ALLOCATIONMODE_FULL)
+                        {
+                           def_allocation_mode = FULL;
+                        }
+                     else if (miscStr == VALUE_ALLOCATIONMODE_COMPACT)
+                        {
+                           def_allocation_mode = COMPACT;
+                        }
                   }
 
                /* Use torrent name instead of file names. */
@@ -1079,11 +1108,24 @@ namespace btg
          temp.clear();
          temp.push_back(std::string("string"));
 
+         /* PID file. */
          formatKey(KEY_MISC_PIDFILE,
-                   "PID-file name",
+                   DESCR_MISC_PIDFILE,
                    temp,
                    output);
-         
+
+         /* Allocation mode. */ 
+
+         temp.clear();
+         temp.push_back(VALUE_ALLOCATIONMODE_SPARSE);
+         temp.push_back(VALUE_ALLOCATIONMODE_FULL);
+         temp.push_back(VALUE_ALLOCATIONMODE_COMPACT);
+
+         formatKey(KEY_MISC_ALLOCATIONMODE,
+                   DESCR_MISC_ALLOCATIONMODE,
+                   temp,
+                   output);
+
          /* */
 
          formatSection(SECTION_LIMIT, output);
@@ -1678,6 +1720,11 @@ namespace btg
          return def_userAgent;
       }
 
+      std::string daemonConfiguration::getAnnounceIp() const      
+      {
+         return def_announceIp;
+      }
+
       void daemonConfiguration::readPeerIdAndUserAgent()
       {
          std::string peerIdStr = inifile->GetValue(KEY_MISC_PEERID, SECTION_MISC);
@@ -1690,6 +1737,12 @@ namespace btg
          if (userAgentStr.size() > 0)
             {
                def_userAgent = userAgentStr;
+            }
+
+         std::string userAnnounceIp = inifile->GetValue(KEY_MISC_ANNOUNCEIP, SECTION_MISC);
+         if (userAnnounceIp.size() > 0)
+            {
+               def_announceIp = userAnnounceIp;
             }
       }
 
@@ -1719,7 +1772,24 @@ namespace btg
                   }
             }
 
+         if (def_announceIp.size() > 0)
+            {
+               if (!inifile->SetValue(KEY_MISC_ANNOUNCEIP,
+                                      def_announceIp,
+                                      DESCR_MISC_ANNOUNCEIP,
+                                      SECTION_MISC))
+                  {
+                     setErrorDescription(writeOperation, SECTION_MISC, KEY_MISC_ANNOUNCEIP);
+                     return false;
+                  }
+            }
+
          return true;
+      }
+
+      daemonConfiguration::allocation_mode daemonConfiguration::getAllocationMode() const
+      {
+         return def_allocation_mode;
       }
 
       daemonConfiguration::~daemonConfiguration()

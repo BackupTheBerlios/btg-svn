@@ -29,6 +29,7 @@
 #include <bcore/addrport.h>
 #include <bcore/file_info.h>
 #include <bcore/urlstatus.h>
+#include <bcore/command/dsetting.h>
 
 #include "clientcallback.h"
 #include "statemachine.h"
@@ -218,6 +219,9 @@ namespace btg
 
             /// Request version information.
             virtual void reqVersion();
+
+            /// Request the value of a setting.
+            virtual void reqSetting(btg::core::daemonSetting _ds);
 
             /// Request list of trackers used by a context.
             virtual void reqTrackers(t_int const _id);

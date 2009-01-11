@@ -120,7 +120,7 @@ if [ "$oldver" != "$newver" ] ; then
 	for fail in $workdir/*.fail ; do
 		[ -e $fail ] || continue
 		name=`basename $fail .fail`
-		echo "($name)"
+		echo "($workdir/$name)"
 		cat $workdir/$name.log
 		fail_cnt=$(($fail_cnt+1))
 	done >>$reportfile.fails

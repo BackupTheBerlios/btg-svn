@@ -79,6 +79,9 @@ AC_DEFUN([BTG_RBLIBTORRENT_CHECK],
         AC_SUBST(LIBTORRENT_LIBS)
     ], [
         dnl else try to use the settings from the libtorrent pkg-config configuration
-        PKG_CHECK_MODULES([LIBTORRENT], [libtorrent >= 0.12])
+        PKG_CHECK_MODULES([LIBTORRENT], [libtorrent-rasterbar >= 0.13], [], [AC_MSG_NOTICE([new-style LT-0.13.1+ not found, trying older setup])])
+	if test -z "$LIBTORRENT_CFLAGS" -a -z "$LIBTORRENT_LIBS"; then
+    	    PKG_CHECK_MODULES([LIBTORRENT], [libtorrent >= 0.12])
+	fi
     ])
 ])

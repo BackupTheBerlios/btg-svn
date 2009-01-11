@@ -11,7 +11,8 @@ noinst_HEADERS       = ext_printer.h
 gen_cmd_docs_LDADD   = $(top_builddir)/bcore/libbtgcore.la \
                        $(top_builddir)/external/ini/libini.la
 
-gen_cmd_docs_LDFLAGS = @LIBS@ @BOOST_SYSTEM_LIB@ @LIBTORRENT_LIBS@ @BOOST_IOSTREAMS_LIB@ @BOOST_PROGRAM_OPTIONS_LIB@ @BOOST_FILESYSTEM_LIB@ @BOOST_THREAD_LIB@ @LIBGNUTLS_LIBS@ 
+# wojci: Added linking against boost date_time. Missing symbols on debian.
+gen_cmd_docs_LDFLAGS = @LIBS@ @BOOST_SYSTEM_LIB@ @LIBTORRENT_LIBS@ @BOOST_IOSTREAMS_LIB@ @BOOST_PROGRAM_OPTIONS_LIB@ @BOOST_FILESYSTEM_LIB@ @BOOST_THREAD_LIB@ @BOOST_DATE_TIME_LIB@ @LIBGNUTLS_LIBS@ 
 
 gen_cmd_docs_CFLAGS   = @CFLAGS@ \
 -DBTG_DEBUG=@BTG_DEBUG@ \

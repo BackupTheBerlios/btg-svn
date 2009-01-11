@@ -38,7 +38,7 @@
 
 #include <string>
 #include <bcore/t_string.h>
-
+#include <bcore/hrr.h>
 #include <bcore/logmacro.h>
 
 namespace btg
@@ -47,6 +47,7 @@ namespace btg
    {
       namespace gui
       {
+         const t_uint maxRateInBytes = (65*1024*1024);
 
          limitDialog::limitDialog(const char * _szUploadLabel, 
                                   const char * _szDownloadLabel, 
@@ -55,7 +56,6 @@ namespace btg
             : Gtk::Dialog(btg::core::projectDefaults::sGUI_CLIENT() + " " + btg::core::projectDefaults::sFULLVERSION() + " / Limit", 
                           true /* modal */, 
                           true /* use_separator aka set_has_separator() */ ),
-              limit_interval(5),
               limit_selected(false),
               selected_upload_disable(false),
               selected_download_disable(false),
@@ -66,24 +66,25 @@ namespace btg
               param3Spin(0),
               param4Spin(0),
               selected_upload_limit(-1),
-              selected_download_limit(-1)
+              selected_download_limit(-1),
+              limits()
          {
-            Gtk::Label *uploadLabel   = Gtk::manage(new class Gtk::Label( _szUploadLabel ? _szUploadLabel : "Upload" ));
-            Gtk::Label *downloadLabel = Gtk::manage(new class Gtk::Label( _szDownloadLabel ? _szDownloadLabel : "Download" ));
+            Gtk::Label* uploadLabel   = Gtk::manage(new class Gtk::Label( _szUploadLabel ? _szUploadLabel : "Upload" ));
+            Gtk::Label* downloadLabel = Gtk::manage(new class Gtk::Label( _szDownloadLabel ? _szDownloadLabel : "Download" ));
             uploadCombo               = Gtk::manage(new class Gtk::ComboBoxText());
             downloadCombo             = Gtk::manage(new class Gtk::ComboBoxText());
 
-            Gtk::Label *seedPercentLabel = Gtk::manage(new class Gtk::Label( _szParam3Label ? _szParam3Label : "Seed %" ));
-            Gtk::Label *seedTimeLabel    = Gtk::manage(new class Gtk::Label( _szParam4Label ? _szParam4Label : "Seed Time" ));
+            Gtk::Label* seedPercentLabel = Gtk::manage(new class Gtk::Label( _szParam3Label ? _szParam3Label : "Seed %" ));
+            Gtk::Label* seedTimeLabel    = Gtk::manage(new class Gtk::Label( _szParam4Label ? _szParam4Label : "Seed Time" ));
 
-            Gtk::Adjustment *seedPercentAdjustment = Gtk::manage(new class Gtk::Adjustment(1, 0, 100, 1, 10, 10));
+            Gtk::Adjustment* seedPercentAdjustment = Gtk::manage(new class Gtk::Adjustment(1, 0, 100, 1, 10, 10));
             param3Spin = Gtk::manage(new class Gtk::SpinButton(*seedPercentAdjustment, 1, 0));
 
             Gtk::Adjustment *seedTimeAdjustment = Gtk::manage(new class Gtk::Adjustment(1, 0, 100, 1, 10, 10));
             param4Spin    = Gtk::manage(new class Gtk::SpinButton(*seedTimeAdjustment, 1, 0));
 
-            Gtk::Table *settingsTable = Gtk::manage(new class Gtk::Table(4, 2, false));
-            Gtk::VBox *limitVbox      = Gtk::manage(new class Gtk::VBox(false, 10));
+            Gtk::Table* settingsTable = Gtk::manage(new class Gtk::Table(4, 2, false));
+            Gtk::VBox* limitVbox      = Gtk::manage(new class Gtk::VBox(false, 10));
 
             uploadLabel->set_alignment(0,0.5);
             uploadLabel->set_padding(5,0);
@@ -130,12 +131,17 @@ namespace btg
             uploadCombo->append_text("disable");
             downloadCombo->append_text("disable");
 
-            for (t_int i=limit_interval; i<=200; i+=limit_interval)
+            for (t_uint i=1024; i<=maxRateInBytes; i*=2)
                {
                   using namespace btg::core;
-                  std::string s = convertToString<int>(i) + " KiB/sec";
+
+                  humanReadableRate h = humanReadableRate::convert(i);
+
+                  std::string s = h.toString();
                   uploadCombo->append_text(s);
                   downloadCombo->append_text(s);
+
+                  limits.push_back(i);
                }
 
             uploadCombo->set_active(0);
@@ -189,7 +195,7 @@ namespace btg
 
             if (_currentUploadLimit > 0)
                {
-                  t_int position = _currentUploadLimit / KiB / limit_interval;
+                  t_uint position = findClosestLimit(_currentUploadLimit);
                   uploadCombo->set_active(position);
                }
             else
@@ -199,7 +205,7 @@ namespace btg
 
             if (_currentDownloadLimit > 0)
                {
-                  t_int position = _currentDownloadLimit / KiB / limit_interval;
+                  t_uint position = findClosestLimit(_currentDownloadLimit);
                   downloadCombo->set_active(position);
                }
             else
@@ -233,8 +239,6 @@ namespace btg
                {
                   param4Spin->set_value(0);
                }
-
-            // BTG_NOTICE("Update - limit, seed % " << param3Spin->get_value() << " time = " << param4Spin->get_value());
          }
 
          void limitDialog::on_button_pressed(int _button)
@@ -247,8 +251,6 @@ namespace btg
 
                      int selection = uploadCombo->get_active_row_number();
 
-                     // BTG_NOTICE("selection = " << selection);
-
                      // Upload:
                      if (selection == 0)
                         {
@@ -259,7 +261,7 @@ namespace btg
                      if (selection > 0)
                         {
                            // Set upload limit.
-                           selected_upload_limit = (selection * limit_interval);
+                           selected_upload_limit = getValue(selection);
                         }
                      else if (selection < 0)
                         {
@@ -278,7 +280,7 @@ namespace btg
                      if (selection > 0)
                         {
                            // Set upload limit.
-                           selected_download_limit = (selection * limit_interval);
+                           selected_download_limit = getValue(selection);
                         }
                      else if (selection < 0)
                         {
@@ -322,7 +324,7 @@ namespace btg
 
          t_int limitDialog::getUploadLimit() const
          {
-            return selected_upload_limit * KiB;
+            return selected_upload_limit;
          }
 
          bool limitDialog::downloadLimitDisabled() const
@@ -332,7 +334,7 @@ namespace btg
 
          t_int limitDialog::getDownloadLimit() const
          {
-            return selected_download_limit * KiB;
+            return selected_download_limit;
          }
 
          bool limitDialog::param3Disabled() const
@@ -356,6 +358,40 @@ namespace btg
             double timeout = param4Spin->get_value();
 
             return static_cast<t_long>(timeout);
+         }
+
+         t_uint limitDialog::findClosestLimit(t_uint _limit) const
+         {
+            t_uint index = 0;
+            std::vector<t_uint>::const_iterator iter;
+            for (iter = limits.begin();
+                 iter != limits.end();
+                 iter++)
+               {
+                  if (*iter >= _limit)
+                     {
+                        break;
+                     }
+                  else
+                     {
+                        index++;
+                     }
+               }
+            index++;
+            return index;
+         }
+
+         t_uint limitDialog::getValue(t_uint _index) const
+         {
+            std::vector<t_uint>::const_iterator iter = limits.begin();
+            iter += (_index-1);
+
+            if (iter != limits.end())
+               {
+                  return *iter;
+               }
+            
+            return 0;
          }
 
          limitDialog::~limitDialog()

@@ -83,6 +83,7 @@ command/session_info.cpp \
 command/opstat.cpp \
 command/setup.cpp \
 command/version.cpp \
+command/setting.cpp \
 command/kill.cpp \
 command/limit.cpp \
 command/uptime.cpp \
@@ -129,9 +130,10 @@ $(AUTH_SOURCES) \
 bitvector.cpp \
 urlstatus.cpp
 
-libbtgcore_la_LIBADD = @XMLRPC_LDFLAGS@ @LIBTORRENT_LIBS@ @BOOST_IOSTREAMS_LIB@ \
+libbtgcore_la_LIBADD = @XMLRPC_LDFLAGS@ @BOOST_IOSTREAMS_LIB@ \
 @LIBGNUTLS_LIBS@ @BOOST_PROGRAM_OPTIONS_LIB@ \
-@BOOST_THREAD_LIB@ @BOOST_FILESYSTEM_LIB@ @BOOST_SYSTEM_LIB@
+@BOOST_THREAD_LIB@ @BOOST_FILESYSTEM_LIB@ @BOOST_SYSTEM_LIB@ \
+@BOOST_DATE_TIME_LIB@
 
 if BUILDINTERNALXMLRPC
   libbtgcore_la_LIBADD += $(top_builddir)/external/xmlrpc-epi/src/libxmlrpc.la
@@ -207,6 +209,8 @@ command/session_info.h \
 command/opstat.h \
 command/setup.h \
 command/version.h \
+command/dsetting.h \
+command/setting.h \
 command/kill.h \
 command/limit.h \
 command/uptime.h \

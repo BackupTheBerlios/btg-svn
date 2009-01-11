@@ -451,6 +451,14 @@ namespace btg
             statemachine.work();
          }
 
+         void clientHandler::reqSetting(btg::core::daemonSetting _ds)
+         {
+            commandStatus = false;
+            
+            statemachine.doSetting(_ds);
+            statemachine.work();
+         }
+
          void clientHandler::reqTrackers(t_int const _id)
          {
             commandStatus = false;

@@ -30,6 +30,7 @@
 #include <bcore/file_info.h>
 #include <bcore/urlstatus.h>
 #include <bcore/copts.h>
+#include <bcore/command/dsetting.h>
 
 #include <string>
 
@@ -190,6 +191,10 @@ namespace btg
 
                      /// Version and options for the daemon received.
                      virtual void onVersion(btg::core::OptionBase const& _ob) = 0;
+
+                     /// Setting info received.
+                     virtual void onSetting(btg::core::daemonSetting const _what, 
+                                            std::string const& _value) = 0;
 
                      /// The files requested by the client could not
                      /// be set.

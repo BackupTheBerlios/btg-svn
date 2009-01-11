@@ -129,6 +129,9 @@ namespace btg
                      CN_VERSION         = 133, //!< Get daemon version and settings.
                      CN_VERSIONRSP      = 134, //!< Get daemon version and settings response.
 
+                     CN_GETSETTING      = 135, //!< Get a daemon setting.
+                     CN_GETSETTINGRSP   = 136, //!< Get a daemon setting response.
+
                      CN_UNDEFINED       = 254  //!< Undefined command.
                   };
 

@@ -142,7 +142,13 @@ namespace btg
                            verboseFlag_, "Tracker alert: filename '" << 
                            filename << "', status = " << 
                            _alert->status_code << ", message '" << 
-                           _alert->msg() << "'");
+#if BTG_LT_0_14
+                           _alert->message()
+#else
+                           _alert->msg()
+#endif
+                           << "'");
+
                ti->trackerStatus.invalidate();
                // Handle alerts which have some undefined status code.
                if (_alert->status_code != trackerStatus::undefined)
@@ -154,7 +160,14 @@ namespace btg
                      ti->trackerStatus.setStatus(trackerStatus::warning);
                   }               
                ti->trackerStatus.setSerial(ti->serial);
-               ti->trackerStatus.setMessage(_alert->msg());
+               ti->trackerStatus.setMessage(
+#if BTG_LT_0_14
+                                            _alert->message()
+#else
+                                            _alert->msg()
+#endif
+               );
+
                ti->serial++;
 
                if (ti->serial > trackerStatus::MAX_SERIAL)
@@ -200,13 +213,26 @@ namespace btg
          if (getIdFromHandle(_alert->handle, torrent_id, ti))
             {
                getFilename(torrent_id, filename);
-
                VERBOSE_LOG(logWrapper(), verboseFlag_, "Tracker warning alert: filename '" << 
-                           filename << "', message '" << _alert->msg() << "'");
+                           filename << "', message '" << 
+#if BTG_LT_0_14
+                           _alert->message()
+#else
+                           _alert->msg()
+#endif
+                           << "'");
+
                ti->trackerStatus.invalidate();
                ti->trackerStatus.setStatus(trackerStatus::warning);
                ti->trackerStatus.setSerial(ti->serial);
-               ti->trackerStatus.setMessage(_alert->msg());
+               ti->trackerStatus.setMessage(
+#if BTG_LT_0_14
+               _alert->message()
+#else
+               _alert->msg()
+#endif
+               );
+
                ti->serial++;
 
                if (ti->serial > trackerStatus::MAX_SERIAL)
@@ -270,7 +296,13 @@ namespace btg
                   else
                      {
                         // Log other alerts.
-                        BTG_NOTICE(logWrapper(), "Alert: " << alert->msg() << " (" << typeid(*alert).name() << ")");
+                        BTG_NOTICE(logWrapper(), "Alert: " << 
+#if BTG_LT_0_14
+                                   alert->message()
+#else
+                                   alert->msg()
+#endif
+                                   << " (" << typeid(*alert).name() << ")");
                      }
                }
          }

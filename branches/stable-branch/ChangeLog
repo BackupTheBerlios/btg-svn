@@ -1,3 +1,26 @@
+BTG version 0.9.9
+-----------------
+The following bugs were fixed:
+
+014834 btgncli, setting limits.
+014794 Regression: short_open_tag=off.
+014792 Popup warning when adding a URL to download.
+014583 Possibility to allocate files.
+014407 Show limits ranges in geometrical progression.
+014372 Building issue (at configure step).
+014371 Does not compile against boost 1.36.
+014353 btgncli doc doesn't say what key configuration does.
+014351 WAN annouce ip not used.
+014308 btgui: infohash and announce_url in Details.
+014305 Limits and sel.files persistance when move betw. sessions.
+014280 btgncli, add sorting by..
+014271 Typo in btg.js.
+014268 Update Freebsd notes in howto.
+014223 libsigc++-2.2.* is not supported.
+013963 btgcli limit setting error.
+013962 wwwUI response times optimization.
+011275 Use UPnP support from libtorrent.
+
 BTG version 0.9.8
 -----------------
 The following bugs were fixed:

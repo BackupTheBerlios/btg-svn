@@ -87,14 +87,18 @@ class Status extends BTGSerializable
 	// Activity counter
 	private $activityCounter;
 
-	public function Status($contextID = -1, $filename="undefined", $status=0, $dn_total=0, $ul_total=0, $failed_bytes=0, $dn_rate=0, $ul_rate=0, $done=0, $filesize=0, $leechers=0, $seeders=0, $time_left_d=0, $time_left_h=0, $time_left_m=0, $time_left_s=0, $trackerStatus = null, $activityCounter = 0)
+	private $hash;
+
+        private $url;
+
+	public function Status($contextID = -1, $filename="undefined", $status=0, $dn_total=0, $ul_total=0, $failed_bytes=0, $dn_rate=0, $ul_rate=0, $done=0, $filesize=0, $leechers=0, $seeders=0, $time_left_d=0, $time_left_h=0, $time_left_m=0, $time_left_s=0, $trackerStatus = null, $activityCounter = 0, $hash = "", $url = "")
 	{
 		if($trackerStatus == null)
 				$trackerStatus = new trackerStatus();
-		$this->set($contextID, $filename, $status, $dn_total, $ul_total, $failed_bytes, $dn_rate, $ul_rate, $done, $filesize, $leechers, $seeders, $time_left_d, $time_left_h, $time_left_m, $time_left_s, $trackerStatus, $activityCounter);
+		$this->set($contextID, $filename, $status, $dn_total, $ul_total, $failed_bytes, $dn_rate, $ul_rate, $done, $filesize, $leechers, $seeders, $time_left_d, $time_left_h, $time_left_m, $time_left_s, $trackerStatus, $activityCounter, $hash, $url);
 	}
 
-	public function set($contextID, $filename, $status, $dn_total, $ul_total, $failed_bytes, $dn_rate, $ul_rate, $done, $filesize, $leechers, $seeders, $time_left_d, $time_left_h, $time_left_m, $time_left_s, $trackerStatus, $activityCounter)
+	public function set($contextID, $filename, $status, $dn_total, $ul_total, $failed_bytes, $dn_rate, $ul_rate, $done, $filesize, $leechers, $seeders, $time_left_d, $time_left_h, $time_left_m, $time_left_s, $trackerStatus, $activityCounter, $hash, $url)
 	{
 		$this->contextID = $contextID;
 		$this->filename = $filename;
@@ -114,6 +118,8 @@ class Status extends BTGSerializable
 		$this->time_left_s = $time_left_s;
 		$this->trackerStatus = $trackerStatus;
 		$this->activityCounter = $activityCounter;
+		$this->hash            = $hash;
+		$this->url             = $url;
 	}
 
 	function getContextID() { return $this->contextID; }
@@ -136,6 +142,9 @@ class Status extends BTGSerializable
 	function getTrackerStatus()	{ return $this->trackerStatus; }
 	function getActivityCounter()	{ return $this->activityCounter; }
 
+	function getHash() { return $this->hash; }
+   function getAnnounceURL() { return $this->url; }
+
 	public function serialize(&$a = array())
 	{
 		$this->intToBytes($a, $this->contextID);
@@ -156,6 +165,8 @@ class Status extends BTGSerializable
 		$this->intToBytes($a, $this->time_left_s);
 		$this->trackerStatus->serialize($a);
 		$this->uLongToBytes($a, $this->activityCounter);
+		$this->stringToBytes($a, $this->hash);
+		$this->stringToBytes($a, $this->url);
 		return $a;
 	}
 
@@ -198,6 +209,8 @@ class Status extends BTGSerializable
 		$this->bytesToInt($this->time_left_s, $data);
 		$this->trackerStatus->deserialize($data);
 		$this->bytesToULong($this->activityCounter, $data);
+		$this->bytesToString($this->hash, $data);
+		$this->bytesToString($this->url, $data);
 	}
 
 	public function toString($lineWidth = 80)

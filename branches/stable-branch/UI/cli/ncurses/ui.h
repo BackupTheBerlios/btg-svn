@@ -121,6 +121,9 @@ namespace btg
                      /// limits.
                      void handleGlobalLimit();
 
+                     /// Handle sorting the list of contexts.
+                     void handleSort();
+
                      /// Refresh all windows.
                      void refresh();
 
@@ -172,6 +175,17 @@ namespace btg
                            sS_SELECT_ABORT
                         };
 
+                     /// Method used for sorting contexts.
+                     enum sortBy
+                     {
+                        sB_Name = 0, /// Sort by name.
+                        sB_Size,     /// Sort by file size.
+                        sB_UlSpeed,  /// Sort by upload speed.
+                        sB_DlSpeed,  /// Sort by download speed.
+                        sB_Peers,    /// Sort by number of peers.
+                        sB_Done      /// Sort by percent done.
+                     };
+
                      /// String representing the current session ID.
                      std::string    session_;
 
@@ -214,6 +228,9 @@ namespace btg
 
                      /// Thread handling updates.
                      btg::core::client::handlerThread& handlerthread_;
+
+                     /// Method used for sorting contexts.
+                     sortBy         sortby_;
 
                      /// Set statusbar up to communicate that some action went ok.
                      void actionSuccess(std::string const& _action, 

@@ -865,6 +865,11 @@ int main(int argc, char* argv[])
    VERBOSE_LOG(logwrapper, 
                verboseFlag, btg::core::projectDefaults::sDAEMON() << " version " << 
                btg::core::projectDefaults::sFULLVERSION() << ".");
+
+   VERBOSE_LOG(logwrapper, 
+               verboseFlag, "Using rasterbar libtorrent version " << LIBTORRENT_VERSION_MAJOR << "." << LIBTORRENT_VERSION_MINOR << ".");
+   VERBOSE_LOG(logwrapper, 
+               verboseFlag, "There can be only one libtorrent. Accept no substitutes.");
    VERBOSE_LOG(logwrapper, 
                verboseFlag, "Ready to accept clients.");
 

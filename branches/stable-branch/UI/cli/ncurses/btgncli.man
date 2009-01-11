@@ -147,40 +147,48 @@ colors and ignore any user defined colors.
 
 .SH KEYBOARD
 .TP
-Use the following configuration keys:
+Use the following configuration to assign ASCII values to keys used by this client:
 
 .TP
-KEY_HELP
+KEY_HELP       \- show help.
 .TP
-KEY_DETACH
+KEY_DETACH     \- detach from the current session.
 .TP
-KEY_QUIT
+KEY_QUIT       \- quit the application.
 .TP
-KEY_LOAD
+KEY_BACK       \- quit an entry dialog.
 .TP
-KEY_LOAD_URL
+KEY_LOAD       \- load a torrent file.
 .TP
-KEY_MENU
+KEY_LOAD_URL   \- load an URL.
 .TP
-KEY_GLIMIT
+KEY_MENU       \- show the per torrent menu.
 .TP
-KEY_DOWN
+KEY_SESNAME    \- change session name.
 .TP
-KEY_UP
+KEY_SORT       \- change the way torrents are sorted.
 .TP
-KEY_LIST_START
+KEY_GLIMIT     \- show global limit menu.
 .TP
-KEY_LIST_END
+KEY_DOWN       \- move down a list.
 .TP
-KEY_SELECT
+KEY_UP         \- move up a list.
 .TP
-KEY_MARK
+KEY_LIST_START \- go to the beginning of a list.
 .TP
-KEY_MARK_ALL
+KEY_LIST_END   \- go to the end of a list.
 .TP
-KEY_NEXT
+KEY_SELECT     \- select an entry in a list.
 .TP
-KEY_PREV
+KEY_MARK       \- mark an entry in a list.
+.TP
+KEY_MARK_ALL   \- mark all entries in a list.
+.TP
+KEY_NEXT       \- Next entry (used in limit dialogs).
+.TP
+KEY_PREV       \- Previous entry (used in limit dialogs).
+.TP
+K_DELETE       \- Delete a character.
 
 .TP
 For example, to set the help key to "h", one has to use the ASCII

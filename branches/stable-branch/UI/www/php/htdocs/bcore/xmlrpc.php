@@ -463,8 +463,11 @@ class XMLRPC_Client
 
 		$this->timeout = $timeout;
 
-		if(function_exists('gzuncompress') && function_exists('gzcompress'))
+		if (($btg_config_use_gzip) && 
+		   (function_exists('gzuncompress') && function_exists('gzcompress')))
+		{
 			$this->gzip_available = true;
+		}
 
 	}
 

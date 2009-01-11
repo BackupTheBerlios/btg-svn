@@ -1873,6 +1873,12 @@ namespace btg
             setOption(_ob);
          }
 
+         void cliHandler::onSetting(btg::core::daemonSetting const _what, 
+                                    std::string const& _value)
+         {
+            commandStatus = true;
+         }
+
          void cliHandler::onSetFilesError(std::string const& _errorDescription)
          {
 

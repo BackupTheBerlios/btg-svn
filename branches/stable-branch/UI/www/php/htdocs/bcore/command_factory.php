@@ -60,6 +60,7 @@ require_once(BTG_BCORE_PATH."/command/kill.php");
 require_once(BTG_BCORE_PATH."/command/limit.php");
 require_once(BTG_BCORE_PATH."/command/uptime.php");
 require_once(BTG_BCORE_PATH."/command/initconnection.php");
+require_once(BTG_BCORE_PATH."/command/opstat.php");
 
 class commandFactory
 {
@@ -101,15 +102,12 @@ class commandFactory
 		case Command::CN_CCREATEFROMURLRSP:
 			$c = new contextCreateFromUrlResponseCommand();
 			break;
-         /*
-          TODO: implement this, since the interface changed.
-		case Command::CN_CURLSTATUS:
-			$c = new contextUrlStatusCommand();
+		case Command::CN_OPSTATUS:
+			$c = new opStatusCommand();
 			break;
-		case Command::CN_CURLSTATUSRSP:
-			$c = new contextUrlStatusResponseCommand();
+		case Command::CN_OPSTATUSRSP:
+			$c = new opStatusResponseCommand();
 			break;
-         */
 		case Command::CN_CLAST: // last context
 			$c = new lastCIDCommand();
 			break;
@@ -133,6 +131,12 @@ class commandFactory
 			break;
 		case Command::CN_CALLSTATUSRSP: // All status response.
 			$c = new contextAllStatusResponseCommand();
+			break;
+		case Command::CN_CMSTATUS:
+			$c = new contextMultipleStatusCommand();
+			break;
+		case Command::CN_CMSTATUSRSP:
+			$c = new contextMultipleStatusResponseCommand();
 			break;
 		case Command::CN_CFILEINFO: // File info request.
 			$c = new contextFileInfoCommand();

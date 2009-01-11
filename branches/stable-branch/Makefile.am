@@ -1,3 +1,5 @@
+ACLOCAL_AMFLAGS = -I m4
+
 if BTG_UNITTEST
   BTG_UNITTEST_DIR = utest
 endif

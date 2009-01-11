@@ -25,6 +25,7 @@
 
 #include <gtkmm/dialog.h>
 #include <bcore/type.h>
+#include <vector>
 
 namespace Gtk
 {
@@ -104,13 +105,9 @@ namespace btg
                   private:
                      enum
                         {
-                           KiB            = 1024,   //!< Definition of KiB.
                            MaxParam3Value = 102400, //!< Maximum seed percent/Maximum uploads. (taken out of thin air)
                            MaxParam4Value = 102400  //!< Maximum seed timeout/Maximum connections. (taken out of thin air)
                         };
-
-                     /// The interval in which rates are in.
-                     const t_int        limit_interval;
 
                      /// True if user pressed the "set" button.
                      bool               limit_selected;
@@ -144,6 +141,14 @@ namespace btg
 
                      /// Download limit in KiB/sec.
                      t_int              selected_download_limit;
+
+                     /// List of limits.
+                     std::vector<t_uint> limits;
+                     /// Get limit value from an index used by the
+                     /// combo boxes (ul/dl limits).
+                     t_uint getValue(t_uint _index) const;
+                     /// Find the closest index for a limit specified by _limit. 
+                     t_uint findClosestLimit(t_uint _limit) const;
 
                      /// Callback: called when one of the buttons are pressed.
                      /// @param [in] _button Which button was pressed. 1 - the set button. 0 - the cancel button.

@@ -38,10 +38,18 @@ namespace btg
           */
          /** @{ */
 
-         /// IPv4 address.
+         /// IPv4 or IPv6 address.
          class Address: public Serializable
             {
             public:
+               /// Type.
+               enum AddrType
+               {
+                  ADT_UNKN = 0, /// Unknown.
+                  ADT_IPV4,     /// IPv4.
+                  ADT_IPV6,     /// IPv6.
+               };
+
                /// Default constructor.
                /// Crates an instance of this class (0.0.0.0) on
                /// which valid() will return false.
@@ -57,6 +65,20 @@ namespace btg
                        t_byte const _ip2,
                        t_byte const _ip3);
 
+               /// Constructor.
+               /// @param [in] _ip0  IPv6, byte 0.
+               /// @param [in] _ip1  IPv6, byte 1.
+               /// @param [in] _ip2  IPv6, byte 2.
+               /// @param [in] _ip3  IPv6, byte 3.
+               /// @param [in] _ip4  IPv6, byte 4.
+               /// @param [in] _ip5  IPv6, byte 5.
+               Address(t_byte const _ip0,
+                       t_byte const _ip1,
+                       t_byte const _ip2,
+                       t_byte const _ip3,
+                       t_byte const _ip4,
+                       t_byte const _ip5);
+
                /// Copy constructor.
                Address(Address const& _address);
 
@@ -64,9 +86,12 @@ namespace btg
                std::string getIp() const { return toString(); }
 
                /// Setup an instance of this class with information
-               /// contained in a string. The string should contain "a.b.c.d".
+               /// contained in a string. The string should contain "a.b.c.d" or "a.b.c.d.e.f".
+               /// Use _type to indicate which kind of address the string contains, 
+               /// use the default to detect the type.
                /// @return True if successful, false otherwise.
-               bool fromString(std::string const& _input);
+               bool fromString(std::string const& _input, 
+                               AddrType const _type = Address::ADT_UNKN);
 
                /// Get this address port as "ip:port" string.
                std::string toString() const;
@@ -84,14 +109,23 @@ namespace btg
 
                virtual bool deserialize(btg::core::externalization::Externalization* _e);
 
-               /// Returns true if, address is not 0.0.0.0.
+               /// Returns true if, address is not 0.0.0.0 or 0.0.0.0.0.0.
                bool valid() const;
 
                /// Destructor.
                virtual ~Address();
             protected:
-               /// IPv4 address.
-               t_byte ip_[4];
+               /// Detect the address type represented by the
+               /// argument.
+               AddrType detectIpType(std::string const& _input);
+               /// Setup an instance by reading an address represented by a string. 
+               bool fromStringImpl(std::string const& _input, 
+                                   t_uint const _digits);
+               /// Type.
+               AddrType type_;
+
+               /// IPv4 or IPv6 address.
+               t_byte ip_[6];
             };
 
          /// IPv4 and port information.
@@ -115,6 +149,22 @@ namespace btg
                            t_byte const _ip3,
                            t_uint const _port);
 
+               /// Constructor.
+               /// @param [in] _ip0  IPv6, byte 0.
+               /// @param [in] _ip1  IPv6, byte 1.
+               /// @param [in] _ip2  IPv6, byte 2.
+               /// @param [in] _ip3  IPv6, byte 3.
+               /// @param [in] _ip4  IPv6, byte 5.
+               /// @param [in] _ip5  IPv6, byte 5.
+               /// @param [in] _port Port.
+               addressPort(t_byte const _ip0,
+                           t_byte const _ip1,
+                           t_byte const _ip2,
+                           t_byte const _ip3,
+                           t_byte const _ip4,
+                           t_byte const _ip5,
+                           t_uint const _port);
+
                /// Copy constructor.
                addressPort(addressPort const& _addressport);
 
@@ -122,7 +172,8 @@ namespace btg
                t_uint    getPort() const;
 
                /// Setup an instance of this class with information
-               /// contained in a string. The string should contain "a.b.c.d:port".
+               /// contained in a string. The string should contain
+               /// "a.b.c.d:port" or "a.b.c.d.e.f:port".
                /// @return True if successful, false otherwise.
                bool fromString(std::string const& _input);
 
@@ -146,7 +197,7 @@ namespace btg
 
                bool deserialize(btg::core::externalization::Externalization* _e);
 
-               /// Returns true if, address is not 0.0.0.0 and port is
+               /// Returns true if, address is not 0.0.0.0/0.0.0.0.0.0 and port is
                /// greater than 0 or if the address is all zeros and
                /// the port is greater than zero.
                bool valid() const;

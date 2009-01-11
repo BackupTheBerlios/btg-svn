@@ -37,7 +37,7 @@ namespace btg
       }
 
       opStatusCommand::opStatusCommand(t_uint const _id,
-                                                     t_uint const _type)
+                                       t_uint const _type)
          : Command(Command::CN_OPSTATUS),
            id_(_id),
            type_(_type)
@@ -94,8 +94,8 @@ namespace btg
       }
 
       opStatusResponseCommand::opStatusResponseCommand(t_uint _id, 
-                                                                     t_uint _type,
-                                                                     t_uint _status)
+                                                       t_uint _type,
+                                                       t_uint _status)
          : Command(Command::CN_OPSTATUSRSP),
            id_(_id),
            type_(_type),
@@ -107,17 +107,17 @@ namespace btg
       }
 
       void opStatusResponseCommand::setData(std::string const& _data)
-         {
-            data_ = _data;
-            if (data_.size() > 0)
-               {
-                  dataSet_ = true;
-               }
-            else
-               {
-                  dataSet_ = false;
-               }
-         }
+      {
+         data_ = _data;
+         if (data_.size() > 0)
+            {
+               dataSet_ = true;
+            }
+         else
+            {
+               dataSet_ = false;
+            }
+      }
 
       bool opStatusResponseCommand::serialize(btg::core::externalization::Externalization* _e) const
       {
@@ -141,11 +141,11 @@ namespace btg
          BTG_RCHECK(_e->status());
          
          if (dataSet_)
-         {
-            _e->setParamInfo("data", false);
-            _e->stringToBytes(&data_);
-            BTG_RCHECK(_e->status());
-         }
+            {
+               _e->setParamInfo("data", false);
+               _e->stringToBytes(&data_);
+               BTG_RCHECK(_e->status());
+            }
 
          return true;
       }
@@ -172,11 +172,11 @@ namespace btg
          BTG_RCHECK(_e->status());
          
          if (dataSet_)
-         {
-            _e->setParamInfo("data", false);
-            _e->bytesToString(&data_);
-            BTG_RCHECK(_e->status());
-         }
+            {
+               _e->setParamInfo("data", false);
+               _e->bytesToString(&data_);
+               BTG_RCHECK(_e->status());
+            }
          
          return true;
       }
@@ -195,7 +195,7 @@ namespace btg
       }
 
       opAbortCommand::opAbortCommand(t_uint const _id, 
-                                                   t_uint const _type)
+                                     t_uint const _type)
          : Command(Command::CN_OPABORT),
            id_(_id),
            type_(_type)

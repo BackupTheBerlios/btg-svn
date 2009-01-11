@@ -140,7 +140,7 @@ namespace PlotMM {
 			  int from = 0, int to = -1);
 
 	//! Signals that this curve has changed in some way or the other
-	SigC::Signal0<void> signal_curve_changed;
+	sigc::signal0<void> signal_curve_changed;
 
     protected:
 	virtual void init(const Glib::ustring &title);

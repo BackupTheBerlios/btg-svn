@@ -25,6 +25,8 @@
 
 #include <bcore/t_string.h>
 #include <bcore/logmacro.h>
+#include <algorithm>
+#include <boost/bind.hpp>
 
 namespace btg
 {
@@ -33,7 +35,8 @@ namespace btg
       namespace cli
       {
          statusEntry::statusEntry(btg::core::Status const& _s)
-            : status(_s),
+            : id(_s.contextID()),
+              status(_s),
               marked(false),
               updated(true),
               trackers_set(false),
@@ -43,7 +46,8 @@ namespace btg
          }
 
          statusEntry::statusEntry()
-            : status(),
+            : id(-1),
+              status(),
               marked(false),
               updated(false),
               trackers_set(false),
@@ -57,20 +61,14 @@ namespace btg
 	
          statusList::statusList()
             : changed_(false),
-              statusList_()
+              statusList_(),
+              sortby_(statusList::sB_Name)
          {
-
          }
 
          void statusList::get(std::vector<statusEntry> & _list) const
          {
-            std::map<t_int, statusEntry>::const_iterator iter;
-            for (iter = statusList_.begin();
-                 iter != statusList_.end();
-                 iter++)
-               {
-                  _list.push_back(iter->second);
-               }
+            _list = statusList_;
          }
 
          bool statusList::get(t_uint const _context_id,
@@ -78,12 +76,18 @@ namespace btg
          {
             bool status = false;
 
-            std::map<t_int, statusEntry>::const_iterator iter = statusList_.find(_context_id);
+            std::vector<statusEntry>::const_iterator iter;
 
-            if (iter != statusList_.end())
+            for (iter = statusList_.begin();
+                 iter != statusList_.end();
+                 iter++)
                {
-                  _status = iter->second.status;
-                  status  = true;
+                  if (iter->id == _context_id)
+                     {
+                        _status = iter->status;
+                        status  = true;
+                        break;
+                     }
                }
 
             return status;
@@ -97,7 +101,7 @@ namespace btg
                   return;
                }
 
-            std::map<t_int, statusEntry>::iterator iter;
+            std::vector<statusEntry>::iterator iter;
             t_uint counter = 0;
             bool status    = false;
             for (iter = statusList_.begin();
@@ -114,8 +118,8 @@ namespace btg
 
             if (status)
                {
-                  iter->second.trackers_set = true;
-                  iter->second.trackers     = _trackers;
+                  iter->trackers_set = true;
+                  iter->trackers     = _trackers;
                }
          }
 
@@ -129,7 +133,7 @@ namespace btg
                   return status;
                }
 
-            std::map<t_int, statusEntry>::const_iterator iter;
+            std::vector<statusEntry>::const_iterator iter;
             t_uint counter = 0;
 
             for (iter = statusList_.begin();
@@ -146,10 +150,10 @@ namespace btg
 
             if (status)
                {
-                  status = iter->second.trackers_set;
+                  status = iter->trackers_set;
                   if (status)
                      {
-                        _trackers = iter->second.trackers;
+                        _trackers = iter->trackers;
                      }
                }
 
@@ -166,7 +170,7 @@ namespace btg
                   return status;
                }
 
-            std::map<t_int, statusEntry>::const_iterator iter;
+            std::vector<statusEntry>::const_iterator iter;
             t_uint counter = 0;
 
             for (iter = statusList_.begin();
@@ -183,7 +187,7 @@ namespace btg
 
             if (status)
                {
-                  _status = iter->second.status;
+                  _status = iter->status;
                }
 
             return status;
@@ -196,7 +200,7 @@ namespace btg
                   return;
                }
 
-            std::map<t_int, statusEntry>::iterator iter;
+            std::vector<statusEntry>::iterator iter;
             t_uint counter = 0;
 
             for (iter = statusList_.begin();
@@ -205,13 +209,13 @@ namespace btg
                {
                   if (counter == _position)
                      {
-                        if (iter->second.marked)
+                        if (iter->marked)
                            {
-                              iter->second.marked = false;
+                              iter->marked = false;
                            }
                         else
                            {
-                              iter->second.marked = true;
+                              iter->marked = true;
                            }  
                         break;
                      }
@@ -220,77 +224,94 @@ namespace btg
          }
          void statusList::markAll()
          {
-            std::map<t_int, statusEntry>::iterator iter;
+            std::vector<statusEntry>::iterator iter;
 
             for (iter = statusList_.begin();
                  iter != statusList_.end();
                  iter++)
                {
-                  if (iter->second.marked)
+                  if (iter->marked)
                      {
-                        iter->second.marked = false;
+                        iter->marked = false;
                      }
                   else
                      {
-                        iter->second.marked = true;
+                        iter->marked = true;
                      }  
                }
          }
 	
          void statusList::getMarked(std::vector<t_int> & _id_list) const
          {
-            std::map<t_int, statusEntry>::const_iterator iter;
+            std::vector<statusEntry>::const_iterator iter;
 
             for (iter = statusList_.begin();
                  iter != statusList_.end();
                  iter++)
                {
-                  if (iter->second.marked)
+                  if (iter->marked)
                      {
-                        _id_list.push_back(iter->first);
+                        _id_list.push_back(iter->id);
                      }
                }
          }
 
          void statusList::clearMark()
          {
-            std::map<t_int, statusEntry>::iterator iter;
+            std::vector<statusEntry>::iterator iter;
 
             for (iter = statusList_.begin();
                  iter != statusList_.end();
                  iter++)
                {
-                  iter->second.marked = false;
+                  iter->marked = false;
                }
          }
 
          void statusList::resetUpdated()
          {
-            std::map<t_int, statusEntry>::iterator iter;
+            std::vector<statusEntry>::iterator iter;
 
             for (iter = statusList_.begin();
                  iter != statusList_.end();
                  iter++)
                {
-                  iter->second.updated = false;
+                  iter->updated = false;
                }
          }
 
          void statusList::removeDead()
          {
-            std::map<t_int, statusEntry>::iterator iter = statusList_.begin();
+            std::vector<statusEntry>::iterator iter = statusList_.begin();
 
             while (iter != statusList_.end())
                {
-                  std::map<t_int, statusEntry>::iterator killIter = iter++;
+                  std::vector<statusEntry>::iterator killIter = iter++;
 	      
-                  if (!killIter->second.updated)
+                  if (!killIter->updated)
                      {
                         statusList_.erase(killIter);
                      }
                }
          }
 	
+         std::vector<statusEntry>::iterator statusList::find(t_int const _id)
+         {
+            std::vector<statusEntry>::iterator iter;
+
+            for (iter = statusList_.begin();
+                 iter != statusList_.end();
+                 iter++)
+               {
+                  if (iter->id == _id)
+                     {
+                        return iter;
+                     }
+               }
+
+            return statusList_.end();
+         }
+
          void statusList::update(std::vector<btg::core::Status> const& _list)
          {
             std::vector<btg::core::Status>::const_iterator iter;
@@ -306,14 +327,14 @@ namespace btg
                {
                   t_int id = iter->contextID();
 
-                  std::map<t_int, statusEntry>::iterator dst_iter =
-                     statusList_.find(id);
+                  std::vector<statusEntry>::iterator dst_iter =
+                     find(id); // statusList_.find(id);
 
                   if (dst_iter != statusList_.end())
                      {
                         // Update context.
-                        dst_iter->second.status  = *iter;
-                        dst_iter->second.updated = true;
+                        dst_iter->status  = *iter;
+                        dst_iter->updated = true;
                      }
                   else
                      {
@@ -336,8 +357,7 @@ namespace btg
                  iiter != new_entries.end();
                  iiter++)
                {
-                  std::pair<t_int, statusEntry> p(iiter->contextID(), statusEntry(*iiter));
-                  statusList_.insert(p);
+                  statusList_.push_back(statusEntry(*iiter));
                }
 
             // Remove dead entries.
@@ -351,12 +371,11 @@ namespace btg
                  iter != _id_list.end();
                  iter++)
                {
-                  std::map<t_int, statusEntry>::iterator erase_iter =
-                     statusList_.find(*iter);
+                  std::vector<statusEntry>::iterator erase_iter = find(*iter);
 
                   if (erase_iter != statusList_.end())
                      {
-                        // BTG_NOTICE("Removing " << erase_iter->second.status.contextID());
+                        // BTG_NOTICE("Removing " << erase_iter->status.contextID());
                         statusList_.erase(erase_iter);
                      }
                }
@@ -387,6 +406,50 @@ namespace btg
          t_uint statusList::size() const
          {
             return statusList_.size();
+         }
+
+         void statusList::setSortBy(statusList::sortBy const _sortby)
+         {
+            sortby_ = _sortby;
+         }
+
+         bool statusList::isStatusLess(statusEntry const& _l, statusEntry const& _r)
+         {
+            bool result = false;
+            switch(sortby_)
+               {
+               case sB_Name:
+                  result = _l.status.filename() < _r.status.filename();
+                  break;
+               case sB_Size:
+                  result = _l.status.filesize() > _r.status.filesize();
+                  break;
+               case sB_UlSpeed:
+                  result = _l.status.uploadRate() > _r.status.uploadRate();
+                  break;
+               case sB_DlSpeed:
+                  result = _l.status.downloadRate() > _r.status.downloadRate();
+                  break;
+               case sB_Peers:
+                  {
+                     t_uint l = (_l.status.seeders() + _l.status.leechers());
+                     t_uint r = (_r.status.seeders() + _r.status.leechers());
+                     result = l > r;
+                     break;
+                  }
+               case sB_Done:
+                  result = _l.status.done() > _r.status.done();
+                  break;
+               }
+
+            return result;
+         }
+
+         void statusList::sort()
+         {
+            std::sort(statusList_.begin(), 
+                      statusList_.end(), 
+                      boost::bind(&statusList::isStatusLess, this, _1, _2));
          }
 
          statusList::~statusList()
@@ -544,10 +607,20 @@ namespace btg
                      }
                }
 
-            if ((max_filename_size + max_progress_size + max_stat_size + max_perc_size + max_peers_size + extra_space)
+            if ((max_filename_size + 
+                 max_progress_size + 
+                 max_stat_size + 
+                 max_perc_size + 
+                 max_peers_size + 
+                 extra_space)
                 > width_)
                {
-                  max_filename_size = width_ - (max_progress_size + max_stat_size + max_perc_size + max_peers_size + extra_space);
+                  max_filename_size = width_ - 
+                     (max_progress_size + 
+                      max_stat_size + 
+                      max_perc_size + 
+                      max_peers_size + 
+                      extra_space);
                }
 
             // Display the window.
@@ -786,7 +859,7 @@ namespace btg
                            }
                      }
 
-                  drawList();
+                  list_.sort();
                   refresh();
                }
          }
@@ -818,7 +891,6 @@ namespace btg
                      }
 
                   clear();
-                  drawList();
                   refresh();
                }
          }
@@ -968,6 +1040,14 @@ namespace btg
             ws.height = _ws.height-3;
 
             return ws;
+         }
+
+         void mainWindow::setSortBy(statusList::sortBy const _sortby)
+         {
+            list_.setSortBy(_sortby);
+            list_.sort();
+            clearMark();
+            refresh();
          }
 
          mainWindow::~mainWindow()

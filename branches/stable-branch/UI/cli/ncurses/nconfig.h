@@ -135,6 +135,10 @@ namespace btg
                      /// Key.
                      t_int limitKey;
                      /// Key.
+                     t_int sesnameKey;
+                     /// Key.
+                     t_int sortKey;
+                     /// Key.
                      t_int downKey;
                      /// Key.
                      t_int upKey;

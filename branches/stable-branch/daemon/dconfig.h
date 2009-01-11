@@ -223,6 +223,9 @@ namespace btg
                /// Get user agent string.
                std::string getUserAgent() const;
 
+               /// Get announce ip
+               std::string getAnnounceIp() const;
+
                /// Encryption policy used.
                enum encryption_policy
                   {
@@ -244,7 +247,18 @@ namespace btg
                                           daemonConfiguration::encryption_policy & _out, 
                                           daemonConfiguration::encryption_level & _level,
                                           bool & _preferRc4) const;
-               
+
+               /// Allocation modes.               
+               enum allocation_mode
+                  {
+                     SPARSE = 0, /// Sparse.
+                     FULL,       /// Full.
+                     COMPACT     /// Compact.
+                  };
+
+               /// Get allocation mode used.
+               allocation_mode getAllocationMode() const;
+
                /// Destructor.
                virtual ~daemonConfiguration();
             private:
@@ -385,12 +399,18 @@ namespace btg
 
                /// User agent used.
                std::string                                 def_userAgent;
+
+               /// Announce ip used.
+               std::string                                 def_announceIp;
                
                /// PID-file name
                std::string                                 def_pidfname;
                
                /// Internal IP for UPnP gateway
                btg::core::Address                          def_upnp_ip;
+
+               /// Allocation mode used.
+               allocation_mode                             def_allocation_mode;
             };
 
       } // namespace daemon

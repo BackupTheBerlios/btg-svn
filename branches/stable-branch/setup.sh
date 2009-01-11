@@ -98,7 +98,7 @@ echo "Using CFLAGS: $CFLAGS"
 
 # Tell the configure script which versions of the boost libs to use.
 # BOOST_SUFFIX="gcc41-mt-1_34_1"
-BOOST_SUFFIX="mt"
+BOOST_SUFFIX="gcc43-mt-1_36"
 
 # Use a certain boost suffix. Hopefully it will stay the same on GNU/Debian.
 CONFIGURE_BOOST="--with-boost-system=$BOOST_SUFFIX --with-boost-date-time=$BOOST_SUFFIX --with-boost-filesystem=$BOOST_SUFFIX --with-boost-thread=$BOOST_SUFFIX --with-boost-regex=$BOOST_SUFFIX --with-boost-program_options=$BOOST_SUFFIX --with-boost-iostreams=$BOOST_SUFFIX"
@@ -107,6 +107,43 @@ CONFIGURE_BOOST="--with-boost-system=$BOOST_SUFFIX --with-boost-date-time=$BOOST
 CONFIGURE="./configure $STATIC --disable-static $DEBUG --enable-btg-config --enable-cli $GUI_CLIENT $GUI_VIEWER --enable-unittest --enable-session-saving --enable-command-list --enable-event-callback --enable-www --enable-url --enable-upnp --prefix=/pack/btg-cvs $CONFIGURE_BOOST"
 
 case "$1" in
+  0.14.1)
+#    export BOOST_ROOT=/pack/libboost-1.37.0/include/boost-1_37
+#    export CXXFLAGS=-I/pack/libboost-1.37.0/include/boost-1_37
+#    export LDFLAGS=-L/pack/libboost-1.37.0/lib
+#    export BOOST_LDFLAGS=$LDFLAGS
+#    export BOOST_CPPFLAGS=$CXXFLAGS
+#    export LD_LIBRARY_PATH=/pack/libboost-1.37.0/lib
+
+    export BOOST_ROOT=/pack/libboost-1.36.0/include/boost-1_36
+    export CXXFLAGS=-I/pack/libboost-1.36.0/include/boost-1_36
+    export LDFLAGS=-L/pack/libboost-1.36.0/lib
+    export BOOST_LDFLAGS=$LDFLAGS
+    export BOOST_CPPFLAGS=$CXXFLAGS
+    export LD_LIBRARY_PATH=/pack/libboost-1.36.0/lib
+
+    # Libtorrent from SVN uses boost 1.3.5, where asio is included.
+    CXXFLAGS_pkgconfig=`export PKG_CONFIG_PATH=/$ROOT/$1/lib/pkgconfig; pkg-config --cflags libtorrent`
+    export LIBTORRENT_CFLAGS="-I$ROOT/$1/include -I$ROOT/$1/include/libtorrent" && \
+    export LIBTORRENT_LIBS="-L$ROOT/$1/lib -ltorrent-rasterbar" && \
+    echo "Using $CONFIGURE";
+    $CONFIGURE --with-rblibtorrent=$ROOT/$1
+    ;;
+  0.14)
+    # Libtorrent from SVN uses boost 1.3.5, where asio is included.
+    export BOOST_ROOT=/pack/libboost-1.37.0/include/boost-1_37
+    export CXXFLAGS=-I/pack/libboost-1.37.0/include/boost-1_37
+    export LDFLAGS=-L/pack/libboost-1.37.0/lib
+    export BOOST_LDFLAGS=$LDFLAGS
+    export BOOST_CPPFLAGS=$CXXFLAGS
+    export LD_LIBRARY_PATH=/pack/libboost-1.37.0/lib
+
+    CXXFLAGS_pkgconfig=`export PKG_CONFIG_PATH=/$ROOT/$1/lib/pkgconfig; pkg-config --cflags libtorrent`
+    export LIBTORRENT_CFLAGS="-I$ROOT/$1/include -I$ROOT/$1/include/libtorrent" && \
+    export LIBTORRENT_LIBS="-L$ROOT/$1/lib -ltorrent-rasterbar" && \
+    echo "Using $CONFIGURE";
+    $CONFIGURE --with-rblibtorrent=$ROOT/$1
+    ;;
   0.13)
     export LIBTORRENT_CFLAGS="-I$ROOT/$1/include -I$ROOT/$1/include/libtorrent" && \
     export LIBTORRENT_LIBS="-L$ROOT/$1/lib -ltorrent" && \
@@ -128,13 +165,18 @@ case "$1" in
   svn)
     # Libtorrent from SVN uses boost 1.3.5, where asio is included.
     CXXFLAGS_pkgconfig=`export PKG_CONFIG_PATH=/$ROOT/$1/lib/pkgconfig; pkg-config --cflags libtorrent`
-    export CXXFLAGS="$CXXFLAGS -I/pack/boost-1.35.0/include $CXXFLAGS_pkgconfig"
-    export LDFLAGS="$LDFLAGS -L/pack/boost-1.35.0/lib"
-    export LD_LIBRARY_PATH=/pack/boost-1.35.0/lib
-    export LIBTORRENT_CFLAGS="-I$ROOT/svn/include -I$ROOT/svn/include/libtorrent" && \
-    export LIBTORRENT_LIBS="-L$ROOT/svn/lib -ltorrent" && \
+    export LIBTORRENT_CFLAGS="-I$ROOT/$1/include -I$ROOT/$1/include/libtorrent" && \
+    export LIBTORRENT_LIBS="-L$ROOT/$1/lib -ltorrent-rasterbar" && \
     echo "Using $CONFIGURE";
-    $CONFIGURE --with-rblibtorrent=$ROOT/svn
+    $CONFIGURE --with-rblibtorrent=$ROOT/$1
+    ;;
+  svn-debug)
+    # Libtorrent from SVN uses boost 1.3.5, where asio is included.
+    CXXFLAGS_pkgconfig=`export PKG_CONFIG_PATH=/$ROOT/$1/lib/pkgconfig; pkg-config --cflags libtorrent`
+    export LIBTORRENT_CFLAGS="-I$ROOT/$1/include -I$ROOT/$1/include/libtorrent" && \
+    export LIBTORRENT_LIBS="-L$ROOT/$1/lib -ltorrent-rasterbar" && \
+    echo "Using $CONFIGURE";
+    $CONFIGURE --with-rblibtorrent=$ROOT/$1
     ;;
   system)
     # Use libtorrent installed system wide.

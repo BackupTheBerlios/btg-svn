@@ -205,6 +205,9 @@ namespace btg
             /// Handle Version request.
             void handleVersion(btg::core::Command* _command);
 
+            /// Handle setting request.
+            void handleGetSetting(btg::core::Command* _command);
+
             /// Handle any other request.
             void handleOther(eventHandler* _eventhandler, btg::core::Command* _command);
 

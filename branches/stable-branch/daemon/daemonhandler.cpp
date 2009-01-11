@@ -36,12 +36,14 @@
 #include <bcore/command/uptime.h>
 #include <bcore/command/limit.h>
 #include <bcore/command/version.h>
+#include <bcore/command/setting.h>
 #include <bcore/command/opstat.h>
 #include <bcore/command/context_move.h>
 #include <bcore/command/context_create.h>
 #include <bcore/command/context_create_url.h>
 #include <bcore/verbose.h>
 #include <bcore/opstatus.h>
+#include <bcore/t_string.h>
 
 #include "modulelog.h"
 
@@ -300,6 +302,11 @@ namespace btg
                         case Command::CN_VERSION:
                            {
                               handleVersion(currentCmd);
+                              break;
+                           }
+                        case Command::CN_GETSETTING:
+                           {
+                              handleGetSetting(currentCmd);
                               break;
                            }
                         default:
@@ -592,7 +599,7 @@ namespace btg
             {
                t_int context_id   = cmtsc->getContextId();
                t_long old_session = cmtsc->session();
-               eventHandler* new_eventhandler;
+               eventHandler* new_eventhandler = 0;
                if (!sessionlist_.get(old_session, new_eventhandler))
                   {
                      sendError(_command->getType(), "Unable to find target session.");
@@ -637,6 +644,81 @@ namespace btg
                      dd_->transport,
                      connectionID_, 
                      vrc);
+      }
+
+      void daemonHandler::handleGetSetting(btg::core::Command* _command)
+      {
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
+
+         settingCommand* sc = dynamic_cast<settingCommand*>(_command);
+
+         btg::core::daemonSetting ds = sc->getSetting();
+
+         bool sendResponse = true;
+         std::string response;
+
+         switch(ds)
+            {
+            case btg::core::SG_TRANSPORT:
+               {
+                  switch (dd_->config->getTransport())
+                     {
+                     case btg::core::messageTransport::TCP:
+                        response = "transport=TCP;";
+                        break;
+                     case btg::core::messageTransport::STCP:
+                        response = "transport=STCP;";
+                        break;
+                     case btg::core::messageTransport::XMLRPC:
+                        response = "transport=XMLRPC";
+                        break;
+                     case btg::core::messageTransport::SXMLRPC:
+                        response = "transport=SXMLRPC";
+                        break;
+                     default:
+                        response = "transport=UNKNOWN";
+                        break;
+                     }
+                  break;
+               }
+            case btg::core::SG_PORT:
+               {
+                  btg::core::addressPort ap = dd_->config->getListenTo();
+                  t_uint port = ap.getPort();
+                  response = "port=" + convertToString<t_uint>(port);
+                  break;
+               }
+            case btg::core::SG_PEERID:
+               {
+                  // Peer ID contained in the config file.
+                  
+                  std::string peerid = dd_->config->getPeerId();
+                  if (peerid.size() == 0)
+                     {
+                        response = "peerid=NOT_SET";
+                     }
+                  else
+                     {
+                        response = "peerid="+peerid;
+                     }
+                  break;
+               }
+            default:
+               sendResponse = false;
+               break;
+            }
+
+         if (sendResponse)
+            {
+               sendCommand(dd_->externalization, 
+                           dd_->transport,
+                           connectionID_, 
+                           new settingResponseCommand(ds, response));
+            }
+         else
+            {
+               sendError(Command::CN_GETSETTING, "Setting not supported.");
+            }
       }
 
       void daemonHandler::handleSessionInfo(eventHandler* _eventhandler, 
@@ -1199,6 +1281,7 @@ namespace btg
             }
 
          delete _command;
+         _command = 0;
 
          BTG_MNOTICE(logWrapper(), "data (out): " << sendBuffer_.size() << " bytes");
 

@@ -289,6 +289,12 @@ namespace btg
             commandStatus = true;
          }
 
+         void Handler::onSetting(btg::core::daemonSetting const _what, 
+                                 std::string const& _value)
+         {
+            commandStatus = true;
+         }
+
          void Handler::onMove()
          {
             commandStatus = true;

@@ -138,6 +138,11 @@ namespace btg
                   add(keyMapping::K_SESNAME, 'n');
                }
 
+            if (!exists(keyMapping::K_SORT))
+               {
+                  add(keyMapping::K_SORT, 's');
+               }
+
             if (!exists(keyMapping::K_RESIZE))
                {
                   add(keyMapping::K_RESIZE, KEY_RESIZE);

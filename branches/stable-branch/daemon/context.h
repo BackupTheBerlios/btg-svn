@@ -602,7 +602,10 @@ namespace btg
                /// Enable/disable using the torrent name from the
                /// tracker.
                bool const                                useTorrentName_;
-
+#if BTG_LT_0_14
+               /// Allocation mode used.
+               libtorrent::storage_mode_t                allocation_mode_;
+#endif
                /// Move the data belonging to a torrent file to another directory.
                /// @return True - file was moved, false otherwise.
                bool moveToDirectory(t_int const _torrent_id, std::string const& _destination_dir);
@@ -660,12 +663,17 @@ namespace btg
 #if (BTG_LT_0_12 || BTG_LT_0_13)
                bool entryToInfo(libtorrent::entry const& _input,
                                 libtorrent::torrent_info & _output) const;
-#endif
+
                /// Convert an entry to a list of contained files.
                /// @return True - converted. False - conversion failed.
                bool entryToFiles(libtorrent::entry const& _input,
                                  std::vector<std::string> & _output) const;
+#endif
 
+#if BTG_LT_0_14
+               bool torrentInfoToFiles(libtorrent::torrent_info const& _tinfo,
+                                       std::vector<std::string> & _output) const;
+#endif                                                
                /// Find out if data of a torrent is present in the seed dir.
                /// @param [in] _torrent_info Torrent info.
                /// @return True - data is present, false otherwise.
@@ -702,6 +710,10 @@ namespace btg
                /// Set peer ID (read from configuration, converting it
                /// to a format used by libtorrent).
                void setPeerIdFromConfig();
+               
+               /// Convert an enum to a string, for debugging.
+               std::string toString(addResult const _addresult) const;
+
 #if (BTG_LT_0_14)
                /// Convert a libtorrent bitfield into a vector of bits.
                /// 

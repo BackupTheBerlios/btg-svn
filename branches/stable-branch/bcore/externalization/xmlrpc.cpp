@@ -222,8 +222,8 @@ namespace btg
 
          void XMLRPC::getBuffer(dBuffer & _buffer)
          {
-            char* buff;
-            int   buffsize;
+            char* buff     = 0;
+            int   buffsize = 0;
 
             XMLRPC_REQUEST_OUTPUT_OPTIONS opt = XMLRPC_RequestGetOutputOptions(xmlrpc_request);
 

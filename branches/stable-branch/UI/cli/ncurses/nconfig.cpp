@@ -43,6 +43,8 @@ namespace btg
          std::string const KEY_LOAD_URL("KEY_LOAD_URL");
 	      std::string const KEY_MENU("KEY_MENU");
 	      std::string const KEY_GLIMIT("KEY_GLIMIT");
+         std::string const KEY_SESNAME("KEY_SESNAME");
+         std::string const KEY_SORT("KEY_SORT");
 	      std::string const KEY_DOWN("KEY_DOWN");
 	      std::string const KEY_UP("KEY_UP");
 	      std::string const KEY_LIST_START("KEY_LIST_START");
@@ -74,6 +76,8 @@ namespace btg
               loadUrlKey(keyMapping::K_UNDEF),
               menuKey(keyMapping::K_UNDEF),
               limitKey(keyMapping::K_UNDEF),
+              sesnameKey(keyMapping::K_UNDEF),
+              sortKey(keyMapping::K_UNDEF),
               downKey(keyMapping::K_UNDEF),
               upKey(keyMapping::K_UNDEF),
               listStartKey(keyMapping::K_UNDEF),
@@ -121,6 +125,12 @@ namespace btg
 
                   key = inifile->GetValue(KEY_GLIMIT, SECTION_BTGNCLI);
                   convertKey(key, limitKey);
+
+                  key = inifile->GetValue(KEY_SESNAME, SECTION_BTGNCLI);
+                  convertKey(key, sesnameKey);
+
+                  key = inifile->GetValue(KEY_SORT, SECTION_BTGNCLI);
+                  convertKey(key, sortKey);
 
                   key = inifile->GetValue(KEY_DOWN, SECTION_BTGNCLI);
                   convertKey(key, downKey);
@@ -239,6 +249,16 @@ namespace btg
                       output);
 
             formatKey(KEY_GLIMIT,
+                      keyDescription,
+                      temp,
+                      output);
+
+            formatKey(KEY_SESNAME,
+                      keyDescription,
+                      temp,
+                      output);
+
+            formatKey(KEY_SORT,
                       keyDescription,
                       temp,
                       output);
@@ -385,6 +405,16 @@ namespace btg
                case keyMapping::K_GLIMIT:
                   {
                      value = limitKey;
+                     break;
+                  }
+               case keyMapping::K_SESNAME:
+                  {
+                     value = sesnameKey;
+                     break;
+                  }
+               case keyMapping::K_SORT:
+                  {
+                     value = sortKey;
                      break;
                   }
                case keyMapping::K_DOWN:
