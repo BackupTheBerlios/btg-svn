@@ -8,7 +8,7 @@ AC_INIT([bcore/project.h])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_SYSTEM
 
-AM_INIT_AUTOMAKE(btg, 0.9.9)
+AM_INIT_AUTOMAKE(btg, 1.0.0)
 
 BTG_BUILD="$VER_CURRENT.$VER_REVISION"
 AC_SUBST(BTG_BUILD)
@@ -425,6 +425,8 @@ if test "$buildviewer" == "true"; then
         if test -z "$AGAR_LIBS"; then
           AC_MSG_ERROR([unable to find the AGAR library, currently this is required.])
         fi
+
+        AC_LIRCCLIENT([])
 else
         AC_MSG_RESULT([no])
 fi

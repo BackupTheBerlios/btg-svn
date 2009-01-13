@@ -35,6 +35,9 @@
 
 #include "agar-if.h"
 
+#include <unistd.h>
+#include <fcntl.h>
+
 namespace btg
 {
    namespace UI
@@ -80,7 +83,9 @@ namespace btg
                  downloadStr("0 K/s"),
                  peLabel(0),
                  peersStr("0"),
-                 seedsStr("0")
+                 seedsStr("0"),
+                 lircConfig(0),
+                 lirc_socket(-1)
             {
                timer = new AG_Timeout;
             }
@@ -232,6 +237,60 @@ namespace btg
                AG_AddTimeout(_gui.table, _gui.timer, 1000 /* 1 sec */);
             }
 
+            bool initLIRC(btgvsGui & _gui)
+            {
+               /* Setup LIRC client. */
+               char appname[] = "btgvs";
+               _gui.lirc_socket = lirc_init(appname,1);
+
+               if (_gui.lirc_socket == -1)
+               {
+                  return false;
+               }
+
+               if (lirc_readconfig(0,&_gui.lircConfig,0) == -1)
+               {
+                  return false;
+               }
+
+               // Use a non blocking socket for LIRC.
+               fcntl(_gui.lirc_socket, F_SETOWN, getpid());
+               int flags = fcntl(_gui.lirc_socket, F_GETFL, 0);
+               if (flags == -1) 
+               {
+                  return false;
+               }
+
+               if (fcntl(_gui.lirc_socket, F_SETFL, flags|O_NONBLOCK) == -1)
+               {
+                  return false;
+               }
+
+               return true;
+            }
+
+            bool pollLirc(btgvsGui & _gui)
+            {
+               char* code = 0;
+		         char* c    = 0;
+
+               if (lirc_nextcode(&code) == -1)
+               {
+                  // LIRC stopped working.
+                  // Inform application.
+                  
+                  return false;
+               }
+               
+      			int ret=lirc_code2char(_gui.lircConfig,code,&c);
+      			if ((ret == 0) && (c != 0))
+      			{
+      			   free(code);
+      			}
+      			
+      			return true;
+            }
+			
             void createGui(btgvsGui & _gui)
             { 
                AG_SetRefreshRate(25);
@@ -296,9 +355,63 @@ namespace btg
                AG_WindowMaximize(_gui.window);
             }
 
-            void run()
+            void run(btgvsGui & _gui)
             {
-               AG_EventLoop();
+               SDL_Event ev;
+               AG_Window* win = 0;
+               Uint32 Tr1     = SDL_GetTicks();
+               Uint32 Tr2     = 0;
+ 
+               for (;;) 
+                  {
+                     Tr2 = SDL_GetTicks();
+                     if (Tr2-Tr1 >= agView->rNom) 
+                     {		
+                        /* Time to redraw? */
+                        AG_LockVFS(agView);
+
+                        /* Render GUI elements */
+                        AG_BeginRendering();
+                        AG_TAILQ_FOREACH(win, &agView->windows, windows) 
+                           {
+                              AG_ObjectLock(win);
+                              AG_WindowDraw(win);
+                              AG_ObjectUnlock(win);
+                           }
+                        AG_EndRendering();
+                        AG_UnlockVFS(agView);
+
+                        /* Recalibrate the effective refresh rate. */
+                        Tr1 = SDL_GetTicks();
+                        agView->rCur = agView->rNom - (Tr1-Tr2);
+                        if (agView->rCur < 1) 
+                        {
+                           agView->rCur = 1;
+                        }
+                     } 
+                     else if (SDL_PollEvent(&ev) != 0) 
+                     {
+                        /* Send all SDL events to Agar-GUI. */
+                        AG_ProcessEvent(&ev);
+                     } 
+                     else if (AG_TAILQ_FIRST(&agTimeoutObjQ) != NULL) 
+                     {
+                        /* Advance the timing wheels. */
+                        AG_ProcessTimeout(Tr2);
+                     } 
+                     else if (agView->rCur > agIdleThresh) 
+                     {
+                        /* Idle the rest of the time. */
+                        SDL_Delay(agView->rCur - agIdleThresh);
+                     }
+                     else
+                     {
+                        if (!pollLirc(_gui))
+                        {
+                           return;
+                        }
+                     }
+                  }
             }
 
             void destroyGui(btgvsGui & _gui)

@@ -278,13 +278,19 @@ int main(int argc, char **argv)
 
    // AG_VIDEO_FULLSCREEN.
    if (AG_InitVideo(x, y, 32, af_flags) == -1) 
-      {
-         std::cerr << "Unable to initialize agar gfx subsystem." << std::endl;
-         return -1;
-      }
+   {
+      std::cerr << "Unable to initialize agar gfx subsystem." << std::endl;
+      return -1;
+   }
 
    // btgvsGui gui;
    createGui(gui);
+
+   if (!initLIRC(gui))
+   {
+      std::cerr << "Unable to initialize LIRC subsystem." << std::endl;
+      return -1;
+   }
 
    // Create a timer which will refresh the UI.
    timerData timerdata;
@@ -306,7 +312,7 @@ int main(int argc, char **argv)
    AG_BindGlobalKey(SDLK_ESCAPE, KMOD_NONE, AG_Quit);
 
    // This will block until user presses ESC.
-   run();
+   run(gui);
 
    handler.reqDetach();
    AG_Quit();
