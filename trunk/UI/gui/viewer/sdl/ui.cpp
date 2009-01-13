@@ -272,23 +272,52 @@ namespace btg
             bool pollLirc(btgvsGui & _gui)
             {
                char* code = 0;
-		         char* c    = 0;
+               char* c    = 0;
+               bool cont = true;
 
-               if (lirc_nextcode(&code) == -1)
+               while (cont)
                {
-                  // LIRC stopped working.
-                  // Inform application.
-                  
-                  return false;
-               }
-               
-      			int ret=lirc_code2char(_gui.lircConfig,code,&c);
-      			if ((ret == 0) && (c != 0))
-      			{
-      			   free(code);
-      			}
-      			
-      			return true;
+                  int ret = lirc_nextcode(&code);
+
+                  if (ret == -1)
+                  {
+                     return false;
+                  }
+
+                  if (code == 0)
+                  {
+                     cont = false;
+                     continue;
+                  }
+
+                  while((ret=lirc_code2char(_gui.lircConfig,code,&c))==0 && c!=0)
+                  {
+                     std::cout << "Got LIRC code:'" << c << "'" << std::endl;
+                     int size = strlen(c);
+                     if ((size == 2) && (strncmp(c, "up", size) == 0))
+                     {
+                         
+                     }
+                     else if (size == 4)
+                     {
+                        if (strncmp(c, "down", size) == 0)
+                        {
+
+                        }
+                        else if (strncmp(c, "left", size) == 0)
+                        {
+                           
+                        }
+                        else if (strncmp(c, "right", size) == 0)
+                        {
+                           
+                        }
+                     }
+                  }
+
+                  free(code);
+                }
+               return true;
             }
 			
             void createGui(btgvsGui & _gui)
@@ -404,12 +433,10 @@ namespace btg
                         /* Idle the rest of the time. */
                         SDL_Delay(agView->rCur - agIdleThresh);
                      }
-                     else
+
+                     if (!pollLirc(_gui))
                      {
-                        if (!pollLirc(_gui))
-                        {
-                           return;
-                        }
+                        return;
                      }
                   }
             }
