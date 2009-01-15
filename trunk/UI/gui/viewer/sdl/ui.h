@@ -23,6 +23,7 @@
 #ifndef UI_H
 #define UI_H
 
+#include <config.h>
 #include <string>
 #include <vector>
 
@@ -30,7 +31,9 @@
 
 #include "agar-if.h"
 
-#include <lirc/lirc_client.h>
+#if HAVE_LIRC
+#  include <lirc/lirc_client.h>
+#endif
 
 namespace btg
 {
@@ -134,11 +137,12 @@ namespace btg
                std::string     peersStr;
                /// Global number of seeds.
                std::string     seedsStr;
-
+#if HAVE_LIRC
                /// Pointer to LIRC config.
                struct lirc_config* lircConfig;
                /// Socket used for talking to LIRC. 
                int lirc_socket;
+#endif
             };
 
             class viewerHandler;
@@ -160,9 +164,9 @@ namespace btg
 
             /// Create the GUI.
             void createGui(btgvsGui & _gui);
-
+#if HAVE_LIRC
             bool initLIRC(btgvsGui & _gui);
-
+#endif
             /// Create the timer used for updating tables.
             void createTimer(btgvsGui & _gui, timerData* _timerdata);
 
@@ -174,9 +178,9 @@ namespace btg
 
             /// Run the GUI.
             void run(btgvsGui & _gui);
-
+#if HAVE_LIRC
 			   bool pollLirc(btgvsGui & _gui);
-			
+#endif
             /// Close the GUI.
             void destroyGui(btgvsGui & _gui);
 

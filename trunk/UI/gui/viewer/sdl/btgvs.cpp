@@ -20,6 +20,7 @@
  * $Id$
  */
 
+#include <config.h>
 #include "ui.h"
 #include "arg.h"
 #include "handler.h"
@@ -286,11 +287,13 @@ int main(int argc, char **argv)
    // btgvsGui gui;
    createGui(gui);
 
+#if HAVE_LIRC
    if (!initLIRC(gui))
    {
       std::cerr << "Unable to initialize LIRC subsystem." << std::endl;
       return -1;
    }
+#endif
 
    // Create a timer which will refresh the UI.
    timerData timerdata;

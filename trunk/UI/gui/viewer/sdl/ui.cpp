@@ -21,6 +21,7 @@
  */
 
 #include "ui.h"
+
 #include <iostream>
 
 #include "handler.h"
@@ -83,9 +84,11 @@ namespace btg
                  downloadStr("0 K/s"),
                  peLabel(0),
                  peersStr("0"),
-                 seedsStr("0"),
-                 lircConfig(0),
-                 lirc_socket(-1)
+                 seedsStr("0")
+#if HAVE_LIRC
+               , lircConfig(0)
+               , lirc_socket(-1)
+#endif
             {
                timer = new AG_Timeout;
             }
@@ -236,7 +239,7 @@ namespace btg
                AG_SetTimeout(_gui.timer, update_event, _timerdata, 0);
                AG_AddTimeout(_gui.table, _gui.timer, 1000 /* 1 sec */);
             }
-
+#if HAVE_LIRC
             bool initLIRC(btgvsGui & _gui)
             {
                /* Setup LIRC client. */
@@ -319,7 +322,7 @@ namespace btg
                 }
                return true;
             }
-			
+#endif
             void createGui(btgvsGui & _gui)
             { 
                AG_SetRefreshRate(25);
@@ -433,11 +436,12 @@ namespace btg
                         /* Idle the rest of the time. */
                         SDL_Delay(agView->rCur - agIdleThresh);
                      }
-
+#if HAVE_LIRC
                      if (!pollLirc(_gui))
                      {
                         return;
                      }
+#endif
                   }
             }
 
