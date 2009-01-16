@@ -39,6 +39,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#include <SDL.h>
+
 namespace btg
 {
    namespace UI
@@ -272,11 +274,12 @@ namespace btg
                return true;
             }
 
-            bool pollLirc(btgvsGui & _gui)
+            bool pollLirc(btgvsGui & _gui, RemoteButton & _rb)
             {
                char* code = 0;
                char* c    = 0;
-               bool cont = true;
+               bool cont  = true;
+               _rb        = RB_UNDEF;
 
                while (cont)
                {
@@ -295,29 +298,38 @@ namespace btg
 
                   while((ret=lirc_code2char(_gui.lircConfig,code,&c))==0 && c!=0)
                   {
-                     std::cout << "Got LIRC code:'" << c << "'" << std::endl;
-                     int size = strlen(c);
-                     if ((size == 2) && (strncmp(c, "up", size) == 0))
+                     const int size = strlen(c);
+                     
+                     if (size == 2) 
                      {
-                         
+                        if (strcmp(c, "up") == 0)
+                        {
+                           _rb = RB_UP;
+                        }
                      }
                      else if (size == 4)
                      {
                         if (strncmp(c, "down", size) == 0)
                         {
-
+                           _rb = RB_DOWN;
                         }
                         else if (strncmp(c, "left", size) == 0)
                         {
-                           
+                           _rb = RB_LEFT;
                         }
-                        else if (strncmp(c, "right", size) == 0)
+                        else if (strncmp(c, "quit", size) == 0)
                         {
-                           
+                           _rb = RB_QUIT;
+                        }
+                     }
+                     else if (size == 5)
+                     {
+                        if (strncmp(c, "right", size) == 0)
+                        {
+                           _rb = RB_RIGHT;
                         }
                      }
                   }
-
                   free(code);
                 }
                return true;
@@ -393,7 +405,9 @@ namespace btg
                AG_Window* win = 0;
                Uint32 Tr1     = SDL_GetTicks();
                Uint32 Tr2     = 0;
- 
+#if HAVE_LIRC
+               RemoteButton rb;
+#endif
                for (;;) 
                   {
                      Tr2 = SDL_GetTicks();
@@ -436,13 +450,61 @@ namespace btg
                         /* Idle the rest of the time. */
                         SDL_Delay(agView->rCur - agIdleThresh);
                      }
-#if HAVE_LIRC
-                     if (!pollLirc(_gui))
+                     else if (agView->rCur > agIdleThresh)
                      {
-                        return;
+                        /* Idle the rest of the time. */
+                        SDL_Delay(agView->rCur - agIdleThresh);
+                     }
+
+
+#if HAVE_LIRC
+                     if (pollLirc(_gui, rb))
+                     {
+                        switch (rb)
+                        {
+                           case RB_UP:
+                              pushEvent(SDLK_UP);
+                              break;
+                           case RB_DOWN:
+                              pushEvent(SDLK_DOWN); 
+                              break;
+                           case RB_LEFT:
+                              pushEvent(SDLK_LEFT); 
+                              break;
+                           case RB_RIGHT:
+                              pushEvent(SDLK_RIGHT);
+                              break;
+                           case RB_QUIT:
+                              {
+                                return;
+                                //pushEvent(SDLK_ESCAPE);
+                                AG_Quit();
+                                std::cout << "RB_QUIT" << std::endl;
+                                //exit(0);
+                                break;
+                              }
+                        }                        
                      }
 #endif
                   }
+            }
+
+            void pushEvent(SDLKey _k)
+            {
+              std::cout << "Sending key press event " << std::hex << (int)_k << std::dec << std::endl;
+              SDL_Event e;
+              e.key.type   = SDL_KEYDOWN;
+              e.key.state  = SDL_PRESSED;
+              e.key.keysym.scancode = 0;
+              e.key.keysym.sym      = _k;
+              e.key.keysym.mod      = KMOD_NONE;
+              e.key.keysym.unicode  = 0;
+              SDL_PushEvent(&e);
+
+              e.key.type   = SDL_KEYUP;
+              e.key.state  = SDL_RELEASED;
+              SDL_PushEvent(&e);
+
             }
 
             void destroyGui(btgvsGui & _gui)

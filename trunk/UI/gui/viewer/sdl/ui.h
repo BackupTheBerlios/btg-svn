@@ -88,6 +88,16 @@ namespace btg
 
             };
 
+            enum RemoteButton
+            {
+               RB_UNDEF = 0,
+               RB_UP,
+               RB_DOWN,
+               RB_LEFT,
+               RB_RIGHT,
+               RB_QUIT
+            };
+
             /// Struct containing the information used by the GUI.
             class btgvsGui
             {
@@ -179,7 +189,9 @@ namespace btg
             /// Run the GUI.
             void run(btgvsGui & _gui);
 #if HAVE_LIRC
-			   bool pollLirc(btgvsGui & _gui);
+            bool pollLirc(btgvsGui & _gui, RemoteButton & _rb);
+
+            void pushEvent(SDLKey _k);
 #endif
             /// Close the GUI.
             void destroyGui(btgvsGui & _gui);
