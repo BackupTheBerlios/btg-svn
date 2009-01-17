@@ -88,16 +88,6 @@ namespace btg
 
             };
 
-            enum RemoteButton
-            {
-               RB_UNDEF = 0,
-               RB_UP,
-               RB_DOWN,
-               RB_LEFT,
-               RB_RIGHT,
-               RB_QUIT
-            };
-
             /// Struct containing the information used by the GUI.
             class btgvsGui
             {
@@ -189,7 +179,7 @@ namespace btg
             /// Run the GUI.
             void run(btgvsGui & _gui);
 #if HAVE_LIRC
-            bool pollLirc(btgvsGui & _gui, RemoteButton & _rb);
+            bool pollLirc(btgvsGui & _gui);
 
             void pushEvent(SDLKey _k);
 #endif
@@ -207,6 +197,9 @@ namespace btg
 
             /// Update the statusbar.
             void update_statusbar(timerData* _timerdata);
+
+            /// Callback
+            void KeyDown(AG_Event *event);
 
          } // namespace viewer
       } // namespace gui

@@ -51,6 +51,8 @@ namespace btg
          {
             using namespace btg::core;
 
+            int quitRequested = 0;
+
             static Uint32 update_event(void *obj, Uint32 ival, void *arg)
             {
                timerData* timerdata = (timerData*)arg;               
@@ -274,12 +276,11 @@ namespace btg
                return true;
             }
 
-            bool pollLirc(btgvsGui & _gui, RemoteButton & _rb)
+            bool pollLirc(btgvsGui & _gui)
             {
                char* code = 0;
                char* c    = 0;
                bool cont  = true;
-               _rb        = RB_UNDEF;
 
                while (cont)
                {
@@ -304,29 +305,37 @@ namespace btg
                      {
                         if (strcmp(c, "up") == 0)
                         {
-                           _rb = RB_UP;
+                           pushEvent(SDLK_UP);
                         }
                      }
                      else if (size == 4)
                      {
-                        if (strncmp(c, "down", size) == 0)
+                        if (strcmp(c, "down") == 0)
                         {
-                           _rb = RB_DOWN;
+                           pushEvent(SDLK_DOWN);
                         }
-                        else if (strncmp(c, "left", size) == 0)
+                        else if (strcmp(c, "left") == 0)
                         {
-                           _rb = RB_LEFT;
+                           pushEvent(SDLK_LEFT);
                         }
-                        else if (strncmp(c, "quit", size) == 0)
+                        else if (strcmp(c, "quit") == 0)
                         {
-                           _rb = RB_QUIT;
+                           pushEvent(SDLK_ESCAPE);
+                        }
+                        else if (strcmp(c, "back") == 0)
+                        {
+                           pushEvent(SDLK_BACKSPACE);
                         }
                      }
                      else if (size == 5)
                      {
-                        if (strncmp(c, "right", size) == 0)
+                        if (strcmp(c, "right") == 0)
                         {
-                           _rb = RB_RIGHT;
+                           pushEvent(SDLK_RIGHT);
+                        }
+                        else if (strcmp(c, "enter") == 0)
+                        {
+                           pushEvent(SDLK_RETURN);
                         }
                      }
                   }
@@ -335,9 +344,48 @@ namespace btg
                return true;
             }
 #endif
+
+            void KeyDown(AG_Event *event)
+            {
+               if (strcmp(event->name, "window-keydown") == 0)
+               {
+                  AG_Table* me = (AG_Table*)AG_SELF();
+
+                  int keysym  = AG_INT(1);
+                  //int keymod  = AG_INT(2);
+                  //int unicode = AG_INT(3);
+
+                  switch (keysym)
+                  {
+                  case SDLK_UP:
+                    std::cout << "<up>" << std::endl;
+                    break;
+                  case SDLK_DOWN:
+                    std::cout << "<down>" << std::endl;
+                    break;
+                  case SDLK_LEFT:
+                    std::cout << "<left>" << std::endl;
+                    break;
+                  case SDLK_RIGHT:
+                    std::cout << "<right>" << std::endl;
+                    break;
+                  case SDLK_RETURN:
+                    std::cout << "<enter>" << std::endl;
+                    break;
+                  case SDLK_BACKSPACE:
+                    std::cout << "<back>" << std::endl;
+                    break;
+                  case SDLK_ESCAPE:
+                    std::cout << "<quit>" << std::endl;
+                    quitRequested = 1;
+                    break;
+                  }
+               }
+            }
+
             void createGui(btgvsGui & _gui)
             { 
-               AG_SetRefreshRate(25);
+               //AG_SetRefreshRate(25);
 
                setColors();
 
@@ -397,6 +445,11 @@ namespace btg
                // Show the window and enter event loop.
                AG_WindowShow(_gui.window);
                AG_WindowMaximize(_gui.window);
+
+               AG_AddEvent(_gui.table, "window-keydown", KeyDown, NULL);
+
+               // Set the focus on the table.
+               AG_WidgetFocus(_gui.table);
             }
 
             void run(btgvsGui & _gui)
@@ -405,9 +458,6 @@ namespace btg
                AG_Window* win = 0;
                Uint32 Tr1     = SDL_GetTicks();
                Uint32 Tr2     = 0;
-#if HAVE_LIRC
-               RemoteButton rb;
-#endif
                for (;;) 
                   {
                      Tr2 = SDL_GetTicks();
@@ -458,40 +508,26 @@ namespace btg
 
 
 #if HAVE_LIRC
-                     if (pollLirc(_gui, rb))
+                     // Translate LIRC input into SDL key press events.
+                     // These will be delivered to AGAR for processing 
+                     // at some point.
+                     if (!pollLirc(_gui))
                      {
-                        switch (rb)
-                        {
-                           case RB_UP:
-                              pushEvent(SDLK_UP);
-                              break;
-                           case RB_DOWN:
-                              pushEvent(SDLK_DOWN); 
-                              break;
-                           case RB_LEFT:
-                              pushEvent(SDLK_LEFT); 
-                              break;
-                           case RB_RIGHT:
-                              pushEvent(SDLK_RIGHT);
-                              break;
-                           case RB_QUIT:
-                              {
-                                return;
-                                //pushEvent(SDLK_ESCAPE);
-                                AG_Quit();
-                                std::cout << "RB_QUIT" << std::endl;
-                                //exit(0);
-                                break;
-                              }
-                        }                        
+                        // Reading from LIRC failed.
+                        return;
                      }
 #endif
+                    // Exit from application requested, so stop processing.
+                    if (quitRequested == 1)
+                    {
+                      return;
+                    }
                   }
             }
 
             void pushEvent(SDLKey _k)
             {
-              std::cout << "Sending key press event " << std::hex << (int)_k << std::dec << std::endl;
+              std::cout << "Sending key press event 0x" << std::hex << (int)_k << std::dec << "." << std::endl;
               SDL_Event e;
               e.key.type   = SDL_KEYDOWN;
               e.key.state  = SDL_PRESSED;
