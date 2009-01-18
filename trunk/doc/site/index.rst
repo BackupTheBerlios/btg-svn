@@ -203,6 +203,7 @@ Documentation
 - `Manual pages`_ contained in the releases.
 - `BTG Developer Howto`_.
 - `BTG Release Procedure`_.
+- `BTG Links`_.
 
 .. _Manual pages: manpages.html
 
@@ -254,6 +255,7 @@ Links
 .. _PHP: http://php.net/
 .. _XML-RPC: http://www.xmlrpc.com/
 .. _BTG Release Procedure: release-proc.html
+.. _BTG Links: links.html
 
 .. image:: http://developer.berlios.de/bslogo.php?group_id=0
    :height: 32

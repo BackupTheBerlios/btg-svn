@@ -22,6 +22,7 @@ commanddoc_copy:
  
 html: commanddoc commanddoc_copy man-pages $(RST_FILES)
 	$(RST2HTML) index.rst > index.html
+	$(RST2HTML) links.rst > links.html
 	$(RST2HTML) packages.rst > packages.html
 	$(RST2HTML) howto.rst > howto.html
 	$(HTML2TEXT) howto.html > howto.txt
