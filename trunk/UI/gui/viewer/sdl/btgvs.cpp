@@ -67,9 +67,10 @@ int main(int argc, char **argv)
    bool fullscreen   = cla.fullscreen();
    bool res1440x900  = cla.res1440x900();
    bool res1024x768  = cla.res1024x768();
-   
+   bool autochange   = cla.getAutoUpdate();
    t_uint updateFreq = cla.getUpdateFreq();
-
+   t_uint autoUpdateFreq = cla.getAutoUpdateFreq();
+   
    // Before doing anything else, check if the user wants to get the
    // syntax of the configuration file.
    if (cla.listConfigFileSyntax())
@@ -140,7 +141,7 @@ int main(int argc, char **argv)
       apTransport.reset(transport);
    }
 
-   btgvsGui gui;
+   btgvsGui gui(autochange, autoUpdateFreq);
 
    viewerHandler handler(logwrapper,
                          *apExternalization,
@@ -240,9 +241,6 @@ int main(int argc, char **argv)
 
    str_session += ")";
 
-   // Start a thread that takes care of communicating with the daemon.
-   //handlerThread handlerthr(verboseFlag, clientdata.handler);
-
    //
    // 
    // BTG initialized, start UI.
@@ -250,9 +248,9 @@ int main(int argc, char **argv)
    //  
 
 	// Initialize Agar.
-	if (AG_InitCore(str_session.c_str(), 0) == -1)
+	if (AG_InitCore(str_session.c_str(), AG_VERBOSE) == -1)
       {
-         std::cerr << "Unable to initialize agar subsystem." << std::endl;
+         std::cerr << "Unable to initialize AGAR subsystem." << std::endl;
          return -1;
       }
 
@@ -284,8 +282,15 @@ int main(int argc, char **argv)
       return -1;
    }
 
+   // Create a timer which will refresh the UI.
+   timerData timerdata;
+   timerdata.count      = 0;
+   timerdata.gui        = &gui;
+   timerdata.handlerthr = 0;
+   timerdata.handler    = &handler;
+
    // btgvsGui gui;
-   createGui(gui);
+   createGui(gui, timerdata);
 
 #if HAVE_LIRC
    if (!initLIRC(gui))
@@ -294,13 +299,6 @@ int main(int argc, char **argv)
       return -1;
    }
 #endif
-
-   // Create a timer which will refresh the UI.
-   timerData timerdata;
-   timerdata.count      = 0;
-   timerdata.gui        = &gui;
-   timerdata.handlerthr = 0; //&handlerthr;
-   timerdata.handler    = &handler;
 
    gui.updateDelay = updateFreq;
 
@@ -312,13 +310,14 @@ int main(int argc, char **argv)
 
    // Bind ESC to a quit function which will tell the daemon that this
    // client is detaching and clean up.
-   AG_BindGlobalKey(SDLK_ESCAPE, KMOD_NONE, AG_Quit);
+   // AG_BindGlobalKey(SDLK_ESCAPE, KMOD_NONE, AG_Quit);
 
    // This will block until user presses ESC.
    run(gui);
 
    handler.reqDetach();
    AG_Quit();
-
+   AG_Destroy();
+   
    return BTG_NORMAL_EXIT;
 }

@@ -59,6 +59,13 @@ namespace btg
 
                timerdata->count++;
 
+               if ((timerdata->gui->autoChange) && (timerdata->count%timerdata->gui->autoUpdateFreq)==0)
+               {
+                  timerdata->gui->direction = btgvsGui::DIR_RIGHT;
+                  move(timerdata);
+                  update_ui_display(timerdata);
+               }
+                     
                if (timerdata->count < timerdata->gui->updateDelay)
                   {
                      update_statusbar(timerdata);
@@ -71,13 +78,12 @@ namespace btg
                return ival;
             }
 
-            btgvsGui::btgvsGui()
+            btgvsGui::btgvsGui(bool _auto, t_uint _autoUpdateFreq)
                : timer(0),
                  window(0),
-                 contents_box(0),
+                 basics_box(0),
                  statusbar(0),
                  statusbarlabel(0),
-                 table(0),
                  ul_max(100),
                  ul_min(0),
                  dl_max(100),
@@ -87,8 +93,11 @@ namespace btg
                  uploadStr("0 K/s"),
                  downloadStr("0 K/s"),
                  peLabel(0),
-                 peersStr("0"),
-                 seedsStr("0")
+                 peerSeedsStr("0/0"),
+                 autoChange(_auto),
+                 autoUpdateFreq(_autoUpdateFreq),
+                 position(0),
+                 size(0)
 #if HAVE_LIRC
                , lircConfig(0)
                , lirc_socket(-1)
@@ -103,24 +112,33 @@ namespace btg
                timer = 0;
             }
 
+            void update_ui_display(timerData* _timerdata)
+            {
+               updateTorrentList(*_timerdata->gui, _timerdata->data);
+               //updateGlobalStats(*_timerdata->gui, _timerdata->data);
+            }
+            
             void update_ui(timerData* _timerdata)
             {
                t_statusList statuslist;
-               std::vector<tableData> data;
 
                _timerdata->handler->reqStatus(-1, true);
 
                if (_timerdata->handler->statusListUpdated())
                   {
+                     _timerdata->data.clear();
+                     
                      _timerdata->handler->getStatusList(statuslist);
                      _timerdata->handler->resetStatusList();
 
-                     tableData td;
+                     torrentData td;
 
                      for (t_statusListI iter = statuslist.begin();
                           iter != statuslist.end();
                           iter++)
                         {
+                           td.id = convertToString<t_int>(iter->contextID());
+                           
                            std::string filename;
 
                            if (Util::getFileFromPath(iter->filename(), filename))
@@ -132,6 +150,8 @@ namespace btg
                                  td.filename = iter->filename();
                               }
 
+                           td.done = iter->done();
+                           
                            switch(iter->status())
                               {
                               case btg::core::Status::ts_undefined:
@@ -170,12 +190,10 @@ namespace btg
                            td.ulRate = iter->uploadRate();
 
                            humanReadableRate hrr = humanReadableRate::convert(iter->downloadRate());
-                           td.dlul = hrr.toString();
-
-                           td.dlul += " / ";
+                           td.dl = hrr.toString();
 
                            hrr = humanReadableRate::convert(iter->uploadRate());
-                           td.dlul += hrr.toString();
+                           td.ul = hrr.toString();
                            
                            // Rates in KiB/sec.
                            td.dlCount   = iter->downloadRate() / 1024;
@@ -184,6 +202,8 @@ namespace btg
                            td.peerCount = iter->leechers();
                            td.seedCount = iter->seeders();
 
+                           td.nof = "0";
+                           
                            std::string progress;
 
                            std::string done_str = convertToString<t_int>(iter->done()) + " %";
@@ -219,21 +239,24 @@ namespace btg
                            td.peers = convertToString<t_int>(iter->leechers()) + "/" +
                               convertToString<t_int>(iter->seeders());
 
-                           data.push_back(td);
+                           _timerdata->data.push_back(td);
                         }
                   }
 
                // Sort the array by download bandwidth.
-               std::sort(data.begin(), data.end());
+               std::sort(_timerdata->data.begin(), _timerdata->data.end());
 
-               updateTable(*_timerdata->gui, data);
-               updateGlobalStats(*_timerdata->gui, data);
+               _timerdata->gui->size = (_timerdata->data.size()-1);
+               if (_timerdata->gui->size < 0)
+               {
+                  _timerdata->gui->size = 0;
+               }
+               
+               update_ui_display(_timerdata);
 
                // Reset the counter used for detecting if its time to
                // update.
                _timerdata->count = 0;
-
-               AG_LabelPrintf(_timerdata->gui->statusbarlabel, "Updated.");
             }
 
 
@@ -241,8 +264,9 @@ namespace btg
             {
                // Create a new timer.
                AG_SetTimeout(_gui.timer, update_event, _timerdata, 0);
-               AG_AddTimeout(_gui.table, _gui.timer, 1000 /* 1 sec */);
+               AG_AddTimeout(_gui.window, _gui.timer, 1000 /* 1 sec */);
             }
+            
 #if HAVE_LIRC
             bool initLIRC(btgvsGui & _gui)
             {
@@ -345,45 +369,109 @@ namespace btg
             }
 #endif
 
+            void move(timerData* _td)
+            {
+               int pos = _td->gui->position;
+               switch (_td->gui->direction)
+               {
+                  case btgvsGui::DIR_UP:
+                     _td->gui->position=_td->gui->size;
+                     break;
+                  case btgvsGui::DIR_DOWN:
+                     _td->gui->position=0;
+                     break;
+                  case btgvsGui::DIR_LEFT:
+                     _td->gui->position--;
+                     break;
+                  case btgvsGui::DIR_RIGHT:
+                     _td->gui->position++;
+                     break;
+               }
+               
+               if (_td->gui->position < 0)
+               {
+                  _td->gui->position = _td->gui->size;
+               }
+               
+               if (_td->gui->position > _td->gui->size)
+               {
+                  _td->gui->position = 0;
+               }
+               
+               if (pos != _td->gui->position)
+               {
+                  // Position changed, update ui.
+                  updateTorrentList(*_td->gui, _td->data);
+               }
+            }
+            
             void KeyDown(AG_Event *event)
             {
                if (strcmp(event->name, "window-keydown") == 0)
                {
-                  AG_Table* me = (AG_Table*)AG_SELF();
-
-                  int keysym  = AG_INT(1);
-                  //int keymod  = AG_INT(2);
-                  //int unicode = AG_INT(3);
-
+                  timerData* td = (timerData*)AG_PTR(1);
+                  int keysym  = AG_INT(2);
+                  
+                  if (td->gui->autoChange && 
+                  ((keysym == SDLK_UP) || (keysym == SDLK_DOWN) || (keysym == SDLK_LEFT) || (keysym == SDLK_RIGHT))
+                  )
+                  {
+                     // When the viewer is scrolling trough the torrents 
+                     // on its own, do not allow key input.
+                     return;
+                  }
+                  
                   switch (keysym)
                   {
-                  case SDLK_UP:
-                    std::cout << "<up>" << std::endl;
-                    break;
-                  case SDLK_DOWN:
-                    std::cout << "<down>" << std::endl;
-                    break;
-                  case SDLK_LEFT:
-                    std::cout << "<left>" << std::endl;
-                    break;
-                  case SDLK_RIGHT:
-                    std::cout << "<right>" << std::endl;
-                    break;
-                  case SDLK_RETURN:
-                    std::cout << "<enter>" << std::endl;
-                    break;
-                  case SDLK_BACKSPACE:
-                    std::cout << "<back>" << std::endl;
-                    break;
-                  case SDLK_ESCAPE:
-                    std::cout << "<quit>" << std::endl;
-                    quitRequested = 1;
-                    break;
+                     case SDLK_UP:
+                     {
+                       std::cout << "<up>" << std::endl;
+                       td->gui->direction = btgvsGui::DIR_UP;
+                       move(td);
+                       break;
+                     }
+                     case SDLK_DOWN:
+                     {
+                       std::cout << "<down>" << std::endl;
+                       td->gui->direction = btgvsGui::DIR_DOWN;
+                       move(td);
+                       break;
+                     }
+                     case SDLK_LEFT:
+                     {
+                       std::cout << "<left>" << std::endl;
+                       td->gui->direction = btgvsGui::DIR_LEFT;
+                       move(td);
+                       break;
+                     }
+                     case SDLK_RIGHT:
+                     {
+                       std::cout << "<right>" << std::endl;
+                       td->gui->direction = btgvsGui::DIR_RIGHT;
+                       move(td);
+                       break;
+                     }
+                     case SDLK_RETURN:
+                     {
+                       std::cout << "<enter>" << std::endl;
+                       break;
+                     }
+                     case SDLK_BACKSPACE:
+                     {
+                       std::cout << "<back>" << std::endl;
+                       break;
+                     }
+                     case SDLK_ESCAPE:
+                     {
+                       std::cout << "<quit>" << std::endl;
+                       quitRequested = 1;
+                       break;
+                     }
                   }
                }
             }
 
-            void createGui(btgvsGui & _gui)
+            void createGui(btgvsGui & _gui, timerData & _timerData)
             { 
                //AG_SetRefreshRate(25);
 
@@ -396,60 +484,129 @@ namespace btg
                                                "%s", "BTGVS");
                AG_SetStyle(_gui.window, &_gui.style);
                AG_WindowSetCaption(_gui.window, "%s", "BTGVS");
+               
+               _gui.top_box = AG_BoxNew(_gui.window, AG_BOX_VERT, AG_BOX_EXPAND);
 
-               _gui.contents_box = AG_VBoxNew(_gui.window, AG_VBOX_EXPAND);
+               copyString("0", &_gui.titleLabelText[0]);
+               _gui.torrentNumberLabel = AG_LabelNewPolled(_gui.top_box, 0, "%s", &_gui.titleLabelText[0]);               
+                               
+               AG_SpacerNewVert (_gui.top_box);
+                                                  
+               // Divide the screen into four sub-parts.
+               _gui.hp = AG_PaneNewVert(_gui.top_box, AG_PANE_FRAME|AG_PANE_DIV|AG_PANE_FORCE_DIV);
+               // AG_Expand(_gui.hp);
+               
+               _gui.vp = AG_PaneNewHoriz(_gui.hp->div[0], AG_PANE_FORCE_DIV);
+               _gui.dp = AG_PaneNewHoriz(_gui.hp->div[1], AG_PANE_FORCE_DIV);
 
-               // Create a new table that expands to fill the window.
-               _gui.table = AG_TableNew(_gui.contents_box, AG_TABLE_EXPAND);
- 
-               // Insert the columns.
-               std::string sizeSpecifier("<01234567890123456789>");
-               std::string ratioSizeSpecifier("<00.0>");
-               AG_TableAddCol(_gui.table, "Filename", sizeSpecifier.c_str(), 0);
-               AG_TableAddCol(_gui.table, "Status", sizeSpecifier.c_str(), 0);
-               AG_TableAddCol(_gui.table, "UL/DL ratio", ratioSizeSpecifier.c_str(), 0);
-               AG_TableAddCol(_gui.table, "Progress", sizeSpecifier.c_str(), 0);
-               AG_TableAddCol(_gui.table, "Dl/Ul", sizeSpecifier.c_str(), 0);
-               AG_TableAddCol(_gui.table, "Size", sizeSpecifier.c_str(), 0);
-               AG_TableAddCol(_gui.table, "Peer/Seed", sizeSpecifier.c_str(), 0);
-#if AGAR_1_2
-               AG_LabelNew(_gui.contents_box, AG_LABEL_STATIC, "Totals:");
-               _gui.bwLabel = AG_LabelNew(_gui.contents_box, AG_LABEL_STATIC,
-                                          "Upload %s. Download %s.",
-                                          _gui.uploadStr.c_str(), 
-                                          _gui.downloadStr.c_str());
-               _gui.peLabel = AG_LabelNew(_gui.contents_box, AG_LABEL_STATIC,
-                                          "Peers %s. Seeds %s.",
-                                          _gui.peersStr.c_str(), 
-                                          _gui.seedsStr.c_str());
-#endif
+               int padding = 10;
+               int spacing = 10;
+               int depth = 0;
+               
+               _gui.basics_box = AG_BoxNew(_gui.vp, AG_BOX_VERT, AG_BOX_EXPAND);
+               // AG_BoxSetLabel(_gui.basics_box, "%s", "Basic");
+               AG_BoxSetPadding(_gui.basics_box, padding);
+               AG_BoxSetSpacing(_gui.basics_box, spacing);
+               AG_BoxSetDepth(_gui.basics_box, depth);
 
-#if AGAR_1_3
-               AG_LabelNewStatic(_gui.contents_box, AG_LABEL_STATIC, "Totals:");
-               _gui.bwLabel = AG_LabelNewStatic(_gui.contents_box, AG_LABEL_STATIC,
-                                                "Upload %s. Download %s.",
-                                                _gui.uploadStr.c_str(), 
-                                                _gui.downloadStr.c_str());
-               _gui.peLabel = AG_LabelNewStatic(_gui.contents_box, AG_LABEL_STATIC,
-                                                "Peers %s. Seeds %s.",
-                                                _gui.peersStr.c_str(), 
-                                                _gui.seedsStr.c_str());
-#endif
+               _gui.done_box  = AG_BoxNew(_gui.vp, AG_BOX_VERT, AG_BOX_EXPAND);
+               //AG_BoxSetLabel(_gui.done_box, "%s", "Done");
+               AG_BoxSetPadding(_gui.done_box, padding);
+               AG_BoxSetSpacing(_gui.done_box, spacing);
+               AG_BoxSetDepth(_gui.done_box, depth);
+               
+               
+               _gui.speed_box = AG_BoxNew(_gui.dp, AG_BOX_VERT, AG_BOX_EXPAND);
+               //AG_BoxSetLabel(_gui.speed_box, "%s", "Speed");
+               AG_BoxSetPadding(_gui.speed_box, padding);
+               AG_BoxSetSpacing(_gui.speed_box, spacing);
+               AG_BoxSetDepth(_gui.speed_box, depth);
+               
 
-               AG_SeparatorNew(_gui.contents_box, AG_SEPARATOR_HORIZ);
+               _gui.files_box = AG_BoxNew(_gui.dp, AG_BOX_VERT, AG_BOX_EXPAND);
+               //AG_BoxSetLabel(_gui.files_box, "%s", "Files");
+               AG_BoxSetPadding(_gui.files_box, padding);
+               AG_BoxSetSpacing(_gui.files_box, spacing);
+               AG_BoxSetDepth(_gui.files_box, depth);
+               
+               _gui.panes[0] = _gui.basics_box;
+               _gui.panes[1] = _gui.done_box;
+               _gui.panes[2] = _gui.speed_box;
+               _gui.panes[3] = _gui.files_box;
 
+               AG_PaneAttachBox(_gui.vp, 0, _gui.panes[0]);
+               AG_PaneAttachBox(_gui.vp, 1, _gui.panes[1]);
+               AG_PaneAttachBox(_gui.dp, 0, _gui.panes[2]);
+               AG_PaneAttachBox(_gui.dp, 1, _gui.panes[3]);
+               
+               // Basic information.
+               AG_LabelNew(_gui.basics_box, 0, "Id:");
+               copyString("0", &_gui.idLabelText[0]);
+               _gui.idLabel = AG_LabelNewPolled(_gui.basics_box, 0, "%s", &_gui.idLabelText[0]);
+               
+               AG_LabelNewStatic(_gui.basics_box, AG_LABEL_STATIC, "Filename:");
+               copyString("0", &_gui.fileLabelText[0]);
+               _gui.fileLabel = AG_LabelNewPolled(_gui.basics_box, 0, "%s", &_gui.fileLabelText[0]);
+               
+               AG_LabelNewStatic(_gui.basics_box, AG_LABEL_STATIC, "Status:");
+               copyString("0", &_gui.statusLabelText[0]);
+               _gui.statusLabel = AG_LabelNewPolled(_gui.basics_box, 0, "%s", &_gui.statusLabelText[0]);
+               
+               // How far is the torrent.
+               AG_LabelNewStatic(_gui.done_box, AG_LABEL_STATIC, "Done:");
+
+               _gui.pb_value = 0;
+               _gui.pb_min   = 0;
+               _gui.pb_max   = 100; 
+               AG_ProgressBarNewInt (_gui.done_box, 
+                                     AG_PROGRESS_BAR_HORIZ, 
+                                     AG_PROGRESS_BAR_SHOW_PCT, 
+                                     &_gui.pb_value, &_gui.pb_min, &_gui.pb_max);
+               
+               AG_LabelNewStatic(_gui.done_box, AG_LABEL_STATIC, "ETA:");
+               copyString("0", &_gui.etaLabelText[0]);
+               _gui.etaLabel = AG_LabelNewPolled(_gui.done_box, 0, "%s", &_gui.etaLabelText[0]);
+               
+               // Speed ..
+               AG_LabelNewStatic(_gui.speed_box, AG_LABEL_STATIC, "Download:");
+               copyString("0", &_gui.dlSpeedLabelText[0]);
+               _gui.dlSpeedLabel = AG_LabelNewPolled(_gui.speed_box, 0, "%s", &_gui.dlSpeedLabelText[0]);
+               
+               AG_LabelNewStatic(_gui.speed_box, AG_LABEL_STATIC, "Upload:");
+               copyString("0", &_gui.ulSpeedLabelText[0]);
+               _gui.ulSpeedLabel = AG_LabelNewPolled(_gui.speed_box, 0, "%s", &_gui.ulSpeedLabelText[0]);
+                            
+               // Files ..
+               AG_LabelNewStatic(_gui.files_box, AG_LABEL_STATIC, "Number of files:");
+               copyString("0", &_gui.nofLabelText[0]);
+               _gui.nofLabel = AG_LabelNewPolled(_gui.files_box, 0, "%s", &_gui.nofLabelText[0]);
+
+               AG_LabelNewStatic(_gui.files_box, AG_LABEL_STATIC, "Total size:");
+               copyString("0", &_gui.fileSizeLabelText[0]);
+               _gui.fileSizeLabel = AG_LabelNewPolled(_gui.files_box, 0, "%s", &_gui.fileSizeLabelText[0]);
+
+               AG_LabelNewStatic(_gui.files_box, AG_LABEL_STATIC, "Seeds/leeches:");
+               copyString("0", &_gui.seedsPeersLabelText[0]);
+               _gui.seedsPeersLabel = AG_LabelNewPolled(_gui.files_box, 0, "%s", &_gui.seedsPeersLabelText[0]);
+               
+               const char spaces[] = "                                                                                ";
+               AG_LabelNewStatic(_gui.basics_box, AG_LABEL_STATIC, "%s", &spaces[0]);
+               AG_LabelNewStatic(_gui.done_box, AG_LABEL_STATIC, "%s", &spaces[0]);
+               AG_LabelNewStatic(_gui.speed_box, AG_LABEL_STATIC, "%s", &spaces[0]);
+               AG_LabelNewStatic(_gui.files_box, AG_LABEL_STATIC, "%s", &spaces[0]);
+               
                // Status bar.
-               _gui.statusbar      = AG_StatusbarNew(_gui.contents_box, 1);
+               _gui.statusbar      = AG_StatusbarNew(_gui.top_box, 1);
                _gui.statusbarlabel = AG_StatusbarAddLabel(_gui.statusbar, AG_LABEL_STATIC, "Ready.");
-
+               
                // Show the window and enter event loop.
                AG_WindowShow(_gui.window);
-               AG_WindowMaximize(_gui.window);
+               //AG_WindowMaximize(_gui.window);
 
-               AG_AddEvent(_gui.table, "window-keydown", KeyDown, NULL);
-
+               AG_AddEvent(_gui.window, "window-keydown", KeyDown, "%p", &_timerData);
+               
                // Set the focus on the table.
-               AG_WidgetFocus(_gui.table);
+               // AG_WidgetFocus(_gui.table);
             }
 
             void run(btgvsGui & _gui)
@@ -548,42 +705,56 @@ namespace btg
    
             }
 
-            void updateTable(btgvsGui & _gui, std::vector<tableData> const& _data)
+            void updateTorrentDetails(btgvsGui & _gui, torrentData const& _data)
             {
-               AG_TableBegin(_gui.table);
-   
-               for (std::vector<tableData>::const_iterator iter = _data.begin();
-                    iter != _data.end();
-                    iter++)
-                  {
-                     const tableData & td = *iter;
-                     AG_TableAddRow(_gui.table, "%s:%s:%s:%s:%s:%s:%s", 
-                                    td.filename.c_str(),
-                                    td.status.c_str(),
-                                    td.ratio.c_str(),
-                                    td.progress.c_str(),
-                                    td.dlul.c_str(),
-                                    td.size.c_str(),
-                                    td.peers.c_str());
-                  }
+               copyString(_data.id, _gui.idLabelText);
+               
+               copyString(_data.filename, _gui.fileLabelText, 50);
+               
+               copyString(_data.status, _gui.statusLabelText);
+               
+               copyString(_data.progress, _gui.etaLabelText);
+               copyString(_data.dl, _gui.dlSpeedLabelText);
+               copyString(_data.ul, _gui.ulSpeedLabelText);
+               copyString(_data.nof, _gui.nofLabelText);
+               copyString(_data.size, _gui.fileSizeLabelText);
+               copyString(_data.peers, _gui.seedsPeersLabelText);
+                                 
+               _gui.pb_value = _data.done;
+            }
+            
+            void updateTorrentList(btgvsGui & _gui, std::vector<torrentData> const& _data)
+            {
+               if (_data.size() == 0)
+               {
+                  AG_LabelPrintf(_gui.torrentNumberLabel, "No torrents to show.");
+                  return;
+               }
+               
+               if (_gui.position > _data.size())
+               {
+                  _gui.position = 0;  
+               }
+                  
+               snprintf(&_gui.titleLabelText[0], btgvsGui::STRING_MAX, "Showing torrent %d out of %d.", 
+                        _gui.position, 
+                        _data.size());
 
-               AG_TableEnd(_gui.table);
-
-               AG_TableRedrawCells(_gui.table);
+               updateTorrentDetails(_gui, _data[_gui.position]);
             }
 
-            void updateGlobalStats(btgvsGui & _gui, std::vector<tableData> const& _data)
+            void updateGlobalStats(btgvsGui & _gui, std::vector<torrentData> const& _data)
             {
                t_ulong ulRate = 0;
                t_ulong dlRate = 0;
                t_ulong seeds = 0;
                t_ulong peers = 0;
 
-               for (std::vector<tableData>::const_iterator iter = _data.begin();
+               for (std::vector<torrentData>::const_iterator iter = _data.begin();
                     iter != _data.end();
                     iter++)
                   {
-                     const tableData & td = *iter;
+                     const torrentData & td = *iter;
                      
                      ulRate += td.ulRate;
                      dlRate += td.dlRate;
@@ -600,10 +771,13 @@ namespace btg
                _gui.downloadStr = hrr.toString();
 
                // Peers and seeds.
-               _gui.peersStr = convertToString<t_uint>(peers);
-               _gui.seedsStr = convertToString<t_uint>(seeds);
-
+               /*
+               _gui.peerSeedsStr = convertToString<t_uint>(peers);
+               _gui.peerSeedsStr += "/";
+               _gui.peerSeedsStr += convertToString<t_uint>(seeds);
+               */
                // Print on screen.
+               /*
                AG_LabelPrintf(_gui.bwLabel, "Upload: %s. Download: %s.",
                               _gui.uploadStr.c_str(), 
                               _gui.downloadStr.c_str());
@@ -611,7 +785,7 @@ namespace btg
                AG_LabelPrintf(_gui.peLabel, "Peers: %s. Seeds: %s",
                               _gui.peersStr.c_str(),
                               _gui.seedsStr.c_str());
-
+               */
                 
             }
 
@@ -622,8 +796,28 @@ namespace btg
                AG_LabelPrintf(_timerdata->gui->statusbarlabel, 
                               "Next update in %d second(s).", 
                               diff);
+
             }
 
+            void copyString(std::string const& _in, char* _dest, int _maxlen)
+            {
+               int len = strlen(_in.c_str());
+               if (_maxlen > 0)
+               {
+                  if (len > _maxlen)
+                  {
+                     len = _maxlen;
+                  }
+               }
+
+               if (len > btgvsGui::STRING_MAX)
+               {
+                  len = btgvsGui::STRING_MAX;
+               }
+               memset(_dest, 0, btgvsGui::STRING_MAX);
+               strncpy(_dest,  _in.c_str(), len);
+            }
+            
          } // namespace viewer
       } // namespace gui
    } // namespace UI

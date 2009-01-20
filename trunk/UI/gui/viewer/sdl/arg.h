@@ -117,6 +117,13 @@ namespace btg
                /// communication with the daemon.
                t_uint getUpdateFreq() const;
 
+               /// Indicates if the client should do automatic updates 
+               /// of its display.
+               bool getAutoUpdate() const;
+
+               /// The frequency of automatic updates.
+               t_uint getAutoUpdateFreq() const;
+               
                /// Destructor.
                virtual ~vsCommandLineArgumentHandler();
 
@@ -158,6 +165,12 @@ namespace btg
                /// The frequency of updates - set low to limit
                /// communication with the daemon.
                t_uint                       updateFreq;
+               
+               /// Do auto updates.
+               bool                         autoUpdate_set;
+               
+               /// The frequency of automatic updates.
+               t_uint                       autoUpdateFreq;
             };
 
             /** @} */

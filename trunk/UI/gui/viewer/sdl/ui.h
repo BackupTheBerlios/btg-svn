@@ -44,12 +44,16 @@ namespace btg
          namespace viewer
          {
             /// Struct containing information about one table row.
-            struct tableData
+            struct torrentData
             {
+               std::string id;
                /// The filename.
                std::string filename;
                /// Current status.
                std::string status;
+               /// Percent done.
+               t_int done;
+               
                /// Progress.
                std::string progress;
                /// UL/DL ratio.
@@ -62,8 +66,10 @@ namespace btg
 
                /// String describing download/upload rate in human
                /// readable format.
-               std::string dlul;
+               std::string dl;
 
+               std::string ul;
+               
                /// Number of bytes downloaded.
                t_uint      dlCount;
                /// Number of bytes uploaded.
@@ -74,6 +80,9 @@ namespace btg
                /// Number of seeds.
                t_uint      seedCount;
 
+               /// Number of files.
+               std::string nof;
+               
                /// Size of the torrent.
                std::string size;
 
@@ -81,7 +90,7 @@ namespace btg
                std::string peers;
 
                /// Operator, used to sort by download rate.
-               bool operator<(tableData const& _td) const
+               bool operator<(torrentData const& _td) const
                {
                   return (dlRate > _td.dlRate);
                }
@@ -92,8 +101,13 @@ namespace btg
             class btgvsGui
             {
             public:
+               enum
+               {
+                  STRING_MAX = 512
+               };
+               
                /// Constructor.
-               btgvsGui();
+               btgvsGui(bool _auto, t_uint _autoUpdateFreq);
 
                /// Destructor.
                ~btgvsGui();
@@ -104,14 +118,63 @@ namespace btg
                AG_Timeout*     timer;
                /// Main window.
                AG_Window*      window;
+
+               /// Used to divide the display in two.
+               AG_Box* top_box;
+               
+               AG_Label* torrentNumberLabel;
+               char titleLabelText[STRING_MAX];
+               
+               AG_Box* panes[4];
+               
+               AG_Pane* hp;
+               AG_Pane* vp;
+               AG_Pane* dp;
+
                /// Vertical box.
-               AG_VBox*        contents_box;
+               AG_Box*        basics_box;
+               AG_Box*        speed_box;
+               
+               int pb_value;
+               int pb_min;
+               int pb_max; 
+               
+               AG_Box*        done_box;
+               AG_Box*        files_box;
+               
+               AG_Label* idLabel;
+               char idLabelText[STRING_MAX];
+               
+               AG_Label* fileLabel;
+               char fileLabelText[STRING_MAX];
+               
+               AG_Label* statusLabel;
+               char statusLabelText[STRING_MAX];
+               
+               AG_Label* etaLabel;
+               char etaLabelText[STRING_MAX];
+               
+               AG_Label* dlSpeedLabel;
+               char dlSpeedLabelText[STRING_MAX];
+               
+               AG_Label* ulSpeedLabel;
+               char ulSpeedLabelText[STRING_MAX];
+               
+               AG_Label* nofLabel;
+               char nofLabelText[STRING_MAX];
+               
+               AG_Label* fileSizeLabel;
+               char fileSizeLabelText[STRING_MAX];
+               
+               AG_Label* seedsPeersLabel;
+               char seedsPeersLabelText[STRING_MAX];
+               
                /// Statusbar.
                AG_Statusbar*   statusbar;
                /// Label used for showing text on the statusbar.
                AG_Label*       statusbarlabel;
                /// Torrent table.
-               AG_Table*       table;
+               // AG_Table*       table;
                /// Observed max UL.
                t_uint          ul_max;
                /// Observed min UL.
@@ -134,9 +197,28 @@ namespace btg
                /// Peer count label.
                AG_Label*       peLabel;
                /// Global number of peers.
-               std::string     peersStr;
-               /// Global number of seeds.
-               std::string     seedsStr;
+               std::string     peerSeedsStr;
+
+               /// Change between torrents automatically.
+               const bool autoChange;
+               
+               const t_uint autoUpdateFreq;
+               
+               /// Which torrent is being displayed.
+               t_int position;
+               /// Number of torrents.
+               t_int size;
+               
+               enum Direction
+               {
+                  DIR_UNDEF = 0,
+                  DIR_UP,
+                  DIR_DOWN,
+                  DIR_LEFT,
+                  DIR_RIGHT
+               };
+               
+               Direction direction;
 #if HAVE_LIRC
                /// Pointer to LIRC config.
                struct lirc_config* lircConfig;
@@ -160,10 +242,14 @@ namespace btg
                btg::core::client::handlerThread*    handlerthr;
                /// Pointer to handler.
                viewerHandler*                       handler;
+               
+               std::vector<torrentData>               data;
             };
 
+            void copyString(std::string const& _in, char* _dest, int _maxlen = 0);
+            
             /// Create the GUI.
-            void createGui(btgvsGui & _gui);
+            void createGui(btgvsGui & _gui, timerData & _timerData);
 #if HAVE_LIRC
             bool initLIRC(btgvsGui & _gui);
 #endif
@@ -187,20 +273,28 @@ namespace btg
             void destroyGui(btgvsGui & _gui);
 
             /// Update the table showing torrents.
-            void updateTable(btgvsGui & _gui, std::vector<tableData> const& _data);
+            void updateTorrentList(btgvsGui & _gui, std::vector<torrentData> const& _data);
 
+            void updateTorrentDetails(btgvsGui & _gui, torrentData const& _data);
+            
             /// Update global dl/ul/peer/seed counters.
-            void updateGlobalStats(btgvsGui & _gui, std::vector<tableData> const& _data);
+            void updateGlobalStats(btgvsGui & _gui, std::vector<torrentData> const& _data);
 
-            /// Update the whole GUI.
+            /// Update the whole GUI - this gets data from the network.
             void update_ui(timerData* _timerdata);
 
+            /// Update the display - using the data already present.
+            void update_ui_display(timerData* _timerdata);
+            
             /// Update the statusbar.
             void update_statusbar(timerData* _timerdata);
 
             /// Callback
             void KeyDown(AG_Event *event);
 
+            /// Move display.
+            void move(timerData* _td);
+            
          } // namespace viewer
       } // namespace gui
    } // namespace UI
