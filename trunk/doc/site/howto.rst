@@ -51,7 +51,7 @@ UI
 ~~
 - `Ncurses`_ 5.
 - `Gtkmm`_ 2.4.
-- `AGAR`_ 1.2 or 1.3.1.
+- `AGAR`_ 1.3.3 or later.
 
 .. _Gtkmm: http://www.gtkmm.org/
 .. _AGAR: http://libagar.org/
@@ -1000,6 +1000,88 @@ XScale-IXP42x, the following had to be used in the .config file.
  CONFIG_TARGET_OPTIMIZATION="-Os -pipe -march=armv5te -mtune=xscale -funit-at-a-time"
  CONFIG_GCC_VERSION="4.2.3"
  CONFIG_UCLIBC_VERSION="0.9.29"
+
+Freevo Integration
+==================
+
+Use the following `Freevo`_ configuration (tested with 1.8.3) in ~/.freevo/local_conf.py:
+
+::
+
+  plugin.activate('command.CommandMainMenuItem', args=('~/.freevo/cmd_btgvs.fxd', ), level=45)
+
+This line instructs `Freevo`_ to add a main menu item, described by cmd_btgvs.fxd, which should contain:
+
+::
+
+  <?xml version="1.0" ?>
+    <freevo>
+      <command title="BTGVS">
+          <cmd>/path/to/btgvs -m -f</cmd>
+          <stoposd />
+          <spawnwm />
+          <info>
+              <content>BTGVS</content>
+          </info>
+      </command>
+  </freevo>
+
+The above modifications will add an additional menu entry, BTGVS, to the 
+`Freevo`_ main menu. When selected using a remote, `Freevo`_ will suspend 
+and start the BTG viewer application. The "-m -f" arguments intruct it 
+to automatically switch between showing the different torrents from a 
+session and to use full screen mode. It would make sense to setup a 
+.lircrc so that the remote can be used to close the viewer application.
+
+An example .lircrc config for use with a PS3 bluetooth remote (using `this driver`_):
+
+::
+
+  begin
+          prog = btgvs
+          button = ps
+          config = quit
+  end
+  
+  begin
+          prog = btgvs
+          button = enter
+          config = enter
+  end
+  
+  begin
+          prog = btgvs
+          button = circle
+          config = back
+  end
+  
+  begin
+          prog = btgvs
+          button = right
+          config = right
+  end
+  
+  begin
+          prog = btgvs
+          button = left
+          config = left
+  end
+  
+  begin
+          prog = btgvs  
+          button = up
+          config = up    
+  end
+  
+  begin
+          prog = btgvs  
+          button = down
+          config = down
+  end
+
+
+.. _Freevo: http://freevo.org
+.. _this driver: http://ant.starikov.googlepages.com/linuxdriverforsonybdremote
 
 Credits
 =======
