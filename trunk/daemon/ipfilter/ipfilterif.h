@@ -88,6 +88,8 @@ namespace btg
                bool                  initialized_;
                /// The total number of rules.
                t_uint                numberOfentries_;
+               /// The number of rules that could not be converted.
+               t_uint                numberOfInvalidentries_;
                /// Libtorrent filter object.
                libtorrent::ip_filter filter_;
             };
