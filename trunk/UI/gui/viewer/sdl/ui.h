@@ -123,7 +123,6 @@ namespace btg
                AG_Box* top_box;
                
                AG_Label* torrentNumberLabel;
-               char titleLabelText[STRING_MAX];
                
                AG_Box* panes[4];
                
@@ -143,31 +142,14 @@ namespace btg
                AG_Box*        files_box;
                
                AG_Label* idLabel;
-               char idLabelText[STRING_MAX];
-               
                AG_Label* fileLabel;
-               char fileLabelText[STRING_MAX];
-               
                AG_Label* statusLabel;
-               char statusLabelText[STRING_MAX];
-               
-               AG_Label* etaLabel;
-               char etaLabelText[STRING_MAX];
-               
+               AG_Label* etaLabel;               
                AG_Label* dlSpeedLabel;
-               char dlSpeedLabelText[STRING_MAX];
-               
                AG_Label* ulSpeedLabel;
-               char ulSpeedLabelText[STRING_MAX];
-               
                AG_Label* nofLabel;
-               char nofLabelText[STRING_MAX];
-               
                AG_Label* fileSizeLabel;
-               char fileSizeLabelText[STRING_MAX];
-               
                AG_Label* seedsPeersLabel;
-               char seedsPeersLabelText[STRING_MAX];
                
                /// Statusbar.
                AG_Statusbar*   statusbar;
@@ -245,8 +227,6 @@ namespace btg
                
                std::vector<torrentData>               data;
             };
-
-            void copyString(std::string const& _in, char* _dest, int _maxlen = 0);
             
             /// Create the GUI.
             void createGui(btgvsGui & _gui, timerData & _timerData);

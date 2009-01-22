@@ -487,9 +487,8 @@ namespace btg
                
                _gui.top_box = AG_BoxNew(_gui.window, AG_BOX_VERT, AG_BOX_EXPAND);
 
-               copyString("0", &_gui.titleLabelText[0]);
-               _gui.torrentNumberLabel = AG_LabelNewPolled(_gui.top_box, 0, "%s", &_gui.titleLabelText[0]);               
-                               
+               _gui.torrentNumberLabel = AG_LabelNew(_gui.top_box, AG_LABEL_HFILL, "0");
+
                AG_SpacerNewVert (_gui.top_box);
                                                   
                // Divide the screen into four sub-parts.
@@ -541,19 +540,17 @@ namespace btg
                
                // Basic information.
                AG_LabelNew(_gui.basics_box, 0, "Id:");
-               copyString("0", &_gui.idLabelText[0]);
-               _gui.idLabel = AG_LabelNewPolled(_gui.basics_box, 0, "%s", &_gui.idLabelText[0]);
+               _gui.idLabel = AG_LabelNew(_gui.basics_box, AG_LABEL_HFILL, "0");
                
-               AG_LabelNewStatic(_gui.basics_box, AG_LABEL_STATIC, "Filename:");
-               copyString("0", &_gui.fileLabelText[0]);
-               _gui.fileLabel = AG_LabelNewPolled(_gui.basics_box, 0, "%s", &_gui.fileLabelText[0]);
                
-               AG_LabelNewStatic(_gui.basics_box, AG_LABEL_STATIC, "Status:");
-               copyString("0", &_gui.statusLabelText[0]);
-               _gui.statusLabel = AG_LabelNewPolled(_gui.basics_box, 0, "%s", &_gui.statusLabelText[0]);
+               AG_LabelNewStatic(_gui.basics_box, 0, "Filename:");
+               _gui.fileLabel = AG_LabelNew(_gui.basics_box, AG_LABEL_HFILL, "0");
+               
+               AG_LabelNew(_gui.basics_box, 0, "Status:");
+               _gui.statusLabel = AG_LabelNew(_gui.basics_box, AG_LABEL_HFILL, "0");
                
                // How far is the torrent.
-               AG_LabelNewStatic(_gui.done_box, AG_LABEL_STATIC, "Done:");
+               AG_LabelNew(_gui.done_box, 0, "Done:");
 
                _gui.pb_value = 0;
                _gui.pb_min   = 0;
@@ -563,37 +560,31 @@ namespace btg
                                      AG_PROGRESS_BAR_SHOW_PCT, 
                                      &_gui.pb_value, &_gui.pb_min, &_gui.pb_max);
                
-               AG_LabelNewStatic(_gui.done_box, AG_LABEL_STATIC, "ETA:");
-               copyString("0", &_gui.etaLabelText[0]);
-               _gui.etaLabel = AG_LabelNewPolled(_gui.done_box, 0, "%s", &_gui.etaLabelText[0]);
+               AG_LabelNew(_gui.done_box, 0, "ETA:");
+               _gui.etaLabel = AG_LabelNew(_gui.done_box, AG_LABEL_HFILL, "0");
                
                // Speed ..
-               AG_LabelNewStatic(_gui.speed_box, AG_LABEL_STATIC, "Download:");
-               copyString("0", &_gui.dlSpeedLabelText[0]);
-               _gui.dlSpeedLabel = AG_LabelNewPolled(_gui.speed_box, 0, "%s", &_gui.dlSpeedLabelText[0]);
+               AG_LabelNew(_gui.speed_box, 0, "Download:");
+               _gui.dlSpeedLabel = AG_LabelNew(_gui.speed_box, AG_LABEL_HFILL, "0");
                
-               AG_LabelNewStatic(_gui.speed_box, AG_LABEL_STATIC, "Upload:");
-               copyString("0", &_gui.ulSpeedLabelText[0]);
-               _gui.ulSpeedLabel = AG_LabelNewPolled(_gui.speed_box, 0, "%s", &_gui.ulSpeedLabelText[0]);
+               AG_LabelNew(_gui.speed_box, 0, "Upload:");
+               _gui.ulSpeedLabel = AG_LabelNew(_gui.speed_box, AG_LABEL_HFILL, "0");
                             
                // Files ..
-               AG_LabelNewStatic(_gui.files_box, AG_LABEL_STATIC, "Number of files:");
-               copyString("0", &_gui.nofLabelText[0]);
-               _gui.nofLabel = AG_LabelNewPolled(_gui.files_box, 0, "%s", &_gui.nofLabelText[0]);
+               AG_LabelNew(_gui.files_box, 0, "Number of files:");
+               _gui.nofLabel = AG_LabelNew(_gui.files_box, AG_LABEL_HFILL, "0");
 
-               AG_LabelNewStatic(_gui.files_box, AG_LABEL_STATIC, "Total size:");
-               copyString("0", &_gui.fileSizeLabelText[0]);
-               _gui.fileSizeLabel = AG_LabelNewPolled(_gui.files_box, 0, "%s", &_gui.fileSizeLabelText[0]);
+               AG_LabelNew(_gui.files_box, 0, "Total size:");
+               _gui.fileSizeLabel = AG_LabelNew(_gui.files_box, AG_LABEL_HFILL, "0");
 
-               AG_LabelNewStatic(_gui.files_box, AG_LABEL_STATIC, "Seeds/leeches:");
-               copyString("0", &_gui.seedsPeersLabelText[0]);
-               _gui.seedsPeersLabel = AG_LabelNewPolled(_gui.files_box, 0, "%s", &_gui.seedsPeersLabelText[0]);
+               AG_LabelNew(_gui.files_box, 0, "Seeds/leeches:");
+               _gui.seedsPeersLabel = AG_LabelNew(_gui.files_box, AG_LABEL_HFILL, "0");
                
                const char spaces[] = "                                                                                ";
-               AG_LabelNewStatic(_gui.basics_box, AG_LABEL_STATIC, "%s", &spaces[0]);
-               AG_LabelNewStatic(_gui.done_box, AG_LABEL_STATIC, "%s", &spaces[0]);
-               AG_LabelNewStatic(_gui.speed_box, AG_LABEL_STATIC, "%s", &spaces[0]);
-               AG_LabelNewStatic(_gui.files_box, AG_LABEL_STATIC, "%s", &spaces[0]);
+               AG_LabelNew(_gui.basics_box, 0, "%s", &spaces[0]);
+               AG_LabelNew(_gui.done_box,   0, "%s", &spaces[0]);
+               AG_LabelNew(_gui.speed_box,  0, "%s", &spaces[0]);
+               AG_LabelNew(_gui.files_box,  0, "%s", &spaces[0]);
                
                // Status bar.
                _gui.statusbar      = AG_StatusbarNew(_gui.top_box, 1);
@@ -707,19 +698,16 @@ namespace btg
 
             void updateTorrentDetails(btgvsGui & _gui, torrentData const& _data)
             {
-               copyString(_data.id, _gui.idLabelText);
-               
-               copyString(_data.filename, _gui.fileLabelText, 50);
-               
-               copyString(_data.status, _gui.statusLabelText);
-               
-               copyString(_data.progress, _gui.etaLabelText);
-               copyString(_data.dl, _gui.dlSpeedLabelText);
-               copyString(_data.ul, _gui.ulSpeedLabelText);
-               copyString(_data.nof, _gui.nofLabelText);
-               copyString(_data.size, _gui.fileSizeLabelText);
-               copyString(_data.peers, _gui.seedsPeersLabelText);
-                                 
+               AG_LabelPrintf(_gui.idLabel,      "%s", _data.id.c_str());
+               AG_LabelPrintf(_gui.fileLabel,    "%s", _data.filename.c_str());
+               AG_LabelPrintf(_gui.statusLabel,  "%s", _data.status.c_str());
+               AG_LabelPrintf(_gui.etaLabel,     "%s", _data.progress.c_str());
+               AG_LabelPrintf(_gui.dlSpeedLabel, "%s", _data.dl.c_str());
+               AG_LabelPrintf(_gui.ulSpeedLabel, "%s", _data.ul.c_str());
+               AG_LabelPrintf(_gui.nofLabel,     "%s", _data.nof.c_str());
+               AG_LabelPrintf(_gui.fileSizeLabel,   "%s", _data.size.c_str());
+               AG_LabelPrintf(_gui.seedsPeersLabel, "%s", _data.peers.c_str());
+
                _gui.pb_value = _data.done;
             }
             
@@ -727,7 +715,7 @@ namespace btg
             {
                if (_data.size() == 0)
                {
-                  AG_LabelPrintf(_gui.torrentNumberLabel, "No torrents to show.");
+                  AG_LabelPrintf(_gui.torrentNumberLabel, "%s" "No torrents to show.");
                   return;
                }
                
@@ -736,9 +724,9 @@ namespace btg
                   _gui.position = 0;  
                }
                   
-               snprintf(&_gui.titleLabelText[0], btgvsGui::STRING_MAX, "Showing torrent %d out of %d.", 
-                        _gui.position, 
-                        _data.size());
+               AG_LabelPrintf(_gui.torrentNumberLabel, "Showing torrent %d out of %d.",
+                              _gui.position,
+                              _data.size()-1);
 
                updateTorrentDetails(_gui, _data[_gui.position]);
             }
@@ -797,25 +785,6 @@ namespace btg
                               "Next update in %d second(s).", 
                               diff);
 
-            }
-
-            void copyString(std::string const& _in, char* _dest, int _maxlen)
-            {
-               int len = strlen(_in.c_str());
-               if (_maxlen > 0)
-               {
-                  if (len > _maxlen)
-                  {
-                     len = _maxlen;
-                  }
-               }
-
-               if (len > btgvsGui::STRING_MAX)
-               {
-                  len = btgvsGui::STRING_MAX;
-               }
-               memset(_dest, 0, btgvsGui::STRING_MAX);
-               strncpy(_dest,  _in.c_str(), len);
             }
             
          } // namespace viewer
