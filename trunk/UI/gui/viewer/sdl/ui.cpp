@@ -79,9 +79,30 @@ namespace btg
             }
 
             btgvsGui::btgvsGui(bool _auto, t_uint _autoUpdateFreq)
-               : timer(0),
+               : style(),
+                 timer(0),
                  window(0),
+                 top_box(0),
+                 torrentNumberLabel(0),
+                 hp(0),
+                 vp(0),
+                 dp(0),
                  basics_box(0),
+                 speed_box(0),
+                 done_box(0),
+                 files_box(0),
+                 pb_value(0),
+                 pb_min(0),
+                 pb_max(0),
+                 idLabel(0),
+                 fileLabel(0),
+                 statusLabel(0),
+                 etaLabel(0),               
+                 dlSpeedLabel(0),
+                 ulSpeedLabel(0),
+                 nofLabel(0),
+                 fileSizeLabel(0),
+                 seedsPeersLabel(0),
                  statusbar(0),
                  statusbarlabel(0),
                  ul_max(100),
@@ -97,12 +118,17 @@ namespace btg
                  autoChange(_auto),
                  autoUpdateFreq(_autoUpdateFreq),
                  position(0),
-                 size(0)
+                 size(0),
+                 direction(DIR_UNDEF)
 #if HAVE_LIRC
                , lircConfig(0)
                , lirc_socket(-1)
 #endif
             {
+               panes[0] = 0;
+               panes[1] = 0;
+               panes[2] = 0;
+               panes[3] = 0;
                timer = new AG_Timeout;
             }
 
@@ -115,7 +141,6 @@ namespace btg
             void update_ui_display(timerData* _timerdata)
             {
                updateTorrentList(*_timerdata->gui, _timerdata->data);
-               //updateGlobalStats(*_timerdata->gui, _timerdata->data);
             }
             
             void update_ui(timerData* _timerdata)
@@ -488,7 +513,7 @@ namespace btg
                _gui.top_box = AG_BoxNew(_gui.window, AG_BOX_VERT, AG_BOX_EXPAND);
 
                _gui.torrentNumberLabel = AG_LabelNew(_gui.top_box, AG_LABEL_HFILL, "0");
-
+               
                AG_SpacerNewVert (_gui.top_box);
                                                   
                // Divide the screen into four sub-parts.
@@ -539,18 +564,18 @@ namespace btg
                AG_PaneAttachBox(_gui.dp, 1, _gui.panes[3]);
                
                // Basic information.
-               AG_LabelNew(_gui.basics_box, 0, "Id:");
+               AG_LabelNew(_gui.basics_box, 0, "[Id]");
                _gui.idLabel = AG_LabelNew(_gui.basics_box, AG_LABEL_HFILL, "0");
                
                
-               AG_LabelNewStatic(_gui.basics_box, 0, "Filename:");
+               AG_LabelNewStatic(_gui.basics_box, 0, "[Filename]");
                _gui.fileLabel = AG_LabelNew(_gui.basics_box, AG_LABEL_HFILL, "0");
                
-               AG_LabelNew(_gui.basics_box, 0, "Status:");
+               AG_LabelNew(_gui.basics_box, 0, "[Status]");
                _gui.statusLabel = AG_LabelNew(_gui.basics_box, AG_LABEL_HFILL, "0");
                
                // How far is the torrent.
-               AG_LabelNew(_gui.done_box, 0, "Done:");
+               AG_LabelNew(_gui.done_box, 0, "[Done]");
 
                _gui.pb_value = 0;
                _gui.pb_min   = 0;
@@ -560,24 +585,24 @@ namespace btg
                                      AG_PROGRESS_BAR_SHOW_PCT, 
                                      &_gui.pb_value, &_gui.pb_min, &_gui.pb_max);
                
-               AG_LabelNew(_gui.done_box, 0, "ETA:");
+               AG_LabelNew(_gui.done_box, 0, "[ETA]");
                _gui.etaLabel = AG_LabelNew(_gui.done_box, AG_LABEL_HFILL, "0");
                
                // Speed ..
-               AG_LabelNew(_gui.speed_box, 0, "Download:");
+               AG_LabelNew(_gui.speed_box, 0, "[Download]");
                _gui.dlSpeedLabel = AG_LabelNew(_gui.speed_box, AG_LABEL_HFILL, "0");
                
-               AG_LabelNew(_gui.speed_box, 0, "Upload:");
+               AG_LabelNew(_gui.speed_box, 0, "[Upload]");
                _gui.ulSpeedLabel = AG_LabelNew(_gui.speed_box, AG_LABEL_HFILL, "0");
                             
                // Files ..
-               AG_LabelNew(_gui.files_box, 0, "Number of files:");
+               AG_LabelNew(_gui.files_box, 0, "[Number of files]");
                _gui.nofLabel = AG_LabelNew(_gui.files_box, AG_LABEL_HFILL, "0");
 
-               AG_LabelNew(_gui.files_box, 0, "Total size:");
+               AG_LabelNew(_gui.files_box, 0, "[Total size]");
                _gui.fileSizeLabel = AG_LabelNew(_gui.files_box, AG_LABEL_HFILL, "0");
 
-               AG_LabelNew(_gui.files_box, 0, "Seeds/leeches:");
+               AG_LabelNew(_gui.files_box, 0, "[Seeds/leeches]");
                _gui.seedsPeersLabel = AG_LabelNew(_gui.files_box, AG_LABEL_HFILL, "0");
                
                const char spaces[] = "                                                                                ";
@@ -723,20 +748,9 @@ namespace btg
                {
                   _gui.position = 0;  
                }
-                  
-               AG_LabelPrintf(_gui.torrentNumberLabel, "Showing torrent %d out of %d.",
-                              _gui.position,
-                              _data.size()-1);
-
-               updateTorrentDetails(_gui, _data[_gui.position]);
-            }
-
-            void updateGlobalStats(btgvsGui & _gui, std::vector<torrentData> const& _data)
-            {
+               
                t_ulong ulRate = 0;
                t_ulong dlRate = 0;
-               t_ulong seeds = 0;
-               t_ulong peers = 0;
 
                for (std::vector<torrentData>::const_iterator iter = _data.begin();
                     iter != _data.end();
@@ -746,35 +760,22 @@ namespace btg
                      
                      ulRate += td.ulRate;
                      dlRate += td.dlRate;
-
-                     seeds  += td.peerCount;
-                     peers  += td.seedCount;
                   }
 
-               // Rates.
+               // Rates.               
                humanReadableRate hrr = humanReadableRate::convert(ulRate);
                _gui.uploadStr = hrr.toString();
 
                hrr = humanReadableRate::convert(dlRate);
                _gui.downloadStr = hrr.toString();
 
-               // Peers and seeds.
-               /*
-               _gui.peerSeedsStr = convertToString<t_uint>(peers);
-               _gui.peerSeedsStr += "/";
-               _gui.peerSeedsStr += convertToString<t_uint>(seeds);
-               */
-               // Print on screen.
-               /*
-               AG_LabelPrintf(_gui.bwLabel, "Upload: %s. Download: %s.",
+               AG_LabelPrintf(_gui.torrentNumberLabel, "Showing torrent %d out of %d. Upload: %s. Download: %s.",
+                              _gui.position,
+                              _data.size()-1,
                               _gui.uploadStr.c_str(), 
                               _gui.downloadStr.c_str());
 
-               AG_LabelPrintf(_gui.peLabel, "Peers: %s. Seeds: %s",
-                              _gui.peersStr.c_str(),
-                              _gui.seedsStr.c_str());
-               */
-                
+               updateTorrentDetails(_gui, _data[_gui.position]);
             }
 
             void update_statusbar(timerData* _timerdata)
