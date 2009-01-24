@@ -16,7 +16,7 @@ Developer Access to SVN
 
 Follow the instructions on http://developer.berlios.de/svn/?group_id=3293.
 
-Trunk is being used for developement. Do not use the stable-branch.
+Trunk is being used for development. Do not use the stable-branch.
 
 Generating the Build System
 ===========================
@@ -54,6 +54,20 @@ The list of commands is available `here`_ (generated from sources in the
 trunk of SVN).
 
 .. _here: commands.html
+
+Context Commands
+================
+
+Commands which inherit from btg::core::contextCommand can be
+constructed with an all-context flag set. This means that the daemon,
+when it receives such a command, will send a reply for all contexts in
+the session the command belongs to.
+
+The all-context flag is not supported for some of the commands. This
+will for example not work with Command::CN_CPEERS and
+Command::CN_CFILEINFO - the daemon will not execute such commands. The
+reason is that the amount of data to transfer would be enormous for
+sessions with a large amount of torrents.
 
 Patches
 =======
