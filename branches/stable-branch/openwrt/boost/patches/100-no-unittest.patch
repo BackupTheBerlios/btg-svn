@@ -1,0 +1,20 @@
+diff -r -u boost_1_36_0.org/libs/serialization/build/Jamfile.v2 boost_1_36_0/libs/serialization/build/Jamfile.v2
+--- boost_1_36_0.org/libs/serialization/build/Jamfile.v2	2008-07-15 12:41:52.000000000 +0200
++++ boost_1_36_0/libs/serialization/build/Jamfile.v2	2009-01-27 22:39:58.000000000 +0100
+@@ -8,7 +8,7 @@
+ 
+ project boost/serialization
+     : source-location ../src
+-    : requirements <dependency>../../config/test/all//BOOST_NO_STD_LOCALE
++    : requirements 
+       <conditional>@include-spirit
+ ;
+ 
+@@ -100,7 +100,6 @@
+     : $(WSOURCES).cpp boost_serialization 
+     :     
+     <toolset>msvc:<cxxflags>/Gy 
+-    <dependency>../../config/test/all//BOOST_NO_STD_WSTREAMBUF
+     <link>shared:<define>BOOST_SERIALIZATION_DYN_LINK=1
+     ;
+ 

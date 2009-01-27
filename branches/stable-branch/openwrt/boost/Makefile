@@ -9,12 +9,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=boost
-PKG_VERSION:=1_34_1
+PKG_VERSION:=1_36_0
 PKG_RELEASE:=1
+PKG_VERSION_SHORT=`echo $(PKG_VERSION)|cut -d "_" -f 1-2`
 
-PKG_SOURCE:=$(PKG_NAME)_$(PKG_VERSION).tar.bz2
-PKG_SOURCE_URL:=http://heanet.dl.sourceforge.net/sourceforge/boost/
-PKG_MD5SUM:=2d938467e8a448a2c9763e0a9f8ca7e5
+PKG_SOURCE:=$(PKG_NAME)_$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=http://surfnet.dl.sourceforge.net/sourceforge/boost/
+PKG_MD5SUM:=550b9157a596f9095aaafd683c4bccf8
 #PKG_BUILD_DIR:=$(PKG_NAME)_$(PKG_VERSION)
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)_$(PKG_VERSION)
 #PKG_BUILD_DEPENDS:=libtool
@@ -56,7 +57,7 @@ endef
 
 define Build/InstallDev
 	mkdir -p $(1)/usr/include
-	$(CP) $(PKG_INSTALL_DIR)/include/boost-1_34_1/boost $(1)/usr/include/
+	$(CP) $(PKG_INSTALL_DIR)/include/boost-$(PKG_VERSION_SHORT)/boost $(1)/usr/include/
 	mkdir -p $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/lib/* $(1)/usr/lib/
 endef

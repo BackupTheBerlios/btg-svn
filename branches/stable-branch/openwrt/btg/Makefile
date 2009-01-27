@@ -11,7 +11,7 @@ include $(TOPDIR)/rules.mk
 # Build using trunk from btg SVN.
 
 PKG_NAME:=btg
-PKG_REV:=317
+PKG_REV:=532
 PKG_VERSION:=r$(PKG_REV)
 PKG_RELEASE:=1
 
