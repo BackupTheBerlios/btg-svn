@@ -44,6 +44,7 @@
 #include "textinput.h"
 #include "progress.h"
 #include "sessionselect.h"
+#include "dm.h"
 
 #define GET_HANDLER_INST                                                \
    boost::shared_ptr<boost::mutex> ptr = handlerthread_.mutex();       \
@@ -976,42 +977,42 @@ namespace btg
                case UI::sB_Name:
                   {
                      sortby_ = UI::sB_Size;
-                     mainwindow_.setSortBy(statusList::sB_Size);
+                     mainwindow_.setSortBy(DisplayModel::sB_Size);
                      name    = "size";
                      break;
                   }
                case UI::sB_Size:
                   {
                      sortby_ = UI::sB_UlSpeed;
-                     mainwindow_.setSortBy(statusList::sB_UlSpeed);
+                     mainwindow_.setSortBy(DisplayModel::sB_UlSpeed);
                      name    = "upload speed";
                      break;
                   }
                case UI::sB_UlSpeed:
                   {
                      sortby_ = UI::sB_DlSpeed;
-                     mainwindow_.setSortBy(statusList::sB_DlSpeed);
+                     mainwindow_.setSortBy(DisplayModel::sB_DlSpeed);
                      name    = "download speed";
                      break;
                   }
                case UI::sB_DlSpeed:
                   {
                      sortby_ = UI::sB_Peers;
-                     mainwindow_.setSortBy(statusList::sB_Peers);
+                     mainwindow_.setSortBy(DisplayModel::sB_Peers);
                      name    = "number of peers";
                      break;
                   }
                case UI::sB_Peers:
                   {
                      sortby_ = UI::sB_Done;
-                     mainwindow_.setSortBy(statusList::sB_Done);
+                     mainwindow_.setSortBy(DisplayModel::sB_Done);
                      name    = "percent done";
                      break;
                   }
                case UI::sB_Done:
                   {
                      sortby_ = UI::sB_Name;
-                     mainwindow_.setSortBy(statusList::sB_Name);
+                     mainwindow_.setSortBy(DisplayModel::sB_Name);
                      name    = "name";
                      break;
                   }
