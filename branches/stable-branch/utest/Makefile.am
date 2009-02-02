@@ -56,9 +56,10 @@ if BUILDGUI
 endif
 
 if BUILDCLI
-  BCORE_CLIENT_TEST        = test_bcore_client.cpp
-  BCORE_CLIENT_TEST_HEADER = test_bcore_client.h
+  BCORE_CLIENT_TEST        = test_bcore_client.cpp test_btgncli.cpp
+  BCORE_CLIENT_TEST_HEADER = test_bcore_client.h test_btgncli.h
   BCORE_CLIENT_TEST_LIB    = $(top_builddir)/bcore/client/libbtgclient.la
+  BCORE_BTGNCLI_LIB        = $(top_builddir)/UI/cli/ncurses/libcommoncli.la
 endif
 
 if BUILDURL
@@ -76,7 +77,7 @@ noinst_HEADERS     = listener.h testrunner.h synchronize.h test_daemon.h test_os
 check_PROGRAMS     = testrunner
 
 testrunner_LDADD   = $(top_builddir)/bcore/libbtgcore.la $(BCORE_CLIENT_TEST_LIB) \
-                     $(top_builddir)/daemon/libdaemon.la $(URL_LDADD) \
+                     $(BCORE_BTGNCLI_LIB) $(top_builddir)/daemon/libdaemon.la $(URL_LDADD) \
                      $(top_builddir)/daemon/resource/libresource.la \
                      $(top_builddir)/external/ini/libini.la \
                      $(top_builddir)/bcore/libbtgcore.la

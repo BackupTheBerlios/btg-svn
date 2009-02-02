@@ -2,9 +2,11 @@ if BUILDCLI
 
 noinst_LTLIBRARIES   = libcommoncli.la
 
-noinst_HEADERS = cli_helper.h
+noinst_HEADERS = cli_helper.h \
+                 se.h dm.h
 
-libcommoncli_la_SOURCES = cli_helper.cpp
+libcommoncli_la_SOURCES = cli_helper.cpp \
+                          se.cpp dm.cpp
 
 libcommoncli_la_CXXFLAGS = @CXXFLAGS@ @LIBGNUTLS_CFLAGS@ \
 -DBTG_DEBUG=@BTG_DEBUG@ \
