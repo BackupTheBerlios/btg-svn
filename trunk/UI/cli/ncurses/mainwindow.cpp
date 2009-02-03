@@ -300,21 +300,12 @@ namespace btg
                      }
                }
 
-            if ((max_filename_size + 
-                 max_progress_size + 
-                 max_stat_size + 
-                 max_perc_size + 
-                 max_peers_size + 
-                 extra_space)
-                > width_)
-               {
-                  max_filename_size = width_ - 
-                     (max_progress_size + 
-                      max_stat_size + 
-                      max_perc_size + 
-                      max_peers_size + 
-                      extra_space);
-               }
+            max_filename_size = width_ - 
+               (max_progress_size + 
+                max_stat_size + 
+                max_perc_size + 
+                max_peers_size + 
+                extra_space);
 
             // BTG_NOTICE(logWrapper(), "findSizes: " << max_filename_size);
          }
