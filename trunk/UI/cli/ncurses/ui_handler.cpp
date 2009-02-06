@@ -974,6 +974,13 @@ namespace btg
             std::string name;
             switch (sortby_)
                {
+               case UI::sB_Id:
+                  {
+                     sortby_ = UI::sB_Name;
+                     mainwindow_.setSortBy(DisplayModel::sB_Name);
+                     name    = "name";
+                     break;
+                  }
                case UI::sB_Name:
                   {
                      sortby_ = UI::sB_Size;
@@ -1011,9 +1018,9 @@ namespace btg
                   }
                case UI::sB_Done:
                   {
-                     sortby_ = UI::sB_Name;
-                     mainwindow_.setSortBy(DisplayModel::sB_Name);
-                     name    = "name";
+                     sortby_ = UI::sB_Id;
+                     mainwindow_.setSortBy(DisplayModel::sB_Id);
+                     name    = "id";
                      break;
                   }
                }

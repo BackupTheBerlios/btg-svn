@@ -178,7 +178,8 @@ namespace btg
                      /// Method used for sorting contexts.
                      enum sortBy
                      {
-                        sB_Name = 0, /// Sort by name.
+                        sB_Id = 0,   /// Sort by id.
+                        sB_Name,     /// Sort by name.
                         sB_Size,     /// Sort by file size.
                         sB_UlSpeed,  /// Sort by upload speed.
                         sB_DlSpeed,  /// Sort by download speed.
