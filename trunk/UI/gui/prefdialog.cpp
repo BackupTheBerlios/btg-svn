@@ -83,9 +83,9 @@ namespace btg
             Gtk::Table* portTable       = Gtk::manage(new class Gtk::Table(2, 2, false));;
             Gtk::Label* beginPortLabel  = Gtk::manage(new class Gtk::Label("Begin Port"));
             Gtk::Label* endPortLabel    = Gtk::manage(new class Gtk::Label("End Port"));
-            beginPortRangeSpinbuttonAdj = Gtk::manage(new class Gtk::Adjustment(_min_port, _min_port, _max_port, 1, 100, 10));
+            beginPortRangeSpinbuttonAdj = Gtk::manage(new class Gtk::Adjustment(_min_port, _min_port, _max_port, 1, 100, 0));
             portrange_begin             = Gtk::manage(new class Gtk::SpinButton(*beginPortRangeSpinbuttonAdj, 1, 0));
-            endPortRangeSpinbuttonAdj   = Gtk::manage(new class Gtk::Adjustment(_min_port, _min_port, _max_port, 1, 100, 10));
+            endPortRangeSpinbuttonAdj   = Gtk::manage(new class Gtk::Adjustment(_min_port, _min_port, _max_port, 1, 100, 0));
             portrange_end               = Gtk::manage(new class Gtk::SpinButton(*endPortRangeSpinbuttonAdj, 1, 0));
 
             beginPortLabel->set_alignment(0,0.5);

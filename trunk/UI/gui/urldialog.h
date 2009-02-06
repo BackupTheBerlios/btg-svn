@@ -89,7 +89,7 @@ namespace btg
                /// Button.
                class Gtk::Button* cancelbutton;
                /// Button.
-               class Gtk::Button* applybutton;
+               class Gtk::Button* okbutton;
 
                /// Indicates if both inputs contain text.
                bool url_filename_filled;

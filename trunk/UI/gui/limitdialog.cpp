@@ -77,10 +77,10 @@ namespace btg
             Gtk::Label* seedPercentLabel = Gtk::manage(new class Gtk::Label( _szParam3Label ? _szParam3Label : "Seed %" ));
             Gtk::Label* seedTimeLabel    = Gtk::manage(new class Gtk::Label( _szParam4Label ? _szParam4Label : "Seed Time" ));
 
-            Gtk::Adjustment* seedPercentAdjustment = Gtk::manage(new class Gtk::Adjustment(1, 0, 100, 1, 10, 10));
+            Gtk::Adjustment* seedPercentAdjustment = Gtk::manage(new class Gtk::Adjustment(1, 0, 100, 1, 10, 0));
             param3Spin = Gtk::manage(new class Gtk::SpinButton(*seedPercentAdjustment, 1, 0));
 
-            Gtk::Adjustment *seedTimeAdjustment = Gtk::manage(new class Gtk::Adjustment(1, 0, 100, 1, 10, 10));
+            Gtk::Adjustment *seedTimeAdjustment = Gtk::manage(new class Gtk::Adjustment(1, 0, 100, 1, 10, 0));
             param4Spin    = Gtk::manage(new class Gtk::SpinButton(*seedTimeAdjustment, 1, 0));
 
             Gtk::Table* settingsTable = Gtk::manage(new class Gtk::Table(4, 2, false));
@@ -174,8 +174,8 @@ namespace btg
             set_default_size(300, 200);
 
             // Create buttons and connect their signals.
-            add_button("Set", 1);
-            add_button("Cancel", 2);
+            add_button(Gtk::StockID("gtk-cancel"), 2);
+            add_button(Gtk::StockID("gtk-apply"), 1);
             signal_response().connect(sigc::mem_fun(*this, &limitDialog::on_button_pressed));
             
             show_all(); // flag all inner elements as visible
