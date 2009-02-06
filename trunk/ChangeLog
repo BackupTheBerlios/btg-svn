@@ -1,3 +1,13 @@
+BTG version 1.0.0
+-----------------
+The following bugs were fixed:
+
+015216 Merge btgui patches from mkbosmans.
+015087 Add Arch Linux package to listing.
+015074 context.peers does not work with "for all contexts" flag set.
+015068 Crash when reading faulty IP filter range.
+015048 btgvs, add lirc support and freevo integration.
+	
 BTG version 0.9.9
 -----------------
 The following bugs were fixed:

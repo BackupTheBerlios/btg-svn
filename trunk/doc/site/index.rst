@@ -215,6 +215,7 @@ Authors
 - Rodolphe Saugier (bugfix #10588).
 - Gabor Tanka (DHT fixes).
 - Richard S. Allen (bugfix #14751).
+- Maarten Bosmans (bugfix #15216).
 - Jesper Nyholm Jensen (Testing).
 
 Getting Help
