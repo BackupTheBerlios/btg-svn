@@ -306,25 +306,67 @@ namespace btg
 
                   return;
                }
+            
+            const t_uint num = mainwindow_.selected();
+            std::string extra_text;
+
+            if (num > 0)
+               {
+                  const t_uint tot = mainwindow_.entries();
+
+                  const std::string num_s = 
+                     btg::core::convertToString<t_uint>(num);
+                  const std::string tot_s = 
+                     btg::core::convertToString<t_uint>(tot);
+                  
+                  extra_text = " (selected " + num_s + " out of " + tot_s + ")";
+               }
 
             statuswindow_.setStatus("Select entry.");
 
             std::vector<menuEntry> contents;
 
-            contents.push_back(menuEntry(UI::M_START, "Start", "Start a torrent"));
-            contents.push_back(menuEntry(UI::M_STOP,  "Stop",  "Stop a torrent"));
-            contents.push_back(menuEntry(UI::M_ABORT, "Abort", "Abort a torrent"));
-            contents.push_back(menuEntry(UI::M_ERASE, "Erase", "Erase a torrent"));
-            contents.push_back(menuEntry(UI::M_LIMIT, "Limit", "Limit a torrent"));
-            contents.push_back(menuEntry(UI::M_CLEAN, "Clean", "Clean a torrent"));
+            std::string startLabel("Start a torrent");
+            startLabel += extra_text;
+            std::string stopLabel("Stop a torrent");
+            stopLabel += extra_text;
+            std::string abortLabel("Abort a torrent");
+            abortLabel += extra_text;
+            std::string eraseLabel("Erase a torrent");
+            eraseLabel += extra_text;
+            std::string limitLabel("Limit a torrent");
+            limitLabel += extra_text;
+            std::string cleanLabel("Clean a torrent");
+            cleanLabel += extra_text;
+            std::string showfilesLabel("Show the files contained in a torrent");
+            showfilesLabel += extra_text;
+            std::string selectfLabel("Select files to download");
+            selectfLabel += extra_text;
+            std::string showpeersLabel("Show the peers for a torrent");
+            showpeersLabel += extra_text;
+            std::string moveLabel("Move to another session");
+            moveLabel += extra_text;
+
+            contents.push_back(menuEntry(UI::M_START, "Start", 
+                                         startLabel));
+            contents.push_back(menuEntry(UI::M_STOP,  "Stop",  
+                                         stopLabel));
+            contents.push_back(menuEntry(UI::M_ABORT, "Abort", 
+                                         abortLabel));
+            contents.push_back(menuEntry(UI::M_ERASE, "Erase", 
+                                         eraseLabel));
+            contents.push_back(menuEntry(UI::M_LIMIT, "Limit", 
+                                         limitLabel));
+            contents.push_back(menuEntry(UI::M_CLEAN, "Clean", 
+                                         cleanLabel));
             contents.push_back(menuEntry(UI::M_SHOWFILES, "Show files", 
-                                         "Show the files contained in a torrent"));
+                                         showfilesLabel));
             contents.push_back(menuEntry(UI::M_SELECTFILES, "Select files", 
-                                         "Select files to download"));
+                                         selectfLabel));
             contents.push_back(menuEntry(UI::M_SHOWPEERS, "Show peers", 
-                                         "Show the peers for a torrent"));
+                                         showpeersLabel));
             contents.push_back(menuEntry(UI::M_MOVE, "Move to session", 
-                                         "Move to another session"));
+                                         moveLabel));
             
             windowSize menudimensions;
             mainwindow_.getSize(menudimensions);

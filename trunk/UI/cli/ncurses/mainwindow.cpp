@@ -171,6 +171,16 @@ namespace btg
             return dm_.get(_context_id, _status);
          }
 
+         t_uint mainWindow::selected() const
+         {
+            return dm_.selected();
+         }
+
+         t_uint mainWindow::entries() const
+         {
+            return dm_.size();
+         }
+
          bool mainWindow::getSelection(btg::core::Status & _status)
          {
             t_strList trackers;

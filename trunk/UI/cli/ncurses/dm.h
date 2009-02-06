@@ -109,6 +109,9 @@ namespace btg
             /// Get the IDs of the selected entries.
             void getSelected(std::vector<t_int> & _id_list) const;
 
+            /// Get the number of selected entries.
+            t_uint selected() const;
+
             /// Resize visible area.
             void resize(t_uint _visible);
 

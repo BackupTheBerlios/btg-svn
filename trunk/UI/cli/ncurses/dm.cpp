@@ -518,9 +518,24 @@ namespace btg
                         _id_list.push_back(iter->id);
                      }
                }
-
          }
          
+         t_uint DisplayModel::selected() const
+         {
+            t_uint num = 0;
+            std::vector<statusEntry>::const_iterator iter;
+            for (iter = statusList_.begin();
+                 iter != statusList_.end();
+                 iter++)
+               {
+                  if (iter->marked)
+                     {
+                        num++;
+                     }
+               }
+            return num;
+         }
+
          DisplayModel::~DisplayModel()
          {
             statusList_.clear();

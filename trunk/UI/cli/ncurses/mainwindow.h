@@ -104,6 +104,12 @@ namespace btg
             bool getSelection(btg::core::Status & _status, 
                               t_strList & _trackers);
 
+            /// Get the number of selected entries.
+            t_uint selected() const;
+
+            /// Get the number of  entries.
+            t_uint entries() const;
+
             /// Get a status, identified by a context id.
             bool get(t_int const _context_id, btg::core::Status & _status) const;
 
