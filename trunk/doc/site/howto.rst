@@ -982,9 +982,14 @@ The following OpenWrt revisions are known to build:
 ======================= ========================== ===========
 **OpenWrt trunk**       **OpenWrt packages trunk** **BTG SVN**
 ----------------------- -------------------------- -----------
-10359                   10359                      210 (0.9.7)
+14212                   14212                      542
 11011                   11011                      328       
+10359                   10359                      210 (0.9.7)
 ======================= ========================== ===========
+
+Revision 542 Notes
+------------------
+Uses boost 1.38.0, libtorrent 0.14.1 and BTG from the trunk of SVN.
 
 Revision 328 Notes
 ------------------
