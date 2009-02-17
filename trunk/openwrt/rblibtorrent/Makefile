@@ -9,14 +9,16 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=rblibtorrent
-PKG_VERSION:=0.13
+PKG_VERSION:=0.14.1
 PKG_RELEASE:=1
 
-PKG_SOURCE:=libtorrent-$(PKG_VERSION).tar.gz
+PKG_SOURCE:=libtorrent-rasterbar-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://dfn.dl.sourceforge.net/sourceforge/libtorrent/
-PKG_MD5SUM:=571a91a98c7426321681dd9f767a87de
-PKG_BUILD_DIR:=$(BUILD_DIR)/libtorrent-$(PKG_VERSION)
+PKG_MD5SUM:=6aa0ed4da604b8b160bf12bcd41d5055
+PKG_BUILD_DIR:=$(BUILD_DIR)/libtorrent-rasterbar-$(PKG_VERSION)
 PKG_BUILD_DEPENDS:=libtool
+#BOOSTPOSTFIX=mt-1_38
+BOOSTPOSTFIX=gcc41-mt-1_38
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -36,25 +38,33 @@ CONFIGURE_ARGS+= \
 	--enable-shared \
 	--disable-debug \
 	--with-ssl=$(STAGING_DIR)/usr/include \
+	--with-boost=$(STAGING_DIR)/usr/include \
+	--with-boost-libdir=$(STAGING_DIR)/usr/lib \
 	--with-zlib=system \
-	--with-boost-date-time=gcc42-mt-1_34_1 \
-	--with-boost-filesystem=gcc42-mt-1_34_1 \
-	--with-boost-thread=gcc42-mt-1_34_1 \
-	--with-boost-regex=gcc42-mt-1_34_1 \
-	--with-boost-program_options=gcc42-mt-1_34_1 \
-	--with-boost-iostreams=gcc42-mt-1_34_1 \
+	--with-boost-system=$(BOOSTPOSTFIX) \
+	--with-boost-date-time=$(BOOSTPOSTFIX) \
+	--with-boost-filesystem=$(BOOSTPOSTFIX) \
+	--with-boost-thread=$(BOOSTPOSTFIX) \
+	--with-boost-regex=$(BOOSTPOSTFIX) \
+	--with-boost-program_options=$(BOOSTPOSTFIX) \
+	--with-boost-iostreams=$(BOOSTPOSTFIX) \
+
+CFLAGS="$(TARGET_CFLAGS)"
+CPPFLAGS="-I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/include"
+#BOOST_CPPFLAGS="$(STAGING_DIR)/usr/include"
 
 CONFIGURE_VARS += \
 	CC="$(GNU_TARGET_NAME)-gcc" \
 	CXX="$(GNU_TARGET_NAME)-g++" \
-	CXXFLAGS="$$$$CXXFLAGS -I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/include" \
+	CPPFLAGS="-I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/include" \
+	CXXFLAGS="$(TARGET_CFLAGS)" \
 	LDFLAGS="$$$$LDFLAGS -Wl,-rpath=$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/lib -lz -lbz2 -lpthread" \
 
 define Build/Configure
-	cd $(PKG_BUILD_DIR) && \
-	grep -v "AC_CHECK_FILES" configure.in > configure.in.new && \
-	mv configure.in.new configure.in && \
-	autoconf && automake && echo "Removed AC_CHECK_FILES from configure.in"
+	#cd $(PKG_BUILD_DIR) && \
+	#grep -v "AC_CHECK_FILES" configure.in > configure.in.new && \
+	#mv configure.in.new configure.in && \
+	#autoconf && automake && echo "Removed AC_CHECK_FILES from configure.in"
 	$(call Build/Configure/Default,)
 endef
 
@@ -69,20 +79,21 @@ define Build/InstallDev
 	mkdir -p $(1)/usr/include
 	$(CP) $(PKG_INSTALL_DIR)/usr/include/libtorrent $(1)/usr/include/
 	mkdir -p $(1)/usr/lib
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/*.so.* $(1)/usr/lib/
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/*.so $(1)/usr/lib/
 	mkdir -p $(1)/usr/lib/pkgconfig
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/libtorrent.pc $(1)/usr/lib/pkgconfig/
-#	$(SED) 's,$(TARGET_LDFLAGS),,g' $(1)/usr/lib/pkgconfig/libtorrent.pc
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/libtorrent-rasterbar.pc $(1)/usr/lib/pkgconfig/
 endef
 
 define Build/UninstallDev
 #	rm -rf	$(STAGING_DIR)/usr/include/torrent \
 #		$(STAGING_DIR)/usr/lib/libtorrent.{a,so*} \
-#		$(STAGING_DIR)/usr/lib/pkgconfig/libtorrent.pc
+#		$(STAGING_DIR)/usr/lib/pkgconfig/libtorrent-rasterbar.pc
 endef
 
 define Package/rblibtorrent/install
 	$(INSTALL_DIR) $(1)/usr/lib
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/*.so.* $(1)/usr/lib/
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/*.so $(1)/usr/lib/
 endef
 

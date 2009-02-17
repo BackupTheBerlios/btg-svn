@@ -9,13 +9,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=boost
-PKG_VERSION:=1_36_0
+PKG_VERSION:=1_38_0
 PKG_RELEASE:=1
 PKG_VERSION_SHORT=`echo $(PKG_VERSION)|cut -d "_" -f 1-2`
 
-PKG_SOURCE:=$(PKG_NAME)_$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=http://heanet.dl.sourceforge.net/sourceforge/boost/
-PKG_MD5SUM:=550b9157a596f9095aaafd683c4bccf8
+PKG_SOURCE:=$(PKG_NAME)_$(PKG_VERSION).tar.bz2
+PKG_SOURCE_URL:=http://garr.dl.sourceforge.net/sourceforge/boost/
+PKG_MD5SUM:=5eca2116d39d61382b8f8235915cb267
 #PKG_BUILD_DIR:=$(PKG_NAME)_$(PKG_VERSION)
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)_$(PKG_VERSION)
 #PKG_BUILD_DEPENDS:=libtool
@@ -46,18 +46,19 @@ define Build/Compile
 	export LDFLAGS="-L$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/lib"
 	cd $(PKG_BUILD_DIR) && \
 	bjam \
-	-d+2 --toolset=gcc --sBUILD=release \
+	-d+2 --toolset=gcc --sBUILD=release --sBOOST_EXCEPTION_DISABLE=1 \
 	link=shared \
 	-sZLIB_INCLUDE=$(STAGING_DIR)/usr/include \
 	-sZLIB_LIBPATH=$(STAGING_DIR)/usr/lib \
 	--prefix=$(PKG_INSTALL_DIR) \
+	--with-system \
 	--with-thread --with-filesystem --with-date_time \
-	--with-program_options --with-serialization --with-iostreams install
+	--with-program_options --with-serialization --with-iostreams --with-regex install
 endef
 
 define Build/InstallDev
 	mkdir -p $(1)/usr/include
-	$(CP) $(PKG_INSTALL_DIR)/include/boost-1_34_1/boost $(1)/usr/include/
+	$(CP) $(PKG_INSTALL_DIR)/include/boost-$(PKG_VERSION_SHORT)/boost $(1)/usr/include/
 	mkdir -p $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/lib/* $(1)/usr/lib/
 endef
