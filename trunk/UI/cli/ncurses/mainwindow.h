@@ -155,12 +155,19 @@ namespace btg
             /// Model used to display a list of entries.
             DisplayModel dm_;
 
+            /// Line counter, used when drawing list of contexts.
             t_uint lcounter;
+            /// Max file name size, in characters.
             t_uint max_filename_size;
+            /// Max progress size, in characters.
             t_uint max_progress_size;
+            /// Max stat size, in characters.
             t_uint max_stat_size;
+            /// Max percent size, in characters.
             t_uint max_perc_size;
+            /// Max peers size, in characters.
             t_uint max_peers_size;
+            /// Extra space, in characters.
             t_uint extra_space;
 
             /// Reference to the UI object used.

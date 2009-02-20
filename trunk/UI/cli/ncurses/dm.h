@@ -54,6 +54,7 @@ namespace btg
                                   const bool _current,
                                   const statusEntry & _se,
                                   const t_uint _total) = 0;
+               /// Find max sizes of the list of status entries.
                virtual void findSizes(std::vector<statusEntry> const& _l) = 0;
                /// End painting.
                virtual void pend() = 0;
@@ -122,19 +123,27 @@ namespace btg
             /// or removing elements.
             bool sizeChanged() const;
          public:
+            /// Update the list of entries with information contained
+            /// in a list of status objects.
             void update(std::vector<btg::core::Status> const& _list);
 
             /// Set the method used for sorting the entries.
             void setSortBy(DisplayModel::sortBy const _sortby);
 
+            /// Get the status for the currently selected entry.
             bool getCurrent(btg::core::Status & _status) const;
 
+            /// Get the tracker list for the currently selected entry.
             bool getCurrent(t_strList & _trackers) const;
 
+            /// Set the tracker list for the currently selected entry.
             bool setCurrent(t_strList const& _trackers);
 
-            bool get(t_int const _context_id, btg::core::Status & _status) const;
+            /// Get the status for a context id.
+            bool get(t_int const _context_id, 
+                     btg::core::Status & _status) const;
 
+            /// Remove contexts identified by context id (the list).
             void remove(std::vector<t_int> const& _id_list);
          public:
             /// Destructor.
@@ -143,6 +152,7 @@ namespace btg
             /// Number of visible entries.
             t_int visible_;
 
+            /// Display interface.
             DisplayModelIf* displayModelIf_;
 
             /// List position.
@@ -157,20 +167,29 @@ namespace btg
             /// Method used for sorting this list.
             sortBy                       sortby_;
 
+            /// Indicates if new entries are present.
             bool                         newEntries_;
+            /// Indicates that entries were deleted.
             bool                         deletedEntries_;
 
             /// Sort the entries.
             void sort();
 
+            /// Get an iterator for the entry identified by a context
+            /// id.
             std::vector<statusEntry>::iterator find(t_int const _id);
+            /// Get an iterator for the entry identified by a context
+            /// id.
             std::vector<statusEntry>::const_iterator find(t_int const _id) const;
-
+            /// Clear the updated flag.
             void resetUpdatedFlag();
 
+            /// Remove deleted contexts.
             void removeDead();
 
-            bool isStatusLess(statusEntry const& _l, statusEntry const& _r) const;
+            /// Comparator, used for sorting entries.
+            bool isStatusLess(statusEntry const& _l, 
+                              statusEntry const& _r) const;
          };
 
          /** @} */
