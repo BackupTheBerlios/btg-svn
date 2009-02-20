@@ -79,6 +79,7 @@ namespace btg
                   return;
                }
 
+            werase(window_);
             dm_.draw();
             wrefresh(window_);
          }

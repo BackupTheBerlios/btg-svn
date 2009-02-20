@@ -279,14 +279,14 @@ namespace btg
             return statusList_.end();
          }
 
-         void DisplayModel::resetUpdatedFlag()
+         void DisplayModel::resetUpdatedFlag(bool _flag)
          {
             std::vector<statusEntry>::iterator iter;
             for (iter = statusList_.begin();
                  iter != statusList_.end();
                  iter++)
                {
-                  iter->updated = false;
+                  iter->updated = _flag;
                }
          }
 
@@ -469,6 +469,8 @@ namespace btg
 
          void DisplayModel::remove(std::vector<t_int> const& _id_list)
          {
+            resetUpdatedFlag(true);
+
             std::vector<t_int>::const_iterator iter;
             for (iter = _id_list.begin();
                  iter != _id_list.end();
@@ -479,6 +481,10 @@ namespace btg
                      {
                         i->updated = false;
                      }
+                  else
+                     {
+                        i->updated = true;
+                     }
                }
             
             std::vector<btg::core::Status> l;
@@ -487,7 +493,10 @@ namespace btg
                  liter != statusList_.end();
                  liter++)
                {
-                  l.push_back(liter->status);
+                  if (liter->updated)
+                     {
+                        l.push_back(liter->status);
+                     }
                }
 
             update(l);

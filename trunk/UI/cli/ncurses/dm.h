@@ -182,7 +182,7 @@ namespace btg
             /// id.
             std::vector<statusEntry>::const_iterator find(t_int const _id) const;
             /// Clear the updated flag.
-            void resetUpdatedFlag();
+            void resetUpdatedFlag(bool _flag = false);
 
             /// Remove deleted contexts.
             void removeDead();
