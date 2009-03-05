@@ -1,3 +1,5 @@
+if BUILDDAEMON
+
 if BUILDUPNP
   EXTRA_DIR = upnp
   UPNP_LDADD = $(top_builddir)/daemon/upnp/libupnp.la 
@@ -125,6 +127,8 @@ if !BUILDURL
                     urlmgr.cpp http/curlif.cpp http/httpmgr.cpp http/httpif.cpp \
                     http/httpproc.cpp
 endif
+
+endif BUILDDAEMON
 
 # Since the session saver is optional, and not always compiled, make dist needs this.
 EXTRA_DIST         = sessionsaver.cpp sessionsaver.h \
