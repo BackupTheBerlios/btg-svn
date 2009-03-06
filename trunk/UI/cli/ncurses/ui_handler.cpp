@@ -82,9 +82,12 @@ namespace btg
                               update(statusList);
                               updateBandwidth(statusList);
                            }
-                        // Make sure that 
+                        // No torrents, showing empty list.
                         if (handler->statusSize() == 0)
                            {
+                              t_statusList statusList;
+                              update(statusList);
+                              updateBandwidth(statusList);
                               clear();
                            }
 
