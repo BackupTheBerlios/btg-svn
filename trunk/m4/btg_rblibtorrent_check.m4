@@ -30,7 +30,7 @@ AC_DEFUN([BTG_RBLIBTORRENT_CHECK],
         PKG_CHECK_MODULES([LIBTORRENT], [libtorrent >= 0.12], [], [
 		AC_MSG_NOTICE([Trying to use the default libtorrent CFLAGS/LIBS.])
         	LIBTORRENT_CFLAGS="-I$RBLIBTORRENT_ROOT/include -I$RBLIBTORRENT_ROOT/include/libtorrent"
-		LIBTORRENT_LIBS="-L$RBLIBTORRENT_ROOT/lib -ltorrent"
+		LIBTORRENT_LIBS="-L$RBLIBTORRENT_ROOT/lib -ltorrent-rasterbar"
 		AC_SUBST(LIBTORRENT_CFLAGS)
 		AC_SUBST(LIBTORRENT_LIBS)
 	])
