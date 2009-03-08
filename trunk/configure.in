@@ -92,7 +92,7 @@ if test -n "$SVNVERSION" ; then
   local_SRC_DIR=`dirname $0`
   SVNREV=`${SVNVERSION} -n $local_SRC_DIR`
   dnl If the source was exported, do not set a version.
-  if test "$SVNREV" == "exported"; then
+  if test "$SVNREV" = "exported"; then
     BTG_REV=""
     AC_MSG_NOTICE([Not using svn revision.])
   else
@@ -146,7 +146,7 @@ AC_CACHE_SAVE
 
 AM_PATH_LIBGNUTLS([1.0.0], [gnutlsfound=true], [gnutlsfound=false])
 
-if test "$gnutlsfound" == "false"; then
+if test "$gnutlsfound" = "false"; then
         AC_MSG_ERROR([unable to find libgnutls library, currently this is required.])
 fi
 
@@ -256,7 +256,7 @@ AM_CONDITIONAL(GENBTGCONFIG, test x$gen_btg_config = xtrue)
 
 dnl Check that dialog exists.
 
-if test "$gen_btg_config" == "true"; then
+if test "$gen_btg_config" = "true"; then
    AC_PATH_PROG(DIALOG, dialog, "no")
    
    if test "${DIALOG}" = "no" ;
@@ -382,7 +382,7 @@ dnl Use it after libtorrent detection
 BTG_UPNP_CHECK
 
 AC_MSG_CHECKING([whether debug information should be included])
-if test "$enabledebug" == "true"; then
+if test "$enabledebug" = "true"; then
         BTG_DEBUG=1
         dnl My compiler flags:
         DEBUG_CFLAGS="-g -Wall -W -rdynamic"
@@ -403,14 +403,14 @@ AC_SUBST(BTG_DEBUG)
 
 AC_MSG_CHECKING([whether the daemon should be built])
 
-if test "$builddaemon" == "true"; then
+if test "$builddaemon" = "true"; then
         AC_MSG_RESULT([yes])
 else
         AC_MSG_RESULT([no])
 fi
 
 AC_MSG_CHECKING([whether the GUI should be built])
-if test "$buildgui" == "true"; then
+if test "$buildgui" = "true"; then
         AC_MSG_RESULT([yes])
         PKG_CHECK_MODULES(GTKMM, gtkmm-2.4 >= 2.6.0)
 
@@ -434,7 +434,7 @@ else
 fi
 
 AC_MSG_CHECKING([whether the AGAR viewer should be built])
-if test "$buildviewer" == "true"; then
+if test "$buildviewer" = "true"; then
         AC_MSG_RESULT([yes])
 
         AM_PATH_AGAR(1.2.0)
@@ -449,7 +449,7 @@ else
 fi
 
 AC_MSG_CHECKING([whether the CLI should be built])
-if test "$buildcli" == "true"; then
+if test "$buildcli" = "true"; then
         AC_MSG_RESULT([yes])
 
         dnl Check for ncurses.
@@ -466,14 +466,14 @@ else
 fi
 
 AC_MSG_CHECKING([whether the www UI should be installed])
-if test "$buildwww" == "true"; then
+if test "$buildwww" = "true"; then
         AC_MSG_RESULT([yes])
 else
         AC_MSG_RESULT([no])
 fi
 
 AC_MSG_CHECKING([whether the daemon session saving support should be enabled])
-if test "$enablesessionsaving" == "true"; then
+if test "$enablesessionsaving" = "true"; then
    BTG_OPTION_SAVESESSIONS=1
    AM_CONDITIONAL(BUILDSESSIONSAVING, true)
    AC_MSG_RESULT([yes])
@@ -486,7 +486,7 @@ fi
 AC_SUBST(BTG_OPTION_SAVESESSIONS)
 
 AC_MSG_CHECKING([whether the daemon should support calling callbacks on events])
-if test "$enableeventcallback" == "true"; then
+if test "$enableeventcallback" = "true"; then
    BTG_OPTION_EVENTCALLBACK=1
    AM_CONDITIONAL(BUILDEVENTCALLBACK, true)
    AC_MSG_RESULT([yes])
@@ -499,7 +499,7 @@ fi
 AC_SUBST(BTG_OPTION_EVENTCALLBACK)
 
 AC_MSG_CHECKING([whether the daemon should support UPNP])
-if test "$enableupnp" == "true"; then
+if test "$enableupnp" = "true"; then
    AC_MSG_RESULT([yes])
 
    AX_BOOST_THREAD
@@ -519,7 +519,7 @@ fi
 AC_SUBST(BTG_OPTION_UPNP)
 
 AC_MSG_CHECKING([whether the unittests should be built])
-if test "$enableunittest" == "true"; then
+if test "$enableunittest" = "true"; then
         AC_MSG_RESULT([yes])
         AM_PATH_CPPUNIT(1)
 
@@ -531,11 +531,11 @@ else
 fi
 
 AC_MSG_CHECKING([whether the daemon should support URL downloading])
-if test "$enableurl" == "true"; then
+if test "$enableurl" = "true"; then
    AC_MSG_RESULT([yes])
 
    LIBCURL_CHECK_CONFIG([], [7.15.5], [libcurlfound=true], [libcurlfound=false])
-   if test "$libcurlfound" == "false"; then
+   if test "$libcurlfound" = "false"; then
       AC_MSG_ERROR([unable to find libcurl, currently this is required.])
    fi
 
@@ -550,7 +550,7 @@ fi
 AC_SUBST(BTG_OPTION_URL)
 
 AC_MSG_CHECKING([whether the a command list should be generated])
-if test "$enablecommandlist" == "true"; then
+if test "$enablecommandlist" = "true"; then
    AC_MSG_RESULT([yes])
    AM_CONDITIONAL(BUILDCOMMANDLIST, true)
 else
@@ -564,79 +564,79 @@ AC_OUTPUT(Makefile external/Makefile external/xmlrpc-epi/Makefile external/xmlrp
 
 AC_MSG_NOTICE([Status:])
 
-if test "$builddaemon" == "true"; then
+if test "$builddaemon" = "true"; then
         AC_MSG_NOTICE([btg-daemon    : enabled])
 else
         AC_MSG_NOTICE([btg-daemon    : disabled])
 fi
 
-if test "$gen_btg_config" == "true"; then
+if test "$gen_btg_config" = "true"; then
         AC_MSG_NOTICE([btg-config    : enabled])
 else
         AC_MSG_NOTICE([btg-config    : disabled])
 fi
 
-if test "$enabledebug" == "true"; then
+if test "$enabledebug" = "true"; then
         AC_MSG_NOTICE([debug         : enabled])
 else
         AC_MSG_NOTICE([debug         : disabled])
 fi
 
-if test "$buildcli" == "true"; then
+if test "$buildcli" = "true"; then
         AC_MSG_NOTICE([CLI           : enabled])
 else
         AC_MSG_NOTICE([CLI           : disabled])
 fi
 
-if test "$buildgui" == "true"; then
+if test "$buildgui" = "true"; then
         AC_MSG_NOTICE([GUI           : enabled])
 else
         AC_MSG_NOTICE([GUI           : disabled])
 fi
 
-if test "$buildviewer" == "true"; then
+if test "$buildviewer" = "true"; then
         AC_MSG_NOTICE([Viewer        : enabled])
 else
         AC_MSG_NOTICE([Viewer        : disabled])
 fi
 
-if test "$buildwww" == "true"; then
+if test "$buildwww" = "true"; then
         AC_MSG_NOTICE([WWW UI        : enabled])
 else
         AC_MSG_NOTICE([WWW UI        : disabled])
 fi
 
-if test "$enablesessionsaving" == "true"; then
+if test "$enablesessionsaving" = "true"; then
         AC_MSG_NOTICE([sessionsaving : enabled])
 else
         AC_MSG_NOTICE([sessionsaving : disabled])
 fi
 
-if test "$enableeventcallback" == "true"; then
+if test "$enableeventcallback" = "true"; then
         AC_MSG_NOTICE([event callback: enabled])
 else
         AC_MSG_NOTICE([event callback: disabled])
 fi
 
-if test "$enableupnp" == "true"; then
+if test "$enableupnp" = "true"; then
         AC_MSG_NOTICE([UPNP          : enabled])
 else
         AC_MSG_NOTICE([UPNP          : disabled])
 fi
 
-if test "$enableurl" == "true"; then
+if test "$enableurl" = "true"; then
         AC_MSG_NOTICE([URL           : enabled])
 else
         AC_MSG_NOTICE([URL           : disabled])
 fi
 
-if test "$enableunittest" == "true"; then
+if test "$enableunittest" = "true"; then
         AC_MSG_NOTICE([unittest      : enabled])
 else
         AC_MSG_NOTICE([unittest      : disabled])
 fi
 
-if test "$enablecommandlist" == "true"; then
+if test "$enablecommandlist" = "true"; then
         AC_MSG_NOTICE([command list  : enabled])
 else
         AC_MSG_NOTICE([command list  : disabled])
