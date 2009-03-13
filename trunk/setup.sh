@@ -126,7 +126,7 @@ case "$1" in
     export BOOST_CPPFLAGS=$CXXFLAGS
     export LD_LIBRARY_PATH=/pack/libboost-1.38.0/lib
 
-    CXXFLAGS_pkgconfig=`export PKG_CONFIG_PATH=/$ROOT/$1/lib/pkgconfig; pkg-config --cflags libtorrent`
+    CXXFLAGS_pkgconfig=`export PKG_CONFIG_PATH=/$ROOT/$1/lib/pkgconfig; pkg-config --cflags libtorrent-rasterbar`
     export LIBTORRENT_CFLAGS="-I$ROOT/$1/include -I$ROOT/$1/include/libtorrent" && \
     export LIBTORRENT_LIBS="-L$ROOT/$1/lib -ltorrent-rasterbar" && \
     echo "Using $CONFIGURE";
