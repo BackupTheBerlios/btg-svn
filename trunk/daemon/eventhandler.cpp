@@ -1259,19 +1259,25 @@ namespace btg
          t_int seedLimit    = btg::core::limitBase::LIMIT_DISABLED;
          t_long seedTimeout = btg::core::limitBase::LIMIT_DISABLED;
          
-         daemoncontext->getLimit(
+         if (!daemoncontext->getLimit(
                                  _context_id,
                                  limitUpld,
                                  limitDwnld,
                                  seedLimit,
                                  seedTimeout
-                                 );
+                                 ))
+            {
+               return status;
+            }
 
          // Get selected files.
          selectedFileEntryList file_list;
          
-         daemoncontext->getSelectedFiles(_context_id, 
-                                         file_list);
+         if (!daemoncontext->getSelectedFiles(_context_id, 
+                                              file_list))
+            {
+               return status;
+            }
 
          // Remove the old torrent.
          if (!daemoncontext->remove(_context_id, false /* do not erase. */))
@@ -1280,31 +1286,34 @@ namespace btg
             }
 
          // Recreate.
-         contextCreateWithDataCommand* ccwdc = 
-            new contextCreateWithDataCommand(filename, sbuf, start);
+         std::auto_ptr<contextCreateWithDataCommand> ccwdc(new contextCreateWithDataCommand(filename, sbuf, start));
 
-         if (_eventhandler->createWithData(ccwdc, _connectionID))
+         if (_eventhandler->createWithData(ccwdc.get(), _connectionID))
             {
                status = true;
             }
 
-         delete ccwdc;
-         ccwdc = 0;
 
          // After this point, the torrent was moved, but setting
          // limits and selecting files can still fail - even if one of
          // the two operations fail, report success.
 
+         // Get created context_id.
+         t_int created_context_id = connHandler->getConnection(_connectionID)->ExtraState().getLastCreatedContextId();
+#if BTG_DEBUG
+         BTG_MNOTICE(logWrapper(), "move: client: " << _connectionID << ", "
+            "context_id: " << _context_id << " -> " << created_context_id << ".");
+#endif
 
          // Set limit.
-         _eventhandler->handle_CN_CLIMIT(_context_id,
+         _eventhandler->handle_CN_CLIMIT(created_context_id,
                                          limitUpld,
                                          limitDwnld,
                                          seedLimit,
                                          seedTimeout);
 
          // Selected files.
-         _eventhandler->handle_CN_CSETFILES(_context_id, file_list);
+         _eventhandler->handle_CN_CSETFILES(created_context_id, file_list);
          
          return status;
       }
