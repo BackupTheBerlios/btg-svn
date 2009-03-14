@@ -11,12 +11,6 @@ add the following line to your ``/etc/apt/sources.list``:
 
 ::
 
- deb http://btg.berlios.de/debian main stable unstable
- deb http://btg.berlios.de/debian other stable unstable
-
-Alternative location (very slow):
-::
-
  deb ftp://ftp.berlios.de/pub/btg/debian main stable unstable
  deb ftp://ftp.berlios.de/pub/btg/debian other stable unstable
 
@@ -31,7 +25,7 @@ key to the apt keyring. To do that you must:
 3. Insert it into the apt keyring. As root, do the following:
         ``apt-key add public_key.asc``
 
-.. _debian repository: http://btg.berlios.de/debian/
+.. _debian repository: ftp://ftp.berlios.de/pub/btg/debian/
 .. _the Debian wiki: http://wiki.debian.org/SecureApt
 .. _public key: ftp://ftp.berlios.de/pub/btg/debian/public_key.asc
 
