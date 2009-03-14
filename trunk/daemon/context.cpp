@@ -1573,6 +1573,7 @@ namespace btg
                std::vector<bool>::const_iterator piece_iter = pieces->begin();
 
                libtorrent::torrent_info::file_iterator file_iter;
+               t_ulong current_size = 0;
                for (file_iter = t_i.begin_files();
                     file_iter != t_i.end_files();
                     file_iter++)
@@ -1580,15 +1581,8 @@ namespace btg
                      std::string filename  = file_iter->path.native_file_string();
                      t_ulong file_size     = file_iter->size;
 
-                     if (!ti->selected_files.selected(filename))
-                        {
-                           // Skip this file, as it is not selected.
-                           continue;
-                        }
-
                      t_bitVector filepieces;
-                     t_ulong current_size = 0;
-                     do
+                     while (current_size < file_size)
                         {
                            if (piece_counter < num_pieces)
                               {
@@ -1603,18 +1597,19 @@ namespace btg
                                  break;
                               }
                         }
-                     while (current_size < file_size);
+                     current_size -= file_size;
 
-                     if (current_size != file_size)
+                     // after piece_iter increase
+                     if (!ti->selected_files.selected(filename))
                         {
-                           piece_counter--;
-                           piece_iter--;
+                           // Skip this file, as it is not selected.
+                           continue;
                         }
+                     
                      BTG_MNOTICE(logWrapper(), 
                                  "creating a fileInformation object (filename = " <<
                                  filename << ", number of pieces = " << filepieces.size() <<
                                  ", piece size = " << piece_len << ")");
-
                      fileInformation file_info(filename, filepieces, piece_len, file_size);
                      fileinfolist.push_back(file_info);
                   }

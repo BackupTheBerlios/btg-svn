@@ -2,6 +2,7 @@ BTG version 1.0.0
 -----------------
 The following bugs were fixed:
 
+015375 Wrong per-file progress info when several files are selected
 015216 Merge btgui patches from mkbosmans.
 015087 Add Arch Linux package to listing.
 015074 context.peers does not work with "for all contexts" flag set.
