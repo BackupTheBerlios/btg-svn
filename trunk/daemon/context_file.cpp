@@ -239,63 +239,15 @@ namespace btg
       }
 #endif // BTG_OPTION_EVENTCALLBACK
 
-      bool Context::find_file(boost::filesystem::path const& dir_path,
-                              std::string const& file_name)
-      {
-         using namespace boost::filesystem;
-         BTG_MENTER(logWrapper(), "find_file", "file name = " << file_name);
-
-         if (!exists(dir_path))
-            {
-               BTG_MEXIT(logWrapper(), "find_file", false);
-               return false;
-            }
-
-         // Default construction yields past-the-end.
-         directory_iterator end_itr;
-
-         for (directory_iterator itr(dir_path);
-              itr != end_itr;
-              ++itr )
-            {
-               if (is_directory(*itr))
-                  {
-                     if (find_file(*itr, file_name))
-                        {
-                           BTG_MEXIT(logWrapper(), "find_file", true);
-                           return true;
-                        }
-                  }
-
-#if BOOST_VERSION > 103500
-               // 1.36.x and so on.
-               else if (itr->filename() == file_name) // see below
-#else
-               // Below 1.35.x.
-               else if (itr->path() == file_name) // see below
-#endif
-                  {
-                     BTG_MEXIT(logWrapper(), "find_file", true);
-                     return true;
-                  }
-            }
-         BTG_MEXIT(logWrapper(), "find_file", false);
-         return false;
-      }
-
       bool Context::dataPresentInSeedDir(libtorrent::torrent_info const& _torrent_info)
       {
          BTG_MENTER(logWrapper(), "dataPresentInSeedDir(torrent_info)", "");
 
-         bool status = true;
-         
-         // Fix of bug #10064
-         // Try to find ANY file in seed dir before give up
-         bool found = false;
+         bool status = false;
 
          libtorrent::torrent_info::file_iterator iter;
 
-         // Find and count the files.
+         // Try to find any file.
          for (iter = _torrent_info.begin_files();
               iter != _torrent_info.end_files();
               iter++)
@@ -303,66 +255,30 @@ namespace btg
                libtorrent::file_entry const& fe = *iter;
          
                // The full path.
-               boost::filesystem::path file_path = fe.path;
-         
-               // Only the file name.
-               std::string filename = file_path.leaf();
-         
-               // Get the first directory name, if it exists.
-               if (!file_path.branch_path().empty())
-                  {
-                     file_path = file_path.branch_path();
-                  }
-
-               // Fix of bug #11575 / #12055
-               // Check if the found file path is a directory.
-               // If its not, then its just files in the seed
-               // directory.
+               boost::filesystem::path const& file_path = fe.path;
                
-               
-               try
+               if (boost::filesystem::exists(seedDir_ / file_path))
                   {
-                     if (boost::filesystem::exists(seedDir_ / file_path) &&
-                         boost::filesystem::is_directory(seedDir_ / file_path))
+                     // Check whether we have the same directory as file name in torrent.
+                     // If so, we can't use the seedDir anyway.
+                     if (boost::filesystem::is_directory(seedDir_ / file_path))
                         {
-                           file_path = seedDir_ / file_path;
+                           BTG_MNOTICE(logWrapper(), "dataPresentInSeedDir: torrent file '"
+                              << file_path << "' is a directory, can't use seedDir.");
                         }
                      else
                         {
-                           file_path = seedDir_;
+                           status = true;
+                           
+                           BTG_MNOTICE(logWrapper(), "dataPresentInSeedDir: found torrent file '"
+                              << file_path << "'.");
                         }
-                  }
-               catch(std::exception& e)
-                  {
-                     BTG_ERROR_LOG(logWrapper(), 
-                                   "Got exception from boost::filesystem, is_directory: " << 
-                                   e.what());
-                     status = false;
-                     break;
-                  }
-
-               BTG_MNOTICE(logWrapper(), "Using directory '" << file_path.string() << "'");
-               BTG_MNOTICE(logWrapper(), "Checking file '" << filename << "'");
-         
-               try
-                  {
-                     if (find_file(boost::filesystem::path(file_path), filename))
-                        {
-                           found = true;
-                           break;
-                        }
-                  }
-               catch(std::exception& e)
-                  {
-                     BTG_ERROR_LOG(logWrapper(), 
-                                   "Got exception from find_file: " << e.what());
-                     status = false;
                      break;
                   }
             }
 
-         BTG_MEXIT(logWrapper(), "dataPresentInSeedDir(torrent_info)", (status && found) );
-         return status && found;
+         BTG_MEXIT(logWrapper(), "dataPresentInSeedDir(torrent_info)", status);
+         return status;
       }
 
 #if (BTG_LT_0_12 || BTG_LT_0_13)
