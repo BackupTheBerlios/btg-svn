@@ -1,0 +1,765 @@
+<!-- Creator     : groff version 1.18.1 -->
+<!-- CreationDate: Mon Mar 16 07:21:06 2009 -->
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta name="Content-Style" content="text/css">
+<title>BTG_CONFIG</title>
+</head>
+<body>
+
+<h1 align=center>BTG_CONFIG</h1>
+<a href="#NAME">NAME</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#LOCATION">LOCATION</a><br>
+<a href="#FORMAT">FORMAT</a><br>
+<a href="#DAEMON CONFIG">DAEMON CONFIG</a><br>
+<a href="#EXAMPLE DAEMON CONFIG">EXAMPLE DAEMON CONFIG</a><br>
+<a href="#CLIENT CONFIG">CLIENT CONFIG</a><br>
+<a href="#EXAMPLE CLIENT CONFIG">EXAMPLE CLIENT CONFIG</a><br>
+<a href="#FILES">FILES</a><br>
+<a href="#AUTHOR">AUTHOR</a><br>
+<a href="#SEE ALSO">SEE ALSO</a><br>
+
+<hr>
+<a name="NAME"></a>
+<h2>NAME</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>btg config</p>
+</td>
+</table>
+<a name="DESCRIPTION"></a>
+<h2>DESCRIPTION</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>This document describes the configuration files used by
+the daemon and clients.</p>
+</td>
+</table>
+<a name="LOCATION"></a>
+<h2>LOCATION</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>The default daemon config is named &quot;daemon.ini&quot;
+and is located in &quot;~/.btg&quot;. The clients use
+&quot;client.ini&quot;, also located in
+&quot;~/.btg&quot;.</p>
+</td>
+</table>
+<a name="FORMAT"></a>
+<h2>FORMAT</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>All config files used by btg uses the same format as
+Windows ini files.</p>
+<!-- INDENTATION -->
+<p>The general format is:</p>
+<!-- INDENTATION -->
+<p>&lt;SECTION&gt;</p>
+<!-- INDENTATION -->
+<p>&lt;KEY&gt; = &lt;VALUE&gt;</p>
+<!-- INDENTATION -->
+<p>Whitespace between the key and value is ignored.</p>
+<!-- INDENTATION -->
+<p>Lines beginning with &quot;;&quot; are comments.</p>
+</td>
+</table>
+<a name="DAEMON CONFIG"></a>
+<h2>DAEMON CONFIG</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>Section &quot;transport&quot;</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>default &minus; default transport between btgdaemon and
+client. Choice between &quot;tcpip&quot;,
+&quot;stcpip&quot;, &quot;xml-rpc&quot;,
+&quot;sxml-rpc&quot;.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>Section &quot;network&quot;</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>listen-to &minus; IPv4:port. Where network transports
+(tcpip, stcpip, xml-rpc and sxml-rpc) will be
+listening.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>torrent-range &minus; integer:integer. Which ports to use
+use for torrent communication and DHT. The daemon will not
+start unless two ports are available.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>torrent-ip &minus; IPv4 or IPv6 address. Libtorrent
+listens to this address.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>use-upnp &minus; True/false. Enable/disable UPnP (if
+support for it was selected at compile time).</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>upnp-ip &minus; IPv4 address. Issued to the UPnP-capable
+gateway as internal address.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>Section &quot;tls&quot;</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>ca-cert &minus; A filename, containing a TLS CA
+certificate.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>cert &minus; A filename, containing a TLS daemon
+certificate.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>cert-privkey &minus; A filename, containing a TLS daemon
+private key.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>Section &quot;logging&quot;</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>type &minus; Log type. Choice between:
+&quot;stdout&quot;, &quot;file&quot;,
+&quot;syslog&quot;.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>filename &minus; If file logging was selected, filename
+to write the log to.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>Section &quot;encryption&quot;</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>policy-in &minus; input policy. Choice between:
+force|enable|disable.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>policy-out &minus; output policy. Choice between:
+force|enable|disable.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>level &minus; encryption level. Choice between:
+plaintext|rc4|both.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>prefer-rc4 &minus; indicates if using rc4 is prefered.
+Choice between: true|false.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>Section &quot;misc&quot;</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>proxy &minus; IPv4:port. If you want to use a proxy for
+track communication, place it here.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>filter &minus; Filename from wich IPv4 addresses are read
+from. See &quot;filter_type&quot;.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>filter_type &minus; Format of the above file. Choice
+between: &quot;level1&quot; and &quot;emule&quot;.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>use-torrent-name &minus; True/false. Enable/disable using
+torrent names (as stored in the torrent file) instead of
+torrent file names.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>peer-id &minus; String. Override the Peer ID.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>user-agent &minus; String. Override the user agent sent
+to tracker.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>pidfile &minus; String. PID-file name (file to write the
+PID to)</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>announce-ip &minus; String, representing IPv4 or IPv6
+address. Tell trackers to use this address instead of the
+one specified using torrent-ip.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>allocation-mode &minus; Choice: sparse, full,
+compact.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>sparse: all pieces will be written to the place where
+they belong and sparse files will be used. This is the
+recommended, and default mode.</p>
+<!-- INDENTATION -->
+<p>full: all pieces will be allocated, zeroes will be
+written to the files, before the data is downloaded and
+written to the file. This might be useful for filesystems
+that don&rsquo;t support sparse files)</p>
+<!-- INDENTATION -->
+<p>compact: the storage will grow as more pieces are
+downloaded, and pieces are rearranged to finally be in their
+correct places once the entire torrent has been
+downloaded.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>Section &quot;auth&quot;</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>passwd-file &minus; Filename of the password file used by
+the daemon. See btgpasswd(1).</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>Section &quot;limit&quot;</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>The limits in this section will apply to all sessions
+independent of how many torrents are running. If multiple
+sessions are running each will have this limit, the limits
+are NOT shared between SESSIONS, only between torrents in a
+session.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>upload_rate_limit &minus; Max session-global upload rate
+in bytes per second.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>download_rate_limit &minus; Max session-global download
+rate in bytes per second.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>max_uploads &minus; Max session-global number of
+connected uploads.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>max_connections &minus; Max session-global number
+connections (when downloading).</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>Section &quot;savesessions&quot;</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Sessionsaving is an compile time optional feature in BTG
+(and can also be disabled from configuration file). It can
+be used to store information about all running sessions when
+btg is exited, and periodicly specified by timeout. If
+enabled, it will save any running sessions and state
+information about all torrents. Upload/download counters
+will be saved to, so ratio calculation can be performed even
+if we restart the daemon. Any settings for the torrent,
+including run state, limits etc will be saved here. The
+.torrent file will be removed from the temporary dir and
+saved in the session save file together with fast-resume
+data.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>enable &minus; Choice: &quot;true&quot; or
+&quot;false&quot;.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>filename &minus; In which file we should save running
+sessions.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>timeout &minus; How often to save the sessions (in
+seconds).</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>Section &quot;runas&quot;</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Run the daemon as another user/group.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>user &minus; Name of the user the daemon should run
+as.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>group &minus; Name of the group the daemon should run
+as.</p></td>
+</table>
+<a name="EXAMPLE DAEMON CONFIG"></a>
+<h2>EXAMPLE DAEMON CONFIG</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<pre>[transport]
+default=tcpip
+
+[network]
+listen-to=127.0.0.1:16000
+torrent-range=10024:11240
+
+[logging]
+type=file
+filename=/var/log/btgdaemon.log
+
+[misc]
+proxy=192.168.0.1:8118
+pidfile=/var/run/btgdaemon.pid
+
+[savesessions]
+enable=true
+filename=~/.btg/daemon.save
+
+[limit]
+upload_rate_limit = 40960
+download_rate_limit 409600
+max_uploads = -1
+max_connections = 100
+
+</pre>
+</td>
+</table>
+<a name="CLIENT CONFIG"></a>
+<h2>CLIENT CONFIG</h2>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>Section transport</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>default &minus; Choice between &quot;tcpip&quot;,
+&quot;stcpip&quot;, &quot;xml-rpc&quot;,
+&quot;sxml-rpc&quot;.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>Section network</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>daemon-address &minus; IPv4:port pair. If a network
+transport (tcpip, stcpip, xml-rpc or sxml-rpc) is used, this
+is where we should try to connect to the daemon.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>Section &quot;logging&quot;</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>type &minus; Log type. Choice between:
+&quot;stdout&quot;, &quot;file&quot;,
+&quot;syslog&quot;.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>filename &minus; If file logging was selected, filename
+to write the log to.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>Section &quot;Misc&quot;</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>leech-mode &minus; Choice between &quot;true&quot; or
+&quot;false&quot;.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>never-ask &minus; Never ask the user any questions.
+Choice between &quot;true&quot; or
+&quot;false&quot;.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>Section &quot;auth&quot;</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>username &minus; The username used for accessing the
+daemon.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>password-hash &minus; The hash of the password used for
+accessing the daemon.</p></td>
+</table>
+<a name="EXAMPLE CLIENT CONFIG"></a>
+<h2>EXAMPLE CLIENT CONFIG</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<pre>[transport]
+default=tcpip
+
+[network]
+daemon-address=127.0.0.1:16000
+
+[logging]
+type=file
+filename=/tmp/btg_client.log
+
+[misc]
+leech-mode=false
+</pre>
+</td>
+</table>
+<a name="FILES"></a>
+<h2>FILES</h2>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>~/.btg/daemon.ini - the daemon configuration
+file.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>~/.btg/client.ini - the client configuration
+file.</p></td>
+</table>
+<a name="AUTHOR"></a>
+<h2>AUTHOR</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Written by Michael Wojciechowski and Johan Strom.</p>
+</td>
+</table>
+<a name="SEE ALSO"></a>
+<h2>SEE ALSO</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>btg(5), btgdaemon(5), btgpasswd(1), btgcli(1),
+btgui(1)</p>
+</td>
+</table>
+<hr>
+</body>
+</html>

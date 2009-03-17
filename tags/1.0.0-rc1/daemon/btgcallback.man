@@ -1,0 +1,133 @@
+.TH BTGCALLBACK 5 "24 Mar 2008"
+.SH NAME
+btg event callback
+
+.SH DESCRIPTION
+The btg daemon is capable of calling a user specified script or executable in order to report events.
+The location of the script or executable is specified in the passwd file.
+
+.SH INTERFACE
+.nf
+/path/to/script <EVENT> <EVENTPARAMETERS>
+.fi 
+
+The daemon executes a script or executable specified for an user when an event happends. 
+The first parameter is the event name. 
+The following parameters depends on the event.
+
+.SH EVENTS
+The following events.
+
+.SS ADD
+
+.TP 
+Description
+Event reported when a torrent file is added.
+
+.TP 
+Parameters
+
+<EVENT> is set to "ADD".
+<EVENTPARAMETERS> is set to the file name of the torrent file which was added.
+
+.SS REMOVE
+.TP 
+Description
+Event reported when a torrent file is removed.
+
+.TP 
+Parameters
+
+<EVENT> is set to "REMOVE".
+<EVENTPARAMETERS> is set to the file name of the torrent file which was removed.
+
+.SS FINISHED
+
+.TP 
+Description
+
+Event reported when a torrent file finishes downloading and is
+stopped. This can happen because of a set seed timer.
+
+.TP 
+Parameters
+
+<EVENT> is set to "FINISHED".
+<EVENTPARAMETERS> is set to the file name of the torrent file which finished downloading.
+
+.SS SEEDING
+.TP 
+Description
+
+Event reported when a torrent file begins seeding.
+
+.TP 
+Parameters
+
+<EVENT> is set to "SEEDING".
+
+<EVENTPARAMETERS> is set to the file name of the torrent file which began seeding.
+
+.SS CLEAN
+.TP 
+Description
+
+Event reported when a torrent file is cleaned - which means that it is
+moved from the user work directory to the users destination directory.
+
+.TP 
+Parameters
+
+<EVENT> is set to "CLEAN".
+
+<EVENTPARAMETERS> is as follows. The first parameter is the name of the torrent file which was cleaned.
+The following parameters are all unique top directories or file names contained in the torrent file which was cleaned.
+
+.SH EXAMPLE SCRIPT
+.nf
+#!/bin/sh
+
+LOGFILE="/tmp/btgdaemon.callback.log"
+
+echo "New event."    >> $LOGFILE
+date                 >> $LOGFILE
+echo "Arguments: $*" >> $LOGFILE
+
+# Check the different events.
+
+case "$1" in
+  ADD)
+    echo "Torrent file '$2' was added." >> $LOGFILE
+    ;;
+
+  REMOVE)
+    echo "Torrent file '$2' was removed." >> $LOGFILE
+    ;;
+
+  FINISHED)
+    echo "Torrent file '$2' finished." >> $LOGFILE
+    ;;
+
+  SEEDING)
+    echo "Torrent file '$2' began seeding." >> $LOGFILE
+    ;;
+
+  CLEAN)
+    echo "Torrent file '$2' was cleaned." >> $LOGFILE
+    ;;
+
+  *)
+    echo "Unknown option." >> $LOGFILE
+    ;;
+esac
+.fi 
+
+.SH FILES
+.TP
+~/.btg/passwd - the daemon passwd file.
+
+.SH AUTHOR
+Written by Michael Wojciechowski.
+
+.SH "SEE ALSO"
+btgdaemon(5)
