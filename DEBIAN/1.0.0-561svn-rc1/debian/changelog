@@ -1,3 +1,23 @@
+btg-1.0.0 (561svn-rc1) unstable; urgency=low
+
+  * The following bugs were fixed:
+    015185 btgncli, broken handling of updates.
+    015049 Update Openwrt build.
+
+ -- Roman Rybalko <btg@romanr.info>  Mon, 16 Mar 2009 23:36:02 +0300
+
+btg-1.0.0 (558svn) unstable; urgency=low
+
+  * The following bugs were fixed:
+    015375 Wrong per-file progress info when several files are selected
+    015216 Merge btgui patches from mkbosmans.
+    015087 Add Arch Linux package to listing.
+    015074 context.peers does not work with "for all contexts" flag set.
+    015068 Crash when reading faulty IP filter range.
+    015048 btgvs, add lirc support and freevo integration.
+
+ -- Roman Rybalko <btg@romanr.info>  Sun, 15 Mar 2009 14:23:34 +0300
+
 btg (0.9.9) stable; urgency=low
 
   * The following bugs were fixed:

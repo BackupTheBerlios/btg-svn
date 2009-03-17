@@ -2,12 +2,20 @@ Source: btg@SUFFIX@
 Section: net
 Priority: extra
 Maintainer: Roman Rybalko <btg@romanr.info>
-Build-Depends: debhelper (>= 5), automake, pkg-config, dialog, libtorrent-rasterbar-dev (>= 0.13) | libtorrent-rasterbar-0.13-dev, libboost-iostreams-dev, libboost-filesystem-dev, libboost-date-time-dev, libboost-thread-dev, libboost-program-options-dev, libncurses5-dev, libgnutls-dev, libgtkmm-2.4-dev, libcppunit-dev, libclinkcc-dev
+Build-Depends: debhelper (>= 5), automake, pkg-config, dialog,
+ libtorrent-rasterbar-dev (>= 0.13) | libtorrent-dev (>= 0.12) | libtorrent-rasterbar-0.14.1-dev | libtorrent-rasterbar-0.14.2-dev,
+ libboost-iostreams1.35-dev | libboost-iostreams1.36-dev | libboost-iostreams1.37-dev | libboost-iostreams1.38-dev,
+ libboost-filesystem1.35-dev | libboost-filesystem1.36-dev | libboost-filesystem1.37-dev | libboost-filesystem1.38-dev,
+ libboost-date-time1.35-dev | libboost-date-time1.36-dev | libboost-date-time1.37-dev | libboost-date-time1.38-dev,
+ libboost-thread1.35-dev | libboost-thread1.36-dev | libboost-thread1.37-dev | libboost-thread1.38-dev,
+ libboost-program-options1.35-dev | libboost-program-options1.36-dev | libboost-program-options1.37-dev | libboost-program-options1.38-dev,
+ libncurses5-dev, libgnutls-dev, libgtkmm-2.4-dev, libcppunit-dev
 Standards-Version: 3.7.3
 
 Package: btg-common@SUFFIX@
-Depends: libboost-date-time1.34.1, libboost-filesystem1.34.1, libboost-thread1.34.1, libboost-iostreams1.34.1, libboost-program-options1.34.1, libgnutls13 (>= 1.6), zlib1g (>= 1:1.2.3), dialog
-Conflicts: btg-common
+Depends: libboost-date-time1.37.0, libboost-filesystem1.37.0, libboost-thread1.37.0, libboost-iostreams1.37.0,
+ libboost-program-options1.37.0, libgnutls26 (>= 2.4), zlib1g (>= 1:1.2.3), dialog
+Conflicts: btg-common, btg-common-0.9.7, btg-common-0.9.8, btg-common-0.9.9
 Recommends: btg-daemon@SUFFIX@ | btg-gui@SUFFIX@ | btg-cli@SUFFIX@
 Architecture: i386 i586 i686 amd64
 Section: net
@@ -77,8 +85,8 @@ Description: GUI interface to the BTG daemon
 
 Package: btg-www@SUFFIX@
 Depends: apache2 | httpd, php5
-Replaces: btg-www
-Recommends: btg-gui@SUFFIX@ | btg-cli@SUFFIX@
+Conflicts: btg-www, btg-www-0.9.7, btg-www-0.9.8, btg-www-0.9.9
+Recommends: btg-gui@SUFFIX@, btg-cli@SUFFIX@
 Architecture: all
 Section: net
 Priority: extra
@@ -90,9 +98,8 @@ Description: web interface to the BTG daemon
  http://btg.berlios.de
 
 Package: btg-daemon@SUFFIX@
-Depends: btg-common@SUFFIX@ (= @VERSION@), libclinkcc (>= 1.7.1), libtorrent-rasterbar (>= 0.13) | libtorrent-rasterbar-0.13
-Replaces: btg-daemon
-Recommends: btg-gui@SUFFIX@ | btg-cli@SUFFIX@ | btg-www@SUFFIX@
+Depends: btg-common@SUFFIX@ (= @VERSION@), libtorrent-rasterbar2 (>= 0.14) | libtorrent-rasterbar-0.14
+Recommends: btg-gui@SUFFIX@, btg-cli@SUFFIX@, btg-www@SUFFIX@
 Architecture: i386 i586 i686 amd64
 Section: net
 Priority: extra

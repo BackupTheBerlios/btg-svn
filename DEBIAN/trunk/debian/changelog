@@ -1,3 +1,64 @@
+btg-1.0.0 (561svn-rc1) unstable; urgency=low
+
+  * The following bugs were fixed:
+    015185 btgncli, broken handling of updates.
+    015049 Update Openwrt build.
+
+ -- Roman Rybalko <btg@romanr.info>  Mon, 16 Mar 2009 23:36:02 +0300
+
+btg-1.0.0 (558svn) unstable; urgency=low
+
+  * The following bugs were fixed:
+    015375 Wrong per-file progress info when several files are selected
+    015216 Merge btgui patches from mkbosmans.
+    015087 Add Arch Linux package to listing.
+    015074 context.peers does not work with "for all contexts" flag set.
+    015068 Crash when reading faulty IP filter range.
+    015048 btgvs, add lirc support and freevo integration.
+
+ -- Roman Rybalko <btg@romanr.info>  Sun, 15 Mar 2009 14:23:34 +0300
+
+btg (0.9.9) stable; urgency=low
+
+  * The following bugs were fixed:
+    014834 btgncli, setting limits.
+    014794 Regression: short_open_tag=off.
+    014792 Popup warning when adding a URL to download.
+    014583 Possibility to allocate files.
+    014407 Show limits ranges in geometrical progression.
+    014372 Building issue (at configure step).
+    014371 Does not compile against boost 1.36.
+    014353 btgncli doc doesn't say what key configuration does.
+    014351 WAN annouce ip not used.
+    014308 btgui: infohash and announce_url in Details.
+    014305 Limits and sel.files persistance when move betw. sessions.
+    014280 btgncli, add sorting by..
+    014271 Typo in btg.js.
+    014268 Update Freebsd notes in howto.
+    014223 libsigc++-2.2.* is not supported.
+    013963 btgcli limit setting error.
+    013962 wwwUI response times optimization.
+    011275 Use UPnP support from libtorrent.
+
+ -- Roman Rybalko <btg@romanr.info>  Sat, 14 Mar 2009 12:51:49 +0300
+
+btg (0.9.8) stable; urgency=low
+
+  * The following bugs were fixed:
+    014142 Compilation broke on curl link with --as-needed LDFLAG.
+    013961 Race-condition in btgui (in peer-list).
+
+ -- Roman Rybalko <btg@romanr.info>  Thu, 10 Jul 2008 20:20:14 +0400
+
+btg-0.9.8 (445svn) UNRELEASED; urgency=low
+
+  * Increased the client read-timout.
+    More communication stability on high daemon loads
+      but long hangups on wrong responses.
+    TESTING.
+
+ -- Roman Rybalko <btg@romanr.info>  Sun, 06 Jul 2008 20:21:34 +0400
+
 btg-0.9.8 (439svn-RC3) stable; urgency=low
 
   * The following bugs were fixed:
