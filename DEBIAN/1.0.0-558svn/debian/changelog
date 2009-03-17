@@ -1,3 +1,11 @@
+btg-1.0.0 (561svn-rc1) unstable; urgency=low
+
+  * The following bugs were fixed:
+    015185 btgncli, broken handling of updates.
+    015049 Update Openwrt build.
+
+ -- Roman Rybalko <btg@romanr.info>  Mon, 16 Mar 2009 23:36:02 +0300
+
 btg-1.0.0 (558svn) unstable; urgency=low
 
   * The following bugs were fixed:
