@@ -240,7 +240,8 @@ namespace btg
          return *this;
       }
 
-      void sessionData::update(t_int const _upload_rate_limit,
+      void sessionData::update(btg::core::LogWrapperType _logwrapper,
+                               t_int const _upload_rate_limit,
                                t_int const _download_rate_limit,
                                t_int const _max_uploads,
                                t_long const _max_connections,
@@ -272,7 +273,8 @@ namespace btg
          upload_bytes_        = upl - upload_bytes_last_;
          upload_bytes_last_   = upl;
 
-         // BTG_MNOTICE("setting counters, dnl " << download_bytes_ << ", upl " << upload_bytes_);
+         BTG_MNOTICE(_logwrapper,
+                     "setting counters, dnl " << download_bytes_ << ", upl " << upload_bytes_);
 
          val_ul_rate.min  = 1;
          val_ul_rate.used = upload_bytes_;
@@ -351,7 +353,7 @@ namespace btg
             }
       }
 
-      void sessionData::set()
+      void sessionData::set(btg::core::LogWrapperType _logwrapper)
       {
          /*
          t_int ul = session_->m_ul_bandwidth_quota.given / interval_;
@@ -386,9 +388,9 @@ namespace btg
                uploads++;
             }
 
-         //BTG_MNOTICE("Setting limit:");
-         //BTG_MNOTICE("ul = " << ul << " bytes/sec, dl = " << dl << " bytes/sec.");
-         //BTG_MNOTICE("connections = " << connections << ", uploads = " << uploads << ".");
+         BTG_MNOTICE(_logwrapper, "Setting limit:");
+         BTG_MNOTICE(_logwrapper, "ul = " << ul << " bytes/sec, dl = " << dl << " bytes/sec.");
+         BTG_MNOTICE(_logwrapper, "connections = " << connections << ", uploads = " << uploads << ".");
 
          session_->set_upload_rate_limit(ul);
          session_->set_download_rate_limit(dl);

@@ -244,7 +244,8 @@ namespace btg
 
          BTG_MNOTICE(logWrapper(), "distributing resources (ul): " << resources);
 
-         allocate_resources(resources,
+         allocate_resources(logWrapper(),
+                            resources,
                             sessions_,
                             &sessionData::val_ul_rate);
 
@@ -261,7 +262,8 @@ namespace btg
 
          BTG_MNOTICE(logWrapper(), "distributing resources (dl): " << resources);
 
-         allocate_resources(resources,
+         allocate_resources(logWrapper(),
+                            resources,
                             sessions_,
                             &sessionData::val_dl_rate);
 
@@ -277,7 +279,8 @@ namespace btg
 
          BTG_MNOTICE(logWrapper(), "distributing resources (max ul): " << resources);
          
-         allocate_resources(resources,
+         allocate_resources(logWrapper(),
+                            resources,
                             sessions_,
                             &sessionData::val_uploads);
 
@@ -294,7 +297,8 @@ namespace btg
 
          BTG_MNOTICE(logWrapper(), "distributing resources (max conn): " << resources);
 
-         allocate_resources(resources,
+         allocate_resources(logWrapper(),
+                            resources,
                             sessions_,
                             &sessionData::val_connections);
 
@@ -305,7 +309,7 @@ namespace btg
               sessionIter != sessions_.end();
               sessionIter++)
             {
-               sessionIter->set();
+               sessionIter->set(logWrapper());
             }
       }
 
@@ -318,9 +322,10 @@ namespace btg
             {
                sessionData & sessiondata = *sessionIter;
 
-               // BTG_MNOTICE(logWrapper(), "rates: " << upload_rate_limit_ << ", " << download_rate_limit_ << ", " << max_uploads_ << ", " << max_connections_);
+               BTG_MNOTICE(logWrapper(), "rates: " << upload_rate_limit_ << ", " << download_rate_limit_ << ", " << max_uploads_ << ", " << max_connections_);
 
-               sessiondata.update(upload_rate_limit_,
+               sessiondata.update(logWrapper(),
+                                  upload_rate_limit_,
                                   download_rate_limit_,
                                   max_uploads_,
                                   max_connections_,

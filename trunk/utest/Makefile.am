@@ -70,9 +70,9 @@ else
   URL_DEFINES=-DBTG_OPTION_URL=@BTG_OPTION_URL@
 endif
 
-testrunner_SOURCES = listener.cpp testrunner.cpp synchronize.cpp test_daemon.cpp test_os.cpp test_gen_transport.cpp test_tcpip.cpp test_http.cpp test_bcore.cpp $(top_srcdir)/bcore/configuration.cpp $(top_srcdir)/bcore/os/gnutlsif.cpp $(BCORE_CLIENT_TEST)
+testrunner_SOURCES = listener.cpp testrunner.cpp synchronize.cpp test_daemon.cpp test_daemon_res.cpp test_os.cpp test_gen_transport.cpp test_tcpip.cpp test_http.cpp test_bcore.cpp $(top_srcdir)/bcore/configuration.cpp $(top_srcdir)/bcore/os/gnutlsif.cpp $(BCORE_CLIENT_TEST)
 
-noinst_HEADERS     = listener.h testrunner.h synchronize.h test_daemon.h test_os.h test_gen_transport.h test_tcpip.h test_http.h test_bcore.h files.h $(top_srcdir)/bcore/configuration.h $(BCORE_CLIENT_TEST_HEADER)
+noinst_HEADERS     = listener.h testrunner.h synchronize.h test_daemon.h test_daemon_res.h test_os.h test_gen_transport.h test_tcpip.h test_http.h test_bcore.h files.h $(top_srcdir)/bcore/configuration.h $(BCORE_CLIENT_TEST_HEADER)
 
 check_PROGRAMS     = testrunner
 

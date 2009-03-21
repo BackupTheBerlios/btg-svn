@@ -1,5 +1,5 @@
 /*
- * btg Copyright (C) 2009 Michael Wojciechowski.
+ * btg Copyright (C) 2005 Michael Wojciechowski.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,25 +20,48 @@
  * $Id$
  */
 
-#ifndef allocate_resources_h
-#define allocate_resources_h
+#include <cppunit/extensions/HelperMacros.h>
 
-#include <daemon/limitval.h>
+#include <bcore/command/command.h>
+#include <bcore/command_factory.h>
+#include <bcore/util.h>
+#include <bcore/dbuf.h>
+#include <bcore/logable.h>
 #include <bcore/logable.h>
 
 namespace btg
 {
    namespace daemon
    {
-      
-      /// Allocate resources, used for global limits.
-      void allocate_resources(btg::core::LogWrapperType _logwrapper,
-                              int _resources, 
-                              std::vector<sessionData>& _sessions,
-                              limitValue sessionData::* _res);
+      class fileTrack;
+   }
+}
 
-   } // namespace btg
-} // namespace daemon
+class testDaemonRes : public CppUnit::TestFixture
+{
+   CPPUNIT_TEST_SUITE( testDaemonRes );
 
-#endif // allocate_resources_h
+   CPPUNIT_TEST( testAllocationInf );
 
+   CPPUNIT_TEST( testAllocation );
+
+   CPPUNIT_TEST( testAllocation2 );
+
+   CPPUNIT_TEST( testAllocation3 );
+
+   CPPUNIT_TEST_SUITE_END();
+
+ public:
+   // Used by the test system.
+   void setUp();
+   // Used by the test system.
+   void tearDown();
+
+   void testAllocationInf();
+   void testAllocation();
+   void testAllocation2();
+   void testAllocation3();
+
+ private:
+   btg::core::LogWrapperType logwrapper;
+};

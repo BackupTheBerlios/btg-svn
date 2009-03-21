@@ -25,6 +25,7 @@
 
 #include <bcore/type.h>
 #include <boost/integer_traits.hpp>
+#include <bcore/logable.h>
 
 namespace libtorrent
 {
@@ -140,7 +141,8 @@ namespace btg
                ///
                /// Update the session's resource_request members using
                /// this information.
-               void update(t_int const _upload_rate_limit,
+               void update(btg::core::LogWrapperType _logwrapper,
+                           t_int const _upload_rate_limit,
                            t_int const _download_rate_limit,
                            t_int const _max_uploads,
                            t_long const _max_connections,
@@ -148,7 +150,7 @@ namespace btg
 
                /// Set the limits, which are stored in the contained
                /// session.
-               void set();
+               void set(btg::core::LogWrapperType _logwrapper);
 
                /// Get the contained session.
                libtorrent::session* session() const;
