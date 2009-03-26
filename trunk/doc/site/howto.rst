@@ -819,7 +819,8 @@ any e-mail.
 Setting global limits based on the time of the day
 --------------------------------------------------
 
-The following script could be used to set upload limits based on the time of the day.
+The following script could be used to set upload limits based on the
+time of the day.
 
 ::
 
@@ -1005,6 +1006,26 @@ XScale-IXP42x, the following had to be used in the .config file.
  CONFIG_TARGET_OPTIMIZATION="-Os -pipe -march=armv5te -mtune=xscale -funit-at-a-time"
  CONFIG_GCC_VERSION="4.2.3"
  CONFIG_UCLIBC_VERSION="0.9.29"
+
+PyTVShows Integration
+=====================
+
+Install `PyTVShows`_ as described in its README file.
+
+The following script can be run from cron to fetch new torrents and save them to the directory from which it can be added to BTG automatically.
+
+::
+ 
+ #!/bin/sh
+ 
+ ODIR=/home/user/btg/incoming
+ 
+ /path/to/pytvshows/bin/pytvshows -v -o$ODIR -q normal
+
+Note that the downloaded torrent files can have spaces in them. Use a script like `fixcase`_ to remove them prior to loading into BTG.
+
+.. _PyTVShows: http://pytvshows.sourceforge.net
+.. _fixcase: files/fixcase
 
 Freevo Integration
 ==================
