@@ -264,14 +264,14 @@ namespace btg
                      if (boost::filesystem::is_directory(seedDir_ / file_path))
                         {
                            BTG_MNOTICE(logWrapper(), "dataPresentInSeedDir: torrent file '"
-                              << file_path << "' is a directory, can't use seedDir.");
+                                       << file_path.string() << "' is a directory, can't use seedDir.");
                         }
                      else
                         {
                            status = true;
                            
                            BTG_MNOTICE(logWrapper(), "dataPresentInSeedDir: found torrent file '"
-                              << file_path << "'.");
+                                       << file_path.string() << "'.");
                         }
                      break;
                   }
