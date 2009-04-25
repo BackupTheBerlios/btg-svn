@@ -191,6 +191,7 @@ Authors
 - Gabor Tanka (DHT fixes).
 - Richard S. Allen (bugfix #14751).
 - Maarten Bosmans (bugfix #15216).
+- gH0StArthour (bugfix #15571 - Hungarian translation).
 - Jesper Nyholm Jensen (Testing).
 
 Getting Help

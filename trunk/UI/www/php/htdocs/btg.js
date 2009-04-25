@@ -22,6 +22,8 @@
  * $Id: btg.js,v 1.1.2.53 2007/08/02 19:49:21 wojci Exp $
  */
 
+
+
 /**************************************************
  * Global variables
  **************************************************/
@@ -92,33 +94,46 @@ var contextAbortId = -1;
 /* sessionList, list existing sessions */
 function sessionList()
 {
-    setStatus("Listing available sessions...");
+    setStatus(lang[lng,'session_listing']);
     btg_sessionList(cb_sessionList, cb_sessionList_err);
+}
+/* setting up a cookie for the language */
+function refresh() //need to reload the new language
+{
+	window.location.reload( true ); //nem csinálunk semmit
+}
+
+function select_language(langname) {
+	var language = langname;    
+	document.cookie = "language" + "=" +escape( language ) ;
+	setTimeout( "refresh()", 3 );
 }
 
 /* auth, authorize  */
 function auth()
 {
+
     var username = encodeURIComponent(document.frm_auth.username.value);
     var password = encodeURIComponent(document.frm_auth.password.value);
     document.frm_auth.username.value = "";
     document.frm_auth.password.value = "";
-    setStatus("Logging in " + username + "...");
+    setStatus(lang[lng,'loggingin'] + username + "...");
     btg_auth(cb_auth, cb_auth_err, username, password);
 }
 
 /* deauth, deauthorize (logout) */
 function deauth()
 {
-    setStatus("Logging out...");
+    setStatus(lang[lng,'loggingout']);
     btg_deauth(cb_deauth, cb_deauth);
+
 }
 
 /* sessionAttach, attach to a existing session */
 function sessionAttach()
 {
     var id = document.frm_sessionlist.sessionlist.options[document.frm_sessionlist.sessionlist.selectedIndex].value;
-    setStatus("Attaching to session " + id + "...");
+    setStatus(lang[lng,'sessionattach'] + id + "...");//Attaching to session_
     btg_sessionAttach(cb_sessionAttach, cb_sessionAttach_err, id);
 }
 
@@ -145,7 +160,7 @@ function sessionSetup()
 	// User enters minutes...
 	seedTimeout=seedTimeout*60;
 
-    setStatus("Setting up new session...");
+    setStatus(lang[lng,'newsession']);//Setting up new session...
     btg_sessionSetup(cb_sessionSetup, 
 		     cb_sessionSetup_err, 
 		     seedLimit, 
@@ -157,40 +172,40 @@ function sessionSetup()
 /* sessionDetach, detach from the current session */
 function sessionDetach()
 {
-    setStatus("Detaching from session...");
+    setStatus(lang[lng,'detachfrom']);
     btg_sessionDetach(cb_sessionDetach, cb_sessionDetach_err);
 }
 
 /* sessionQuit, quit the currently attached session */
 function sessionQuit()
 {
-    if(!confirm("Are you realy sure you want to terminate this session and all torrents downloading in it?"))
+    if(!confirm(lang[lng,'question']))//Are you realy sure you want to terminate this session and all torrents downloading in it?
 	return;
     
-    setStatus("Terminating session...");
+    setStatus(lang[lng,'terminator']);
     btg_sessionQuit(cb_sessionQuit, cb_sessionQuit_err);
 }
 
 function cleanAllContexts()
 {
-    if(!confirm("Are you sure you want to clean all torrents?"))
+    if(!confirm(lang[lng,'cleanall']))//Are you sure you want to clean all torrents?
 	return;
 
-    setStatus("Cleaning session...");
+    setStatus(lang[lng,'cleansession']);//"Cleaning session..."
     btg_cleanAll(cb_cleanAll, cb_cleanAll_err);
 }
 
 function showGlobalLimits()
 {
     setUIState(4);
-    setStatus("Getting global limits.");
+    setStatus(lang[lng,'gettinglobalimits']);//Getting global limits.
 
     btg_globallimitstatus(cb_globallimitstatus, cb_globallimitstatus_err);
 }
 
 function cancelGlobalLimits()
 {
-    setStatus("Not setting global limits.");
+    setStatus(lang[lng,'notsettinggl']);//Not setting global limits.
     setUIState(3);
 }
 
@@ -248,13 +263,13 @@ function showSessionName()
     btg_sessionName(cb_updateSessionNameField, cb_updateSessionNameField_err);
 
     setUIState(5);
-    setStatus("Setting session name.");
+    setStatus(lang[lng,'setsessioname']);//Setting session name.
 }
 
 function cancelSessionName()
 {
     setUIState(3);
-    setStatus("Setting session name cancelled.");
+    setStatus(lang[lng,'setsessionamecancelled']);//Setting session name cancelled.
 }
 
 function setSessionName()
@@ -271,32 +286,32 @@ function setSessionName()
 /* contextStart, start a specific torrent */
 function contextStop(id)
 {
-    setStatus("Stopping torrent...");
+    setStatus(lang[lng,'stopping']);//Stopping torrent...
     btg_contextStop(cb_contextStop, cb_contextStop_err, id);
 }
 
 /* contextStop, stop a specific torrent */
 function contextStart(id)
 {
-    setStatus("Starting torrent...");
+    setStatus(lang[lng,'starting']);//Starting torrent...
     btg_contextStart(cb_contextStart, cb_contextStart_err, id);
 }
 
 /* contextAbort, remove a specific torrent */
 function contextAbort(id)
 {
-    if (!confirm("Are you sure?"))
+    if (!confirm(lang[lng,'areyou']))//Are you sure?
     {
 	return;
     }
 
     var eraseData = 0;
-    if (confirm("Do you want to remove the downloaded data from disk?"))
+    if (confirm(lang[lng,'doyouwantremove']))//Do you want to remove the downloaded data from disk?
     {
 	eraseData = 1;
     }
     
-    setStatus("Deleting torrent...");
+    setStatus(lang[lng,'deleting']);//Deleting torrent...
     contextAbortId = id;
     btg_contextAbort(cb_contextAbort, cb_contextAbort_err, id, eraseData);
 }
@@ -304,23 +319,23 @@ function contextAbort(id)
 /* contextClean, clean/remove a specific torrent */
 function contextClean(id)
 {
-    if(!confirm("Are you sure?"))
+    if(!confirm(lang[lng,'areyou']))
 	return;
-    setStatus("Moving torrent...");
+    setStatus(lang[lng,'moving']);//Moving torrent...
     btg_contextClean(cb_contextClean, cb_contextClean_err, id);
 }
 
 /* contextPeers, get peer list for a torrent */
 function contextPeers(id)
 {
-    setStatus("Getting peers list...");
+    setStatus(lang[lng,'gettingpeers']);//Getting peers list...
     btg_contextPeers(cb_contextPeers, cb_contextPeers_err, id);
 }
 
 /* contextLimitStatus, get limits for a specific torrent (or a list of torrents, comma delimited) */
 function contextLimitStatus(id)
 {
-    setStatus("Getting limit status...");
+    setStatus(lang[lng,'gettinglimitstatus']);//Getting limit status...
     btg_contextLimitStatus(cb_contextLimitStatus, cb_contextLimitStatus_err, id);
 }
 
@@ -377,19 +392,19 @@ function uploadCheck()
     var file = document.getElementById('upload_input');
     if(file.value == '')
     {
-	alert('Please select a file.');
+	alert(lang[lng,'pleaseselect']);//Please select a file.
 	return false;
     }
 
     /* Make sure file ends with .torrent */
     if(!file.value.match(/\.torrent$/))
     {
-	alert('Only .torrent files allowed.');
+	alert(lang[lng,'onlymetallowed']);//Only .torrent files allowed.
 	return false;
     }
 
     /* Valid file */
-    setStatus('Uploading torrent...');
+    setStatus(lang[lng,'uploading']);//Uploading torrent...
     return true;
 }
 
@@ -402,7 +417,7 @@ function init(is_authed, session)
     if(is_authed == 0)
     {
 	setUIState(1);
-	setStatus("Waiting for login.");
+	setStatus(lang[lng,'waitlogin']);//Waiting for login.
     }
     else if(session == -1)
     {
@@ -412,7 +427,7 @@ function init(is_authed, session)
     }else
     {
 	/* Authed and attached */
-	setStatus("Loading context list...");
+	setStatus(lang[lng,'loadinglist']);//Loading context list...
 	doAutoRefresh = 1;
 	refreshContextList();
 	setUIState(3);
@@ -625,7 +640,7 @@ function uploadDone()
     var response = content.getElementsByTagName('response')[0];
     if(!response)
     {
-	alert("Invalid response from server, missing response. Upload failed.");
+	alert(lang[lng,'invalidresponse']);//Invalid response from server, missing response. Upload failed.
 	return;
     }
 
@@ -654,7 +669,7 @@ function loadUrl()
     var filename = url;
 
     if(!url.match('^http[s]?://(.+)'))
-	return alert("Invalid URL");
+	return alert(lang[lng,'invalidurl']);//"Invalid URL"
 
     // Extract filename from URL
     if(filename.indexOf('?') != -1)
@@ -664,7 +679,7 @@ function loadUrl()
 	filename = filename.substr(filename.lastIndexOf('/') + 1);
 
     if(filename.length == 0 || filename.indexOf('.torrent') == -1)
-	filename = prompt('Enter filename');
+	filename = prompt(lang[lng,'enterfilename']);//Enter filename
 
     if(filename == null)
 	return;
@@ -696,7 +711,7 @@ function timer()
 
 	if (isBlurred)
 	{
-	    document.getElementById('statusMessage').innerHTML = 'Window not on focus, wont update...';
+	    document.getElementById('statusMessage').innerHTML = lang[lng,'notfocus'];//Window not on focus, wont update...
 	}
 	else if(diff <= 0)
 	{
@@ -709,7 +724,7 @@ function timer()
 	{
 	    if (updatesStopped == 0)
 	    {
-		document.getElementById('statusMessage').innerHTML = 'Update in ' + (refreshTimeout - contextsAge)  + ' seconds.';
+		document.getElementById('statusMessage').innerHTML = lang[lng,'updatein'] + (refreshTimeout - contextsAge)  + lang[lng,'seconds'];
 	    }
 	}
     }
@@ -728,23 +743,23 @@ function timer()
 
 function cb_setSessionName(response)
 {
-    setStatus("Session name set.");
+    setStatus(lang[lng,'sessionameset']);//Session name set.
 }
 
 function cb_setSessionName_err(error, errStr)
 {
-    setStatus("Session name not set: " + errStr);
+    setStatus(lang[lng,'sessionamenotset'] + errStr);//"Session name not set: " + errStr
 }
 
 function cb_globallimit(response)
 {
-    setStatus("Global limits set.");
+    setStatus(lang[lng,'globalimitsset']);//Global limits set.
     setUIState(3);
 }
 
 function cb_globallimit_err(error, errStr)
 {
-    setStatus("Unable to set global limits.");
+    setStatus(lang[lng,'unableglobalimitsset']);//Unable to set global limits.
     setUIState(3);
 }
 
@@ -791,7 +806,7 @@ function cb_globallimitstatus(response)
 
 function cb_globallimitstatus_err(error, errStr)
 {
-    setStatus("Unable to get global limit status...");
+    setStatus(lang[lng,'unableglobalimitsget']);//Unable to get global limit status...
 }
 
 var pendingDownloadID = -1;
@@ -805,7 +820,7 @@ function cb_contextCreateFromUrl(response)
     f.value = '';
     i.style.display='none';
     s.style.display='block';
-    s.innerHTML='Downloading URL...';
+    s.innerHTML=lang[lng,'downloadurl'];//Downloading URL...
 
     setTimeout('checkUrlStatus();', 1000);
 }
@@ -844,24 +859,24 @@ function cb_contextUrlStatus(response)
     switch(ss)
     {
     case 1:
-	s.innerHTML='Downloading URL...';
+	s.innerHTML=lang[lng,'downloadurl'];
 	break;
     case 2:
 	done = true;
-	s.innerHTML = 'Failed to download URL.<br/>(Click here to continue)';
+	s.innerHTML = lang[lng,'failesdownloadurl'];//Failed to download URL.<br/>(Click here to continue)
 	break;
     case 4:
 	done = true;
-	s.innerHTML = 'URL downloaded and created successfully.<br/>(Click here to continue)';
+	s.innerHTML = lang[lng,'successdownloadurl'];//URL downloaded and created successfully.<br/>(Click here to continue)
 	refreshContextList();
 	break;
     case 5:
 	done = true;
-	s.innerHTML = 'Failed to create context from URL.<br/>(Click here to continue)';
+	s.innerHTML = lang[lng,'faildownloadurl'];//Failed to create context from URL.<br/>(Click here to continue)
 	break;
     case 0:
     default:
-	s.innerHTML='Unknown';
+	s.innerHTML=lang[lng,'unknown'];//'Unknown'
 	break;
     }
     
@@ -898,13 +913,19 @@ function cb_auth(response)
     sessionList();
 }
 
+/*
+Failed to list contexts: Failed to decode received command:unable to deserialize (c) File info response: BTGSerializable::getBytes failed. Value is '' of type NULL.
+
+Teljes letöltési sebesség: 0b/s
+Teljes feltöltési sebesség: 0b/s
+*/
 /**
  * Error Callback for btg_auth.
  * Called when the auth failed.
  */
 function cb_auth_err(error, errStr)
 {
-    setError(error, 'Failed to login: ' + errStr);
+    setError(error, lang[lng,'failogin'] + errStr);//Failed to login: 
     document.frm_auth.username.focus();
 }
 
@@ -914,7 +935,7 @@ function cb_auth_err(error, errStr)
  */
 function cb_deauth(response)
 {
-    setStatus("Logged out.");
+    setStatus(lang[lng,'loggedout']);//Logged out.
     setUIState(1);
 }
 
@@ -948,7 +969,7 @@ function cb_sessionList_err(error, errStr)
     var list = document.getElementById('sessionlist');
     while(list.hasChildNodes())
 	list.removeChild(list.childNodes[0]);
-    setError(error, 'Could not list sessions: ' + errStr);
+    setError(error, lang[lng,'nosessionlisting'] + errStr);//'Could not list sessions: ' + errStr
 }
 
 /**
@@ -970,7 +991,7 @@ function cb_sessionAttach(response)
  */
 function cb_sessionAttach_err(error, errStr)
 {
-    setError(error, 'Failed to attach to session: ' + errStr);
+    setError(error, lang[lng,'failedtoattach'] + errStr);//Failed to attach to session: 
 }
 
 /**
@@ -989,7 +1010,7 @@ function cb_sessionSetup(response)
  */
 function cb_sessionSetup_err(error, errStr)
 {
-    setError(error, 'Failed to create new session: ' + errStr);
+    setError(error, lang[lng,'failednewsession'] + errStr);//Failed to create new session: 
 }
 
 /**
@@ -1009,7 +1030,7 @@ function cb_sessionDetach(response)
  */
 function cb_sessionDetach_err(error, errStr)
 {
-    setError(error, 'Failed to detach from session: ' + errStr);
+    setError(error, lang[lng,'failedtodetach'] + errStr);//Failed to detach from session: 
 }
 
 /**
@@ -1029,18 +1050,18 @@ function cb_sessionQuit(response)
  */
 function cb_sessionQuit_err(error, errStr)
 {
-    setError(error, 'Failed to terminate session: ' + errStr);
+    setError(error, lang[lng,'failedtoterminator'] + errStr);//Failed to terminate session: 
 }
 
 function cb_cleanAll(response)
 {
-    setStatus("Session cleaned...");
+    setStatus(lang[lng,'sessioncleanded']);//Session cleaned...
     refreshContextList();
 }
 
 function cb_cleanAll_err(error, errorStr)
 {
-    setError(error, 'Unable to clean session.');
+    setError(error, lang[lng,'unablecleansession']);//Unable to clean session.
 }
 
 function cb_contextList(response)
@@ -1068,8 +1089,8 @@ function cb_contextList(response)
 
 function cb_contextList_err(error, errStr)
 {
-    setError(error, 'Failed to obtain context list: '+errStr);
-}
+    setError(error, lang[lng,'failedconextlist'] + errStr);//Failed to obtain context list: 
+}//lang['en','unablecleansession']
 
 /**
  * Callback for btg_contextStatus.
@@ -1077,7 +1098,7 @@ function cb_contextList_err(error, errStr)
  */
 function cb_contextStatus(response)
 {
-    setStatus("Parsing context response...");
+    setStatus(lang[lng,'parsingcontextresp']);//Parsing context response...
 
     /* Fetch all contexts, create new Status objects for them (status.js) and let 
 	 * updateContextTable do the work.
@@ -1085,7 +1106,7 @@ function cb_contextStatus(response)
     var contexts = response.getElementsByTagName('contexts')[0];
     if (contexts == null)
     {
-	setStatus("Server didnt provide any contexts!");
+	setStatus(lang[lng,'servernoconects']);//Server didnt provide any contexts!
 	return;
     }
 
@@ -1122,7 +1143,7 @@ function cb_contextStatus(response)
  */
 function cb_contextStatus_err(error, errStr)
 {
-    setError(error, 'Failed to list contexts: '+errStr);
+    setError(error, lang[lng,'failedcontextlists'] +errStr);//Failed to list contexts: 
     canGetContexts = 0;
 }
 
@@ -1130,7 +1151,7 @@ function cb_sessionName(response)
 {
     var sesnam = getFirstChildValue(response, 'sessionname');
     var sesid  = getFirstChildValue(response, 'sessionid');
-    document.title = "BTG (session " + sesid + ": " + sesnam + ")";
+    document.title = "BTG - " + sesnam + " (" + sesid + ")";
 }
 
 function cb_sessionName_err(error, errStr)
@@ -1145,7 +1166,7 @@ function cb_updateSessionNameField(response)
 
 function cb_updateSessionNameField_err(error, errStr)
 {
-    document.getElementById('session_name').value = "Unknown";
+    document.getElementById('session_name').value = lang[lng,'unknown'];
 }
 
 /**
@@ -1188,7 +1209,7 @@ function cb_contextLimitStatus(response)
  */
 function cb_contextLimitStatus_err(error, errStr)
 {
-    setError(error, 'Failed to get limit status: '+errStr);
+    setError(error, lang[lng,'failgetlimits'] + errStr);//Failed to get limit status: 
 }
 
 /**
@@ -1206,7 +1227,7 @@ function cb_contextLimit(response)
  */
 function cb_contextLimit_err(error, errStr)
 {
-    setError(error, 'Failed to set limit: '+errStr);
+    setError(error, lang[lng,'failsetlimit'] + errStr);//Failed to set limit: 
 }
 
 /**
@@ -1224,7 +1245,7 @@ function cb_contextStart(response)
  */
 function cb_contextStart_err(error, errStr)
 {
-    setError(error, "Failed to start torrent: "+ errStr);
+    setError(error, lang[lng,'failstartorrent'] + errStr);//Failed to start torrent: 
 }
 
 /**
@@ -1242,7 +1263,7 @@ function cb_contextStop(response)
  */
 function cb_contextStop_err(error, errStr)
 {
-    setError(error, "Failed to stop torrent: "+ errStr);
+    setError(error, lang[lng,'failstoporrent'] + errStr);//Failed to stop torrent: 
 }
 
 /**
@@ -1258,7 +1279,7 @@ function cb_contextPeers(response)
 	peers.push(p);
     }
     if(peers.length == 0)
-	setStatus("No peer information available.");
+	setStatus(lang[lng,'nopeerinformationavaible']);//No peer information available.
     else
 	alert(peers);
 }
@@ -1269,7 +1290,7 @@ function cb_contextPeers(response)
  */
 function cb_contextPeers_err(error, errStr)
 {
-    setError(error, "Failed to get peers list: "+ errStr);
+    setError(error, lang[lng,'failgetpeerlist'] + errStr);//Failed to get peers list: 
 }
 
 /**
@@ -1303,7 +1324,7 @@ function cb_contextAbort(response)
  */
 function cb_contextAbort_err(error, errStr)
 {
-    setError(error, "Failed to delete torrent: "+ errStr);
+    setError(error, lang[lng,'failedtorrentdelete'] + errStr);//Failed to delete torrent: 
 }
 
 /**
@@ -1321,7 +1342,7 @@ function cb_contextClean(response)
  */
 function cb_contextClean_err(error, errStr)
 {
-    setError(error, "Failed to move torrent: "+ errStr);
+    setError(error, lang[lng,'failedtmovetorrent'] + errStr);//Failed to move torrent: 
 }
 
 /**************************************************
@@ -1335,7 +1356,7 @@ function setStatus(msg)
     if(msg == '' || msg == null || msg == undefined)
     {
 	isStatusIdle = 1;
-	msg = "Idle.";
+	msg = lang[lng,'idle'];//Idle
     }
 
     document.getElementById('statusMessage').innerHTML = msg;
@@ -1356,16 +1377,16 @@ function setError(error, msg)
 	    {
 		/* Failed to connect to BTG, or failed to init session.. This is fatal  */
 		setUIState(0);
-		document.getElementById('layer_fatal').innerHTML = "<h2>Fatal error</h2><p>" + error[i].childNodes[0].nodeValue + "</p>";
+		document.getElementById('layer_fatal').innerHTML = "<h2>" + lang[lng,'fatalerror'] + "</h2><p>" + error[i].childNodes[0].nodeValue + "</p>";//Fatal error
 		document.getElementById('layer_fatal').style.display="block";
-		setStatus('Cannot connect to BTG. Please refresh this page and try later.');
+		setStatus(lang[lng,'failedtoconnect']);//Cannot connect to BTG. Please refresh this page and try later.
 		return;
 	    }
 	    else if(code == '2')
 	    {
 		/* Failed to authorize */
 		setUIState(1);
-		setStatus('Failed to authorize.');
+		setStatus(lang[lng,'failauthorize']);//Failed to authorize.
 		return;
 	    }
 	    else if(code == '3')
@@ -1516,7 +1537,7 @@ function removeOldTorrents()
 		}
 		else
 		{
-		    setStatus("Unable to delete context from table..");
+		    setStatus(lang[lng,'unabledeletecontext']);//Unable to delete context from table..
 		}
 	    }
 	}
@@ -1533,7 +1554,7 @@ function refreshContextList()
 
     if (!contextIdListUpdated)
     {
-	setStatus("Updating id list...");
+	setStatus(lang[lng,'updateidlist']);//Updating id list...
 	contextIdList = new Array();
 	
 	//!!!
@@ -1542,7 +1563,7 @@ function refreshContextList()
     }
     else
     {
-	setStatus("Updating torrent list...");
+	setStatus(lang[lng,'updatetorrentlist']);//Updating torrent list...
 
 	splitContextList();
 	createUpdateList();
@@ -1580,14 +1601,14 @@ function changeUpdateMode()
     if (updatesStopped == 0)
     {
 	updatesStopped = 1;
-	setStatus("Stopped automatic updates...");
-	document.getElementById('stop_refresh').value='Start updates';
+	setStatus(lang[lng,'sau']);//Stopped automatic updates...
+	document.getElementById('stop_refresh').value=lang[lng,'startupdates'];//Start updates
     }
     else
     {
 	contextsAge    = 0;
 	updatesStopped = 0;
-	document.getElementById('stop_refresh').value='Stop updates';
+	document.getElementById('stop_refresh').value=lang[lng,'stopupdates'];//Stop updates
 	setStatus();
     }
 }
@@ -1644,22 +1665,22 @@ function updateContextTable(newList)
 	if (s.status == ts_queued)
 	{
 	    /* Some other torrent is checking its data and this torrent is in the wait queue */
-	    s.statusMessage = "Queued for check"
+	    s.statusMessage = lang[lng,'checkqueue']//Queued for check
 	}
 	else if (s.status == ts_checking)
 	{
 	    /* This torrent is currently checking its data */
-	    s.statusMessage = "Checking data (" + s.done + "%)"
+	    s.statusMessage = lang[lng,'checkdata'] + s.done + "%"//Checking data (" + s.done + "%)
 	}
 	else if (s.status == ts_connecting)
 	{
 	    /* Connecting to tracker or peers  */
-	    s.statusMessage = "Connecting"
+	    s.statusMessage = lang[lng,'connecting']//Connecting
 	}
 	else if (s.status == ts_downloading)
 	{
 	    /* This torrent is currently downloading data, not finished */
-	    s.statusMessage = "Downloading (" + humanizeSpeed(s.downloadrate,1) + "): "+ round1(s.done) +"% (" + s.timeleft + " left)"
+	    s.statusMessage = lang[lng,'downloading'] + "(" + humanizeSpeed(s.downloadrate,1) + "): "+ round1(s.done) +"% (" + s.timeleft + lang[lng,'left'] + ")"
 	}
 	else if (s.status == ts_seeding)
 	{
@@ -1669,12 +1690,12 @@ function updateContextTable(newList)
 	else if (s.status == ts_stopped)
 	{
 	    /* User has stopped torrent, not finished */
-	    s.statusMessage = "Stopped ("+ round1(s.done) +"%)"
+	    s.statusMessage = lang[lng,'stopped'] + "("+ round1(s.done) +"%)"
 	}
 	else if (s.status == ts_finished)
 	{
 	    /* Torrent is fully downloaded and is stopped */
-	    s.statusMessage = "Finished ("+ round1(s.done)+"%)"
+	    s.statusMessage = lang[lng,'finished'] + "("+ round1(s.done)+"%)"
 	}
 	else
 	{
@@ -1769,8 +1790,8 @@ function updateContextTable(newList)
     contextList = tempList;
 
     /* Refresh total counters */
-    document.getElementById('status_download').innerHTML = 'Total download speed is: ' + humanizeSpeed(totalDownRate, 2);
-    document.getElementById('status_upload').innerHTML = 'Total upload speed is: ' + humanizeSpeed(totalUpRate, 2);
+    document.getElementById('status_download').innerHTML = lang[lng,'totaldownis'] + humanizeSpeed(totalDownRate, 2);//Total download speed is: 
+    document.getElementById('status_upload').innerHTML = lang[lng,'totalupis'] + humanizeSpeed(totalUpRate, 2);//Total upload speed is: 
 
     /* Call IE specific crap to get mouseover working */
     if(parseStylesheets)
@@ -1808,8 +1829,8 @@ function clearContextList()
     contextList = new Array();
 
     /* Refresh total counters */
-    document.getElementById('status_download').innerHTML = 'Total download speed is: ' + humanizeSpeed(totalDownRate, 2);
-    document.getElementById('status_upload').innerHTML = 'Total upload speed is: ' + humanizeSpeed(totalUpRate, 2);
+    document.getElementById('status_download').innerHTML = lang[lng,'totaldownis'] + humanizeSpeed(totalDownRate, 2);
+    document.getElementById('status_upload').innerHTML = lang[lng,'totalupis'] + humanizeSpeed(totalUpRate, 2);
 }
 
 /**
@@ -1929,7 +1950,7 @@ function createTorrentControls(s, d)
     if(s.status == ts_checking || s.status == ts_connecting || s.status == ts_downloading || s.status == ts_seeding)
     {
 	// Add a stop button
-	var b = createButton('Stop');
+	var b = createButton(lang[lng,'stop']);//Stop
 	b.contextID = s.contextID;
 	b.onclick = function(){contextStop(this.contextID);}
 	d.appendChild(b);
@@ -1937,7 +1958,7 @@ function createTorrentControls(s, d)
     else if(s.status == ts_stopped || s.status == ts_finished)
     {
 	// Add a start button
-	var b = createButton('Start');
+	var b = createButton(lang[lng,'start']);//Start
 	b.contextID = s.contextID;
 	b.onclick = function(){contextStart(this.contextID);}
 	d.appendChild(b);
@@ -1947,7 +1968,7 @@ function createTorrentControls(s, d)
     if(s.status == ts_checking || s.status == ts_connecting || s.status == ts_downloading || s.status == ts_stopped)
     {
 	// Add a abort button
-	var b = createButton('Abort');
+	var b = createButton(lang[lng,'abort']);//Abort
 	b.contextID = s.contextID;
 	b.onclick = function(){contextAbort(this.contextID);}
 	d.appendChild(b);
@@ -1955,12 +1976,12 @@ function createTorrentControls(s, d)
     else if(s.status == ts_seeding || s.status == ts_finished)
     {
 	// Add a abort button
-	var b = createButton('Abort');
+	var b = createButton(lang[lng,'abort']);//Abort
 	b.contextID = s.contextID;
 	b.onclick = function(){contextAbort(this.contextID);}
 	d.appendChild(b);
 	// Add a clean button
-	b = createButton('Clean');
+	b = createButton(lang[lng,'clean']);//Clean
 	b.contextID = s.contextID;
 	b.onclick = function(){contextClean(this.contextID);}
 	d.appendChild(b);
@@ -2008,21 +2029,21 @@ function createTorrentDetails()
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_type';
-    c.innerHTML='Torrent Filename:';
+    c.innerHTML = lang[lng,'tfilename'];//Torrent Filename:
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_value';
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_type extrainfo_divider';
-    c.innerHTML='Filesize:';
+    c.innerHTML = lang[lng,'tfilesize'];//Filesize:
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_value';
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_type extrainfo_divider';
-    c.innerHTML='Seeders:';
+    c.innerHTML = lang[lng,'seeders'];//Seeders:
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_value';
@@ -2033,21 +2054,21 @@ function createTorrentDetails()
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_type';
-    c.innerHTML='Upload Speed:';
+    c.innerHTML = lang[lng,'upspeed'];//Upload Speed:
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_value';
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_type extrainfo_divider';
-    c.innerHTML='Uploaded:';
+    c.innerHTML = lang[lng,'uploaded'];//Uploaded:
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_value';
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_type extrainfo_divider';
-    c.innerHTML='Leechers:';
+    c.innerHTML = lang[lng,'leechers'];//Leechers:
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_value';
@@ -2058,21 +2079,21 @@ function createTorrentDetails()
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_type';
-    c.innerHTML='Download Speed:';
+    c.innerHTML = lang[lng,'dspeed'];//Download Speed:
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_value';
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_type extrainfo_divider';
-    c.innerHTML='Downloaded:';
+    c.innerHTML = lang[lng,'downloaded'];//Downloaded:
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_value';
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_type extrainfo_divider';
-    c.innerHTML='Total progress:';
+    c.innerHTML = lang[lng,'totalprogress'];//Total progress:
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_value';
@@ -2085,7 +2106,7 @@ function createTorrentDetails()
     // Add a tracker URL.
     c = r.insertCell(-1);
     c.className = 'extrainfo_type';
-    c.innerHTML='Tracker:';
+    c.innerHTML = lang[lng,'tracker'];//Tracker
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_value';
@@ -2095,7 +2116,7 @@ function createTorrentDetails()
     // Add ul/dl ratio.
     c = r.insertCell(-1);
     c.className = 'extrainfo_type extrainfo_divider';
-    c.innerHTML = 'Ratio';
+    c.innerHTML = lang[lng,'ratio'];//Ratio
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_value';
@@ -2109,7 +2130,7 @@ function createTorrentDetails()
     // Hash
     c = r.insertCell(-1);
     c.className = 'extrainfo_type';
-    c.innerHTML='Hash:';
+    c.innerHTML = lang[lng,'hash'];//Hash
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_value';
@@ -2119,11 +2140,11 @@ function createTorrentDetails()
     // Url 
     c = r.insertCell(-1);
     c.className = 'extrainfo_type extrainfo_divider';
-    c.innerHTML = 'Announce URL';
+    c.innerHTML = lang[lng,'announceurl'];//Announce URL
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_value';
-    c.innerHTML = 'http://missing-url';
+    c.innerHTML = lang[lng,'missingurl'];//http://missing-url
     c.colSpan = 2;
 
     /* Files follow */
@@ -2133,14 +2154,14 @@ function createTorrentDetails()
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_type';
-    c.innerHTML='Files:';
+    c.innerHTML = lang[lng,'files'];//Files:
 
     c = r.insertCell(-1);
     c.className = 'extrainfo_value';
 
     /* Files, contents. */
 
-    c.innerHTML="No files present.";
+    c.innerHTML = lang[lng,'nofiles'];//No files present.
     c.colSpan = 5;
 
     return tbl;
@@ -2151,10 +2172,10 @@ function addFileInfoList(status)
     var fileinfolist = status.fileinfolist;
 
     var tableStr = '<table>';
-    tableStr+='<th>Selected</th>';
-    tableStr+='<th>Filename</th>';
-    tableStr+='<th>Size</th>';
-    tableStr+='<th>Done %</th>';
+    tableStr+='<th>' + lang[lng,'selected'] + '</th>'; //Selected
+    tableStr+='<th>' + lang[lng,'filename'] + '</th>';//Filename
+    tableStr+='<th>' + lang[lng,'size'] + '</th>';//Size
+    tableStr+='<th>' + lang[lng,'donepercent'] + '</th>'; //Done %
 
     currentDir = "";
     for (var count = 0; count < fileinfolist.length; count++)
@@ -2275,7 +2296,7 @@ function cb_contextSelectFile(response)
 
 function cb_contextSelectFile_err(error, errStr)
 {
-    setError(error, 'Failed to select file.');
+    setError(error, lang[lng,'failselectfile']);//Failed to select file.
 }
 
 function unSelectFile(context_id, filename)
@@ -2290,7 +2311,7 @@ function cb_contextUnSelectFile(response)
 
 function cb_contextUnSelectFile_err(error, errStr)
 {
-    setError(error, 'Failed to un-select file.');
+    setError(error, lang[lng,'failunselectfile']);//Failed to un-select file.
 }
 
 /**
@@ -2303,7 +2324,7 @@ function createTorrentExtendedControls(contextID)
     ctrl.className='extendedcontrol';
     var cr = ctrl.insertRow(-1);
     var cc = cr.insertCell(-1);
-    cc.innerHTML = "Upload Limit (KB/s):";
+    cc.innerHTML = lang[lng,'uploadlimit'];//Upload Limit (KB/s):
 
     cc = cr.insertCell(-1);
     var ct = document.createElement('input');
@@ -2313,7 +2334,7 @@ function createTorrentExtendedControls(contextID)
     cc.appendChild(ct);
 
     cc = cr.insertCell(-1);
-    cc.innerHTML = "Seed Limit (%):"
+    cc.innerHTML = lang[lng,'seedlimit'];//Seed Limit (%):
 
     cc = cr.insertCell(-1);
     ct = document.createElement('input');
@@ -2326,7 +2347,7 @@ function createTorrentExtendedControls(contextID)
 
     cr = ctrl.insertRow(-1);
     cc = cr.insertCell(-1);
-    cc.innerHTML = "Download Limit (KB/s):";
+    cc.innerHTML = lang[lng,'downloadlimit'];//Download Limit (KB/s):
 
     cc = cr.insertCell(-1);
     ct = document.createElement('input');
@@ -2336,7 +2357,7 @@ function createTorrentExtendedControls(contextID)
     cc.appendChild(ct);
 
     cc = cr.insertCell(-1);
-    cc.innerHTML = "Seed Timeout (minutes):";
+    cc.innerHTML = lang[lng,'seedtimeout'];//Seed Timeout (minutes):
 
     cc = cr.insertCell(-1);
     ct = document.createElement('input');
@@ -2374,13 +2395,13 @@ function updateTorrentDetails(t, s)
     /* TODO: convert to days:hours:minutes. */
     if (s.status == ts_downloading)
     {
-	t.rows[1].cells[0].innerHTML = "Download time";
-	t.rows[1].cells[1].innerHTML = s.activitycounter + " minutes";
+	t.rows[1].cells[0].innerHTML = lang[lng,'downtime'];//Download time
+	t.rows[1].cells[1].innerHTML = s.activitycounter + lang[lng,'minutes'];//minutes
     }
     else if (s.status == ts_seeding)
     {
-	t.rows[1].cells[0].innerHTML = "Seed time";
-	t.rows[1].cells[1].innerHTML = s.activitycounter + " minutes";
+	t.rows[1].cells[0].innerHTML = lang[lng,'seedtime'];//Seed time
+	t.rows[1].cells[1].innerHTML = s.activitycounter + lang[lng,'minutes'];
     }
     else
     {

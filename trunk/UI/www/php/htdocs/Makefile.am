@@ -1,4 +1,4 @@
-SUBDIRS = bcore images
+SUBDIRS = bcore images languages
 
 WWW_UI_DEST  = $(datadir)/wwwbtg/htdocs
 WWW_UI_FILES = ajaxjs.php aphpstr.php btg.css \
