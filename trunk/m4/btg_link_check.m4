@@ -18,7 +18,7 @@ AC_DEFUN([BTG_LINK_CHECK],
    AC_MSG_NOTICE([Link test, compiler flags: $TRY_CXXFLAGS])
    AC_MSG_NOTICE([Link test, linker flags  : $TRY_LIBS])
 
-   AC_CACHE_CHECK([if BTG can link with the provided/found libraries], btg_link_check,
+   AC_CACHE_CHECK([if BTG can link with the provided/found libraries], am_cv_btg_link_check,
      [LIBS="$TRY_LIBS"
       CXXFLAGS="$TRY_CXXFLAGS"
       AC_TRY_LINK(
@@ -68,9 +68,9 @@ AC_DEFUN([BTG_LINK_CHECK],
         // libtorrrent
         libtorrent::session lt_session(libtorrent::fingerprint("BG", 0, 0, 0, 0));
         ],
-        btg_link_check=yes, btg_link_check=no)])
+        am_cv_btg_link_check=yes, am_cv_btg_link_check=no)])
 
-   if test "$btg_link_check" = no
+   if test "$am_cv_btg_link_check" = no
    then
      AC_MSG_ERROR([Unable to link with required libraries.])
    fi
