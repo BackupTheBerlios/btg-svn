@@ -152,59 +152,16 @@ fi
 
 AM_LIBGNUTLS_VERSION
 
-# Work-around for new BOOST detection macros
-# we should point it to the dirs where to search libs
-if test -z "$BOOST_LDFLAGS" ; then
-	# default locations
-	AC_MSG_NOTICE([Perhaps you need to set BOOST_LDFLAGS to specify where to search for your BOOST libs.])
-	for BOOST_libdir in /usr/local/boost*/lib /usr/local/lib /usr/boost*/lib /usr/lib ; do
-		AC_MSG_CHECKING([BOOST libs in $BOOST_libdir])
-		for BOOST_lib in $BOOST_libdir/libboost* ; do
-		if test -r "$BOOST_lib" ; then
-				AC_MSG_RESULT([found])
-				BOOST_LDFLAGS="-L$BOOST_libdir"
-				break
-			else
-				AC_MSG_RESULT([no])
-				break
-			fi
-		done
-		test -n "$BOOST_LDFLAGS" && break
-	done
-	if test -z "$BOOST_LDFLAGS" ; then
-		AC_MSG_ERROR([Unable to find where BOOST libraries is. You should set BOOST_LDFLAGS manually.])
-	fi
-fi
-AC_MSG_NOTICE([Using BOOST_LDFLAGS = $BOOST_LDFLAGS])
-LDFLAGS="$LDFLAGS $BOOST_LDFLAGS"
-# the same for includes
-if test -z "$BOOST_CPPFLAGS" ; then
-	# default locations
-	AC_MSG_NOTICE([Perhaps you need to set BOOST_CPPFLAGS to specify where to search for your BOOST includes.])
-	for BOOST_incdir in /usr/local/boost*/include /usr/local/boost*/include/boost* /usr/local/include /usr/local/include/boost* /usr/boost*/include /usr/boost*/include/boost* /usr/include /usr/include/boost* ; do
-		AC_MSG_CHECKING([BOOST includes in $BOOST_incdir])
-		if test -r "$BOOST_incdir/boost/config.hpp" ; then
-			AC_MSG_RESULT([found])
-			BOOST_CPPFLAGS="-I$BOOST_incdir"
-		else
-			AC_MSG_RESULT([no])
-		fi
-		test -n "$BOOST_CPPFLAGS" && break
-	done
-	if test -z "$BOOST_CPPFLAGS" ; then
-		AC_MSG_ERROR([Unable to find where BOOST includes is. You should set BOOST_CPPFLAGS manually.])
-	fi
-fi
-AC_MSG_NOTICE([Using BOOST_CPPFLAGS = $BOOST_CPPFLAGS])
+AX_BOOST_BASE([1.35])
+AC_MSG_NOTICE([Using BOOST_CPPFLAGS: $BOOST_CPPFLAGS])
 CPPFLAGS="$CPPFLAGS $BOOST_CPPFLAGS"
+AC_MSG_NOTICE([Using BOOST_LDFLAGS : $BOOST_LDFLAGS])
+LDFLAGS="$LDFLAGS $BOOST_LDFLAGS"
 
 AX_BOOST_SYSTEM
 dnl check that Boost.System was found:
 if test -z "$BOOST_SYSTEM_LIB"; then
-   dnl AC_MSG_ERROR([unable to find Boost.System library, currently this is required.])
-   AC_MSG_NOTICE([unable to find Boost.System library, this is not required unless boost 1.3.5 or better is used.])
-   BOOST_SYSTEM_LIB=""
-   AC_SUBST(BOOST_SYSTEM_LIB)
+   AC_MSG_ERROR([unable to find Boost.System library, currently this is required.])
 fi
 
 AX_BOOST_IOSTREAMS
