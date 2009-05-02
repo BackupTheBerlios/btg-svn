@@ -1563,17 +1563,15 @@ namespace btg
 #endif
          if (pieces->size() > 0)
             {
-               t_ulong piece_len        = t_i.piece_length();
-               t_int         num_pieces = t_i.num_pieces();
-
                t_fileInfoList fileinfolist;
 
                t_int piece_counter = 0;
-
+               t_int num_pieces = t_i.num_pieces();
+               t_ulong piece_len = t_i.piece_length();
+               t_ulong current_size = t_i.piece_size(piece_counter);
                std::vector<bool>::const_iterator piece_iter = pieces->begin();
 
                libtorrent::torrent_info::file_iterator file_iter;
-               t_ulong current_size = 0;
                for (file_iter = t_i.begin_files();
                     file_iter != t_i.end_files();
                     file_iter++)
@@ -1582,6 +1580,10 @@ namespace btg
                      t_ulong file_size     = file_iter->size;
 
                      t_bitVector filepieces;
+                     if (current_size >= file_size)
+                        {
+                           filepieces.push_back(*piece_iter);
+                        }
                      while (current_size < file_size)
                         {
                            if (piece_counter < num_pieces)
@@ -1599,7 +1601,7 @@ namespace btg
                         }
                      current_size -= file_size;
 
-                     // after piece_iter increase
+                     // after filepieces
                      if (!ti->selected_files.selected(filename))
                         {
                            // Skip this file, as it is not selected.
