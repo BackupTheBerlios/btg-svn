@@ -49,6 +49,8 @@ class testDaemonRes : public CppUnit::TestFixture
 
    CPPUNIT_TEST( testAllocation3 );
 
+   CPPUNIT_TEST( testAllocation4 );
+
    CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -61,6 +63,7 @@ class testDaemonRes : public CppUnit::TestFixture
    void testAllocation();
    void testAllocation2();
    void testAllocation3();
+   void testAllocation4();
 
  private:
    btg::core::LogWrapperType logwrapper;

@@ -52,15 +52,17 @@ namespace btg
                                    limitValue T::* _res)
 		{
 			assert(_resources >= 0);
+ 
+         size_type size = 0;
 
-         unsigned int size = 0;
-
+         int count = 0;
          for (It i = _start; i != _end; ++i)
             {
                limitValue& r = (*i).*_res;
                r.leftovers = (std::max)(r.given-r.used, 0);
 
-               BTG_NOTICE(_logwrapper, descrLabel << ", given = " << r.given << ", used " << r.used << ", left = " << r.leftovers);
+               //BTG_NOTICE(_logwrapper, "count=" << count << ", used = " << r.used);
+               count++;
 
                if (_resources == limitValue::inf)
                {
@@ -84,17 +86,20 @@ namespace btg
 
          assert(size > 0);
 
-         size++;
+         size_type minres = _resources / size;
 
-         int minres = _resources / size;
+         /// Amount of resources to give, if none are required.
+         const size_type giveIfNotNeeding = 1 * _resources / 100;
 
-         BTG_NOTICE(_logwrapper, descrLabel << ", resources = " << _resources << ", minres " << minres << ", size = " << size);
+         //BTG_NOTICE(_logwrapper, descrLabel << ", minres = " << minres << ", size = " << size);
+
+         //BTG_NOTICE(_logwrapper, descrLabel << ", resources = " << _resources << ", minres " << minres << ", size = " << size);
 
          // Resources left after distributing the minimum.
-         int left = 0;
+         size_type left = 0;
          // Producers which can use extra resources.
-         int needing = 0;
-         int count = 0;
+         size_type needing = 0;
+         count = 0;
          for (It i = _start; i != _end; ++i)
          {
             limitValue& r = (*i).*_res;
@@ -102,42 +107,98 @@ namespace btg
             if (r.used < minres)
                {
                   // Using less than the minimum.
-                  r.given = (std::min)(r.used, r.max);
+                  r.given     = (std::min)(r.used, r.max);
                   r.leftovers = 0;
-                  left += (std::max)(minres-r.used, 0);
+                  if ((minres-r.used) > 0)
+                     {
+                        left += (minres-r.used);
+                     }
+
                   if (r.given == 0)
                      {
-                        r.given++;
-                        left--;
+                        r.given += giveIfNotNeeding;
+                        left    -= giveIfNotNeeding;
                      }
                }
             else
                {
                   // Give minimal resources to everyone.
-                  r.given = minres;
+                  r.given     = minres;
                   r.leftovers = 1;
                   needing++;
                }
 
+            //BTG_NOTICE(_logwrapper, descrLabel << " count = " << count << ", r.given = " << r.given << ", left = " << left);
+
             count++;
          }
 
+         //BTG_NOTICE(_logwrapper, descrLabel << " left = " << left);
+         //BTG_NOTICE(_logwrapper, descrLabel << " needing = " << needing);
+
          if ((left > 0) && (needing > 0))
             {
-               minres = left / needing;
+               if (needing == 1)
+                  {
+                     for (It i = _start; i != _end; ++i)
+                        {
+                           limitValue& r = (*i).*_res;
+                           if (r.leftovers == 1)
+                              {
+                                 r.given += left;
+                                 left = 0;
+                                 break;
+                              }
+                        }
+                  }
+               else
+                  {
+                     minres = left / needing;
+                     count = 0;
+                     for (It i = _start; i != _end; ++i)
+                        {
+                           limitValue& r = (*i).*_res;
+                           if (r.leftovers == 1)
+                              {
+                                 r.given += minres;
+                                 left    -= minres;
+                                 
+                                 //BTG_NOTICE(_logwrapper, descrLabel << " giving minres = " << minres << ", left = " << left );
+                              }
+                           count++;
+                        }
+                  }
+            }
+
+         // Still resources left, distribute.
+         if (left > 0)
+            {
+               minres = left / size;
                count = 0;
                for (It i = _start; i != _end; ++i)
                   {
                      limitValue& r = (*i).*_res;
-                     if (r.leftovers == 1)
-                        {
-                           r.given += minres;
-                           left -= minres;
-                        }
-                     count++;
+                     r.given      += minres;
                   }
+               left = 0;
             }
 
+         // Clear the used resources.
+         count = 0;
+         for (It i = _start; i != _end; ++i)
+            {
+               limitValue& r = (*i).*_res;
+               
+               if (r.given < giveIfNotNeeding)
+                  {
+                     r.given = giveIfNotNeeding;
+                  }
+
+               //BTG_NOTICE(_logwrapper, descrLabel << "count = " << count << ", given = " << r.given);
+
+               r.used = 0;
+               count++;
+            }
 		}
 
    } // namespace daemon
