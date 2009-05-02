@@ -2,7 +2,7 @@ noinst_LTLIBRARIES   = libresource.la
 
 libresource_la_SOURCES   = allocate_resources.cpp
 
-noinst_HEADERS       = allocate_resources.h allocate_resources_impl.h allocate_resources_impl_lt.h
+noinst_HEADERS       = allocate_resources.h allocate_resources_impl.h
 
 libresource_la_CFLAGS   = @DEBUG_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ \
 -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \

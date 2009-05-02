@@ -11,7 +11,8 @@ The following bugs were fixed:
 015068 Crash when reading faulty IP filter range.
 015049 Update Openwrt build.
 015048 btgvs, add lirc support and freevo integration.
-	
+014512 Refactor daemon/resource (GPL vs BSD license).
+
 BTG version 0.9.9
 -----------------
 The following bugs were fixed:
