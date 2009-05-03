@@ -44,6 +44,12 @@ namespace btg
 
 
       /// Allocate resources (used for global limits).
+      /// 
+      /// This is an attempt to implement the max-min fair share
+      /// algorithm, as described in "Computer Networks, Performance and Quality
+      /// of Service" written by Ivan Marsic. (This is a downloadable
+      /// PDF book - thank you Ivan.)
+
 		template<class It, class T>
 		void allocate_resources_impl(btg::core::LogWrapperType _logwrapper,
                                    int _resources,
@@ -54,8 +60,9 @@ namespace btg
 			assert(_resources >= 0);
  
          size_type size = 0;
-
          int count = 0;
+         // Find out how much leftovers: the difference between the
+         // given and the actually used amount of resources.
          for (It i = _start; i != _end; ++i)
             {
                limitValue& r = (*i).*_res;
@@ -74,11 +81,12 @@ namespace btg
                size++;
             }
          
+         /// Unlimited resources, quit.
          if (_resources == limitValue::inf)
 			{
 				return;
 			}
-
+         /// No sessions, quit.
          if (size == 0)
          {
             return;
@@ -86,6 +94,7 @@ namespace btg
 
          assert(size > 0);
 
+         /// Minimal resources to give to everyone.
          size_type minres = _resources / size;
 
          /// Amount of resources to give, if none are required.
@@ -138,6 +147,7 @@ namespace btg
 
          if ((left > 0) && (needing > 0))
             {
+               // There are resources left and sessions who want them.
                if (needing == 1)
                   {
                      for (It i = _start; i != _end; ++i)
@@ -153,6 +163,8 @@ namespace btg
                   }
                else
                   {
+                     /// There are resources, but no one wants
+                     /// them. Give them to sessions anyway.
                      minres = left / needing;
                      count = 0;
                      for (It i = _start; i != _end; ++i)
