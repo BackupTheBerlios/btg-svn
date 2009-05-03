@@ -312,6 +312,7 @@ namespace btg
             down_speed_(_down_speed), up_speed_(_up_speed),
             payload_down_speed_(_payload_down_speed), payload_up_speed_(_payload_up_speed),
             total_download_(_total_download), total_upload_(_total_upload),
+            pieces_(_pieces),
             download_limit_(_download_limit), upload_limit_(_upload_limit),
             load_balancing_(_load_balancing),
             download_queue_length_(_download_queue_length), upload_queue_length_(_upload_queue_length),
@@ -325,7 +326,12 @@ namespace btg
             target_dl_queue_length_(_target_dl_queue_length),
             remote_dl_rate_(_remote_dl_rate)
       {
+         /*
+          * Disabled due [ Bug #15073 ] Peers of any kind appear to have all pieces
+          * 
          pieces_.aggregate(_pieces, max_pieces_cnt);
+          *
+          */
          
          if (_country && _country[0])
          {
