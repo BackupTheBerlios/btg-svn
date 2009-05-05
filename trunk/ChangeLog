@@ -2,6 +2,8 @@ BTG version 1.0.0
 -----------------
 The following bugs were fixed:
 
+015632 btgncli, add dialog showing totals for a session.
+015626 btgncli, show files crashes client in certain situations.
 015571 Merge wwwui patch from gH0StArthour (Hungarian translation).
 015375 Wrong per-file progress info when several files are selected.
 015216 Merge btgui patches from mkbosmans.

@@ -41,16 +41,23 @@ namespace btg
             t_ulong dl_total = _s.downloadTotal();
             t_ulong ul_total = _s.uploadTotal();
 
+            CalculateUlDlRatio(dl_total, ul_total, _output);
+         }
+
+         void CalculateUlDlRatio(t_ulong _dl_total,
+                                 t_ulong _ul_total,
+                                 std::string & _output)
+         {
             t_float ratio = 0;
-            if (dl_total > 0)
+            if (_dl_total > 0)
                {
-                  ratio = (1.0f*ul_total) / (1.0f*dl_total);
+                  ratio = (1.0f*_ul_total) / (1.0f*_dl_total);
                }
 
             // Only show two decimal places.
             t_float rounded = roundf(ratio * 100.0f) / 100.0f;
 
-            _output = btg::core::convertToString<t_float>(rounded);
+            _output = btg::core::convertToString<t_float>(rounded);            
          }
 
       } // client

@@ -41,6 +41,11 @@ namespace btg
          void CalculateUlDlRatio(btg::core::Status const& _s, 
                                  std::string & _output);
 
+         /// Given ul/dl totals, calculate the ul/dl ratio and
+         /// update _output.
+         void CalculateUlDlRatio(t_ulong _dl_total,
+                                 t_ulong _ul_total,
+                                 std::string & _output);
          /** @} */
 
       } // client
