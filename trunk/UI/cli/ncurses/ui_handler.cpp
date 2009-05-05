@@ -696,6 +696,16 @@ namespace btg
                }
 
             if (helpWindow::generateHelpForKey(keymap_,
+                                               keyMapping::K_STATS,
+                                               "",
+                                               keyDescr,
+                                               false))
+               {
+                  helpText.push_back(keyDescr);
+                  helpText.push_back("  to show session stats");
+               }
+
+            if (helpWindow::generateHelpForKey(keymap_,
                                                keyMapping::K_QUIT,
                                                "",
                                                keyDescr,
