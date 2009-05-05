@@ -79,6 +79,9 @@ namespace btg
                      /// Show help for the details.
                      dialog::RESULT handleShowDetailsHelp();
 
+                     /// Show help for stats window.
+                     dialog::RESULT handleShowStatsHelp();
+
                      /// Show a window showing the torrent.
                      void handleShowDetails();
 
@@ -123,6 +126,8 @@ namespace btg
 
                      /// Handle sorting the list of contexts.
                      void handleSort();
+
+                     void handleStats();
 
                      /// Refresh all windows.
                      void refresh();
@@ -303,6 +308,12 @@ namespace btg
                      
                      /// Set the status bar to its default text.
                      void setDefaultStatusText();
+
+                     /// Set the status bar to its default text.
+                     ///
+                     /// Prefix the default text with the string
+                     /// contained in _prefix.
+                     void setStatusText(std::string const& _prefix);
 
                      /// Show the files belonging to a torrent.
                      void handleShowFiles(std::vector<btg::core::fileInformation> const& _fi);

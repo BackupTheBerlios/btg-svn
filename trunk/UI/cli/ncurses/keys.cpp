@@ -143,6 +143,11 @@ namespace btg
                   add(keyMapping::K_SORT, 's');
                }
 
+            if (!exists(keyMapping::K_STATS))
+               {
+                  add(keyMapping::K_STATS, 'i');
+               }
+
             if (!exists(keyMapping::K_RESIZE))
                {
                   add(keyMapping::K_RESIZE, KEY_RESIZE);

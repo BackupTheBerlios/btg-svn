@@ -502,6 +502,17 @@ namespace btg
             update(l);
          }
 
+         void DisplayModel::get(std::vector<btg::core::Status> & _list) const
+         {
+            std::vector<statusEntry>::const_iterator iter;
+            for (iter = statusList_.begin();
+                 iter != statusList_.end();
+                 iter++)
+               {
+                  _list.push_back(iter->status);
+               }
+         }
+
          bool DisplayModel::get(t_int const _context_id, btg::core::Status & _status) const
          {
             std::vector<statusEntry>::const_iterator i = find(_context_id);

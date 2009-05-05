@@ -97,24 +97,7 @@ namespace btg
 
             baseWindow::getScreenSize(dimensions.width, dimensions.height);
 
-            //
-            // Attempt to use the following layout:
-            //
-            // +-----------------------+
-            // |       status          |
-            // +-----------------------+
-            // |                       |
-            // |       list            |
-            // |                       |
-            // |                       |
-            // |                       |
-            // |                       |
-            // +-----------------------+
-            // |       keys            |
-            // +-----------------------+
-
             // Init the main window.
-
             windowSize mainwndSize = mainwindow_.calculateDimenstions(dimensions);
             bool init_success = mainwindow_.init(mainwndSize);
 
@@ -197,6 +180,13 @@ namespace btg
          void UI::remove(std::vector<t_int> const& _id_list)
          {
             mainwindow_.remove(_id_list);
+         }
+
+         void UI::setStatusText(std::string const& _prefix)
+         {
+            std::string value("KEY");
+            keymap_.getValue(keyMapping::K_HELP, value);
+            statuswindow_.setStatus(_prefix + "." + " Press /" + value + "/ for help.");
          }
 
          void UI::setDefaultStatusText()

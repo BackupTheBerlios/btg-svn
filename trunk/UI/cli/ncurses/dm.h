@@ -143,6 +143,9 @@ namespace btg
             bool get(t_int const _context_id, 
                      btg::core::Status & _status) const;
 
+            /// Get all status objects.
+            void get(std::vector<btg::core::Status> & _list) const;
+
             /// Remove contexts identified by context id (the list).
             void remove(std::vector<t_int> const& _id_list);
          public:

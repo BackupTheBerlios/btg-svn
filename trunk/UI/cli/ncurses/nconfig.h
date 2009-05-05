@@ -139,6 +139,8 @@ namespace btg
                      /// Key.
                      t_int sortKey;
                      /// Key.
+                     t_int statsKey;
+                     /// Key.
                      t_int downKey;
                      /// Key.
                      t_int upKey;

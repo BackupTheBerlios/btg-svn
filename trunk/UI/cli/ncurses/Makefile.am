@@ -24,7 +24,7 @@ btgncli_SOURCES = nconfig.cpp \
                   window.cpp \
                   basemenu.cpp \
                   initwindow.cpp \
-                  detailwindow.cpp statuswindow.cpp topwindow.cpp snwindow.cpp \
+                  detailwindow.cpp statuswindow.cpp topwindow.cpp snwindow.cpp statswindow.cpp \
                   helpwindow.cpp filelist.cpp limitwindow.cpp peerlist.cpp \
                   fileview.cpp \
                   sessionselect.cpp \
@@ -41,7 +41,7 @@ noinst_HEADERS += nconfig.h \
                  window.h \
                  basemenu.h \
                  initwindow.h \
-                 detailwindow.h statuswindow.h topwindow.h snwindow.h \
+                 detailwindow.h statuswindow.h topwindow.h snwindow.h statswindow.h \
                  helpwindow.h filelist.h limitwindow.h peerlist.h \
                  fileview.h \
                  sessionselect.h \

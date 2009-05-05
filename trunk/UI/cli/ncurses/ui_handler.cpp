@@ -33,6 +33,7 @@
 
 #include "handler.h"
 #include "detailwindow.h"
+#include "statswindow.h"
 #include "helpwindow.h"
 #include "filelist.h"
 #include "fileview.h"
@@ -229,6 +230,11 @@ namespace btg
                      handleSort();
                      break;
                   }
+               case keyMapping::K_STATS:
+                  {
+                     handleStats();
+                     break;
+                  }
                case keyMapping::K_RESIZE:
                   {
                      handleResizeMainWindow();
@@ -241,6 +247,31 @@ namespace btg
                }
 
             return status;
+         }
+
+         dialog::RESULT UI::handleShowStatsHelp()
+         {
+            // Show a help window on the middle of the screen.
+            std::vector<std::string> helpText;
+
+            helpText.push_back("Help");
+            helpText.push_back("    ");
+
+            std::string keyDescr;
+
+            if (helpWindow::generateHelpForKey(keymap_,
+                                               keyMapping::K_BACK,
+                                               "to go back",
+                                               keyDescr))
+               {
+                  helpText.push_back(keyDescr);
+               }
+
+            helpText.push_back(" ");
+
+            helpWindow hw(keymap_, helpText);
+
+            return hw.run();
          }
 
          dialog::RESULT UI::handleShowDetailsHelp()
@@ -282,7 +313,7 @@ namespace btg
             windowSize detailsdimension;
             mainwindow_.getSize(detailsdimension);
             {
-               setDefaultStatusText();
+               setStatusText("Showing details");
 
                mainwindow_.clear();
                detailWindow dw(keymap_, mainwindow_);
@@ -355,8 +386,6 @@ namespace btg
                            }
                         }
                   }
-
-               // dw.destroy();
             }
 
             setDefaultStatusText();
@@ -1029,6 +1058,98 @@ namespace btg
                }
 
             statuswindow_.setStatus("Sorting by '" + name + "'.");
+         }
+
+         void UI::handleStats()
+         {
+            bool stats_resized = false;
+
+            windowSize statsdimension;
+            mainwindow_.getSize(statsdimension);
+            {
+               setStatusText("Showing stats");
+
+               mainwindow_.clear();
+               statsWindow sw(keymap_, mainwindow_);
+               sw.init(statsdimension);
+               sw.refresh();
+
+               keyMapping::KEYLABEL label;
+
+               bool cont = true;
+
+               while (cont)
+                  {
+                     label = sw.handleKeyboard();
+                     switch (label)
+                        {
+                        case keyMapping::K_UNDEF:
+                           {
+                              {
+                                 GET_HANDLER_INST;
+
+                                 bool statusUpdated = handler->statusListUpdated();
+                                 if (statusUpdated)
+                                    {
+                                       t_statusList statusList;
+                                       handler->getStatusList(statusList);
+                                       update(statusList);
+                                       // Redraw the contents.
+                                       sw.refresh();
+                                    }
+                              }
+                              break;
+                           }
+                        case keyMapping::K_SELECT:
+                        case keyMapping::K_BACK:
+                           {
+                              cont = false;
+                              sw.clear();
+                              break;
+                           }
+                        case keyMapping::K_HELP:
+                           {
+                              switch (handleShowStatsHelp())
+                                 {
+                                 case dialog::R_RESIZE:
+                                    {
+                                       // window was resized.
+                                       cont            = false;
+                                       stats_resized = true;
+                                       sw.clear();
+                                       break;
+                                    }
+                                 default:
+                                    {
+                                       break;
+                                    }
+                                 }
+                              break;
+                           }
+                        case keyMapping::K_RESIZE:
+                           {
+                              cont            = false;
+                              stats_resized = true;
+                              sw.clear();
+                              break;
+                           }
+                        default:
+                           {
+                              // Do nothing.
+                              break;
+                           }
+                        }
+                  }
+            }
+
+            setDefaultStatusText();
+
+            if (stats_resized)
+               {
+                  handleResizeMainWindow();
+               }
+
+            mainwindow_.refresh();
          }
 
          void UI::handleGlobalLimit()

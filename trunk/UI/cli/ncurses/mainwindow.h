@@ -104,6 +104,12 @@ namespace btg
             bool getSelection(btg::core::Status & _status, 
                               t_strList & _trackers);
 
+            /// Get total dl/ul ratio, dl/ul rates, number of torrents, etc.
+            void getTotals(std::string & _numberOfTorrent,
+                           std::string & _seeds, std::string & _leeches,
+                           std::string & _uldl_ratio,
+                           std::string & _dl_size, std::string & _ul_size);
+
             /// Get the number of selected entries.
             t_uint selected() const;
 
