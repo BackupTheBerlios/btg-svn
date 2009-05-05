@@ -437,6 +437,12 @@ namespace btg
 
          void fileView::genPieces(btg::core::fileInformation const& _fi, std::string & _output)
          {
+            if (_fi.size() == 0)
+               {
+                  _output += "0% done";
+                  return;
+               }
+
             if (_fi.isFull())
                {
                   _output += "100% done";
