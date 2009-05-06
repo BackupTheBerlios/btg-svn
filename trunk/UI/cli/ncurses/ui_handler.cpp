@@ -340,6 +340,10 @@ namespace btg
                                        t_statusList statusList;
                                        handler->getStatusList(statusList);
                                        update(statusList);
+                                       // Update and redraw bandwidth counters.
+                                       updateBandwidth(statusList);
+                                       topwindow_.refresh();
+
                                        // Redraw the contents.
                                        dw.refresh();
                                     }
@@ -1104,6 +1108,9 @@ namespace btg
                                        t_statusList statusList;
                                        handler->getStatusList(statusList);
                                        update(statusList);
+                                       // Update and redraw bandwidth counters.
+                                       updateBandwidth(statusList);
+                                       topwindow_.refresh();
                                        // Redraw the contents.
                                        sw.refresh();
                                     }
