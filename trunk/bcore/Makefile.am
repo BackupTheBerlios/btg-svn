@@ -130,7 +130,7 @@ $(AUTH_SOURCES) \
 bitvector.cpp \
 urlstatus.cpp
 
-libbtgcore_la_LIBADD = @XMLRPC_LDFLAGS@ @BOOST_IOSTREAMS_LIB@ \
+libbtgcore_la_LIBADD = @XMLRPC_LDFLAGS@ @ZLIB_LDFLAGS@ \
 @LIBGNUTLS_LIBS@ @BOOST_PROGRAM_OPTIONS_LIB@ \
 @BOOST_THREAD_LIB@ @BOOST_FILESYSTEM_LIB@ @BOOST_SYSTEM_LIB@ \
 @BOOST_DATE_TIME_LIB@
@@ -252,14 +252,14 @@ $(AUTH_HEADER) \
 bitvector.h \
 urlstatus.h
 
-AM_CFLAGS           = @CFLAGS@   @DEBUG_CFLAGS@ @XMLRPC_CFLAGS@ \
+AM_CFLAGS           = @CFLAGS@ @DEBUG_CFLAGS@ @XMLRPC_CFLAGS@ @ZLIB_CFLAGS@ \
                     -DBTG_DEBUG=@BTG_DEBUG@ \
                     -DBTG_VERSION="@VERSION@" \
                     -DBTG_BUILD="@BTG_BUILD@" \
                     -DBTG_REV="@BTG_REV@" \
                     -DBTG_INTERNAL_XMLRPC="@BTG_INTERNAL_XMLRPC@"
 
-AM_CXXFLAGS         = @CXXFLAGS@ @DEBUG_CXXFLAGS@ @XMLRPC_CFLAGS@ \
+AM_CXXFLAGS         = @CXXFLAGS@ @DEBUG_CXXFLAGS@ @XMLRPC_CFLAGS@ @ZLIB_CFLAGS@ \
                     -DBTG_DEBUG=@BTG_DEBUG@ \
                     -DBTG_VERSION="@VERSION@" \
                     -DBTG_BUILD="@BTG_BUILD@" \

@@ -111,7 +111,7 @@ else
 fi
 
 # Use a certain boost suffix. Hopefully it will stay the same on GNU/Debian.
-CONFIGURE_BOOST="--with-boost-system=$BOOST_SUFFIX --with-boost-date-time=$BOOST_SUFFIX --with-boost-filesystem=$BOOST_SUFFIX --with-boost-thread=$BOOST_SUFFIX --with-boost-program_options=$BOOST_SUFFIX --with-boost-iostreams=$BOOST_SUFFIX"
+CONFIGURE_BOOST="--with-boost-system=$BOOST_SUFFIX --with-boost-date-time=$BOOST_SUFFIX --with-boost-filesystem=$BOOST_SUFFIX --with-boost-thread=$BOOST_SUFFIX --with-boost-program_options=$BOOST_SUFFIX"
 
 # Execute this configure command.
 CONFIGURE="./configure $STATIC --disable-static $DAEMON $DEBUG --enable-btg-config --enable-cli $GUI_CLIENT $GUI_VIEWER --enable-unittest --enable-session-saving --enable-command-list 
