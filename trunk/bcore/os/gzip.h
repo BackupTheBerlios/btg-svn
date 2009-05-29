@@ -50,7 +50,7 @@ namespace btg
          public:
             enum
             {
-               GZIP_MAX_BUFFER_SIZE = 255
+               GZIP_MAX_BUFFER_SIZE = 16*1024
             };
 
             /// Constructor.
