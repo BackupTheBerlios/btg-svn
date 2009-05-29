@@ -30,8 +30,14 @@ namespace btg
       {
 
          gzipIf::gzipIf()
+            : initialized_(false)
          {
+            
+         }
 
+         bool gzipIf::initialized() const
+         {
+            return initialized_;
          }
 
          gzipIf::~gzipIf()

@@ -51,6 +51,7 @@ extern "C"
 
 #include <bcore/os/fileop.h>
 #include <bcore/os/pidfile.h>
+#include <bcore/os/gzip.h>
 
 #include <bcore/project.h>
 
@@ -2085,6 +2086,103 @@ void testBcore::XmlRpcSerializeDeserialize(btg::core::externalization::Externali
 
    destroyCommands(org_commands);
    destroyCommands(restored_commands);
+}
+
+void testBcore::gzipEncodeDecode(std::string const& _input)
+{
+   btg::core::os::gzipIf* gzi = new btg::core::os::gzip;
+   CPPUNIT_ASSERT(gzi->initialized());
+
+   std::string output;
+
+   gzi->gzip_compress(_input, output);
+   //std::cout << "input='" << _input.size() << "'" << std::endl;
+   //std::cout << "output='" << output.size() << "'" << std::endl;
+   /*
+   for (int i = 0; i < output.size(); i++)
+      {
+         int a = (unsigned char)output.c_str()[i];
+         std::cout << " " << std::hex << a;
+      }
+   std::cout << std::dec << std::endl;
+   */
+   std::string input2(output);
+   std::string output2;
+
+   gzi->gzip_decompress(input2, output2);
+   //std::cout << "input2='" << input2.size() << "'" << std::endl;
+   //std::cout << "output2='" << output2.size() << "'" << std::endl;
+
+   //std::cout << "'" << _input << "'" << std::endl;
+   //std::cout << "'" << output2 << "'" << std::endl;
+
+   CPPUNIT_ASSERT(_input == output2);
+
+   delete gzi;
+   gzi = 0;
+}
+
+void testBcore::test_gzip()
+{
+   const std::string input("abc");
+   gzipEncodeDecode(input);
+
+   std::string input2;
+   for (int count = 0; count < (btg::core::os::gzip::GZIP_MAX_BUFFER_SIZE/2); count++)
+      {
+         input2 += 'a';
+      }
+
+   gzipEncodeDecode(input2);
+
+   std::string input3;
+   for (int count = 0; count < (btg::core::os::gzip::GZIP_MAX_BUFFER_SIZE-1); count++)
+      {
+         input3 += 'a';
+      }
+
+   gzipEncodeDecode(input3);
+
+   std::string input4;
+   for (int count = 0; count < (btg::core::os::gzip::GZIP_MAX_BUFFER_SIZE); count++)
+      {
+         input4 += 'a';
+      }
+
+   gzipEncodeDecode(input4);
+
+   std::string input5;
+   for (int count = 0; count < (btg::core::os::gzip::GZIP_MAX_BUFFER_SIZE+1); count++)
+      {
+         input5 += 'a';
+      }
+
+   gzipEncodeDecode(input5);
+
+   std::string input6;
+   for (int count = 0; count < (btg::core::os::gzip::GZIP_MAX_BUFFER_SIZE*2); count++)
+      {
+         input6 += 'a';
+      }
+
+   gzipEncodeDecode(input6);
+   
+   std::string input7;
+   for (int count = 0; count < ((btg::core::os::gzip::GZIP_MAX_BUFFER_SIZE*2)+1); count++)
+      {
+         input7 += 'a';
+      }
+
+   gzipEncodeDecode(input7);
+
+   std::string input8;
+   for (int count = 0; count < ((btg::core::os::gzip::GZIP_MAX_BUFFER_SIZE*2)+1); count++)
+      {
+         input8 += "1234567890abbbbccccdddeeeffffgggghhhh!";
+      }
+
+   gzipEncodeDecode(input8);
+   
 }
 
 void testBcore::createCommands(std::vector<btg::core::Command*> & commands)

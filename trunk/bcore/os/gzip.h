@@ -24,9 +24,8 @@
 #define GZIP_H
 
 #include "gzipif.h"
-
-#include <sstream>
-#include <boost/iostreams/filtering_streambuf.hpp>
+#include <zlib.h>
+#include <bcore/type.h>
 
 namespace btg
 {
@@ -49,26 +48,31 @@ namespace btg
          class gzip: public gzipIf
          {
          public:
+            enum
+            {
+               GZIP_MAX_BUFFER_SIZE = 255
+            };
+
             /// Constructor.
             gzip();
 
-            virtual void gzip_compress(std::string const &_src, std::string &_dst);
+            virtual void gzip_compress(std::string const &_src, std::string & _dst);
             
-            virtual void gzip_decompress(std::string const &_src, std::string &_dst);
+            virtual void gzip_decompress(std::string const &_src, std::string & _dst);
             
             /// Destructor.
             virtual ~gzip();
          private:
-            /// Used as input to a filtered input streambuffer.
-            std::stringstream srcstream;
-            /// Used as input from a filtered input streambuffer.
-            std::stringstream dststream;
+            t_byte*  inputBuffer;
+            t_byte*  outputBuffer;
+            z_stream strmDef;
+            z_stream strmInf;
 
-            /// Filtered input streambuffer used for compression.
-            boost::iostreams::filtering_istreambuf compress_filter;
+            void gzip_compress_impl(int bufferSize, std::string & _dst, bool _flush = false);
+            void gzip_decompress_impl(int _bufferSize, std::string & _dst, bool _flush = false );
 
-            /// Filtered input streambuffer used for decompression.
-            boost::iostreams::filtering_istreambuf decompress_filter;
+            void getOutput(int _bytes, std::string & _dst);
+            void clearOutputBuffers();
          };
 
          /** @} */
@@ -77,5 +81,5 @@ namespace btg
    } // namespace core
 } // namespace btg
 
-#endif
+#endif // GZIP_H
 
