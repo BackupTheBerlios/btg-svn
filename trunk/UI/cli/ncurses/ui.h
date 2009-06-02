@@ -127,6 +127,7 @@ namespace btg
                      /// Handle sorting the list of contexts.
                      void handleSort();
 
+                     /// Show session statistics like ul/dl bytes, ul/dl ratio.
                      void handleStats();
 
                      /// Refresh all windows.

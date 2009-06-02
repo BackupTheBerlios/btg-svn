@@ -40,8 +40,7 @@ namespace btg
 
          /** @{ */
 
-         /// Gzip compression/decompression using boost, filtered
-         /// streams and zlib.
+         /// Gzip compression/decompression using zlib.
          /// 
          /// Note: compression and decompression cannot be done at the
          /// same time.
@@ -50,6 +49,7 @@ namespace btg
          public:
             enum
             {
+               /// Use buffers of this size for encoding/decoding.
                GZIP_MAX_BUFFER_SIZE = 16*1024
             };
 
@@ -63,15 +63,24 @@ namespace btg
             /// Destructor.
             virtual ~gzip();
          private:
+            /// Input buffer.
             t_byte*  inputBuffer;
+            /// Output buffer.
             t_byte*  outputBuffer;
+            /// zlib struct used for compressing.
             z_stream strmDef;
+            /// zlib struct used for decompressing.
             z_stream strmInf;
 
+            /// Compress a chunk of data, present in inputBuffer.
             void gzip_compress_impl(int bufferSize, std::string & _dst, bool _flush = false);
+            /// Decompress a chunk of data, present in inputBuffer.
             void gzip_decompress_impl(int _bufferSize, std::string & _dst, bool _flush = false );
 
+            /// Copy _bytes from outputBuffer and append it to the
+            /// second argument.
             void getOutput(int _bytes, std::string & _dst);
+            /// Clear the contents of the output buffer.
             void clearOutputBuffers();
          };
 

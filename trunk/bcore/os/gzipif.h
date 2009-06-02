@@ -60,6 +60,7 @@ namespace btg
             /// Destructor.
             virtual ~gzipIf();
          protected:
+            /// Indicates if an instance of this class has been initialized.
             bool initialized_;
          };
 
