@@ -118,6 +118,20 @@ CONFIGURE="./configure $STATIC --disable-static $DAEMON $DEBUG --enable-btg-conf
 --enable-event-callback --enable-www --enable-url --enable-upnp --prefix=/pack/btg-cvs $CONFIGURE_BOOST"
 
 case "$1" in
+  0.14.4)
+    export BOOST_ROOT=/pack/libboost-1.38.0/include/boost-1_38
+    export CXXFLAGS=-I/pack/libboost-1.38.0/include/boost-1_38
+    export LDFLAGS=-L/pack/libboost-1.38.0/lib
+    export BOOST_LDFLAGS=$LDFLAGS
+    export BOOST_CPPFLAGS=$CXXFLAGS
+    export LD_LIBRARY_PATH=/pack/libboost-1.38.0/lib
+
+    CXXFLAGS_pkgconfig=`export PKG_CONFIG_PATH=/$ROOT/$1/lib/pkgconfig; pkg-config --cflags libtorrent-rasterbar`
+    export LIBTORRENT_CFLAGS="-I$ROOT/$1/include -I$ROOT/$1/include/libtorrent" && \
+    export LIBTORRENT_LIBS="-L$ROOT/$1/lib -ltorrent-rasterbar" && \
+    echo "Using $CONFIGURE";
+    $CONFIGURE --with-rblibtorrent=$ROOT/$1
+    ;;
   0.14.2)
     export BOOST_ROOT=/pack/libboost-1.38.0/include/boost-1_38
     export CXXFLAGS=-I/pack/libboost-1.38.0/include/boost-1_38
