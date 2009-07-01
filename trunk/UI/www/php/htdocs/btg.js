@@ -85,6 +85,26 @@ var StatusAge = 0;
 
 var contextAbortId = -1;
 
+/*
+* IE workaround.
+* Taken from: http://soledadpenades.com/2007/05/17/arrayindexof-in-internet-explorer/
+*/
+
+if (!Array.indexOf)
+{
+    Array.prototype.indexOf = function(obj)
+    {
+	for(var i=0; i<this.length; i++)
+	{
+	    if(this[i]==obj)
+	    {
+		return i;
+	    }
+	}
+	return -1;
+    }
+}
+
 /**************************************************
  * Functions called from user interface in some 
  * way or another (either via user action or other
@@ -724,7 +744,7 @@ function timer()
 	{
 	    if (updatesStopped == 0)
 	    {
-		document.getElementById('statusMessage').innerHTML = lang[lng,'updatein'] + (refreshTimeout - contextsAge)  + lang[lng,'seconds'];
+		document.getElementById('statusMessage').innerHTML = lang[lng,'updatein'] + (refreshTimeout - contextsAge)  + " " + lang[lng,'seconds'];
 	    }
 	}
     }

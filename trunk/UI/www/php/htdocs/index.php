@@ -108,7 +108,8 @@ for(var i=0;i<t.length;i++) {
 echo $lang['language']."<br/><br/>";
 $langdir=scandir("languages/");
 foreach ($langdir as $langu) { 
-if ($langu!="." AND $langu!=".." AND is_file("languages/".$langu)) {
+if (preg_match("/\.php$/", $langu)) {
+#if ($langu!="." AND $langu!=".." AND is_file("languages/".$langu)) {
 $lang_name=explode(".",$langu);
 echo "<img style='cursor: pointer;' title='".$lang_name[0]."' rel='".$lang_name[0]."' onClick='select_language(\"".$lang_name[0]."\"); return false;' src='images/".$lang_name[0].".gif'>";
 }else {}
