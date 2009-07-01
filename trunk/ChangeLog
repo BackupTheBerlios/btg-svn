@@ -2,6 +2,7 @@ BTG version 1.0.0
 -----------------
 The following bugs were fixed:
 
+015907 wwwBTG does not work with iExplorer.
 015771 Refactor gzip interface (use zlib instead of boost).
 015632 btgncli, add dialog showing totals for a session.
 015626 btgncli, show files crashes client in certain situations.
