@@ -1,0 +1,29 @@
+.TH BTG 5 "02 December 2007"
+.SH NAME 
+btg
+.SH DESCRIPTION
+.B "btg" 
+consists of a number of applications which are used together to
+download files using the bittorrent protocol.
+
+A daemon, which runs in the background.
+
+A CLI client.
+
+A GUI client.
+
+A GUI viewer.
+
+A web based PHP client.
+
+The clients connect to the daemon using a transport. The clients can
+attach/detach sessions, which makes it possible to change between the
+different clients without stopping downloading or event to use all the
+clients at the same time to connect to the same session.
+
+.SH AUTHOR
+Written by Michael Wojciechowski and Johan Strom.
+
+.SH "SEE ALSO"
+btgdaemon(1), btgcli(1), btgui(1), btg_config(5)
+
