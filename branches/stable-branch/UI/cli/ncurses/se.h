@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: mainwindow.h 516 2009-01-11 19:42:53Z wojci $
+ * $Id$
  */
 
 #ifndef STATUS_ENTRY_H

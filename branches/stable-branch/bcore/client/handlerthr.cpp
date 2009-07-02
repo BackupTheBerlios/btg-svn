@@ -166,6 +166,7 @@ namespace btg
          void handlerThreadIf::resetStatusList()
          {
             statusSize_ = 0;
+            statusList_.clear();
          }
 
          void handlerThreadIf::getStatusList(t_statusList & _statusList)

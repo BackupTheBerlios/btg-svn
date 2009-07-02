@@ -45,6 +45,7 @@ namespace btg
 	      std::string const KEY_GLIMIT("KEY_GLIMIT");
          std::string const KEY_SESNAME("KEY_SESNAME");
          std::string const KEY_SORT("KEY_SORT");
+         std::string const KEY_STATS("KEY_STATS");
 	      std::string const KEY_DOWN("KEY_DOWN");
 	      std::string const KEY_UP("KEY_UP");
 	      std::string const KEY_LIST_START("KEY_LIST_START");
@@ -78,6 +79,7 @@ namespace btg
               limitKey(keyMapping::K_UNDEF),
               sesnameKey(keyMapping::K_UNDEF),
               sortKey(keyMapping::K_UNDEF),
+              statsKey(keyMapping::K_UNDEF),
               downKey(keyMapping::K_UNDEF),
               upKey(keyMapping::K_UNDEF),
               listStartKey(keyMapping::K_UNDEF),
@@ -131,6 +133,9 @@ namespace btg
 
                   key = inifile->GetValue(KEY_SORT, SECTION_BTGNCLI);
                   convertKey(key, sortKey);
+
+                  key = inifile->GetValue(KEY_STATS, SECTION_BTGNCLI);
+                  convertKey(key, statsKey);
 
                   key = inifile->GetValue(KEY_DOWN, SECTION_BTGNCLI);
                   convertKey(key, downKey);
@@ -259,6 +264,11 @@ namespace btg
                       output);
 
             formatKey(KEY_SORT,
+                      keyDescription,
+                      temp,
+                      output);
+
+            formatKey(KEY_STATS,
                       keyDescription,
                       temp,
                       output);
@@ -415,6 +425,11 @@ namespace btg
                case keyMapping::K_SORT:
                   {
                      value = sortKey;
+                     break;
+                  }
+               case keyMapping::K_STATS:
+                  {
+                     value = statsKey;
                      break;
                   }
                case keyMapping::K_DOWN:

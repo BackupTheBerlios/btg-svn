@@ -42,9 +42,9 @@ class testBcore : public CppUnit::TestFixture
    CPPUNIT_TEST( testSbuffer );
    CPPUNIT_TEST( testStatus );
 
-
    /* Tests of the commands. */
    /* Added as new commands are added, as I am lazy. */
+
 
    CPPUNIT_TEST( testCommand );
    CPPUNIT_TEST( testCommandNames );
@@ -95,7 +95,9 @@ class testBcore : public CppUnit::TestFixture
    CPPUNIT_TEST( testPIDFile );
 
    CPPUNIT_TEST( test_bitvector );
-   
+
+   CPPUNIT_TEST( test_gzip );
+
    CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -162,11 +164,17 @@ class testBcore : public CppUnit::TestFixture
    // Stress test the encoding/decoding of commands using XML-RPC.
    void stressTestXmlRpcCommands();
    
-   // test btg::core::os::PIDFile
+   // Test btg::core::os::PIDFile
    void testPIDFile();
    
-   // the test for btg::core::bitvector
+   // The test for btg::core::bitvector
    void test_bitvector();
+
+   /// Test gzip encoding/decoding.
+   void test_gzip();
+
+   void gzipEncodeDecode(std::string const& _input);
+
  private:
    void createCommands(std::vector<btg::core::Command*> & commands);
    void destroyCommands(std::vector<btg::core::Command*> & commands);

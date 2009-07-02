@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: test_bcore_client.h 450 2008-07-08 18:35:24Z wojci $
+ * $Id$
  */
 
 #include <cppunit/extensions/HelperMacros.h>
@@ -56,6 +56,7 @@ class testbtgncli : public CppUnit::TestFixture
 
    CPPUNIT_TEST( testDisplayModel );
    CPPUNIT_TEST( testDisplayModelResize );
+   CPPUNIT_TEST( testRemove );
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -67,6 +68,8 @@ class testbtgncli : public CppUnit::TestFixture
 
    void testDisplayModel();
    void testDisplayModelResize();
+   void testRemove();
+   void testRemoveLast();
 
    void addData(btg::UI::cli::DisplayModel* _dm, coutDisplayModelIf* _dmif, t_uint _visible);
    void testMoving(btg::UI::cli::DisplayModel* _dm, coutDisplayModelIf* _dmif, t_uint _visible);

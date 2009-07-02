@@ -53,8 +53,15 @@ namespace btg
             /// in _dst.
             virtual void gzip_decompress(std::string const& _src, std::string& _dst) = 0;
 
+            /// Return true if this interface was initialized and is
+            /// ready for use.
+            bool initialized() const;
+
             /// Destructor.
             virtual ~gzipIf();
+         protected:
+            /// Indicates if an instance of this class has been initialized.
+            bool initialized_;
          };
 
          /** @} */

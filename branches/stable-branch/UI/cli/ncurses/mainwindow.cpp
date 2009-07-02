@@ -27,6 +27,8 @@
 #include <bcore/logmacro.h>
 #include <algorithm>
 #include <boost/bind.hpp>
+#include <bcore/client/ratio.h>
+#include <bcore/hru.h>
 
 namespace btg
 {
@@ -79,6 +81,7 @@ namespace btg
                   return;
                }
 
+            werase(window_);
             dm_.draw();
             wrefresh(window_);
          }
@@ -171,6 +174,54 @@ namespace btg
             return dm_.get(_context_id, _status);
          }
 
+         t_uint mainWindow::selected() const
+         {
+            return dm_.selected();
+         }
+
+         t_uint mainWindow::entries() const
+         {
+            return dm_.size();
+         }
+
+         void mainWindow::getTotals(std::string & _numberOfTorrents,
+                                    std::string & _seeds, std::string & _leeches,
+                                    std::string & _uldl_ratio,
+                                    std::string & _dl_size, std::string & _ul_size)
+         {
+            _numberOfTorrents = btg::core::convertToString<t_uint>(dm_.size());
+
+            std::vector<btg::core::Status> list;
+            dm_.get(list);
+
+            t_ulong s = 0;
+            t_ulong l = 0;
+            t_ulong dlt = 0;
+            t_ulong ult = 0;
+
+            std::vector<btg::core::Status>::const_iterator iter;
+            for (iter = list.begin();
+                 iter != list.end();
+                 iter++)
+               {
+                  s   += iter->seeders();
+                  l   += iter->leechers();
+                  dlt += iter->downloadTotal();
+                  ult += iter->uploadTotal();
+               }
+
+            _seeds   = btg::core::convertToString<t_ulong>(s);
+            _leeches = btg::core::convertToString<t_ulong>(l);
+
+            btg::core::client::CalculateUlDlRatio(dlt, ult, _uldl_ratio);
+
+            btg::core::humanReadableUnit dlt_s = btg::core::humanReadableUnit::convert(dlt);
+            btg::core::humanReadableUnit ult_s = btg::core::humanReadableUnit::convert(ult);
+
+            _dl_size  = dlt_s.toString();
+            _ul_size  = ult_s.toString();
+         }
+         
          bool mainWindow::getSelection(btg::core::Status & _status)
          {
             t_strList trackers;
@@ -300,21 +351,12 @@ namespace btg
                      }
                }
 
-            if ((max_filename_size + 
-                 max_progress_size + 
-                 max_stat_size + 
-                 max_perc_size + 
-                 max_peers_size + 
-                 extra_space)
-                > width_)
-               {
-                  max_filename_size = width_ - 
-                     (max_progress_size + 
-                      max_stat_size + 
-                      max_perc_size + 
-                      max_peers_size + 
-                      extra_space);
-               }
+            max_filename_size = width_ - 
+               (max_progress_size + 
+                max_stat_size + 
+                max_perc_size + 
+                max_peers_size + 
+                extra_space);
 
             // BTG_NOTICE(logWrapper(), "findSizes: " << max_filename_size);
          }

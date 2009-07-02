@@ -55,3 +55,11 @@ SUSE Packages
 
 .. footer:: `BTG home page`_
 .. _BTG home page: http://btg.berlios.de/
+
+Arch Linux Packages
+~~~~~~~~~~~~~~~~~~~
+
+- `AUR package and instructions`_.
+
+.. _AUR package and instructions: http://aur.archlinux.org/packages.php?ID=8212
+

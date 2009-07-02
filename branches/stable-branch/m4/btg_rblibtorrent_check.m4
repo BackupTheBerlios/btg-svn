@@ -27,10 +27,10 @@ AC_DEFUN([BTG_RBLIBTORRENT_CHECK],
 	AC_MSG_NOTICE([Searching for libtorrent in $RBLIBTORRENT_ROOT (by pkgconfig) ...])
 	PKG_CONFIG_PATH_saved=$PKG_CONFIG_PATH
 	export PKG_CONFIG_PATH="$RBLIBTORRENT_ROOT/lib/pkgconfig:$RBLIBTORRENT_ROOT/libdata/pkgconfig"
-        PKG_CHECK_MODULES([LIBTORRENT], [libtorrent >= 0.12], [], [
+        PKG_CHECK_MODULES([LIBTORRENT], [libtorrent-rasterbar >= 0.13], [], [
 		AC_MSG_NOTICE([Trying to use the default libtorrent CFLAGS/LIBS.])
         	LIBTORRENT_CFLAGS="-I$RBLIBTORRENT_ROOT/include -I$RBLIBTORRENT_ROOT/include/libtorrent"
-		LIBTORRENT_LIBS="-L$RBLIBTORRENT_ROOT/lib -ltorrent"
+		LIBTORRENT_LIBS="-L$RBLIBTORRENT_ROOT/lib -ltorrent-rasterbar"
 		AC_SUBST(LIBTORRENT_CFLAGS)
 		AC_SUBST(LIBTORRENT_LIBS)
 	])
@@ -79,9 +79,6 @@ AC_DEFUN([BTG_RBLIBTORRENT_CHECK],
         AC_SUBST(LIBTORRENT_LIBS)
     ], [
         dnl else try to use the settings from the libtorrent pkg-config configuration
-        PKG_CHECK_MODULES([LIBTORRENT], [libtorrent-rasterbar >= 0.13], [], [AC_MSG_NOTICE([new-style LT-0.13.1+ not found, trying older setup])])
-	if test -z "$LIBTORRENT_CFLAGS" -a -z "$LIBTORRENT_LIBS"; then
-    	    PKG_CHECK_MODULES([LIBTORRENT], [libtorrent >= 0.12])
-	fi
+        PKG_CHECK_MODULES([LIBTORRENT], [libtorrent-rasterbar >= 0.13])
     ])
 ])

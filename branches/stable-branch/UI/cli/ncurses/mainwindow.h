@@ -104,6 +104,18 @@ namespace btg
             bool getSelection(btg::core::Status & _status, 
                               t_strList & _trackers);
 
+            /// Get total dl/ul ratio, dl/ul rates, number of torrents, etc.
+            void getTotals(std::string & _numberOfTorrent,
+                           std::string & _seeds, std::string & _leeches,
+                           std::string & _uldl_ratio,
+                           std::string & _dl_size, std::string & _ul_size);
+
+            /// Get the number of selected entries.
+            t_uint selected() const;
+
+            /// Get the number of  entries.
+            t_uint entries() const;
+
             /// Get a status, identified by a context id.
             bool get(t_int const _context_id, btg::core::Status & _status) const;
 
@@ -149,12 +161,19 @@ namespace btg
             /// Model used to display a list of entries.
             DisplayModel dm_;
 
+            /// Line counter, used when drawing list of contexts.
             t_uint lcounter;
+            /// Max file name size, in characters.
             t_uint max_filename_size;
+            /// Max progress size, in characters.
             t_uint max_progress_size;
+            /// Max stat size, in characters.
             t_uint max_stat_size;
+            /// Max percent size, in characters.
             t_uint max_perc_size;
+            /// Max peers size, in characters.
             t_uint max_peers_size;
+            /// Extra space, in characters.
             t_uint extra_space;
 
             /// Reference to the UI object used.

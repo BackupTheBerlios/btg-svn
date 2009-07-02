@@ -653,11 +653,6 @@ namespace btg
                                           t_strList & _destination);
 #endif // BTG_OPTION_EVENTCALLBACK
 
-               /// Given a directory, attempt to find a file in it.
-               /// @return True - found the file, false otherwise.
-               bool find_file(boost::filesystem::path const& dir_path,
-                              std::string const& file_name);
-
                /// Convert an entry into a torrent info.
                /// @return True - converted. False - conversion failed.
 #if (BTG_LT_0_12 || BTG_LT_0_13)

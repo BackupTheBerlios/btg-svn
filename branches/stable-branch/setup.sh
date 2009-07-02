@@ -42,6 +42,7 @@ fi
 # For xmlrpc installed system wide, on debian.
 export CFLAGS=-I/usr/include/xmlrpc-epi
 export CXXFLAGS=$CFLAGS
+DAEMON=""
 
 for arg in "$@"
 do
@@ -57,6 +58,10 @@ do
 	    export CXXFLAGS="$CXXFLAGS -O3"
 	    export CFLAGS="$CFLAGS -O3"
 	    ;;
+        "-no-daemon")
+            echo "Disabling: daemon."
+            DAEMON="--disable-daemon"
+            ;;
 	"-debug")
 	    echo "Enabling: debug build."
 	    DEBUG=--enable-debug
@@ -98,32 +103,44 @@ echo "Using CFLAGS: $CFLAGS"
 
 # Tell the configure script which versions of the boost libs to use.
 # BOOST_SUFFIX="gcc41-mt-1_34_1"
-BOOST_SUFFIX="gcc43-mt-1_36"
+OS=`uname -s -r`
+if test "$OS" = "FreeBSD 7.1-RELEASE"; then
+  BOOST_SUFFIX="gcc42-mt"
+else
+  BOOST_SUFFIX="gcc43-mt-1_38"
+fi
 
 # Use a certain boost suffix. Hopefully it will stay the same on GNU/Debian.
-CONFIGURE_BOOST="--with-boost-system=$BOOST_SUFFIX --with-boost-date-time=$BOOST_SUFFIX --with-boost-filesystem=$BOOST_SUFFIX --with-boost-thread=$BOOST_SUFFIX --with-boost-regex=$BOOST_SUFFIX --with-boost-program_options=$BOOST_SUFFIX --with-boost-iostreams=$BOOST_SUFFIX"
+CONFIGURE_BOOST="--with-boost-system=$BOOST_SUFFIX --with-boost-date-time=$BOOST_SUFFIX --with-boost-filesystem=$BOOST_SUFFIX --with-boost-thread=$BOOST_SUFFIX --with-boost-program_options=$BOOST_SUFFIX"
 
 # Execute this configure command.
-CONFIGURE="./configure $STATIC --disable-static $DEBUG --enable-btg-config --enable-cli $GUI_CLIENT $GUI_VIEWER --enable-unittest --enable-session-saving --enable-command-list --enable-event-callback --enable-www --enable-url --enable-upnp --prefix=/pack/btg-cvs $CONFIGURE_BOOST"
+CONFIGURE="./configure $STATIC --disable-static $DAEMON $DEBUG --enable-btg-config --enable-cli $GUI_CLIENT $GUI_VIEWER --enable-unittest --enable-session-saving --enable-command-list 
+--enable-event-callback --enable-www --enable-url --enable-upnp --prefix=/pack/btg-cvs $CONFIGURE_BOOST"
 
 case "$1" in
-  0.14.1)
-#    export BOOST_ROOT=/pack/libboost-1.37.0/include/boost-1_37
-#    export CXXFLAGS=-I/pack/libboost-1.37.0/include/boost-1_37
-#    export LDFLAGS=-L/pack/libboost-1.37.0/lib
-#    export BOOST_LDFLAGS=$LDFLAGS
-#    export BOOST_CPPFLAGS=$CXXFLAGS
-#    export LD_LIBRARY_PATH=/pack/libboost-1.37.0/lib
-
-    export BOOST_ROOT=/pack/libboost-1.36.0/include/boost-1_36
-    export CXXFLAGS=-I/pack/libboost-1.36.0/include/boost-1_36
-    export LDFLAGS=-L/pack/libboost-1.36.0/lib
+  0.14.4)
+    export BOOST_ROOT=/pack/libboost-1.38.0/include/boost-1_38
+    export CXXFLAGS=-I/pack/libboost-1.38.0/include/boost-1_38
+    export LDFLAGS=-L/pack/libboost-1.38.0/lib
     export BOOST_LDFLAGS=$LDFLAGS
     export BOOST_CPPFLAGS=$CXXFLAGS
-    export LD_LIBRARY_PATH=/pack/libboost-1.36.0/lib
+    export LD_LIBRARY_PATH=/pack/libboost-1.38.0/lib
 
-    # Libtorrent from SVN uses boost 1.3.5, where asio is included.
-    CXXFLAGS_pkgconfig=`export PKG_CONFIG_PATH=/$ROOT/$1/lib/pkgconfig; pkg-config --cflags libtorrent`
+    CXXFLAGS_pkgconfig=`export PKG_CONFIG_PATH=/$ROOT/$1/lib/pkgconfig; pkg-config --cflags libtorrent-rasterbar`
+    export LIBTORRENT_CFLAGS="-I$ROOT/$1/include -I$ROOT/$1/include/libtorrent" && \
+    export LIBTORRENT_LIBS="-L$ROOT/$1/lib -ltorrent-rasterbar" && \
+    echo "Using $CONFIGURE";
+    $CONFIGURE --with-rblibtorrent=$ROOT/$1
+    ;;
+  0.14.2)
+    export BOOST_ROOT=/pack/libboost-1.38.0/include/boost-1_38
+    export CXXFLAGS=-I/pack/libboost-1.38.0/include/boost-1_38
+    export LDFLAGS=-L/pack/libboost-1.38.0/lib
+    export BOOST_LDFLAGS=$LDFLAGS
+    export BOOST_CPPFLAGS=$CXXFLAGS
+    export LD_LIBRARY_PATH=/pack/libboost-1.38.0/lib
+
+    CXXFLAGS_pkgconfig=`export PKG_CONFIG_PATH=/$ROOT/$1/lib/pkgconfig; pkg-config --cflags libtorrent-rasterbar`
     export LIBTORRENT_CFLAGS="-I$ROOT/$1/include -I$ROOT/$1/include/libtorrent" && \
     export LIBTORRENT_LIBS="-L$ROOT/$1/lib -ltorrent-rasterbar" && \
     echo "Using $CONFIGURE";

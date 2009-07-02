@@ -33,6 +33,7 @@
 
 #include "handler.h"
 #include "detailwindow.h"
+#include "statswindow.h"
 #include "helpwindow.h"
 #include "filelist.h"
 #include "fileview.h"
@@ -82,9 +83,12 @@ namespace btg
                               update(statusList);
                               updateBandwidth(statusList);
                            }
-                        // Make sure that 
+                        // No torrents, showing empty list.
                         if (handler->statusSize() == 0)
                            {
+                              t_statusList statusList;
+                              update(statusList);
+                              updateBandwidth(statusList);
                               clear();
                            }
 
@@ -226,6 +230,11 @@ namespace btg
                      handleSort();
                      break;
                   }
+               case keyMapping::K_STATS:
+                  {
+                     handleStats();
+                     break;
+                  }
                case keyMapping::K_RESIZE:
                   {
                      handleResizeMainWindow();
@@ -238,6 +247,31 @@ namespace btg
                }
 
             return status;
+         }
+
+         dialog::RESULT UI::handleShowStatsHelp()
+         {
+            // Show a help window on the middle of the screen.
+            std::vector<std::string> helpText;
+
+            helpText.push_back("Help");
+            helpText.push_back("    ");
+
+            std::string keyDescr;
+
+            if (helpWindow::generateHelpForKey(keymap_,
+                                               keyMapping::K_BACK,
+                                               "to go back",
+                                               keyDescr))
+               {
+                  helpText.push_back(keyDescr);
+               }
+
+            helpText.push_back(" ");
+
+            helpWindow hw(keymap_, helpText);
+
+            return hw.run();
          }
 
          dialog::RESULT UI::handleShowDetailsHelp()
@@ -279,7 +313,7 @@ namespace btg
             windowSize detailsdimension;
             mainwindow_.getSize(detailsdimension);
             {
-               setDefaultStatusText();
+               setStatusText("Showing details");
 
                mainwindow_.clear();
                detailWindow dw(keymap_, mainwindow_);
@@ -306,6 +340,10 @@ namespace btg
                                        t_statusList statusList;
                                        handler->getStatusList(statusList);
                                        update(statusList);
+                                       // Update and redraw bandwidth counters.
+                                       updateBandwidth(statusList);
+                                       topwindow_.refresh();
+
                                        // Redraw the contents.
                                        dw.refresh();
                                     }
@@ -352,8 +390,6 @@ namespace btg
                            }
                         }
                   }
-
-               // dw.destroy();
             }
 
             setDefaultStatusText();
@@ -661,6 +697,16 @@ namespace btg
                {
                   helpText.push_back(keyDescr);
                   helpText.push_back("  to set the name of the session");
+               }
+
+            if (helpWindow::generateHelpForKey(keymap_,
+                                               keyMapping::K_STATS,
+                                               "",
+                                               keyDescr,
+                                               false))
+               {
+                  helpText.push_back(keyDescr);
+                  helpText.push_back("  to show session stats");
                }
 
             if (helpWindow::generateHelpForKey(keymap_,
@@ -974,6 +1020,13 @@ namespace btg
             std::string name;
             switch (sortby_)
                {
+               case UI::sB_Id:
+                  {
+                     sortby_ = UI::sB_Name;
+                     mainwindow_.setSortBy(DisplayModel::sB_Name);
+                     name    = "name";
+                     break;
+                  }
                case UI::sB_Name:
                   {
                      sortby_ = UI::sB_Size;
@@ -1011,14 +1064,109 @@ namespace btg
                   }
                case UI::sB_Done:
                   {
-                     sortby_ = UI::sB_Name;
-                     mainwindow_.setSortBy(DisplayModel::sB_Name);
-                     name    = "name";
+                     sortby_ = UI::sB_Id;
+                     mainwindow_.setSortBy(DisplayModel::sB_Id);
+                     name    = "id";
                      break;
                   }
                }
 
             statuswindow_.setStatus("Sorting by '" + name + "'.");
+         }
+
+         void UI::handleStats()
+         {
+            bool stats_resized = false;
+
+            windowSize statsdimension;
+            mainwindow_.getSize(statsdimension);
+            {
+               setStatusText("Showing stats");
+
+               mainwindow_.clear();
+               statsWindow sw(keymap_, mainwindow_);
+               sw.init(statsdimension);
+               sw.refresh();
+
+               keyMapping::KEYLABEL label;
+
+               bool cont = true;
+
+               while (cont)
+                  {
+                     label = sw.handleKeyboard();
+                     switch (label)
+                        {
+                        case keyMapping::K_UNDEF:
+                           {
+                              {
+                                 GET_HANDLER_INST;
+
+                                 bool statusUpdated = handler->statusListUpdated();
+                                 if (statusUpdated)
+                                    {
+                                       t_statusList statusList;
+                                       handler->getStatusList(statusList);
+                                       update(statusList);
+                                       // Update and redraw bandwidth counters.
+                                       updateBandwidth(statusList);
+                                       topwindow_.refresh();
+                                       // Redraw the contents.
+                                       sw.refresh();
+                                    }
+                              }
+                              break;
+                           }
+                        case keyMapping::K_SELECT:
+                        case keyMapping::K_BACK:
+                           {
+                              cont = false;
+                              sw.clear();
+                              break;
+                           }
+                        case keyMapping::K_HELP:
+                           {
+                              switch (handleShowStatsHelp())
+                                 {
+                                 case dialog::R_RESIZE:
+                                    {
+                                       // window was resized.
+                                       cont            = false;
+                                       stats_resized = true;
+                                       sw.clear();
+                                       break;
+                                    }
+                                 default:
+                                    {
+                                       break;
+                                    }
+                                 }
+                              break;
+                           }
+                        case keyMapping::K_RESIZE:
+                           {
+                              cont            = false;
+                              stats_resized = true;
+                              sw.clear();
+                              break;
+                           }
+                        default:
+                           {
+                              // Do nothing.
+                              break;
+                           }
+                        }
+                  }
+            }
+
+            setDefaultStatusText();
+
+            if (stats_resized)
+               {
+                  handleResizeMainWindow();
+               }
+
+            mainwindow_.refresh();
          }
 
          void UI::handleGlobalLimit()

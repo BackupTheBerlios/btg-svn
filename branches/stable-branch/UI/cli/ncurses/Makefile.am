@@ -8,7 +8,7 @@ noinst_HEADERS = cli_helper.h \
 libcommoncli_la_SOURCES = cli_helper.cpp \
                           se.cpp dm.cpp
 
-libcommoncli_la_CXXFLAGS = @CXXFLAGS@ @LIBGNUTLS_CFLAGS@ \
+libcommoncli_la_CXXFLAGS = @CXXFLAGS@ @LIBGNUTLS_CFLAGS@ @ZLIB_CFLAGS@ \
 -DBTG_DEBUG=@BTG_DEBUG@ \
 -DBTG_REV="@BTG_REV@" \
 -DBTG_INTERNAL_XMLRPC="@BTG_INTERNAL_XMLRPC@"
@@ -24,7 +24,7 @@ btgncli_SOURCES = nconfig.cpp \
                   window.cpp \
                   basemenu.cpp \
                   initwindow.cpp \
-                  detailwindow.cpp statuswindow.cpp topwindow.cpp snwindow.cpp \
+                  detailwindow.cpp statuswindow.cpp topwindow.cpp snwindow.cpp statswindow.cpp \
                   helpwindow.cpp filelist.cpp limitwindow.cpp peerlist.cpp \
                   fileview.cpp \
                   sessionselect.cpp \
@@ -41,7 +41,7 @@ noinst_HEADERS += nconfig.h \
                  window.h \
                  basemenu.h \
                  initwindow.h \
-                 detailwindow.h statuswindow.h topwindow.h snwindow.h \
+                 detailwindow.h statuswindow.h topwindow.h snwindow.h statswindow.h \
                  helpwindow.h filelist.h limitwindow.h peerlist.h \
                  fileview.h \
                  sessionselect.h \
@@ -58,14 +58,14 @@ btgncli_LDADD   = libcommoncli.la \
                   $(top_builddir)/external/ini/libini.la \
                   $(top_builddir)/bcore/libbtgcore.la
 
-btgncli_LDFLAGS = @LIBS@ @CURSES_LIB@ @BOOST_SYSTEM_LIB@ @BOOST_DATE_TIME_LIB@ @BOOST_IOSTREAMS_LIB@ @BOOST_FILESYSTEM_LIB@ @LIBGNUTLS_LIBS@ @BOOST_PROGRAM_OPTIONS_LIB@ @BOOST_THREAD_LIB@ 
+btgncli_LDFLAGS = @LIBS@ @CURSES_LIB@ @BOOST_SYSTEM_LIB@ @BOOST_DATE_TIME_LIB@ @ZLIB_LDFLAGS@ @BOOST_FILESYSTEM_LIB@ @LIBGNUTLS_LIBS@ @BOOST_PROGRAM_OPTIONS_LIB@ @BOOST_THREAD_LIB@ 
 
-btgncli_CFLAGS   = @CFLAGS@ @LIBGNUTLS_CFLAGS@ \
+btgncli_CFLAGS   = @CFLAGS@ @LIBGNUTLS_CFLAGS@ @ZLIB_CFLAGS@ \
 -DBTG_DEBUG=@BTG_DEBUG@ \
 -DBTG_REV="@BTG_REV@" \
 -DBTG_INTERNAL_XMLRPC="@BTG_INTERNAL_XMLRPC@"
 
-btgncli_CXXFLAGS = @CXXFLAGS@ @LIBGNUTLS_CFLAGS@ \
+btgncli_CXXFLAGS = @CXXFLAGS@ @LIBGNUTLS_CFLAGS@ @ZLIB_CFLAGS@ \
 -DBTG_DEBUG=@BTG_DEBUG@ \
 -DBTG_REV="@BTG_REV@" \
 -DBTG_INTERNAL_XMLRPC="@BTG_INTERNAL_XMLRPC@"

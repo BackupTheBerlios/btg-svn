@@ -104,6 +104,7 @@ Stable Releases
 ======================= ========================== ======================= ============================================
 **Source**              **Release note**           **Changelog**           **Rasterbar Libtorrent version**
 ----------------------- -------------------------- ----------------------- --------------------------------------------
+`btg-0.9.9.tar.gz`_     `0.9.9 release note`_      `0.9.9 changelog`_      0.12.1/0.13/0.13.1/0.14/0.14.1
 `btg-0.9.8.tar.gz`_     `0.9.8 release note`_      `0.9.8 changelog`_      0.12.1/0.13/0.13.1
 `btg-0.9.7.tar.gz`_     `0.9.7 release note`_      `0.9.7 changelog`_      0.12.x/0.13rc1
 `btg-0.9.6.tar.gz`_     `0.9.6 release note`_      `0.9.6 changelog`_      0.12
@@ -136,44 +137,32 @@ Stable Releases
 .. _0.9.8 release note: http://developer.berlios.de/project/shownotes.php?release_id=14876
 .. _0.9.8 changelog: http://developer.berlios.de/project/shownotes.php?release_id=14876
 
+.. _btg-0.9.9.tar.gz: http://download.berlios.de/btg/btg-0.9.9.tar.gz
+.. _0.9.9 release note: http://developer.berlios.de/project/shownotes.php?release_id=15680
+.. _0.9.9 changelog: http://developer.berlios.de/project/shownotes.php?release_id=15680
+
 Experimental Releases
 ---------------------
 
 ======================= ========================== ======================= ==================================
 **Source**              **Release note**           **Changelog**           **Rasterbar Libtorrent version**
 ----------------------- -------------------------- ----------------------- ----------------------------------
-`btg-0.9.9-rc3.tar.gz`_ `0.9.9 RC3 release note`_  `0.9.9 RC3 changelog`_  0.12.1/0.13/0.13.1/0.14/0.14.1
-`btg-0.9.9-rc2.tar.gz`_ `0.9.9 RC2 release note`_  `0.9.9 RC2 changelog`_  0.12.1/0.13/0.13.1/0.14
-`btg-0.9.9-rc1.tar.gz`_ `0.9.9 RC1 release note`_  `0.9.9 RC1 changelog`_  0.12.1/0.13/0.13.1/0.14
-`btg-0.9.8-rc3.tar.gz`_ `0.9.8 RC3 release note`_  `0.9.8 RC3 changelog`_  0.12.1/0.13/0.13.1
-`btg-0.9.8-rc2.tar.gz`_ `0.9.8 RC2 release note`_  `0.9.8 RC2 changelog`_  0.12.1/0.13
-`btg-0.9.8-rc1.tar.gz`_ `0.9.8 RC1 release note`_  `0.9.8 RC1 changelog`_  0.12.1/0.13/SVN
+`btg-1.0.0-rc3.tar.gz`_ `1.0.0 RC3 release note`_  `1.0.0 RC3 changelog`_  0.12.1/0.13/0.13.1/0.14/0.14.x
+`btg-1.0.0-rc2.tar.gz`_ `1.0.0 RC2 release note`_  `1.0.0 RC2 changelog`_  0.12.1/0.13/0.13.1/0.14/0.14.x
+`btg-1.0.0-rc1.tar.gz`_ `1.0.0 RC1 release note`_  `1.0.0 RC1 changelog`_  0.12.1/0.13/0.13.1/0.14/0.14.x
 ======================= ========================== ======================= ==================================
 
-.. _btg-0.9.9-rc3.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.9-rc3.tar.gz
-.. _0.9.9 RC3 release note: http://developer.berlios.de/project/shownotes.php?release_id=15627
-.. _0.9.9 RC3 changelog: http://developer.berlios.de/project/shownotes.php?release_id=15627
+.. _btg-1.0.0-rc3.tar.gz: http://prdownload.berlios.de/btg/btg-1.0.0-rc3.tar.gz
+.. _1.0.0 RC3 release note: https://developer.berlios.de/project/shownotes.php?release_id=16384
+.. _1.0.0 RC3 changelog: https://developer.berlios.de/project/shownotes.php?release_id=16384
 
-.. _btg-0.9.9-rc2.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.9-RC2.tar.gz
-.. _0.9.9 RC2 release note: http://developer.berlios.de/project/shownotes.php?release_id=15453
-.. _0.9.9 RC2 changelog: http://developer.berlios.de/project/shownotes.php?release_id=15453
+.. _btg-1.0.0-rc2.tar.gz: http://prdownload.berlios.de/btg/btg-1.0.0-rc2.tar.gz
+.. _1.0.0 RC2 release note: https://developer.berlios.de/project/shownotes.php?release_id=16164
+.. _1.0.0 RC2 changelog: https://developer.berlios.de/project/shownotes.php?release_id=16164
 
-.. _btg-0.9.9-rc1.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.9-rc1.tar.gz
-.. _0.9.9 RC1 release note: http://developer.berlios.de/project/shownotes.php?release_id=15141
-.. _0.9.9 RC1 changelog: http://developer.berlios.de/project/shownotes.php?release_id=15141
-
-.. _btg-0.9.8-rc3.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.8-rc3.tar.gz
-.. _0.9.8 RC3 release note: http://developer.berlios.de/project/shownotes.php?release_id=14856
-.. _0.9.8 RC3 changelog: http://developer.berlios.de/project/shownotes.php?release_id=14856
-
-.. _btg-0.9.8-rc2.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.8-rc2.tar.gz
-.. _0.9.8 RC2 release note: http://developer.berlios.de/project/shownotes.php?release_id=14736
-.. _0.9.8 RC2 changelog: http://developer.berlios.de/project/shownotes.php?release_id=14736
-
-.. _btg-0.9.8-rc1.tar.gz: http://prdownload.berlios.de/btg/btg-0.9.8-rc1.tar.gz
-.. _0.9.8 RC1 release note: http://developer.berlios.de/project/shownotes.php?release_id=14498
-.. _0.9.8 RC1 changelog: http://developer.berlios.de/project/shownotes.php?release_id=14498
-
+.. _btg-1.0.0-rc1.tar.gz: http://prdownload.berlios.de/btg/btg-1.0.0-RC1.tar.gz
+.. _1.0.0 RC1 release note: https://developer.berlios.de/project/shownotes.php?release_id=15934
+.. _1.0.0 RC1 changelog: https://developer.berlios.de/project/shownotes.php?release_id=15934
 
 Packages
 ~~~~~~~~
@@ -186,6 +175,7 @@ Documentation
 ~~~~~~~~~~~~~
 - `BTG FAQ`_.
 - `BTG howto (current)`_.
+- `BTG howto (0.9.9)`_.
 - `BTG howto (0.9.8)`_.
 - `BTG howto (0.9.7)`_.
 - `BTG howto (0.9.6)`_.
@@ -197,6 +187,7 @@ Documentation
 - `Manual pages`_ contained in the releases.
 - `BTG Developer Howto`_.
 - `BTG Release Procedure`_.
+- `BTG Links`_.
 
 .. _Manual pages: manpages.html
 
@@ -208,6 +199,8 @@ Authors
 - Rodolphe Saugier (bugfix #10588).
 - Gabor Tanka (DHT fixes).
 - Richard S. Allen (bugfix #14751).
+- Maarten Bosmans (bugfix #15216).
+- gH0StArthour (bugfix #15571 - Hungarian translation).
 - Jesper Nyholm Jensen (Testing).
 
 Getting Help
@@ -239,6 +232,7 @@ Links
 .. _BTG Howto (0.9.6): howto-0.9.6.html
 .. _BTG Howto (0.9.7): howto-0.9.7.html
 .. _BTG Howto (0.9.8): howto-0.9.8.html
+.. _BTG Howto (0.9.9): howto-0.9.9.html
 .. _Rasterbar Libtorrent: http://www.rasterbar.com/products/libtorrent.html
 .. _Gtkmm: http://www.gtkmm.org/
 .. _SDL: http://libsdl.org/
@@ -247,6 +241,7 @@ Links
 .. _PHP: http://php.net/
 .. _XML-RPC: http://www.xmlrpc.com/
 .. _BTG Release Procedure: release-proc.html
+.. _BTG Links: links.html
 
 .. image:: http://developer.berlios.de/bslogo.php?group_id=0
    :height: 32

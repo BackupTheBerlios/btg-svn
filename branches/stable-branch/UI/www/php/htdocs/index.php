@@ -1,18 +1,26 @@
 <?php
+error_reporting(E_ALL);
+header("Expires: Thu, 19 Nov 1981 08:52:00 GMT");
+header("Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0"); 
+header("Pragma: no-cache");
 // Check PHP version, we require at least PHP 5
 if(substr(phpversion(), 0,1) < 5)
-	die("Sorry, btg-www requires at least PHP 5");
+	die($lang['php_die']);
 
 // make sure we can find version.php
 @include("version.php");
+
 if(!defined("BTG_BUILD"))
 {
-	echo "You have to run configure with --enable-www in order to use the web interface! version.php missing.";
-	die();
+	die($lang['version_missing']);
 }
 
 session_start();
-
+if (isset($_COOKIE['language'])) {
+require_once("languages/".$_COOKIE['language'].".php");
+}else{
+require_once("languages/en.php");
+}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
@@ -21,7 +29,17 @@ session_start();
 <meta http-equiv="Content-Language" content="en-us" />
 <meta name="ROBOTS" content="NONE" />
 <style type="text/css" media="screen">@import "btg.css";</style>
-<script language="javascript" src="btg.js" type="text/javascript"></script>
+<?
+
+echo"<script language='javascript' src='languages/js/";
+if (isset($_COOKIE['language'])) { 
+echo $_COOKIE['language'].".js'";
+} else {
+echo "en.js'";
+}
+echo"type='text/javascript'></script>";
+echo'<script language="javascript" src="btg.js" type="text/javascript"></script>';
+?>
 <script language="javascript" src="ajaxjs.php" type="text/javascript"></script>
 <script language="javascript" src="csshover.js" type="text/javascript"></script>
 <title>BTG <?php
@@ -57,55 +75,66 @@ for(var i=0;i<t.length;i++) {
 		<form action="upload.php" target="upload_iframe" method="post" enctype="multipart/form-data" onSubmit="return uploadCheck();">
 		<input type="hidden" name="MAX_FILE_SIZE" value="1000000" />
 		<input class="btn" type="file" id="upload_input" name="torrent_file"/>
-		<input id="upload_button" type="submit" value="Upload"/>
+		<input id="upload_button" type="submit" value="<?=$lang['upload']?>"/>
 		</form>
 		<div id="loadurl">
 			<input class="textinput" type="text" id="loadurl_input"/>
-			<input id="loadurl_button" type="button" value="Load URL" onClick="loadUrl()"/>
+			<input id="loadurl_button" type="button" value="<?=$lang['load_url']?>" onClick="loadUrl()"/>
 		</div>
 		<div id="loadurl_status" onClick="resetUrl()">
 		</div>
 	</div>
 
-	<input id="logout_button" class="control_buttons" type="button" onClick="deauth();" value="Logout"/>
-	<input id="detach_button" class="control_buttons" type="button" onClick="sessionDetach();" value="Detach session"/>
-	<input id="quit_button" class="control_buttons" type="button" onClick="sessionQuit();" value="Quit session"/>
-	<input id="collapse_button" class="control_buttons" type="button" onClick="hideAllContextDetails();" value="Hide all details"/>
-	<input id="cleanall_button" class="control_buttons" type="button" onClick="cleanAllContexts();" value="Clean all"/>
-	<input id="glimit_button" class="control_buttons" type="button" onClick="showGlobalLimits();" value="Global limit"/>
-	<input id="sesname_button" class="control_buttons" type="button" onClick="showSessionName();" value="Session name"/>
+	<input id="logout_button" class="control_buttons" type="button" onClick="deauth();" value="<?=$lang['logout']?>"/>
+	<input id="detach_button" class="control_buttons" type="button" onClick="sessionDetach();" value="<?=$lang['detach']?>"/>
+	<input id="quit_button" class="control_buttons" type="button" onClick="sessionQuit();" value="<?=$lang['quit']?>"/>
+	<input id="collapse_button" class="control_buttons" type="button" onClick="hideAllContextDetails();" value="<?=$lang['hide']?>"/>
+	<input id="cleanall_button" class="control_buttons" type="button" onClick="cleanAllContexts();" value="<?=$lang['clean']?>"/>
+	<input id="glimit_button" class="control_buttons" type="button" onClick="showGlobalLimits();" value="<?=$lang['global_limit']?>"/>
+	<input id="sesname_button" class="control_buttons" type="button" onClick="showSessionName();" value="<?=$lang['session_name']?>"/>
 	<div id="layer_fatal">
-	Fatal error.
+	<?=$lang['fatal_error']?>
 	</div>
 
 	<div id="layer_auth">
-		<h2>Welcome to webBTG!</h2>
-		<p>Please enter your login details:</p>
+		<h2><?=$lang['welcome']?></h2>
+		<p><?=$lang['login_details']?></p>
 		<form action="" name="frm_auth">
 		<input type="text" id="username" name="username" style="width:100px"/>
 		<input type="password" id="password" name="password" style="width:100px"/>
-		<input type="submit" id="login_button" onClick="auth(); return false;" value="Login"/>
-		</form>
+		<input type="submit" id="login_button" onClick="auth(); return false;" value="<?=$lang['login']?>"/>
+		</form><br/>
+<?
+echo $lang['language']."<br/><br/>";
+$langdir=scandir("languages/");
+foreach ($langdir as $langu) { 
+if (preg_match("/\.php$/", $langu)) {
+#if ($langu!="." AND $langu!=".." AND is_file("languages/".$langu)) {
+$lang_name=explode(".",$langu);
+echo "<img style='cursor: pointer;' title='".$lang_name[0]."' rel='".$lang_name[0]."' onClick='select_language(\"".$lang_name[0]."\"); return false;' src='images/".$lang_name[0].".gif'>";
+}else {}
+}
+
+?>
 	</div>
 
 	<div id="layer_sessions">
-		<h2>Welcome to webBTG!</h2>
-		<h3>Attach to session</h3>
-		<p>If there are any sessions available, you can select a session here and attach to it.</p>
+		<h2><?=$lang['welcome']?></h2>
+		<h3><?=$lang['session_attach']?></h3>
+		<p><?=$lang['session_attach2']?></p>
 		<form action="" name="frm_sessionlist">
 		<select id="sessionlist" name="sessionlist" style="width:100px"></select>
-		<input type="submit" id="attach_button" onClick="sessionAttach(); return false;" value="Attach"/>
+		<input type="submit" id="attach_button" onClick="sessionAttach(); return false;" value="<?=$lang['attach']?>"/>
 		</form>
 
-		<h3>Setup new session</h3>
-		<p>If you'd like to setup a new session, enter default seed limit (how many % we should seed before we stop) and/or default seed timeout (how long time we should seed before we stop).
-		Both can be empty, in which case you have to stop your torrents by your self, or one of them can be used, in which case that condition will be used, or both can be used, and the first reached will be used.</p>
+		<h3><?=$lang['setup_session']?></h3>
+		<p><?=$lang['setup_session2']?></p>
 		<form action="" name="frm_sessionsetup">
-		Encryption <input type="checkbox" id="session_enc" name="session_enc" value="1"/>, 
-		DHT <input type="checkbox" id="session_dht" name="session_dht" value="1"/>, 
-		Seed limit <input type="text" id="seedLimit" name="seedLimit" value="" style="width:30px;"/>%,
-		seed timeout <input type="text" id="seedTimeout" name="seedTimeout" value="" style="width:40px;"/> minutes
-		<input type="submit" id="setup_button" onClick="sessionSetup(); return false;" value="Setup"/>
+		<?=$lang['encryption']?> <input type="checkbox" id="session_enc" name="session_enc" value="1"/>, 
+		<?=$lang['dht']?> <input type="checkbox" id="session_dht" name="session_dht" value="1"/>, 
+		<?=$lang['seed_limit']?> <input type="text" id="seedLimit" name="seedLimit" value="" style="width:30px;"/>%,
+		<?=$lang['seed_timeout']?> <input type="text" id="seedTimeout" name="seedTimeout" value="" style="width:40px;"/> perc
+		<input type="submit" id="setup_button" onClick="sessionSetup(); return false;" value="<?=$lang['setup']?>"/>
 		</form>
 	</div>
 	
@@ -114,31 +143,31 @@ for(var i=0;i<t.length;i++) {
 		<table id="glimit_table" cellspacing=0>
 
 		<tr>
-			<th class="column_glimit">Limit name</th>
-			<th class="column_glimit">Limit value</th>
+			<th class="column_glimit"><?=$lang['limit_name']?></th>
+			<th class="column_glimit"><?=$lang['limit_value']?></th>
 		</tr>
 
 		<tr>
-			<td>Upload</td>
+			<td><?=$lang['upload']?></td>
 			<td><input type="text" id="gupload" name="gupload" value="0" style="width:30px;"/> KiB/sec</td>
 		</tr>
 		<tr>
-			<td>Download</td>
+			<td><?=$lang['download']?></td>
 			<td><input type="text" id="gdownload" name="gdownload" value="0" style="width:40px;"/> KiB/sec</td>
 		</tr>
 		<tr>
-			<td>Max uploads</td>
-			<td><input type="text" id="gmaxuploads" name="gmaxuploads" value="0" style="width:40px;"/> uploads</td>
+			<td><?=$lang['max_uploads']?></td>
+			<td><input type="text" id="gmaxuploads" name="gmaxuploads" value="0" style="width:40px;"/><?=$lang['uploads']?></td>
 		</tr>
 
 		<tr>
-			<td>Max connections</td>
-			<td><input type="text" id="gmaxconn" name="gmaxconn" value="0" style="width:30px;"/> connections </td>
+			<td><?=$lang['max_connections']?></td>
+			<td><input type="text" id="gmaxconn" name="gmaxconn" value="0" style="width:30px;"/><?=$lang['connections']?></td>
 		</tr>
 
 		<tr>
-			<td><input type="submit" id="glimit_cancel_button" onClick="cancelGlobalLimits(); return false;" value="Cancel"/></td>
-			<td><input type="submit" id="glimit_set_button" onClick="setGlobalLimits(); return false;" value="Set"/></td>
+			<td><input type="submit" id="glimit_cancel_button" onClick="cancelGlobalLimits(); return false;" value="<?=$lang['cancel']?>"/></td>
+			<td><input type="submit" id="glimit_set_button" onClick="setGlobalLimits(); return false;" value="<?=$lang['set']?>"/></td>
 		</tr>
 		</form>
 		</table>
@@ -149,13 +178,13 @@ for(var i=0;i<t.length;i++) {
 		<table id="sesname_table" cellspacing=0>
 
 		<tr>
-			<td>Session name</td>
+			<td><?=$lang['session_name']?></td>
 			<td><input type="text" id="session_name" name="sname" value="session name" style="width:130px;"/></td>
 		</tr>
 
 		<tr>
-			<td><input type="submit" id="sesname_cancel_button" onClick="cancelSessionName(); return false;" value="Cancel"/></td>
-			<td><input type="submit" id="sesname_set_button" onClick="setSessionName(); return false;" value="Set"/></td>
+			<td><input type="submit" id="sesname_cancel_button" onClick="cancelSessionName(); return false;" value="<?=$lang['cancel']?>"/></td>
+			<td><input type="submit" id="sesname_set_button" onClick="setSessionName(); return false;" value="<?=$lang['set']?>"/></td>
 		</tr>
 		</form>
 		</table>
@@ -164,27 +193,27 @@ for(var i=0;i<t.length;i++) {
 	<div id="layer_contexts">
 		<table id="torrent_table" cellspacing=0>
 			<tr>
-				<th class="column_torrent">Torrent</th>
-				<th class="column_status">Status</th>
-				<th class="column_control">Control</th>
+				<th class="column_torrent"><?=$lang['torrent']?></th>
+				<th class="column_status"><?=$lang['status']?></th>
+				<th class="column_control"><?=$lang['control']?></th>
 			</tr>
 		</table>
 	</div>
 
 	<div id="footer">
 			<span id="about">
-				<a href="http://btg.berlios.de/" target="_blank">webBTG version 1.1</a>
+				<a href="http://btg.berlios.de/" target="_blank">webBTG 1.1 <?=$lang['version']?></a>
 			</span>
 	</div>
 </div>
 
 <div id="bottom"></div>
 <div id="network_status">
-	<pre id="statusMessage">Loading...</pre>
-	<input id="refresh_button" class="control_buttons" type="button" name="update" onClick="refreshContextList();" value="Refresh now"/>
-	<input id="stop_refresh" class="control_buttons" type="button" name="stop_refresh" onClick="changeUpdateMode();" value="Stop updates"/>
-	<h2 id="status_download">Total download speed is: 0b/s</h2>
-	<h2 id="status_upload">Total upload speed is: 0b/s</h2>
+	<pre id="statusMessage">Töltés...</pre>
+	<input id="refresh_button" class="control_buttons" type="button" name="update" onClick="refreshContextList();" value="<?=$lang['refresh']?>"/>
+	<input id="stop_refresh" class="control_buttons" type="button" name="stop_refresh" onClick="changeUpdateMode();" value="<?=$lang['refresh_stop']?>"/>
+	<h2 id="status_download"><?=$lang['total_d_speed']?></h2>
+	<h2 id="status_upload"><?=$lang['total_u_speed']?></h2>
 </div>
 
 </body>

@@ -84,6 +84,83 @@ be terminated by pressing the escape key.
 .I "<filename>"
 \- Name of a client configuration file to use.
 
+.SH LIRC
+
+If LIRC support was enabled at compile time, the following LIRC events are supported.
+
+.TP
+.BI "quit"
+\- quit the application.
+
+.TP 
+.BI "enter"
+\- enter a submenu (not used).
+
+.TP
+.BI "back"
+\- exit a submenu (not used).
+
+.TP 
+.BI "right"
+\- not used.
+
+.TP 
+.BI "left"
+\- not used.
+
+.TP 
+.BI "up"
+\- move one line up.
+
+.TP 
+.BI "down"
+\- move one line down.
+
+.SH EXAMPLE .lircrc
+
+.nf
+begin
+        prog = btgvs
+        button = ps
+        config = quit
+end
+
+begin
+        prog = btgvs
+        button = enter
+        config = enter
+end
+
+begin
+        prog = btgvs
+        button = circle
+        config = back
+end
+
+begin
+        prog = btgvs
+        button = right
+        config = right
+end
+begin
+        prog = btgvs
+        button = left
+        config = left
+end
+
+begin
+        prog = btgvs
+        button = up
+        config = up
+end
+
+begin
+        prog = btgvs
+        button = down
+        config = down
+end
+.fi
+
 .SH FILES
 See btg_config(1).
 

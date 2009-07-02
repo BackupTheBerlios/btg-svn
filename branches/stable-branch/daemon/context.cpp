@@ -1563,13 +1563,12 @@ namespace btg
 #endif
          if (pieces->size() > 0)
             {
-               t_ulong piece_len        = t_i.piece_length();
-               t_int         num_pieces = t_i.num_pieces();
-
                t_fileInfoList fileinfolist;
 
                t_int piece_counter = 0;
-
+               t_int num_pieces = t_i.num_pieces();
+               t_ulong piece_len = t_i.piece_length();
+               t_ulong current_size = t_i.piece_size(piece_counter);
                std::vector<bool>::const_iterator piece_iter = pieces->begin();
 
                libtorrent::torrent_info::file_iterator file_iter;
@@ -1580,15 +1579,12 @@ namespace btg
                      std::string filename  = file_iter->path.native_file_string();
                      t_ulong file_size     = file_iter->size;
 
-                     if (!ti->selected_files.selected(filename))
-                        {
-                           // Skip this file, as it is not selected.
-                           continue;
-                        }
-
                      t_bitVector filepieces;
-                     t_ulong current_size = 0;
-                     do
+                     if (current_size >= file_size)
+                        {
+                           filepieces.push_back(*piece_iter);
+                        }
+                     while (current_size < file_size)
                         {
                            if (piece_counter < num_pieces)
                               {
@@ -1603,18 +1599,19 @@ namespace btg
                                  break;
                               }
                         }
-                     while (current_size < file_size);
+                     current_size -= file_size;
 
-                     if (current_size != file_size)
+                     // after filepieces
+                     if (!ti->selected_files.selected(filename))
                         {
-                           piece_counter--;
-                           piece_iter--;
+                           // Skip this file, as it is not selected.
+                           continue;
                         }
+                     
                      BTG_MNOTICE(logWrapper(), 
                                  "creating a fileInformation object (filename = " <<
                                  filename << ", number of pieces = " << filepieces.size() <<
                                  ", piece size = " << piece_len << ")");
-
                      fileInformation file_info(filename, filepieces, piece_len, file_size);
                      fileinfolist.push_back(file_info);
                   }

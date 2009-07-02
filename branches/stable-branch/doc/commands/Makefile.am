@@ -12,13 +12,13 @@ gen_cmd_docs_LDADD   = $(top_builddir)/bcore/libbtgcore.la \
                        $(top_builddir)/external/ini/libini.la
 
 # wojci: Added linking against boost date_time. Missing symbols on debian.
-gen_cmd_docs_LDFLAGS = @LIBS@ @BOOST_SYSTEM_LIB@ @LIBTORRENT_LIBS@ @BOOST_IOSTREAMS_LIB@ @BOOST_PROGRAM_OPTIONS_LIB@ @BOOST_FILESYSTEM_LIB@ @BOOST_THREAD_LIB@ @BOOST_DATE_TIME_LIB@ @LIBGNUTLS_LIBS@ 
+gen_cmd_docs_LDFLAGS = @LIBS@ @BOOST_SYSTEM_LIB@ @LIBTORRENT_LIBS@ @ZLIB_LDFLAGS@ @BOOST_PROGRAM_OPTIONS_LIB@ @BOOST_FILESYSTEM_LIB@ @BOOST_THREAD_LIB@ @BOOST_DATE_TIME_LIB@ @LIBGNUTLS_LIBS@ 
 
-gen_cmd_docs_CFLAGS   = @CFLAGS@ \
+gen_cmd_docs_CFLAGS   = @CFLAGS@ @ZLIB_CFLAGS@ \
 -DBTG_DEBUG=@BTG_DEBUG@ \
 -DBTG_REV="@BTG_REV@"
 
-gen_cmd_docs_CXXFLAGS = @CXXFLAGS@ \
+gen_cmd_docs_CXXFLAGS = @CXXFLAGS@ @ZLIB_CFLAGS@ \
 -DBTG_DEBUG=@BTG_DEBUG@ \
 -DBTG_REV="@BTG_REV@"
 

@@ -62,6 +62,12 @@ namespace btg
 #define updateFreqLabel            "freq,u"
 #define updateFreqLabelKey         "freq"
 
+#define autoUpdateLabel            "autoupdate,m"
+#define autoUpdateKey              "autoupdate"
+
+#define autoUpdateFreqLabel            "autofreq,r"
+#define autoUpdateFreqLabelKey         "autofreq"
+
             vsCommandLineArgumentHandler::vsCommandLineArgumentHandler(std::string const& _config_file)
                : btg::core::argumentInterface("BTG client", true),
                  session(Command::INVALID_SESSION),
@@ -74,7 +80,9 @@ namespace btg
                  fullscreen_set(false),
                  res1440x900_set(false),
                  res1024x768_set(false),
-                 updateFreq(10)
+                 updateFreq(10),
+                 autoUpdate_set(false),
+                 autoUpdateFreq(2)
             {
 
             }
@@ -92,6 +100,8 @@ namespace btg
                   (res1440x900Label, "Use 1440x900 as the resolution.")
                   (res1024x768Label, "Use 1024x768 as the resolution.")
                   (updateFreqLabel, boost::program_options::value<t_uint>(), "Update frequency in seconds.")
+                  (autoUpdateLabel, "Change between showing different torrents automagically")
+                  (autoUpdateFreqLabel, boost::program_options::value<t_uint>(), "Change between showing different torrents after this amount of time (in seconds)")
                   (configLabel, boost::program_options::value<std::string>(), "Configuration file.");
             }
 
@@ -206,6 +216,21 @@ namespace btg
                      updateFreq = vm[updateFreqLabelKey].as<t_uint>();
                   }
 
+               if (vm.count(autoUpdateKey))
+                  {
+                     autoUpdate_set = true;
+                  }
+
+               if (vm.count(autoUpdateFreqLabelKey))
+                  {
+                     autoUpdateFreq = vm[autoUpdateFreqLabelKey].as<t_uint>();
+                     
+                     if (autoUpdateFreq <= 1)
+                     {
+                        autoUpdateFreq = 2;
+                     }
+                  }
+                  
                return true;
             }
 
@@ -319,6 +344,16 @@ namespace btg
             t_uint vsCommandLineArgumentHandler::getUpdateFreq() const
             {
                return updateFreq;
+            }
+            
+            bool vsCommandLineArgumentHandler::getAutoUpdate() const
+            {
+               return autoUpdate_set;
+            }
+            
+            t_uint vsCommandLineArgumentHandler::getAutoUpdateFreq() const
+            {
+               return autoUpdateFreq;   
             }
             
             vsCommandLineArgumentHandler::~vsCommandLineArgumentHandler()

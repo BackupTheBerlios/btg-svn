@@ -168,6 +168,8 @@ KEY_SESNAME    \- change session name.
 .TP
 KEY_SORT       \- change the way torrents are sorted.
 .TP
+KEY_STATS      \- show statistics for the current session.
+.TP
 KEY_GLIMIT     \- show global limit menu.
 .TP
 KEY_DOWN       \- move down a list.

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: mainwindow.h 516 2009-01-11 19:42:53Z wojci $
+ * $Id$
  */
 
 #include "dm.h"
@@ -279,14 +279,14 @@ namespace btg
             return statusList_.end();
          }
 
-         void DisplayModel::resetUpdatedFlag()
+         void DisplayModel::resetUpdatedFlag(bool _flag)
          {
             std::vector<statusEntry>::iterator iter;
             for (iter = statusList_.begin();
                  iter != statusList_.end();
                  iter++)
                {
-                  iter->updated = false;
+                  iter->updated = _flag;
                }
          }
 
@@ -469,6 +469,8 @@ namespace btg
 
          void DisplayModel::remove(std::vector<t_int> const& _id_list)
          {
+            resetUpdatedFlag(true);
+
             std::vector<t_int>::const_iterator iter;
             for (iter = _id_list.begin();
                  iter != _id_list.end();
@@ -479,6 +481,10 @@ namespace btg
                      {
                         i->updated = false;
                      }
+                  else
+                     {
+                        i->updated = true;
+                     }
                }
             
             std::vector<btg::core::Status> l;
@@ -487,10 +493,24 @@ namespace btg
                  liter != statusList_.end();
                  liter++)
                {
-                  l.push_back(liter->status);
+                  if (liter->updated)
+                     {
+                        l.push_back(liter->status);
+                     }
                }
 
             update(l);
+         }
+
+         void DisplayModel::get(std::vector<btg::core::Status> & _list) const
+         {
+            std::vector<statusEntry>::const_iterator iter;
+            for (iter = statusList_.begin();
+                 iter != statusList_.end();
+                 iter++)
+               {
+                  _list.push_back(iter->status);
+               }
          }
 
          bool DisplayModel::get(t_int const _context_id, btg::core::Status & _status) const
@@ -518,9 +538,24 @@ namespace btg
                         _id_list.push_back(iter->id);
                      }
                }
-
          }
          
+         t_uint DisplayModel::selected() const
+         {
+            t_uint num = 0;
+            std::vector<statusEntry>::const_iterator iter;
+            for (iter = statusList_.begin();
+                 iter != statusList_.end();
+                 iter++)
+               {
+                  if (iter->marked)
+                     {
+                        num++;
+                     }
+               }
+            return num;
+         }
+
          DisplayModel::~DisplayModel()
          {
             statusList_.clear();

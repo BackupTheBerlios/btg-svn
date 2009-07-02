@@ -36,6 +36,7 @@ namespace btg
            filename_(_filename),
            initialized_(false),
            numberOfentries_(0),
+           numberOfInvalidentries_(0),
            filter_()
       {
       }

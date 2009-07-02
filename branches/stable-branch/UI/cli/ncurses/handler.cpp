@@ -213,14 +213,14 @@ namespace btg
          void Handler::onStatusError(std::string const& _errorDescription)
          {
             commandStatus = false;
-            statusSize_         = 0;
+            statusSize_   = 0;
             cmd_failture++;
          }
 
          void Handler::onFileInfo(t_fileInfoList const& _fileinfolist)
          {
-            lastFileinfolist_   = _fileinfolist;
-            commandStatus = true;
+            lastFileinfolist_ = _fileinfolist;
+            commandStatus     = true;
          }
 
          void Handler::onFileInfoError(std::string const& _errorDescription)
@@ -232,7 +232,7 @@ namespace btg
          {
             commandStatus = true;
             lastPeerlist_.clear();
-            lastPeerlist_       = _peerlist;
+            lastPeerlist_ = _peerlist;
          }
 
          void Handler::onPeersError(std::string const& _errorDescription)
@@ -245,8 +245,8 @@ namespace btg
                                       t_strList const& _sessionNames)
          {
             commandStatus = true;
-            sessionList         = _sessions;
-            sessionNames        = _sessionNames;
+            sessionList   = _sessions;
+            sessionNames  = _sessionNames;
          }
 
          void Handler::onSessionError()
@@ -264,8 +264,6 @@ namespace btg
          {
             commandStatus = false;
             cmd_failture++;
-
-            // std::cout << _errorDescription << std::endl;
          }
 
          void Handler::getLastFileInfoList(t_fileInfoList & _fileInfoList) const

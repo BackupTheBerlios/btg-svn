@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: test_bcore_client.cpp 450 2008-07-08 18:35:24Z wojci $
+ * $Id$
  */
 
 #include <cppunit/extensions/HelperMacros.h>
@@ -49,7 +49,8 @@ class coutDisplayModelIf: public btg::UI::cli::DisplayModelIf
 public:
    coutDisplayModelIf()
       : printed(0),
-        current(-1)
+        current(-1),
+        size_from_findSizes(255)
    {
    }
 
@@ -65,13 +66,14 @@ public:
 
    void findSizes(std::vector<btg::UI::cli::statusEntry> const& _l)
    {
-      
+      size_from_findSizes = _l.size();
    }
 
    void reset()
    {
-      printed = 0;
-      current = -1;
+      printed             = 0;
+      current             = -1;
+      size_from_findSizes = 255;
    }
 
    void paint(const t_uint _number, 
@@ -94,6 +96,7 @@ public:
    
    t_uint printed;
    t_int current;
+   t_uint size_from_findSizes;
 };
 
 void testbtgncli::setUp()
@@ -160,6 +163,118 @@ void testbtgncli::testDisplayModelResize()
    delete dmif;
    dmif = 0;
 }
+
+void testbtgncli::testRemove()
+{
+   using namespace btg::UI::cli;
+   using namespace btg::core;
+
+   coutDisplayModelIf* dmif = new coutDisplayModelIf;
+
+   // Try with a different number of visible elements.
+   t_uint visible = 20;
+   btg::UI::cli::DisplayModel* dm = new btg::UI::cli::DisplayModel(visible, dmif);
+
+   addData(dm, dmif, visible);
+
+   dmif->reset();
+   dm->draw();
+
+   std::cout << "dmif->printed:" << dmif->printed << std::endl;
+   CPPUNIT_ASSERT(dmif->printed == visible);
+   CPPUNIT_ASSERT(dmif->size_from_findSizes == visible);
+   
+
+   std::vector<t_int> id_list;
+   for (t_int i = 0;
+        i < 100;
+        i++)
+      {
+         id_list.push_back(i);
+      }
+
+   dm->remove(id_list);
+
+   dmif->reset();
+   dm->draw();
+
+   CPPUNIT_ASSERT(dmif->printed == 0);
+   CPPUNIT_ASSERT(dmif->size_from_findSizes == 0);
+
+   CPPUNIT_ASSERT(dmif->current == -1);
+
+   CPPUNIT_ASSERT(dm->size() == 0);
+
+   delete dm;
+   dm = 0;
+   delete dmif;
+   dmif = 0;
+}
+
+void testbtgncli::testRemoveLast()
+{
+   using namespace btg::UI::cli;
+   using namespace btg::core;
+
+   coutDisplayModelIf* dmif = new coutDisplayModelIf;
+
+   // Try with a different number of visible elements.
+   t_uint visible = 20;
+   btg::UI::cli::DisplayModel* dm = new btg::UI::cli::DisplayModel(visible, dmif);
+   t_int last_id = 1;
+
+   std::vector<btg::core::Status> l;
+   trackerStatus ts(-1, 0);
+   Status s(last_id, 
+            "test", 
+            Status::ts_queued, 
+            100, 
+            101, 
+            102, 
+            1, 
+            1, 
+            50, 
+            1, 
+            100, 
+            200, 
+            0, 
+            0, 
+            0, 
+            0, 
+            ts, 
+            0,
+            "hash",
+            "url");
+         
+   l.push_back(s);
+
+   dm->update(l);
+
+   // Draw.
+   dmif->reset();
+   dm->draw();
+   CPPUNIT_ASSERT(dmif->current == 0);
+
+   std::vector<t_int> id_list;
+   id_list.push_back(last_id);
+   dm->remove(id_list);
+
+   dmif->reset();
+   dm->draw();
+
+   CPPUNIT_ASSERT(dmif->printed == 0);
+   CPPUNIT_ASSERT(dmif->size_from_findSizes == 0);
+
+   CPPUNIT_ASSERT(dmif->current == -1);
+
+   CPPUNIT_ASSERT(dm->size() == 0);
+
+   delete dm;
+   dm = 0;
+   delete dmif;
+   dmif = 0;
+}
+
 
 void testbtgncli::addData(btg::UI::cli::DisplayModel* _dm, 
                           coutDisplayModelIf* _dmif,

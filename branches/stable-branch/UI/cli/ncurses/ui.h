@@ -79,6 +79,9 @@ namespace btg
                      /// Show help for the details.
                      dialog::RESULT handleShowDetailsHelp();
 
+                     /// Show help for stats window.
+                     dialog::RESULT handleShowStatsHelp();
+
                      /// Show a window showing the torrent.
                      void handleShowDetails();
 
@@ -123,6 +126,9 @@ namespace btg
 
                      /// Handle sorting the list of contexts.
                      void handleSort();
+
+                     /// Show session statistics like ul/dl bytes, ul/dl ratio.
+                     void handleStats();
 
                      /// Refresh all windows.
                      void refresh();
@@ -178,7 +184,8 @@ namespace btg
                      /// Method used for sorting contexts.
                      enum sortBy
                      {
-                        sB_Name = 0, /// Sort by name.
+                        sB_Id = 0,   /// Sort by id.
+                        sB_Name,     /// Sort by name.
                         sB_Size,     /// Sort by file size.
                         sB_UlSpeed,  /// Sort by upload speed.
                         sB_DlSpeed,  /// Sort by download speed.
@@ -302,6 +309,12 @@ namespace btg
                      
                      /// Set the status bar to its default text.
                      void setDefaultStatusText();
+
+                     /// Set the status bar to its default text.
+                     ///
+                     /// Prefix the default text with the string
+                     /// contained in _prefix.
+                     void setStatusText(std::string const& _prefix);
 
                      /// Show the files belonging to a torrent.
                      void handleShowFiles(std::vector<btg::core::fileInformation> const& _fi);

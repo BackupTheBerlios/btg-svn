@@ -242,9 +242,10 @@ namespace btg
                resources = upload_rate_limit_ * tick_interval;
             }
 
-         BTG_MNOTICE(logWrapper(), "distributing resources (ul): " << resources);
+         BTG_MNOTICE(logWrapper(), "distributing resources (ul) " << resources << " for " << sessions_.size() << " sessions");
 
-         allocate_resources(resources,
+         allocate_resources(logWrapper(),
+                            resources,
                             sessions_,
                             &sessionData::val_ul_rate);
 
@@ -259,9 +260,10 @@ namespace btg
                resources = download_rate_limit_ * tick_interval;
             }
 
-         BTG_MNOTICE(logWrapper(), "distributing resources (dl): " << resources);
+         BTG_MNOTICE(logWrapper(), "distributing resources (dl) " << resources << " for " << sessions_.size() << " sessions");
 
-         allocate_resources(resources,
+         allocate_resources(logWrapper(),
+                            resources,
                             sessions_,
                             &sessionData::val_dl_rate);
 
@@ -275,9 +277,10 @@ namespace btg
                resources = max_uploads_ * tick_interval;
             }
 
-         BTG_MNOTICE(logWrapper(), "distributing resources (max ul): " << resources);
-         
-         allocate_resources(resources,
+         BTG_MNOTICE(logWrapper(), "distributing resources (max ul) " << resources << " for " << sessions_.size() << " sessions");
+
+         allocate_resources(logWrapper(),
+                            resources,
                             sessions_,
                             &sessionData::val_uploads);
 
@@ -292,9 +295,10 @@ namespace btg
                resources = max_connections_ * tick_interval;
             }
 
-         BTG_MNOTICE(logWrapper(), "distributing resources (max conn): " << resources);
+         BTG_MNOTICE(logWrapper(), "distributing resources (max conn) " << resources << " for " << sessions_.size() << " sessions");
 
-         allocate_resources(resources,
+         allocate_resources(logWrapper(),
+                            resources,
                             sessions_,
                             &sessionData::val_connections);
 
@@ -305,7 +309,7 @@ namespace btg
               sessionIter != sessions_.end();
               sessionIter++)
             {
-               sessionIter->set();
+               sessionIter->set(logWrapper());
             }
       }
 
@@ -318,9 +322,10 @@ namespace btg
             {
                sessionData & sessiondata = *sessionIter;
 
-               // BTG_MNOTICE(logWrapper(), "rates: " << upload_rate_limit_ << ", " << download_rate_limit_ << ", " << max_uploads_ << ", " << max_connections_);
+               BTG_MNOTICE(logWrapper(), "rates: " << upload_rate_limit_ << ", " << download_rate_limit_ << ", " << max_uploads_ << ", " << max_connections_);
 
-               sessiondata.update(upload_rate_limit_,
+               sessiondata.update(logWrapper(),
+                                  upload_rate_limit_,
                                   download_rate_limit_,
                                   max_uploads_,
                                   max_connections_,

@@ -70,9 +70,9 @@ else
   URL_DEFINES=-DBTG_OPTION_URL=@BTG_OPTION_URL@
 endif
 
-testrunner_SOURCES = listener.cpp testrunner.cpp synchronize.cpp test_daemon.cpp test_os.cpp test_gen_transport.cpp test_tcpip.cpp test_http.cpp test_bcore.cpp $(top_srcdir)/bcore/configuration.cpp $(top_srcdir)/bcore/os/gnutlsif.cpp $(BCORE_CLIENT_TEST)
+testrunner_SOURCES = listener.cpp testrunner.cpp synchronize.cpp test_daemon.cpp test_daemon_res.cpp test_os.cpp test_gen_transport.cpp test_tcpip.cpp test_http.cpp test_bcore.cpp $(top_srcdir)/bcore/configuration.cpp $(top_srcdir)/bcore/os/gnutlsif.cpp $(BCORE_CLIENT_TEST)
 
-noinst_HEADERS     = listener.h testrunner.h synchronize.h test_daemon.h test_os.h test_gen_transport.h test_tcpip.h test_http.h test_bcore.h files.h $(top_srcdir)/bcore/configuration.h $(BCORE_CLIENT_TEST_HEADER)
+noinst_HEADERS     = listener.h testrunner.h synchronize.h test_daemon.h test_daemon_res.h test_os.h test_gen_transport.h test_tcpip.h test_http.h test_bcore.h files.h $(top_srcdir)/bcore/configuration.h $(BCORE_CLIENT_TEST_HEADER)
 
 check_PROGRAMS     = testrunner
 
@@ -83,18 +83,18 @@ testrunner_LDADD   = $(top_builddir)/bcore/libbtgcore.la $(BCORE_CLIENT_TEST_LIB
                      $(top_builddir)/bcore/libbtgcore.la
 
 testrunner_LDFLAGS  = @LIBS@ $(CPPUNIT_LIBS) @LIBTORRENT_LIBS@ @BOOST_SYSTEM_LIB@ \
-                      @BOOST_IOSTREAMS_LIB@ @BOOST_FILESYSTEM_LIB@ \
+                      @@ZLIB_LDFLAGS @BOOST_FILESYSTEM_LIB@ \
                       @BOOST_PROGRAM_OPTIONS_LIB@ @BOOST_THREAD_LIB@ \
                       @LIBGNUTLS_LIBS@ @XMLRPC_LDFLAGS@ $(URL_LIBS)
 
-testrunner_CFLAGS   = @CFLAGS@   $(CPPUNIT_CFLAGS) @LIBTORRENT_CFLAGS@ @LIBGNUTLS_CFLAGS@ \
+testrunner_CFLAGS   = @CFLAGS@   $(CPPUNIT_CFLAGS) @LIBTORRENT_CFLAGS@ @LIBGNUTLS_CFLAGS@ @ZLIB_CFLAGS@ \
                       @XMLRPC_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ \
                       -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \
                       -DBTG_OPTION_EVENTCALLBACK=@BTG_OPTION_EVENTCALLBACK@ \
                       -DBTG_INTERNAL_XMLRPC="@BTG_INTERNAL_XMLRPC@" \
                       -DBTG_REV="@BTG_REV@" $(URL_DEFINES)
 
-testrunner_CXXFLAGS = @CXXFLAGS@ $(CPPUNIT_CFLAGS) @LIBTORRENT_CFLAGS@ @LIBGNUTLS_CFLAGS@ \
+testrunner_CXXFLAGS = @CXXFLAGS@ $(CPPUNIT_CFLAGS) @LIBTORRENT_CFLAGS@ @LIBGNUTLS_CFLAGS@ @ZLIB_CFLAGS@ \
                       @XMLRPC_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ \
                       -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \
                       -DBTG_OPTION_EVENTCALLBACK=@BTG_OPTION_EVENTCALLBACK@ \
@@ -107,7 +107,7 @@ AM_CFLAGS         = @CFLAGS@   @DEBUG_CFLAGS@ @XMLRPC_CFLAGS@ \
                     -DBTG_BUILD="@BTG_BUILD@" \
                     -DBTG_REV="@BTG_REV@" $(URL_DEFINES)
 
-AM_CXXFLAGS       = @CXXFLAGS@ @DEBUG_CXXFLAGS@ @XMLRPC_CFLAGS@ \
+AM_CXXFLAGS       = @CXXFLAGS@ @DEBUG_CXXFLAGS@ @XMLRPC_CFLAGS@ @ZLIB_CFLAGS@ \
                     -DBTG_DEBUG=@BTG_DEBUG@ \
                     -DBTG_VERSION="@VERSION@" \
                     -DBTG_BUILD="@BTG_BUILD@" \

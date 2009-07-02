@@ -1,3 +1,22 @@
+BTG version 1.0.0
+-----------------
+The following bugs were fixed:
+
+015907 wwwBTG does not work with iExplorer.
+015771 Refactor gzip interface (use zlib instead of boost).
+015632 btgncli, add dialog showing totals for a session.
+015626 btgncli, show files crashes client in certain situations.
+015571 Merge wwwui patch from gH0StArthour (Hungarian translation).
+015375 Wrong per-file progress info when several files are selected.
+015216 Merge btgui patches from mkbosmans.
+015185 btgncli, broken handling of updates.
+015087 Add Arch Linux package to listing.
+015074 context.peers does not work with "for all contexts" flag set.
+015068 Crash when reading faulty IP filter range.
+015049 Update Openwrt build.
+015048 btgvs, add lirc support and freevo integration.
+014512 Refactor daemon/resource (GPL vs BSD license).
+
 BTG version 0.9.9
 -----------------
 The following bugs were fixed:

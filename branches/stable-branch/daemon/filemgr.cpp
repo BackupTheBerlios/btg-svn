@@ -267,16 +267,16 @@ namespace btg
 
       void fileManager::removeDead()
       {
-         std::map<t_uint, fileData>::iterator iter;
-         for (iter = files.begin();
-              iter != files.end();
-              iter++)
+         std::map<t_uint, fileData>::iterator iter = files.begin();
+         while (iter != files.end())
             {
                if (!iter->second.valid)
                   {
                      filetrack->remove(iter->second.dir, iter->second.filename);
-                     files.erase(iter);
+                     files.erase(iter++);
                   }
+               else
+                  ++iter;
             }
       }
       

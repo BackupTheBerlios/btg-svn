@@ -1,3 +1,5 @@
+if BUILDDAEMON
+
 if BUILDUPNP
   EXTRA_DIR = upnp
   UPNP_LDADD = $(top_builddir)/daemon/upnp/libupnp.la 
@@ -50,7 +52,7 @@ libdaemon_la_SOURCES = dconfig.cpp darg.cpp \
                        context_alert.cpp context_file.cpp context_session.cpp context.cpp \
                        eventhandler.cpp connectionextrastate.cpp $(SSSOURCES) $(CALLBACKSOURCES)
 
-libdaemon_la_CFLAGS   = @CFLAGS@ @DEBUG_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ \
+libdaemon_la_CFLAGS   = @CFLAGS@ @XMLRPC_CFLAGS@ @DEBUG_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ @ZLIB_CFLAGS@ \
 -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \
 -DBTG_OPTION_EVENTCALLBACK=@BTG_OPTION_EVENTCALLBACK@ \
 -DBTG_OPTION_UPNP=@BTG_OPTION_UPNP@ \
@@ -59,7 +61,7 @@ libdaemon_la_CFLAGS   = @CFLAGS@ @DEBUG_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ \
 -DBTG_REV="@BTG_REV@" $(URL_DEFINES) \
 -DBTG_INTERNAL_XMLRPC="@BTG_INTERNAL_XMLRPC@"
 
-libdaemon_la_CXXFLAGS = @CXXFLAGS@ @DEBUG_CXXFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ \
+libdaemon_la_CXXFLAGS = @CXXFLAGS@ @XMLRPC_CFLAGS@ @DEBUG_CXXFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ @ZLIB_CFLAGS@ \
 -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \
 -DBTG_OPTION_EVENTCALLBACK=@BTG_OPTION_EVENTCALLBACK@ \
 -DBTG_OPTION_UPNP=@BTG_OPTION_UPNP@ \
@@ -88,14 +90,14 @@ btgdaemon_LDADD   = $(top_builddir)/bcore/libbtgcore.la \
                     $(top_builddir)/external/ini/libini.la \
                     $(top_builddir)/bcore/libbtgcore.la \
                     $(UPNP_LDADD) $(HTTP_LDADD) \
-                    @LIBS@ @LIBTORRENT_LIBS@ @BOOST_SYSTEM_LIB@ @BOOST_IOSTREAMS_LIB@ \
+                    @LIBS@ @LIBTORRENT_LIBS@ @BOOST_SYSTEM_LIB@ @ZLIB_LDFLAGS@ \
                     @LIBGNUTLS_LIBS@ @BOOST_THREAD_LIB@ @BOOST_FILESYSTEM_LIB@ \
                     @BOOST_PROGRAM_OPTIONS_LIB@ @XMLRPC_LDFLAGS@ @BOOST_DATE_TIME_LIB@ \
                     $(URL_LIBS) $(CYBERLINK_LDADD)
 
 #btgdaemon_LDFLAGS  = -all-static
 
-btgdaemon_CFLAGS   = @CFLAGS@   @DEBUG_CFLAGS@ @LIBGNUTLS_CFLAGS@ \
+btgdaemon_CFLAGS   = @CFLAGS@ @XMLRPC_CFLAGS@ @DEBUG_CFLAGS@ @LIBGNUTLS_CFLAGS@ @ZLIB_CFLAGS@ \
 -DBTG_DEBUG=@BTG_DEBUG@ -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \
 -DBTG_OPTION_EVENTCALLBACK=@BTG_OPTION_EVENTCALLBACK@ \
 -DBTG_OPTION_UPNP=@BTG_OPTION_UPNP@ \
@@ -103,7 +105,7 @@ btgdaemon_CFLAGS   = @CFLAGS@   @DEBUG_CFLAGS@ @LIBGNUTLS_CFLAGS@ \
 -DBTG_OPTION_USECYBERLINK=@BTG_OPTION_USECYBERLINK@ @CYBERLINK_CFLAGS@ $(URL_DEFINES) \
 -DBTG_INTERNAL_XMLRPC="@BTG_INTERNAL_XMLRPC@"
 
-btgdaemon_CXXFLAGS = @CXXFLAGS@ @DEBUG_CXXFLAGS@ @LIBGNUTLS_CFLAGS@ \
+btgdaemon_CXXFLAGS = @CXXFLAGS@ @XMLRPC_CFLAGS@ @DEBUG_CXXFLAGS@ @LIBGNUTLS_CFLAGS@ @ZLIB_CFLAGS@ \
 -DBTG_DEBUG=@BTG_DEBUG@ -DBTG_OPTION_SAVESESSIONS=@BTG_OPTION_SAVESESSIONS@ \
 -DBTG_OPTION_EVENTCALLBACK=@BTG_OPTION_EVENTCALLBACK@ \
 -DBTG_OPTION_UPNP=@BTG_OPTION_UPNP@ \
@@ -125,6 +127,8 @@ if !BUILDURL
                     urlmgr.cpp http/curlif.cpp http/httpmgr.cpp http/httpif.cpp \
                     http/httpproc.cpp
 endif
+
+endif BUILDDAEMON
 
 # Since the session saver is optional, and not always compiled, make dist needs this.
 EXTRA_DIST         = sessionsaver.cpp sessionsaver.h \

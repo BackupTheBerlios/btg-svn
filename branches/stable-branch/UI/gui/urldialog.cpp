@@ -62,7 +62,7 @@ namespace btg
             table1 = Gtk::manage(new class Gtk::Table(2, 2));
             vbox1 = Gtk::manage(new class Gtk::VBox(false, 0));
             cancelbutton = Gtk::manage(new class Gtk::Button(Gtk::StockID("gtk-cancel")));
-            applybutton = Gtk::manage(new class Gtk::Button(Gtk::StockID("gtk-apply")));
+            okbutton = Gtk::manage(new class Gtk::Button(Gtk::StockID("gtk-ok")));
             label1->set_events(Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
             file_entry->set_events(Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
             file_entry->set_flags(Gtk::CAN_FOCUS);
@@ -84,8 +84,8 @@ namespace btg
             vbox1->pack_start(*table1);
             cancelbutton->set_events(Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
             cancelbutton->set_flags(Gtk::CAN_FOCUS);
-            applybutton->set_events(Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
-            applybutton->set_flags(Gtk::CAN_FOCUS);
+            okbutton->set_events(Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
+            okbutton->set_flags(Gtk::CAN_FOCUS);
             get_action_area()->set_events(Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
             get_action_area()->property_layout_style().set_value(Gtk::BUTTONBOX_END);
             get_vbox()->set_events(Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
@@ -96,7 +96,7 @@ namespace btg
             property_window_position().set_value(Gtk::WIN_POS_CENTER_ON_PARENT);
             set_has_separator(false);
             add_action_widget(*cancelbutton, Gtk::RESPONSE_CANCEL);
-            add_action_widget(*applybutton, Gtk::RESPONSE_APPLY);
+            add_action_widget(*okbutton, Gtk::RESPONSE_OK);
             label1->show();
             file_entry->show();
             url_entry->show();
@@ -105,9 +105,10 @@ namespace btg
             table1->show();
             vbox1->show();
             cancelbutton->show();
-            // Start hidden, show when something has been entered in
-            // both entries.
-            applybutton->hide();
+            // Start insensitive, make sensitive when something 
+            // has been entered in both entries.
+            okbutton->show();
+            okbutton->set_sensitive(false);
 
             file_entry->signal_changed().connect(sigc::mem_fun(*this, &urlDialog::file_changed));
             url_entry->signal_changed().connect(sigc::mem_fun(*this, &urlDialog::url_changed));
@@ -150,7 +151,7 @@ namespace btg
             if (!btg::core::client::isUrlValid(u))
                {
                   url_filename_filled = false;
-                  applybutton->hide();
+		  okbutton->set_sensitive(false);
                   return;
                }
 
@@ -167,12 +168,12 @@ namespace btg
             if ((f.size() > 0) && (u.size() > 0))
                {
                   url_filename_filled = true;
-                  applybutton->show();
+		  okbutton->set_sensitive(true);
                }
             else
                {
                   url_filename_filled = false;
-                  applybutton->hide();
+		  okbutton->set_sensitive(false);
                }
          }
 

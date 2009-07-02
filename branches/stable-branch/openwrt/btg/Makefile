@@ -11,7 +11,7 @@ include $(TOPDIR)/rules.mk
 # Build using trunk from btg SVN.
 
 PKG_NAME:=btg
-PKG_REV:=532
+PKG_REV:=541
 PKG_VERSION:=r$(PKG_REV)
 PKG_RELEASE:=1
 
@@ -20,6 +20,7 @@ PKG_SOURCE_URL:=http://svn.berlios.de/svnroot/repos/btg/trunk
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_VERSION:=$(PKG_REV)
 PKG_SOURCE_PROTO:=svn
+BOOSTPOSTFIX=gcc41-mt-1_38
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -41,13 +42,13 @@ CONFIGURE_ARGS+= \
 	--disable-debug \
 	--enable-session-saving \
 	--enable-url \
-	--with-boost-date-time=gcc42-mt-1_34_1 \
-	--with-boost-filesystem=gcc42-mt-1_34_1 \
-	--with-boost-thread=gcc42-mt-1_34_1 \
-	--with-boost-regex=gcc42-mt-1_34_1 \
-	--with-boost-program_options=gcc42-mt-1_34_1 \
-	--with-boost-iostreams=gcc42-mt-1_34_1 \
-	--with-boost-program_options=gcc42-mt-1_34_1 \
+	--with-boost-date-time=$(BOOSTPOSTFIX) \
+	--with-boost-filesystem=$(BOOSTPOSTFIX) \
+	--with-boost-thread=$(BOOSTPOSTFIX) \
+	--with-boost-regex=$(BOOSTPOSTFIX) \
+	--with-boost-program_options=$(BOOSTPOSTFIX) \
+	--with-boost-iostreams=$(BOOSTPOSTFIX) \
+	--with-boost-program_options=$(BOOSTPOSTFIX) \
 	--with-rblibtorrent=$(STAGING_DIR)/usr \
 
 CONFIGURE_VARS += \
@@ -55,7 +56,18 @@ CONFIGURE_VARS += \
 	CXX="$(GNU_TARGET_NAME)-g++" \
 	CXXFLAGS="$$$$CXXFLAGS -I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/include" \
 	CFLAGS="$$$$CFLAGS -I$(STAGING_DIR)/usr/lib/libiconv/include -I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/include" \
-	LDFLAGS="$$$$LDFLAGS -Wl,-rpath=$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/usr/lib/libiconv/lib -L$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/lib -lz -lbz2 -lpthread -lboost_iostreams-gcc42-mt-1_34_1 -lboost_filesystem-gcc42-mt-1_34_1 -lboost_date_time-gcc42-mt-1_34_1 -lboost_thread-gcc42-mt-1_34_1 -lboost_program_options-gcc42-mt-1_34_1 -lssl -lcrypto -liconv -lcurl" \
+	BOOST_CPPFLAGS="-I$(STAGING_DIR)/usr/include" \
+	BOOST_LDFLAGS="-L$(STAGING_DIR)/usr/lib" \
+	LIBTORRENT_CFLAGS="-I$(STAGING_DIR)/usr/include" \
+	LIBTORRENT_LIBS="-L$(STAGING_DIR)/usr/lib -ltorrent-rasterbar" \
+	LDFLAGS="$$$$LDFLAGS -Wl,-rpath=$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/usr/lib/libiconv/lib -L$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/lib -lz -lbz2 -lpthread \
+-lboost_iostreams-$(BOOSTPOSTFIX) \
+-lboost_iostreams-$(BOOSTPOSTFIX) \
+-lboost_filesystem-$(BOOSTPOSTFIX) \
+-lboost_date_time-$(BOOSTPOSTFIX) \
+-lboost_thread-$(BOOSTPOSTFIX) \
+-lboost_program_options-$(BOOSTPOSTFIX) \
+-lssl -lcrypto -liconv -lcurl" \
 
 define Build/Configure
 	cd $(PKG_BUILD_DIR) && ./autogen.sh && \

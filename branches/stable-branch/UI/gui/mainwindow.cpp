@@ -642,7 +642,7 @@ namespace btg
          {
             // Show a dialog where one can input the URL and filename.
             urlDialog ud(last_url, last_url_file);
-            if (ud.run() != Gtk::RESPONSE_APPLY)
+            if (ud.run() != Gtk::RESPONSE_OK)
                {
                   ud.hide();
                   msb->set("Loading URL aborted.");
