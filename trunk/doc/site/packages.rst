@@ -32,17 +32,12 @@ key to the apt keyring. To do that you must:
 Gentoo Packages
 ~~~~~~~~~~~~~~~
 
-A Gentoo ebuild was added to `Project Sunrise`_ ("Gentoo User Overlay").
+Btg (version 1.0.0 as of 06-07-2009) is available in Gentoo. It can be
+installed as every other packages:
 
-One has to do the following:
 ::
 
- emerge -av layman
- echo "source /usr/portage/local/layman/make.conf" >> /etc/make.conf
- layman -f -a sunrise
  emerge -av btg
-
-.. _Project Sunrise: http://www.gentoo.org/proj/en/sunrise/
 
 SUSE Packages
 ~~~~~~~~~~~~~
