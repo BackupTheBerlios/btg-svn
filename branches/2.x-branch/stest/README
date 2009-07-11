@@ -1,0 +1,25 @@
+This directory contains system tests, which can be run against the btg
+daemon.
+
+The tests use btgcli, and should therefore be used _after_ btgcli was
+built.
+
+Test procedure
+--------------
+1. Generate daemon/client config. Execute gen_btg_config.sh.
+2. Open one terminal, execute ./run_daemon.sh.
+3. Open another terminal, execute one of the tests.
+
+Tests
+-----
+
+test_btgpasswd.sh       - add/modify an user.
+test_create_sessions.sh - create/destroy 100 sessions.
+test_limits.sh          - create 3 sessions, set different limits. [1]
+test_users.sh           - create/destroy 100 sessions, each one 
+                          belonging to a different btg user.
+test_session_stress.sh  - create 3 sessions, stress test using 3 
+                          different commands. [1]
+
+1:
+Requires 3 torrent files present in ./sources. Names don't matter.

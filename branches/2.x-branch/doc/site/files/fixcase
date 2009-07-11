@@ -1,0 +1,38 @@
+#!/bin/sh
+
+# I did not write this script, but found it on some unix site. The
+# original author is unknown.
+# 
+# This script can be used to translate unwanted characters to
+# underscores. Some people, like me, dislike spaces in filenames and
+# uppercase characters.  Execute in the directory which contains files
+# with filenames which need to be stripped of unwanted characters.
+
+UFILES=0
+CFILES=0
+COUNT=0
+
+find . -maxdepth 1 | while read file
+do
+    # First translate the unwanted characters to "!".
+    NEWNAME=$(echo $file |tr ",\"[]() [:upper:]" "!!!!!!![:lower:]")
+    # Then remove the unwanted characters.
+    SHORTNAME=$(echo $NEWNAME |tr -d "!")
+
+    if [ "$file" == "$SHORTNAME" ]
+    then
+        UFILES=`expr $UFILES + 1`
+        COUNT=`expr $COUNT + 1`
+        if [ $COUNT -gt 9 ]
+            then
+                echo "Processed $CFILES files, skipped $UFILES files."
+                COUNT=0
+            fi
+    else
+        echo "converting $file [$CFILES]"
+        mv "$file" "$SHORTNAME"
+        CFILES=`expr $CFILES + 1`
+    fi
+done
+
+
