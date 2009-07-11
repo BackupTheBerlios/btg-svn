@@ -42,15 +42,15 @@ The following is done using the "stable-branch" SVN branch.
 Action                  Description 
 ----------------------- -------------------------------------------------------------------------------------
 Update to stable branch Update the current branch to stable branch. This could be done using:
-                        "svn switch svn+ssh://user@svn.berlios.de/svnroot/repos/btg/branches/stable-branch".
+                        "svn switch https://user@svn.berlios.de/svnroot/repos/btg/branches/stable-branch".
 
 Merge from trunk        Merge the changes from trunk into the stable branch. This could be done using:
-                        "svn merge svn+ssh://user@svn.berlios.de/svnroot/repos/btg/branches/stable-branch \
-                        svn+ssh://user@svn.berlios.de/svnroot/repos/btg/trunk"
+                        "svn merge https://user@svn.berlios.de/svnroot/repos/btg/branches/stable-branch \
+                        https://user@svn.berlios.de/svnroot/repos/btg/trunk"
 
 Tag                     Add a relase tag. This could be done using:
-                        "svn copy svn+ssh://user@svn.berlios.de/svnroot/repos/btg/trunk \ 
-                        svn+ssh://user@svn.berlios.de/svnroot/repos/btg/tags/0.9.6 \
+                        "svn copy https://user@svn.berlios.de/svnroot/repos/btg/trunk \ 
+                        https://user@svn.berlios.de/svnroot/repos/btg/tags/0.9.6 \
                         -m 'Added 0.9.6 tag.'"
 
 ======================= =====================================================================================
