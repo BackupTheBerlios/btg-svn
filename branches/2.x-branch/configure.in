@@ -41,7 +41,7 @@ PKG_PROG_PKG_CONFIG([0.9.0]) dnl generally can be used any version
 
 XMLRPC_CHECK
 
-if test -z "$XMLRPC_LDFLAGS" ; then
+if test -z "$XMLRPC_LIBS" ; then
   AC_MSG_NOTICE([Using internal XML-RPC implementation.])
   BTG_INTERNAL_XMLRPC=1
   AM_CONDITIONAL(BUILDINTERNALXMLRPC, true)
