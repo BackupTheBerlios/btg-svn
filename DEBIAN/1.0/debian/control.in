@@ -15,7 +15,7 @@ Standards-Version: 3.7.3
 Package: btg-common@SUFFIX@
 Depends: libboost-date-time1.37.0, libboost-filesystem1.37.0, libboost-thread1.37.0, libboost-iostreams1.37.0,
  libboost-program-options1.37.0, libgnutls26 (>= 2.4), zlib1g (>= 1:1.2.3), dialog
-Conflicts: btg-common, btg-common-0.9.7, btg-common-0.9.8, btg-common-0.9.9
+Conflicts: btg-common, btg-common-0.9.7, btg-common-0.9.8, btg-common-0.9.9, btg-common-1.0.0
 Recommends: btg-daemon@SUFFIX@ | btg-gui@SUFFIX@ | btg-cli@SUFFIX@
 Architecture: i386 i586 i686 amd64
 Section: net
@@ -85,7 +85,7 @@ Description: GUI interface to the BTG daemon
 
 Package: btg-www@SUFFIX@
 Depends: apache2 | httpd, php5
-Conflicts: btg-www, btg-www-0.9.7, btg-www-0.9.8, btg-www-0.9.9
+Conflicts: btg-www, btg-www-0.9.7, btg-www-0.9.8, btg-www-0.9.9, btg-www-1.0.0
 Recommends: btg-gui@SUFFIX@, btg-cli@SUFFIX@
 Architecture: all
 Section: net

@@ -1,3 +1,16 @@
+btg (1.0) stable; urgency=low
+
+  * The following bugs were fixed:
+    015907 wwwBTG does not work with iExplorer.
+    015771 Refactor gzip interface (use zlib instead of boost).
+    015632 btgncli, add dialog showing totals for a session.
+    015626 btgncli, show files crashes client in certain situations.
+    015571 Merge wwwui patch from gH0StArthour (Hungarian translation).
+    015375 Wrong per-file progress info when several files are selected.
+    014512 Refactor daemon/resource (GPL vs BSD license).
+
+ -- Roman Rybalko <btg@romanr.info>  Sat, 18 Jul 2009 17:14:20 +0400
+
 btg-1.0.0 (561svn-rc1) unstable; urgency=low
 
   * The following bugs were fixed:
