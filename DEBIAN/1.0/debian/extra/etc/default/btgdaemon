@@ -1,0 +1,8 @@
+#
+# Launch script defaults
+# You can add some shell here, e.g. ulimit -n
+# $Id$
+#
+
+ulimit -n 1000000
+ulimit -c 18000

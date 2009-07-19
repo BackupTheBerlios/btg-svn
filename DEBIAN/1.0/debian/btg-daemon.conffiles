@@ -1,2 +1,3 @@
 etc/btg/daemon.ini
+etc/default/btgdaemon
 var/lib/btg/auth

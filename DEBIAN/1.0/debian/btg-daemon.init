@@ -17,6 +17,9 @@
 
 PIDFILE=/var/run/btgdaemon.pid
 CONFFILE=/etc/btg/daemon.ini
+DEFFILE=/etc/default/btg
+
+[ -f $DEFFILE ] && . $DEFFILE
 
 case $1 in
 	start)
