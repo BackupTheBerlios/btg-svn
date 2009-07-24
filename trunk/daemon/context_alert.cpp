@@ -63,10 +63,10 @@ namespace btg
       void Context::handleFinishedTorrent(libtorrent::torrent_finished_alert* _alert)
       {
          // A torrent finnished.
-         
+
          t_int torrent_id;
          torrentInfo* ti;
-         
+
          if (!getIdFromHandle(_alert->handle, torrent_id, ti))
             {
                // Unknown id?
@@ -139,9 +139,9 @@ namespace btg
             {
                getFilename(torrent_id, filename);
                VERBOSE_LOG(logWrapper(),
-                           verboseFlag_, "Tracker alert: filename '" << 
-                           filename << "', status = " << 
-                           _alert->status_code << ", message '" << 
+                           verboseFlag_, "Tracker alert: filename '" <<
+                           filename << "', status = " <<
+                           _alert->status_code << ", message '" <<
 #if BTG_LT_0_14
                            _alert->message()
 #else
@@ -158,7 +158,7 @@ namespace btg
                else
                   {
                      ti->trackerStatus.setStatus(trackerStatus::warning);
-                  }               
+                  }
                ti->trackerStatus.setSerial(ti->serial);
                ti->trackerStatus.setMessage(
 #if BTG_LT_0_14
@@ -188,7 +188,7 @@ namespace btg
                getFilename(torrent_id, filename);
 
                VERBOSE_LOG(logWrapper(),
-                           verboseFlag_, "Tracker reply alert: filename '" << 
+                           verboseFlag_, "Tracker reply alert: filename '" <<
                            filename << "', status = 200 OK");
                ti->trackerStatus.invalidate();
                ti->trackerStatus.setStatus(200);
@@ -213,8 +213,8 @@ namespace btg
          if (getIdFromHandle(_alert->handle, torrent_id, ti))
             {
                getFilename(torrent_id, filename);
-               VERBOSE_LOG(logWrapper(), verboseFlag_, "Tracker warning alert: filename '" << 
-                           filename << "', message '" << 
+               VERBOSE_LOG(logWrapper(), verboseFlag_, "Tracker warning alert: filename '" <<
+                           filename << "', message '" <<
 #if BTG_LT_0_14
                            _alert->message()
 #else
@@ -242,6 +242,85 @@ namespace btg
             }
       }
 
+#if BTG_LT_0_14
+      void Context::handleResumeDataAlert(libtorrent::save_resume_data_alert* _alert)
+      {
+         libtorrent::torrent_handle th = _alert->handle;
+         t_int tid = -1;
+         torrentInfo *ti = NULL;
+
+         if (!getIdFromHandle(th, tid, ti)) // else skip it - probably deleted before alert arrived
+         {
+            BTG_ERROR_LOG(logWrapper(), "Context::handleResumeDataAlert, torrent is not found.");
+            return;
+         }
+
+         // The name to which the resume data is saved to.
+         std::string filename;
+         filename = tempDir_ + projectDefaults::sPATH_SEPARATOR() + ti->filename +
+            this->fastResumeFileNameEnd;
+
+         // Output file.
+         std::ofstream out;
+
+#if HAVE_IOS_BASE
+         out.open(filename.c_str(), std::ios_base::out);
+#else
+         out.open(filename.c_str(), std::ios::out);
+#endif
+
+         if (!out.is_open())
+            {
+               BTG_ERROR_LOG(logWrapper(), "Context::handleResumeDataAlert, unable to open file " << filename << " for writing.");
+               return;
+            }
+
+         try
+            {
+               // Encode to file.
+               libtorrent::bencode(
+                                   std::ostream_iterator<char>(out),
+                                   *_alert->resume_data
+                                   );
+            }
+         catch (const libtorrent::invalid_encoding & e)
+            {
+               BTG_ERROR_LOG(logWrapper(), "libtorrent exception: " << e.what() );
+               return;
+            }
+
+         out.close();
+         BTG_NOTICE(logWrapper(), "wrote fast resume data for '" << filename << "'");
+      }
+#endif
+
+#if BTG_LT_0_14
+      void Context::handleStateChangeAlert(libtorrent::state_changed_alert* _alert)
+      {
+         libtorrent::torrent_handle th = _alert->handle;
+         t_int tid = -1;
+         torrentInfo *ti = NULL;
+
+         if (!getIdFromHandle(th, tid, ti)) // else skip it - probably deleted before alert arrived
+         {
+            BTG_ERROR_LOG(logWrapper(), "Context::handleStateChangeAlert, torrent is not found.");
+            return;
+         }
+
+         // Saving resume data
+         switch (_alert->state)
+         {
+         case libtorrent::torrent_status::downloading:
+         case libtorrent::torrent_status::finished:
+         case libtorrent::torrent_status::seeding:
+            writeResumeData(tid);
+            break;
+         default:
+            break;
+         }
+      }
+#endif
+
       void Context::handleAlerts()
       {
          // fetch and handle all libtorrent alerts present in queue
@@ -249,13 +328,13 @@ namespace btg
          {
             std::auto_ptr<libtorrent::alert> sp_alert = torrent_session->pop_alert();
             libtorrent::alert* raw_alert = sp_alert.get();
-            
+
             if (!raw_alert)
                {
                   // no more alerts in queue
                   break;
                }
-            
+
             libtorrent::torrent_alert* alert = dynamic_cast<libtorrent::torrent_alert*>(raw_alert);
             // we aren't interested in alert, that doesn't contain torrent_handle
             if (alert != 0 )
@@ -293,10 +372,22 @@ namespace btg
                      {
                         handleTrackerWarningAlert(dynamic_cast<libtorrent::tracker_warning_alert*>(alert));
                      }
+#if BTG_LT_0_14
+                  else if (typeid(*alert) == typeid(libtorrent::save_resume_data_alert))
+                     {
+                        handleResumeDataAlert(dynamic_cast<libtorrent::save_resume_data_alert*>(alert));
+                     }
+#endif
+#if BTG_LT_0_14
+                  else if (typeid(*alert) == typeid(libtorrent::state_changed_alert))
+                     {
+                        handleStateChangeAlert(dynamic_cast<libtorrent::state_changed_alert*>(alert));
+                     }
+#endif
                   else
                      {
                         // Log other alerts.
-                        BTG_NOTICE(logWrapper(), "Alert: " << 
+                        BTG_NOTICE(logWrapper(), "Alert: " <<
 #if BTG_LT_0_14
                                    alert->message()
 #else

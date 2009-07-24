@@ -23,7 +23,11 @@ daemonize_status do_daemonize(void)
    /*
     * Fork off the parent process.
     */
+#ifdef __FreeBSD__
+   pid = rfork(RFPROC); // no RFFDG - preserve asio/kqueue descriptor
+#else
    pid = fork();
+#endif
 
    /*
     * If we got a good PID, then

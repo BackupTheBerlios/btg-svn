@@ -94,7 +94,7 @@ using namespace btg::core::logger;
 using namespace btg::daemon;
 
 bool checkFile(LogWrapperType _logwrapper,
-               std::string const& _purpose, 
+               std::string const& _purpose,
                std::string & _filename);
 
 bool loadFilter(LogWrapperType _logwrapper, bool _verboseFlag, daemonData & _dd);
@@ -138,13 +138,13 @@ int main(int argc, char* argv[])
 
 
    bool verboseFlag = dd.cla->beVerbose();
-   
+
    VERBOSE_LOG(logwrapper, verboseFlag, "Verbose logging enabled.");
 
    /*
     * Set debug level
     */
-   
+
 #if BTG_DEBUG
    // Set debug logging, if requested.
    if (dd.cla->doDebug())
@@ -173,7 +173,7 @@ int main(int argc, char* argv[])
       }
 #endif // BTG_DEBUG
 
-   
+
    dd.configFile = btg::core::projectDefaults::sDAEMON_CONFIG();
 
    if (dd.cla->configFileSet())
@@ -188,12 +188,12 @@ int main(int argc, char* argv[])
          return BTG_ERROR_EXIT;
       }
 
-   dd.config = new daemonConfiguration(logwrapper, 
+   dd.config = new daemonConfiguration(logwrapper,
                                        dd.configFile);
 
    if (!dd.config->read())
       {
-         BTG_FATAL_ERROR(logwrapper, 
+         BTG_FATAL_ERROR(logwrapper,
                          "btgdaemon", "Could not open configuration file '" << dd.configFile << "'");
          return BTG_ERROR_EXIT;
       }
@@ -218,15 +218,15 @@ int main(int argc, char* argv[])
          VERBOSE_LOG(logwrapper, verboseFlag, "Libtorrent will bind to '" << lt_address.toString() << "'.");
       }
 
-   /* 
+   /*
     * Creating/check PID-file
     */
-   
+
    btg::core::os::PIDFile pidfile;
-   
+
    { // create PID-file
       std::string pfname;
-      
+
       // try cmdline first
       if ( dd.cla->PIDFile().size() > 0 )
          {
@@ -250,30 +250,30 @@ int main(int argc, char* argv[])
 
             if (pidfile.exists())
                {
-                  BTG_FATAL_ERROR(logwrapper, 
+                  BTG_FATAL_ERROR(logwrapper,
                                   "btgdaemon",
                                   "Another instance of btgdaemon with pid "
                                   << pidfile.pid()
                                   << " already running.");
                   return BTG_ERROR_EXIT;
                }
-         
+
             if (pidfile.error())
                {
-                  BTG_FATAL_ERROR(logwrapper, 
+                  BTG_FATAL_ERROR(logwrapper,
                                   "btgdaemon",
                                   "Could not create PID file '" << dd.config->getPIDFile() << "'");
                   return BTG_ERROR_EXIT;
                }
          }
    } // end create PID-file
-   
+
 #if BTG_OPTION_SAVESESSIONS
 
    /*
     * Setup sessionsaving
     */
-   
+
    { // sessionsaving
       std::string ss_fname;
 
@@ -295,7 +295,7 @@ int main(int argc, char* argv[])
             VERBOSE_LOG(logwrapper, verboseFlag, "Using session file from config: '"
                         << ss_fname << "'." );
          }
-      
+
       if (dd.ss_enable)
          {
             btg::core::os::fileOperation::resolvePath(ss_fname);
@@ -307,7 +307,7 @@ int main(int argc, char* argv[])
                   dd.ss_file.open(ss_fname.c_str(), std::ios_base::out); // try to create a new
                   if (!dd.ss_file.is_open())
                      {
-                        BTG_FATAL_ERROR(logwrapper, 
+                        BTG_FATAL_ERROR(logwrapper,
                                         "btgdaemon", "Could not open/create session file '"
                                         << ss_fname << "'");
                         return BTG_ERROR_EXIT;
@@ -317,7 +317,7 @@ int main(int argc, char* argv[])
                }
          }
    } // end sessionsaving
-   
+
 #endif // BTG_OPTION_SAVESESSIONS
 
    /*
@@ -335,7 +335,7 @@ int main(int argc, char* argv[])
 
    if (!dd.auth->initialized())
       {
-         BTG_FATAL_ERROR(logwrapper, 
+         BTG_FATAL_ERROR(logwrapper,
                          "btgdaemon", "Unable to load passwd file '" << auth_file << "'.");
          return BTG_ERROR_EXIT;
       }
@@ -351,14 +351,14 @@ int main(int argc, char* argv[])
             addressPort ap = dd.config->getListenTo();
             if (!ap.valid())
                {
-                  BTG_FATAL_ERROR(logwrapper, 
+                  BTG_FATAL_ERROR(logwrapper,
                                   "btgdaemon", "Invalid IPv4:port pair '" << ap.toString() << "'");
                   return BTG_ERROR_EXIT;
                }
 
             dd.externalization = new btg::core::externalization::XMLRPC(logwrapper);
 
-            dd.transport = new tcpTransport(logwrapper, 
+            dd.transport = new tcpTransport(logwrapper,
                                             dd.externalization,
                                             100 * 1024,
                                             FROM_SERVER,
@@ -368,11 +368,11 @@ int main(int argc, char* argv[])
 
             if (!dd.transport->isInitialized())
                {
-                  BTG_FATAL_ERROR(logwrapper, 
+                  BTG_FATAL_ERROR(logwrapper,
                                   "btgdaemon", "Could not create a TCP/IP transport");
                   return BTG_ERROR_EXIT;
                }
-            BTG_MNOTICE(logwrapper, 
+            BTG_MNOTICE(logwrapper,
                         "initialized a TCP/IP transport");
             break;
          }
@@ -381,7 +381,7 @@ int main(int argc, char* argv[])
             addressPort ap = dd.config->getListenTo();
             if (!ap.valid())
                {
-                  BTG_FATAL_ERROR(logwrapper, 
+                  BTG_FATAL_ERROR(logwrapper,
                                   "btgdaemon", "Invalid IPv4:port pair '" << ap.toString() << "'");
                   return BTG_ERROR_EXIT;
                }
@@ -421,12 +421,12 @@ int main(int argc, char* argv[])
 
             if (!dd.transport->isInitialized())
                {
-                  BTG_FATAL_ERROR(logwrapper, 
+                  BTG_FATAL_ERROR(logwrapper,
                                   "btgdaemon", "Could not create a STCP/IP transport");
                   return BTG_ERROR_EXIT;
                }
 
-            BTG_MNOTICE(logwrapper, 
+            BTG_MNOTICE(logwrapper,
                         "initialized a STCP/IP transport");
             break;
          }
@@ -435,7 +435,7 @@ int main(int argc, char* argv[])
             addressPort ap = dd.config->getListenTo();
             if (!ap.valid())
                {
-                  BTG_FATAL_ERROR(logwrapper, 
+                  BTG_FATAL_ERROR(logwrapper,
                                   "btgdaemon", "Invalid ipv4:port pair '" << ap.toString() << "'");
                   return BTG_ERROR_EXIT;
                }
@@ -452,11 +452,11 @@ int main(int argc, char* argv[])
 
             if (!dd.transport->isInitialized())
                {
-                  BTG_FATAL_ERROR(logwrapper, 
+                  BTG_FATAL_ERROR(logwrapper,
                                   "btgdaemon", "Could not create a http transport");
                   return BTG_ERROR_EXIT;
                }
-            BTG_MNOTICE(logwrapper, 
+            BTG_MNOTICE(logwrapper,
                         "initialized a XMLRPC transport");
             break;
          }
@@ -465,7 +465,7 @@ int main(int argc, char* argv[])
             addressPort ap = dd.config->getListenTo();
             if (!ap.valid())
                {
-                  BTG_FATAL_ERROR(logwrapper, 
+                  BTG_FATAL_ERROR(logwrapper,
                                   "btgdaemon", "Invalid IPv4:port pair '" << ap.toString() << "'");
                   return BTG_ERROR_EXIT;
                }
@@ -505,25 +505,25 @@ int main(int argc, char* argv[])
 
             if (!dd.transport->isInitialized())
                {
-                  BTG_FATAL_ERROR(logwrapper, 
+                  BTG_FATAL_ERROR(logwrapper,
                                   "btgdaemon", "Could not create a SXMLRPC transport");
                   return BTG_ERROR_EXIT;
                }
 
-            BTG_MNOTICE(logwrapper, 
+            BTG_MNOTICE(logwrapper,
                         "initialized a SXMLRPC transport");
             break;
          }
       case messageTransport::UNDEFINED:
          {
-            BTG_FATAL_ERROR(logwrapper, 
+            BTG_FATAL_ERROR(logwrapper,
                             "btgdaemon", "Unable to recognize transport name, cannot continue.");
          }
       }
 
    if (!dd.transport)
       {
-         BTG_FATAL_ERROR(logwrapper, 
+         BTG_FATAL_ERROR(logwrapper,
                          "btgdaemon", "No transport, cannot continue.");
          return BTG_ERROR_EXIT;
       }
@@ -551,20 +551,20 @@ int main(int argc, char* argv[])
                break;
             }
 
-         VERBOSE_LOG(logwrapper, 
+         VERBOSE_LOG(logwrapper,
                      verboseFlag, "Transport, " << transportName << ", created and initialized.");
       }
-   
+
    /*
     * Create an object to keep track of added torrents.
     */
-   
+
    dd.filetrack = new fileTrack(logwrapper);
 
    /*
     * Create an object to keep track of connections
     */
-   
+
    dd.connHandler = new connectionHandler();
 
    /*
@@ -585,18 +585,18 @@ int main(int argc, char* argv[])
     */
 
    dd.portRange = dd.config->getLTPortRange();
-   if ((((dd.portRange.first < daemonData::MIN_LISTEN_PORT) || (dd.portRange.second < daemonData::MIN_LISTEN_PORT)) || 
+   if ((((dd.portRange.first < daemonData::MIN_LISTEN_PORT) || (dd.portRange.second < daemonData::MIN_LISTEN_PORT)) ||
         (dd.portRange.first > dd.portRange.second)))
       {
-         BTG_FATAL_ERROR(logwrapper, 
-                         "btgdaemon", "Unable to use port range: " << dd.portRange.first << 
+         BTG_FATAL_ERROR(logwrapper,
+                         "btgdaemon", "Unable to use port range: " << dd.portRange.first <<
                          ":" << dd.portRange.second << ".");
          return BTG_ERROR_EXIT;
       }
    if ((dd.portRange.second - dd.portRange.first) < 1)
       {
-         BTG_FATAL_ERROR(logwrapper, 
-                         "btgdaemon", "Unable to use port range: " << dd.portRange.first << 
+         BTG_FATAL_ERROR(logwrapper,
+                         "btgdaemon", "Unable to use port range: " << dd.portRange.first <<
                          ":" << dd.portRange.second << ", at least two ports are required.");
          return BTG_ERROR_EXIT;
       }
@@ -606,13 +606,13 @@ int main(int argc, char* argv[])
    /*
     * init upnp.
     */
-   
+
    bool const upnpEnabled = dd.config->getUseUPnP();
    std::auto_ptr<btg::daemon::upnp::upnpIf> upnpif;
-   
+
    if (upnpEnabled)
       {
-         VERBOSE_LOG(logwrapper, 
+         VERBOSE_LOG(logwrapper,
                      verboseFlag,
                      "UPnP using internal IP: " << dd.config->getUPNPInternalIP().getIp() << ".");
       }
@@ -624,7 +624,7 @@ int main(int argc, char* argv[])
       {
          libtorrent::address upnpIpAddr;
          upnpIpAddr.from_string(dd.config->getUPNPInternalIP().getIp());
-         
+
          upnpif.reset(
                       new btg::daemon::upnp::libtorrentUpnpIf(logwrapper,
                                                               verboseFlag,
@@ -646,7 +646,7 @@ int main(int argc, char* argv[])
       {
          if (upnpEnabled)
             {
-               VERBOSE_LOG(logwrapper, 
+               VERBOSE_LOG(logwrapper,
                            verboseFlag, "UPnP: attempting to forward ports.");
 
                if (!upnpif->open(dd.portRange))
@@ -656,31 +656,31 @@ int main(int argc, char* argv[])
                                      "UPnP: port forwarding failed.");
                      return BTG_ERROR_EXIT;
                   }
-               
-               VERBOSE_LOG(logwrapper, 
+
+               VERBOSE_LOG(logwrapper,
                            verboseFlag, "UPnP: port forwarding succeded.");
             }
          else
             {
-               VERBOSE_LOG(logwrapper, 
+               VERBOSE_LOG(logwrapper,
                            verboseFlag, "Not using UPnP.");
             }
       }
 
 #endif // BTG_OPTION_UPNP
-   
-   
+
+
    /*
-    * 
+    *
     * =================================================================
-    * 
+    *
     * Begin of daemonization process
-    * 
+    *
     * =================================================================
-    * 
+    *
     */
-   
-   
+
+
    /*
     * Initializing logging
     */
@@ -704,7 +704,7 @@ int main(int argc, char* argv[])
                   boost::shared_ptr<btg::core::logger::logStream> l(new btg::core::logger::logStream(fl));
                   logwrapper->setLogStream(l);
 
-                  BTG_MNOTICE(logwrapper, 
+                  BTG_MNOTICE(logwrapper,
                               "logfile opened");
                }
             else
@@ -718,7 +718,7 @@ int main(int argc, char* argv[])
                         boost::shared_ptr<btg::core::logger::logStream> l(new btg::core::logger::logStream(new btg::core::logger::consoleLogger()));
                         logwrapper->setLogStream(l);
 
-                        BTG_MNOTICE(logwrapper, 
+                        BTG_MNOTICE(logwrapper,
                                     "opening logfile '" << logfilename << "' failed");
                      }
                }
@@ -737,11 +737,11 @@ int main(int argc, char* argv[])
             break;
          }
       }
-   
+
    /*
     * change EUID
     */
-   
+
    if ((dd.config->getRunAsUser().size() > 0) &&
        (dd.config->getRunAsGroup().size() > 0) )
       {
@@ -753,7 +753,7 @@ int main(int argc, char* argv[])
                                                                            );
                if (idChangeResult)
                   {
-                     VERBOSE_LOG(logwrapper, 
+                     VERBOSE_LOG(logwrapper,
                                  verboseFlag, "Changed user/group to " <<
                                  dd.config->getRunAsUser() << "/" <<
                                  dd.config->getRunAsGroup() << ".");
@@ -775,7 +775,7 @@ int main(int argc, char* argv[])
    /*
     * Daemonize.
     */
-   
+
    if (!dd.cla->doNotDetach())
       {
 #if BTG_OPTION_UPNP
@@ -796,14 +796,17 @@ int main(int argc, char* argv[])
 #if BTG_OPTION_UPNP
                   if (upnpif.get()) upnpif->clear(); // prevent port closing in destructor
 #endif // BTG_OPTION_UPNP
-                  BTG_MNOTICE(logwrapper, 
+                  BTG_MNOTICE(logwrapper,
                               "parent exiting, child daemonizing");
-                  return BTG_NORMAL_EXIT;
+
+                  // don't allow destructors to be called
+                  // there are implementations that can share handles with child
+                  exit(BTG_NORMAL_EXIT);
                }
                break;
             case PID_ERR:
                {
-                  BTG_MNOTICE(logwrapper, 
+                  BTG_MNOTICE(logwrapper,
                               "daemonized");
                }
                break;
@@ -836,7 +839,7 @@ int main(int argc, char* argv[])
       {
          VERBOSE_LOG(logwrapper, verboseFlag, "Not detaching from TTY.");
       }
-   
+
    /*
     * Write pidfile, if was set
     */
@@ -848,12 +851,12 @@ int main(int argc, char* argv[])
     * because callbackManager creates a thread
     * threads aren't re-created in child process
     */
-   
+
 #if BTG_OPTION_EVENTCALLBACK
    dd.callbackmgr      = new callbackManager(logwrapper, verboseFlag);
 #endif // BTG_OPTION_EVENTCALLBACK
 
-   BTG_MNOTICE(logwrapper, 
+   BTG_MNOTICE(logwrapper,
                "init done");
 
    sigh_add(SIGINT, (void*)&global_signal_handler);
@@ -862,15 +865,15 @@ int main(int argc, char* argv[])
 
    daemonHandler* dh = new daemonHandler(logwrapper, &dd, verboseFlag);
 
-   VERBOSE_LOG(logwrapper, 
-               verboseFlag, btg::core::projectDefaults::sDAEMON() << " version " << 
+   VERBOSE_LOG(logwrapper,
+               verboseFlag, btg::core::projectDefaults::sDAEMON() << " version " <<
                btg::core::projectDefaults::sFULLVERSION() << ".");
 
-   VERBOSE_LOG(logwrapper, 
+   VERBOSE_LOG(logwrapper,
                verboseFlag, "Using rasterbar libtorrent version " << LIBTORRENT_VERSION_MAJOR << "." << LIBTORRENT_VERSION_MINOR << ".");
-   VERBOSE_LOG(logwrapper, 
+   VERBOSE_LOG(logwrapper,
                verboseFlag, "There can be only one libtorrent. Accept no substitutes.");
-   VERBOSE_LOG(logwrapper, 
+   VERBOSE_LOG(logwrapper,
                verboseFlag, "Ready to accept clients.");
 
    while (global_btg_run == 1)
@@ -881,7 +884,7 @@ int main(int argc, char* argv[])
          if (global_btg_hup == 1)
             {
                // SIGHUP received, reload user file.
-               VERBOSE_LOG(logwrapper, 
+               VERBOSE_LOG(logwrapper,
                            verboseFlag, "Reloaded users file.");
                dd.auth->reInit();
 
@@ -893,7 +896,7 @@ int main(int argc, char* argv[])
                   }
                dh->updateFilter();
 
-               VERBOSE_LOG(logwrapper, 
+               VERBOSE_LOG(logwrapper,
                            verboseFlag, "Reloaded filter.");
 
                global_btg_hup = 0;
@@ -912,14 +915,14 @@ int main(int argc, char* argv[])
       }
 #endif
 
-   BTG_MNOTICE(logwrapper, 
+   BTG_MNOTICE(logwrapper,
                "finished execution");
-   VERBOSE_LOG(logwrapper, 
+   VERBOSE_LOG(logwrapper,
                verboseFlag, "Finished execution.");
 
    if (dd.config->modified())
       {
-         BTG_MNOTICE(logwrapper, 
+         BTG_MNOTICE(logwrapper,
                      "saving config");
          dd.config->write();
       }
@@ -928,7 +931,7 @@ int main(int argc, char* argv[])
 }
 
 bool checkFile(LogWrapperType _logwrapper,
-               std::string const& _purpose, 
+               std::string const& _purpose,
                std::string & _filename)
 {
    bool status = true;
@@ -936,7 +939,7 @@ bool checkFile(LogWrapperType _logwrapper,
    std::string errorString;
    if (!btg::core::os::fileOperation::check(_filename, errorString, false))
       {
-         BTG_FATAL_ERROR(_logwrapper, 
+         BTG_FATAL_ERROR(_logwrapper,
                          "btgdaemon", "Filename (" << _purpose << ") '" << _filename << "', could not be used: " << errorString);
          status = false;
       }
@@ -964,16 +967,16 @@ bool loadFilter(LogWrapperType _logwrapper, bool _verboseFlag, daemonData & _dd)
                                "Unable to load IP filter.");
                return false;
             }
-      
+
          std::string filtername;
 
          switch (_dd.filterType)
             {
             case IpFilterIf::IPF_LEVELONE:
                {
-                  VERBOSE_LOG(_logwrapper, 
+                  VERBOSE_LOG(_logwrapper,
                               _verboseFlag, "Loading IP filter, level one.");
-                  BTG_MNOTICE(_logwrapper, 
+                  BTG_MNOTICE(_logwrapper,
                               "creating filter: IPF_LEVELONE");
                   filtername = "level one";
                   _dd.filter  = new levelOne(_logwrapper, _verboseFlag, _dd.filterFilename);
@@ -981,9 +984,9 @@ bool loadFilter(LogWrapperType _logwrapper, bool _verboseFlag, daemonData & _dd)
                }
             case IpFilterIf::IPF_EMULE:
                {
-                  VERBOSE_LOG(_logwrapper, 
+                  VERBOSE_LOG(_logwrapper,
                               _verboseFlag, "Loading IP filter, emule.");
-                  BTG_MNOTICE(_logwrapper, 
+                  BTG_MNOTICE(_logwrapper,
                               "creating filter: IPF_EMULE");
                   filtername = "emule";
                   _dd.filter  = new Emule(_logwrapper, _verboseFlag, _dd.filterFilename);
@@ -991,7 +994,7 @@ bool loadFilter(LogWrapperType _logwrapper, bool _verboseFlag, daemonData & _dd)
                }
             case IpFilterIf::IPF_UNDEF:
                {
-                  VERBOSE_LOG(_logwrapper, 
+                  VERBOSE_LOG(_logwrapper,
                               _verboseFlag, "Loading IP filter disabled.");
                   _dd.filter = 0;
                   break;
@@ -1002,7 +1005,7 @@ bool loadFilter(LogWrapperType _logwrapper, bool _verboseFlag, daemonData & _dd)
             {
                if ((!_dd.filter->initialized()) || (_dd.filter->numberOfEntries() == 0))
                   {
-                     BTG_MNOTICE(_logwrapper, 
+                     BTG_MNOTICE(_logwrapper,
                                  "filter not initialized or empty. Deleted.");
 
                      delete _dd.filter;
@@ -1010,10 +1013,10 @@ bool loadFilter(LogWrapperType _logwrapper, bool _verboseFlag, daemonData & _dd)
                   }
                else
                   {
-                     BTG_MNOTICE(_logwrapper, 
+                     BTG_MNOTICE(_logwrapper,
                                  "IP filter '" << filtername << "' created, contains "
                                  << _dd.filter->numberOfEntries() << " entries.");
-                     VERBOSE_LOG(_logwrapper, 
+                     VERBOSE_LOG(_logwrapper,
                                  _verboseFlag,
                                  "IP filter '" << filtername << "' created, contains "
                                  << _dd.filter->numberOfEntries() << " entries.");
