@@ -455,6 +455,16 @@ namespace btg
 
                /// Handle libtorrent alert.
                void handleTrackerWarningAlert(libtorrent::tracker_warning_alert* _alert);
+
+#if BTG_LT_0_14
+               /// Handle libtorrent resume data
+               void handleResumeDataAlert(libtorrent::save_resume_data_alert* _alert);
+#endif
+
+#if BTG_LT_0_14
+               /// Handle torrent state change
+               void handleStateChangeAlert(libtorrent::state_changed_alert* _alert);
+#endif
             public:
 #if BTG_OPTION_SAVESESSIONS
                /// Session saving: serialize the torrents so they can be reloaded later.
@@ -642,6 +652,10 @@ namespace btg
 
                /// Write the fast resume data for all torrents.
                bool writeResumeData();
+
+               /// Write the fast resume data for the torrent.
+               /// @param [in] _torrent_id The ID of the libtorrent handle.
+               bool writeResumeData(t_int const _torrent_id);
 
                /// Returns true if the torrent file pointed by the
                /// argument has fast resume data.

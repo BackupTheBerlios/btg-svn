@@ -242,6 +242,85 @@ namespace btg
             }
       }
 
+#if BTG_LT_0_14
+      void Context::handleResumeDataAlert(libtorrent::save_resume_data_alert* _alert)
+      {
+         libtorrent::torrent_handle th = _alert->handle;
+         t_int tid = -1;
+         torrentInfo *ti = NULL;
+
+         if (!getIdFromHandle(th, tid, ti)) // else skip it - probably deleted before alert arrived
+         {
+            BTG_ERROR_LOG(logWrapper(), "Context::handleResumeDataAlert, torrent is not found.");
+            return;
+         }
+
+         // The name to which the resume data is saved to.
+         std::string filename;
+         filename = tempDir_ + projectDefaults::sPATH_SEPARATOR() + ti->filename +
+            this->fastResumeFileNameEnd;
+
+         // Output file.
+         std::ofstream out;
+
+#if HAVE_IOS_BASE
+         out.open(filename.c_str(), std::ios_base::out);
+#else
+         out.open(filename.c_str(), std::ios::out);
+#endif
+
+         if (!out.is_open())
+            {
+               BTG_ERROR_LOG(logWrapper(), "Context::handleResumeDataAlert, unable to open file " << filename << " for writing.");
+               return;
+            }
+
+         try
+            {
+               // Encode to file.
+               libtorrent::bencode(
+                                   std::ostream_iterator<char>(out),
+                                   *_alert->resume_data
+                                   );
+            }
+         catch (const libtorrent::invalid_encoding & e)
+            {
+               BTG_ERROR_LOG(logWrapper(), "libtorrent exception: " << e.what() );
+               return;
+            }
+
+         out.close();
+         BTG_NOTICE(logWrapper(), "wrote fast resume data for '" << filename << "'");
+      }
+#endif
+
+#if BTG_LT_0_14
+      void Context::handleStateChangeAlert(libtorrent::state_changed_alert* _alert)
+      {
+         libtorrent::torrent_handle th = _alert->handle;
+         t_int tid = -1;
+         torrentInfo *ti = NULL;
+
+         if (!getIdFromHandle(th, tid, ti)) // else skip it - probably deleted before alert arrived
+         {
+            BTG_ERROR_LOG(logWrapper(), "Context::handleStateChangeAlert, torrent is not found.");
+            return;
+         }
+
+         // Saving resume data
+         switch (_alert->state)
+         {
+         case libtorrent::torrent_status::downloading:
+         case libtorrent::torrent_status::finished:
+         case libtorrent::torrent_status::seeding:
+            writeResumeData(tid);
+            break;
+         default:
+            break;
+         }
+      }
+#endif
+
       void Context::handleAlerts()
       {
          // fetch and handle all libtorrent alerts present in queue
@@ -293,6 +372,18 @@ namespace btg
                      {
                         handleTrackerWarningAlert(dynamic_cast<libtorrent::tracker_warning_alert*>(alert));
                      }
+#if BTG_LT_0_14
+                  else if (typeid(*alert) == typeid(libtorrent::save_resume_data_alert))
+                     {
+                        handleResumeDataAlert(dynamic_cast<libtorrent::save_resume_data_alert*>(alert));
+                     }
+#endif
+#if BTG_LT_0_14
+                  else if (typeid(*alert) == typeid(libtorrent::state_changed_alert))
+                     {
+                        handleStateChangeAlert(dynamic_cast<libtorrent::state_changed_alert*>(alert));
+                     }
+#endif
                   else
                      {
                         // Log other alerts.

@@ -441,10 +441,27 @@ namespace btg
 
          bool op_status = false;
 
-         std::map<t_int, torrentInfo*>::iterator tii;
-         for (tii = torrents.begin(); tii != torrents.end(); tii++)
+         // TODO: result checking
+         std::for_each(torrent_ids.begin(), torrent_ids.end(), boost::bind(&Context::writeResumeData, this, _1));
+
+         op_status = true;
+
+         BTG_MEXIT(logWrapper(), "writeResumeData", op_status);
+         return op_status;
+      }
+
+      bool Context::writeResumeData(t_int const _torrent_id)
             {
-               torrentInfo *ti       = tii->second;
+         BTG_MENTER(logWrapper(), "writeResumeData(torrent_id)", _torrent_id);
+
+         bool op_status = false;
+
+         torrentInfo *ti       = getTorrentInfo(_torrent_id);
+         if (!ti)
+         {
+            BTG_ERROR_LOG(logWrapper(), "Context::writeResumeData(torrent_id): unknown torrent_id = " << _torrent_id);
+            return op_status;
+         }
 
 #if (BTG_LT_0_12 || BTG_LT_0_13)
                // Get the fast resume data.
@@ -486,15 +503,13 @@ namespace btg
                BTG_MNOTICE(logWrapper(), "wrote fast resume data for '" << filename << "'");
                out.close();
 #elif BTG_LT_0_14
-               // The actual writting is done using a callback.
-               // TODO: implement this!
+         // The actual writing is done using a callback (handleResumeDataAlert).
                ti->handle.save_resume_data();
 #endif
-            }
 
          op_status = true;
 
-         BTG_MEXIT(logWrapper(), "writeResumeData", op_status);
+         BTG_MEXIT(logWrapper(), "writeResumeData(torrent_id)", op_status);
          return op_status;
       }
 

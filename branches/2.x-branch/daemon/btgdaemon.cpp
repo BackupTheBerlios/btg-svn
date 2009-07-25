@@ -798,7 +798,10 @@ int main(int argc, char* argv[])
 #endif // BTG_OPTION_UPNP
                   BTG_MNOTICE(logwrapper, 
                               "parent exiting, child daemonizing");
-                  return BTG_NORMAL_EXIT;
+
+                  // don't allow destructors to be called
+                  // there are implementations that can share handles with child
+                  exit(BTG_NORMAL_EXIT);
                }
                break;
             case PID_ERR:

@@ -1409,7 +1409,7 @@ namespace btg
                   {
                      BTG_MNOTICE(logWrapper(), "Periodically saving sessions");
                      MVERBOSE_LOG(logWrapper(), verboseFlag_, "Periodically saving sessions.");
-                     sessionsaver_.saveSessions(dd_->ss_file, false);
+                     sessionsaver_.saveSessions(dd_->ss_file, true /* also save fast-resume data */);
                   }
 #endif
                periodic_ssave_timer_trigger_ = false;

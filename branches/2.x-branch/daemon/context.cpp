@@ -261,11 +261,13 @@ namespace btg
 #elif BTG_LT_0_14
                {
                   int amask = 
-                     libtorrent::alert::error_notification | 
-                     libtorrent::alert::port_mapping_notification | 
-                     libtorrent::alert::tracker_notification | 
-                     libtorrent::alert::status_notification | 
-                     libtorrent::alert::progress_notification;
+                     libtorrent::alert::error_notification
+                     | libtorrent::alert::port_mapping_notification
+                     | libtorrent::alert::tracker_notification
+                     | libtorrent::alert::status_notification
+                     | libtorrent::alert::progress_notification
+                     | libtorrent::alert::storage_notification // is needed for fast-resume data saving
+                     ;
 
                   torrent_session->set_alert_mask(amask);
                }
@@ -1032,6 +1034,8 @@ namespace btg
 
          // Not allready paused, so pause it.
          ti->handle.pause();
+
+         writeResumeData(_torrent_id);
 
          BTG_MEXIT(logWrapper(), "stop", true);
          return true;

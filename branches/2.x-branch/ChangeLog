@@ -3,6 +3,7 @@ BTG version 2.0.0
 The following bugs were fixed:
 
 015985 Merge patches from volkmar.
+016008 torrents are completely re-checked after restart
 
 BTG version 1.0.0
 -----------------

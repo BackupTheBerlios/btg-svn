@@ -118,7 +118,7 @@ namespace btg
                fullFilename = fullFilename + fastResumeFileNameEnd;
                if (!sbuf.read(fullFilename))
                   {
-                     BTG_MNOTICE(logWrapper(), "failed to read .torrent file from '" << fullFilename << "' (serializing)");
+                     BTG_MNOTICE(logWrapper(), "failed to read .fast file from '" << fullFilename << "' (serializing)");
                   }
 
                sbuf.serialize(_e);
