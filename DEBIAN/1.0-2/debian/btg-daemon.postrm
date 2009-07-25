@@ -1,0 +1,9 @@
+#! /bin/sh
+
+# $Id$
+
+#DEBHELPER#
+
+if [ "$1" = "remove" ]; then
+	deluser btg
+fi
