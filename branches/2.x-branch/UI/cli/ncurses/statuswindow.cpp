@@ -74,7 +74,15 @@ namespace btg
          {
             currentColor_ = Colors::C_NORMAL;
             clear();
-            status_ = _text;
+            const t_uint maxTextSize = width_-1;
+            if (_text.size() > maxTextSize)
+            {
+               status_ = _text.substr(0, maxTextSize);
+            }
+            else
+            {
+               status_ = _text;
+            }
             refresh();
          }
 
