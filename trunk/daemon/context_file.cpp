@@ -452,7 +452,7 @@ namespace btg
 
       bool Context::writeResumeData(t_int const _torrent_id)
       {
-         BTG_MENTER(logWrapper(), "writeResumeData(torrent_id)", "");
+         BTG_MENTER(logWrapper(), "writeResumeData(torrent_id)", _torrent_id);
 
          bool op_status = false;
 
