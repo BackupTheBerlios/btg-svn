@@ -63,7 +63,7 @@ namespace btg
       typedef std::map<t_long, eventHandler*> handlerMap;
 
       daemonHandler::daemonHandler(btg::core::LogWrapperType _logwrapper,
-                                   daemonData* _dd, 
+                                   daemonData* _dd,
                                    bool const _verboseFlag)
          : btg::core::Logable(_logwrapper),
            dd_(_dd),
@@ -173,7 +173,7 @@ namespace btg
                      connection_ = dd_->connHandler->getConnection(connectionID_);
                   }
 
-               BTG_MNOTICE(logWrapper(), 
+               BTG_MNOTICE(logWrapper(),
                            "got " << readBytes_ << " bytes from " << connection_->toString());
                BTG_MNOTICE(logWrapper(),
                            "data (in): " << buffer_.size() << " bytes");
@@ -541,9 +541,9 @@ namespace btg
 
          t_ulong timeDiff = now - dd_->daemonStartTime;
 
-         sendCommand(dd_->externalization, 
-                     dd_->transport, 
-                     connectionID_, 
+         sendCommand(dd_->externalization,
+                     dd_->transport,
+                     connectionID_,
                      new uptimeResponseCommand(timeDiff));
       }
 
@@ -551,13 +551,13 @@ namespace btg
       {
          MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
 
-         sendCommand(dd_->externalization, 
+         sendCommand(dd_->externalization,
                      dd_->transport,
-                     connectionID_, 
+                     connectionID_,
                      new sessionNameResponseCommand(_eventhandler->getName()));
       }
 
-      void daemonHandler::handleSessionSetName(eventHandler* _eventhandler, 
+      void daemonHandler::handleSessionSetName(eventHandler* _eventhandler,
                                                Command* _command)
       {
          MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
@@ -584,7 +584,7 @@ namespace btg
             }
       }
 
-      void daemonHandler::handleMoveContext(eventHandler* _eventhandler, 
+      void daemonHandler::handleMoveContext(eventHandler* _eventhandler,
                                             btg::core::Command* _command)
       {
          MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
@@ -605,7 +605,7 @@ namespace btg
                      sendError(_command->getType(), "Unable to find target session.");
                      return;
                   }
-               
+
                if (!_eventhandler->move(connectionID_, context_id, new_eventhandler))
                   {
                      sendError(_command->getType(), "Unable to move context.");
@@ -618,8 +618,8 @@ namespace btg
       void daemonHandler::handleVersion(btg::core::Command* _command)
       {
          MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
-         
-         versionResponseCommand* vrc = new versionResponseCommand(projectDefaults::iMAJORVERSION(), 
+
+         versionResponseCommand* vrc = new versionResponseCommand(projectDefaults::iMAJORVERSION(),
                                                                   projectDefaults::iMINORVERSION(),
                                                                   projectDefaults::iREVISIONVERSION());
          // Set the differnent options, default is off.
@@ -640,9 +640,9 @@ namespace btg
 #if BTG_OPTION_URL
          vrc->setOption(versionResponseCommand::URL);
 #endif
-         sendCommand(dd_->externalization, 
+         sendCommand(dd_->externalization,
                      dd_->transport,
-                     connectionID_, 
+                     connectionID_,
                      vrc);
       }
 
@@ -691,7 +691,7 @@ namespace btg
             case btg::core::SG_PEERID:
                {
                   // Peer ID contained in the config file.
-                  
+
                   std::string peerid = dd_->config->getPeerId();
                   if (peerid.size() == 0)
                      {
@@ -710,9 +710,9 @@ namespace btg
 
          if (sendResponse)
             {
-               sendCommand(dd_->externalization, 
+               sendCommand(dd_->externalization,
                            dd_->transport,
-                           connectionID_, 
+                           connectionID_,
                            new settingResponseCommand(ds, response));
             }
          else
@@ -721,15 +721,15 @@ namespace btg
             }
       }
 
-      void daemonHandler::handleSessionInfo(eventHandler* _eventhandler, 
+      void daemonHandler::handleSessionInfo(eventHandler* _eventhandler,
                                             btg::core::Command* _command)
       {
          MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << ".");
 
-         sendCommand(dd_->externalization, 
+         sendCommand(dd_->externalization,
                      dd_->transport,
-                     connectionID_, 
-                     new sessionInfoResponseCommand(_eventhandler->encryptionEnabled(), 
+                     connectionID_,
+                     new sessionInfoResponseCommand(_eventhandler->encryptionEnabled(),
                                                     _eventhandler->dhtEnabled())
                      );
       }
@@ -804,8 +804,8 @@ namespace btg
 
          if (sessions.size() > 0)
             {
-               btg_assert(sessions.size() == session_names.size(), 
-                          logWrapper(), 
+               btg_assert(sessions.size() == session_names.size(),
+                          logWrapper(),
                           "Session list and Id list must have same size.");
                sendCommand(dd_->externalization,
                            dd_->transport,
@@ -838,7 +838,7 @@ namespace btg
          t_long attachTo    = asc->getSession();
          if (connection_->getSession() != 0)
             {
-               sendError(_command->getType(), 
+               sendError(_command->getType(),
                          "Could not attach to session, already attached to another session.");
                return;
 
@@ -846,7 +846,7 @@ namespace btg
 
          if (attachTo == Command::INVALID_SESSION)
             {
-               sendError(_command->getType(), 
+               sendError(_command->getType(),
                          "Could not attach to session, invalid session id.");
                return;
             }
@@ -855,7 +855,7 @@ namespace btg
 
          if (!sessionlist_.get(attachTo, eventhandler))
             {
-               sendError(_command->getType(), 
+               sendError(_command->getType(),
                          "Could not attach to session, unknown session id.");
                return;
             }
@@ -870,10 +870,10 @@ namespace btg
             }
 
 
-         if ((!controlFlag) && 
+         if ((!controlFlag) &&
              (eventhandler->getUsername() != connection_->getUsername()))
             {
-               sendError(_command->getType(), 
+               sendError(_command->getType(),
                          "Could not attach to session, wrong username.");
                return;
             }
@@ -896,7 +896,7 @@ namespace btg
          if (sc->getRequiredData().getBuildID() != projectDefaults::sBUILD())
             {
                BTG_ERROR_LOG(logWrapper(), "Setup, unexpected build id '" << sc->getRequiredData().getBuildID() << "', expected '" << projectDefaults::sBUILD() << "'");
-               sendError(_command->getType(), 
+               sendError(_command->getType(),
                          "Wrong build ID");
             }
          else
@@ -929,7 +929,7 @@ namespace btg
                   {
                      // Error handling.
                      errorDescription = "Missing callback.";
-                     sendError(_command->getType(), errorDescription); 
+                     sendError(_command->getType(), errorDescription);
                      return;
                   }
 #endif // BTG_OPTION_EVENTCALLBACK
@@ -939,14 +939,14 @@ namespace btg
                t_long session;
                sessionlist_.new_session(session);
 
-               BTG_MNOTICE(logWrapper(), 
+               BTG_MNOTICE(logWrapper(),
                            "setup, client build id '" << sc->getRequiredData().getBuildID() << "'");
 
                // Setup a new context.
-               BTG_MNOTICE(logWrapper(), 
+               BTG_MNOTICE(logWrapper(),
                            "setup, attempt to establish a new session with session id " << session);
 
-               BTG_MNOTICE(logWrapper(), 
+               BTG_MNOTICE(logWrapper(),
                            "using the following paths:" <<
                            "tempdir '" << userTempDir << "', " <<
                            "work dir '" << userWorkDir << "', " <<
@@ -959,8 +959,8 @@ namespace btg
 
                if (!portManager_.available())
                   {
-                     sendError(_command->getType(), 
-                               "Failed to setup session (all ports used)."); 
+                     sendError(_command->getType(),
+                               "Failed to setup session (all ports used).");
 
                      MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << " failed.");
                      return;
@@ -1025,7 +1025,7 @@ namespace btg
                         {
                            setupInfoMessage += " Encryption: OFF.";
                         }
-                     
+
                      MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << "(" << setupInfoMessage << ").");
 
                      // Write a response:
@@ -1037,8 +1037,8 @@ namespace btg
                else
                   {
                      delete eh;
-                     sendError(_command->getType(), 
-                               "Failed to setup session."); 
+                     sendError(_command->getType(),
+                               "Failed to setup session.");
                      MVERBOSE_LOG(logWrapper(), verboseFlag_, "client (" << connectionID_ << "): " << _command->getName() << " failed.");
                   }
             }
@@ -1139,7 +1139,7 @@ namespace btg
             }
       }
 
-      void daemonHandler::handleUrlMessages(eventHandler* _eventhandler, 
+      void daemonHandler::handleUrlMessages(eventHandler* _eventhandler,
                                             btg::core::Command* _command)
       {
 #if BTG_OPTION_URL
@@ -1166,16 +1166,16 @@ namespace btg
             }
 #else
          // URL loading disabled.
-         sendError(_command->getType(), 
-                   "URL loading not enabled."); 
-         MVERBOSE_LOG(logWrapper(), verboseFlag_, "Session " << _eventhandler->getSession() << 
-                      " received unsupported URL command: " << _command->getName() << 
+         sendError(_command->getType(),
+                   "URL loading not enabled.");
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "Session " << _eventhandler->getSession() <<
+                      " received unsupported URL command: " << _command->getName() <<
                       " from client (" << connectionID_ << ").");
-         
+
 #endif // BTG_OPTION_URL
       }
 
-      void daemonHandler::handleCreateFileMessages(eventHandler* _eventhandler, 
+      void daemonHandler::handleCreateFileMessages(eventHandler* _eventhandler,
                                                    btg::core::Command* _command)
       {
          switch (_command->getType())
@@ -1216,8 +1216,8 @@ namespace btg
 
          if (err->messagePresent())
             {
-               MVERBOSE_LOG(logWrapper(), 
-                            verboseFlag_, "Sending error to client (" << connectionID_ << 
+               MVERBOSE_LOG(logWrapper(),
+                            verboseFlag_, "Sending error to client (" << connectionID_ <<
                             "): '" << err->getMessage() << "'.");
             }
 
@@ -1310,21 +1310,21 @@ namespace btg
                      connection_ = dd_->connHandler->getConnection(*iter);
                      if (connection_ == 0)
                         {
-                           BTG_MNOTICE(logWrapper(), 
+                           BTG_MNOTICE(logWrapper(),
                                        "got a dead connection ID " <<
                                        *iter << " from transport");
                            continue;
                         }
 
                      // Find out if the connection had a session attached.
-                     BTG_MNOTICE(logWrapper(), 
+                     BTG_MNOTICE(logWrapper(),
                                  "connection " << connection_->toString() << " has died");
                      if (connection_->getSession() != 0)
                         {
                            eventHandler* eventhandler = 0;
                            if (sessionlist_.get(connection_->getSession(), eventhandler))
                               {
-                                 BTG_MNOTICE(logWrapper(), 
+                                 BTG_MNOTICE(logWrapper(),
                                              "detaching dead connection from session " << connection_->getSession());
                                  eventhandler->decClients();
                               }
@@ -1348,14 +1348,14 @@ namespace btg
             {
             case btg::core::commandFactory::DS_UNKNOWN:
                {
-                  sendError(Command::CN_UNDEFINED, 
-                               "Unknown command."); 
+                  sendError(Command::CN_UNDEFINED,
+                               "Unknown command.");
                   break;
                }
             case btg::core::commandFactory::DS_FAILED:
                {
                   sendError(Command::CN_UNDEFINED,
-                            "Failed to deserialize command."); 
+                            "Failed to deserialize command.");
                   break;
                }
             default:
@@ -1367,10 +1367,10 @@ namespace btg
 
       void daemonHandler::logDirectoryNotFound(std::string const& _type, std::string const& _value)
       {
-         BTG_MNOTICE(logWrapper(), 
+         BTG_MNOTICE(logWrapper(),
                      _type << ": directory '" << _value << "' not found");
 
-         MVERBOSE_LOG(logWrapper(), 
+         MVERBOSE_LOG(logWrapper(),
                       verboseFlag_, "daemon (" << connectionID_ << "): " <<
                       _type << ", directory '" << _value << "' not found.");
       }
@@ -1383,7 +1383,7 @@ namespace btg
                file_timer_.Reset();
                handleFileDownloads();
             }
-         
+
 #if BTG_OPTION_URL
          if (url_timer_trigger_)
             {
@@ -1409,7 +1409,7 @@ namespace btg
                   {
                      BTG_MNOTICE(logWrapper(), "Periodically saving sessions");
                      MVERBOSE_LOG(logWrapper(), verboseFlag_, "Periodically saving sessions.");
-                     sessionsaver_.saveSessions(dd_->ss_file, false);
+                     sessionsaver_.saveSessions(dd_->ss_file, true /* also save fast-resume data */);
                   }
 #endif
                periodic_ssave_timer_trigger_ = false;

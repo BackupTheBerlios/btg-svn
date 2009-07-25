@@ -658,6 +658,7 @@ namespace btg
                bool writeResumeData(t_int const _torrent_id);
 
                /// Returns true if the torrent file pointed by the
+               /// argument has fast resume data.
                bool hasFastResumeData(std::string const& _torrent_filename) const;
 
 #if BTG_OPTION_EVENTCALLBACK
