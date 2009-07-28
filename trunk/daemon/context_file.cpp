@@ -43,10 +43,10 @@ namespace btg
       bool dirname_compare(std::string const& _s1,
                            std::string const& _s2);
 
-      bool Context::moveToDirectory(t_int const _torrent_id,
+      bool Context::moveToDirectory(t_int const _torrent_id, 
                                     std::string const& _destination_dir)
       {
-         BTG_MENTER(logWrapper(),
+         BTG_MENTER(logWrapper(), 
                     "moveToDirectory", "id = " << _torrent_id << ", destination = " << _destination_dir);
 
          bool result = true;
@@ -62,7 +62,7 @@ namespace btg
             {
                std::string filename;
                this->getFilename(_torrent_id, filename);
-               BTG_ERROR_LOG(logWrapper(),
+               BTG_ERROR_LOG(logWrapper(), 
                              "Attempt to move '" << filename << "' to " << _destination_dir << " failed.");
                result = false;
             }
@@ -76,9 +76,9 @@ namespace btg
 
       bool Context::moveToWorkingDir(t_int const _torrent_id)
       {
-         BTG_MENTER(logWrapper(),
+         BTG_MENTER(logWrapper(), 
                     "moveToWorkingDir", "id = " << _torrent_id);
-
+         
          bool result = false;
 
          if (torrent_storage[_torrent_id] == tsWork)
@@ -97,12 +97,12 @@ namespace btg
          BTG_MEXIT(logWrapper(), "moveToWorkingDir", result);
          return result;
       }
-
+      
       bool Context::moveToSeedingDir(t_int const _torrent_id)
       {
-         BTG_MENTER(logWrapper(),
+         BTG_MENTER(logWrapper(), 
                     "moveToSeedingDir", "id = " << _torrent_id);
-
+         
          bool result = false;
 
          if (torrent_storage[_torrent_id] == tsSeed)
@@ -112,7 +112,7 @@ namespace btg
             BTG_MEXIT(logWrapper(), "moveToSeedingDir", result);
             return result;
          }
-
+         
          result = moveToDirectory(_torrent_id, seedDir_);
 
          if (result)
@@ -124,11 +124,11 @@ namespace btg
 
       bool Context::moveToDestinationDir(t_int const _torrent_id)
       {
-         BTG_MENTER(logWrapper(),
+         BTG_MENTER(logWrapper(), 
                     "moveToDestinationDir", "id = " << _torrent_id);
 
          bool result = false;
-
+         
          if (torrent_storage[_torrent_id] == tsDest)
          {
             result = true;
@@ -136,7 +136,7 @@ namespace btg
             BTG_MEXIT(logWrapper(), "moveToDestinationDir", result);
             return result;
          }
-
+         
          // remove unselected files (probably they aren't completely downloaded)
          selectedFileEntryList aSelectedFileEntryList;
          if (getSelectedFiles(_torrent_id, aSelectedFileEntryList))
@@ -158,9 +158,9 @@ namespace btg
             BTG_MERROR(logWrapper(),"getSelectedFiles");
             // but still continue
          }
-
+         
          result = moveToDirectory(_torrent_id, outputDir_);
-
+         
          if (result)
             torrent_storage[_torrent_id] = tsDest;
 
@@ -178,8 +178,8 @@ namespace btg
             {
                if (this->hasFastResumeData(filename))
                   {
-                     std::string fastResumeFilename = tempDir_ +
-                        projectDefaults::sPATH_SEPARATOR() +
+                     std::string fastResumeFilename = tempDir_ + 
+                        projectDefaults::sPATH_SEPARATOR() + 
                         filename + this->fastResumeFileNameEnd;
                      status = btg::core::os::fileOperation::remove(fastResumeFilename);
                   }
@@ -206,7 +206,7 @@ namespace btg
       }
 
 #if BTG_OPTION_EVENTCALLBACK
-      void Context::removeFileInfoDetails(t_fileInfoList const& _source,
+      void Context::removeFileInfoDetails(t_fileInfoList const& _source, 
                                           t_strList & _destination)
       {
          // Find unique top directories.
@@ -253,10 +253,10 @@ namespace btg
               iter++)
             {
                libtorrent::file_entry const& fe = *iter;
-
+         
                // The full path.
                boost::filesystem::path const& file_path = fe.path;
-
+               
                if (boost::filesystem::exists(seedDir_ / file_path))
                   {
                      // Check whether we have the same directory as file name in torrent.
@@ -269,7 +269,7 @@ namespace btg
                      else
                         {
                            status = true;
-
+                           
                            BTG_MNOTICE(logWrapper(), "dataPresentInSeedDir: found torrent file '"
                                        << file_path.string() << "'.");
                         }
@@ -451,7 +451,7 @@ namespace btg
       }
 
       bool Context::writeResumeData(t_int const _torrent_id)
-      {
+            {
          BTG_MENTER(logWrapper(), "writeResumeData(torrent_id)", _torrent_id);
 
          bool op_status = false;
@@ -464,47 +464,47 @@ namespace btg
          }
 
 #if (BTG_LT_0_12 || BTG_LT_0_13)
-         // Get the fast resume data.
-         libtorrent::entry torrent_entry = ti->handle.write_resume_data();
+               // Get the fast resume data.
+               libtorrent::entry torrent_entry = ti->handle.write_resume_data();
 
-         // The name to which the resume data is saved to.
-         std::string filename;
-         filename = tempDir_ + projectDefaults::sPATH_SEPARATOR() + ti->filename +
-         this->fastResumeFileNameEnd;
+               // The name to which the resume data is saved to.
+               std::string filename;
+               filename = tempDir_ + projectDefaults::sPATH_SEPARATOR() + ti->filename + 
+                  this->fastResumeFileNameEnd;
 
-         // Output file.
-         std::ofstream out;
+               // Output file.
+               std::ofstream out;
 
 #if HAVE_IOS_BASE
-         out.open(filename.c_str(), std::ios_base::out);
+               out.open(filename.c_str(), std::ios_base::out);
 #else
-         out.open(filename.c_str(), std::ios::out);
+               out.open(filename.c_str(), std::ios::out);
 #endif
 
-         if (!out.is_open())
-         {
-            return op_status;
-         }
+               if (!out.is_open())
+                  {
+                     return op_status;
+                  }
 
-         try
-         {
-            // Encode to file.
-            libtorrent::bencode(
-               std::ostream_iterator<char>(out),
-               torrent_entry
-            );
-         }
-         catch (libtorrent::invalid_encoding & e)
-         {
-            BTG_ERROR_LOG(logWrapper(), "libtorrent exception: " << e.what() );
-            return op_status;
-         }
+               try
+                  {
+                     // Encode to file.
+                     libtorrent::bencode(
+                                         std::ostream_iterator<char>(out),
+                                         torrent_entry
+                                         );
+                  }
+               catch (libtorrent::invalid_encoding & e)
+                  {
+                     BTG_ERROR_LOG(logWrapper(), "libtorrent exception: " << e.what() );
+                     return op_status;
+                  }
 
-         BTG_MNOTICE(logWrapper(), "wrote fast resume data for '" << filename << "'");
-         out.close();
+               BTG_MNOTICE(logWrapper(), "wrote fast resume data for '" << filename << "'");
+               out.close();
 #elif BTG_LT_0_14
          // The actual writing is done using a callback (handleResumeDataAlert).
-         ti->handle.save_resume_data();
+               ti->handle.save_resume_data();
 #endif
 
          op_status = true;
@@ -516,7 +516,7 @@ namespace btg
       bool Context::hasFastResumeData(std::string const& _torrent_filename) const
       {
          // Check if the fast resume data actually exists.
-         std::string fastResumeFilename = tempDir_ + projectDefaults::sPATH_SEPARATOR() +
+         std::string fastResumeFilename = tempDir_ + projectDefaults::sPATH_SEPARATOR() + 
             _torrent_filename + this->fastResumeFileNameEnd;
          bool status = btg::core::os::fileOperation::check(fastResumeFilename);
 
@@ -526,7 +526,7 @@ namespace btg
             }
          else
             {
-               boost::intmax_t filesize =
+               boost::intmax_t filesize = 
                   boost::filesystem::file_size(boost::filesystem::path(fastResumeFilename));
                if(filesize == 0)
                   {
@@ -570,7 +570,7 @@ namespace btg
             BTG_ERROR_LOG(logWrapper(), "torrentInfoToFiles, attempt to load torrent with no files in it.");
             status = false;
          }
-
+         
          BTG_MEXIT(logWrapper(), "torrentInfoToFiles", status);
          return status;
       }
@@ -610,7 +610,7 @@ namespace btg
 #endif
 
 #if (BTG_LT_0_14)
-      void Context::bitfieldToVector(libtorrent::bitfield const& _input,
+      void Context::bitfieldToVector(libtorrent::bitfield const& _input, 
                                      std::vector<bool> & _output) const
       {
          _output.resize(_input.size());

@@ -94,7 +94,7 @@ namespace btg
          total_payload_download(0),
          total_payload_upload(0)
 #endif // BTG_OPTION_SAVESESSIONS
-      {
+      {  
       }
 
       bool Context::set_boost_native_paths = true;
@@ -260,7 +260,7 @@ namespace btg
                torrent_session->set_severity_level(libtorrent::alert::info);
 #elif BTG_LT_0_14
                {
-                  int amask =
+                  int amask = 
                      libtorrent::alert::error_notification
                      | libtorrent::alert::port_mapping_notification
                      | libtorrent::alert::tracker_notification
@@ -294,8 +294,8 @@ namespace btg
 
          if (peerid.size() < minPeerIdSize)
             {
-               MVERBOSE_LOG(logWrapper(), verboseFlag_,
-                            "Peer ID: '" << peerid << "' must be at least " <<
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, 
+                            "Peer ID: '" << peerid << "' must be at least " << 
                             minPeerIdSize << " characters.");
                return;
             }
@@ -326,12 +326,12 @@ namespace btg
                      oss << std::hex << std::setw(2) << std::setfill('0') << i;
                   }
             }
-
+         
          oss << std::dec << std::setfill(' ');
 
          libtorrent::peer_id pid = btg::core::convertStringTo<libtorrent::peer_id>(oss.str());
 
-         MVERBOSE_LOG(logWrapper(), verboseFlag_,
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, 
                       "Overriding libtorrent peer ID with: '" << peerid << "'.");
          torrent_session->set_peer_id(pid);
       }
@@ -369,7 +369,7 @@ namespace btg
       }
 
       bool Context::getFile(t_int const _torrent_id,
-                            std::string & _filename,
+                            std::string & _filename, 
                             btg::core::sBuffer & _buffer) const
       {
          torrentInfo *ti;
@@ -381,7 +381,7 @@ namespace btg
          std::string fullFilename = tempDir_ + projectDefaults::sPATH_SEPARATOR() + ti->filename;
          if (!_buffer.read(fullFilename))
             {
-               BTG_MNOTICE(logWrapper(),
+               BTG_MNOTICE(logWrapper(), 
                            "failed to read .torrent file from '" << fullFilename << "'");
                return false;
             }
@@ -518,7 +518,7 @@ namespace btg
          Context::addResult status = Context::ERR_UNDEFINED;
 
          // Filename used as key for the file tracker.
-         // tempDir_ + projectDefaults::sPATH_SEPARATOR() +
+         // tempDir_ + projectDefaults::sPATH_SEPARATOR() + 
          std::string fileTrackFilename = _torrent_filename;
 
          // Add torrent name to filetracker.
@@ -526,7 +526,7 @@ namespace btg
             {
                status = Context::ERR_EXISTS;
                BTG_MNOTICE(logWrapper(),
-                           "add, file '" << fileTrackFilename <<
+                           "add, file '" << fileTrackFilename << 
                            "' already exists in filetrack");
                BTG_MEXIT(logWrapper(), "add", status);
                return status;
@@ -535,8 +535,8 @@ namespace btg
          libtorrent::entry torrent_entry;
 
          // Prepend tempDir_ to filename.
-         std::string targetPath = tempDir_ +
-            projectDefaults::sPATH_SEPARATOR() +
+         std::string targetPath = tempDir_ + 
+            projectDefaults::sPATH_SEPARATOR() + 
             _torrent_filename;
 
 #if BTG_LT_0_12 || BTG_LT_0_13
@@ -553,7 +553,7 @@ namespace btg
             }
          catch (std::exception& e)
             {
-
+               
                status = Context::ERR_LIBTORRENT;
             }
          if (status != Context::ERR_OK)
@@ -599,13 +599,13 @@ namespace btg
                BTG_MNOTICE(logWrapper(), "libtorrent exception (torrent_info constructor): " << e.what());
                gotInfo = false;
             }
-
+         
          if (!gotInfo)
 #endif
             {
                // Unable to convert the entry to a torrent info.
                // Adding files cannot continue.
-
+               
                filetrack_->remove(tempDir_, fileTrackFilename);
                status = Context::ERR_LIBTORRENT;
                BTG_MEXIT(logWrapper(), "add", status);
@@ -630,7 +630,7 @@ namespace btg
                return status;
             }
 #endif
-         btg_assert(contained_files.size() >= 1,
+         btg_assert(contained_files.size() >= 1, 
                     logWrapper(),
                     "entryToFiles must return at least one file");
 
@@ -689,7 +689,7 @@ namespace btg
                                                                  std::istream_iterator<char>()
                                                                  );
 #elif BTG_LT_0_14
-                           std::copy(std::istream_iterator<char>(in),
+                           std::copy(std::istream_iterator<char>(in), 
                                      std::istream_iterator<char>(),
                                      std::back_inserter(*resumeData));
 #endif
@@ -704,7 +704,7 @@ namespace btg
                         {
                            BTG_MNOTICE(logWrapper(), "using fast resume for '" << _torrent_filename << "'");
 #if BTG_LT_0_12
-                           handle = torrent_session->add_torrent(torrent_entry, dataPath, fastResumeEntry);
+                           handle = torrent_session->add_torrent(torrent_entry, dataPath, fastResumeEntry);         
 #elif BTG_LT_0_13
                            handle = torrent_session->add_torrent(tinfo, dataPath, fastResumeEntry);
 #elif BTG_LT_0_14
@@ -798,7 +798,7 @@ namespace btg
          return status;
       }
 
-      Context::addResult Context::add(std::string const& _torrent_filename,
+      Context::addResult Context::add(std::string const& _torrent_filename, 
                                       btg::core::sBuffer const& _buffer,
                                       t_int & _handle_id)
       {
@@ -907,7 +907,7 @@ namespace btg
          torrents.erase(_torrent_id);
          delete ti;
          ti = 0;
-
+         
          // Remove storage data
          torrent_storage.erase(_torrent_id);
 
@@ -1064,16 +1064,16 @@ namespace btg
          return result;
       }
 
-      bool Context::limit(t_int const _torrent_id,
-                          t_int const _limitUpld,
-                          const t_int _limitDwnld,
-                          const t_int _seedLimit,
+      bool Context::limit(t_int const _torrent_id, 
+                          t_int const _limitUpld, 
+                          const t_int _limitDwnld, 
+                          const t_int _seedLimit, 
                           const t_long _seedTimeout)
       {
-         BTG_MENTER(logWrapper(), "limit", "id = " << _torrent_id << ", _limitUpld = " <<
-                    _limitUpld << ", _limitDwnld = " <<
-                    _limitDwnld << ", seedLimit = " <<
-                    _seedLimit << ", seedTimeout = " <<
+         BTG_MENTER(logWrapper(), "limit", "id = " << _torrent_id << ", _limitUpld = " << 
+                    _limitUpld << ", _limitDwnld = " << 
+                    _limitDwnld << ", seedLimit = " << 
+                    _seedLimit << ", seedTimeout = " << 
                     _seedTimeout);
 
          torrentInfo *ti;
@@ -1094,9 +1094,9 @@ namespace btg
          return true;
       }
 
-      bool Context::limitAll(t_int const _limitUpld,
-                             const t_int _limitDwnld,
-                             const t_int _seedLimit,
+      bool Context::limitAll(t_int const _limitUpld, 
+                             const t_int _limitDwnld, 
+                             const t_int _seedLimit, 
                              const t_long _seedTimeout)
       {
          BTG_MENTER(logWrapper(), "limitAll", "");
@@ -1120,13 +1120,13 @@ namespace btg
          return result;
       }
 
-      bool Context::removeLimit(t_int const _torrent_id,
-                                bool const _upld,
-                                bool const _dwnld,
-                                bool const _seedLimit,
+      bool Context::removeLimit(t_int const _torrent_id, 
+                                bool const _upld, 
+                                bool const _dwnld, 
+                                bool const _seedLimit, 
                                 bool const _seedTimeout)
       {
-         BTG_MENTER(logWrapper(), "removeLimit", "id = " << _torrent_id << ", _upld = " <<
+         BTG_MENTER(logWrapper(), "removeLimit", "id = " << _torrent_id << ", _upld = " << 
                     _upld<< ", _dwnld = " << _dwnld << ", seedLimit = " <<
                     _seedLimit << ", seedTimeout = " << _seedTimeout);
 
@@ -1162,9 +1162,9 @@ namespace btg
          return true;
       }
 
-      bool Context::removeLimitAll(bool const _upld,
-                                   bool const _dwnld,
-                                   bool const _seedLimit,
+      bool Context::removeLimitAll(bool const _upld, 
+                                   bool const _dwnld, 
+                                   bool const _seedLimit, 
                                    bool const _seedTimeout)
       {
          BTG_MENTER(logWrapper(), "removeLimitAll", "");
@@ -1189,10 +1189,10 @@ namespace btg
          return result;
       }
 
-      bool Context::getLimit(t_int const _torrent_id,
-                             t_int & _limitUpld,
-                             t_int & _limitDwnld,
-                             t_int & _seedLimit,
+      bool Context::getLimit(t_int const _torrent_id, 
+                             t_int & _limitUpld, 
+                             t_int & _limitDwnld, 
+                             t_int & _seedLimit, 
                              t_long & _seedTimeout)
       {
          BTG_MENTER(logWrapper(), "getLimit", "id = " << _torrent_id);
@@ -1208,15 +1208,15 @@ namespace btg
          _seedLimit   = ti->seedLimit;
          _seedTimeout = ti->seedTimeout;
 
-         BTG_MENTER(logWrapper(), "getLimit", "_limitUpld = " <<
-                    _limitUpld << ", _limitDwnld = " <<
-                    _limitDwnld << ", _seedLimit = " <<
-                    _seedLimit << ", _seedTimeout = " <<
+         BTG_MENTER(logWrapper(), "getLimit", "_limitUpld = " << 
+                    _limitUpld << ", _limitDwnld = " << 
+                    _limitDwnld << ", _seedLimit = " << 
+                    _seedLimit << ", _seedTimeout = " << 
                     _seedTimeout);
          return true;
       }
 
-      bool Context::getStatus(t_int const _torrent_id,
+      bool Context::getStatus(t_int const _torrent_id, 
                               Status & _destination)
       {
          BTG_MENTER(logWrapper(), "getStatus", "");
@@ -1368,7 +1368,7 @@ namespace btg
             }
 
          libtorrent::sha1_hash h = ti->handle.info_hash();
-
+         
          std::string shash = btg::core::convertToString<libtorrent::sha1_hash>(h);
 
          std::string announceUrl("not set");
@@ -1391,7 +1391,7 @@ namespace btg
                   }
             }
 
-         BTG_MNOTICE(logWrapper(),
+         BTG_MNOTICE(logWrapper(), 
                      "sending progress info: " <<
                      hour << ":" << minute << ":" << second <<
                      ". Trackerstatus is " << ti->trackerStatus.toString());
@@ -1422,7 +1422,7 @@ namespace btg
          return true;
       }
 
-      bool Context::getStatus(t_intList const& _contexts,
+      bool Context::getStatus(t_intList const& _contexts, 
                               t_statusList & _status)
       {
          BTG_MENTER(logWrapper(), "getStatus(list)", "");
@@ -1442,7 +1442,7 @@ namespace btg
                return result;
             }
 
-         for (t_intListCI i=_contexts.begin();
+         for (t_intListCI i=_contexts.begin(); 
               i!= _contexts.end();
               i++)
             {
@@ -1489,7 +1489,7 @@ namespace btg
          return result;
       }
 
-      bool Context::getFileInfo(t_int const _torrent_id,
+      bool Context::getFileInfo(t_int const _torrent_id, 
                                 t_fileInfoList & _vfileinfo)
       {
          BTG_MENTER(logWrapper(), "getFileInfo", "id = " << _torrent_id);
@@ -1515,7 +1515,7 @@ namespace btg
          libtorrent::torrent_status tstatus = ti->handle.status();
 
          if ((tstatus.state == libtorrent::torrent_status::seeding)
-             ||
+             || 
              (tstatus.state == libtorrent::torrent_status::finished))
             {
                libtorrent::torrent_info t_i = ti->handle.get_torrent_info();
@@ -1543,7 +1543,7 @@ namespace btg
                BTG_MEXIT(logWrapper(), "getFileInfo", true);
                return true;
             }
-
+         
 
          /*
           * By using the list of files and the piece-size from the
@@ -1611,8 +1611,8 @@ namespace btg
                            // Skip this file, as it is not selected.
                            continue;
                         }
-
-                     BTG_MNOTICE(logWrapper(),
+                     
+                     BTG_MNOTICE(logWrapper(), 
                                  "creating a fileInformation object (filename = " <<
                                  filename << ", number of pieces = " << filepieces.size() <<
                                  ", piece size = " << piece_len << ")");
@@ -1630,7 +1630,7 @@ namespace btg
          return result;
       }
 
-      bool Context::getPeers(t_int const _torrent_id,
+      bool Context::getPeers(t_int const _torrent_id, 
                              t_peerList & _peerlist,
                              t_uint * _peerExOffset,
                              t_uint * _peerExCount,
@@ -1683,7 +1683,7 @@ namespace btg
                      std::string client_identification = libtorrent::identify_client(iter->pid);
 #if BTG_LT_0_12
                      Peer peer(pa, iter->seed, client_identification);
-#else
+#else                    
                      Peer peer(pa, iter->flags & libtorrent::peer_info::seed, client_identification);
 #endif
 
@@ -1722,18 +1722,18 @@ namespace btg
 #elif BTG_LT_0_12
                            0,
 #endif
-                           (t_uint)peerinfolist[i].down_speed,
+                           (t_uint)peerinfolist[i].down_speed, 
                            (t_uint)peerinfolist[i].up_speed,
-                           (t_uint)peerinfolist[i].payload_down_speed,
+                           (t_uint)peerinfolist[i].payload_down_speed, 
                            (t_uint)peerinfolist[i].payload_up_speed,
-                           peerinfolist[i].total_download,
+                           peerinfolist[i].total_download, 
                            peerinfolist[i].total_upload,
 #if BTG_LT_0_12 || BTG_LT_0_13
                            peerinfolist[i].pieces,
 #elif BTG_LT_0_14
                            fpieces,
 #endif
-                           peerinfolist[i].download_limit,
+                           peerinfolist[i].download_limit, 
                            peerinfolist[i].upload_limit,
 #ifndef TORRENT_DISABLE_RESOLVE_COUNTRIES
                            peerinfolist[i].country,
@@ -1741,18 +1741,18 @@ namespace btg
                            0,
 #endif
                            peerinfolist[i].load_balancing,
-                           peerinfolist[i].download_queue_length,
+                           peerinfolist[i].download_queue_length, 
                            peerinfolist[i].upload_queue_length,
-                           peerinfolist[i].downloading_piece_index,
+                           peerinfolist[i].downloading_piece_index, 
                            peerinfolist[i].downloading_block_index,
-                           peerinfolist[i].downloading_progress,
+                           peerinfolist[i].downloading_progress, 
                            peerinfolist[i].downloading_total,
                            peerinfolist[i].client,
                            peerinfolist[i].connection_type,
 #if BTG_LT_0_13 || BTG_LT_0_14
-                           libtorrent::total_seconds(peerinfolist[i].last_request),
+                           libtorrent::total_seconds(peerinfolist[i].last_request), 
                            libtorrent::total_seconds(peerinfolist[i].last_active),
-                           peerinfolist[i].num_hashfails,
+                           peerinfolist[i].num_hashfails, 
                            peerinfolist[i].failcount,
                            peerinfolist[i].target_dl_queue_length,
                            peerinfolist[i].remote_dl_rate
@@ -1828,7 +1828,7 @@ namespace btg
             {
                return false;
             }
-
+         
          _file_list = ti->selected_files;
 
          BTG_MEXIT(logWrapper(), "getSelectedFiles", true);
@@ -1845,7 +1845,7 @@ namespace btg
             {
                return false;
             }
-
+         
          btg::core::selectedFileEntryList file_list;
 
          if (_file_list.size() < ti->selected_files.size())
@@ -1872,7 +1872,7 @@ namespace btg
                               {
                                  *currentiter = *newiter;
                               }
-                        }
+                        }  
                   }
 
                file_list.setFiles(currentfiles);
@@ -1904,13 +1904,13 @@ namespace btg
                BTG_MEXIT(logWrapper(), "setSelectedFiles", false);
                return false;
             }
-
+         
          if (!applySelectedFiles(ti, file_list))
             {
                BTG_MEXIT(logWrapper(), "setSelectedFiles", false);
                return false;
             }
-
+         
          // after handle.prioritize_files torrent status is recalculated, so we can use it to
          // switch storage dir
          switch (ti->handle.status().state)
@@ -1938,11 +1938,11 @@ namespace btg
             default:
                ; // do nothing
             }
-
+         
          BTG_MEXIT(logWrapper(), "setSelectedFiles", true);
          return true;
       }
-
+      
       bool Context::checkSelectedFiles(btg::core::selectedFileEntryList const& _l1,
                                        btg::core::selectedFileEntryList const& _l2) const
       {
@@ -1968,15 +1968,15 @@ namespace btg
                      BTG_MEXIT(logWrapper(), "checkSelectedFiles", false);
                      return false;
                   }
-
-               l1_iter++;
+               
+               l1_iter++; 
                l2_iter++;
             } while (l1_iter != l1_end);
 
          BTG_MEXIT(logWrapper(), "checkSelectedFiles", true);
          return true;
       }
-
+      
       bool Context::applySelectedFiles(torrentInfo* ti,
                                        btg::core::selectedFileEntryList const& _input)
       {
@@ -2029,7 +2029,7 @@ namespace btg
                      debugPriorityString += "_";
                   }
             }
-
+         
          BTG_MNOTICE(logWrapper(), "Setting file priorities: " + debugPriorityString);
 #endif // BTG_DEBUG
 
@@ -2080,7 +2080,7 @@ namespace btg
              (status.state == libtorrent::torrent_status::downloading)
              ||
              (status.state == libtorrent::torrent_status::seeding)
-             ||
+             || 
              (status.state == libtorrent::torrent_status::finished))
             {
                result = true;
@@ -2215,7 +2215,7 @@ namespace btg
             {
                torrentInfo* ti = tii->second;
                libtorrent::torrent_status status = ti->handle.status();
-
+       
                if (status.state == libtorrent::torrent_status::downloading)
                   {
                      ti->download_counter++;
@@ -2227,8 +2227,8 @@ namespace btg
             }
       }
 
-      bool Context::clean(t_int _contextID,
-                          t_strList & _files,
+      bool Context::clean(t_int _contextID, 
+                          t_strList & _files, 
                           t_intList & _contextIDs)
       {
          BTG_MENTER(logWrapper(), "clean", "Cleaning contextID=" << _contextID);
@@ -2256,7 +2256,7 @@ namespace btg
                op_status = true;
 
                // Attempt to move data to the destination directory.
-               BTG_MNOTICE(logWrapper(),
+               BTG_MNOTICE(logWrapper(), 
                            "moving ID " << _contextID << " from '" <<
                            workDir_ << "' to '" << outputDir_ << "'");
                this->moveToDestinationDir(_contextID);
@@ -2292,7 +2292,7 @@ namespace btg
                      _files.push_back(ti->filename);
                      _contextIDs.push_back(torrent_id);
 
-                     BTG_MNOTICE(logWrapper(),
+                     BTG_MNOTICE(logWrapper(), 
                                  "marking torrent with ID = " << torrent_id << " for removal");
                      op_status = true;
                   }
@@ -2317,7 +2317,7 @@ namespace btg
 #endif // BTG_OPTION_EVENTCALLBACK
 
                      // Attempt to move this file to the destination directory.
-                     BTG_MNOTICE(logWrapper(),
+                     BTG_MNOTICE(logWrapper(), 
                                  "moving '" << *iter << "' from '" <<
                                  workDir_ << "' to '" << outputDir_ << "'");
                      this->moveToDestinationDir(*iter);
@@ -2380,11 +2380,11 @@ namespace btg
                session_settings_.announce_ip = boost::asio::ip::address(boost::asio::ip::address_v4::from_string(announceIp));
 #endif
             }
-
+         
          std::string userAgent = config_->getUserAgent();
          if (userAgent.size() > 0)
             {
-               MVERBOSE_LOG(logWrapper(), verboseFlag_,
+               MVERBOSE_LOG(logWrapper(), verboseFlag_, 
                             "Overriding user agent with: '" << userAgent << "'.");
                session_settings_.user_agent = userAgent;
             }
@@ -2536,7 +2536,7 @@ namespace btg
          try
             {
                libtorrent::pe_settings enc_settings;
-
+                     
                daemonConfiguration::encryption_policy in;
                daemonConfiguration::encryption_policy out;
                daemonConfiguration::encryption_level level;
@@ -2638,7 +2638,7 @@ namespace btg
 
          filter_->set(*torrent_session);
       }
-
+      
       std::string Context::toString(addResult const _addresult) const
       {
          std::string s;

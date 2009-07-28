@@ -41,7 +41,7 @@ PKG_PROG_PKG_CONFIG([0.9.0]) dnl generally can be used any version
 
 XMLRPC_CHECK
 
-if test -z "$XMLRPC_LDFLAGS" ; then
+if test -z "$XMLRPC_LIBS" ; then
   AC_MSG_NOTICE([Using internal XML-RPC implementation.])
   BTG_INTERNAL_XMLRPC=1
   AM_CONDITIONAL(BUILDINTERNALXMLRPC, true)
@@ -144,11 +144,7 @@ AM_ICONV
 
 AC_CACHE_SAVE
 
-AM_PATH_LIBGNUTLS([1.0.0], [gnutlsfound=true], [gnutlsfound=false])
-
-if test "$gnutlsfound" = "false"; then
-        AC_MSG_ERROR([unable to find libgnutls library, currently this is required.])
-fi
+PKG_CHECK_MODULES(LIBGNUTLS, gnutls >= 1.0.0)
 
 AM_LIBGNUTLS_VERSION
 

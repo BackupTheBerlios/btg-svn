@@ -42,7 +42,7 @@ namespace btg
       const std::string moduleName("ctn");
 
 #if BTG_OPTION_SAVESESSIONS
-      bool Context::serialize(btg::core::externalization::Externalization* _e,
+      bool Context::serialize(btg::core::externalization::Externalization* _e, 
                               bool const _dumpFastResume)
       {
          // Dump timestamp, used so we can relate finished_timestamp
@@ -142,7 +142,7 @@ namespace btg
          // Global settings.
          // Save DHT status.
          _e->boolToBytes(useDHT_);
-
+         
          if (useDHT_)
             {
                std::vector<t_byte> buf;
@@ -152,7 +152,7 @@ namespace btg
 
          // Save encryption status.
          _e->boolToBytes(useEncryption_);
-
+         
          return true;
       }
 
@@ -194,7 +194,7 @@ namespace btg
             }
          catch(...)
             {
-               BTG_MNOTICE(logWrapper(),
+               BTG_MNOTICE(logWrapper(), 
                            "dumped timestamp is not a valid timestamp: '" <<
                            isoTimestamp << "'");
                return false;
@@ -262,9 +262,9 @@ namespace btg
 								t_uint dhtStatusLength;
 								t_byteP buf;
 								BTG_CDC(!_e->getBytes(&buf,dhtStatusLength), "DHT status");
-
+								
 								libtorrent::entry dhtState = libtorrent::bdecode(buf, buf+dhtStatusLength);
-
+						
 								delete buf;
 								enableDHT(dhtState);
 							}
@@ -356,20 +356,20 @@ namespace btg
 
                // DHT flag and list of nodes.
                BTG_MNOTICE(logWrapper(), "deserialize, reading DHT information");
-
+               
                BTG_CDC(!_e->bytesToBool(useDHT_), "DHT flag");
-
+               
                if (useDHT_)
                   {
-
+                     
                      BTG_MNOTICE(logWrapper(), "deserialize, session is using DHT");
-
+                     
                      t_uint dhtStatusLength;
                      t_byteP buf;
                      BTG_CDC(!_e->getBytes(&buf,dhtStatusLength), "DHT status");
-
+							
                      libtorrent::entry dhtState = libtorrent::bdecode(buf, buf+dhtStatusLength);
-
+                     
                      delete buf;
                      enableDHT(dhtState);
                   }

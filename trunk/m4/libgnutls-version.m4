@@ -3,27 +3,15 @@ dnl Find the version of gnutls.
 dnl
 
 AC_DEFUN([AM_LIBGNUTLS_VERSION],
-[dnl
-dnl Get the cflags and libraries from the libgnutls-config script
-dnl
-AC_ARG_WITH(libgnutls-prefix,
-          [  --with-libgnutls-prefix=PFX   Prefix where libgnutls is installed (optional)],
-          libgnutls_config_prefix="$withval", libgnutls_config_prefix="")
+[
+  PKG_CHECK_EXISTS(gnutls, [gnutls_exists=yes], [gnutls_exists=no])
 
-  if test x$libgnutls_config_prefix != x ; then
-     if test x${LIBGNUTLS_CONFIG+set} != xset ; then
-        LIBGNUTLS_CONFIG=$libgnutls_config_prefix/bin/libgnutls-config
-     fi
-  fi
-
-  AC_PATH_PROG(LIBGNUTLS_CONFIG, libgnutls-config, no)
-
-  if test "$LIBGNUTLS_CONFIG" = "no" ; then
+  if test "$gnutls_exists" = "no" ; then
     LIBGNUTLS_MAJOR_VER=0
     LIBGNUTLS_MINOR_VER=0
   else
-    LIBGNUTLS_MAJOR_VER=`$LIBGNUTLS_CONFIG $libgnutls_config_args --version|cut -d "." -f 1`
-    LIBGNUTLS_MINOR_VER=`$LIBGNUTLS_CONFIG $libgnutls_config_args --version|cut -d "." -f 2`
+    LIBGNUTLS_MAJOR_VER=`pkg-config gnutls --modversion --silence-errors |cut -d "." -f 1`
+    LIBGNUTLS_MINOR_VER=`pkg-config gnutls --modversion --silence-errors |cut -d "." -f 2`
   fi
 
   AC_DEFINE_UNQUOTED(GNUTLS_MAJOR_VER, [$LIBGNUTLS_MAJOR_VER], [gnutls major version])

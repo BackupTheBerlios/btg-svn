@@ -63,10 +63,10 @@ namespace btg
       void Context::handleFinishedTorrent(libtorrent::torrent_finished_alert* _alert)
       {
          // A torrent finnished.
-
+         
          t_int torrent_id;
          torrentInfo* ti;
-
+         
          if (!getIdFromHandle(_alert->handle, torrent_id, ti))
             {
                // Unknown id?
@@ -139,9 +139,9 @@ namespace btg
             {
                getFilename(torrent_id, filename);
                VERBOSE_LOG(logWrapper(),
-                           verboseFlag_, "Tracker alert: filename '" <<
-                           filename << "', status = " <<
-                           _alert->status_code << ", message '" <<
+                           verboseFlag_, "Tracker alert: filename '" << 
+                           filename << "', status = " << 
+                           _alert->status_code << ", message '" << 
 #if BTG_LT_0_14
                            _alert->message()
 #else
@@ -158,7 +158,7 @@ namespace btg
                else
                   {
                      ti->trackerStatus.setStatus(trackerStatus::warning);
-                  }
+                  }               
                ti->trackerStatus.setSerial(ti->serial);
                ti->trackerStatus.setMessage(
 #if BTG_LT_0_14
@@ -188,7 +188,7 @@ namespace btg
                getFilename(torrent_id, filename);
 
                VERBOSE_LOG(logWrapper(),
-                           verboseFlag_, "Tracker reply alert: filename '" <<
+                           verboseFlag_, "Tracker reply alert: filename '" << 
                            filename << "', status = 200 OK");
                ti->trackerStatus.invalidate();
                ti->trackerStatus.setStatus(200);
@@ -213,8 +213,8 @@ namespace btg
          if (getIdFromHandle(_alert->handle, torrent_id, ti))
             {
                getFilename(torrent_id, filename);
-               VERBOSE_LOG(logWrapper(), verboseFlag_, "Tracker warning alert: filename '" <<
-                           filename << "', message '" <<
+               VERBOSE_LOG(logWrapper(), verboseFlag_, "Tracker warning alert: filename '" << 
+                           filename << "', message '" << 
 #if BTG_LT_0_14
                            _alert->message()
 #else
@@ -328,13 +328,13 @@ namespace btg
          {
             std::auto_ptr<libtorrent::alert> sp_alert = torrent_session->pop_alert();
             libtorrent::alert* raw_alert = sp_alert.get();
-
+            
             if (!raw_alert)
                {
                   // no more alerts in queue
                   break;
                }
-
+            
             libtorrent::torrent_alert* alert = dynamic_cast<libtorrent::torrent_alert*>(raw_alert);
             // we aren't interested in alert, that doesn't contain torrent_handle
             if (alert != 0 )
@@ -387,7 +387,7 @@ namespace btg
                   else
                      {
                         // Log other alerts.
-                        BTG_NOTICE(logWrapper(), "Alert: " <<
+                        BTG_NOTICE(logWrapper(), "Alert: " << 
 #if BTG_LT_0_14
                                    alert->message()
 #else

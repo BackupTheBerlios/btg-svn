@@ -24,6 +24,8 @@
 
 #include <bcore/logmacro.h>
 
+#include <cstdio>
+
 extern "C"
 {
    // For getenv.

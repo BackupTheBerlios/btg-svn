@@ -22,6 +22,7 @@
 
 #include "logger.h"
 #include "logif.h"
+#include <cstdio>
 
 namespace btg
 {

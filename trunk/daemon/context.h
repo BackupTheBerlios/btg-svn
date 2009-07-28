@@ -124,7 +124,7 @@ namespace btg
                /// Tracker Status.
                btg::core::trackerStatus trackerStatus;
 
-               /// List of files in a torrent,
+               /// List of files in a torrent, 
                /// selected files can be extracted from it.
                btg::core::selectedFileEntryList selected_files;
 #if BTG_OPTION_SAVESESSIONS
@@ -145,7 +145,7 @@ namespace btg
          class portManager;
          class limitManager;
          class daemonConfiguration;
-
+         
          /// An abstraction which is used to communicate with the thread that
          /// runs the bittorrent client.
          class Context: public btg::core::Logable
@@ -218,7 +218,7 @@ namespace btg
                /// @param [in] _buffer            The contents of the file.
                /// @param [out] _handle_id        The ID of the added context. Defined only if the torrent was added. Check the returned status.
                /// @return One of the addResult enums
-               addResult add(std::string const& _torrent_filename,
+               addResult add(std::string const& _torrent_filename, 
                              btg::core::sBuffer const& _buffer,
                              t_int & _handle_id);
 
@@ -263,9 +263,9 @@ namespace btg
                /// @param [in]  _seedLimit   How many % we should seed before stopping.
                /// @param [in]  _seedTimeout How many seocnds we should seed before stopping.
                bool limit(t_int const _torrent_id,
-                          t_int const _limitUpld,
-                          const t_int _limitDwnld,
-                          const t_int _seedLimit,
+                          t_int const _limitUpld, 
+                          const t_int _limitDwnld, 
+                          const t_int _seedLimit, 
                           const t_long _seedTimeout);
 
                /// Set limits ussed by all contexts.
@@ -273,9 +273,9 @@ namespace btg
                /// @param [in]  _limitDwnld Number of B per second.
                /// @param [in]  _seedLimit   How many % we should seed before stopping.
                /// @param [in]  _seedTimeout How many seocnds we should seed before stopping.
-               bool limitAll(t_int const _limitUpld,
-                             const t_int _limitDwnld,
-                             const t_int _seedLimit,
+               bool limitAll(t_int const _limitUpld, 
+                             const t_int _limitDwnld, 
+                             const t_int _seedLimit, 
                              const t_long _seedTimeout);
 
                /// Remove the limits of a single context.
@@ -284,10 +284,10 @@ namespace btg
                /// @param [in]  _dwnld          If true, remove download limit.
                /// @param [in]  _seedLimit      If true, remove seed limit.
                /// @param [in]  _seedTimeout   If true, remove seed timeout.
-               bool removeLimit(t_int const _torrent_id,
-                                bool const _upld = true,
-                                bool const _dwnld = true,
-                                bool const _seedLimit = true,
+               bool removeLimit(t_int const _torrent_id, 
+                                bool const _upld = true, 
+                                bool const _dwnld = true, 
+                                bool const _seedLimit = true, 
                                 bool const _seedTimeout = true);
 
                /// Remove the limits for all contexts.
@@ -295,9 +295,9 @@ namespace btg
                /// @param [in]  _dwnld    If true, remove download limit.
                /// @param [in]  _seedLimit      If true, remove seed limit.
                /// @param [in]  _seedTimeout   If true, remove seed timeout.
-               bool removeLimitAll(bool const _upld = true,
-                                   bool const _dwnld = true,
-                                   bool const _seedLimit = true,
+               bool removeLimitAll(bool const _upld = true, 
+                                   bool const _dwnld = true, 
+                                   bool const _seedLimit = true, 
                                    bool const _seedTimeout = true);
 
                /// Get the limits which was set for a context.
@@ -307,22 +307,22 @@ namespace btg
                /// @param [out]  _limitDwnld    Number of B per second.
                /// @param [out]  _seedLimit     Max seed %.
                /// @param [out]  _seedTimeout   Max seed timeout.
-               bool getLimit(t_int const _torrent_id,
-                             t_int & _limitUpld,
-                             t_int & _limitDwnld,
-                             t_int &_seedLimit,
+               bool getLimit(t_int const _torrent_id, 
+                             t_int & _limitUpld, 
+                             t_int & _limitDwnld, 
+                             t_int &_seedLimit, 
                              t_long &_seedTimeout);
 
                /// Get status of a torrent.
                /// @param [in]  _torrent_id  Context ID of the torrent to get status of.
                /// @param [out] _destination Pointer to the object which stores the status information.
                /// @return True if operation was successful, false if not.
-               bool getStatus(t_int const _torrent_id,
+               bool getStatus(t_int const _torrent_id, 
                               btg::core::Status & _destination);
 
                /// Get status of list of torrents.
                /// @return True if operation was successful, false if not.
-               bool getStatus(t_intList const& _contexts,
+               bool getStatus(t_intList const& _contexts, 
                               t_statusList & _status);
 
                /// Get status of all torrents.
@@ -338,16 +338,16 @@ namespace btg
                bool getFileInfo(t_int const _torrent_id, t_fileInfoList & _vfileinfo);
 
                /// Get a list of peers.
-               ///
+               /// 
                /// @param _torrent_id   Get peer for context identified by this id.
                /// @param _peerlist     Reference to list of peers.
                /// @param _peerExOffset Extended peer info, offset.
                /// @param _peerExCount  Extended peer info, count.
                /// @param _peerExList   Extended peer info, list.
                /// @return True - success, false - otherwise.
-               bool getPeers(t_int const _torrent_id,
+               bool getPeers(t_int const _torrent_id, 
                              t_peerList & _peerlist,
-                             t_uint * _peerExOffset = 0,
+                             t_uint * _peerExOffset = 0, 
                              t_uint * _peerExCount = 0,
                              t_peerExList * _peerExList = 0);
 
@@ -366,7 +366,7 @@ namespace btg
                /// Check the list of files from a client against the stored list.
                bool checkSelectedFiles(btg::core::selectedFileEntryList const& _l1,
                                        btg::core::selectedFileEntryList const& _l2) const;
-
+               
                /// Update the stored list of selected files.
                bool applySelectedFiles(torrentInfo* ti,
                                        btg::core::selectedFileEntryList const& _input);
@@ -385,7 +385,7 @@ namespace btg
                /// Get the full filename and the contents of the
                /// torrent file.
                bool getFile(t_int const _torrent_id,
-                            std::string & _filename,
+                            std::string & _filename, 
                             btg::core::sBuffer & _buffer) const;
 
                /// Tell this context if there is a client attached or not.
@@ -468,7 +468,7 @@ namespace btg
             public:
 #if BTG_OPTION_SAVESESSIONS
                /// Session saving: serialize the torrents so they can be reloaded later.
-               bool serialize(btg::core::externalization::Externalization* _e,
+               bool serialize(btg::core::externalization::Externalization* _e, 
                               bool const _dumpFastResume);
                /// Session saving: deserialize data into the torrents.
                /// @param [in] _e       Pointer to the externalization interface used.
@@ -527,7 +527,7 @@ namespace btg
 
                /// Pointer to port manager.
                portManager*  portMgr;
-
+               
                /// Pointer to limit manager.
                limitManager* limitMgr_;
 
@@ -575,10 +575,10 @@ namespace btg
 
                /// Map of torrent information.
                std::map<t_int, torrentInfo*>             torrents;
-
+               
                /// where storage for torrent is
                enum torrentStorage { tsWork, tsSeed, tsDest };
-
+               
                /// Map of torrent storage
                std::map<t_int, torrentStorage>           torrent_storage;
 
@@ -682,7 +682,7 @@ namespace btg
 #if BTG_LT_0_14
                bool torrentInfoToFiles(libtorrent::torrent_info const& _tinfo,
                                        std::vector<std::string> & _output) const;
-#endif
+#endif                                                
                /// Find out if data of a torrent is present in the seed dir.
                /// @param [in] _torrent_info Torrent info.
                /// @return True - data is present, false otherwise.
@@ -719,16 +719,16 @@ namespace btg
                /// Set peer ID (read from configuration, converting it
                /// to a format used by libtorrent).
                void setPeerIdFromConfig();
-
+               
                /// Convert an enum to a string, for debugging.
                std::string toString(addResult const _addresult) const;
 
 #if (BTG_LT_0_14)
                /// Convert a libtorrent bitfield into a vector of bits.
-               ///
+               /// 
                /// Libtorrent 0.14 changed the way a torrent's pieces
                /// are represented.
-               void bitfieldToVector(libtorrent::bitfield const& _input,
+               void bitfieldToVector(libtorrent::bitfield const& _input, 
                                      std::vector<bool> & _output) const;
 #endif
             private:
