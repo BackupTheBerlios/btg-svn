@@ -30,6 +30,8 @@
 #include <bcore/logable.h>
 #include <bcore/os/fstream.h>
 
+#include <boost/thread/mutex.hpp>
+
 #include "portmgr.h"
 #include "limitmgr.h"
 
@@ -94,6 +96,7 @@ namespace btg
                                                      t_int const _seed_limit,
                                                      t_int const _seed_timeout);
 
+         private:
             /// Reference to the port manager.
             ///
             /// Access to network ports goes trough it.
@@ -107,6 +110,10 @@ namespace btg
 
             /// Data used to initialize the daemon.
             daemonData & dd;
+         private:
+            /// Mutex used to control access to the members
+            /// of this class from the outside.
+            boost::mutex interfaceMutex_;
          };
    } // namespace daemon
 } // namespace btg

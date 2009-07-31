@@ -24,6 +24,8 @@ namespace btg
 
       void sessionList::new_session(t_long & _new_session)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          bool unique = false;
 
          while (!unique)
@@ -66,6 +68,8 @@ namespace btg
                             eventHandler* _eventhandler, 
                             bool _resetCounter)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::pair<t_long, eventHandler*> p(_session, _eventhandler);
 
          eventhandlers_.insert(p);
@@ -77,8 +81,10 @@ namespace btg
       }
 
       bool sessionList::get(t_long const & _session, 
-                            eventHandler* & _eventhandler) const
+                            eventHandler* & _eventhandler)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::map<t_long, eventHandler*>::const_iterator iter = eventhandlers_.find(_session);
 
          if (iter == eventhandlers_.end())
@@ -90,8 +96,10 @@ namespace btg
          return true;
       }
 
-      void sessionList::getIds(std::vector<t_long> & _sessions) const
+      void sessionList::getIds(std::vector<t_long> & _sessions)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::map<t_long, eventHandler*>::const_iterator iter;
          for (iter = eventhandlers_.begin();
               iter != eventhandlers_.end();
@@ -102,8 +110,10 @@ namespace btg
       }
 
       void sessionList::getIds(std::string const& _username, 
-                               std::vector<t_long> & _sessions) const
+                               std::vector<t_long> & _sessions)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::map<t_long, eventHandler*>::const_iterator iter;
          for (iter = eventhandlers_.begin();
               iter != eventhandlers_.end();
@@ -117,8 +127,10 @@ namespace btg
       }
 
       void sessionList::getNames(std::string const& _username, 
-                                 std::vector<std::string> & _names) const
+                                 std::vector<std::string> & _names)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::map<t_long, eventHandler*>::const_iterator iter;
          for (iter = eventhandlers_.begin();
               iter != eventhandlers_.end();
@@ -131,8 +143,10 @@ namespace btg
             }
       }
 
-      void sessionList::getNames(std::vector<std::string> & _names) const
+      void sessionList::getNames(std::vector<std::string> & _names)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::map<t_long, eventHandler*>::const_iterator iter;
          for (iter = eventhandlers_.begin();
               iter != eventhandlers_.end();
@@ -144,6 +158,8 @@ namespace btg
 
       void sessionList::checkLimitsAndAlerts()
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::map<t_long, eventHandler*>::iterator iter;
          for (iter = eventhandlers_.begin();
               iter != eventhandlers_.end();
@@ -159,6 +175,8 @@ namespace btg
 
       void sessionList::updateElapsedOrSeedCounter()
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::map<t_long, eventHandler*>::iterator iter;
          for (iter = eventhandlers_.begin();
               iter != eventhandlers_.end();
@@ -170,6 +188,8 @@ namespace btg
 
       void sessionList::erase(t_long const & _session)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::map<t_long, eventHandler*>::iterator iter = eventhandlers_.find(_session);
 
          if (iter == eventhandlers_.end())
@@ -189,6 +209,8 @@ namespace btg
 
       void sessionList::deleteAll()
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          const t_uint numberOfSessions = size();
 
          std::map<t_long, eventHandler*>::iterator iter;
@@ -212,6 +234,8 @@ namespace btg
 
       void sessionList::shutdown()
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::map<t_long, eventHandler*>::iterator iter;
          for (iter = eventhandlers_.begin();
               iter != eventhandlers_.end();
@@ -226,6 +250,8 @@ namespace btg
       void sessionList::serialize(btg::core::externalization::Externalization* _e, 
                                   bool const _dumpFastResume)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          // Number of sessions
          t_int count = size();
          _e->intToBytes(&count);
@@ -247,6 +273,8 @@ namespace btg
 
       void sessionList::updateFilter(IpFilterIf* _filter)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          for (std::map<t_long, btg::daemon::eventHandler*>::iterator iter = eventhandlers_.begin(); 
               iter != eventhandlers_.end(); 
               iter++)

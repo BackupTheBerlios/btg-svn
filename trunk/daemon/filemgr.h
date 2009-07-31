@@ -114,7 +114,7 @@ namespace btg
                           btg::core::sBuffer const& _data);
 
             /// Get the id of the next piece.
-            bool nextPiece(const t_uint _id, t_uint & _piece) const;
+            bool nextPiece(const t_uint _id, t_uint & _piece);
 
             /// Get the state of a file upload.
             fileData::Status getStatus(const t_uint _id);
@@ -152,7 +152,7 @@ namespace btg
                              bool        & _start);
 
             /// Get the number of active downloads.
-            t_uint size() const;
+            t_uint size();
 
             /// Destructor.
             virtual ~fileManager();
@@ -170,6 +170,11 @@ namespace btg
             
             /// Maps ID to file information.
             std::map<t_uint, fileData> files;
+
+            /// Mutex used to control access to the members
+            /// of this class from the outside.
+            boost::mutex     interfaceMutex_;
+            
          };
 
       /** @} */

@@ -57,7 +57,7 @@ namespace btg
                return;
             }
 
-         t_uint id = filemgr.addFile(userdir, 
+         t_uint id = filemgr_.addFile(userdir, 
                                      filename, 
                                      ccffc->numberOfParts(), 
                                      ccffc->getStart());
@@ -80,39 +80,39 @@ namespace btg
          contextCreateFromFilePartCommand* ccffpc = dynamic_cast<contextCreateFromFilePartCommand*>(_command);
          const t_uint id = ccffpc->id();
 
-         if (!filemgr.addPiece(id,
-                               ccffpc->part(),
-                               ccffpc->data()))
+         if (!filemgr_.addPiece(id,
+                                ccffpc->part(),
+                                ccffpc->data()))
             {
                sendError(_command->getType(), "Upload of piece failed.");
-               filemgr.setState(id, fileData::DLERROR);
-               filemgr.removeData(id);
+               filemgr_.setState(id, fileData::DLERROR);
+               filemgr_.removeData(id);
             }
          else
             {
-               filemgr.resetAge(id);
+               filemgr_.resetAge(id);
 
                sendAck(_command->getType());
                BTG_MNOTICE(logWrapper(), 
                            "File ID: " << id << ", added part " << ccffpc->part() << ".");
             }
          
-         if (filemgr.getStatus(id) == fileData::DONE)
+         if (filemgr_.getStatus(id) == fileData::DONE)
             {
                std::string dir;
                std::string filename;
                bool start;
-               filemgr.getFileInfo(id, dir, filename, start);
+               filemgr_.getFileInfo(id, dir, filename, start);
 
                // Got all pieces.
                // Remove from file tracker, will be added when adding the torrent.
                dd_->filetrack->remove(dir, filename);
 
                btg::core::sBuffer sbuf;
-               if (!filemgr.getResult(id, sbuf))
+               if (!filemgr_.getResult(id, sbuf))
                   {
-                     filemgr.setState(id, fileData::DLERROR);
-                     filemgr.removeData(id);
+                     filemgr_.setState(id, fileData::DLERROR);
+                     filemgr_.removeData(id);
                      return;  
                   }
 
@@ -125,16 +125,16 @@ namespace btg
                   {
                      BTG_MERROR(logWrapper(), 
                                 "Adding '" << filename << "' from file failed.");
-                     filemgr.setState(id, fileData::CREATE_ERROR);
+                     filemgr_.setState(id, fileData::CREATE_ERROR);
                   }
                else
                   {
                      BTG_MNOTICE(logWrapper(), 
                                  "Added '" << filename << "' from file.");
-                     filemgr.setState(id, fileData::CREATED);
+                     filemgr_.setState(id, fileData::CREATED);
                   }
          
-               filemgr.removeData(id);
+               filemgr_.removeData(id);
 
                delete ccwdc;
                ccwdc = 0;
@@ -148,7 +148,7 @@ namespace btg
          btg::core::opStatusCommand* cosc = dynamic_cast<btg::core::opStatusCommand*>(_command);
 
          t_uint id = cosc->id();
-         fileData::Status s = filemgr.getStatus(id);
+         fileData::Status s = filemgr_.getStatus(id);
 
          t_uint status = btg::core::OP_UNDEF;
 
@@ -217,7 +217,7 @@ namespace btg
 
          t_uint id = coac->id();
 
-         if (filemgr.abort(id))
+         if (filemgr_.abort(id))
             {
                sendAck(_command->getType());
             }
@@ -225,16 +225,6 @@ namespace btg
             {
                sendError(_command->getType(), "Unknown file id.");
             }
-      }
-
-      void daemonHandler::handleFileDownloads()
-      {
-         if (filemgr.size() > 0)
-            {
-               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Checking file downloads (" << filemgr.size() << ").");
-            }
-         filemgr.updateAge();
-         filemgr.removeDead();
       }
 
    } // namespace daemon

@@ -87,6 +87,8 @@ namespace btg
                                  const t_uint _num,
                                  btg::core::sBuffer const& _data)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::map<t_uint, fileData>::iterator iter = files.find(_id);
 
          if (iter == files.end())
@@ -117,8 +119,10 @@ namespace btg
          return true;
       }
 
-      bool fileManager::nextPiece(const t_uint _id, t_uint & _piece) const
+      bool fileManager::nextPiece(const t_uint _id, t_uint & _piece)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::map<t_uint, fileData>::const_iterator iter = files.find(_id);
 
          if (iter == files.end())
@@ -133,6 +137,8 @@ namespace btg
 
       fileData::Status fileManager::getStatus(const t_uint _id)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::map<t_uint, fileData>::const_iterator iter = files.find(_id);
 
          if (iter == files.end())
@@ -146,6 +152,8 @@ namespace btg
       bool fileManager::getResult(const t_uint _id, 
                                   btg::core::sBuffer & _buffer)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::map<t_uint, fileData>::iterator iter = files.find(_id);
 
          if (iter == files.end())
@@ -167,6 +175,8 @@ namespace btg
 
       void fileManager::invalidate(const t_uint _id)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::map<t_uint, fileData>::iterator iter = files.find(_id);
 
          if (iter == files.end())
@@ -179,6 +189,8 @@ namespace btg
 
       void fileManager::resetAge(const t_uint _id)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::map<t_uint, fileData>::iterator iter = files.find(_id);
 
          if (iter == files.end())
@@ -192,6 +204,8 @@ namespace btg
       void fileManager::setState(const t_uint _id, 
                                  fileData::Status const _status)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::map<t_uint, fileData>::iterator iter = files.find(_id);
 
          if (iter == files.end())
@@ -204,6 +218,8 @@ namespace btg
 
       bool fileManager::abort(const t_uint _id)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::map<t_uint, fileData>::iterator iter = files.find(_id);
 
          if (iter == files.end())
@@ -250,6 +266,8 @@ namespace btg
 
       void fileManager::updateAge()
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::map<t_uint, fileData>::iterator iter;
          for (iter = files.begin();
               iter != files.end();
@@ -267,6 +285,8 @@ namespace btg
 
       void fileManager::removeDead()
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::map<t_uint, fileData>::iterator iter = files.begin();
          while (iter != files.end())
             {
@@ -282,6 +302,8 @@ namespace btg
       
       void fileManager::removeData(const t_uint _id)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::map<t_uint, fileData>::iterator iter = files.find(_id);
 
          if (iter == files.end())
@@ -297,14 +319,18 @@ namespace btg
                                     std::string & _filename,
                                     bool        & _start)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::map<t_uint, fileData>::iterator iter = files.find(_id);
          _dir      = iter->second.dir;
          _filename = iter->second.filename;
          _start    = iter->second.start;
       }
 
-      t_uint fileManager::size() const
+      t_uint fileManager::size()
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          return files.size();
       }
 

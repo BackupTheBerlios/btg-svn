@@ -66,6 +66,7 @@ namespace btg
                                    daemonData* _dd, 
                                    bool const _verboseFlag)
          : btg::core::Logable(_logwrapper),
+           limitTimerMax_(30), /* 30 seconds. */
            dd_(_dd),
            verboseFlag_(_verboseFlag),
            sessionlist_(_logwrapper, _verboseFlag, 1024*1024 /* Max number of sessions. */),
@@ -75,26 +76,12 @@ namespace btg
            connection_(0),
            handlerCount_(0),
            buffer_(),
-           session_timer_(10), /* 10 seconds. */
-           session_timer_trigger_(false),
-#if BTG_OPTION_URL
-           url_timer_(5),
-           url_timer_trigger_(false),
-#endif
-           file_timer_(5),
-           file_timer_trigger_(false),
-           limit_timer_(30), /* 30 seconds. */
-           limit_timer_trigger_(false),
-           elapsed_seed_timer_(60), /* 1 minute. */
-           elapsed_timer_trigger_(false),
-           periodic_ssave_timer_(_dd->config->getSSTimeout()),
-           periodic_ssave_timer_trigger_(false),
 #if BTG_DEBUG
            aliveCounter_(0),
            aliveCounterMax_(5),
 #endif // BTG_DEBUG
            portManager_(_logwrapper, _verboseFlag, _dd->portRange),
-           limitManager_(_logwrapper, _verboseFlag, limit_timer_.maxValue(),
+           limitManager_(_logwrapper, _verboseFlag, limitTimerMax_,
                          _dd->config->getUploadRateLimit(),
                          _dd->config->getDownloadRateLimit(),
                          _dd->config->getMaxUploads(),
@@ -106,15 +93,39 @@ namespace btg
                          limitManager_,
                          sessionlist_,
                          *dd_),
-           sessiontimer_(dd_->ss_timeout),
 #endif // BTG_OPTION_SAVESESSIONS
            sendBuffer_(),
            cf_(_logwrapper, *_dd->externalization),
+           opid_(_logwrapper),
 #if BTG_OPTION_URL
-           urlmgr(_logwrapper, _verboseFlag, _dd->filetrack, &sessionlist_, opid),
+           urlmgr_(_logwrapper, _verboseFlag, _dd->filetrack, &sessionlist_, opid_),
 #endif
-           filemgr(_logwrapper, _dd->filetrack, opid),
-           opid(_logwrapper)
+           filemgr_(_logwrapper, _dd->filetrack, opid_),
+
+           /* Create and start a thread used for doing periodic tasks. */
+           handlerthread_(_logwrapper,
+#if BTG_OPTION_SAVESESSIONS
+                          dd_->ss_enable,
+                          dd_->ss_file,
+                          dd_->config->getSSTimeout(),
+#else
+                          /* Session saving disabled. */
+                          false,
+                          dd_->ss_file,
+                          -1,
+#endif
+                          &sessionlist_,
+                          &sessionsaver_,
+                          &limitManager_,
+                          limitTimerMax_,
+#if BTG_OPTION_URL
+                          &urlmgr_,
+#else
+                          /* URL downloading disabled. */
+                          0,
+#endif
+                          &filemgr_,
+                          _verboseFlag)
       {
          /// Set the initial limits.
          limitManager_.set(_dd->config->getUploadRateLimit(),
@@ -1375,99 +1386,11 @@ namespace btg
                       _type << ", directory '" << _value << "' not found.");
       }
 
-      void daemonHandler::checkTimeout()
-      {
-         if (file_timer_trigger_)
-            {
-               file_timer_trigger_ = false;
-               file_timer_.Reset();
-               handleFileDownloads();
-            }
-         
-#if BTG_OPTION_URL
-         if (url_timer_trigger_)
-            {
-               url_timer_trigger_ = false;
-               url_timer_.Reset();
-
-               handleUrlDownloads();
-            }
-#endif
-         if (session_timer_trigger_)
-            {
-               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Checking limits and alerts.");
-               sessionlist_.checkLimitsAndAlerts();
-               session_timer_trigger_ = false;
-               session_timer_.Reset();
-               return;
-            }
-
-         if (periodic_ssave_timer_trigger_)
-            {
-#if BTG_OPTION_SAVESESSIONS
-               if (dd_->ss_enable)
-                  {
-                     BTG_MNOTICE(logWrapper(), "Periodically saving sessions");
-                     MVERBOSE_LOG(logWrapper(), verboseFlag_, "Periodically saving sessions.");
-                     sessionsaver_.saveSessions(dd_->ss_file, true /* also save fast-resume data */);
-                  }
-#endif
-               periodic_ssave_timer_trigger_ = false;
-               periodic_ssave_timer_.Reset();
-               return;
-            }
-
-         if (limit_timer_trigger_)
-            {
-               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Updating limits.");
-               limitManager_.update();
-               limit_timer_.Reset();
-               limit_timer_trigger_ = false;
-               return;
-            }
-
-         if (elapsed_timer_trigger_)
-            {
-               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Updating seed counters.");
-               sessionlist_.updateElapsedOrSeedCounter();
-               elapsed_timer_trigger_ = false;
-               elapsed_seed_timer_.Reset();
-               return;
-            }
-         if (file_timer_.Timeout())
-            {
-               file_timer_trigger_ = true;
-            }
-#if BTG_OPTION_URL
-         if (url_timer_.Timeout())
-            {
-               url_timer_trigger_ = true;
-            }
-#endif
-         if (session_timer_.Timeout())
-            {
-               session_timer_trigger_ = true;
-            }
-
-         if (periodic_ssave_timer_.Timeout())
-            {
-               periodic_ssave_timer_trigger_ = true;
-            }
-
-         if (limit_timer_.Timeout())
-            {
-               limit_timer_trigger_ = true;
-            }
-
-         if (elapsed_seed_timer_.Timeout())
-            {
-               elapsed_timer_trigger_ = true;
-            }
-      }
-
       void daemonHandler::shutdown()
       {
          BTG_MNOTICE(logWrapper(), "cleaning up.");
+
+         handlerthread_.stop();
 
          limitManager_.stop();
 

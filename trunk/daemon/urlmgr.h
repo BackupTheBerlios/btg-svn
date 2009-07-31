@@ -28,6 +28,9 @@
 #include <bcore/urlstatus.h>
 #include <daemon/opid.h>
 
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/condition.hpp>
+
 namespace btg
 {
    namespace daemon
@@ -86,7 +89,7 @@ namespace btg
             void checkUrlDownloads();
 
             /// Number of downloads.
-            t_uint size() const;
+            t_uint size();
 
             /// Find out if a filename/user directory combination is unique.
             bool unique(std::string const & _filename, 
@@ -134,13 +137,17 @@ namespace btg
             fileTrack*   filetrack;
 
             /// Pointer to list of sessions.
-            const sessionList* sessionlist;
+            sessionList* sessionlist;
 
             /// Http manager used for all downloads.
             btg::daemon::http::httpDlManager httpmgr;
 
             /// Mapping between URL id and session.
             std::vector<UrlIdSessionMapping> urlIdSessions;
+
+            /// Mutex used to control access to the members
+            /// of this class from the outside.
+            boost::mutex     interfaceMutex_;
          };
 
       /** @} */

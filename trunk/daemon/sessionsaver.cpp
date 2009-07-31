@@ -38,6 +38,8 @@
 #include "eventhandler.h"
 #include "dconfig.h"
 
+#include <boost/thread/condition.hpp>
+
 #include <map>
 #include <fstream>
 
@@ -74,7 +76,8 @@ namespace btg
            portManager_(_portManager),
            limitManager_(_limitManager),
            sessionlist_(_sessionlist),
-           dd(_dd)
+           dd(_dd),
+           interfaceMutex_()
       {
       }
 
@@ -84,6 +87,8 @@ namespace btg
 #endif
             )
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          t_int handler_count = 0;
 
          BTG_MNOTICE(logWrapper(), "loadSessions(), Loading sessions from stream.");
@@ -278,6 +283,8 @@ namespace btg
 
       bool SessionSaver::saveSessions(btg::core::os::fstream & _file, bool const _dumpFastResume)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          BTG_MNOTICE(logWrapper(),
                      "saveSessions(), Writing sessions to file");
 

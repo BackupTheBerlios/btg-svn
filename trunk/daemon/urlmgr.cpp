@@ -90,6 +90,8 @@ namespace btg
 
       bool urlManager::abort(const t_uint _id)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::vector<UrlIdSessionMapping>::iterator iter = getUrlMapping(_id);
 
          if (iter == urlIdSessions.end())
@@ -109,13 +111,17 @@ namespace btg
          return false;
       }
 
-      t_uint urlManager::size() const
+      t_uint urlManager::size()
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          return urlIdSessions.size();
       }
 
       void urlManager::checkUrlDownloads()
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::vector<UrlIdSessionMapping>::iterator i;
          for (i = urlIdSessions.begin();
               i != urlIdSessions.end();
@@ -257,6 +263,8 @@ namespace btg
 
       bool urlManager::getStatus(const t_uint _id, t_uint & _urlstat)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::vector<UrlIdSessionMapping>::iterator mapping = getUrlMapping(_id);
 
          if (mapping == urlIdSessions.end())
@@ -311,6 +319,8 @@ namespace btg
 
       bool urlManager::getDlProgress(const t_uint _id, t_uint & _dltotal, t_uint & _dlnow, t_uint & _dlspeed)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          std::vector<UrlIdSessionMapping>::iterator mapping = getUrlMapping(_id);
 
          if (mapping == urlIdSessions.end())
@@ -327,6 +337,8 @@ namespace btg
                                     t_long const _session,
                                     bool const _start)
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          t_uint id = httpmgr.Fetch(_url, _userdir + projectDefaults::sPATH_SEPARATOR() + _filename);
 
          UrlIdSessionMapping usmap(id, _session, _userdir, _filename, _start);

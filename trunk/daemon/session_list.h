@@ -29,6 +29,9 @@
 #include "eventhandler.h"
 #include <map>
 
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/condition.hpp>
+
 namespace btg
 {
    namespace daemon
@@ -61,7 +64,7 @@ namespace btg
                /// @param [in] _session       The session ID to use.
                /// @param [out] _eventhandler Reference to a pointer to an eventhandler.
                /// @return True - success. False otherwise.
-               bool get(t_long const & _session, eventHandler* & _eventhandler) const;
+               bool get(t_long const & _session, eventHandler* & _eventhandler);
 
 #if BTG_OPTION_SAVESESSIONS
                /// Serialize the contents.
@@ -75,18 +78,18 @@ namespace btg
 
                /// Get all contained session IDs belonging to an user.
                void getIds(std::string const& _username, 
-                           std::vector<t_long> & _sessions) const;
+                           std::vector<t_long> & _sessions);
 
                /// Get all contained session IDs.
-               void getIds(std::vector<t_long> & _sessions) const;
+               void getIds(std::vector<t_long> & _sessions);
 
                /// Get the names of the contained sessions belonging
                /// to an user.
                void getNames(std::string const& _username, 
-                             std::vector<std::string> & _names) const;
+                             std::vector<std::string> & _names);
 
                /// Get the names of the contained sessions. 
-               void getNames(std::vector<std::string> & _names) const;
+               void getNames(std::vector<std::string> & _names);
 
                /// For each event handler contained in an instance of
                /// this class, check their limits and check for
@@ -132,6 +135,10 @@ namespace btg
 
                /// Maps session IDs to eventhandlers.
                std::map<t_long, eventHandler*> eventhandlers_;
+            private:
+               /// Mutex used to control access to the members
+               /// of this class from the outside.
+               boost::mutex interfaceMutex_;
             };
 
       } // namespace daemon

@@ -41,8 +41,6 @@
 #  include "sessionsaver.h"
 #endif // BTG_OPTION_SAVESESSIONS
 
-#include <bcore/os/timer.h>
-
 #include <bcore/command/limit_base.h>
 
 #include <map>
@@ -57,6 +55,8 @@
 #include "filemgr.h"
 #include <bcore/logable.h>
 #include "opid.h"
+
+#include "daemonhandler_thr.h"
 
 namespace btg
 {
@@ -183,9 +183,6 @@ namespace btg
             /// Handle URL abort message.
             void handle_CN_CCREATEURLABORT(btg::core::Command* _command);
 
-            /// Once every few seconds, see if any of the URLs
-            /// downloading have changed state.
-            void handleUrlDownloads();
 #endif // BTG_OPTION_URL
 
             /// File upload.
@@ -247,6 +244,7 @@ namespace btg
             /* Data. */
             /*       */
 
+            const t_int                     limitTimerMax_;
             /// Pointer to daemon data.
             daemonData*                     dd_;
 
@@ -274,41 +272,6 @@ namespace btg
             /// Buffer used by the externalization i/f.
             btg::core::dBuffer              buffer_;
 
-            /// The timer used for checking limits and alerts for
-            /// the contained sessions.
-            btg::core::os::Timer            session_timer_;
-
-            /// Indicates that the session timer has expired.
-            bool                            session_timer_trigger_;
-#if BTG_OPTION_URL
-            /// Timer used to check for completed URL downloads.
-            btg::core::os::Timer            url_timer_;
-            /// Indicates that the URL timer timed out.
-            bool                            url_timer_trigger_;
-#endif // BTG_OPTION_URL
-            /// Timer used to check for completed URL downloads.
-            btg::core::os::Timer            file_timer_;
-            /// Indicates that the URL timer timed out.
-            bool                            file_timer_trigger_;
-            /// Timer used for setting global limits.
-            btg::core::os::Timer            limit_timer_;
-
-            /// Indicates that the limit timer has expired.
-            bool                            limit_timer_trigger_;
-
-            /// Timer used for increasing the elapsed or seed time
-            /// for torrents.
-            btg::core::os::Timer            elapsed_seed_timer_;
-
-            /// Indicates that the elapsed/seed timer has expired.
-            bool                            elapsed_timer_trigger_;
-
-            /// Timer used for timed session saving.
-            btg::core::os::Timer            periodic_ssave_timer_;
-
-            /// Indicates that the periodic session save timer has
-            /// expired.
-            bool                            periodic_ssave_timer_trigger_;
 #if BTG_DEBUG
             /// Debug: alive counter used for logging.
             t_int                           aliveCounter_;
@@ -325,9 +288,6 @@ namespace btg
 #if BTG_OPTION_SAVESESSIONS
             /// Instance of the class used for saving sessions to a file.
             SessionSaver                    sessionsaver_;
-
-            /// The timer used for periodicly save sessions
-            btg::core::os::Timer            sessiontimer_;
 #endif // BTG_OPTION_SAVESESSIONS
 
             /// The buffer used to send commands back to the
@@ -337,18 +297,19 @@ namespace btg
             /// Command factory used by this instance.
             btg::core::commandFactory       cf_;
 
-            /// Every few seconds, check if any of the file uploads
-            /// changed state.
-            void handleFileDownloads();
-#if BTG_OPTION_URL
-            /// URL manager.
-            btg::daemon::urlManager  urlmgr;
-#endif // BTG_OPTION_URL
-            /// File manager.
-            btg::daemon::fileManager filemgr;
             /// Used to create unique ids used for tracking status of
             /// commands or aborting the same commands.
-            btg::daemon::opId        opid;
+            btg::daemon::opId               opid_;
+
+#if BTG_OPTION_URL
+            /// URL manager.
+            btg::daemon::urlManager         urlmgr_;
+#endif // BTG_OPTION_URL
+            /// File manager.
+            btg::daemon::fileManager        filemgr_;
+            
+            /// Thread used for executing periodic tasks.
+            daemonHandlerThread             handlerthread_;
          private:
             /// Copy constructor.
             daemonHandler(daemonHandler const& _dh);

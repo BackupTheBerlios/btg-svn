@@ -47,7 +47,7 @@ namespace btg
 
          t_uint urlstat = btg::core::OP_UNDEF;
 
-         if (!urlmgr.getStatus(id, urlstat))
+         if (!urlmgr_.getStatus(id, urlstat))
             {
                sendError(_command->getType(), "Unknown URL id.");
                return;
@@ -60,7 +60,7 @@ namespace btg
          if (urlstat == btg::core::OP_WORKING)
          {
             t_uint dltotal, dlnow, dlspeed;
-            if (!urlmgr.getDlProgress(id, dltotal, dlnow, dlspeed))
+            if (!urlmgr_.getDlProgress(id, dltotal, dlnow, dlspeed))
                {
                   sendError(_command->getType(), "Unknown URL id (by getDlProgress).");
                   return;
@@ -96,7 +96,7 @@ namespace btg
                return;
             }
 
-         bool unique = urlmgr.unique(filename, userdir);
+         bool unique = urlmgr_.unique(filename, userdir);
 
          if (!unique)
             {
@@ -107,7 +107,7 @@ namespace btg
                return;
             }
 
-         t_uint id = urlmgr.addMapping(ccful->getUrl(),
+         t_uint id = urlmgr_.addMapping(ccful->getUrl(),
                                        userdir,
                                        filename,
                                        _eventhandler->getSession(),
@@ -127,7 +127,7 @@ namespace btg
 
          t_uint id = coac->id();
 
-         if (urlmgr.abort(id))
+         if (urlmgr_.abort(id))
             {
                sendAck(_command->getType());
             }
@@ -137,14 +137,6 @@ namespace btg
             }
       }
 
-      void daemonHandler::handleUrlDownloads()
-      {
-         if (urlmgr.size() > 0)
-            {
-               MVERBOSE_LOG(logWrapper(), verboseFlag_, "Checking URL downloads(" << urlmgr.size() << ").");
-               urlmgr.checkUrlDownloads();
-            }
-      }
 #endif // BTG_OPTION_URL
 
    } // namespace daemon

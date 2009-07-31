@@ -879,7 +879,6 @@ int main(int argc, char* argv[])
    while (global_btg_run == 1)
       {
          dh->readFromTransport();
-         dh->checkTimeout();
 
          if (global_btg_hup == 1)
             {
