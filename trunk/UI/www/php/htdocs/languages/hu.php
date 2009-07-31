@@ -22,7 +22,7 @@ $lang['session_attach']="Munkamenet csatolása";
 $lang['session_attach2']="Amelyik meunkamenet megjelenik a listában, azt csatolhatod.";
 $lang['attach']="Csatolás";
 $lang['setup_session']="Új munkamenet";
-$lang['setuo_session2']="Hogyha szeretnél új munkamenetet készíteni, add meg az alapértelmezett visszatöltési korlátot (hány százalékot töltsön vissza, mielőtt leáll) és/vagy az alapértelmezett időkorlátot (mennyi ideig töltse vissza, mielőtt megáll).
+$lang['setup_session2']="Hogyha szeretnél új munkamenetet készíteni, add meg az alapértelmezett visszatöltési korlátot (hány százalékot töltsön vissza, mielőtt leáll) és/vagy az alapértelmezett időkorlátot (mennyi ideig töltse vissza, mielőtt megáll).
 		Hagyhatod üresen is, hogyha te akarod leállítani a torrenteket, vagy megadhatsz csak egyet, hogy csak azt az egy beállítást alkalmazza, vagy beállíthatod mindkettőt, és a hamarabb elért korlát fogja megállítani a torrentet.";
 $lang['encryption']="Titkosítás";
 $lang['dht']="DHT";

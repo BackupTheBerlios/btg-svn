@@ -22,7 +22,7 @@ $lang['session_attach']="Attach to session";
 $lang['session_attach2']="If there are any sessions available, you can select a session here and attach to it.";
 $lang['attach']="Attach";
 $lang['setup_session']="Setup new session";
-$lang['setuo_session2']="If you'd like to setup a new session, enter default seed limit (how many % we should seed before we stop) and/or default seed timeout (how long time we should seed before we stop).
+$lang['setup_session2']="If you'd like to setup a new session, enter default seed limit (how many % we should seed before we stop) and/or default seed timeout (how long time we should seed before we stop).
 		Both can be empty, in which case you have to stop your torrents by your self, or one of them can be used, in which case that condition will be used, or both can be used, and the first reached will be used.";
 $lang['encryption']="Encryption";
 $lang['dht']="DHT";
