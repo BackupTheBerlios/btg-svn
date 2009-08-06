@@ -1,0 +1,97 @@
+#!/bin/sh
+
+# Where to search for torrents.
+IN=$HOME/rss
+# Where to move torrents.
+OUT=$HOME/btg/incoming
+TEMP=/tmp/rss2btg.temp
+H=40
+W=79
+MENUENTRIES=20
+
+rm -f $TEMP
+touch $TEMP
+
+F=""
+DIRS=`find $IN -mindepth 1 -maxdepth 2 -type d`
+TOTAL=0
+for DIR in `echo $DIRS`
+do
+        # Find number of torrent files in dir.
+	NUMBER_OF_TORRENTS=`find $DIR -name \*.torrent|wc -l`
+        if [ "$NUMBER_OF_TORRENTS" -gt 0 ] 
+        then
+          F="$F $DIR $NUMBER_OF_TORRENTS "
+        fi
+        TOTAL=`expr $TOTAL + $NUMBER_OF_TORRENTS`
+done
+
+if [ "$TOTAL" -eq 0 ]
+then
+  echo "No torrents found."
+  exit 0
+fi
+
+dialog --menu 'Choose dir containing torrent files' $H $W $MENUENTRIES $F 2> $TEMP
+STATUS=$?
+
+case $STATUS in
+  "0")
+     ;; # pressed ok.
+  *)
+     echo "Script aborted by user ($STATUS)."
+     rm -f $TEMP
+     exit 0
+esac
+
+DIR=`cat $TEMP|sed -e "s/\"//g"`
+rm -f $TEMP
+
+# List files, sort by date, newest first.
+FILES=`ls -1t $DIR/*.torrent`
+
+F=""
+COUNT=0
+NOW=`date +%s`
+for FILE in `echo $FILES`
+do
+        MODTIME=`stat --printf=%Y $FILE`
+	SINCE=`expr \( $NOW - $MODTIME \) / 60 / 60`
+        BASE=`basename $FILE`
+        F="$F $BASE ${SINCE}h "
+        COUNT=`expr $COUNT + 1`
+done
+
+dialog --menu 'Choose torrent file to add to current BTG session' $H $W $MENUENTRIES $F 2> $TEMP
+STATUS=$?
+
+case $STATUS in
+  "0")
+     ;; # pressed ok.
+  *)
+     echo "Script aborted by user ($STATUS)."
+     rm -f $TEMP
+     exit 0
+esac
+
+FILE=`cat $TEMP|sed -e "s/\"//g"`
+
+# Move file, run script which adds the torrents to BTG.
+
+STATUS=0
+(
+    echo "00" ;
+    mv -v $DIR/$FILE $OUT 
+    echo "50";
+
+    cd $OUT && ./btg_in.sh > /dev/null
+    STATUS=$?
+    echo "100"
+    ) |
+    dialog --gauge "Adding file .. " 7 30
+
+case $STATUS in
+0) echo "File added to BTG session." ;;
+*) echo "File NOT added to BTG session" ;;
+esac
+

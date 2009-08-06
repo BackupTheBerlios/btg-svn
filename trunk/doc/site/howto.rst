@@ -1008,6 +1008,18 @@ XScale-IXP42x, the following had to be used in the .config file.
  CONFIG_GCC_VERSION="4.2.3"
  CONFIG_UCLIBC_VERSION="0.9.29"
 
+Rssdler Integration
+===================
+
+Install `rssdler`_ as described in its documentation.
+
+Make sure that different sources store downloaded torrents into ~/rss/$NAME, where $NAME is the name of the source.
+
+Then use the `rss2btg`_ script to copy the torrents you want BTG to load into ~/btg/incoming and to run ~/btg/incoming/btg_in.sh.
+
+.. _rssdler: http://code.google.com/p/rssdler/
+.. _rss2btg: files/rss2btg
+
 PyTVShows Integration
 =====================
 
