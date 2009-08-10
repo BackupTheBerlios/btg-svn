@@ -98,6 +98,23 @@ Development is done on the "devel-branch" and the changes are merged
 into the "stable-branch" as soon as they are well tested and all
 classes are documented.
 
+Planned Releases
+----------------
+
+The following table lists the future planned releases. 
+The changes will be done when I have time and feel like it, 
+unless people send me patches, which will be incorporated as soon as possible.
+
+======================= ========================== ==============================================================
+**Codename**              **When**                 **Contents**           
+----------------------- -------------------------- --------------------------------------------------------------
+Papa Legba              Soon.                      Fix session saving in both stable and 2.x branch.
+Erzulie Freda           2-3 months from now.       First 2.0 release. Arch changes. Remove support for LT<0.14.x.           
+Simbi                   Not defined.               Not defined.
+Kouzin Zaka             Not defined.               Not defined.
+The Marasa              Not defined.               Not defined.
+======================= ========================== ==============================================================
+
 Stable Releases
 ---------------
 
