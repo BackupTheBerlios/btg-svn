@@ -199,7 +199,7 @@ Documentation
 
 Authors
 ~~~~~~~
-- Michael Wojciechowski.
+- `Michael Wojciechowski`_.
 - Johan Ström (XML-RPC_ transport and externalization, WWW UI, session saving, porting).
 - Roman Rybalko (making btgui look pretty, countless bugfixes, packaging).
 - Rodolphe Saugier (bugfix #10588).
@@ -208,6 +208,8 @@ Authors
 - Maarten Bosmans (bugfix #15216).
 - gH0StArthour (bugfix #15571 - Hungarian translation).
 - Jesper Nyholm Jensen (Testing).
+
+.. _Michael Wojciechowski: http://twitter.com/wojci/
 
 Getting Help
 ~~~~~~~~~~~~
