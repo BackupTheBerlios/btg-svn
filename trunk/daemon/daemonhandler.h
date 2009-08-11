@@ -244,7 +244,9 @@ namespace btg
             /* Data. */
             /*       */
 
+            /// The amount of seconds before the limit timer expires.
             const t_int                     limitTimerMax_;
+
             /// Pointer to daemon data.
             daemonData*                     dd_;
 

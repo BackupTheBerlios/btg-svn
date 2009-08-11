@@ -75,6 +75,8 @@ namespace btg
          /// Indicates if the thread should terminate.
          bool die_;
       protected:
+         /// Function which implements checks of the different timers
+         /// used by the daemon.
          void checkTimeout();
       protected:
          /* Handlers */
@@ -87,9 +89,18 @@ namespace btg
          /// downloading changed state.
          void handleUrlDownloads();
 
+         /// Executed when session timer times out.
          void handleSessions();
+
+         /// Executed when periodic session save timer times out.
          void handlePeriodicSessions();
+
+         /// Executed when limit timer times out.
          void handleLimits();
+
+         /// Executed when elapsed timer times out.
+         /// This checks for example if any seeds are going to be
+         /// stopped because of user set limits.
          void handleElapsed();
 
          /// Session saving enabled?
@@ -147,8 +158,10 @@ namespace btg
          /// Entity used for setting global limits.
          limitManager*                   limitManager_;
 
+         /// Pointer to URL manager.
          btg::daemon::urlManager*        urlmgr_;
 
+         /// Pointer to file manager.
          btg::daemon::fileManager*       filemgr_;
       protected:
          /// Mutex used to control access to the members
