@@ -27,9 +27,10 @@
 
 #if BTG_LT_0_14
 #  include <boost/asio/ip/address_v4.hpp>
-#else
-#  include <asio/ip/address_v4.hpp>
 #endif
+
+//#include <boost/date_time/posix_time/posix_time.hpp>
+#include <libtorrent/time.hpp>
 
 #if BTG_OPTION_EVENTCALLBACK
 #  include "callbackmgr.h"
@@ -51,9 +52,6 @@ namespace btg
 #if BTG_LT_0_14
          boost::asio::ip::basic_endpoint<boost::asio::ip::tcp> endp = _alert->ip;
          boost::asio::ip::address_v4 banned_ip = endp.address().to_v4();
-#else
-         asio::ip::basic_endpoint<asio::ip::tcp> endp = _alert->ip;
-         asio::ip::address_v4 banned_ip = endp.address().to_v4();
 #endif
          BTG_NOTICE(logWrapper(), "Banned host: " << banned_ip.to_string() << ".");
 
@@ -119,16 +117,11 @@ namespace btg
 #if BTG_LT_0_14
          boost::asio::ip::basic_endpoint<boost::asio::ip::tcp> endp = _alert->ip;
          boost::asio::ip::address_v4 banned_ip = endp.address().to_v4();
-#else
-         asio::ip::basic_endpoint<asio::ip::tcp> endp = _alert->ip;
-         asio::ip::address_v4 banned_ip = endp.address().to_v4();
 #endif
          BTG_NOTICE(logWrapper(), "Errors from peer: " << banned_ip.to_string() << ".");
       }
 #if BTG_LT_0_14
       void Context::handleTrackerAlert(libtorrent::tracker_error_alert* _alert)
-#else
-      void Context::handleTrackerAlert(libtorrent::tracker_alert* _alert)
 #endif
       {
          t_int torrent_id;
@@ -144,8 +137,6 @@ namespace btg
                            _alert->status_code << ", message '" << 
 #if BTG_LT_0_14
                            _alert->message()
-#else
-                           _alert->msg()
 #endif
                            << "'");
 
@@ -163,8 +154,6 @@ namespace btg
                ti->trackerStatus.setMessage(
 #if BTG_LT_0_14
                                             _alert->message()
-#else
-                                            _alert->msg()
 #endif
                );
 
@@ -217,8 +206,6 @@ namespace btg
                            filename << "', message '" << 
 #if BTG_LT_0_14
                            _alert->message()
-#else
-                           _alert->msg()
 #endif
                            << "'");
 
@@ -228,8 +215,6 @@ namespace btg
                ti->trackerStatus.setMessage(
 #if BTG_LT_0_14
                _alert->message()
-#else
-               _alert->msg()
 #endif
                );
 
@@ -245,6 +230,8 @@ namespace btg
 #if BTG_LT_0_14
       void Context::handleResumeDataAlert(libtorrent::save_resume_data_alert* _alert)
       {
+         completeCondition_.notify_one();
+
          libtorrent::torrent_handle th = _alert->handle;
          t_int tid = -1;
          torrentInfo *ti = NULL;
@@ -292,6 +279,13 @@ namespace btg
          out.close();
          BTG_NOTICE(logWrapper(), "wrote fast resume data for '" << filename << "'");
       }
+
+      void Context::handleResumeDataFailedAlert(libtorrent::save_resume_data_failed_alert* _alert)
+      {
+         // Unblock any waiting threads.
+         completeCondition_.notify_one();
+      }
+
 #endif
 
 #if BTG_LT_0_14
@@ -313,7 +307,7 @@ namespace btg
          case libtorrent::torrent_status::downloading:
          case libtorrent::torrent_status::finished:
          case libtorrent::torrent_status::seeding:
-            writeResumeData(tid);
+            // writeResumeData(tid);
             break;
          default:
             break;
@@ -323,17 +317,29 @@ namespace btg
 
       void Context::handleAlerts()
       {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
+         // boost::posix_time::time_duration mw();
+
+         libtorrent::time_duration td = libtorrent::milliseconds(100);
+         if (torrent_session->wait_for_alert(td) == 0)
+            {
+               // No alerts to pop.
+               return;
+            }
+
          // fetch and handle all libtorrent alerts present in queue
-         for(;;)
-         {
-            std::auto_ptr<libtorrent::alert> sp_alert = torrent_session->pop_alert();
-            libtorrent::alert* raw_alert = sp_alert.get();
+         //for(;;)
+         //{
+         std::auto_ptr<libtorrent::alert> sp_alert = torrent_session->pop_alert();
+         libtorrent::alert* raw_alert = sp_alert.get();
             
-            if (!raw_alert)
-               {
-                  // no more alerts in queue
-                  break;
-               }
+         if (!raw_alert)
+            {
+               // no more alerts in queue
+               //break;
+               return;
+            }
             
             libtorrent::torrent_alert* alert = dynamic_cast<libtorrent::torrent_alert*>(raw_alert);
             // we aren't interested in alert, that doesn't contain torrent_handle
@@ -358,11 +364,6 @@ namespace btg
                      {
                         handleTrackerAlert(dynamic_cast<libtorrent::tracker_error_alert*>(alert));
                      }
-#else
-                  else if (typeid(*alert) == typeid(libtorrent::tracker_alert))
-                     {
-                        handleTrackerAlert(dynamic_cast<libtorrent::tracker_alert*>(alert));
-                     }
 #endif
                   else if (typeid(*alert) == typeid(libtorrent::tracker_reply_alert))
                      {
@@ -377,6 +378,10 @@ namespace btg
                      {
                         handleResumeDataAlert(dynamic_cast<libtorrent::save_resume_data_alert*>(alert));
                      }
+                  else if (typeid(*alert) == typeid(libtorrent::save_resume_data_failed_alert))
+                     {
+                        handleResumeDataFailedAlert(dynamic_cast<libtorrent::save_resume_data_failed_alert*>(alert));
+                     }
 #endif
 #if BTG_LT_0_14
                   else if (typeid(*alert) == typeid(libtorrent::state_changed_alert))
@@ -390,13 +395,11 @@ namespace btg
                         BTG_NOTICE(logWrapper(), "Alert: " << 
 #if BTG_LT_0_14
                                    alert->message()
-#else
-                                   alert->msg()
 #endif
                                    << " (" << typeid(*alert).name() << ")");
                      }
                }
-         }
+            //}
       }
 
    } // namespace daemon

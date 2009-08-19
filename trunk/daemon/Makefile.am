@@ -32,6 +32,7 @@ noinst_HEADERS = $(CALLBACKHEADERS) $(SSHEADERS) filetrackdata.h filetrack.h con
                  eventhandler.h darg.h \
                  opid.h \
                  dconfig.h daemon.h daemondata.h \
+                 alerthandler_thr.h \
                  daemonhandler_thr.h \
                  daemonhandler.h \
                  filemgr.h $(URL_HEADER) \
@@ -48,6 +49,7 @@ libdaemon_la_SOURCES = dconfig.cpp darg.cpp \
                        filetrackdata.cpp filetrack.cpp connectionhandler.cpp \
                        session_list.cpp portmgr.cpp \
                        limitval.cpp limitmgr.cpp daemondata.cpp \
+                       alerthandler_thr.cpp \
                        daemonhandler_thr.cpp \
                        daemonhandler_url.cpp daemonhandler_file.cpp daemonhandler.cpp progress.cpp \
                        filemgr.cpp $(URL_SOURCE) \

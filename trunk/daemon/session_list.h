@@ -92,9 +92,11 @@ namespace btg
                void getNames(std::vector<std::string> & _names);
 
                /// For each event handler contained in an instance of
-               /// this class, check their limits and check for
-               /// alerts.
-               void checkLimitsAndAlerts();
+               /// this class, check their limits.
+               void checkLimits();
+
+               /// For each event handler handle any alerts.
+               void handleAlerts();
 
                /// For each session, update the contained elapsed or
                /// seed counter.

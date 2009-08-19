@@ -140,8 +140,8 @@ namespace btg
 
       void daemonHandlerThread::handleSessions()
       {
-         MVERBOSE_LOG(logWrapper(), verboseFlag_, "Checking limits and alerts.");
-         sessionlist_->checkLimitsAndAlerts();
+         MVERBOSE_LOG(logWrapper(), verboseFlag_, "Checking limits.");
+         sessionlist_->checkLimits();
          session_timer_trigger_ = false;
          session_timer_.Reset();
       }

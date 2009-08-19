@@ -34,6 +34,9 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/condition.hpp>
+
 #include <string>
 #include <map>
 #include <vector>
@@ -459,6 +462,8 @@ namespace btg
 #if BTG_LT_0_14
                /// Handle libtorrent resume data
                void handleResumeDataAlert(libtorrent::save_resume_data_alert* _alert);
+
+               void handleResumeDataFailedAlert(libtorrent::save_resume_data_failed_alert* _alert);
 #endif
 
 #if BTG_LT_0_14
@@ -730,6 +735,14 @@ namespace btg
                /// are represented.
                void bitfieldToVector(libtorrent::bitfield const& _input, 
                                      std::vector<bool> & _output) const;
+
+               /// Mutex used to control access to the members
+               /// of this class from the outside.
+               boost::mutex interfaceMutex_;
+
+
+               boost::mutex completeMutex_;
+               boost::condition completeCondition_;
 #endif
             private:
                /// Copy constructor.

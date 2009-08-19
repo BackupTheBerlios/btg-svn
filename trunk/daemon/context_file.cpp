@@ -57,16 +57,7 @@ namespace btg
                return false;
             }
 
-#if BTG_LT_0_12
-         if (!ti->handle.move_storage(_destination_dir))
-            {
-               std::string filename;
-               this->getFilename(_torrent_id, filename);
-               BTG_ERROR_LOG(logWrapper(), 
-                             "Attempt to move '" << filename << "' to " << _destination_dir << " failed.");
-               result = false;
-            }
-#elif (BTG_LT_0_13 || BTG_LT_0_14)
+#if BTG_LT_0_14
          ti->handle.move_storage(_destination_dir);
 #endif // lt version
          BTG_MEXIT(logWrapper(), "moveToDirectory", result);
@@ -451,7 +442,7 @@ namespace btg
       }
 
       bool Context::writeResumeData(t_int const _torrent_id)
-            {
+      {
          BTG_MENTER(logWrapper(), "writeResumeData(torrent_id)", _torrent_id);
 
          bool op_status = false;
@@ -463,48 +454,12 @@ namespace btg
             return op_status;
          }
 
-#if (BTG_LT_0_12 || BTG_LT_0_13)
-               // Get the fast resume data.
-               libtorrent::entry torrent_entry = ti->handle.write_resume_data();
-
-               // The name to which the resume data is saved to.
-               std::string filename;
-               filename = tempDir_ + projectDefaults::sPATH_SEPARATOR() + ti->filename + 
-                  this->fastResumeFileNameEnd;
-
-               // Output file.
-               std::ofstream out;
-
-#if HAVE_IOS_BASE
-               out.open(filename.c_str(), std::ios_base::out);
-#else
-               out.open(filename.c_str(), std::ios::out);
-#endif
-
-               if (!out.is_open())
-                  {
-                     return op_status;
-                  }
-
-               try
-                  {
-                     // Encode to file.
-                     libtorrent::bencode(
-                                         std::ostream_iterator<char>(out),
-                                         torrent_entry
-                                         );
-                  }
-               catch (libtorrent::invalid_encoding & e)
-                  {
-                     BTG_ERROR_LOG(logWrapper(), "libtorrent exception: " << e.what() );
-                     return op_status;
-                  }
-
-               BTG_MNOTICE(logWrapper(), "wrote fast resume data for '" << filename << "'");
-               out.close();
-#elif BTG_LT_0_14
+#if (BTG_LT_0_14)
          // The actual writing is done using a callback (handleResumeDataAlert).
-               ti->handle.save_resume_data();
+         ti->handle.save_resume_data();
+         // Wait for this operation to complete.
+         boost::mutex::scoped_lock complete_lock(completeMutex_);
+         completeCondition_.wait(complete_lock);
 #endif
 
          op_status = true;
@@ -572,39 +527,6 @@ namespace btg
          }
          
          BTG_MEXIT(logWrapper(), "torrentInfoToFiles", status);
-         return status;
-      }
-#endif
-
-#if BTG_LT_0_12 || BTG_LT_0_13
-      bool Context::entryToFiles(libtorrent::entry const& _input,
-                                 std::vector<std::string> & _output) const
-      {
-         BTG_MENTER(logWrapper(), "entryToFiles", "");
-
-         bool status = true;
-         try
-            {
-               libtorrent::torrent_info tinfo(_input);
-               libtorrent::torrent_info::file_iterator iter;
-
-               for (iter = tinfo.begin_files();
-                    iter != tinfo.end_files();
-                    iter++)
-                  {
-                     libtorrent::file_entry const& fe = *iter;
-                     BTG_MNOTICE(logWrapper(), fe.path.string());
-
-                     _output.push_back(fe.path.string());
-                  }
-            }
-         catch (std::exception& e)
-            {
-               BTG_ERROR_LOG(logWrapper(), "libtorrent exception (entryToFiles): " << e.what() );
-               status = false;
-            }
-
-         BTG_MEXIT(logWrapper(), "entryToFiles", status);
          return status;
       }
 #endif

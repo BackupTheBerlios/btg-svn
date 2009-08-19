@@ -57,6 +57,7 @@
 #include "opid.h"
 
 #include "daemonhandler_thr.h"
+#include "alerthandler_thr.h"
 
 namespace btg
 {
@@ -312,6 +313,8 @@ namespace btg
             
             /// Thread used for executing periodic tasks.
             daemonHandlerThread             handlerthread_;
+
+            alertHandlerThread              alertthread_;
          private:
             /// Copy constructor.
             daemonHandler(daemonHandler const& _dh);

@@ -125,7 +125,11 @@ namespace btg
                           0,
 #endif
                           &filemgr_,
-                          _verboseFlag)
+                          _verboseFlag),
+           alertthread_(_logwrapper,
+                        &sessionlist_,
+                        _verboseFlag)
+
       {
          /// Set the initial limits.
          limitManager_.set(_dd->config->getUploadRateLimit(),
@@ -1391,6 +1395,7 @@ namespace btg
          BTG_MNOTICE(logWrapper(), "cleaning up.");
 
          handlerthread_.stop();
+         alertthread_.stop();
 
          limitManager_.stop();
 

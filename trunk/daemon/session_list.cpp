@@ -156,7 +156,20 @@ namespace btg
             }
       }
 
-      void sessionList::checkLimitsAndAlerts()
+      void sessionList::handleAlerts()
+      {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+       
+         std::map<t_long, eventHandler*>::iterator iter;
+         for (iter = eventhandlers_.begin();
+              iter != eventhandlers_.end();
+              iter++)
+            {
+               iter->second->handleAlerts();
+            }
+      }
+      
+      void sessionList::checkLimits()
       {
          boost::mutex::scoped_lock interface_lock(interfaceMutex_);
 
@@ -165,8 +178,6 @@ namespace btg
               iter != eventhandlers_.end();
               iter++)
             {
-               // Check for any alerts.
-               iter->second->handleAlerts();
                // Check if any torrents have seeded more/longer than
                // the limit; if so, stop them.
                iter->second->checkSeedLimits();
