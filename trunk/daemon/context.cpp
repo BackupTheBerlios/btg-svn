@@ -2662,6 +2662,17 @@ namespace btg
 
       Context::~Context()
       {
+         // Delete any saved alerts back.
+         std::vector<libtorrent::torrent_alert*>::iterator iter;
+         for (iter = saved_alerts_.begin();
+              iter != saved_alerts_.end();
+              iter++)
+            {
+               libtorrent::alert* a = *iter;
+               delete a;
+            }
+         saved_alerts_.clear();
+
          portMgr->giveBack(listen_port_range_);
       }
 

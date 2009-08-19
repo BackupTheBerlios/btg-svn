@@ -426,6 +426,50 @@ namespace btg
          return status;
       }
 
+      void Context::waitForResumeDataAlert()
+      {
+         bool finished = false;
+         while (!finished)
+         {
+            libtorrent::alert const* al = torrent_session->wait_for_alert(libtorrent::seconds(1));
+
+            if (al == 0)
+            {
+               continue;
+            }
+
+            std::auto_ptr<libtorrent::alert> sp_alert = torrent_session->pop_alert();
+            libtorrent::alert* raw_alert = sp_alert.get();
+            
+            if (!raw_alert)
+            {
+               continue;
+            }
+            
+            libtorrent::torrent_alert* alert = dynamic_cast<libtorrent::torrent_alert*>(raw_alert);
+
+            // we aren't interested in alert, that doesn't contain torrent_handle
+            if (alert != 0 )
+            {
+               if ((typeid(*alert) == typeid(libtorrent::save_resume_data_alert)) ||
+                   (typeid(*alert) == typeid(libtorrent::save_resume_data_failed_alert))
+                   )
+                  {
+                     handleAlert(sp_alert.get());
+                     // Done waiting.
+                     finished = true;
+                     VERBOSE_LOG(logWrapper(), verboseFlag_, "Finished waiting for resume data.");
+                  }
+               else
+                  {
+                     // Save alert for processing later.
+                     libtorrent::torrent_alert* a = dynamic_cast<libtorrent::torrent_alert*>(sp_alert.release());
+                     saved_alerts_.push_back(a);
+                  }
+            }
+         }
+      }
+
       bool Context::writeResumeData()
       {
          BTG_MENTER(logWrapper(), "writeResumeData", "");
@@ -458,8 +502,7 @@ namespace btg
          // The actual writing is done using a callback (handleResumeDataAlert).
          ti->handle.save_resume_data();
          // Wait for this operation to complete.
-         boost::mutex::scoped_lock complete_lock(completeMutex_);
-         completeCondition_.wait(complete_lock);
+         waitForResumeDataAlert();
 #endif
 
          op_status = true;

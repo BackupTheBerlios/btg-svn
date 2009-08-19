@@ -230,8 +230,6 @@ namespace btg
 #if BTG_LT_0_14
       void Context::handleResumeDataAlert(libtorrent::save_resume_data_alert* _alert)
       {
-         completeCondition_.notify_one();
-
          libtorrent::torrent_handle th = _alert->handle;
          t_int tid = -1;
          torrentInfo *ti = NULL;
@@ -282,8 +280,7 @@ namespace btg
 
       void Context::handleResumeDataFailedAlert(libtorrent::save_resume_data_failed_alert* _alert)
       {
-         // Unblock any waiting threads.
-         completeCondition_.notify_one();
+         BTG_NOTICE(logWrapper(), "Failed to write fast resume data: '" << _alert->msg << "'");
       }
 
 #endif
@@ -307,7 +304,7 @@ namespace btg
          case libtorrent::torrent_status::downloading:
          case libtorrent::torrent_status::finished:
          case libtorrent::torrent_status::seeding:
-            // writeResumeData(tid);
+            writeResumeData(tid);
             break;
          default:
             break;
@@ -315,11 +312,95 @@ namespace btg
       }
 #endif
 
-      void Context::handleAlerts()
+      void Context::handleAlert(libtorrent::alert* _alert)
+      {
+         if (!_alert)
+            {
+               // no more alerts in queue
+               //break;
+               return;
+            }
+            
+         libtorrent::torrent_alert* alert = dynamic_cast<libtorrent::torrent_alert*>(_alert);
+         // we aren't interested in alerts that doesn't contain a
+         // torrent_handle.
+         if (alert != 0 )
+            {
+               // peer_ban_alert
+               // peer_error_alert
+               if (typeid(*alert) == typeid(libtorrent::peer_ban_alert))
+                  {
+                     handleBannedHost(dynamic_cast<libtorrent::peer_ban_alert*>(alert));
+                  }
+               else if (typeid(*alert) == typeid(libtorrent::torrent_finished_alert))
+                  {
+                     handleFinishedTorrent(dynamic_cast<libtorrent::torrent_finished_alert*>(alert));
+                  }
+               else if (typeid(*alert) == typeid(libtorrent::peer_error_alert))
+                  {
+                     handlePeerError(dynamic_cast<libtorrent::peer_error_alert*>(alert));
+                  }
+#if BTG_LT_0_14
+               else if (typeid(*alert) == typeid(libtorrent::tracker_error_alert))
+                  {
+                     handleTrackerAlert(dynamic_cast<libtorrent::tracker_error_alert*>(alert));
+                  }
+#endif
+               else if (typeid(*alert) == typeid(libtorrent::tracker_reply_alert))
+                  {
+                     handleTrackerReplyAlert(dynamic_cast<libtorrent::tracker_reply_alert*>(alert));
+                  }
+               else if (typeid(*alert) == typeid(libtorrent::tracker_warning_alert))
+                  {
+                     handleTrackerWarningAlert(dynamic_cast<libtorrent::tracker_warning_alert*>(alert));
+                  }
+#if BTG_LT_0_14
+               else if (typeid(*alert) == typeid(libtorrent::save_resume_data_alert))
+                  {
+                     handleResumeDataAlert(dynamic_cast<libtorrent::save_resume_data_alert*>(alert));
+                  }
+               else if (typeid(*alert) == typeid(libtorrent::save_resume_data_failed_alert))
+                  {
+                     handleResumeDataFailedAlert(dynamic_cast<libtorrent::save_resume_data_failed_alert*>(alert));
+                  }
+               else if (typeid(*alert) == typeid(libtorrent::state_changed_alert))
+                  {
+                     handleStateChangeAlert(dynamic_cast<libtorrent::state_changed_alert*>(alert));
+                  }
+#endif
+               else
+                  {
+                     // Log other alerts.
+                     BTG_NOTICE(logWrapper(), "Alert: " << 
+#if BTG_LT_0_14
+                                alert->message()
+#endif
+                                << " (" << typeid(*alert).name() << ")");
+                  }
+            }
+      }
+      
+      void Context::handleSavedAlerts()
       {
          boost::mutex::scoped_lock interface_lock(interfaceMutex_);
 
-         // boost::posix_time::time_duration mw();
+         // Handle all stored alerts.
+         std::vector<libtorrent::torrent_alert*>::iterator iter;
+         for (iter = saved_alerts_.begin();
+              iter != saved_alerts_.end();
+              iter++)
+            {
+               libtorrent::alert* a = *iter;
+               handleAlert(a);
+               delete a;
+            }
+
+         saved_alerts_.clear();
+      }
+
+      void Context::handleAlerts()
+      {
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
 
          libtorrent::time_duration td = libtorrent::milliseconds(100);
          if (torrent_session->wait_for_alert(td) == 0)
@@ -328,78 +409,11 @@ namespace btg
                return;
             }
 
-         // fetch and handle all libtorrent alerts present in queue
-         //for(;;)
-         //{
+         // Handle a single alert.
          std::auto_ptr<libtorrent::alert> sp_alert = torrent_session->pop_alert();
          libtorrent::alert* raw_alert = sp_alert.get();
             
-         if (!raw_alert)
-            {
-               // no more alerts in queue
-               //break;
-               return;
-            }
-            
-            libtorrent::torrent_alert* alert = dynamic_cast<libtorrent::torrent_alert*>(raw_alert);
-            // we aren't interested in alert, that doesn't contain torrent_handle
-            if (alert != 0 )
-               {
-                  // peer_ban_alert
-                  // peer_error_alert
-                  if (typeid(*alert) == typeid(libtorrent::peer_ban_alert))
-                     {
-                        handleBannedHost(dynamic_cast<libtorrent::peer_ban_alert*>(alert));
-                     }
-                  else if (typeid(*alert) == typeid(libtorrent::torrent_finished_alert))
-                     {
-                        handleFinishedTorrent(dynamic_cast<libtorrent::torrent_finished_alert*>(alert));
-                     }
-                  else if (typeid(*alert) == typeid(libtorrent::peer_error_alert))
-                     {
-                        handlePeerError(dynamic_cast<libtorrent::peer_error_alert*>(alert));
-                     }
-#if BTG_LT_0_14
-                  else if (typeid(*alert) == typeid(libtorrent::tracker_error_alert))
-                     {
-                        handleTrackerAlert(dynamic_cast<libtorrent::tracker_error_alert*>(alert));
-                     }
-#endif
-                  else if (typeid(*alert) == typeid(libtorrent::tracker_reply_alert))
-                     {
-                        handleTrackerReplyAlert(dynamic_cast<libtorrent::tracker_reply_alert*>(alert));
-                     }
-                  else if (typeid(*alert) == typeid(libtorrent::tracker_warning_alert))
-                     {
-                        handleTrackerWarningAlert(dynamic_cast<libtorrent::tracker_warning_alert*>(alert));
-                     }
-#if BTG_LT_0_14
-                  else if (typeid(*alert) == typeid(libtorrent::save_resume_data_alert))
-                     {
-                        handleResumeDataAlert(dynamic_cast<libtorrent::save_resume_data_alert*>(alert));
-                     }
-                  else if (typeid(*alert) == typeid(libtorrent::save_resume_data_failed_alert))
-                     {
-                        handleResumeDataFailedAlert(dynamic_cast<libtorrent::save_resume_data_failed_alert*>(alert));
-                     }
-#endif
-#if BTG_LT_0_14
-                  else if (typeid(*alert) == typeid(libtorrent::state_changed_alert))
-                     {
-                        handleStateChangeAlert(dynamic_cast<libtorrent::state_changed_alert*>(alert));
-                     }
-#endif
-                  else
-                     {
-                        // Log other alerts.
-                        BTG_NOTICE(logWrapper(), "Alert: " << 
-#if BTG_LT_0_14
-                                   alert->message()
-#endif
-                                   << " (" << typeid(*alert).name() << ")");
-                     }
-               }
-            //}
+         handleAlert(raw_alert);
       }
 
    } // namespace daemon

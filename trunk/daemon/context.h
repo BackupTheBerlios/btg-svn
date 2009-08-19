@@ -433,11 +433,23 @@ namespace btg
                /// @return True if operation was successful, false if not.
                bool moveToDestinationDir(t_int const _torrent_id);
 
-               /// Log the alerts produced by libtorrent.
+               /// Handle any alerts produced by libtorrent.
                void handleAlerts();
+
+               /// Handle saved alerts.
+               void handleSavedAlerts();
 
                /// Get the port range use by this context.
                std::pair<t_int, t_int> getPortRange() const;
+            private:
+               /// Handle a single alert.
+               void handleAlert(libtorrent::alert* _alert);
+               
+               /// Wait for a certain type of alert.
+               /// 
+               /// Used for blocking until fast file is written to
+               /// disk, which is done in an async manner.
+               void waitForResumeDataAlert();
             private:
                /// Handle libtorrent alert.
                void handleBannedHost(libtorrent::peer_ban_alert* _alert);
@@ -740,9 +752,7 @@ namespace btg
                /// of this class from the outside.
                boost::mutex interfaceMutex_;
 
-
-               boost::mutex completeMutex_;
-               boost::condition completeCondition_;
+               std::vector<libtorrent::torrent_alert*> saved_alerts_;
 #endif
             private:
                /// Copy constructor.
