@@ -80,7 +80,7 @@ namespace btg
 #if BTG_TRANSPORT_DEBUG
                   BTG_NOTICE(logWrapper(), "(write) Marking socket with id=" << getSockId() << " as deleted");
 #endif // BTG_TRANSPORT_DEBUG
-                  this->markAsDeleted();
+                  markAsDeleted();
                }
 
             bool status = true;
@@ -99,7 +99,7 @@ namespace btg
 #if BTG_TRANSPORT_DEBUG
                   BTG_NOTICE(logWrapper(), "(read) Marking socket with id=" << getSockId() << " as deleted");
 #endif // BTG_TRANSPORT_DEBUG
-                  this->markAsDeleted();
+                  markAsDeleted();
                }
 
             t_int readCount = 0;

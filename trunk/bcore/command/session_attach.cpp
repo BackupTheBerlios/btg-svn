@@ -50,10 +50,10 @@ namespace btg
          BTG_RCHECK( Command::serialize(_e) );
 
          _e->setParamInfo("build id", true);
-         BTG_RCHECK( _e->stringToBytes(&this->buildID) );
+         BTG_RCHECK( _e->stringToBytes(&buildID) );
 
          _e->setParamInfo("session ID", true);
-         BTG_RCHECK( _e->longToBytes(&this->session) );
+         BTG_RCHECK( _e->longToBytes(&session) );
 
          return true;
       }
@@ -63,10 +63,10 @@ namespace btg
          BTG_RCHECK( Command::deserialize(_e) );
 
          _e->setParamInfo("build id", true);
-         BTG_RCHECK( _e->bytesToString(&this->buildID) );
+         BTG_RCHECK( _e->bytesToString(&buildID) );
 
          _e->setParamInfo("session ID", true);
-         BTG_RCHECK( _e->bytesToLong(&this->session) );
+         BTG_RCHECK( _e->bytesToLong(&session) );
 
          return true;
       }
@@ -78,7 +78,7 @@ namespace btg
 
       t_long attachSessionCommand::getSession() const
       {
-         return this->session;
+         return session;
       }
 
       attachSessionCommand::~attachSessionCommand()

@@ -63,11 +63,11 @@ namespace btg
                return *this;
             }
 
-         this->contents          = _dbuffer.contents;
-         this->current_size      = _dbuffer.current_size;
-         this->read_counter      = _dbuffer.read_counter;
-         this->lastInsertedBytes = _dbuffer.lastInsertedBytes;
-         this->lastRemovedBytes  = _dbuffer.lastRemovedBytes;
+         contents          = _dbuffer.contents;
+         current_size      = _dbuffer.current_size;
+         read_counter      = _dbuffer.read_counter;
+         lastInsertedBytes = _dbuffer.lastInsertedBytes;
+         lastRemovedBytes  = _dbuffer.lastRemovedBytes;
 
          return *this;
       }

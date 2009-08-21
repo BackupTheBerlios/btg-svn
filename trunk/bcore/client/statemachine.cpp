@@ -1746,7 +1746,7 @@ namespace btg
             _status = false;
 
             // Pop a command and send it.
-            Command *c = this->getCommand();
+            Command *c = getCommand();
             if (c != 0)
                {
                   sendCommand(c);
@@ -1828,7 +1828,7 @@ namespace btg
          {
             Command *c;
             // Pop a command and send it.
-            c = this->getCommand();
+            c = getCommand();
             if (c != 0)
                {
                   sendCommand(c);
@@ -1896,7 +1896,7 @@ namespace btg
          void stateMachine::step_SM_COMMAND(bool & _status)
          {
             // Pop a command and send it.
-            Command* c = this->getCommand();
+            Command* c = getCommand();
             if (c != 0)
                {
                   // Reset the command counter.
@@ -1920,11 +1920,11 @@ namespace btg
                   else
                      {
 #if BTG_STATEMACHINE_DEBUG
-                        BTG_NOTICE(logWrapper(), "expecting: " << Command::getName(this->expectedReply[0]));
+                        BTG_NOTICE(logWrapper(), "expecting: " << Command::getName(expectedReply[0]));
 
-                        if (this->expectedReply[1] != Command::CN_UNDEFINED)
+                        if (expectedReply[1] != Command::CN_UNDEFINED)
                            {
-                              BTG_NOTICE(logWrapper(), "or " << Command::getName(this->expectedReply[1]));
+                              BTG_NOTICE(logWrapper(), "or " << Command::getName(expectedReply[1]));
                            }
 #endif // BTG_STATEMACHINE_DEBUG
                         changeState(SM_COMMAND_WAIT);
@@ -2008,7 +2008,7 @@ namespace btg
                   // Call a function with the result:
                   if (
                       (c->getType() == Command::CN_ACK) &&
-                      (dynamic_cast<ackCommand*>(c)->getCommandType() == this->ackForCommand)
+                      (dynamic_cast<ackCommand*>(c)->getCommandType() == ackForCommand)
                       )
                      {
                         // Got the expected reply.
@@ -2047,7 +2047,7 @@ namespace btg
          void stateMachine::step_SM_SESSION_LIST(bool & _status)
          {
             // Pop a command and send it.
-            Command* c = this->getCommand();
+            Command* c = getCommand();
             if (c != 0)
                {
                   sendCommand(c);
@@ -2111,7 +2111,7 @@ namespace btg
          void stateMachine::step_SM_ATTACH(bool & _status)
          {
             // Pop a command and send it.
-            Command* c = this->getCommand();
+            Command* c = getCommand();
             if (c != 0)
                {
                   sendCommand(c);

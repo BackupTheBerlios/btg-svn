@@ -53,12 +53,12 @@ namespace btg
 
       t_int limitCommand::getUploadLimit() const
       {
-         return this->limitUpld;
+         return limitUpld;
       }
 
       t_int limitCommand::getDownloadLimit() const
       {
-         return this->limitDwnld;
+         return limitDwnld;
       }
 
       t_int limitCommand::getMaxUplds() const
@@ -76,16 +76,16 @@ namespace btg
          BTG_RCHECK( Command::serialize(_e) );
 
          _e->setParamInfo("upload speed in bytes/sec", true);
-         BTG_RCHECK( _e->intToBytes(&this->limitUpld) );
+         BTG_RCHECK( _e->intToBytes(&limitUpld) );
 
          _e->setParamInfo("download speed in bytes/sec", true);
-         BTG_RCHECK( _e->intToBytes(&this->limitDwnld) );
+         BTG_RCHECK( _e->intToBytes(&limitDwnld) );
 
          _e->setParamInfo("Max uploads", true);
-         BTG_RCHECK( _e->intToBytes(&this->maxUplds) );
+         BTG_RCHECK( _e->intToBytes(&maxUplds) );
 
          _e->setParamInfo("Max connections", true);
-         BTG_RCHECK( _e->intToBytes(&this->maxConnections) );
+         BTG_RCHECK( _e->intToBytes(&maxConnections) );
 
          return true;
       }
@@ -95,36 +95,36 @@ namespace btg
          BTG_RCHECK( Command::deserialize(_e) );
 
          _e->setParamInfo("upload speed in bytes/sec", true);
-         BTG_RCHECK( _e->bytesToInt(&this->limitUpld) );
+         BTG_RCHECK( _e->bytesToInt(&limitUpld) );
 
-         if (this->limitUpld < 0 && this->limitUpld != limitBase::LIMIT_DISABLED)
+         if (limitUpld < 0 && limitUpld != limitBase::LIMIT_DISABLED)
             {
                // BTG_NOTICE("Deserialize of limitCommand failed, limitUpld is negative but not limitBase::LIMIT_DISABLED");
                return false;
             }
 
          _e->setParamInfo("download speed in bytes/sec", true);
-         BTG_RCHECK( _e->bytesToInt(&this->limitDwnld) );
+         BTG_RCHECK( _e->bytesToInt(&limitDwnld) );
 
-         if (this->limitDwnld < 0 && this->limitDwnld != LIMIT_DISABLED)
+         if (limitDwnld < 0 && limitDwnld != LIMIT_DISABLED)
             {
                // BTG_NOTICE("Deserialize of limitCommand failed, limitUpld is negative but not limitBase::LIMIT_DISABLED");
                return false;
             }
 
          _e->setParamInfo("Max uploads", true);
-         BTG_RCHECK( _e->bytesToInt(&this->maxUplds) );
+         BTG_RCHECK( _e->bytesToInt(&maxUplds) );
 
-         if (this->maxUplds < 0 && this->maxUplds != limitBase::LIMIT_DISABLED)
+         if (maxUplds < 0 && maxUplds != limitBase::LIMIT_DISABLED)
             {
                // BTG_NOTICE("Deserialize of limitCommand failed, maxUplds is negative but not limitBase::LIMIT_DISABLED");
                return false;
             }
 
          _e->setParamInfo("Max connections", true);
-         BTG_RCHECK( _e->bytesToInt(&this->maxConnections) );
+         BTG_RCHECK( _e->bytesToInt(&maxConnections) );
 
-         if (this->maxConnections < 0 && this->maxConnections != limitBase::LIMIT_DISABLED)
+         if (maxConnections < 0 && maxConnections != limitBase::LIMIT_DISABLED)
             {
                // BTG_NOTICE("Deserialize of limitCommand failed, maxConnections is negative but not limitBase::LIMIT_DISABLED");
                return false;
@@ -186,12 +186,12 @@ namespace btg
 
       t_int limitStatusResponseCommand::getUploadLimit() const
       {
-         return this->limitUpld;
+         return limitUpld;
       }
 
       t_int limitStatusResponseCommand::getDownloadLimit() const
       {
-         return this->limitDwnld;
+         return limitDwnld;
       }
 
       t_int limitStatusResponseCommand::getMaxUplds() const
@@ -209,16 +209,16 @@ namespace btg
          BTG_RCHECK( Command::serialize(_e) );
 
          _e->setParamInfo("upload speed in bytes/sec", true);
-         BTG_RCHECK( _e->intToBytes(&this->limitUpld) );
+         BTG_RCHECK( _e->intToBytes(&limitUpld) );
 
          _e->setParamInfo("download speed in bytes/sec", true);
-         BTG_RCHECK( _e->intToBytes(&this->limitDwnld) );
+         BTG_RCHECK( _e->intToBytes(&limitDwnld) );
 
          _e->setParamInfo("Max uploads", true);
-         BTG_RCHECK( _e->intToBytes(&this->maxUplds) );
+         BTG_RCHECK( _e->intToBytes(&maxUplds) );
 
          _e->setParamInfo("Max connections", true);
-         BTG_RCHECK( _e->intToBytes(&this->maxConnections) );
+         BTG_RCHECK( _e->intToBytes(&maxConnections) );
 
          return true;
       }
@@ -228,36 +228,36 @@ namespace btg
          BTG_RCHECK( Command::deserialize(_e) );
 
          _e->setParamInfo("upload speed in bytes/sec", true);
-         BTG_RCHECK( _e->bytesToInt(&this->limitUpld) );
+         BTG_RCHECK( _e->bytesToInt(&limitUpld) );
 
-         if (this->limitUpld < 0 && this->limitUpld != limitBase::LIMIT_DISABLED)
+         if (limitUpld < 0 && limitUpld != limitBase::LIMIT_DISABLED)
             {
                // BTG_NOTICE("Deserialize of limitStatusResponseCommand failed, limitUpld is negative but not limitBase::LIMIT_DISABLED");
                return false;
             }
 
          _e->setParamInfo("download speed in bytes/sec", true);
-         BTG_RCHECK( _e->bytesToInt(&this->limitDwnld) );
+         BTG_RCHECK( _e->bytesToInt(&limitDwnld) );
 
-         if (this->limitDwnld < 0 && this->limitDwnld != LIMIT_DISABLED)
+         if (limitDwnld < 0 && limitDwnld != LIMIT_DISABLED)
             {
                // BTG_NOTICE("Deserialize of limitStatusResponseCommand failed, limitUpld is negative but not limitBase::LIMIT_DISABLED");
                return false;
             }
 
          _e->setParamInfo("Max uploads", true);
-         BTG_RCHECK( _e->bytesToInt(&this->maxUplds) );
+         BTG_RCHECK( _e->bytesToInt(&maxUplds) );
 
-         if (this->maxUplds < 0 && this->maxUplds != limitBase::LIMIT_DISABLED)
+         if (maxUplds < 0 && maxUplds != limitBase::LIMIT_DISABLED)
             {
                // BTG_NOTICE("Deserialize of limitStatusResponseCommand failed, maxUplds is negative but not limitBase::LIMIT_DISABLED");
                return false;
             }
 
          _e->setParamInfo("Max connections", true);
-         BTG_RCHECK( _e->bytesToInt(&this->maxConnections) );
+         BTG_RCHECK( _e->bytesToInt(&maxConnections) );
 
-         if (this->maxConnections < 0 && this->maxConnections != limitBase::LIMIT_DISABLED)
+         if (maxConnections < 0 && maxConnections != limitBase::LIMIT_DISABLED)
             {
                // BTG_NOTICE("Deserialize of limitStatusResponseCommand failed, maxConnections is negative but not limitBase::LIMIT_DISABLED");
                return false;

@@ -134,44 +134,44 @@ namespace btg
          const t_int secPerHour   = 3600;
          const t_int secPerMinute = 60;
 
-         this->day_   = _seconds / secPerDay;
-         t_ulong left  = _seconds - (this->day_ * secPerDay);
+         day_   = _seconds / secPerDay;
+         t_ulong left  = _seconds - (day_ * secPerDay);
 
-         if (this->day_ == 0)
+         if (day_ == 0)
             {
                left = _seconds;
             }
 
-         this->hour_   = left / secPerHour;
-         left  = left - (this->hour_ * secPerHour);
+         hour_   = left / secPerHour;
+         left  = left - (hour_ * secPerHour);
 
-         if (this->day_ == 0 && this->hour_ == 0)
+         if (day_ == 0 && hour_ == 0)
             {
                left = _seconds;
             }
 
-         this->minute_ = left / secPerMinute;
+         minute_ = left / secPerMinute;
 
-         if ((this->day_ == 0) && (this->hour_ == 0) && (this->minute_ == 0))
+         if ((day_ == 0) && (hour_ == 0) && (minute_ == 0))
             {
                left = _seconds;
             }
          else
             {
-               left = left - (this->minute_ * secPerMinute);
+               left = left - (minute_ * secPerMinute);
             }
 
-         this->second_ = left;
+         second_ = left;
       }
 
       void timeSpecification::setUndefined(bool const _value)
       {
-         this->undefined = _value;
+         undefined = _value;
       }
 
       bool timeSpecification::isUndefined() const
       {
-         return this->undefined;
+         return undefined;
       }
 
       std::string timeSpecification::toString()
@@ -180,33 +180,33 @@ namespace btg
 
          std::string output;
 
-         if (this->day_ < 10)
+         if (day_ < 10)
             {
                output += "0";
             }
 
-         output += convertToString<t_int>(this->day_) + ":";
+         output += convertToString<t_int>(day_) + ":";
 
-         if (this->hour_ < 10)
+         if (hour_ < 10)
             {
                output += "0";
             }
 
-         output += convertToString<t_ulong>(this->hour_) + ":";
+         output += convertToString<t_ulong>(hour_) + ":";
 
-         if (this->minute_ < 10)
+         if (minute_ < 10)
             {
                output += "0";
             }
 
-         output += convertToString<t_uint>(this->minute_) + ":";
+         output += convertToString<t_uint>(minute_) + ":";
 
-         if (this->second_ < 10)
+         if (second_ < 10)
             {
                output += "0";
             }
 
-         output += convertToString<t_uint>(this->second_);
+         output += convertToString<t_uint>(second_);
 
          return output;
       }

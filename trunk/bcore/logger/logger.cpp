@@ -128,7 +128,7 @@ namespace btg
 
          bool logWrapper::logInput(logWrapper::MESSAGEPRIORITY _messagePriority) const
          {
-            if (static_cast<t_uint>(_messagePriority) < static_cast<t_uint>(this->minMessagePriority))
+            if (static_cast<t_uint>(_messagePriority) < static_cast<t_uint>(minMessagePriority))
                {
                   return false;
                }
@@ -137,7 +137,7 @@ namespace btg
 
          void logWrapper::setMinMessagePriority(logWrapper::MESSAGEPRIORITY _minMessagePriority)
          {
-            this->minMessagePriority = _minMessagePriority;
+            minMessagePriority = _minMessagePriority;
          }
 
       } // namespace logger

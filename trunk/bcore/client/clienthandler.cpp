@@ -196,7 +196,7 @@ namespace btg
                  iter != _filenames.end(); 
                  iter++)
                {
-                  this->reqCreate(*iter);
+                  reqCreate(*iter);
                }
          }
 

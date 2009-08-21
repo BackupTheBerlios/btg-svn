@@ -169,13 +169,13 @@ namespace btg
          bool status = false;
 
          std::string filename;
-         if (this->getFilename(_torrent_id, filename))
+         if (getFilename(_torrent_id, filename))
             {
-               if (this->hasFastResumeData(filename))
+               if (hasFastResumeData(filename))
                   {
                      std::string fastResumeFilename = tempDir_ + 
                         projectDefaults::sPATH_SEPARATOR() + 
-                        filename + this->fastResumeFileNameEnd;
+                        filename + fastResumeFileNameEnd;
                      status = btg::core::os::fileOperation::remove(fastResumeFilename);
                   }
             }
@@ -190,7 +190,7 @@ namespace btg
          BTG_MENTER(logWrapper(), "removeTorrentFile", "id = " << _torrent_id);
 
          std::string filename;
-         if (this->getFilename(_torrent_id, filename))
+         if (getFilename(_torrent_id, filename))
             {
                filename = tempDir_ + projectDefaults::sPATH_SEPARATOR() + filename;
                status = btg::core::os::fileOperation::remove(filename);
@@ -519,7 +519,7 @@ namespace btg
       {
          // Check if the fast resume data actually exists.
          std::string fastResumeFilename = tempDir_ + projectDefaults::sPATH_SEPARATOR() + 
-            _torrent_filename + this->fastResumeFileNameEnd;
+            _torrent_filename + fastResumeFileNameEnd;
          bool status = btg::core::os::fileOperation::check(fastResumeFilename);
 
          if (!status)

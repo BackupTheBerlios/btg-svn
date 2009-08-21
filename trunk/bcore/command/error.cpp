@@ -41,8 +41,8 @@ namespace btg
       std::string errorCommand::toString() const
       {
          std::string output = Command::toString() +
-            " " + "Failed command=" + Command::getName(this->which_command) + "." +
-            " " + "Message='" + this->message + "'.";
+            " " + "Failed command=" + Command::getName(which_command) + "." +
+            " " + "Message='" + message + "'.";
 
          return output;
       }
@@ -54,7 +54,7 @@ namespace btg
          _e->setParamInfo("flag, indicates if a command is present", true);
          bool command_present = true;
 
-         if (this->which_command == Command::CN_UNDEFINED)
+         if (which_command == Command::CN_UNDEFINED)
             {
                command_present = false;
             }
@@ -64,13 +64,13 @@ namespace btg
          if (command_present)
             {
                _e->setParamInfo("command ID", false);
-               BTG_RCHECK( _e->intToBytes(&this->which_command) );
+               BTG_RCHECK( _e->intToBytes(&which_command) );
             }
 
          _e->setParamInfo("flag, indicates if a message is present", true);
          bool message_present = true;
 
-         if ((this->message.size() == 0) || (!isMessagePresent))
+         if ((message.size() == 0) || (!isMessagePresent))
             {
                message_present = false;
             }
@@ -80,7 +80,7 @@ namespace btg
          if (message_present)
             {
                _e->setParamInfo("error message", false);
-               BTG_RCHECK( _e->stringToBytes(&this->message) );
+               BTG_RCHECK( _e->stringToBytes(&message) );
             }
 
          return true;
@@ -90,7 +90,7 @@ namespace btg
       {
          BTG_RCHECK( Command::deserialize(_e) );
 
-         this->which_command = Command::CN_UNDEFINED;
+         which_command = Command::CN_UNDEFINED;
          bool command_present = true;
 
          _e->setParamInfo("flag, indicates if a command is present", true);
@@ -99,7 +99,7 @@ namespace btg
          if (command_present)
             {
                _e->setParamInfo("command ID", false);
-               BTG_RCHECK( _e->bytesToInt(&this->which_command) );
+               BTG_RCHECK( _e->bytesToInt(&which_command) );
             }
 
          bool message_present = true;
@@ -110,14 +110,14 @@ namespace btg
          if (message_present)
             {
                _e->setParamInfo("error message", false);
-               BTG_RCHECK( _e->bytesToString(&this->message) );
+               BTG_RCHECK( _e->bytesToString(&message) );
 
-               this->isMessagePresent = true;
+               isMessagePresent = true;
             }
          else
             {
-               this->isMessagePresent = false;
-               this->message          = "";
+               isMessagePresent = false;
+               message          = "";
             }
 
          return true;
@@ -125,12 +125,12 @@ namespace btg
 
       t_int errorCommand::getErrorCommand() const
       {
-         return this->which_command;
+         return which_command;
       }
 
       void errorCommand::setMessage(std::string const& _message)
       {
-         this->message = _message;
+         message = _message;
       }
 
       std::string errorCommand::getMessage() const
@@ -148,8 +148,8 @@ namespace btg
          bool parent = Command::operator==(dynamic_cast<const Command*>(_ec));
 
          if (
-             (this->isMessagePresent == _ec->messagePresent()) &&
-             (this->message          == _ec->getMessage()) && parent
+             (isMessagePresent == _ec->messagePresent()) &&
+             (message          == _ec->getMessage()) && parent
              )
             {
                return true;

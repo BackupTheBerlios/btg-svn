@@ -82,13 +82,13 @@ namespace btg
       bool requiredSetupData::serialize(btg::core::externalization::Externalization* _e) const
       {
          _e->setParamInfo("build id", true);
-         BTG_RCHECK( _e->stringToBytes(&this->buildID_) );
+         BTG_RCHECK( _e->stringToBytes(&buildID_) );
 
          _e->setParamInfo("flag: seed limit", true);
-         BTG_RCHECK( _e->intToBytes(&this->seedLimit_) );
+         BTG_RCHECK( _e->intToBytes(&seedLimit_) );
 
          _e->setParamInfo("flag: seed timeout", true);
-         BTG_RCHECK( _e->longToBytes(&this->seedTimeout_) );
+         BTG_RCHECK( _e->longToBytes(&seedTimeout_) );
 
          _e->setParamInfo("flag: use DHT", true);
          BTG_RCHECK( _e->boolToBytes(useDHT_) );
@@ -102,13 +102,13 @@ namespace btg
       bool requiredSetupData::deserialize(btg::core::externalization::Externalization* _e)
       {
          _e->setParamInfo("build id", true);
-         BTG_RCHECK( _e->bytesToString(&this->buildID_) );
+         BTG_RCHECK( _e->bytesToString(&buildID_) );
 
          _e->setParamInfo("flag: seed limit", true);
-         BTG_RCHECK( _e->bytesToInt(&this->seedLimit_) );
+         BTG_RCHECK( _e->bytesToInt(&seedLimit_) );
 
          _e->setParamInfo("flag: seed timeout", true);
-         BTG_RCHECK( _e->bytesToLong(&this->seedTimeout_) );
+         BTG_RCHECK( _e->bytesToLong(&seedTimeout_) );
 
          _e->setParamInfo("flag: use DHT", true);
          BTG_RCHECK( _e->bytesToBool(useDHT_) );
@@ -214,7 +214,7 @@ namespace btg
          BTG_RCHECK( Command::serialize(_e) );
 
          _e->setParamInfo("Session", true);
-         BTG_RCHECK(_e->longToBytes(&this->session_) );
+         BTG_RCHECK(_e->longToBytes(&session_) );
 
          return true;
       }
@@ -224,7 +224,7 @@ namespace btg
          BTG_RCHECK( Command::deserialize(_e) );
 
          _e->setParamInfo("Session", true);
-         BTG_RCHECK( _e->bytesToLong(&this->session_) );
+         BTG_RCHECK( _e->bytesToLong(&session_) );
 
          return true;
       }

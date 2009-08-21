@@ -71,8 +71,8 @@ namespace btg
       {
          bool status = false;
          if (
-             (_ftd.torrent_filename_ == this->torrent_filename_) &&
-             (_ftd.entries_          == this->entries_)
+             (_ftd.torrent_filename_ == torrent_filename_) &&
+             (_ftd.entries_          == entries_)
              )
             {
                status = true;

@@ -91,7 +91,7 @@ namespace btg
 #if BTG_TRANSPORT_DEBUG
                   BTG_NOTICE(logWrapper(), "(write) Marking socket with id=" << getSockId() << " as deleted");
 #endif // BTG_TRANSPORT_DEBUG
-                  this->markAsDeleted();
+                  markAsDeleted();
                   return false;
                }
 
@@ -134,14 +134,14 @@ namespace btg
 #if BTG_TRANSPORT_DEBUG
                   BTG_NOTICE(logWrapper(), "(read) Marking socket with id=" << getSockId() << " as deleted");
 #endif // BTG_TRANSPORT_DEBUG
-                  this->markAsDeleted();
+                  markAsDeleted();
                }
 
             int ret = gnutls_record_recv (gsd_->getSession(), _msg, _size);
 
             if (ret <= 0)
                {
-                  this->markAsDeleted();
+                  markAsDeleted();
                   return 0;
                }
 

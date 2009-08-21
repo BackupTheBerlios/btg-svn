@@ -479,7 +479,7 @@ namespace btg
 
          if (temp_port > 0)
             {
-               this->port_  = temp_port;
+               port_  = temp_port;
             }
          else
             {

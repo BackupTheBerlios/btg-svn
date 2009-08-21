@@ -74,7 +74,7 @@ namespace btg
          BTG_RCHECK( Command::serialize(_e) );
 
          _e->setParamInfo("uptime", true);
-         BTG_RCHECK(_e->uLongToBytes(&this->uptime) );
+         BTG_RCHECK(_e->uLongToBytes(&uptime) );
 
          return true;
       }
@@ -84,7 +84,7 @@ namespace btg
          BTG_RCHECK( Command::deserialize(_e) );
 
          _e->setParamInfo("uptime", true);
-         BTG_RCHECK( _e->bytesToULong(&this->uptime) );
+         BTG_RCHECK( _e->bytesToULong(&uptime) );
 
          return true;
       }

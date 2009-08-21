@@ -51,13 +51,13 @@ namespace btg
                /// Set the last created context ID.
                void setLastCreatedContextId(t_int lastCreatedContextId)
                {
-                  this->lastCreatedContextId = lastCreatedContextId;
+                  lastCreatedContextId = lastCreatedContextId;
                }
 
                /// Returns the last created context ID, or contextCommand::UNDEFINED_CONTEXT if there is none.
                t_int getLastCreatedContextId() const
                {
-                  return this->lastCreatedContextId;
+                  return lastCreatedContextId;
                }
 
             private:

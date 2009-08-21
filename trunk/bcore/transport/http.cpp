@@ -76,7 +76,7 @@ namespace btg
                switch(_direction)
                   {
                   case TO_SERVER:
-                     clientRequest = new httpRequestClientSide(logWrapper(), this->getGzipIf());
+                     clientRequest = new httpRequestClientSide(logWrapper(), getGzipIf());
                      break;
                   case FROM_SERVER:
                      clientRequest = 0;
@@ -93,7 +93,7 @@ namespace btg
          BTG_NOTICE(logWrapper(), "httpTransport::write, size=" << _size);
 #endif // BTG_TRANSPORT_DEBUG
 
-         switch (this->direction)
+         switch (direction)
             {
             case TO_SERVER:
                {
@@ -222,7 +222,7 @@ namespace btg
 
       t_int httpTransport::read(dBuffer & _buffer)
       {
-         if (this->direction != TO_SERVER)
+         if (direction != TO_SERVER)
             {
                BTG_ERROR_LOG(logWrapper(), "httpTransport::read(dBuffer) can only be used on client side!! Not on server side!");
                return 0;
@@ -252,7 +252,7 @@ namespace btg
                return status;
             }
 
-         switch (this->direction)
+         switch (direction)
             {
             case TO_SERVER:
                {
@@ -321,7 +321,7 @@ namespace btg
                         if (socket == server)
                            {
                               // A new connection is here
-                              this->acceptNewConnections();
+                              acceptNewConnections();
                               continue;
                            }
 
@@ -420,7 +420,7 @@ namespace btg
 #endif // BTG_TRANSPORT_DEBUG
 
                // Got a new client.
-               httpClient* hc   = new httpClient(logWrapper(), this->getGzipIf());
+               httpClient* hc   = new httpClient(logWrapper(), getGzipIf());
                hc->socket       = acceptsock;
                hc->connectionID = -1;
 

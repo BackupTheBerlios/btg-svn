@@ -42,7 +42,7 @@ namespace btg
 
       std::string contextCommand::toString() const
       {
-         std::string output = Command::toString() + " " + "Context_id=" + convertToString<t_long>(this->context_id) + ".";
+         std::string output = Command::toString() + " " + "Context_id=" + convertToString<t_long>(context_id) + ".";
 
          if (allContexts)
             {
@@ -53,7 +53,7 @@ namespace btg
 
       t_int contextCommand::getContextId() const
       {
-         return this->context_id;
+         return context_id;
       }
 
       bool contextCommand::serialize(btg::core::externalization::Externalization* _e) const
@@ -63,12 +63,12 @@ namespace btg
 
          // All elements are required.
          _e->setParamInfo("context ID", true);
-         _e->intToBytes(&this->context_id);
+         _e->intToBytes(&context_id);
          BTG_RCHECK(_e->status());
 
          // All elements are required.
          _e->setParamInfo("flag: for all contexts", true);
-         _e->boolToBytes(this->allContexts);
+         _e->boolToBytes(allContexts);
          BTG_RCHECK(_e->status());
 
          return true;
@@ -80,11 +80,11 @@ namespace btg
          BTG_RCHECK(_e->status());
 
          _e->setParamInfo("context ID", true);
-         _e->bytesToInt(&this->context_id);
+         _e->bytesToInt(&context_id);
          BTG_RCHECK(_e->status());
 
          _e->setParamInfo("flag: for all contexts", true);
-         _e->bytesToBool(this->allContexts);
+         _e->bytesToBool(allContexts);
          BTG_RCHECK(_e->status());
 
          return true;
@@ -92,12 +92,12 @@ namespace btg
 
       void contextCommand::setAllContextsFlag()
       {
-         this->allContexts = true;
+         allContexts = true;
       }
 
       bool contextCommand::isAllContextsFlagSet() const
       {
-         return this->allContexts;
+         return allContexts;
       }
 
 

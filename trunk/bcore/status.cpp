@@ -172,64 +172,64 @@ namespace btg
       bool Status::serialize(btg::core::externalization::Externalization* _e) const
       {
          // int, context id;
-         t_int temp_contextid  = this->contextID_;
+         t_int temp_contextid  = contextID_;
          BTG_RCHECK( _e->intToBytes(&temp_contextid) );
 
          // string, filename;
-         BTG_RCHECK( _e->stringToBytes(&this->filename_) );
+         BTG_RCHECK( _e->stringToBytes(&filename_) );
 
          // int, status;
-         t_int temp_status  = this->status_;
+         t_int temp_status  = status_;
          BTG_RCHECK( _e->intToBytes(&temp_status) );
 
          //long, dn_total;
-         BTG_RCHECK( _e->uLongToBytes(&this->downloadTotal_) );
+         BTG_RCHECK( _e->uLongToBytes(&downloadTotal_) );
 
          //long, ul_total;
-         BTG_RCHECK( _e->uLongToBytes(&this->uploadTotal_) );
+         BTG_RCHECK( _e->uLongToBytes(&uploadTotal_) );
 
          //long, failed_bytes;
-         BTG_RCHECK( _e->uLongToBytes(&this->failedBytes_) );
+         BTG_RCHECK( _e->uLongToBytes(&failedBytes_) );
 
          //long, dn_rate;
-         BTG_RCHECK( _e->uLongToBytes(&this->downloadRate_) );
+         BTG_RCHECK( _e->uLongToBytes(&downloadRate_) );
 
          //long, ul_rate;
-         BTG_RCHECK( _e->uLongToBytes(&this->uploadRate_) );
+         BTG_RCHECK( _e->uLongToBytes(&uploadRate_) );
 
          //int, done;
-         BTG_RCHECK( _e->intToBytes(&this->done_) );
+         BTG_RCHECK( _e->intToBytes(&done_) );
 
          //long, filesize;
-         BTG_RCHECK( _e->uLongToBytes(&this->filesize_) );
+         BTG_RCHECK( _e->uLongToBytes(&filesize_) );
 
          //int, leeches;
-         BTG_RCHECK( _e->intToBytes(&this->leechers_) );
+         BTG_RCHECK( _e->intToBytes(&leechers_) );
 
          //int, seeders;
-         BTG_RCHECK( _e->intToBytes(&this->seeders_) );
+         BTG_RCHECK( _e->intToBytes(&seeders_) );
 
          //long, time left, days;
-         BTG_RCHECK( _e->intToBytes(&this->time_left_d_) );
+         BTG_RCHECK( _e->intToBytes(&time_left_d_) );
 
          //long, time left, hours;
-         BTG_RCHECK( _e->uLongToBytes(&this->time_left_h_) );
+         BTG_RCHECK( _e->uLongToBytes(&time_left_h_) );
 
          //int, time left, minutes;
-         BTG_RCHECK( _e->intToBytes(&this->time_left_m_) );
+         BTG_RCHECK( _e->intToBytes(&time_left_m_) );
 
          //int, time left, seconds;
-         BTG_RCHECK( _e->intToBytes(&this->time_left_s_) );
+         BTG_RCHECK( _e->intToBytes(&time_left_s_) );
 
          //tracker status;
          BTG_RCHECK( trackerStatus_.serialize(_e) );
 
          // unsigned long, counter, minutes;
-         BTG_RCHECK( _e->uLongToBytes(&this->activityCounter_) );
+         BTG_RCHECK( _e->uLongToBytes(&activityCounter_) );
 
-         BTG_RCHECK( _e->stringToBytes(&this->hash_) );
+         BTG_RCHECK( _e->stringToBytes(&hash_) );
          
-         BTG_RCHECK( _e->stringToBytes(&this->announceURL_) );
+         BTG_RCHECK( _e->stringToBytes(&announceURL_) );
 
          return true;
       }
@@ -240,10 +240,10 @@ namespace btg
          t_int temp_contextid  = 0;
          BTG_RCHECK( _e->bytesToInt(&temp_contextid) );
 
-         this->contextID_ = temp_contextid;
+         contextID_ = temp_contextid;
 
          // string, filename;
-         BTG_RCHECK( _e->bytesToString(&this->filename_) );
+         BTG_RCHECK( _e->bytesToString(&filename_) );
 
          // int, status;
          t_int temp_status  = 0;
@@ -265,55 +265,55 @@ namespace btg
                BTG_RCHECK(false);
             }
 
-         this->status_ = static_cast<torrent_status>(temp_status);
+         status_ = static_cast<torrent_status>(temp_status);
 
          //long, dn_total;
-         BTG_RCHECK( _e->bytesToULong(&this->downloadTotal_) );
+         BTG_RCHECK( _e->bytesToULong(&downloadTotal_) );
 
          //long, ul_total;
-         BTG_RCHECK( _e->bytesToULong(&this->uploadTotal_) );
+         BTG_RCHECK( _e->bytesToULong(&uploadTotal_) );
 
          //long, failed_bytes;
-         BTG_RCHECK( _e->bytesToULong(&this->failedBytes_) );
+         BTG_RCHECK( _e->bytesToULong(&failedBytes_) );
 
          //long, dn_rate;
-         BTG_RCHECK( _e->bytesToULong(&this->downloadRate_) );
+         BTG_RCHECK( _e->bytesToULong(&downloadRate_) );
 
          //long, ul_rate;
-         BTG_RCHECK( _e->bytesToULong(&this->uploadRate_) );
+         BTG_RCHECK( _e->bytesToULong(&uploadRate_) );
 
          //int, done;
-         BTG_RCHECK( _e->bytesToInt(&this->done_) );
+         BTG_RCHECK( _e->bytesToInt(&done_) );
 
          //long, filesize;
-         BTG_RCHECK( _e->bytesToULong(&this->filesize_) );
+         BTG_RCHECK( _e->bytesToULong(&filesize_) );
 
          //int, leeches;
-         BTG_RCHECK( _e->bytesToInt(&this->leechers_) );
+         BTG_RCHECK( _e->bytesToInt(&leechers_) );
 
          //int, seeders;
-         BTG_RCHECK( _e->bytesToInt(&this->seeders_) );
+         BTG_RCHECK( _e->bytesToInt(&seeders_) );
 
          //int, time left, days;
-         BTG_RCHECK( _e->bytesToInt(&this->time_left_d_) );
+         BTG_RCHECK( _e->bytesToInt(&time_left_d_) );
 
          //long, time left, hours;
-         BTG_RCHECK( _e->bytesToULong(&this->time_left_h_) );
+         BTG_RCHECK( _e->bytesToULong(&time_left_h_) );
 
          //int, time left, minutes;
-         BTG_RCHECK( _e->bytesToInt(&this->time_left_m_) );
+         BTG_RCHECK( _e->bytesToInt(&time_left_m_) );
 
          //int, time left, seconds;
-         BTG_RCHECK( _e->bytesToInt(&this->time_left_s_) );
+         BTG_RCHECK( _e->bytesToInt(&time_left_s_) );
 
          // Trackerstatus
          BTG_RCHECK( trackerStatus_.deserialize(_e));
 
          // unsigned long, counter, minutes;
-         BTG_RCHECK( _e->bytesToULong(&this->activityCounter_) );
+         BTG_RCHECK( _e->bytesToULong(&activityCounter_) );
 
-         BTG_RCHECK( _e->bytesToString(&this->hash_) );
-         BTG_RCHECK( _e->bytesToString(&this->announceURL_) );
+         BTG_RCHECK( _e->bytesToString(&hash_) );
+         BTG_RCHECK( _e->bytesToString(&announceURL_) );
 
          return true;
       }

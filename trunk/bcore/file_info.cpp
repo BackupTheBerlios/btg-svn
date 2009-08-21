@@ -122,32 +122,32 @@ namespace btg
 
       bool fileInformation::operator== (fileInformation const& _fileinfo) const
       {
-         if (this->filename != _fileinfo.filename)
+         if (filename != _fileinfo.filename)
             {
                return false;
             }
 
-         if (this->pieces_size != _fileinfo.pieces_size)
+         if (pieces_size != _fileinfo.pieces_size)
             {
                return false;
             }
 
-         if (this->status != _fileinfo.status)
+         if (status != _fileinfo.status)
             {
                return false;
             }
 
-         if (this->pieces != _fileinfo.pieces)
+         if (pieces != _fileinfo.pieces)
             {
                return false;
             }
 
-         if (this->bytesPerPiece != _fileinfo.bytesPerPiece)
+         if (bytesPerPiece != _fileinfo.bytesPerPiece)
             {
                return false;
             }
 
-         if (this->fileSize != _fileinfo.fileSize)
+         if (fileSize != _fileinfo.fileSize)
             {
                return false;
             }
@@ -158,21 +158,21 @@ namespace btg
       bool fileInformation::serialize(btg::core::externalization::Externalization* _e) const
       {
          // string, filename;
-         _e->stringToBytes(&this->filename);
+         _e->stringToBytes(&filename);
          BTG_RCHECK(_e->status());
 
-         t_int temp_status = this->status;
+         t_int temp_status = status;
          _e->intToBytes(&temp_status);
          BTG_RCHECK(_e->status());
 
-         _e->intToBytes(&this->bytesPerPiece);
+         _e->intToBytes(&bytesPerPiece);
          BTG_RCHECK(_e->status());
 
-         _e->uLongToBytes(&this->fileSize);
+         _e->uLongToBytes(&fileSize);
          BTG_RCHECK(_e->status());
 
          // Length, in bits.
-         _e->intToBytes(&this->pieces_size);
+         _e->intToBytes(&pieces_size);
          BTG_RCHECK(_e->status());
 
          if (status == fileInformation::DONE_UNDEF)
@@ -187,22 +187,22 @@ namespace btg
       bool fileInformation::deserialize(btg::core::externalization::Externalization* _e)
       {
          // string, filename;
-         _e->bytesToString(&this->filename);
+         _e->bytesToString(&filename);
          BTG_RCHECK(_e->status());
 
          t_int temp_status = 0;
          _e->bytesToInt(&temp_status);
          BTG_RCHECK(_e->status());
-         this->status = (bitsetModifier)temp_status;
+         status = (bitsetModifier)temp_status;
 
-         _e->bytesToInt(&this->bytesPerPiece);
+         _e->bytesToInt(&bytesPerPiece);
          BTG_RCHECK(_e->status());
 
-         _e->bytesToULong(&this->fileSize);
+         _e->bytesToULong(&fileSize);
          BTG_RCHECK(_e->status());
 
          // Length, in bits.
-         _e->bytesToInt(&this->pieces_size);
+         _e->bytesToInt(&pieces_size);
          BTG_RCHECK(_e->status());
 
          if (status == fileInformation::DONE_UNDEF)
@@ -226,24 +226,24 @@ namespace btg
 
       t_bitVector fileInformation::getBits() const
       {
-         if ((this->status != fileInformation::DONE_ALL) && 
-             (this->status != fileInformation::DONE_NONE))
+         if ((status != fileInformation::DONE_ALL) && 
+             (status != fileInformation::DONE_NONE))
             {
                return pieces;
             }
 
          t_bitVector list_to_return;
 
-         if (this->status == fileInformation::DONE_ALL)
+         if (status == fileInformation::DONE_ALL)
             {
-               for (t_int i=0; i<this->pieces_size; i++)
+               for (t_int i=0; i<pieces_size; i++)
                   {
                      list_to_return.push_back(1);
                   }
             }
-         else if (this->status == fileInformation::DONE_NONE)
+         else if (status == fileInformation::DONE_NONE)
             {
-               for (t_int i=0; i<this->pieces_size; i++)
+               for (t_int i=0; i<pieces_size; i++)
                   {
                      list_to_return.push_back(0);
                   }
@@ -259,19 +259,19 @@ namespace btg
          std::string output;
 
          output += "Filename: ";
-         output += this->filename;
+         output += filename;
          output += "\n";
 
          output += "Size: ";
-         output += convertToString<t_uint>(this->pieces_size);
+         output += convertToString<t_uint>(pieces_size);
          output += "\n";
 
          output += "Bytes per piece: ";
-         output += convertToString<t_uint>(this->bytesPerPiece);
+         output += convertToString<t_uint>(bytesPerPiece);
          output += "\n";
 
 
-         switch (this->status)
+         switch (status)
             {
             case fileInformation::DONE_ALL:
                {
@@ -287,7 +287,7 @@ namespace btg
                }
             case fileInformation::DONE_UNDEF:
                {
-                  if (this->pieces_size <= 0)
+                  if (pieces_size <= 0)
                      {
                         output += "Undefined.";
                         output += "\n";
@@ -328,7 +328,7 @@ namespace btg
       bool fileInformation::isFull() const
       {
          bool op_status = false;
-         if (this->status == fileInformation::DONE_ALL)
+         if (status == fileInformation::DONE_ALL)
             {
                op_status = true;
             }
@@ -338,7 +338,7 @@ namespace btg
       bool fileInformation::isEmpty() const
       {
          bool op_status = false;
-         if (this->status == fileInformation::DONE_NONE)
+         if (status == fileInformation::DONE_NONE)
             {
                op_status = true;
             }
@@ -381,15 +381,15 @@ namespace btg
 
       bool selectedFileEntry::serialize(btg::core::externalization::Externalization* _e) const
       {
-         BTG_RCHECK( _e->stringToBytes(&this->filename_) );
-         BTG_RCHECK( _e->boolToBytes(this->selected_) );
+         BTG_RCHECK( _e->stringToBytes(&filename_) );
+         BTG_RCHECK( _e->boolToBytes(selected_) );
          return true;
       }
 
       bool selectedFileEntry::deserialize(btg::core::externalization::Externalization* _e)
       {
-         BTG_RCHECK( _e->bytesToString(&this->filename_) );
-         BTG_RCHECK( _e->bytesToBool(this->selected_) );
+         BTG_RCHECK( _e->bytesToString(&filename_) );
+         BTG_RCHECK( _e->bytesToBool(selected_) );
 
          return true;
       }

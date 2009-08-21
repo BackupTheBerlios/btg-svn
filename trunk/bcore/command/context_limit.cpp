@@ -50,22 +50,22 @@ namespace btg
 
       t_int contextLimitCommand::getUploadLimit() const
       {
-         return this->limitUpld;
+         return limitUpld;
       }
 
       t_int contextLimitCommand::getDownloadLimit() const
       {
-         return this->limitDwnld;
+         return limitDwnld;
       }
 
       t_int contextLimitCommand::getSeedLimit() const
       {
-         return this->seedLimit;
+         return seedLimit;
       }
 
       t_long contextLimitCommand::getSeedTimeout() const
       {
-         return this->seedTimeout;
+         return seedTimeout;
       }
 
       bool contextLimitCommand::serialize(btg::core::externalization::Externalization* _e) const
@@ -73,16 +73,16 @@ namespace btg
          BTG_RCHECK( contextCommand::serialize(_e) );
 
          _e->setParamInfo("upload speed in bytes/sec", true);
-         BTG_RCHECK( _e->intToBytes(&this->limitUpld) );
+         BTG_RCHECK( _e->intToBytes(&limitUpld) );
 
          _e->setParamInfo("download speed in bytes/sec", true);
-         BTG_RCHECK( _e->intToBytes(&this->limitDwnld) );
+         BTG_RCHECK( _e->intToBytes(&limitDwnld) );
 
          _e->setParamInfo("percents to seed before torrent is stopped", true);
-         BTG_RCHECK( _e->intToBytes(&this->seedLimit) );
+         BTG_RCHECK( _e->intToBytes(&seedLimit) );
 
          _e->setParamInfo("seconds to seed before torrent is stopped", true);
-         BTG_RCHECK( _e->longToBytes(&this->seedTimeout) );
+         BTG_RCHECK( _e->longToBytes(&seedTimeout) );
 
          return true;
       }
@@ -92,36 +92,36 @@ namespace btg
          BTG_RCHECK( contextCommand::deserialize(_e) );
 
          _e->setParamInfo("upload speed in bytes/sec", true);
-         BTG_RCHECK( _e->bytesToInt(&this->limitUpld) );
+         BTG_RCHECK( _e->bytesToInt(&limitUpld) );
 
-         if(this->limitUpld < 0 && this->limitUpld != limitBase::LIMIT_DISABLED)
+         if(limitUpld < 0 && limitUpld != limitBase::LIMIT_DISABLED)
             {
                // BTG_NOTICE("Deserialize of contextLimitCommand failed, limitUpld is negative but not limitBase::LIMIT_DISABLED");
                return false;
             }
 
          _e->setParamInfo("download speed in bytes/sec", true);
-         BTG_RCHECK( _e->bytesToInt(&this->limitDwnld) );
+         BTG_RCHECK( _e->bytesToInt(&limitDwnld) );
 
-         if(this->limitDwnld < 0 && this->limitDwnld != limitBase::LIMIT_DISABLED)
+         if(limitDwnld < 0 && limitDwnld != limitBase::LIMIT_DISABLED)
             {
                // BTG_NOTICE("Deserialize of contextLimitCommand failed, limitUpld is negative but not limitBase::LIMIT_DISABLED");
                return false;
             }
 
          _e->setParamInfo("percents to seed before torrent is stopped", true);
-         BTG_RCHECK( _e->bytesToInt(&this->seedLimit) );
+         BTG_RCHECK( _e->bytesToInt(&seedLimit) );
 
-         if(this->seedLimit < 0 && this->seedLimit != limitBase::LIMIT_DISABLED)
+         if(seedLimit < 0 && seedLimit != limitBase::LIMIT_DISABLED)
             {
                // BTG_NOTICE("Deserialize of contextLimitCommand failed, seedLimit is negative but not limitBase::LIMIT_DISABLED");
                return false;
             }
 
          _e->setParamInfo("seconds to seed before torrent is stopped", true);
-         BTG_RCHECK( _e->bytesToLong(&this->seedTimeout) );
+         BTG_RCHECK( _e->bytesToLong(&seedTimeout) );
 
-         if(this->seedTimeout < 0 && this->seedTimeout != limitBase::LIMIT_DISABLED)
+         if(seedTimeout < 0 && seedTimeout != limitBase::LIMIT_DISABLED)
             {
                // BTG_NOTICE("Deserialize of contextLimitCommand failed, seedTimeout is negative but not limitBase::LIMIT_DISABLED");
                return false;

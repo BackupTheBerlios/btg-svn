@@ -87,7 +87,7 @@ namespace btg
 #if BTG_OPTION_EVENTCALLBACK
          // Call event callback.
          std::string filename;
-         this->getFilename(torrent_id, filename);
+         getFilename(torrent_id, filename);
 
          std::vector<std::string> cbm_arguments;
          cbm_arguments.push_back(filename);
@@ -243,7 +243,7 @@ namespace btg
          // The name to which the resume data is saved to.
          std::string filename;
          filename = tempDir_ + projectDefaults::sPATH_SEPARATOR() + ti->filename +
-            this->fastResumeFileNameEnd;
+            fastResumeFileNameEnd;
 
          // Output file.
          std::ofstream out;

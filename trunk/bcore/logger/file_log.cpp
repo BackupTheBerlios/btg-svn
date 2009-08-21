@@ -57,9 +57,9 @@ namespace btg
          bool fileLogger::open()
          {
 #if HAVE_IOS_BASE
-            file.open(this->filename.c_str(), std::ios_base::out);
+            file.open(filename.c_str(), std::ios_base::out);
 #else
-            file.open(this->filename.c_str(), std::ios::out);
+            file.open(filename.c_str(), std::ios::out);
 #endif
             return file.is_open();
          }

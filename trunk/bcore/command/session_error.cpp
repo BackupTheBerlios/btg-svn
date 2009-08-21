@@ -43,7 +43,7 @@ namespace btg
 
          bool command_present = true;
 
-         if (this->which_command == Command::CN_UNDEFINED)
+         if (which_command == Command::CN_UNDEFINED)
             {
                command_present = false;
             }
@@ -54,7 +54,7 @@ namespace btg
          if (command_present)
             {
                _e->setParamInfo("command ID", false);
-               BTG_RCHECK( _e->intToBytes(&this->which_command) );
+               BTG_RCHECK( _e->intToBytes(&which_command) );
             }
 
          return true;
@@ -65,7 +65,7 @@ namespace btg
       {
          BTG_RCHECK( Command::deserialize(_e) );
 
-         this->which_command = Command::CN_UNDEFINED;
+         which_command = Command::CN_UNDEFINED;
          bool command_present = true;
 
          _e->setParamInfo("flag: indicates that a command ID is present.", true);
@@ -74,7 +74,7 @@ namespace btg
          if (command_present)
             {
                _e->setParamInfo("command ID", false);
-               BTG_RCHECK( _e->bytesToInt(&this->which_command) );
+               BTG_RCHECK( _e->bytesToInt(&which_command) );
             }
 
          return true;

@@ -116,7 +116,7 @@ namespace btg
 #endif // BTG_TRANSPORT_DEBUG
 
                // Got a new client.
-               httpClient* hc   = new httpClient(logWrapper(), this->getGzipIf());
+               httpClient* hc   = new httpClient(logWrapper(), getGzipIf());
                hc->socket       = acceptsock;
                hc->connectionID = -1;
 

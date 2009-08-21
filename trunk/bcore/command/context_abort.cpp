@@ -47,7 +47,7 @@ namespace btg
          BTG_RCHECK( contextCommand::serialize(_e) );
 
          _e->setParamInfo("flag: erase data", true);
-         _e->boolToBytes(this->eraseData_);
+         _e->boolToBytes(eraseData_);
          BTG_RCHECK(_e->status());
 
          return true;
@@ -59,7 +59,7 @@ namespace btg
          BTG_RCHECK(_e->status());
 
          _e->setParamInfo("flag: erase data", true);
-         _e->bytesToBool(this->eraseData_);
+         _e->bytesToBool(eraseData_);
          BTG_RCHECK(_e->status());
 
          return true;

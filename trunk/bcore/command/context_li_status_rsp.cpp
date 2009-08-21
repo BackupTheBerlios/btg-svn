@@ -60,22 +60,22 @@ namespace btg
 
       t_int contextLimitStatusResponseCommand::getUploadLimit() const
       {
-         return this->limitUpld;
+         return limitUpld;
       }
 
       t_int contextLimitStatusResponseCommand::getDownloadLimit() const
       {
-         return this->limitDwnld;
+         return limitDwnld;
       }
 
       t_int contextLimitStatusResponseCommand::getSeedLimit() const
       {
-         return this->seedLimit;
+         return seedLimit;
       }
 
       t_long contextLimitStatusResponseCommand::getSeedTimeout() const
       {
-         return this->seedTimeout;
+         return seedTimeout;
       }
 
       bool contextLimitStatusResponseCommand::serialize(btg::core::externalization::Externalization* _e) const
@@ -83,16 +83,16 @@ namespace btg
          BTG_RCHECK( contextCommand::serialize(_e));
 
          _e->setParamInfo("upload speed in bytes/sec", true);
-         BTG_RCHECK( _e->intToBytes(&this->limitUpld) );
+         BTG_RCHECK( _e->intToBytes(&limitUpld) );
 
          _e->setParamInfo("download speed in bytes/sec", true);
-         BTG_RCHECK( _e->intToBytes(&this->limitDwnld) );
+         BTG_RCHECK( _e->intToBytes(&limitDwnld) );
 
          _e->setParamInfo("percents to seed before torrent is stopped", true);
-         BTG_RCHECK( _e->intToBytes(&this->seedLimit) );
+         BTG_RCHECK( _e->intToBytes(&seedLimit) );
 
          _e->setParamInfo("seconds to seed before torrent is stopped", true);
-         BTG_RCHECK( _e->longToBytes(&this->seedTimeout) );
+         BTG_RCHECK( _e->longToBytes(&seedTimeout) );
 
          return true;
       }
@@ -102,16 +102,16 @@ namespace btg
          BTG_RCHECK( contextCommand::deserialize(_e) );
 
          _e->setParamInfo("upload speed in bytes/sec", true);
-         BTG_RCHECK( _e->bytesToInt(&this->limitUpld) );
+         BTG_RCHECK( _e->bytesToInt(&limitUpld) );
 
          _e->setParamInfo("download speed in bytes/sec", true);
-         BTG_RCHECK( _e->bytesToInt(&this->limitDwnld) );
+         BTG_RCHECK( _e->bytesToInt(&limitDwnld) );
 
          _e->setParamInfo("percents to seed before torrent is stopped", true);
-         BTG_RCHECK( _e->bytesToInt(&this->seedLimit) );
+         BTG_RCHECK( _e->bytesToInt(&seedLimit) );
 
          _e->setParamInfo("seconds to seed before torrent is stopped", true);
-         BTG_RCHECK( _e->bytesToLong(&this->seedTimeout) );
+         BTG_RCHECK( _e->bytesToLong(&seedTimeout) );
 
          return true;
       }

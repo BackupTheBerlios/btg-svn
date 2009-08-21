@@ -60,12 +60,12 @@ namespace btg
 
       t_intList listCommandResponse::getIDs() const
       {
-         return this->context_ids;
+         return context_ids;
       }
 
       t_strList listCommandResponse::getFilanames() const
       {
-         return this->filenames;
+         return filenames;
       }
 
       bool listCommandResponse::serialize(btg::core::externalization::Externalization* _e) const
@@ -73,10 +73,10 @@ namespace btg
          BTG_RCHECK( Command::serialize(_e) );
 
          _e->setParamInfo("list of context ids", true);
-         BTG_RCHECK( _e->intListToBytes(&this->context_ids) );
+         BTG_RCHECK( _e->intListToBytes(&context_ids) );
 
          _e->setParamInfo("list of file names", true);
-         BTG_RCHECK( _e->stringListToBytes(&this->filenames) );
+         BTG_RCHECK( _e->stringListToBytes(&filenames) );
 
          return true;
       }
@@ -91,11 +91,11 @@ namespace btg
          _e->setParamInfo("list of context ids", true);
          BTG_RCHECK( _e->bytesToIntList(&intv) );
 
-         this->context_ids = intv;
+         context_ids = intv;
          _e->setParamInfo("list of file names", true);
          BTG_RCHECK( _e->bytesToStringList(&stringv) );
 
-         this->filenames = stringv;
+         filenames = stringv;
 
          return true;
       }

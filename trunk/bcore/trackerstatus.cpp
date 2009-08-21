@@ -151,7 +151,7 @@ namespace btg
       bool trackerStatus::serialize(btg::core::externalization::Externalization* _e) const
       {
          // int, status;
-         t_int temp_status  = this->status_;
+         t_int temp_status  = status_;
          BTG_RCHECK( _e->intToBytes(&temp_status) );
 
          // int, serial;
@@ -179,7 +179,7 @@ namespace btg
                BTG_RCHECK(false);
             }
 
-         this->status_ = static_cast<tracker_status>(temp_status);
+         status_ = static_cast<tracker_status>(temp_status);
 
          BTG_RCHECK( _e->bytesToInt(&serial_) );
 
@@ -372,10 +372,10 @@ namespace btg
       {
          bool op_status = true;
 
-         if ((this->status_ != _status.status_) || 
-             (this->serial_ != _status.serial_) || 
-             (this->message_set_ != _status.message_set_) || 
-             (this->message_ != _status.message_))
+         if ((status_ != _status.status_) || 
+             (serial_ != _status.serial_) || 
+             (message_set_ != _status.message_set_) || 
+             (message_ != _status.message_))
             {
                op_status = false;
             }

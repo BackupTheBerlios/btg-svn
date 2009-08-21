@@ -61,7 +61,7 @@ namespace btg
          BTG_RCHECK(Command::serialize(_e));
 
          _e->setParamInfo("ack command", true);
-         BTG_RCHECK(_e->intToBytes(&this->command_type));
+         BTG_RCHECK(_e->intToBytes(&command_type));
          
          return true;
       }
@@ -71,7 +71,7 @@ namespace btg
          BTG_RCHECK(Command::deserialize(_e));
 
          _e->setParamInfo("ack command", true);
-         BTG_RCHECK(_e->bytesToInt(&this->command_type));
+         BTG_RCHECK(_e->bytesToInt(&command_type));
 
          return true;
       }

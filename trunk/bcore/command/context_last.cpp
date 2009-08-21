@@ -68,7 +68,7 @@ namespace btg
       bool lastCIDResponseCommand::serialize(btg::core::externalization::Externalization* _e) const
       {
          BTG_RCHECK( Command::serialize(_e) );
-         BTG_RCHECK( _e->intToBytes(&this->context_id) );
+         BTG_RCHECK( _e->intToBytes(&context_id) );
 
          return true;
       }
@@ -76,14 +76,14 @@ namespace btg
       bool lastCIDResponseCommand::deserialize(btg::core::externalization::Externalization* _e)
       {
          BTG_RCHECK( Command::deserialize(_e) );
-         BTG_RCHECK( _e->bytesToInt(&this->context_id) );
+         BTG_RCHECK( _e->bytesToInt(&context_id) );
 
          return true;
       }
 
       t_int lastCIDResponseCommand::getContextId() const
       {
-         return this->context_id;
+         return context_id;
       }
 
       lastCIDResponseCommand::~lastCIDResponseCommand()

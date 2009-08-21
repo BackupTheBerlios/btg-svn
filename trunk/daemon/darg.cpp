@@ -123,7 +123,7 @@ namespace btg
 
          if (vm.count(nodetachLabelKey))
             {
-               this->doNotDetach_present = true;
+               doNotDetach_present = true;
             }
 
 #if BTG_OPTION_SAVESESSIONS
@@ -135,7 +135,7 @@ namespace btg
 
          if (vm.count(noreloadLabelKey))
             {
-               this->noReloadSessions_present_ = true;
+               noReloadSessions_present_ = true;
             }
 
 #endif // BTG_OPTION_SAVESESSIONS

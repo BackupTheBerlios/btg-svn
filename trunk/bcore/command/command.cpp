@@ -133,12 +133,12 @@ namespace btg
 
       t_int Command::getType() const
       {
-         return this->type;
+         return type;
       }
 
       std::string Command::getName() const
       {
-         return Command::getName(this->type);
+         return Command::getName(type);
       }
 
       std::string Command::getName(t_int const _type)
@@ -161,7 +161,7 @@ namespace btg
       {
          // Write the command id.
          _e->setParamInfo("command type", true);
-         BTG_RCHECK( _e->setCommand(this->type));
+         BTG_RCHECK( _e->setCommand(type));
 
          return true;
       }
@@ -171,14 +171,14 @@ namespace btg
          // Make sure that this is a valid command.
          // Read the command id.
          _e->setParamInfo("command type", true);
-         BTG_RCHECK( _e->getCommand(this->type) );
+         BTG_RCHECK( _e->getCommand(type) );
 
          return true;
       }
 
       bool Command::isInitialized() const
       {
-         if (this->type != CN_UNDEFINED)
+         if (type != CN_UNDEFINED)
             {
                return true;
             }
@@ -188,20 +188,20 @@ namespace btg
       std::string Command::toString() const
       {
          std::string output;
-         if (this->isInitialized())
+         if (isInitialized())
             {
-               output = this->getName() + ".";
+               output = getName() + ".";
             }
          else
             {
-               output = this->getName() + ", not initialized.";
+               output = getName() + ", not initialized.";
             }
          return output;
       }
 
       bool Command::operator== (const Command* _command)
       {
-         if ( (this->type == _command->getType()) )
+         if ( (type == _command->getType()) )
             {
                return true;
             }

@@ -254,7 +254,7 @@ namespace btg
                         }
                   }
 
-               this->setNormalHttpSettings();
+               setNormalHttpSettings();
 
 #if (BTG_LT_0_12 || BTG_LT_0_13)
                torrent_session->set_severity_level(libtorrent::alert::info);
@@ -670,7 +670,7 @@ namespace btg
          libtorrent::torrent_handle handle;
          try
             {
-               if (this->hasFastResumeData(_torrent_filename))
+               if (hasFastResumeData(_torrent_filename))
                   {
                      // Get fast resume data.
                      std::string fastResumeFileName = tempDir_ + projectDefaults::sPATH_SEPARATOR() + _torrent_filename + fastResumeFileNameEnd;
@@ -852,11 +852,11 @@ namespace btg
 
          // Remove fast resume data, if any (is serialized before
          // remove() if we're quiting and sessionsaving is in use)
-         this->removeFastResumeData(_torrent_id);
+         removeFastResumeData(_torrent_id);
 
          // Remove .torrent file (this is also serialized if
          // sessionsaving is in use)
-         this->removeTorrentFile(_torrent_id);
+         removeTorrentFile(_torrent_id);
 
          // Remove this id from progress tracking.
          progress_.remove(_torrent_id);
@@ -869,11 +869,11 @@ namespace btg
             {
                // The files which are to be erased can be either in
                // the work dir or in the seed dir.
-               foundEntities = this->getListOfEntities(_torrent_id, workDir_, entitiesToErase);
+               foundEntities = getListOfEntities(_torrent_id, workDir_, entitiesToErase);
 
                if (!foundEntities)
                   {
-                     foundEntities = this->getListOfEntities(_torrent_id, seedDir_, entitiesToErase);
+                     foundEntities = getListOfEntities(_torrent_id, seedDir_, entitiesToErase);
                   }
 
                BTG_MNOTICE(logWrapper(), "remove, foundEntities = " << foundEntities);
@@ -951,7 +951,7 @@ namespace btg
          BTG_MENTER(logWrapper(), "removeAll", "");
 
          bool result = true;
-         t_intList contexts = this->getContexts();
+         t_intList contexts = getContexts();
          if (contexts.size() == 0)
             {
                result = false;
@@ -959,7 +959,7 @@ namespace btg
 
          for (t_intListI i=contexts.begin(); i!= contexts.end(); i++)
             {
-               if (!this->remove(*i, _eraseData))
+               if (!remove(*i, _eraseData))
                   {
                      result = false;
                   }
@@ -998,7 +998,7 @@ namespace btg
          BTG_MENTER(logWrapper(), "startAll", "");
 
          bool result = true;
-         t_intList contexts = this->getContexts();
+         t_intList contexts = getContexts();
          if (contexts.size() == 0)
             {
                result = false;
@@ -1006,7 +1006,7 @@ namespace btg
 
          for (t_intListI i=contexts.begin(); i!= contexts.end(); i++)
             {
-               if (!this->start(*i))
+               if (!start(*i))
                   {
                      result = false;
                   }
@@ -1046,7 +1046,7 @@ namespace btg
          BTG_MENTER(logWrapper(), "stopAll", "");
 
          bool result          = true;
-         t_intList contexts = this->getContexts();
+         t_intList contexts = getContexts();
          if (contexts.size() == 0)
             {
                result = false;
@@ -1054,7 +1054,7 @@ namespace btg
 
          for (t_intListI i=contexts.begin(); i!= contexts.end(); i++)
             {
-               if (!this->stop(*i))
+               if (!stop(*i))
                   {
                      result = false;
                   }
@@ -1102,7 +1102,7 @@ namespace btg
          BTG_MENTER(logWrapper(), "limitAll", "");
 
          bool result          = true;
-         t_intList contexts   = this->getContexts();
+         t_intList contexts   = getContexts();
          if (contexts.size() == 0)
             {
                result = false;
@@ -1110,7 +1110,7 @@ namespace btg
 
          for (t_intListI i=contexts.begin(); i!= contexts.end(); i++)
             {
-               if (!this->limit(*i, _limitUpld, _limitDwnld, _seedLimit, _seedTimeout))
+               if (!limit(*i, _limitUpld, _limitDwnld, _seedLimit, _seedTimeout))
                   {
                      result = false;
                   }
@@ -1170,7 +1170,7 @@ namespace btg
          BTG_MENTER(logWrapper(), "removeLimitAll", "");
 
          bool result          = true;
-         t_intList contexts   = this->getContexts();
+         t_intList contexts   = getContexts();
 
          if (contexts.size() == 0)
             {
@@ -1179,7 +1179,7 @@ namespace btg
 
          for (t_intListI i=contexts.begin(); i!= contexts.end(); i++)
             {
-               if (!this->removeLimit(*i, _upld, _dwnld, _seedLimit, _seedTimeout))
+               if (!removeLimit(*i, _upld, _dwnld, _seedLimit, _seedTimeout))
                   {
                      result = false;
                   }
@@ -1446,7 +1446,7 @@ namespace btg
               i!= _contexts.end();
               i++)
             {
-               if (this->getStatus(*i, status))
+               if (getStatus(*i, status))
                   {
                      _status.push_back(status);
                   }
@@ -1465,7 +1465,7 @@ namespace btg
          BTG_MENTER(logWrapper(), "getStatusAll", "");
 
          bool           result   = true;
-         t_intList      contexts = this->getContexts();
+         t_intList      contexts = getContexts();
          Status         status;
 
          if (contexts.size() == 0)
@@ -1475,7 +1475,7 @@ namespace btg
 
          for (t_intListI i=contexts.begin(); i!= contexts.end(); i++)
             {
-               if (this->getStatus(*i, status))
+               if (getStatus(*i, status))
                   {
                      _vstatus.push_back(status);
                   }
@@ -2191,7 +2191,7 @@ namespace btg
                   {
                      // Call event callback.
                      std::string filename;
-                     this->getFilename(tii->first, filename);
+                     getFilename(tii->first, filename);
 
                      std::vector<std::string> cbm_arguments;
                      cbm_arguments.push_back(filename);
@@ -2259,10 +2259,10 @@ namespace btg
                BTG_MNOTICE(logWrapper(), 
                            "moving ID " << _contextID << " from '" <<
                            workDir_ << "' to '" << outputDir_ << "'");
-               this->moveToDestinationDir(_contextID);
+               moveToDestinationDir(_contextID);
 
                BTG_MNOTICE(logWrapper(), "removing torrent with ID = " << _contextID);
-               this->remove(_contextID, false
+               remove(_contextID, false
 #if BTG_OPTION_EVENTCALLBACK
                             , false
 #endif // BTG_OPTION_EVENTCALLBACK
@@ -2320,10 +2320,10 @@ namespace btg
                      BTG_MNOTICE(logWrapper(), 
                                  "moving '" << *iter << "' from '" <<
                                  workDir_ << "' to '" << outputDir_ << "'");
-                     this->moveToDestinationDir(*iter);
+                     moveToDestinationDir(*iter);
 
                      BTG_MNOTICE(logWrapper(), "removing torrent with ID " << *iter);
-                     this->remove(*iter, false
+                     remove(*iter, false
 #if BTG_OPTION_EVENTCALLBACK
                                   , false
 #endif // BTG_OPTION_EVENTCALLBACK
@@ -2456,19 +2456,19 @@ namespace btg
       void Context::shutdown()
       {
          BTG_MENTER(logWrapper(), "shutdown", "");
-         this->setDestructionlHttpSettings();
+         setDestructionlHttpSettings();
 
-         this->stopAll();
+         stopAll();
 
-         this->writeResumeData();
+         writeResumeData();
 
-         this->removeAll(false /* Do not remove data. */);
+         removeAll(false /* Do not remove data. */);
 
          disableDHT();
 
          limitMgr_->remove(torrent_session);
 
-         this->torrent_session_proxy = torrent_session->abort();
+         torrent_session_proxy = torrent_session->abort();
 
          delete torrent_session;
          torrent_session = 0;
