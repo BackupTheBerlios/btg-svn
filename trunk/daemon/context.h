@@ -752,6 +752,7 @@ namespace btg
                /// of this class from the outside.
                boost::mutex interfaceMutex_;
 
+               /// List of saved alerts, to be handled later.
                std::vector<libtorrent::torrent_alert*> saved_alerts_;
 #endif
             private:

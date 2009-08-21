@@ -83,7 +83,9 @@ namespace btg
          result = moveToDirectory(_torrent_id, workDir_);
 
          if (result)
-            torrent_storage[_torrent_id] = tsWork;
+            {
+               torrent_storage[_torrent_id] = tsWork;
+            }
 
          BTG_MEXIT(logWrapper(), "moveToWorkingDir", result);
          return result;
@@ -107,7 +109,9 @@ namespace btg
          result = moveToDirectory(_torrent_id, seedDir_);
 
          if (result)
-            torrent_storage[_torrent_id] = tsSeed;
+            {
+               torrent_storage[_torrent_id] = tsSeed;
+            }
 
          BTG_MEXIT(logWrapper(), "moveToSeedingDir", result);
          return result;

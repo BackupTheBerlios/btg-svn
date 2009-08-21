@@ -2,6 +2,7 @@ BTG version 2.0.0
 -----------------
 The following bugs were fixed:
 
+016157 Fast resume data writting does not work.
 016081 Two bugs in the www UI language files.
 015985 Merge patches from volkmar.
 016008 Torrents are completely re-checked after restart.

@@ -412,6 +412,7 @@ namespace btg
 
       void eventHandler::handleAlerts()
       {
+         daemoncontext->handleSavedAlerts();
          daemoncontext->handleAlerts();
       }
 

@@ -302,12 +302,28 @@ namespace btg
          switch (_alert->state)
          {
          case libtorrent::torrent_status::downloading:
-         case libtorrent::torrent_status::finished:
-         case libtorrent::torrent_status::seeding:
+         {
             writeResumeData(tid);
             break;
+         }
+         case libtorrent::torrent_status::finished:
+         case libtorrent::torrent_status::seeding:
+            {
+               if (moveToSeedingDir(tid))
+                  {
+                     VERBOSE_LOG(logWrapper(), verboseFlag_, "Moved files belonging to context " << tid << " to seed dir.");
+                  }
+               else
+                  {
+                     VERBOSE_LOG(logWrapper(), verboseFlag_, "Unable to move files belonging to context " << tid << " to seed dir.");
+                  }
+               writeResumeData(tid);
+               break;
+            }
          default:
-            break;
+            {
+               break;
+            }
          }
       }
 #endif
@@ -391,8 +407,8 @@ namespace btg
               iter++)
             {
                libtorrent::alert* a = *iter;
-               handleAlert(a);
-               delete a;
+               handleAlert(a); 
+              delete a;
             }
 
          saved_alerts_.clear();
@@ -402,18 +418,34 @@ namespace btg
       {
          boost::mutex::scoped_lock interface_lock(interfaceMutex_);
 
-         libtorrent::time_duration td = libtorrent::milliseconds(100);
-         if (torrent_session->wait_for_alert(td) == 0)
-            {
-               // No alerts to pop.
-               return;
-            }
+         // Handle this amount of alerts at one time.
+         t_uint alertCounterMax = 255;
+         t_uint alertCounter    = 0;
 
-         // Handle a single alert.
-         std::auto_ptr<libtorrent::alert> sp_alert = torrent_session->pop_alert();
-         libtorrent::alert* raw_alert = sp_alert.get();
+         // Handle all available alerts.
+         for(;;)
+         {
+            libtorrent::time_duration td = libtorrent::milliseconds(100);
+            if (torrent_session->wait_for_alert(td) == 0)
+               {
+                  // No alerts to pop.
+                  break;
+               }
             
-         handleAlert(raw_alert);
+            // Handle a single alert.
+            std::auto_ptr<libtorrent::alert> sp_alert = torrent_session->pop_alert();
+            libtorrent::alert* raw_alert = sp_alert.get();
+            
+            handleAlert(raw_alert);
+
+            alertCounter++;
+
+            if (alertCounter > alertCounterMax)
+            {
+               VERBOSE_LOG(logWrapper(), verboseFlag_, "Stopped handling alerts, max (" << alertCounterMax << ") reached.");
+               break;
+            }
+         }
       }
 
    } // namespace daemon

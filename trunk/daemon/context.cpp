@@ -2662,7 +2662,7 @@ namespace btg
 
       Context::~Context()
       {
-         // Delete any saved alerts back.
+         // Delete any saved alerts.
          std::vector<libtorrent::torrent_alert*>::iterator iter;
          for (iter = saved_alerts_.begin();
               iter != saved_alerts_.end();
@@ -2670,6 +2670,7 @@ namespace btg
             {
                libtorrent::alert* a = *iter;
                delete a;
+               a = 0;
             }
          saved_alerts_.clear();
 
