@@ -25,7 +25,14 @@
 extern "C"
 {
 #include <unistd.h>
+#include <termios.h>
+#include <stdio.h>
 }
+
+ssize_t getpass_replacement(char **lineptr, 
+                            size_t *n, 
+                            FILE *stream);
+
 namespace btg
 {
    namespace core
@@ -35,7 +42,7 @@ namespace btg
          bool stdIn::getPassword(std::string & _password)
          {
             bool status = false;
-            
+#if 0
             char *buffer = getpass("");
 
             if (buffer != NULL)
@@ -47,6 +54,20 @@ namespace btg
                         status    = true;
                      }
                }
+#endif
+            char* line = NULL;
+            FILE* fp = stdin;
+            size_t s = -1;
+            ssize_t size = getpass_replacement(&line, 
+                                               &s /*ignored */,
+                                               fp);
+
+            if ((size > 0) && (line != NULL))
+               {
+                  std::string s(line);
+                  _password = s;
+                  status    = true;
+               }
 
             return status;
          }
@@ -55,3 +76,34 @@ namespace btg
    } // namespace core
 } // namespace btg
 
+// getpass replacement, taken from glibc documentation.
+// 
+// http://www.gnu.org/software/libc/manual/html_node/getpass.html
+// 
+ssize_t getpass_replacement(char **lineptr, 
+                            size_t *n, 
+                            FILE *stream)
+{
+   struct termios old, tnew;
+   int nread;
+   
+   /* Turn echoing off and fail if we can't. */
+   if (tcgetattr (fileno (stream), &old) != 0)
+      {
+         return -1;
+      }
+   tnew = old;
+   tnew.c_lflag &= ~ECHO;
+   if (tcsetattr (fileno (stream), TCSAFLUSH, &tnew) != 0)
+      {
+         return -1;
+      }
+
+   /* Read the password. */
+   nread = getline (lineptr, n, stream);
+     
+   /* Restore terminal. */
+   (void) tcsetattr (fileno (stream), TCSAFLUSH, &old);
+     
+   return nread;
+}
