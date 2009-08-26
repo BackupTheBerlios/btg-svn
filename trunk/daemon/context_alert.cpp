@@ -401,17 +401,19 @@ namespace btg
          boost::mutex::scoped_lock interface_lock(interfaceMutex_);
 
          // Handle all stored alerts.
+         std::vector<libtorrent::torrent_alert*> saved_alerts = saved_alerts_;
+         saved_alerts_.clear();
+
          std::vector<libtorrent::torrent_alert*>::iterator iter;
-         for (iter = saved_alerts_.begin();
-              iter != saved_alerts_.end();
+         for (iter = saved_alerts.begin();
+              iter != saved_alerts.end();
               iter++)
             {
                libtorrent::alert* a = *iter;
                handleAlert(a); 
-              delete a;
+               delete a;
             }
-
-         saved_alerts_.clear();
+         saved_alerts.clear();
       }
 
       void Context::handleAlerts()

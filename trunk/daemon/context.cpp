@@ -1035,8 +1035,6 @@ namespace btg
          // Not allready paused, so pause it.
          ti->handle.pause();
 
-         writeResumeData(_torrent_id);
-
          BTG_MEXIT(logWrapper(), "stop", true);
          return true;
       }
@@ -2456,6 +2454,10 @@ namespace btg
       void Context::shutdown()
       {
          BTG_MENTER(logWrapper(), "shutdown", "");
+
+         // Calls writeResumeData, which needs locking.
+         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
          setDestructionlHttpSettings();
 
          stopAll();
