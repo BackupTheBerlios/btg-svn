@@ -273,6 +273,11 @@ namespace btg
                }
 #endif
                setPeerIdFromConfig();
+               btg::core::addressPort proxy = config_->getProxy();
+               if (proxy.getPort() != 0)
+                  {
+                     setProxyHttpSettings(proxy);
+                  } 
             }
       }
 
@@ -2402,7 +2407,7 @@ namespace btg
          libtorrent::proxy_settings ps;
          ps.hostname = _proxy.getIp();
          ps.port     = _proxy.getPort();
-         torrent_session->set_peer_proxy(ps);
+         //torrent_session->set_peer_proxy(ps);
          torrent_session->set_web_seed_proxy(ps);
          torrent_session->set_tracker_proxy(ps);
 #elif (BTG_LT_0_12)

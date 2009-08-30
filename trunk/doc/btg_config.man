@@ -74,7 +74,7 @@ prefer-rc4     \- indicates if using rc4 is prefered. Choice between: true|false
 .SS
 Section "misc"
 .TP
-proxy            \- IPv4:port. If you want to use a proxy for track communication, place it here.
+proxy            \- IPv4:port. If you want to use a proxy for tracker communication, place it here.
 .TP
 filter           \- Filename from wich IPv4 addresses are read from. See "filter_type".
 .TP

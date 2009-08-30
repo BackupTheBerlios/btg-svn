@@ -2,7 +2,8 @@ BTG version 2.0.0 (Papa Legba)
 ------------------------------
 The following bugs were fixed:
 
-000000 getpass() replacement.
+016196 getpass() replacement.
+016168 Proxy setting not working.
 016157 Fast resume data writting does not work.
 016081 Two bugs in the www UI language files.
 015985 Merge patches from volkmar.
