@@ -32,8 +32,6 @@
 
 #if BTG_LT_0_14
 #  include <boost/asio/ip/address_v4.hpp>
-#else
-#  include <asio/ip/address_v4.hpp>
 #endif
 
 #include <bcore/verbose.h>
@@ -149,9 +147,6 @@ namespace btg
 #if BTG_LT_0_14
                                                          boost::asio::ip::address_v4 address1(ip1);
                                                          boost::asio::ip::address_v4 address2(ip2);
-#else
-                                                         asio::ip::address_v4 address1(ip1);
-                                                         asio::ip::address_v4 address2(ip2);
 #endif
                                                          filter_.add_rule(address1,
                                                                           address2,

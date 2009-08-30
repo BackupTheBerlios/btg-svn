@@ -276,36 +276,6 @@ namespace btg
          return status;
       }
 
-#if (BTG_LT_0_12 || BTG_LT_0_13)
-      bool Context::entryToInfo(libtorrent::entry const& _input,
-                                libtorrent::torrent_info & _output) const
-      {
-         BTG_MENTER(logWrapper(), "entryToInfo", "");
-
-         bool status = false;
-
-         try
-            {
-               _output = libtorrent::torrent_info(_input);
-               status  = true;
-            }
-         catch (std::exception& e)
-            {
-               BTG_ERROR_LOG(logWrapper(), "libtorrent exception: " << e.what() );
-            }
-
-         if (!status)
-            {
-               // The input is incorrect.
-               BTG_MEXIT(logWrapper(), "entryToInfo", status);
-               return status;
-            }
-
-         BTG_MEXIT(logWrapper(), "entryToInfo", status);
-         return status;
-      }
-#endif
-
       bool Context::getListOfEntities(t_int const _torrent_id,
                                       std::string const& _directory,
                                       std::vector<std::string> & _entities)

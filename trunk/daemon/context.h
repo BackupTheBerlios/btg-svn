@@ -461,9 +461,6 @@ namespace btg
                void handlePeerError(libtorrent::peer_error_alert* _alert);
 #if BTG_LT_0_14
                void handleTrackerAlert(libtorrent::tracker_error_alert* _alert);
-#else
-               /// Handle libtorrent alert.
-               void handleTrackerAlert(libtorrent::tracker_alert* _alert);
 #endif
                /// Handle libtorrent alert.
                void handleTrackerReplyAlert(libtorrent::tracker_reply_alert* _alert);
@@ -684,18 +681,6 @@ namespace btg
                                           t_strList & _destination);
 #endif // BTG_OPTION_EVENTCALLBACK
 
-               /// Convert an entry into a torrent info.
-               /// @return True - converted. False - conversion failed.
-#if (BTG_LT_0_12 || BTG_LT_0_13)
-               bool entryToInfo(libtorrent::entry const& _input,
-                                libtorrent::torrent_info & _output) const;
-
-               /// Convert an entry to a list of contained files.
-               /// @return True - converted. False - conversion failed.
-               bool entryToFiles(libtorrent::entry const& _input,
-                                 std::vector<std::string> & _output) const;
-#endif
-
 #if BTG_LT_0_14
                bool torrentInfoToFiles(libtorrent::torrent_info const& _tinfo,
                                        std::vector<std::string> & _output) const;
@@ -740,7 +725,7 @@ namespace btg
                /// Convert an enum to a string, for debugging.
                std::string toString(addResult const _addresult) const;
 
-#if (BTG_LT_0_14)
+#if BTG_LT_0_14
                /// Convert a libtorrent bitfield into a vector of bits.
                /// 
                /// Libtorrent 0.14 changed the way a torrent's pieces

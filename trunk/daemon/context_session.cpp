@@ -128,9 +128,7 @@ namespace btg
 
                // Peer ID.
                libtorrent::peer_id pid;
-#if BTG_LT_0_12
-               pid = 0;
-#elif (BTG_LT_0_13 || BTG_LT_0_14)
+#if BTG_LT_0_14
                pid = torrent_session->id();
 #endif
                std::string peerid = btg::core::convertToString<libtorrent::peer_id>(pid);
@@ -313,10 +311,8 @@ namespace btg
 							if (_version >= 0x89)
 							{
                         bool asfr = applySelectedFiles(ti,aSelectedFileEntryList);
-#if (BTG_LT_0_13 || BTG_LT_0_14)
+#if BTG_LT_0_14
 								BTG_CDC(!asfr, "call applySelectedFiles");
-#elif BTG_LT_0_12
-                        // Selecting files is not supported by 0.12.x, so ignore this.
 #endif
 							}
 
