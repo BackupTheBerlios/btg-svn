@@ -437,7 +437,7 @@ class XMLRPC_Client
 	private $fp = null;
 	private $rxbuff = "";
 
-	function XMLRPC_Client($server, $path = false, $port = 80, $timeout=20)
+	function XMLRPC_Client($server, $use_gzip, $path = false, $port = 80, $timeout=20)
 	{
 		if(!$path)
 		{
@@ -463,7 +463,7 @@ class XMLRPC_Client
 
 		$this->timeout = $timeout;
 
-		if (($btg_config_use_gzip) && 
+		if (($use_gzip) && 
 		   (function_exists('gzuncompress') && function_exists('gzcompress')))
 		{
 			$this->gzip_available = true;

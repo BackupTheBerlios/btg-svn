@@ -1,4 +1,4 @@
-<? //magyar
+<?php //magyar
    //btg.php //log fordítás nélkül
 $lang['php_die']="Sajnálom, btg-www -nek php5-re van szüksége.";
 $lang['need_xml']="Sajnálom, btg-www-nek szüksége van xml-rpc támogatásra.";

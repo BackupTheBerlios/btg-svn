@@ -66,12 +66,12 @@ class BTG
 	/// Autostart downloads
 	private $autostart = true;
 
-	public function __construct($url="http://127.0.0.1:16000/", $buildID, $autostart)
+	public function __construct($url="http://127.0.0.1:16000/", $buildID, $autostart, $use_gzip)
 	{
 		// Open syslog.
 		openlog("BTG_wwwui", LOG_ODELAY, LOG_LOCAL0);
 
-		$this->xmlrpc = new XMLRPC_Client($url);
+		$this->xmlrpc = new XMLRPC_Client($url, $use_gzip);
 		$this->xmlrpc->enableGZIP(true);
 
 		$this->buildID = $buildID;
@@ -1327,7 +1327,7 @@ try
 {
 	require_once("config.php");
 	require_once("version.php");
-	$btg = new BTG($btg_config_url, BTG_BUILD, $btg_config_autostart);
+	$btg = new BTG($btg_config_url, BTG_BUILD, $btg_config_autostart, $btg_config_use_gzip);
 
 	if(isset($btg_ca_cert) && isset($btg_client_cert))
 		$btg->setSSLparams($btg_ca_cert, $btg_client_cert);

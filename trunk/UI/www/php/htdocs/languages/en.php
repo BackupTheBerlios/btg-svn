@@ -1,4 +1,4 @@
-<? //english
+<?php //english
    //btg.php //without log translation 
 $lang['php_die']="Sorry, btg-www requires at least PHP 5";
 $lang['need_xml']="Sorry, btg-www requires XML support in your PHP installation.";
