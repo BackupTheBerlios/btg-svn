@@ -75,34 +75,34 @@ for(var i=0;i<t.length;i++) {
 		<form action="upload.php" target="upload_iframe" method="post" enctype="multipart/form-data" onSubmit="return uploadCheck();">
 		<input type="hidden" name="MAX_FILE_SIZE" value="1000000" />
 		<input class="btn" type="file" id="upload_input" name="torrent_file"/>
-		<input id="upload_button" type="submit" value="<?php=$lang['upload']?>"/>
+		<input id="upload_button" type="submit" value="<?php echo $lang['upload']?>"/>
 		</form>
 		<div id="loadurl">
 			<input class="textinput" type="text" id="loadurl_input"/>
-			<input id="loadurl_button" type="button" value="<?php=$lang['load_url']?>" onClick="loadUrl()"/>
+			<input id="loadurl_button" type="button" value="<?php echo $lang['load_url']?>" onClick="loadUrl()"/>
 		</div>
 		<div id="loadurl_status" onClick="resetUrl()">
 		</div>
 	</div>
 
-	<input id="logout_button" class="control_buttons" type="button" onClick="deauth();" value="<?php=$lang['logout']?>"/>
-	<input id="detach_button" class="control_buttons" type="button" onClick="sessionDetach();" value="<?php=$lang['detach']?>"/>
-	<input id="quit_button" class="control_buttons" type="button" onClick="sessionQuit();" value="<?php=$lang['quit']?>"/>
-	<input id="collapse_button" class="control_buttons" type="button" onClick="hideAllContextDetails();" value="<?php=$lang['hide']?>"/>
-	<input id="cleanall_button" class="control_buttons" type="button" onClick="cleanAllContexts();" value="<?php=$lang['clean']?>"/>
-	<input id="glimit_button" class="control_buttons" type="button" onClick="showGlobalLimits();" value="<?php=$lang['global_limit']?>"/>
-	<input id="sesname_button" class="control_buttons" type="button" onClick="showSessionName();" value="<?php=$lang['session_name']?>"/>
+	<input id="logout_button" class="control_buttons" type="button" onClick="deauth();" value="<?php echo $lang['logout']?>"/>
+	<input id="detach_button" class="control_buttons" type="button" onClick="sessionDetach();" value="<?php echo $lang['detach']?>"/>
+	<input id="quit_button" class="control_buttons" type="button" onClick="sessionQuit();" value="<?php echo $lang['quit']?>"/>
+	<input id="collapse_button" class="control_buttons" type="button" onClick="hideAllContextDetails();" value="<?php echo $lang['hide']?>"/>
+	<input id="cleanall_button" class="control_buttons" type="button" onClick="cleanAllContexts();" value="<?php echo $lang['clean']?>"/>
+	<input id="glimit_button" class="control_buttons" type="button" onClick="showGlobalLimits();" value="<?php echo $lang['global_limit']?>"/>
+	<input id="sesname_button" class="control_buttons" type="button" onClick="showSessionName();" value="<?php echo $lang['session_name']?>"/>
 	<div id="layer_fatal">
-	<?php=$lang['fatal_error']?>
+	<?php echo $lang['fatal_error']?>
 	</div>
 
 	<div id="layer_auth">
-		<h2><?php=$lang['welcome']?></h2>
-		<p><?php=$lang['login_details']?></p>
+		<h2><?php echo $lang['welcome']?></h2>
+		<p><?php echo $lang['login_details']?></p>
 		<form action="" name="frm_auth">
 		<input type="text" id="username" name="username" style="width:100px"/>
 		<input type="password" id="password" name="password" style="width:100px"/>
-		<input type="submit" id="login_button" onClick="auth(); return false;" value="<?php=$lang['login']?>"/>
+		<input type="submit" id="login_button" onClick="auth(); return false;" value="<?php echo $lang['login']?>"/>
 		</form><br/>
 <?php
 echo $lang['language']."<br/><br/>";
@@ -119,22 +119,22 @@ echo "<img style='cursor: pointer;' title='".$lang_name[0]."' rel='".$lang_name[
 	</div>
 
 	<div id="layer_sessions">
-		<h2><?php=$lang['welcome']?></h2>
-		<h3><?php=$lang['session_attach']?></h3>
-		<p><?php=$lang['session_attach2']?></p>
+		<h2><?php echo $lang['welcome']?></h2>
+		<h3><?php echo $lang['session_attach']?></h3>
+		<p><?php echo $lang['session_attach2']?></p>
 		<form action="" name="frm_sessionlist">
 		<select id="sessionlist" name="sessionlist" style="width:100px"></select>
-		<input type="submit" id="attach_button" onClick="sessionAttach(); return false;" value="<?php=$lang['attach']?>"/>
+		<input type="submit" id="attach_button" onClick="sessionAttach(); return false;" value="<?php echo $lang['attach']?>"/>
 		</form>
 
-		<h3><?php=$lang['setup_session']?></h3>
-		<p><?php=$lang['setup_session2']?></p>
+		<h3><?php echo $lang['setup_session']?></h3>
+		<p><?php echo $lang['setup_session2']?></p>
 		<form action="" name="frm_sessionsetup">
-		<?php=$lang['encryption']?> <input type="checkbox" id="session_enc" name="session_enc" value="1"/>, 
-		<?php=$lang['dht']?> <input type="checkbox" id="session_dht" name="session_dht" value="1"/>, 
-		<?php=$lang['seed_limit']?> <input type="text" id="seedLimit" name="seedLimit" value="" style="width:30px;"/>%,
-		<?php=$lang['seed_timeout']?> <input type="text" id="seedTimeout" name="seedTimeout" value="" style="width:40px;"/> perc
-		<input type="submit" id="setup_button" onClick="sessionSetup(); return false;" value="<?php=$lang['setup']?>"/>
+		<?php echo $lang['encryption']?> <input type="checkbox" id="session_enc" name="session_enc" value="1"/>, 
+		<?php echo $lang['dht']?> <input type="checkbox" id="session_dht" name="session_dht" value="1"/>, 
+		<?php echo $lang['seed_limit']?> <input type="text" id="seedLimit" name="seedLimit" value="" style="width:30px;"/>%,
+		<?php echo $lang['seed_timeout']?> <input type="text" id="seedTimeout" name="seedTimeout" value="" style="width:40px;"/> perc
+		<input type="submit" id="setup_button" onClick="sessionSetup(); return false;" value="<?php echo $lang['setup']?>"/>
 		</form>
 	</div>
 	
@@ -143,31 +143,31 @@ echo "<img style='cursor: pointer;' title='".$lang_name[0]."' rel='".$lang_name[
 		<table id="glimit_table" cellspacing=0>
 
 		<tr>
-			<th class="column_glimit"><?php=$lang['limit_name']?></th>
-			<th class="column_glimit"><?php=$lang['limit_value']?></th>
+			<th class="column_glimit"><?php echo $lang['limit_name']?></th>
+			<th class="column_glimit"><?php echo $lang['limit_value']?></th>
 		</tr>
 
 		<tr>
-			<td><?php=$lang['upload']?></td>
+			<td><?php echo $lang['upload']?></td>
 			<td><input type="text" id="gupload" name="gupload" value="0" style="width:30px;"/> KiB/sec</td>
 		</tr>
 		<tr>
-			<td><?php=$lang['download']?></td>
+			<td><?php echo $lang['download']?></td>
 			<td><input type="text" id="gdownload" name="gdownload" value="0" style="width:40px;"/> KiB/sec</td>
 		</tr>
 		<tr>
-			<td><?php=$lang['max_uploads']?></td>
-			<td><input type="text" id="gmaxuploads" name="gmaxuploads" value="0" style="width:40px;"/><?php=$lang['uploads']?></td>
+			<td><?php echo $lang['max_uploads']?></td>
+			<td><input type="text" id="gmaxuploads" name="gmaxuploads" value="0" style="width:40px;"/><?php echo $lang['uploads']?></td>
 		</tr>
 
 		<tr>
-			<td><?php=$lang['max_connections']?></td>
-			<td><input type="text" id="gmaxconn" name="gmaxconn" value="0" style="width:30px;"/><?php=$lang['connections']?></td>
+			<td><?php echo $lang['max_connections']?></td>
+			<td><input type="text" id="gmaxconn" name="gmaxconn" value="0" style="width:30px;"/><?php echo $lang['connections']?></td>
 		</tr>
 
 		<tr>
-			<td><input type="submit" id="glimit_cancel_button" onClick="cancelGlobalLimits(); return false;" value="<?php=$lang['cancel']?>"/></td>
-			<td><input type="submit" id="glimit_set_button" onClick="setGlobalLimits(); return false;" value="<?php=$lang['set']?>"/></td>
+			<td><input type="submit" id="glimit_cancel_button" onClick="cancelGlobalLimits(); return false;" value="<?php echo $lang['cancel']?>"/></td>
+			<td><input type="submit" id="glimit_set_button" onClick="setGlobalLimits(); return false;" value="<?php echo $lang['set']?>"/></td>
 		</tr>
 		</form>
 		</table>
@@ -178,13 +178,13 @@ echo "<img style='cursor: pointer;' title='".$lang_name[0]."' rel='".$lang_name[
 		<table id="sesname_table" cellspacing=0>
 
 		<tr>
-			<td><?php=$lang['session_name']?></td>
+			<td><?php echo $lang['session_name']?></td>
 			<td><input type="text" id="session_name" name="sname" value="session name" style="width:130px;"/></td>
 		</tr>
 
 		<tr>
-			<td><input type="submit" id="sesname_cancel_button" onClick="cancelSessionName(); return false;" value="<?php=$lang['cancel']?>"/></td>
-			<td><input type="submit" id="sesname_set_button" onClick="setSessionName(); return false;" value="<?php=$lang['set']?>"/></td>
+			<td><input type="submit" id="sesname_cancel_button" onClick="cancelSessionName(); return false;" value="<?php echo $lang['cancel']?>"/></td>
+			<td><input type="submit" id="sesname_set_button" onClick="setSessionName(); return false;" value="<?php echo $lang['set']?>"/></td>
 		</tr>
 		</form>
 		</table>
@@ -193,16 +193,16 @@ echo "<img style='cursor: pointer;' title='".$lang_name[0]."' rel='".$lang_name[
 	<div id="layer_contexts">
 		<table id="torrent_table" cellspacing=0>
 			<tr>
-				<th class="column_torrent"><?php=$lang['torrent']?></th>
-				<th class="column_status"><?php=$lang['status']?></th>
-				<th class="column_control"><?php=$lang['control']?></th>
+				<th class="column_torrent"><?php echo $lang['torrent']?></th>
+				<th class="column_status"><?php echo $lang['status']?></th>
+				<th class="column_control"><?php echo $lang['control']?></th>
 			</tr>
 		</table>
 	</div>
 
 	<div id="footer">
 			<span id="about">
-				<a href="http://btg.berlios.de/" target="_blank">webBTG 1.1 <?php=$lang['version']?></a>
+				<a href="http://btg.berlios.de/" target="_blank">webBTG 1.1 <?php echo $lang['version']?></a>
 			</span>
 	</div>
 </div>
@@ -210,10 +210,10 @@ echo "<img style='cursor: pointer;' title='".$lang_name[0]."' rel='".$lang_name[
 <div id="bottom"></div>
 <div id="network_status">
 	<pre id="statusMessage">Töltés...</pre>
-	<input id="refresh_button" class="control_buttons" type="button" name="update" onClick="refreshContextList();" value="<?php=$lang['refresh']?>"/>
-	<input id="stop_refresh" class="control_buttons" type="button" name="stop_refresh" onClick="changeUpdateMode();" value="<?php=$lang['refresh_stop']?>"/>
-	<h2 id="status_download"><?php=$lang['total_d_speed']?></h2>
-	<h2 id="status_upload"><?php=$lang['total_u_speed']?></h2>
+	<input id="refresh_button" class="control_buttons" type="button" name="update" onClick="refreshContextList();" value="<?php echo $lang['refresh']?>"/>
+	<input id="stop_refresh" class="control_buttons" type="button" name="stop_refresh" onClick="changeUpdateMode();" value="<?php echo $lang['refresh_stop']?>"/>
+	<h2 id="status_download"><?php echo $lang['total_d_speed']?></h2>
+	<h2 id="status_upload"><?php echo $lang['total_u_speed']?></h2>
 </div>
 
 </body>
