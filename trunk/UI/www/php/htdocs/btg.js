@@ -1,4 +1,3 @@
-    <!--
 /*
  * btg Copyright (C) 2005 Michael Wojciechowski.
  * Web client written by Johan Ström.
@@ -98,17 +97,17 @@ var contextAbortId = -1;
 
 if (!Array.indexOf)
 {
-    Array.prototype.indexOf = function(obj)
-    {
-	for(var i=0; i<this.length; i++)
+	Array.prototype.indexOf = function(obj)
 	{
-	    if(this[i]==obj)
-	    {
-		return i;
-	    }
+		for(var i=0; i<this.length; i++)
+		{
+			if(this[i]==obj)
+			{
+				return i;
+			}
+		}
+		return -1;
 	}
-	return -1;
-    }
 }
 
 /**************************************************
@@ -120,8 +119,8 @@ if (!Array.indexOf)
 /* sessionList, list existing sessions */
 function sessionList()
 {
-    setStatus(lang[lng,'session_listing']);
-    btg_sessionList(cb_sessionList, cb_sessionList_err);
+	setStatus(lang[lng,'session_listing']);
+	btg_sessionList(cb_sessionList, cb_sessionList_err);
 }
 /* setting up a cookie for the language */
 function refresh() //need to reload the new language
@@ -138,333 +137,331 @@ function select_language(langname) {
 /* auth, authorize  */
 function auth()
 {
-
-    var username = encodeURIComponent(document.frm_auth.username.value);
-    var password = encodeURIComponent(document.frm_auth.password.value);
-    document.frm_auth.username.value = "";
-    document.frm_auth.password.value = "";
-    setStatus(lang[lng,'loggingin'] + username + "...");
-    btg_auth(cb_auth, cb_auth_err, username, password);
+	var username = encodeURIComponent(document.frm_auth.username.value);
+	var password = encodeURIComponent(document.frm_auth.password.value);
+	document.frm_auth.username.value = "";
+	document.frm_auth.password.value = "";
+	setStatus(lang[lng,'loggingin'] + username + "...");
+	btg_auth(cb_auth, cb_auth_err, username, password);
 }
 
 /* deauth, deauthorize (logout) */
 function deauth()
 {
-    setStatus(lang[lng,'loggingout']);
-    btg_deauth(cb_deauth, cb_deauth);
-
+	setStatus(lang[lng,'loggingout']);
+	btg_deauth(cb_deauth, cb_deauth);
 }
 
 /* sessionAttach, attach to a existing session */
 function sessionAttach()
 {
-    var id = document.frm_sessionlist.sessionlist.options[document.frm_sessionlist.sessionlist.selectedIndex].value;
-    setStatus(lang[lng,'sessionattach'] + id + "...");//Attaching to session_
-    btg_sessionAttach(cb_sessionAttach, cb_sessionAttach_err, id);
+	var id = document.frm_sessionlist.sessionlist.options[document.frm_sessionlist.sessionlist.selectedIndex].value;
+	setStatus(lang[lng,'sessionattach'] + id + "...");//Attaching to session_
+	btg_sessionAttach(cb_sessionAttach, cb_sessionAttach_err, id);
 }
 
 /* sessionSetup, setup a new session */
 function sessionSetup()
 {
-    var seedLimit   = document.frm_sessionsetup.seedLimit.value;
-    var seedTimeout = document.frm_sessionsetup.seedTimeout.value;
-    var useEncryption  = false;
-    var useDHT         = false; 
+	var seedLimit   = document.frm_sessionsetup.seedLimit.value;
+	var seedTimeout = document.frm_sessionsetup.seedTimeout.value;
+	var useEncryption  = false;
+	var useDHT         = false; 
 
-    if (document.frm_sessionsetup.session_enc.checked)
-	useEncryption = true;
+	if (document.frm_sessionsetup.session_enc.checked)
+		useEncryption = true;
 
-    if (document.frm_sessionsetup.session_dht.checked)
-	useDHT = true;
+	if (document.frm_sessionsetup.session_dht.checked)
+		useDHT = true;
 
-    if (seedLimit.length == 0)
-	seedLimit = noLimit;
+	if (seedLimit.length == 0)
+		seedLimit = noLimit;
 
-    if (seedTimeout.length == 0)
-	seedTimeout = noLimit;
-    else
-	// User enters minutes...
-	seedTimeout=seedTimeout*60;
+	if (seedTimeout.length == 0)
+		seedTimeout = noLimit;
+	else
+		// User enters minutes...
+		seedTimeout=seedTimeout*60;
 
-    setStatus(lang[lng,'newsession']);//Setting up new session...
-    btg_sessionSetup(cb_sessionSetup, 
-		     cb_sessionSetup_err, 
-		     seedLimit, 
-		     seedTimeout,
-		     useDHT,
-		     useEncryption);
+	setStatus(lang[lng,'newsession']);//Setting up new session...
+	btg_sessionSetup(cb_sessionSetup, 
+			cb_sessionSetup_err, 
+			seedLimit, 
+			seedTimeout,
+			useDHT,
+			useEncryption);
 }
 
 /* sessionDetach, detach from the current session */
 function sessionDetach()
 {
-    setStatus(lang[lng,'detachfrom']);
-    btg_sessionDetach(cb_sessionDetach, cb_sessionDetach_err);
+	setStatus(lang[lng,'detachfrom']);
+	btg_sessionDetach(cb_sessionDetach, cb_sessionDetach_err);
 }
 
 /* sessionQuit, quit the currently attached session */
 function sessionQuit()
 {
-    if(!confirm(lang[lng,'question']))//Are you realy sure you want to terminate this session and all torrents downloading in it?
-	return;
-    
-    setStatus(lang[lng,'terminator']);
-    btg_sessionQuit(cb_sessionQuit, cb_sessionQuit_err);
+	if(!confirm(lang[lng,'question']))//Are you realy sure you want to terminate this session and all torrents downloading in it?
+		return;
+
+	setStatus(lang[lng,'terminator']);
+	btg_sessionQuit(cb_sessionQuit, cb_sessionQuit_err);
 }
 
 function cleanAllContexts()
 {
-    if(!confirm(lang[lng,'cleanall']))//Are you sure you want to clean all torrents?
-	return;
+	if(!confirm(lang[lng,'cleanall']))//Are you sure you want to clean all torrents?
+		return;
 
-    setStatus(lang[lng,'cleansession']);//"Cleaning session..."
-    btg_cleanAll(cb_cleanAll, cb_cleanAll_err);
+	setStatus(lang[lng,'cleansession']);//"Cleaning session..."
+	btg_cleanAll(cb_cleanAll, cb_cleanAll_err);
 }
 
 function showGlobalLimits()
 {
-    setUIState(4);
-    setStatus(lang[lng,'gettinglobalimits']);//Getting global limits.
+	setUIState(4);
+	setStatus(lang[lng,'gettinglobalimits']);//Getting global limits.
 
-    btg_globallimitstatus(cb_globallimitstatus, cb_globallimitstatus_err);
+	btg_globallimitstatus(cb_globallimitstatus, cb_globallimitstatus_err);
 }
 
 function cancelGlobalLimits()
 {
-    setStatus(lang[lng,'notsettinggl']);//Not setting global limits.
-    setUIState(3);
+	setStatus(lang[lng,'notsettinggl']);//Not setting global limits.
+	setUIState(3);
 }
 
 function setGlobalLimits()
 {
-    var eUl = document.getElementById('gupload');
-    var eDl = document.getElementById('gdownload');
-    var eMu = document.getElementById('gmaxuploads');
-    var eMc = document.getElementById('gmaxconn');
+	var eUl = document.getElementById('gupload');
+	var eDl = document.getElementById('gdownload');
+	var eMu = document.getElementById('gmaxuploads');
+	var eMc = document.getElementById('gmaxconn');
 
-    var ul, dl, mu, mc;
+	var ul, dl, mu, mc;
 
-    if (eUl.value != "" && parseInt(eUl.value) > 0)	
-    {
-	ul = parseInt(eUl.value)*bytesPerKiB;
-    }
-    else 
-    {
-	ul = noLimit;
-    }
+	if (eUl.value != "" && parseInt(eUl.value) > 0)	
+	{
+		ul = parseInt(eUl.value)*bytesPerKiB;
+	}
+	else 
+	{
+		ul = noLimit;
+	}
 
-    if(eDl.value != "" && parseInt(eDl.value) > 0)
-    {
-	dl = parseInt(eDl.value)*bytesPerKiB;
-    }
-    else
-    {
-	dl = noLimit;
-    }
+	if(eDl.value != "" && parseInt(eDl.value) > 0)
+	{
+		dl = parseInt(eDl.value)*bytesPerKiB;
+	}
+	else
+	{
+		dl = noLimit;
+	}
 
-    if(eMu.value != "" && parseInt(eMu.value) > 0)
-    {
-	mu = parseInt(eMu.value);
-    }
-    else
-    {
-	mu = noLimit;
-    }
+	if(eMu.value != "" && parseInt(eMu.value) > 0)
+	{
+		mu = parseInt(eMu.value);
+	}
+	else
+	{
+		mu = noLimit;
+	}
 
-    if(eMc.value != "" && parseInt(eMc.value) > 0)
-    {
-	mc = parseInt(eMc.value);
-    }
-    else
-    {
-	mc = noLimit;
-    }
+	if(eMc.value != "" && parseInt(eMc.value) > 0)
+	{
+		mc = parseInt(eMc.value);
+	}
+	else
+	{
+		mc = noLimit;
+	}
 
-    // Set the limits:
-    btg_globallimit(cb_globallimit, cb_globallimit_err, ul, dl, mu, mc);
+	// Set the limits:
+	btg_globallimit(cb_globallimit, cb_globallimit_err, ul, dl, mu, mc);
 }
 
 function showSessionName()
 {
-    btg_sessionName(cb_updateSessionNameField, cb_updateSessionNameField_err);
+	btg_sessionName(cb_updateSessionNameField, cb_updateSessionNameField_err);
 
-    setUIState(5);
-    setStatus(lang[lng,'setsessioname']);//Setting session name.
+	setUIState(5);
+	setStatus(lang[lng,'setsessioname']);//Setting session name.
 }
 
 function cancelSessionName()
 {
-    setUIState(3);
-    setStatus(lang[lng,'setsessionamecancelled']);//Setting session name cancelled.
+	setUIState(3);
+	setStatus(lang[lng,'setsessionamecancelled']);//Setting session name cancelled.
 }
 
 function setSessionName()
 {
-    var sessionname = document.getElementById('session_name');
+	var sessionname = document.getElementById('session_name');
 
-    btg_setSessionName(cb_setSessionName, cb_setSessionName_err, sessionname.value);
+	btg_setSessionName(cb_setSessionName, cb_setSessionName_err, sessionname.value);
 
-    setUIState(3);
+	setUIState(3);
 
-    updateSessionName();
+	updateSessionName();
 }
 
 /* contextStart, start a specific torrent */
 function contextStop(id)
 {
-    setStatus(lang[lng,'stopping']);//Stopping torrent...
-    btg_contextStop(cb_contextStop, cb_contextStop_err, id);
+	setStatus(lang[lng,'stopping']);//Stopping torrent...
+	btg_contextStop(cb_contextStop, cb_contextStop_err, id);
 }
 
 /* contextStop, stop a specific torrent */
 function contextStart(id)
 {
-    setStatus(lang[lng,'starting']);//Starting torrent...
-    btg_contextStart(cb_contextStart, cb_contextStart_err, id);
+	setStatus(lang[lng,'starting']);//Starting torrent...
+	btg_contextStart(cb_contextStart, cb_contextStart_err, id);
 }
 
 /* contextAbort, remove a specific torrent */
 function contextAbort(id)
 {
-    if (!confirm(lang[lng,'areyou']))//Are you sure?
-    {
-	return;
-    }
+	if (!confirm(lang[lng,'areyou']))//Are you sure?
+	{
+		return;
+	}
 
-    var eraseData = 0;
-    if (confirm(lang[lng,'doyouwantremove']))//Do you want to remove the downloaded data from disk?
-    {
-	eraseData = 1;
-    }
-    
-    setStatus(lang[lng,'deleting']);//Deleting torrent...
-    contextAbortId = id;
-    btg_contextAbort(cb_contextAbort, cb_contextAbort_err, id, eraseData);
+	var eraseData = 0;
+	if (confirm(lang[lng,'doyouwantremove']))//Do you want to remove the downloaded data from disk?
+	{
+		eraseData = 1;
+	}
+
+	setStatus(lang[lng,'deleting']);//Deleting torrent...
+	contextAbortId = id;
+	btg_contextAbort(cb_contextAbort, cb_contextAbort_err, id, eraseData);
 }
 
 /* contextClean, clean/remove a specific torrent */
 function contextClean(id)
 {
-    if(!confirm(lang[lng,'areyou']))
-	return;
-    setStatus(lang[lng,'moving']);//Moving torrent...
-    btg_contextClean(cb_contextClean, cb_contextClean_err, id);
+	if(!confirm(lang[lng,'areyou']))
+		return;
+	setStatus(lang[lng,'moving']);//Moving torrent...
+	btg_contextClean(cb_contextClean, cb_contextClean_err, id);
 }
 
 /* contextPeers, get peer list for a torrent */
 function contextPeers(id)
 {
-    setStatus(lang[lng,'gettingpeers']);//Getting peers list...
-    btg_contextPeers(cb_contextPeers, cb_contextPeers_err, id);
+	setStatus(lang[lng,'gettingpeers']);//Getting peers list...
+	btg_contextPeers(cb_contextPeers, cb_contextPeers_err, id);
 }
 
 /* contextLimitStatus, get limits for a specific torrent (or a list of torrents, comma delimited) */
 function contextLimitStatus(id)
 {
-    setStatus(lang[lng,'gettinglimitstatus']);//Getting limit status...
-    btg_contextLimitStatus(cb_contextLimitStatus, cb_contextLimitStatus_err, id);
+	setStatus(lang[lng,'gettinglimitstatus']);//Getting limit status...
+	btg_contextLimitStatus(cb_contextLimitStatus, cb_contextLimitStatus_err, id);
 }
 
 /* toogleContextDetails, toogles the details info for a specific torrent on/off */
 function toogleContextDetails(id)
 {
-    var detailsRow= document.getElementById('context_'+id+'_details_row');
-    var controlRow= document.getElementById('context_'+id+'_control_row');
+	var detailsRow= document.getElementById('context_'+id+'_details_row');
+	var controlRow= document.getElementById('context_'+id+'_control_row');
 
-    if (detailsRow.style.display == '')
-    {
-		  detailsRow.style.display='none';
-		  controlRow.style.display='none';
-    }
-    else
-    {
-		  detailsRow.style.display='';
-		  controlRow.style.display='';
-    }
+	if (detailsRow.style.display == '')
+	{
+		detailsRow.style.display='none';
+		controlRow.style.display='none';
+	}
+	else
+	{
+		detailsRow.style.display='';
+		controlRow.style.display='';
+	}
 }
 
 /* hideAllContextDetails, hides details info for all torrents */
 function hideAllContextDetails()
 {
-    var table = document.getElementById('torrent_table');
-    for(var x = 0; x < table.rows.length; x++)
-    {
-	var row = table.rows[x];
-	if(row.id.match(/context_(\d+)_details_row/) || row.id.match(/context_(\d+)_control_row/))
-	    row.style.display='none';
-    }
+	var table = document.getElementById('torrent_table');
+	for(var x = 0; x < table.rows.length; x++)
+	{
+		var row = table.rows[x];
+		if(row.id.match(/context_(\d+)_details_row/) || row.id.match(/context_(\d+)_control_row/))
+			row.style.display='none';
+	}
 }
 
 /* saveContextLimit, save limits for a specific context */
 function saveContextLimit(id)
 {
-    var eUl = document.getElementById('txtUploadLimit_'+id);
-    var eDl = document.getElementById('txtDownloadLimit_'+id);
-    var eSl = document.getElementById('txtSeedLimit_'+id);
-    var eSt = document.getElementById('txtSeedTimeout_'+id);
+	var eUl = document.getElementById('txtUploadLimit_'+id);
+	var eDl = document.getElementById('txtDownloadLimit_'+id);
+	var eSl = document.getElementById('txtSeedLimit_'+id);
+	var eSt = document.getElementById('txtSeedTimeout_'+id);
 
-    var ul, dl, sl, st;
-    if(eUl.value != "" && parseInt(eUl.value) > 0)	ul = parseInt(eUl.value)*bytesPerKiB;	else ul = noLimit;
-    if(eDl.value != "" && parseInt(eDl.value) > 0)	dl = parseInt(eDl.value)*bytesPerKiB;	else dl = noLimit;
-    if(eSl.value != "" && parseInt(eSl.value) > 0)	sl = parseInt(eSl.value);	else sl = noLimit;
-    if(eSt.value != "" && parseInt(eSt.value) > 0)	st = parseInt(eSt.value)*60;	else st = noLimit;
+	var ul, dl, sl, st;
+	if(eUl.value != "" && parseInt(eUl.value) > 0)	ul = parseInt(eUl.value)*bytesPerKiB;	else ul = noLimit;
+	if(eDl.value != "" && parseInt(eDl.value) > 0)	dl = parseInt(eDl.value)*bytesPerKiB;	else dl = noLimit;
+	if(eSl.value != "" && parseInt(eSl.value) > 0)	sl = parseInt(eSl.value);	else sl = noLimit;
+	if(eSt.value != "" && parseInt(eSt.value) > 0)	st = parseInt(eSt.value)*60;	else st = noLimit;
 
-    btg_contextLimit(cb_contextLimit, cb_contextLimit_err, id, ul, dl, sl, st, 0);
+	btg_contextLimit(cb_contextLimit, cb_contextLimit_err, id, ul, dl, sl, st, 0);
 }
 
 /* uploadCheck, called from upload form's onSubmit */
 function uploadCheck()
 {
-    var file = document.getElementById('upload_input');
-    if(file.value == '')
-    {
-	alert(lang[lng,'pleaseselect']);//Please select a file.
-	return false;
-    }
+	var file = document.getElementById('upload_input');
+	if(file.value == '')
+	{
+		alert(lang[lng,'pleaseselect']);//Please select a file.
+		return false;
+	}
 
-    /* Make sure file ends with .torrent */
-    if(!file.value.match(/\.torrent$/))
-    {
-	alert(lang[lng,'onlymetallowed']);//Only .torrent files allowed.
-	return false;
-    }
+	/* Make sure file ends with .torrent */
+	if(!file.value.match(/\.torrent$/))
+	{
+		alert(lang[lng,'onlymetallowed']);//Only .torrent files allowed.
+		return false;
+	}
 
-    /* Valid file */
-    setStatus(lang[lng,'uploading']);//Uploading torrent...
-    return true;
+	/* Valid file */
+	setStatus(lang[lng,'uploading']);//Uploading torrent...
+	return true;
 }
 
 /* Init, called from BODYs onLoad */
 function init(is_authed, session)
 {
-    /* Call our timer function (direct now but later once a second) */
-    timerHandle = setTimeout(timer, 1);
+	/* Call our timer function (direct now but later once a second) */
+	timerHandle = setTimeout(timer, 1);
 
-    if(is_authed == 0)
-    {
-	setUIState(1);
-	setStatus(lang[lng,'waitlogin']);//Waiting for login.
-    }
-    else if(session == -1)
-    {
-	/* Authed, but no session attached, display session list */
-	sessionList();
-	setUIState(2);
-    }else
-    {
-	/* Authed and attached */
-	setStatus(lang[lng,'loadinglist']);//Loading context list...
-	doAutoRefresh = 1;
-	refreshContextList();
-	setUIState(3);
-    }
+	if(is_authed == 0)
+	{
+		setUIState(1);
+		setStatus(lang[lng,'waitlogin']);//Waiting for login.
+	}
+	else if(session == -1)
+	{
+		/* Authed, but no session attached, display session list */
+		sessionList();
+		setUIState(2);
+	}else
+	{
+		/* Authed and attached */
+		setStatus(lang[lng,'loadinglist']);//Loading context list...
+		doAutoRefresh = 1;
+		refreshContextList();
+		setUIState(3);
+	}
 
-    /* Everything should be loaded now, show main container */
-    document.getElementById('container').style.display='block';
-    
-    /* Setup handlers so we dont run when we're not focused */
-    window.onblur = function(){ isBlurred = true; };
-    window.onfocus = function(){ isBlurred = false; timer(); };
+	/* Everything should be loaded now, show main container */
+	document.getElementById('container').style.display='block';
+
+	/* Setup handlers so we dont run when we're not focused */
+	window.onblur = function(){ isBlurred = true; };
+	window.onfocus = function(){ isBlurred = false; timer(); };
 }
 
 /**
@@ -476,160 +473,160 @@ function init(is_authed, session)
  */
 function setUIState(state)
 {
-    if(state == 0)
-	// State unknown/daemon unrechable
-    {
-	document.getElementById('layer_sessions').style.display='none';
-	document.getElementById('layer_auth').style.display='none';
-	document.getElementById('attach_button').style.display='none';
-	document.getElementById('setup_button').style.display='none';
-	document.getElementById('quit_button').style.display='none';
-	document.getElementById('refresh_button').style.display='none';
-	document.getElementById('stop_refresh').style.display='none';
-	document.getElementById('collapse_button').style.display='none';
-	document.getElementById('cleanall_button').style.display='none';
-	document.getElementById('layer_glimit').style.display='none';
-	document.getElementById('glimit_button').style.display='none';
-	document.getElementById('sesname_button').style.display='none';
+	if(state == 0)
+		// State unknown/daemon unrechable
+	{
+		document.getElementById('layer_sessions').style.display='none';
+		document.getElementById('layer_auth').style.display='none';
+		document.getElementById('attach_button').style.display='none';
+		document.getElementById('setup_button').style.display='none';
+		document.getElementById('quit_button').style.display='none';
+		document.getElementById('refresh_button').style.display='none';
+		document.getElementById('stop_refresh').style.display='none';
+		document.getElementById('collapse_button').style.display='none';
+		document.getElementById('cleanall_button').style.display='none';
+		document.getElementById('layer_glimit').style.display='none';
+		document.getElementById('glimit_button').style.display='none';
+		document.getElementById('sesname_button').style.display='none';
 
-	document.getElementById('glimit_cancel_button').style.display='none';
-	document.getElementById('glimit_set_button').style.display='none';
-	document.getElementById('detach_button').style.display='none';
-	document.getElementById('logout_button').style.display='none';
-	document.getElementById('upload').style.display='none';
-	document.getElementById('layer_contexts').style.display='none';
-	document.getElementById('status_download').style.display='none';
-	document.getElementById('status_upload').style.display='none';
-	document.getElementById('layer_sesname').style.display='none';
-	doAutoRefresh = 0;
-    }
-    else if(state == 1)
-	// Not authorized, show authorize controls.
-    {
-	document.getElementById('layer_auth').style.display='block';
-	document.getElementById('layer_sessions').style.display='none';
-	document.getElementById('attach_button').style.display='none';
-	document.getElementById('setup_button').style.display='none';
-	document.getElementById('quit_button').style.display='none';
-	document.getElementById('refresh_button').style.display='none';
-	document.getElementById('stop_refresh').style.display='none';
-	document.getElementById('collapse_button').style.display='none';
-	document.getElementById('cleanall_button').style.display='none';
-	document.getElementById('layer_glimit').style.display='none';
-	document.getElementById('glimit_button').style.display='none';
-	document.getElementById('sesname_button').style.display='none';
-	document.getElementById('glimit_cancel_button').style.display='none';
-	document.getElementById('glimit_set_button').style.display='none';
-	document.getElementById('detach_button').style.display='none';
-	document.getElementById('logout_button').style.display='none';
-	document.getElementById('upload').style.display='none';
-	document.getElementById('layer_contexts').style.display='none';
-	document.getElementById('status_download').style.display='none';
-	document.getElementById('status_upload').style.display='none';
-	document.getElementById('layer_sesname').style.display='none';
-	doAutoRefresh = 0;
-    }
-    else if(state == 2)
-	// Authorized, not attached to any session. Show attach and setup controls.
-    {
-	document.getElementById('layer_auth').style.display='none';
-	document.getElementById('quit_button').style.display='none';
-	document.getElementById('refresh_button').style.display='none';
-	document.getElementById('stop_refresh').style.display='none';
-	document.getElementById('collapse_button').style.display='none';
-	document.getElementById('cleanall_button').style.display='none';
-	document.getElementById('layer_glimit').style.display='none';
-	document.getElementById('glimit_button').style.display='none';
-	document.getElementById('sesname_button').style.display='none';
-	document.getElementById('glimit_cancel_button').style.display='none';
-	document.getElementById('glimit_set_button').style.display='none';
-	document.getElementById('detach_button').style.display='none';
-	document.getElementById('upload').style.display='none';
-	document.getElementById('layer_contexts').style.display='none';
-	document.getElementById('status_download').style.display='none';
-	document.getElementById('status_upload').style.display='none';
+		document.getElementById('glimit_cancel_button').style.display='none';
+		document.getElementById('glimit_set_button').style.display='none';
+		document.getElementById('detach_button').style.display='none';
+		document.getElementById('logout_button').style.display='none';
+		document.getElementById('upload').style.display='none';
+		document.getElementById('layer_contexts').style.display='none';
+		document.getElementById('status_download').style.display='none';
+		document.getElementById('status_upload').style.display='none';
+		document.getElementById('layer_sesname').style.display='none';
+		doAutoRefresh = 0;
+	}
+	else if(state == 1)
+		// Not authorized, show authorize controls.
+	{
+		document.getElementById('layer_auth').style.display='block';
+		document.getElementById('layer_sessions').style.display='none';
+		document.getElementById('attach_button').style.display='none';
+		document.getElementById('setup_button').style.display='none';
+		document.getElementById('quit_button').style.display='none';
+		document.getElementById('refresh_button').style.display='none';
+		document.getElementById('stop_refresh').style.display='none';
+		document.getElementById('collapse_button').style.display='none';
+		document.getElementById('cleanall_button').style.display='none';
+		document.getElementById('layer_glimit').style.display='none';
+		document.getElementById('glimit_button').style.display='none';
+		document.getElementById('sesname_button').style.display='none';
+		document.getElementById('glimit_cancel_button').style.display='none';
+		document.getElementById('glimit_set_button').style.display='none';
+		document.getElementById('detach_button').style.display='none';
+		document.getElementById('logout_button').style.display='none';
+		document.getElementById('upload').style.display='none';
+		document.getElementById('layer_contexts').style.display='none';
+		document.getElementById('status_download').style.display='none';
+		document.getElementById('status_upload').style.display='none';
+		document.getElementById('layer_sesname').style.display='none';
+		doAutoRefresh = 0;
+	}
+	else if(state == 2)
+		// Authorized, not attached to any session. Show attach and setup controls.
+	{
+		document.getElementById('layer_auth').style.display='none';
+		document.getElementById('quit_button').style.display='none';
+		document.getElementById('refresh_button').style.display='none';
+		document.getElementById('stop_refresh').style.display='none';
+		document.getElementById('collapse_button').style.display='none';
+		document.getElementById('cleanall_button').style.display='none';
+		document.getElementById('layer_glimit').style.display='none';
+		document.getElementById('glimit_button').style.display='none';
+		document.getElementById('sesname_button').style.display='none';
+		document.getElementById('glimit_cancel_button').style.display='none';
+		document.getElementById('glimit_set_button').style.display='none';
+		document.getElementById('detach_button').style.display='none';
+		document.getElementById('upload').style.display='none';
+		document.getElementById('layer_contexts').style.display='none';
+		document.getElementById('status_download').style.display='none';
+		document.getElementById('status_upload').style.display='none';
 
-	document.getElementById('layer_sessions').style.display='block';
-	document.getElementById('attach_button').style.display='inline';
-	document.getElementById('setup_button').style.display='inline';
-	document.getElementById('logout_button').style.display='inline';
-	document.getElementById('layer_sesname').style.display='none';
-	doAutoRefresh = 0;
-    }
-    else if(state == 3)
-	// Authorized, attached to a session. Show context list and controls. 
-    {
-	document.getElementById('layer_sessions').style.display='none';
-	document.getElementById('attach_button').style.display='none';
-	document.getElementById('setup_button').style.display='none';
-	document.getElementById('refresh_button').style.display='block';
-	document.getElementById('stop_refresh').style.display='block';
-	document.getElementById('quit_button').style.display='inline';
-	document.getElementById('collapse_button').style.display='inline';
-	document.getElementById('cleanall_button').style.display='inline';
-	document.getElementById('layer_glimit').style.display='none';
-	document.getElementById('glimit_button').style.display='inline';
-	document.getElementById('sesname_button').style.display='inline';
-	document.getElementById('glimit_cancel_button').style.display='none';
-	document.getElementById('glimit_set_button').style.display='none';
-	document.getElementById('detach_button').style.display='inline';
-	document.getElementById('logout_button').style.display='inline';
-	document.getElementById('upload').style.display='block';
-	document.getElementById('layer_contexts').style.display='block';
-	document.getElementById('status_download').style.display='inline';
-	document.getElementById('status_upload').style.display='inline';
-	document.getElementById('layer_sesname').style.display='none';
-	doAutoRefresh = 1;
-    }
-    else if(state == 4)
-	// Authorized, Set global limits.
-    {
-	document.getElementById('layer_sessions').style.display='none';
-	document.getElementById('attach_button').style.display='none';
-	document.getElementById('setup_button').style.display='none';
-	document.getElementById('refresh_button').style.display='none';
-	document.getElementById('stop_refresh').style.display='none';
-	document.getElementById('quit_button').style.display='inline';
-	document.getElementById('collapse_button').style.display='none';
-	document.getElementById('cleanall_button').style.display='none';
-	document.getElementById('layer_glimit').style.display='block';
-	document.getElementById('glimit_button').style.display='none';
-	document.getElementById('sesname_button').style.display='none';
-	document.getElementById('glimit_cancel_button').style.display='inline';
-	document.getElementById('glimit_set_button').style.display='inline';
-	document.getElementById('detach_button').style.display='inline';
-	document.getElementById('logout_button').style.display='inline';
-	document.getElementById('upload').style.display='none';
-	document.getElementById('layer_contexts').style.display='none';
-	document.getElementById('status_download').style.display='none';
-	document.getElementById('status_upload').style.display='none';
-	document.getElementById('layer_sesname').style.display='none';
-	doAutoRefresh = 0;
-    }
-    else if(state == 5)
-    {
-	document.getElementById('layer_sessions').style.display='none';
-	document.getElementById('attach_button').style.display='none';
-	document.getElementById('setup_button').style.display='none';
-	document.getElementById('refresh_button').style.display='none';
-	document.getElementById('stop_refresh').style.display='none';
-	document.getElementById('quit_button').style.display='inline';
-	document.getElementById('collapse_button').style.display='none';
-	document.getElementById('cleanall_button').style.display='none';
-	document.getElementById('layer_glimit').style.display='none';
-	document.getElementById('glimit_button').style.display='none';
-	document.getElementById('sesname_button').style.display='none';
-	document.getElementById('glimit_cancel_button').style.display='none';
-	document.getElementById('glimit_set_button').style.display='none';
-	document.getElementById('detach_button').style.display='inline';
-	document.getElementById('logout_button').style.display='inline';
-	document.getElementById('upload').style.display='none';
-	document.getElementById('layer_contexts').style.display='none';
-	document.getElementById('status_download').style.display='none';
-	document.getElementById('status_upload').style.display='none';
-	document.getElementById('layer_sesname').style.display='inline';
-	doAutoRefresh = 0;
-    }
+		document.getElementById('layer_sessions').style.display='block';
+		document.getElementById('attach_button').style.display='inline';
+		document.getElementById('setup_button').style.display='inline';
+		document.getElementById('logout_button').style.display='inline';
+		document.getElementById('layer_sesname').style.display='none';
+		doAutoRefresh = 0;
+	}
+	else if(state == 3)
+		// Authorized, attached to a session. Show context list and controls. 
+	{
+		document.getElementById('layer_sessions').style.display='none';
+		document.getElementById('attach_button').style.display='none';
+		document.getElementById('setup_button').style.display='none';
+		document.getElementById('refresh_button').style.display='block';
+		document.getElementById('stop_refresh').style.display='block';
+		document.getElementById('quit_button').style.display='inline';
+		document.getElementById('collapse_button').style.display='inline';
+		document.getElementById('cleanall_button').style.display='inline';
+		document.getElementById('layer_glimit').style.display='none';
+		document.getElementById('glimit_button').style.display='inline';
+		document.getElementById('sesname_button').style.display='inline';
+		document.getElementById('glimit_cancel_button').style.display='none';
+		document.getElementById('glimit_set_button').style.display='none';
+		document.getElementById('detach_button').style.display='inline';
+		document.getElementById('logout_button').style.display='inline';
+		document.getElementById('upload').style.display='block';
+		document.getElementById('layer_contexts').style.display='block';
+		document.getElementById('status_download').style.display='inline';
+		document.getElementById('status_upload').style.display='inline';
+		document.getElementById('layer_sesname').style.display='none';
+		doAutoRefresh = 1;
+	}
+	else if(state == 4)
+		// Authorized, Set global limits.
+	{
+		document.getElementById('layer_sessions').style.display='none';
+		document.getElementById('attach_button').style.display='none';
+		document.getElementById('setup_button').style.display='none';
+		document.getElementById('refresh_button').style.display='none';
+		document.getElementById('stop_refresh').style.display='none';
+		document.getElementById('quit_button').style.display='inline';
+		document.getElementById('collapse_button').style.display='none';
+		document.getElementById('cleanall_button').style.display='none';
+		document.getElementById('layer_glimit').style.display='block';
+		document.getElementById('glimit_button').style.display='none';
+		document.getElementById('sesname_button').style.display='none';
+		document.getElementById('glimit_cancel_button').style.display='inline';
+		document.getElementById('glimit_set_button').style.display='inline';
+		document.getElementById('detach_button').style.display='inline';
+		document.getElementById('logout_button').style.display='inline';
+		document.getElementById('upload').style.display='none';
+		document.getElementById('layer_contexts').style.display='none';
+		document.getElementById('status_download').style.display='none';
+		document.getElementById('status_upload').style.display='none';
+		document.getElementById('layer_sesname').style.display='none';
+		doAutoRefresh = 0;
+	}
+	else if(state == 5)
+	{
+		document.getElementById('layer_sessions').style.display='none';
+		document.getElementById('attach_button').style.display='none';
+		document.getElementById('setup_button').style.display='none';
+		document.getElementById('refresh_button').style.display='none';
+		document.getElementById('stop_refresh').style.display='none';
+		document.getElementById('quit_button').style.display='inline';
+		document.getElementById('collapse_button').style.display='none';
+		document.getElementById('cleanall_button').style.display='none';
+		document.getElementById('layer_glimit').style.display='none';
+		document.getElementById('glimit_button').style.display='none';
+		document.getElementById('sesname_button').style.display='none';
+		document.getElementById('glimit_cancel_button').style.display='none';
+		document.getElementById('glimit_set_button').style.display='none';
+		document.getElementById('detach_button').style.display='inline';
+		document.getElementById('logout_button').style.display='inline';
+		document.getElementById('upload').style.display='none';
+		document.getElementById('layer_contexts').style.display='none';
+		document.getElementById('status_download').style.display='none';
+		document.getElementById('status_upload').style.display='none';
+		document.getElementById('layer_sesname').style.display='inline';
+		doAutoRefresh = 0;
+	}
 }
 
 /* Called when the upload iframe has been loaded, either on first page load
@@ -639,78 +636,78 @@ function setUIState(state)
 var uploadDone_firstRun = 0;
 function uploadDone()
 {
-    if((++uploadDone_firstRun) == 1)
-	return;
+	if((++uploadDone_firstRun) == 1)
+		return;
 
-    var file = document.getElementById('upload_input');
-    var contentDoc = function(iframe_el)
-    {
-	var doc = iframe_el.contentDocument || // W3
-	(
-	    (iframe_el.contentWindow)&&(iframe_el.contentWindow.document)
-	) ||  // IE
-	(
-	    (iframe_el.name)&&(document.frames[iframe_el.name])&&
-		(document.frames[iframe_el.name].document)
-	) || null;
-	return doc;
-    };
-    
-    var content = contentDoc(document.getElementById('upload_iframe'));
+	var file = document.getElementById('upload_input');
+	var contentDoc = function(iframe_el)
+	{
+		var doc = iframe_el.contentDocument || // W3
+			(
+			 (iframe_el.contentWindow)&&(iframe_el.contentWindow.document)
+			) ||  // IE
+			(
+			 (iframe_el.name)&&(document.frames[iframe_el.name])&&
+			 (document.frames[iframe_el.name].document)
+			) || null;
+		return doc;
+	};
 
-    /* We only care about the contents if its a XMLDocument, not on default empty page load */
-    if(content == null)
-	return;
-    
-    /* Fetch the response object from the DOM */
-    var response = content.getElementsByTagName('response')[0];
-    if(!response)
-    {
-	alert(lang[lng,'invalidresponse']);//Invalid response from server, missing response. Upload failed.
-	return;
-    }
+	var content = contentDoc(document.getElementById('upload_iframe'));
 
-    /* Check if any errors occured */
-    var error = response.getElementsByTagName('error');
-    if(error.length > 0)
-    {
-	var errStr = ""
-	for(var i=0; i < error.length; i++)
-	    errStr+=error[i].childNodes[0].nodeValue+"\n";
+	/* We only care about the contents if its a XMLDocument, not on default empty page load */
+	if(content == null)
+		return;
 
-	setStatus(errStr);
+	/* Fetch the response object from the DOM */
+	var response = content.getElementsByTagName('response')[0];
+	if(!response)
+	{
+		alert(lang[lng,'invalidresponse']);//Invalid response from server, missing response. Upload failed.
+		return;
+	}
+
+	/* Check if any errors occured */
+	var error = response.getElementsByTagName('error');
+	if(error.length > 0)
+	{
+		var errStr = ""
+			for(var i=0; i < error.length; i++)
+				errStr+=error[i].childNodes[0].nodeValue+"\n";
+
+		setStatus(errStr);
+		file.value = '';
+		return;
+	}
+
+	/* No errors occured, torrents should be uploaded and running. Erase file field and update the context list */
 	file.value = '';
-	return;
-    }
-
-    /* No errors occured, torrents should be uploaded and running. Erase file field and update the context list */
-    file.value = '';
-    refreshContextList();
+	refreshContextList();
 }
 
 function loadUrl()
 {
-    var f = document.getElementById('loadurl_input');
-    var url = f.value;
-    var filename = url;
+	var f = document.getElementById('loadurl_input');
+	var url = f.value;
+	var filename = url;
 
-    if(!url.match('^http[s]?://(.+)'))
-	return alert(lang[lng,'invalidurl']);//"Invalid URL"
+	if(!url.match('^http[s]?://(.+)'))
+		return alert(lang[lng,'invalidurl']);//"Invalid URL"
 
-    // Extract filename from URL
-    if(filename.indexOf('?') != -1)
-	filename = filename.substr(0, filename.indexOf('?'));
+	// Extract filename from URL
+	if(filename.indexOf('?') != -1)
+		filename = filename.substr(0, filename.indexOf('?'));
 
-    if(filename.lastIndexOf('/') != -1)
-	filename = filename.substr(filename.lastIndexOf('/') + 1);
+	if(filename.lastIndexOf('/') != -1)
+		filename = filename.substr(filename.lastIndexOf('/') + 1);
 
-    if(filename.length == 0 || filename.indexOf('.torrent') == -1)
-	filename = prompt(lang[lng,'enterfilename']);//Enter filename
+	if(filename.length == 0 || filename.indexOf('.torrent') == -1)
+		filename = prompt(lang[lng,'enterfilename']);//Enter filename
 
-    if(filename == null)
-	return;
+	if(filename == null)
+		return;
 
-    btg_contextCreateFromUrl(cb_contextCreateFromUrl, cb_contextCreateFromUrl_err, filename, url);
+	btg_contextCreateFromUrl(cb_contextCreateFromUrl, cb_contextCreateFromUrl_err, filename, url);
 }
 
 /**
@@ -718,49 +715,49 @@ function loadUrl()
  */
 function timer()
 {
-    if (isStatusIdle == 0)
-    {
-	StatusAge++;
-	
-	if (StatusAge >= 1)
+	if (isStatusIdle == 0)
 	{
-	    setStatus();
-	    StatusAge = 0;
-	}
-    }
+		StatusAge++;
 
-    if (doAutoRefresh && isStatusIdle)
-    {
-	contextsAge++;
-	
-	var diff = refreshTimeout - contextsAge;
+		if (StatusAge >= 1)
+		{
+			setStatus();
+			StatusAge = 0;
+		}
+	}
 
-	if (isBlurred)
+	if (doAutoRefresh && isStatusIdle)
 	{
-	    document.getElementById('statusMessage').innerHTML = lang[lng,'notfocus'];//Window not on focus, wont update...
-	}
-	else if(diff <= 0)
-	{
-	    if (updatesStopped == 0)
-	    {
-       		refreshContextList();
-	    }
-	}
-	else if(diff > 0)
-	{
-	    if (updatesStopped == 0)
-	    {
-		document.getElementById('statusMessage').innerHTML = lang[lng,'updatein'] + (refreshTimeout - contextsAge)  + " " + lang[lng,'seconds'];
-	    }
-	}
-    }
-    else
-    {
-	contextsAge = 0; 
-    }
+		contextsAge++;
 
-    clearTimeout(timerHandle);
-    timerHandle = setTimeout(timer, 1000);
+		var diff = refreshTimeout - contextsAge;
+
+		if (isBlurred)
+		{
+			document.getElementById('statusMessage').innerHTML = lang[lng,'notfocus'];//Window not on focus, wont update...
+		}
+		else if(diff <= 0)
+		{
+			if (updatesStopped == 0)
+			{
+				refreshContextList();
+			}
+		}
+		else if(diff > 0)
+		{
+			if (updatesStopped == 0)
+			{
+				document.getElementById('statusMessage').innerHTML = lang[lng,'updatein'] + (refreshTimeout - contextsAge)  + " " + lang[lng,'seconds'];
+			}
+		}
+	}
+	else
+	{
+		contextsAge = 0; 
+	}
+
+	clearTimeout(timerHandle);
+	timerHandle = setTimeout(timer, 1000);
 }
 
 /**************************************************
@@ -769,65 +766,65 @@ function timer()
 
 function cb_setSessionName(response)
 {
-    setStatus(lang[lng,'sessionameset']);//Session name set.
+	setStatus(lang[lng,'sessionameset']);//Session name set.
 }
 
 function cb_setSessionName_err(error, errStr)
 {
-    setStatus(lang[lng,'sessionamenotset'] + errStr);//"Session name not set: " + errStr
+	setStatus(lang[lng,'sessionamenotset'] + errStr);//"Session name not set: " + errStr
 }
 
 function cb_globallimit(response)
 {
-    setStatus(lang[lng,'globalimitsset']);//Global limits set.
-    setUIState(3);
+	setStatus(lang[lng,'globalimitsset']);//Global limits set.
+	setUIState(3);
 }
 
 function cb_globallimit_err(error, errStr)
 {
-    setStatus(lang[lng,'unableglobalimitsset']);//Unable to set global limits.
-    setUIState(3);
+	setStatus(lang[lng,'unableglobalimitsset']);//Unable to set global limits.
+	setUIState(3);
 }
 
 function cb_globallimitstatus(response)
 {
-    var r_ull  = parseInt(getFirstChildValue(response, 'uploadLimit'));
-    if (r_ull != noLimit)
-    {
-	ri_ull = parseInt(r_ull / bytesPerKiB);
-    }
-    else
-    {
-	ri_ull = '';
-    }
+	var r_ull  = parseInt(getFirstChildValue(response, 'uploadLimit'));
+	if (r_ull != noLimit)
+	{
+		ri_ull = parseInt(r_ull / bytesPerKiB);
+	}
+	else
+	{
+		ri_ull = '';
+	}
 
-    var r_dll  = parseInt(getFirstChildValue(response, 'downloadLimit'));
-    if (r_dll != noLimit)
-    {
-	ri_dll = parseInt(r_dll / bytesPerKiB);
-    }
-    else
-    {
-	ri_dll = '';
-    }
+	var r_dll  = parseInt(getFirstChildValue(response, 'downloadLimit'));
+	if (r_dll != noLimit)
+	{
+		ri_dll = parseInt(r_dll / bytesPerKiB);
+	}
+	else
+	{
+		ri_dll = '';
+	}
 
-    var r_mull = parseInt(getFirstChildValue(response, 'maxuploads'));
-    var r_mc   = parseInt(getFirstChildValue(response, 'maxconnections'));
-    if(r_mull == noLimit)
-	r_mull = '';
-    if(r_mc == noLimit)
-	r_mc = '';
+	var r_mull = parseInt(getFirstChildValue(response, 'maxuploads'));
+	var r_mc   = parseInt(getFirstChildValue(response, 'maxconnections'));
+	if(r_mull == noLimit)
+		r_mull = '';
+	if(r_mc == noLimit)
+		r_mc = '';
 
-    // Update the limit table.
-    var eUl = document.getElementById('gupload');
-    var eDl = document.getElementById('gdownload');
-    var eMu = document.getElementById('gmaxuploads');
-    var eMc = document.getElementById('gmaxconn');
+	// Update the limit table.
+	var eUl = document.getElementById('gupload');
+	var eDl = document.getElementById('gdownload');
+	var eMu = document.getElementById('gmaxuploads');
+	var eMc = document.getElementById('gmaxconn');
 
-    eUl.value = ri_ull;
-    eDl.value = ri_dll;
-    eMu.value = r_mull;
-    eMc.value = r_mc;
+	eUl.value = ri_ull;
+	eDl.value = ri_dll;
+	eMu.value = r_mull;
+	eMc.value = r_mc;
 }
 
 function cb_globallimitstatus_err(error, errStr)
@@ -853,79 +850,79 @@ function cb_contextCreateFromUrl(response)
 
 function cb_contextCreateFromUrl_err(error, errStr)
 {
-    pendingDownloadID = -1;
-    alert(errStr);
+	pendingDownloadID = -1;
+	alert(errStr);
 }
 
 // Called by timer
 function checkUrlStatus()
 {
-    if (pendingDownloadID == -1)
-	 {
-		  return;
-	 }
+	if (pendingDownloadID == -1)
+	{
+		return;
+	}
 
-    btg_contextUrlStatus(cb_contextUrlStatus, cb_contextUrlStatus_err, pendingDownloadID);
+	btg_contextUrlStatus(cb_contextUrlStatus, cb_contextUrlStatus_err, pendingDownloadID);
 }
 
 function cb_contextUrlStatus(response)
 {
-    var ss = parseInt(getFirstChildValue(response.getElementsByTagName('url')[0], 'status'));
-    /*
-	const URLS_UNDEF      = 0; //!<  Unknown.
-	const URLS_WORKING    = 1; //!<  Download in progress.
-	const URLS_FINISHED   = 2; //!<  Download finished.
-	const URLS_ERROR      = 3; //!<  Unable to download.
-	const URLS_CREATE     = 4; //!<  Context created.
-	const URLS_CREATE_ERR = 5; //!<  Context not created.
-	*/
-    var i = document.getElementById('loadurl');
-    var s = document.getElementById('loadurl_status');
-    var done = false;
-    switch(ss)
-    {
-    case 1:
-	s.innerHTML=lang[lng,'downloadurl'];
-	break;
-    case 2:
-	done = true;
-	s.innerHTML = lang[lng,'failesdownloadurl'];//Failed to download URL.<br/>(Click here to continue)
-	break;
-    case 4:
-	done = true;
-	s.innerHTML = lang[lng,'successdownloadurl'];//URL downloaded and created successfully.<br/>(Click here to continue)
-	refreshContextList();
-	break;
-    case 5:
-	done = true;
-	s.innerHTML = lang[lng,'faildownloadurl'];//Failed to create context from URL.<br/>(Click here to continue)
-	break;
-    case 0:
-    default:
-	s.innerHTML=lang[lng,'unknown'];//'Unknown'
-	break;
-    }
-    
-    if(!done)
-	setTimeout('checkUrlStatus();', 1000);
-    else
-	pendingDownloadID = -1;
+	var ss = parseInt(getFirstChildValue(response.getElementsByTagName('url')[0], 'status'));
+	/*
+		const URLS_UNDEF      = 0; //!<  Unknown.
+		const URLS_WORKING    = 1; //!<  Download in progress.
+		const URLS_FINISHED   = 2; //!<  Download finished.
+		const URLS_ERROR      = 3; //!<  Unable to download.
+		const URLS_CREATE     = 4; //!<  Context created.
+		const URLS_CREATE_ERR = 5; //!<  Context not created.
+		*/
+	var i = document.getElementById('loadurl');
+	var s = document.getElementById('loadurl_status');
+	var done = false;
+	switch(ss)
+	{
+		case 1:
+			s.innerHTML=lang[lng,'downloadurl'];
+			break;
+		case 2:
+			done = true;
+			s.innerHTML = lang[lng,'failesdownloadurl'];//Failed to download URL.<br/>(Click here to continue)
+			break;
+		case 4:
+			done = true;
+			s.innerHTML = lang[lng,'successdownloadurl'];//URL downloaded and created successfully.<br/>(Click here to continue)
+			refreshContextList();
+			break;
+		case 5:
+			done = true;
+			s.innerHTML = lang[lng,'faildownloadurl'];//Failed to create context from URL.<br/>(Click here to continue)
+			break;
+		case 0:
+		default:
+			s.innerHTML=lang[lng,'unknown'];//'Unknown'
+			break;
+	}
+
+	if(!done)
+		setTimeout('checkUrlStatus();', 1000);
+	else
+		pendingDownloadID = -1;
 }
 
 function resetUrl()
 {
-    if(pendingDownloadID > 0)
-	return;
+	if(pendingDownloadID > 0)
+		return;
 
-    var i = document.getElementById('loadurl');
-    var s = document.getElementById('loadurl_status');
-    i.style.display='block';
-    s.style.display='none';
+	var i = document.getElementById('loadurl');
+	var s = document.getElementById('loadurl_status');
+	i.style.display='block';
+	s.style.display='none';
 }
 
 function cb_contextUrlStatus_err(error, errStr)
 {
-    alert(errStr);
+	alert(errStr);
 }
 
 /**
@@ -934,9 +931,9 @@ function cb_contextUrlStatus_err(error, errStr)
  */
 function cb_auth(response)
 {
-    setStatus("");
-    setUIState(2);
-    sessionList();
+	setStatus("");
+	setUIState(2);
+	sessionList();
 }
 
 /*
@@ -951,8 +948,8 @@ Teljes feltöltési sebesség: 0b/s
  */
 function cb_auth_err(error, errStr)
 {
-    setError(error, lang[lng,'failogin'] + errStr);//Failed to login: 
-    document.frm_auth.username.focus();
+	setError(error, lang[lng,'failogin'] + errStr);//Failed to login: 
+	document.frm_auth.username.focus();
 }
 
 /**
@@ -961,8 +958,8 @@ function cb_auth_err(error, errStr)
  */
 function cb_deauth(response)
 {
-    setStatus(lang[lng,'loggedout']);//Logged out.
-    setUIState(1);
+	setStatus(lang[lng,'loggedout']);//Logged out.
+	setUIState(1);
 }
 
 /**
@@ -971,18 +968,18 @@ function cb_deauth(response)
  */
 function cb_sessionList(response)
 {
-    var sessions = response.getElementsByTagName('sessions')[0].getElementsByTagName('session');
-    var names    = response.getElementsByTagName('sessions')[0].getElementsByTagName('name');
-    var list = document.getElementById('sessionlist');
-    while(list.hasChildNodes())
-	list.removeChild(list.childNodes[0]);
-    for(var i=0; i < sessions.length; i++)
-    {
-	var session = sessions[i].childNodes[0].nodeValue;
-	var name    = names[i].childNodes[0].nodeValue;
-	list.options[i] = new Option(session + ":" + name, session);
-    }
-    setStatus("");
+	var sessions = response.getElementsByTagName('sessions')[0].getElementsByTagName('session');
+	var names    = response.getElementsByTagName('sessions')[0].getElementsByTagName('name');
+	var list = document.getElementById('sessionlist');
+	while(list.hasChildNodes())
+		list.removeChild(list.childNodes[0]);
+	for(var i=0; i < sessions.length; i++)
+	{
+		var session = sessions[i].childNodes[0].nodeValue;
+		var name    = names[i].childNodes[0].nodeValue;
+		list.options[i] = new Option(session + ":" + name, session);
+	}
+	setStatus("");
 }
 
 /**
@@ -992,10 +989,10 @@ function cb_sessionList(response)
  */
 function cb_sessionList_err(error, errStr)
 {
-    var list = document.getElementById('sessionlist');
-    while(list.hasChildNodes())
-	list.removeChild(list.childNodes[0]);
-    setError(error, lang[lng,'nosessionlisting'] + errStr);//'Could not list sessions: ' + errStr
+	var list = document.getElementById('sessionlist');
+	while(list.hasChildNodes())
+		list.removeChild(list.childNodes[0]);
+	setError(error, lang[lng,'nosessionlisting'] + errStr);//'Could not list sessions: ' + errStr
 }
 
 /**
@@ -1004,11 +1001,11 @@ function cb_sessionList_err(error, errStr)
  */
 function cb_sessionAttach(response)
 {
-    setUIState(3);
-    refreshContextList();
-    // Fix: calling this function right after or before updating
-    // the contexts does not work. Hence the 1 second delay.
-    setTimeout('updateSessionName();', 1000);
+	setUIState(3);
+	refreshContextList();
+	// Fix: calling this function right after or before updating
+	// the contexts does not work. Hence the 1 second delay.
+	setTimeout('updateSessionName();', 1000);
 }
 
 /**
@@ -1017,7 +1014,7 @@ function cb_sessionAttach(response)
  */
 function cb_sessionAttach_err(error, errStr)
 {
-    setError(error, lang[lng,'failedtoattach'] + errStr);//Failed to attach to session: 
+	setError(error, lang[lng,'failedtoattach'] + errStr);//Failed to attach to session: 
 }
 
 /**
@@ -1026,8 +1023,8 @@ function cb_sessionAttach_err(error, errStr)
  */
 function cb_sessionSetup(response)
 {
-    setUIState(3);
-    refreshContextList();
+	setUIState(3);
+	refreshContextList();
 }
 
 /**
@@ -1036,7 +1033,7 @@ function cb_sessionSetup(response)
  */
 function cb_sessionSetup_err(error, errStr)
 {
-    setError(error, lang[lng,'failednewsession'] + errStr);//Failed to create new session: 
+	setError(error, lang[lng,'failednewsession'] + errStr);//Failed to create new session: 
 }
 
 /**
@@ -1045,9 +1042,9 @@ function cb_sessionSetup_err(error, errStr)
  */
 function cb_sessionDetach(response)
 {
-    setUIState(2);
-    clearContextList();
-    sessionList();
+	setUIState(2);
+	clearContextList();
+	sessionList();
 }
 
 /**
@@ -1056,7 +1053,7 @@ function cb_sessionDetach(response)
  */
 function cb_sessionDetach_err(error, errStr)
 {
-    setError(error, lang[lng,'failedtodetach'] + errStr);//Failed to detach from session: 
+	setError(error, lang[lng,'failedtodetach'] + errStr);//Failed to detach from session: 
 }
 
 /**
@@ -1065,9 +1062,9 @@ function cb_sessionDetach_err(error, errStr)
  */
 function cb_sessionQuit(response)
 {
-    setUIState(2);
-    clearContextList();
-    sessionList();
+	setUIState(2);
+	clearContextList();
+	sessionList();
 }
 
 /**
@@ -1076,53 +1073,53 @@ function cb_sessionQuit(response)
  */
 function cb_sessionQuit_err(error, errStr)
 {
-    setError(error, lang[lng,'failedtoterminator'] + errStr);//Failed to terminate session: 
+	setError(error, lang[lng,'failedtoterminator'] + errStr);//Failed to terminate session: 
 }
 
 function cb_cleanAll(response)
 {
-    setStatus(lang[lng,'sessioncleanded']);//Session cleaned...
-    refreshContextList();
+	setStatus(lang[lng,'sessioncleanded']);//Session cleaned...
+	refreshContextList();
 }
 
 function cb_cleanAll_err(error, errorStr)
 {
-    setError(error, lang[lng,'unablecleansession']);//Unable to clean session.
+	setError(error, lang[lng,'unablecleansession']);//Unable to clean session.
 }
 
 function cb_contextList(response)
 {
-    last_contextIdList = contextIdList;
+	last_contextIdList = contextIdList;
 
-    contextIdList = new Array();
+	contextIdList = new Array();
 
-    var ids = response.getElementsByTagName('list')[0];
+	var ids = response.getElementsByTagName('list')[0];
 
-    if (ids == null)
-    {
-	// Not providing any context IDs is ok.
-	/* setStatus("Server did not provide any context ids!"); */
-		 updateInProgress = false;
-	return;
-    }
+	if (ids == null)
+	{
+		// Not providing any context IDs is ok.
+		/* setStatus("Server did not provide any context ids!"); */
+		updateInProgress = false;
+		return;
+	}
 
-    for(var i=0; i < ids.getElementsByTagName('entry').length; i++)
-    {
-	var entry = ids.getElementsByTagName('entry')[i];
-	var cid = parseInt(getFirstChildValue(entry, 'id'));
-	contextIdList.push(cid);
-    }
+	for(var i=0; i < ids.getElementsByTagName('entry').length; i++)
+	{
+		var entry = ids.getElementsByTagName('entry')[i];
+		var cid = parseInt(getFirstChildValue(entry, 'id'));
+		contextIdList.push(cid);
+	}
 
 	updateInProgress = false;
 
 	// Call again to immediatly get status updates
 	if(!firstFull)
-	 refreshContextList();
+		refreshContextList();
 }
 
 function cb_contextList_err(error, errStr)
 {
-    setError(error, lang[lng,'failedconextlist'] + errStr);//Failed to obtain context list: 
+	setError(error, lang[lng,'failedconextlist'] + errStr);//Failed to obtain context list: 
 	updateInProgress = false;
 }//lang['en','unablecleansession']
 
@@ -1132,57 +1129,57 @@ function cb_contextList_err(error, errStr)
  */
 function cb_contextStatus(response)
 {
-    setStatus(lang[lng,'parsingcontextresp']);//Parsing context response...
+	setStatus(lang[lng,'parsingcontextresp']);//Parsing context response...
 
-    /* Fetch all contexts, create new Status objects for them (status.js) and let 
+	/* Fetch all contexts, create new Status objects for them (status.js) and let 
 	 * updateContextTable do the work.
 	 */
-    var contexts = response.getElementsByTagName('contexts')[0];
-    if (contexts == null)
-    {
-	setStatus(lang[lng,'servernoconects']);//Server didnt provide any contexts!
-	updateInProgress = false;
-	return;
-    }
-
-    var newContextList = new Array();
-    var strContexts = "";
-	 var i;
-    for(i=0; i < contexts.getElementsByTagName('context').length; i++)
-    {
-	var s = new Status(contexts.getElementsByTagName('context')[i]);
-	newContextList.push(s);
-	if (strContexts == "")
+	var contexts = response.getElementsByTagName('contexts')[0];
+	if (contexts == null)
 	{
-	    strContexts += s.contextID;
+		setStatus(lang[lng,'servernoconects']);//Server didnt provide any contexts!
+		updateInProgress = false;
+		return;
 	}
-	else
+
+	var newContextList = new Array();
+	var strContexts = "";
+	var i;
+	for(i=0; i < contexts.getElementsByTagName('context').length; i++)
 	{
-	    strContexts += ","+s.contextID;
+		var s = new Status(contexts.getElementsByTagName('context')[i]);
+		newContextList.push(s);
+		if (strContexts == "")
+		{
+			strContexts += s.contextID;
+		}
+		else
+		{
+			strContexts += ","+s.contextID;
+		}
 	}
-    }
 
-	 // Shift i elements of contextIdsToUpdate
-	 for(var count=0; count < i; count++)
-	    contextIdsToUpdate.shift();
+	// Shift i elements of contextIdsToUpdate
+	for(var count=0; count < i; count++)
+		contextIdsToUpdate.shift();
 
-    updateContextTable(newContextList);
-    contextsAge = 0;
+	updateContextTable(newContextList);
+	contextsAge = 0;
 
-    // Refresh limits
-    if(strContexts != "")
-	contextLimitStatus(strContexts);
+	// Refresh limits
+	if(strContexts != "")
+		contextLimitStatus(strContexts);
 
-    /* Updates done */
-    setStatus("");
+	/* Updates done */
+	setStatus("");
 
 	updateInProgress = false;
 
 	if(!firstFull) {
-		 if(contextIdsToUpdate.length > 0)
-			 refreshContextList();
-		 else
-			 firstFull = true;
+		if(contextIdsToUpdate.length > 0)
+			refreshContextList();
+		else
+			firstFull = true;
 	}
 }
 
@@ -1192,31 +1189,31 @@ function cb_contextStatus(response)
  */
 function cb_contextStatus_err(error, errStr)
 {
-    setError(error, lang[lng,'failedcontextlists'] +errStr);//Failed to list contexts: 
-    canGetContexts = 0;
+	setError(error, lang[lng,'failedcontextlists'] +errStr);//Failed to list contexts: 
+	canGetContexts = 0;
 	updateInProgress = false;
 }
 
 function cb_sessionName(response)
 {
-    var sesnam = getFirstChildValue(response, 'sessionname');
-    var sesid  = getFirstChildValue(response, 'sessionid');
-    document.title = "BTG - " + sesnam + " (" + sesid + ")";
+	var sesnam = getFirstChildValue(response, 'sessionname');
+	var sesid  = getFirstChildValue(response, 'sessionid');
+	document.title = "BTG - " + sesnam + " (" + sesid + ")";
 }
 
 function cb_sessionName_err(error, errStr)
 {
-    document.title = "BTG";
+	document.title = "BTG";
 }
 
 function cb_updateSessionNameField(response)
 {
-    document.getElementById('session_name').value = getFirstChildValue(response, 'sessionname');
+	document.getElementById('session_name').value = getFirstChildValue(response, 'sessionname');
 }
 
 function cb_updateSessionNameField_err(error, errStr)
 {
-    document.getElementById('session_name').value = lang[lng,'unknown'];
+	document.getElementById('session_name').value = lang[lng,'unknown'];
 }
 
 /**
@@ -1225,32 +1222,32 @@ function cb_updateSessionNameField_err(error, errStr)
  */
 function cb_contextLimitStatus(response)
 {
-    var limits = response.getElementsByTagName('limits')[0];
+	var limits = response.getElementsByTagName('limits')[0];
 
-    for(var i=0; i < limits.getElementsByTagName('limit').length; i++)
-    {
-	var l = new Limit(limits.getElementsByTagName('limit')[i]);
-	var e = document.getElementById('txtUploadLimit_'+l.contextID);
-	if(l.uploadLimit == noLimit)
-	    e.value = "";
-	else
-	    e.value = l.uploadLimit/bytesPerKiB;
-	e = document.getElementById('txtDownloadLimit_'+l.contextID);
-	if(l.downloadLimit == noLimit)
-	    e.value = "";
-	else
-	    e.value = l.downloadLimit/bytesPerKiB;
-	e = document.getElementById('txtSeedLimit_'+l.contextID);
-	if(l.seedLimit == noLimit)
-	    e.value = "";
-	else
-	    e.value = l.seedLimit;
-	e = document.getElementById('txtSeedTimeout_'+l.contextID);
-	if(l.seedTimeout == noLimit)
-	    e.value = "";
-	else
-	    e.value = l.seedTimeout/60;
-    }
+	for(var i=0; i < limits.getElementsByTagName('limit').length; i++)
+	{
+		var l = new Limit(limits.getElementsByTagName('limit')[i]);
+		var e = document.getElementById('txtUploadLimit_'+l.contextID);
+		if(l.uploadLimit == noLimit)
+			e.value = "";
+		else
+			e.value = l.uploadLimit/bytesPerKiB;
+		e = document.getElementById('txtDownloadLimit_'+l.contextID);
+		if(l.downloadLimit == noLimit)
+			e.value = "";
+		else
+			e.value = l.downloadLimit/bytesPerKiB;
+		e = document.getElementById('txtSeedLimit_'+l.contextID);
+		if(l.seedLimit == noLimit)
+			e.value = "";
+		else
+			e.value = l.seedLimit;
+		e = document.getElementById('txtSeedTimeout_'+l.contextID);
+		if(l.seedTimeout == noLimit)
+			e.value = "";
+		else
+			e.value = l.seedTimeout/60;
+	}
 }
 
 /**
@@ -1259,7 +1256,7 @@ function cb_contextLimitStatus(response)
  */
 function cb_contextLimitStatus_err(error, errStr)
 {
-    setError(error, lang[lng,'failgetlimits'] + errStr);//Failed to get limit status: 
+	setError(error, lang[lng,'failgetlimits'] + errStr);//Failed to get limit status: 
 }
 
 /**
@@ -1268,7 +1265,7 @@ function cb_contextLimitStatus_err(error, errStr)
  */
 function cb_contextLimit(response)
 {
-    setStatus("");
+	setStatus("");
 }
 
 /**
@@ -1277,7 +1274,7 @@ function cb_contextLimit(response)
  */
 function cb_contextLimit_err(error, errStr)
 {
-    setError(error, lang[lng,'failsetlimit'] + errStr);//Failed to set limit: 
+	setError(error, lang[lng,'failsetlimit'] + errStr);//Failed to set limit: 
 }
 
 /**
@@ -1286,7 +1283,7 @@ function cb_contextLimit_err(error, errStr)
  */
 function cb_contextStart(response)
 {
-    refreshContextList();
+	refreshContextList();
 }
 
 /**
@@ -1295,7 +1292,7 @@ function cb_contextStart(response)
  */
 function cb_contextStart_err(error, errStr)
 {
-    setError(error, lang[lng,'failstartorrent'] + errStr);//Failed to start torrent: 
+	setError(error, lang[lng,'failstartorrent'] + errStr);//Failed to start torrent: 
 }
 
 /**
@@ -1304,7 +1301,7 @@ function cb_contextStart_err(error, errStr)
  */
 function cb_contextStop(response)
 {
-    refreshContextList();
+	refreshContextList();
 }
 
 /**
@@ -1313,7 +1310,7 @@ function cb_contextStop(response)
  */
 function cb_contextStop_err(error, errStr)
 {
-    setError(error, lang[lng,'failstoporrent'] + errStr);//Failed to stop torrent: 
+	setError(error, lang[lng,'failstoporrent'] + errStr);//Failed to stop torrent: 
 }
 
 /**
@@ -1322,16 +1319,16 @@ function cb_contextStop_err(error, errStr)
  */
 function cb_contextPeers(response)
 {
-    var peers = new Array();
-    for(var i=0; i < contexts.getElementsByTagName('peers').length; i++)
-    {
-	var p = new Peer(contexts.getElementsByTagName('peer')[i]);
-	peers.push(p);
-    }
-    if(peers.length == 0)
-	setStatus(lang[lng,'nopeerinformationavaible']);//No peer information available.
-    else
-	alert(peers);
+	var peers = new Array();
+	for(var i=0; i < contexts.getElementsByTagName('peers').length; i++)
+	{
+		var p = new Peer(contexts.getElementsByTagName('peer')[i]);
+		peers.push(p);
+	}
+	if(peers.length == 0)
+		setStatus(lang[lng,'nopeerinformationavaible']);//No peer information available.
+	else
+		alert(peers);
 }
 
 /**
@@ -1340,7 +1337,7 @@ function cb_contextPeers(response)
  */
 function cb_contextPeers_err(error, errStr)
 {
-    setError(error, lang[lng,'failgetpeerlist'] + errStr);//Failed to get peers list: 
+	setError(error, lang[lng,'failgetpeerlist'] + errStr);//Failed to get peers list: 
 }
 
 /**
@@ -1349,23 +1346,23 @@ function cb_contextPeers_err(error, errStr)
  */
 function cb_contextAbort(response)
 {
-    // !!!
+	// !!!
 
-    var index = contextIdsToUpdate.indexOf(contextAbortId);
-    if (index != -1)
-    {
-	contextIdsToUpdate.splice(index, 1);
-    }
+	var index = contextIdsToUpdate.indexOf(contextAbortId);
+	if (index != -1)
+	{
+		contextIdsToUpdate.splice(index, 1);
+	}
 
-    index = contextIdList.indexOf(contextAbortId);
-    if (index != -1)
-    {
-	contextIdList.splice(index, 1);
-    }
+	index = contextIdList.indexOf(contextAbortId);
+	if (index != -1)
+	{
+		contextIdList.splice(index, 1);
+	}
 
-    contextAbortId = -1;
+	contextAbortId = -1;
 
-    refreshContextList();
+	refreshContextList();
 }
 
 /**
@@ -1374,7 +1371,7 @@ function cb_contextAbort(response)
  */
 function cb_contextAbort_err(error, errStr)
 {
-    setError(error, lang[lng,'failedtorrentdelete'] + errStr);//Failed to delete torrent: 
+	setError(error, lang[lng,'failedtorrentdelete'] + errStr);//Failed to delete torrent: 
 }
 
 /**
@@ -1383,7 +1380,7 @@ function cb_contextAbort_err(error, errStr)
  */
 function cb_contextClean(response)
 {
-    refreshContextList();
+	refreshContextList();
 }
 
 /**
@@ -1392,7 +1389,7 @@ function cb_contextClean(response)
  */
 function cb_contextClean_err(error, errStr)
 {
-    setError(error, lang[lng,'failedtmovetorrent'] + errStr);//Failed to move torrent: 
+	setError(error, lang[lng,'failedtmovetorrent'] + errStr);//Failed to move torrent: 
 }
 
 /**************************************************
@@ -1401,15 +1398,15 @@ function cb_contextClean_err(error, errStr)
 /* Set the status message */
 function setStatus(msg)
 {
-    isStatusIdle = 0;
-    StatusAge = 0;
-    if(msg == '' || msg == null || msg == undefined)
-    {
-	isStatusIdle = 1;
-	msg = lang[lng,'idle'];//Idle
-    }
+	isStatusIdle = 0;
+	StatusAge = 0;
+	if(msg == '' || msg == null || msg == undefined)
+	{
+		isStatusIdle = 1;
+		msg = lang[lng,'idle'];//Idle
+	}
 
-    document.getElementById('statusMessage').innerHTML = msg;
+	document.getElementById('statusMessage').innerHTML = msg;
 }
 
 /* Set an error message.
@@ -1418,181 +1415,181 @@ function setStatus(msg)
  */
 function setError(error, msg)
 {
-    for(var i=0; i < error.length; i++)
-    {
-	var code = error[i].getAttribute('code');
-	if(code != null)
+	for(var i=0; i < error.length; i++)
 	{
-	    if(code == '1')
-	    {
-		/* Failed to connect to BTG, or failed to init session.. This is fatal  */
-		setUIState(0);
-		document.getElementById('layer_fatal').innerHTML = "<h2>" + lang[lng,'fatalerror'] + "</h2><p>" + error[i].childNodes[0].nodeValue + "</p>";//Fatal error
-		document.getElementById('layer_fatal').style.display="block";
-		setStatus(lang[lng,'failedtoconnect']);//Cannot connect to BTG. Please refresh this page and try later.
-		return;
-	    }
-	    else if(code == '2')
-	    {
-		/* Failed to authorize */
-		setUIState(1);
-		setStatus(lang[lng,'failauthorize']);//Failed to authorize.
-		return;
-	    }
-	    else if(code == '3')
-	    {
-		/* Failed to attach session, let user select new session */
-		sessionList();
-		setUIState(2);
-		setStatus(error[i].childNodes[0].nodeValue);
-		return;
-	    }
-	    else if(code == '4')
-	    {
-		/* Failed to setup session */
-		setUIState(2);
-		setStatus(error[i].childNodes[0].nodeValue);
-		return;
-	    }
+		var code = error[i].getAttribute('code');
+		if(code != null)
+		{
+			if(code == '1')
+			{
+				/* Failed to connect to BTG, or failed to init session.. This is fatal  */
+				setUIState(0);
+				document.getElementById('layer_fatal').innerHTML = "<h2>" + lang[lng,'fatalerror'] + "</h2><p>" + error[i].childNodes[0].nodeValue + "</p>";//Fatal error
+				document.getElementById('layer_fatal').style.display="block";
+				setStatus(lang[lng,'failedtoconnect']);//Cannot connect to BTG. Please refresh this page and try later.
+				return;
+			}
+			else if(code == '2')
+			{
+				/* Failed to authorize */
+				setUIState(1);
+				setStatus(lang[lng,'failauthorize']);//Failed to authorize.
+				return;
+			}
+			else if(code == '3')
+			{
+				/* Failed to attach session, let user select new session */
+				sessionList();
+				setUIState(2);
+				setStatus(error[i].childNodes[0].nodeValue);
+				return;
+			}
+			else if(code == '4')
+			{
+				/* Failed to setup session */
+				setUIState(2);
+				setStatus(error[i].childNodes[0].nodeValue);
+				return;
+			}
+		}
 	}
-    }
 
-    setStatus(msg);
+	setStatus(msg);
 }
 
 /** Retreive a specific field value in DOM node */
 function getFirstChildValue(node, field)
 {
-    var elem = node.getElementsByTagName(field);
-    if(elem.length == 0)
-	return "";
-    if(elem[0].childNodes.length == 0)
-	return "";
-    else
-	return elem[0].childNodes[0].nodeValue;
+	var elem = node.getElementsByTagName(field);
+	if(elem.length == 0)
+		return "";
+	if(elem[0].childNodes.length == 0)
+		return "";
+	else
+		return elem[0].childNodes[0].nodeValue;
 }
 
 /** Round a number X to N decimals */
 function RoundToNdp(X, N) {
-    var T = Number("1e" + N);
-    return Math.round(X * T) / T;
+	var T = Number("1e" + N);
+	return Math.round(X * T) / T;
 }
 
 /** Shortcut to rounding val with 1 decimal */
 function round1(val)
 {
-    return RoundToNdp(val,1);
+	return RoundToNdp(val,1);
 }
 
 /** Shortcut to rounding val with 2 decimals */
 function round2(val)
 {
-    return RoundToNdp(val,2);
+	return RoundToNdp(val,2);
 }
 
 /** Converts size (in bytes) to a human readble figure */
 function humanizeSize(size, precision)
 {
-    if(size < bytesPerKiB)
-	return size + "b";
+	if(size < bytesPerKiB)
+		return size + "b";
 
-    size = size / bytesPerKiB;
-    if(size < bytesPerKiB)
-	return RoundToNdp(size, precision) + " kB";
+	size = size / bytesPerKiB;
+	if(size < bytesPerKiB)
+		return RoundToNdp(size, precision) + " kB";
 
-    size = size / bytesPerKiB;
-    if(size < bytesPerKiB)
-	return RoundToNdp(size, precision) + " MB";
-    
-    size = size / bytesPerKiB;
-    if(size < bytesPerKiB)
-	return RoundToNdp(size, precision) + " GB";
+	size = size / bytesPerKiB;
+	if(size < bytesPerKiB)
+		return RoundToNdp(size, precision) + " MB";
+
+	size = size / bytesPerKiB;
+	if(size < bytesPerKiB)
+		return RoundToNdp(size, precision) + " GB";
 }
 
 /** Converts speed (in byte/s) to a human readble figure */
 function humanizeSpeed(size, precision)
 {
-    return humanizeSize(size, precision) + "/s";
+	return humanizeSize(size, precision) + "/s";
 }
 
 function splitContextList()
 {
-    // Find new entries.
+	// Find new entries.
 
-    contextIdListNewContexts = new Array();
+	contextIdListNewContexts = new Array();
 
-    for (var count=0; count<contextIdList.length; count++) 
-    {
-	var id = contextIdList[count];
-	if (last_contextIdList.indexOf(id) != -1)
+	for (var count=0; count<contextIdList.length; count++) 
 	{
-	    // New entry.
-	    contextIdListNewContexts.push(id);
+		var id = contextIdList[count];
+		if (last_contextIdList.indexOf(id) != -1)
+		{
+			// New entry.
+			contextIdListNewContexts.push(id);
+		}
 	}
-    }
 }
 
 function createUpdateList()
 {
 	// All updated, fill up with ALL
-    if (contextIdsToUpdate.length == 0)
-    {
-	for (var count=0; count<contextIdList.length; count++) 
+	if (contextIdsToUpdate.length == 0)
 	{
-	    var id = contextIdList[count];
-	    contextIdsToUpdate.push(id);
+		for (var count=0; count<contextIdList.length; count++) 
+		{
+			var id = contextIdList[count];
+			contextIdsToUpdate.push(id);
+		}
+
+		return;
 	}
 
-	return;
-    }
-
-    // New, add.
-    if (contextIdListNewContexts.length > 0)
-    {
-	// New contexts.
-	for (var count=0; count<contextIdListNewContexts.length; count++) 
+	// New, add.
+	if (contextIdListNewContexts.length > 0)
 	{
-	    var id = contextIdListNewContexts[count];
-	    contextIdsToUpdate.push(id);
+		// New contexts.
+		for (var count=0; count<contextIdListNewContexts.length; count++) 
+		{
+			var id = contextIdListNewContexts[count];
+			contextIdsToUpdate.push(id);
+		}
+		contextIdListNewContexts = new Array();
 	}
-	contextIdListNewContexts = new Array();
-    }
 }
 
 function removeOldTorrents()
 {
-    // !!!
-    var table = document.getElementById('torrent_table');
+	// !!!
+	var table = document.getElementById('torrent_table');
 
-    for(var i=0; i < contextList.length; i++)
-    {
-	var s = contextList[i];
-	if (s)
+	for(var i=0; i < contextList.length; i++)
 	{
-	    if (contextIdList.indexOf(s.contextID) == -1)
-	    {
-		var row = document.getElementById('context_'+s.contextID+'_row');
-		if (row)
+		var s = contextList[i];
+		if (s)
 		{
-		    //setStatus("Deleting:" + s.contextID.toString());
+			if (contextIdList.indexOf(s.contextID) == -1)
+			{
+				var row = document.getElementById('context_'+s.contextID+'_row');
+				if (row)
+				{
+					//setStatus("Deleting:" + s.contextID.toString());
 
-		    table.deleteRow(row.rowIndex);
-		    var detailsRow = document.getElementById('context_'+s.contextID+'_details_row');
-		    table.deleteRow(detailsRow.rowIndex);
-		    var controlRow = document.getElementById('context_'+s.contextID+'_control_row');
-		    table.deleteRow(controlRow.rowIndex);
-		    delete s;
-		    delete contextList[i];
+					table.deleteRow(row.rowIndex);
+					var detailsRow = document.getElementById('context_'+s.contextID+'_details_row');
+					table.deleteRow(detailsRow.rowIndex);
+					var controlRow = document.getElementById('context_'+s.contextID+'_control_row');
+					table.deleteRow(controlRow.rowIndex);
+					delete s;
+					delete contextList[i];
 
-		    contextList.splice(i, 1);
+					contextList.splice(i, 1);
+				}
+				else
+				{
+					setStatus(lang[lng,'unabledeletecontext']);//Unable to delete context from table..
+				}
+			}
 		}
-		else
-		{
-		    setStatus(lang[lng,'unabledeletecontext']);//Unable to delete context from table..
-		}
-	    }
 	}
-    }
 }
 
 /* Refresh the context list */
@@ -1604,76 +1601,76 @@ function refreshContextList()
 
 	updateInProgress = true;
 
-    if (updatesStopped == 1)
-    {
-	changeUpdateMode();
-    }
-
-
-    if (!contextIdListUpdated)
-    {
-	setStatus(lang[lng,'updateidlist']);//Updating id list...
-	contextIdList = new Array();
-	
-	//!!!
-	if(!btg_contextList(cb_contextList, cb_contextList_err)) {
-		// race detected
-		updateInProgress = false;
-		return;
-	}
-	contextIdListUpdated = true;
-    }
-    else
-    {
-	setStatus(lang[lng,'updatetorrentlist']);//Updating torrent list...
-
-	splitContextList();
-	createUpdateList();
-	removeOldTorrents();
-
-	var str_contextIdsToUpdate = "";
-	var cid_number = 0;
-	for (var count=0; count<contextIdsToUpdate.length; count++) 
+	if (updatesStopped == 1)
 	{
-	    var id = contextIdsToUpdate[count];
-	    
-	    str_contextIdsToUpdate += id.toString() + ",";
-
-	    if (cid_number > updateNumberOfContexts)
-	    {
-			  break;
-	    }
-
-	    cid_number += 1;
+		changeUpdateMode();
 	}
 
-	btg_contextStatusForIds(cb_contextStatus, cb_contextStatus_err, str_contextIdsToUpdate);
 
-	contextIdListUpdated = false;
-    }
+	if (!contextIdListUpdated)
+	{
+		setStatus(lang[lng,'updateidlist']);//Updating id list...
+		contextIdList = new Array();
+
+		//!!!
+		if(!btg_contextList(cb_contextList, cb_contextList_err)) {
+			// race detected
+			updateInProgress = false;
+			return;
+		}
+		contextIdListUpdated = true;
+	}
+	else
+	{
+		setStatus(lang[lng,'updatetorrentlist']);//Updating torrent list...
+
+		splitContextList();
+		createUpdateList();
+		removeOldTorrents();
+
+		var str_contextIdsToUpdate = "";
+		var cid_number = 0;
+		for (var count=0; count<contextIdsToUpdate.length; count++) 
+		{
+			var id = contextIdsToUpdate[count];
+
+			str_contextIdsToUpdate += id.toString() + ",";
+
+			if (cid_number > updateNumberOfContexts)
+			{
+				break;
+			}
+
+			cid_number += 1;
+		}
+
+		btg_contextStatusForIds(cb_contextStatus, cb_contextStatus_err, str_contextIdsToUpdate);
+
+		contextIdListUpdated = false;
+	}
 }
 
 function changeUpdateMode()
 {
-    if (updatesStopped == 0)
-    {
-	updatesStopped = 1;
-	setStatus(lang[lng,'sau']);//Stopped automatic updates...
-	document.getElementById('stop_refresh').value=lang[lng,'startupdates'];//Start updates
-    }
-    else
-    {
-	contextsAge    = 0;
-	updatesStopped = 0;
-	document.getElementById('stop_refresh').value=lang[lng,'stopupdates'];//Stop updates
-	setStatus();
-    }
+	if (updatesStopped == 0)
+	{
+		updatesStopped = 1;
+		setStatus(lang[lng,'sau']);//Stopped automatic updates...
+		document.getElementById('stop_refresh').value=lang[lng,'startupdates'];//Start updates
+	}
+	else
+	{
+		contextsAge    = 0;
+		updatesStopped = 0;
+		document.getElementById('stop_refresh').value=lang[lng,'stopupdates'];//Stop updates
+		setStatus();
+	}
 }
 
 /* Update the name of the current session. */
 function updateSessionName()
 {
-    btg_sessionName(cb_sessionName, cb_sessionName_err);
+	btg_sessionName(cb_sessionName, cb_sessionName_err);
 }
 
 /** Handles updating of the visuals.
@@ -1693,166 +1690,166 @@ function updateSessionName()
  */
 function updateContextTable(newList)
 {
-    var tempList = new Array();
+	var tempList = new Array();
 
-    var totalUpRate = 0;
-    var totalDownRate = 0;
-    
-    var table = document.getElementById('torrent_table');
-    var evenOrUneven = 'uneven';
-    /* Iterate over all new items */
-    for (var i=0; i < newList.length; i++)
-    {
-	var s = newList[i];
+	var totalUpRate = 0;
+	var totalDownRate = 0;
 
-	/* Add it to the new list */
-	tempList.push(s);
+	var table = document.getElementById('torrent_table');
+	var evenOrUneven = 'uneven';
+	/* Iterate over all new items */
+	for (var i=0; i < newList.length; i++)
+	{
+		var s = newList[i];
 
-	/* Remove it from the current list (isn't there any better way to do this???) */
-	for (var y=0; y < contextList.length; y++)
-	{
-	    if (s.compare(contextList[y]))
-	    {
-		contextList.splice(y, 1);
-		break;
-	    }
-	}
+		/* Add it to the new list */
+		tempList.push(s);
 
-	/* Determine the state of the torrent */
-	if (s.status == ts_queued)
-	{
-	    /* Some other torrent is checking its data and this torrent is in the wait queue */
-	    s.statusMessage = lang[lng,'checkqueue']//Queued for check
-	}
-	else if (s.status == ts_checking)
-	{
-	    /* This torrent is currently checking its data */
-	    s.statusMessage = lang[lng,'checkdata'] + s.done + "%"//Checking data (" + s.done + "%)
-	}
-	else if (s.status == ts_connecting)
-	{
-	    /* Connecting to tracker or peers  */
-	    s.statusMessage = lang[lng,'connecting']//Connecting
-	}
-	else if (s.status == ts_downloading)
-	{
-	    /* This torrent is currently downloading data, not finished */
-	    s.statusMessage = lang[lng,'downloading'] + "(" + humanizeSpeed(s.downloadrate,1) + "): "+ round1(s.done) +"% (" + s.timeleft + lang[lng,'left'] + ")"
-	}
-	else if (s.status == ts_seeding)
-	{
-	    /* This torrent is fully downloaded and is seeding */
-	    s.statusMessage = "Seeding (" + humanizeSpeed(s.uploadrate,1) + "): "+ round1(s.done) + "%";
-	}
-	else if (s.status == ts_stopped)
-	{
-	    /* User has stopped torrent, not finished */
-	    s.statusMessage = lang[lng,'stopped'] + "("+ round1(s.done) +"%)"
-	}
-	else if (s.status == ts_finished)
-	{
-	    /* Torrent is fully downloaded and is stopped */
-	    s.statusMessage = lang[lng,'finished'] + "("+ round1(s.done)+"%)"
-	}
-	else
-	{
-	    /* Undefined...? Use the specified statustext... */
-	    s.statusMessage = s.statustext
-	}
+		/* Remove it from the current list (isn't there any better way to do this???) */
+		for (var y=0; y < contextList.length; y++)
+		{
+			if (s.compare(contextList[y]))
+			{
+				contextList.splice(y, 1);
+				break;
+			}
+		}
 
-	if (s.trackerstatus != 200 && s.trackerstatus != -1)
-	    s.statusMessage+='. Error '+s.trackerstatus + ': '+s.trackerstatustext;
+		/* Determine the state of the torrent */
+		if (s.status == ts_queued)
+		{
+			/* Some other torrent is checking its data and this torrent is in the wait queue */
+			s.statusMessage = lang[lng,'checkqueue']//Queued for check
+		}
+		else if (s.status == ts_checking)
+		{
+			/* This torrent is currently checking its data */
+			s.statusMessage = lang[lng,'checkdata'] + s.done + "%"//Checking data (" + s.done + "%)
+		}
+		else if (s.status == ts_connecting)
+		{
+			/* Connecting to tracker or peers  */
+			s.statusMessage = lang[lng,'connecting']//Connecting
+		}
+		else if (s.status == ts_downloading)
+		{
+			/* This torrent is currently downloading data, not finished */
+			s.statusMessage = lang[lng,'downloading'] + "(" + humanizeSpeed(s.downloadrate,1) + "): "+ round1(s.done) +"% (" + s.timeleft + lang[lng,'left'] + ")"
+		}
+		else if (s.status == ts_seeding)
+		{
+			/* This torrent is fully downloaded and is seeding */
+			s.statusMessage = "Seeding (" + humanizeSpeed(s.uploadrate,1) + "): "+ round1(s.done) + "%";
+		}
+		else if (s.status == ts_stopped)
+		{
+			/* User has stopped torrent, not finished */
+			s.statusMessage = lang[lng,'stopped'] + "("+ round1(s.done) +"%)"
+		}
+		else if (s.status == ts_finished)
+		{
+			/* Torrent is fully downloaded and is stopped */
+			s.statusMessage = lang[lng,'finished'] + "("+ round1(s.done)+"%)"
+		}
+		else
+		{
+			/* Undefined...? Use the specified statustext... */
+			s.statusMessage = s.statustext
+		}
 
-	if (s.trackerstatusmessage != "")
-	{
-	    s.statusMessage+='. '+s.trackerstatusmessage;
-	}
+		if (s.trackerstatus != 200 && s.trackerstatus != -1)
+			s.statusMessage+='. Error '+s.trackerstatus + ': '+s.trackerstatustext;
 
-	/* Check if we can find the row already (existing torrent) */
-	var row = document.getElementById('context_'+s.contextID+'_row');
-	var detailsTable = document.getElementById('context_'+s.contextID+'_details_table');
-	var detailsRow = document.getElementById('context_'+s.contextID+'_details_row');
-	var details = document.getElementById('context_'+s.contextID+'_details');
+		if (s.trackerstatusmessage != "")
+		{
+			s.statusMessage+='. '+s.trackerstatusmessage;
+		}
 
-	/* Not found, create it */
-	if (!row)
-	{
-	    /* 
+		/* Check if we can find the row already (existing torrent) */
+		var row = document.getElementById('context_'+s.contextID+'_row');
+		var detailsTable = document.getElementById('context_'+s.contextID+'_details_table');
+		var detailsRow = document.getElementById('context_'+s.contextID+'_details_row');
+		var details = document.getElementById('context_'+s.contextID+'_details');
+
+		/* Not found, create it */
+		if (!row)
+		{
+			/* 
 			 * This torrent is new! 
 			 * Create a new row at index 0.
 			 */
-	    row = createTorrentTableRow(table, s);
+			row = createTorrentTableRow(table, s);
 
-	    /* 
+			/* 
 			 * Create a hidden details row. 
 			 * Insert this as THIRD row! 
 			 * (headers, main row, info row..) 
 			 */
-	    detailsRow = table.insertRow(2);
-	    detailsRow.className = "ctx_details";
-	    detailsRow.style.display = 'none'; 
-	    detailsRow.id = 'context_'+s.contextID+'_details_row';
-	    detailsRow.contextID = s.contextID;
-	    // wojci: do not use this, as file selection cannot work if
-	    // the details are hidden when one clicks anywhere on the details.
-	    //detailsRow.onclick = function(){ toogleContextDetails(this.contextID); }
+			detailsRow = table.insertRow(2);
+			detailsRow.className = "ctx_details";
+			detailsRow.style.display = 'none'; 
+			detailsRow.id = 'context_'+s.contextID+'_details_row';
+			detailsRow.contextID = s.contextID;
+			// wojci: do not use this, as file selection cannot work if
+			// the details are hidden when one clicks anywhere on the details.
+			//detailsRow.onclick = function(){ toogleContextDetails(this.contextID); }
 
-	    /* Create the details cell and insert a detailsTable in it */
-	    detailsCell = detailsRow.insertCell(-1);
-	    detailsCell.colSpan = 3;
-	    detailsCell.className = "ctx_details";
-	    
-	    details = createTorrentDetails();
-	    details.id = 'context_'+s.contextID+'_details';
-	    detailsCell.appendChild(details);
+			/* Create the details cell and insert a detailsTable in it */
+			detailsCell = detailsRow.insertCell(-1);
+			detailsCell.colSpan = 3;
+			detailsCell.className = "ctx_details";
 
-	    var controlRow = table.insertRow(3);
-	    controlRow.className = "ctx_control";
-	    controlRow.style.display = 'none';
-	    controlRow.id = 'context_'+s.contextID+'_control_row';
-	    controlRow.contextID = s.contextID;
-	    var controlCell = controlRow.insertCell(-1);
-	    controlCell.colSpan = 3;
-	    controlCell.className = "ctx_control";
+			details = createTorrentDetails();
+			details.id = 'context_'+s.contextID+'_details';
+			detailsCell.appendChild(details);
 
-	    var control = createTorrentExtendedControls(s.contextID);
-	    control.id = 'context_'+s.contextID+'_control';
-	    controlCell.appendChild(control);
-	    
+			var controlRow = table.insertRow(3);
+			controlRow.className = "ctx_control";
+			controlRow.style.display = 'none';
+			controlRow.id = 'context_'+s.contextID+'_control_row';
+			controlRow.contextID = s.contextID;
+			var controlCell = controlRow.insertCell(-1);
+			controlCell.colSpan = 3;
+			controlCell.className = "ctx_control";
+
+			var control = createTorrentExtendedControls(s.contextID);
+			control.id = 'context_'+s.contextID+'_control';
+			controlCell.appendChild(control);
+
+		}
+
+		if (evenOrUneven == 'even')
+		{
+			evenOrUneven = 'uneven';
+		}
+		else
+		{
+			evenOrUneven = 'even';
+		}
+
+		/* Update the data */
+		updateTorrentTableRow(row, s);
+		row.className=evenOrUneven+'_row';
+		//detailsRow.className='extra_'+evenOrUneven+'_row';
+		updateTorrentDetails(details, s)
+
+			totalUpRate+= s.uploadrate;
+		totalDownRate+= s.downloadrate;
 	}
 
-	if (evenOrUneven == 'even')
-	{
-	    evenOrUneven = 'uneven';
-	}
-	else
-	{
-	    evenOrUneven = 'even';
-	}
-
-	/* Update the data */
-	updateTorrentTableRow(row, s);
-	row.className=evenOrUneven+'_row';
-	//detailsRow.className='extra_'+evenOrUneven+'_row';
-	updateTorrentDetails(details, s)
-
-	totalUpRate+= s.uploadrate;
-	totalDownRate+= s.downloadrate;
-    }
-
-    /* Okay. All available items has been processed and removed from contextList if they
+	/* Okay. All available items has been processed and removed from contextList if they
 	 * where there before. */
 
-    /* Done! Replace the contextList with the new list we created. */
-    contextList = tempList;
+	/* Done! Replace the contextList with the new list we created. */
+	contextList = tempList;
 
-    /* Refresh total counters */
-    document.getElementById('status_download').innerHTML = lang[lng,'totaldownis'] + humanizeSpeed(totalDownRate, 2);//Total download speed is: 
-    document.getElementById('status_upload').innerHTML = lang[lng,'totalupis'] + humanizeSpeed(totalUpRate, 2);//Total upload speed is: 
+	/* Refresh total counters */
+	document.getElementById('status_download').innerHTML = lang[lng,'totaldownis'] + humanizeSpeed(totalDownRate, 2);//Total download speed is: 
+	document.getElementById('status_upload').innerHTML = lang[lng,'totalupis'] + humanizeSpeed(totalUpRate, 2);//Total upload speed is: 
 
-    /* Call IE specific crap to get mouseover working */
-    if(parseStylesheets)
-	parseStylesheets();
+	/* Call IE specific crap to get mouseover working */
+	if(parseStylesheets)
+		parseStylesheets();
 }
 
 /**
@@ -1866,23 +1863,23 @@ function clearContextList()
     var table = document.getElementById('torrent_table');
     /* Iterate over all items */
     for(var i=0; i < contextList.length; i++)
-    {
-	var s = contextList[i];
-	var row = document.getElementById('context_'+s.contextID+'_row');
-	if(!row)
-	{
-	    alert('Error! '+s.contextID+' was found in contextList on cleanup, but no table row is found!');
-	    continue;
-	}
+	 {
+		 var s = contextList[i];
+		 var row = document.getElementById('context_'+s.contextID+'_row');
+		 if(!row)
+		 {
+			 alert('Error! '+s.contextID+' was found in contextList on cleanup, but no table row is found!');
+			 continue;
+		 }
 
-	table.deleteRow(row.rowIndex);
-	var detailsRow = document.getElementById('context_'+s.contextID+'_details_row');
-	table.deleteRow(detailsRow.rowIndex);
-	var controlRow = document.getElementById('context_'+s.contextID+'_control_row');
-	table.deleteRow(controlRow.rowIndex);
-	delete s;
-	delete contextList[i];
-    }
+		 table.deleteRow(row.rowIndex);
+		 var detailsRow = document.getElementById('context_'+s.contextID+'_details_row');
+		 table.deleteRow(detailsRow.rowIndex);
+		 var controlRow = document.getElementById('context_'+s.contextID+'_control_row');
+		 table.deleteRow(controlRow.rowIndex);
+		 delete s;
+		 delete contextList[i];
+	 }
     contextList = new Array();
 
     /* Refresh total counters */
@@ -1898,43 +1895,43 @@ function clearContextList()
  */
 function createTorrentTableRow(t, s)
 {
-    // Insert AFTER headers...
-    var r = t.insertRow(1);
-    r.contextID = s.contextID;
-    r.id = 'context_'+s.contextID+'_row';
+	// Insert AFTER headers...
+	var r = t.insertRow(1);
+	r.contextID = s.contextID;
+	r.id = 'context_'+s.contextID+'_row';
 
-    /* Caller should change this */
-    r.className='even_row';
+	/* Caller should change this */
+	r.className='even_row';
 
-    /* Filename cell */
-    var c = r.insertCell(-1);
-    c.contextID = r.contextID;
-    c.onclick = function(){ toogleContextDetails(this.contextID); }
-    c.className = 'column_torrent';
-    
-    /* Status bar cell */
-    c = r.insertCell(-1);
-    c.contextID = r.contextID;
-    c.onclick = function(){ toogleContextDetails(this.contextID); }
-    c.className = 'column_status';
+	/* Filename cell */
+	var c = r.insertCell(-1);
+	c.contextID = r.contextID;
+	c.onclick = function(){ toogleContextDetails(this.contextID); }
+	c.className = 'column_torrent';
 
-    var d1 = document.createElement('div');
-    d1.className = 'status_bar';
+	/* Status bar cell */
+	c = r.insertCell(-1);
+	c.contextID = r.contextID;
+	c.onclick = function(){ toogleContextDetails(this.contextID); }
+	c.className = 'column_status';
 
-    var d2 = document.createElement('div');
-    d2.style.width = '0%';
+	var d1 = document.createElement('div');
+	d1.className = 'status_bar';
 
-    var p = document.createElement('pre');
+	var d2 = document.createElement('div');
+	d2.style.width = '0%';
 
-    d2.appendChild(p);
-    d1.appendChild(d2);
-    c.appendChild(d1);
+	var p = document.createElement('pre');
 
-    /* Controls cell */
-    c = r.insertCell(-1);
-    c.className = 'column_control';
+	d2.appendChild(p);
+	d1.appendChild(d2);
+	c.appendChild(d1);
 
-    return r;
+	/* Controls cell */
+	c = r.insertCell(-1);
+	c.className = 'column_control';
+
+	return r;
 }
 
 /**
@@ -1944,44 +1941,44 @@ function createTorrentTableRow(t, s)
  */
 function updateTorrentTableRow(r, s)
 {
-    // Strip .torrent extension
-    var f = s.filename
-    var rexp = f.match(/^(.*)\.torrent$/)
-    if(rexp)
-	f = rexp[1]
+	// Strip .torrent extension
+	var f = s.filename
+		var rexp = f.match(/^(.*)\.torrent$/)
+		if(rexp)
+			f = rexp[1]
 
-    // and then cut it if to long
-    if(f.length > 60)
-	f = f.substr(0,60) + '...';
+				// and then cut it if to long
+				if(f.length > 60)
+					f = f.substr(0,60) + '...';
 
-    r.cells[0].innerHTML = f;
-    r.cells[0].title = s.filename;
+	r.cells[0].innerHTML = f;
+	r.cells[0].title = s.filename;
 
-    if(s.done > 100)
-	r.cells[1].childNodes[0].childNodes[0].style.width = '100%';
-    else
-	r.cells[1].childNodes[0].childNodes[0].style.width = ''+s.done+'%';
+	if(s.done > 100)
+		r.cells[1].childNodes[0].childNodes[0].style.width = '100%';
+	else
+		r.cells[1].childNodes[0].childNodes[0].style.width = ''+s.done+'%';
 
-    if(s.status == ts_downloading)
-	r.cells[1].childNodes[0].childNodes[0].className = 'downloading_bar';
-    else if(s.status == ts_seeding)
-	r.cells[1].childNodes[0].childNodes[0].className = 'seeding_bar';
-    else if(s.status == ts_finished)
-	r.cells[1].childNodes[0].childNodes[0].className = 'finished_bar';
-    
-    var stxt=r.cells[1].childNodes[0].childNodes[0].childNodes[0];
-    if(s.statusMessage.length > 50)
-	stxt.innerHTML = s.statusMessage.substr(0, 50)+"...";
-    else
-	stxt.innerHTML = s.statusMessage;
+	if(s.status == ts_downloading)
+		r.cells[1].childNodes[0].childNodes[0].className = 'downloading_bar';
+	else if(s.status == ts_seeding)
+		r.cells[1].childNodes[0].childNodes[0].className = 'seeding_bar';
+	else if(s.status == ts_finished)
+		r.cells[1].childNodes[0].childNodes[0].className = 'finished_bar';
 
-    // erase all controls
-    var ctrl = r.cells[2];
-    while(ctrl.childNodes.length > 0)
-	ctrl.removeChild(ctrl.childNodes[0]);
+	var stxt=r.cells[1].childNodes[0].childNodes[0].childNodes[0];
+	if(s.statusMessage.length > 50)
+		stxt.innerHTML = s.statusMessage.substr(0, 50)+"...";
+	else
+		stxt.innerHTML = s.statusMessage;
 
-    // and create new
-    createTorrentControls(s, r.cells[2]);
+	// erase all controls
+	var ctrl = r.cells[2];
+	while(ctrl.childNodes.length > 0)
+		ctrl.removeChild(ctrl.childNodes[0]);
+
+	// and create new
+	createTorrentControls(s, r.cells[2]);
 }
 
 /**
@@ -1989,10 +1986,10 @@ function updateTorrentTableRow(r, s)
  */
 function createButton(title)
 {
-    var b = document.createElement('span');
-    b.className = 'button';
-    b.innerHTML = title;
-    return b;
+	var b = document.createElement('span');
+	b.className = 'button';
+	b.innerHTML = title;
+	return b;
 }
 
 /**
@@ -2003,46 +2000,46 @@ function createButton(title)
  */
 function createTorrentControls(s, d)
 {
-    /* Start/Stop button */
-    if(s.status == ts_checking || s.status == ts_connecting || s.status == ts_downloading || s.status == ts_seeding)
-    {
-	// Add a stop button
-	var b = createButton(lang[lng,'stop']);//Stop
-	b.contextID = s.contextID;
-	b.onclick = function(){contextStop(this.contextID);}
-	d.appendChild(b);
-    }
-    else if(s.status == ts_stopped || s.status == ts_finished)
-    {
-	// Add a start button
-	var b = createButton(lang[lng,'start']);//Start
-	b.contextID = s.contextID;
-	b.onclick = function(){contextStart(this.contextID);}
-	d.appendChild(b);
-    }
+	/* Start/Stop button */
+	if(s.status == ts_checking || s.status == ts_connecting || s.status == ts_downloading || s.status == ts_seeding)
+	{
+		// Add a stop button
+		var b = createButton(lang[lng,'stop']);//Stop
+		b.contextID = s.contextID;
+		b.onclick = function(){contextStop(this.contextID);}
+		d.appendChild(b);
+	}
+	else if(s.status == ts_stopped || s.status == ts_finished)
+	{
+		// Add a start button
+		var b = createButton(lang[lng,'start']);//Start
+		b.contextID = s.contextID;
+		b.onclick = function(){contextStart(this.contextID);}
+		d.appendChild(b);
+	}
 
-    /* Abort/Clean button */
-    if(s.status == ts_checking || s.status == ts_connecting || s.status == ts_downloading || s.status == ts_stopped)
-    {
-	// Add a abort button
-	var b = createButton(lang[lng,'abort']);//Abort
-	b.contextID = s.contextID;
-	b.onclick = function(){contextAbort(this.contextID);}
-	d.appendChild(b);
-    }
-    else if(s.status == ts_seeding || s.status == ts_finished)
-    {
-	// Add a abort button
-	var b = createButton(lang[lng,'abort']);//Abort
-	b.contextID = s.contextID;
-	b.onclick = function(){contextAbort(this.contextID);}
-	d.appendChild(b);
-	// Add a clean button
-	b = createButton(lang[lng,'clean']);//Clean
-	b.contextID = s.contextID;
-	b.onclick = function(){contextClean(this.contextID);}
-	d.appendChild(b);
-    }
+	/* Abort/Clean button */
+	if(s.status == ts_checking || s.status == ts_connecting || s.status == ts_downloading || s.status == ts_stopped)
+	{
+		// Add a abort button
+		var b = createButton(lang[lng,'abort']);//Abort
+		b.contextID = s.contextID;
+		b.onclick = function(){contextAbort(this.contextID);}
+		d.appendChild(b);
+	}
+	else if(s.status == ts_seeding || s.status == ts_finished)
+	{
+		// Add a abort button
+		var b = createButton(lang[lng,'abort']);//Abort
+		b.contextID = s.contextID;
+		b.onclick = function(){contextAbort(this.contextID);}
+		d.appendChild(b);
+		// Add a clean button
+		b = createButton(lang[lng,'clean']);//Clean
+		b.contextID = s.contextID;
+		b.onclick = function(){contextClean(this.contextID);}
+		d.appendChild(b);
+	}
 }
 
 /**
@@ -2051,294 +2048,294 @@ function createTorrentControls(s, d)
  */
 function createTorrentDetails()
 {
-    var tbl = document.createElement('table');
-    tbl.className='extrainfo';
+	var tbl = document.createElement('table');
+	tbl.className='extrainfo';
 
-    /* First row , Torrent filename, filesize and seeders */
-    var r = tbl.insertRow(-1);
-    r.className='extra_uneven_row';
+	/* First row , Torrent filename, filesize and seeders */
+	var r = tbl.insertRow(-1);
+	r.className='extra_uneven_row';
 
-    var c = r.insertCell(-1);
-    c.className = 'extrainfo_type';
-    c.innerHTML = "Status:";
+	var c = r.insertCell(-1);
+	c.className = 'extrainfo_type';
+	c.innerHTML = "Status:";
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_value';
-    c.colSpan = 5;
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_value';
+	c.colSpan = 5;
 
-    /* */
-    r = tbl.insertRow(-1);
-    r.className='extra_even_row';
+	/* */
+	r = tbl.insertRow(-1);
+	r.className='extra_even_row';
 
-    var c = r.insertCell(-1);
-    c.className = 'extrainfo_type';
-    c.innerHTML = "";
+	var c = r.insertCell(-1);
+	c.className = 'extrainfo_type';
+	c.innerHTML = "";
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_value';
-    c.colSpan = 5;
-    c.innerHTML = "";
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_value';
+	c.colSpan = 5;
+	c.innerHTML = "";
 
-    /* */
+	/* */
 
-    r = tbl.insertRow(-1);
-    r.className='extra_uneven_row';
+	r = tbl.insertRow(-1);
+	r.className='extra_uneven_row';
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_type';
-    c.innerHTML = lang[lng,'tfilename'];//Torrent Filename:
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_type';
+	c.innerHTML = lang[lng,'tfilename'];//Torrent Filename:
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_value';
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_value';
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_type extrainfo_divider';
-    c.innerHTML = lang[lng,'tfilesize'];//Filesize:
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_type extrainfo_divider';
+	c.innerHTML = lang[lng,'tfilesize'];//Filesize:
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_value';
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_value';
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_type extrainfo_divider';
-    c.innerHTML = lang[lng,'seeders'];//Seeders:
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_type extrainfo_divider';
+	c.innerHTML = lang[lng,'seeders'];//Seeders:
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_value';
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_value';
 
-    /* Second row , Uploaded, Upload speed, Leechers */
-    r = tbl.insertRow(-1);
-    r.className='extra_even_row';
+	/* Second row , Uploaded, Upload speed, Leechers */
+	r = tbl.insertRow(-1);
+	r.className='extra_even_row';
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_type';
-    c.innerHTML = lang[lng,'upspeed'];//Upload Speed:
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_type';
+	c.innerHTML = lang[lng,'upspeed'];//Upload Speed:
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_value';
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_value';
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_type extrainfo_divider';
-    c.innerHTML = lang[lng,'uploaded'];//Uploaded:
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_type extrainfo_divider';
+	c.innerHTML = lang[lng,'uploaded'];//Uploaded:
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_value';
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_value';
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_type extrainfo_divider';
-    c.innerHTML = lang[lng,'leechers'];//Leechers:
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_type extrainfo_divider';
+	c.innerHTML = lang[lng,'leechers'];//Leechers:
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_value';
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_value';
 
-    /* Third row , Downloaded, download speed, total progress */
-    r = tbl.insertRow(-1);
-    r.className='extra_uneven_row';
+	/* Third row , Downloaded, download speed, total progress */
+	r = tbl.insertRow(-1);
+	r.className='extra_uneven_row';
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_type';
-    c.innerHTML = lang[lng,'dspeed'];//Download Speed:
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_type';
+	c.innerHTML = lang[lng,'dspeed'];//Download Speed:
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_value';
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_value';
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_type extrainfo_divider';
-    c.innerHTML = lang[lng,'downloaded'];//Downloaded:
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_type extrainfo_divider';
+	c.innerHTML = lang[lng,'downloaded'];//Downloaded:
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_value';
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_value';
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_type extrainfo_divider';
-    c.innerHTML = lang[lng,'totalprogress'];//Total progress:
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_type extrainfo_divider';
+	c.innerHTML = lang[lng,'totalprogress'];//Total progress:
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_value';
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_value';
 
-    /* */
+	/* */
 
-    r = tbl.insertRow(-1);
-    r.className='extra_even_row';
+	r = tbl.insertRow(-1);
+	r.className='extra_even_row';
 
-    // Add a tracker URL.
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_type';
-    c.innerHTML = lang[lng,'tracker'];//Tracker
+	// Add a tracker URL.
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_type';
+	c.innerHTML = lang[lng,'tracker'];//Tracker
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_value';
-    c.innerHTML='';
-    c.colSpan = 3;
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_value';
+	c.innerHTML='';
+	c.colSpan = 3;
 
-    // Add ul/dl ratio.
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_type extrainfo_divider';
-    c.innerHTML = lang[lng,'ratio'];//Ratio
+	// Add ul/dl ratio.
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_type extrainfo_divider';
+	c.innerHTML = lang[lng,'ratio'];//Ratio
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_value';
-    c.innerHTML = '';
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_value';
+	c.innerHTML = '';
 
-    /* Hash and Url */
+	/* Hash and Url */
 
-    r = tbl.insertRow(-1);
-    r.className='extra_uneven_row';
+	r = tbl.insertRow(-1);
+	r.className='extra_uneven_row';
 
-    // Hash
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_type';
-    c.innerHTML = lang[lng,'hash'];//Hash
+	// Hash
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_type';
+	c.innerHTML = lang[lng,'hash'];//Hash
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_value';
-    c.innerHTML='0x00000000000ccdd';
-    //c.colSpan = 3;
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_value';
+	c.innerHTML='0x00000000000ccdd';
+	//c.colSpan = 3;
 
-    // Url 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_type extrainfo_divider';
-    c.innerHTML = lang[lng,'announceurl'];//Announce URL
+	// Url 
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_type extrainfo_divider';
+	c.innerHTML = lang[lng,'announceurl'];//Announce URL
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_value';
-    c.innerHTML = lang[lng,'missingurl'];//http://missing-url
-    c.colSpan = 2;
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_value';
+	c.innerHTML = lang[lng,'missingurl'];//http://missing-url
+	c.colSpan = 2;
 
-    /* Files follow */
+	/* Files follow */
 
-    r = tbl.insertRow(-1);
-    r.className='extra_even_row';
+	r = tbl.insertRow(-1);
+	r.className='extra_even_row';
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_type';
-    c.innerHTML = lang[lng,'files'];//Files:
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_type';
+	c.innerHTML = lang[lng,'files'];//Files:
 
-    c = r.insertCell(-1);
-    c.className = 'extrainfo_value';
+	c = r.insertCell(-1);
+	c.className = 'extrainfo_value';
 
-    /* Files, contents. */
+	/* Files, contents. */
 
-    c.innerHTML = lang[lng,'nofiles'];//No files present.
-    c.colSpan = 5;
+	c.innerHTML = lang[lng,'nofiles'];//No files present.
+	c.colSpan = 5;
 
-    return tbl;
+	return tbl;
 }
 
 function addFileInfoList(status)
 {
-    var fileinfolist = status.fileinfolist;
+	var fileinfolist = status.fileinfolist;
 
-    var tableStr = '<table>';
-    tableStr+='<th>' + lang[lng,'selected'] + '</th>'; //Selected
-    tableStr+='<th>' + lang[lng,'filename'] + '</th>';//Filename
-    tableStr+='<th>' + lang[lng,'size'] + '</th>';//Size
-    tableStr+='<th>' + lang[lng,'donepercent'] + '</th>'; //Done %
+	var tableStr = '<table>';
+	tableStr+='<th>' + lang[lng,'selected'] + '</th>'; //Selected
+	tableStr+='<th>' + lang[lng,'filename'] + '</th>';//Filename
+	tableStr+='<th>' + lang[lng,'size'] + '</th>';//Size
+	tableStr+='<th>' + lang[lng,'donepercent'] + '</th>'; //Done %
 
-    currentDir = "";
-    for (var count = 0; count < fileinfolist.length; count++)
-    {
-	if (fileinfolist[count].dir != "")
+	currentDir = "";
+	for (var count = 0; count < fileinfolist.length; count++)
 	{
-	    tableStr+='<tr>\n';
-	    tableStr+='<td colspan="4">\n';
-	    tableStr+= fileinfolist[count].dir;
-	    tableStr+= '</td>\n';
-	    tableStr+='</tr>\n';
+		if (fileinfolist[count].dir != "")
+		{
+			tableStr+='<tr>\n';
+			tableStr+='<td colspan="4">\n';
+			tableStr+= fileinfolist[count].dir;
+			tableStr+= '</td>\n';
+			tableStr+='</tr>\n';
 
-	    currentDir = fileinfolist[count].dir;
-	    if (currentDir != "")
-	    {
-		currentDir = currentDir + "/";
-	    }
+			currentDir = fileinfolist[count].dir;
+			if (currentDir != "")
+			{
+				currentDir = currentDir + "/";
+			}
+		}
+
+		tableStr+='<tr>\n';
+		tableStr+=addFileInfoEntry(status.contextID,
+				currentDir,
+				fileinfolist[count].name, 
+				fileinfolist[count].selected, 
+				fileinfolist[count].size, 
+				fileinfolist[count].percent);
+		tableStr+='</tr>\n';
 	}
 
-	tableStr+='<tr>\n';
-	tableStr+=addFileInfoEntry(status.contextID,
-				   currentDir,
-				   fileinfolist[count].name, 
-				   fileinfolist[count].selected, 
-				   fileinfolist[count].size, 
-				   fileinfolist[count].percent);
-	tableStr+='</tr>\n';
-    }
-    
-    tableStr += '</table>';
+	tableStr += '</table>';
 
-    return tableStr;
+	return tableStr;
 }
 
 function addFileInfoEntry(context_id, dir, filename, sel, filesize, percentdone)
 {
-    var output = "";
-    output += '<tr>\n';
+	var output = "";
+	output += '<tr>\n';
 
-    output += '<td>';
-    output += '<input type="checkbox" value="';
-    if (sel == true)
-    {
-	output += '666" checked onClick="unSelectFile(';
-	output += context_id;
-	output += ',\'';
-	output += dir;
-	output += filename;
-	output += '\');"/>';
-    }
-    else
-    {
-	output += '666" onClick="selectFile(';
-	output += context_id;
-	output += ',\'';
-	output += dir;
-	output += filename;
-	output += '\');"/>';
-    }
-    output += '</td>';
-
-    output += '<td>';
-    output += filename;
-    output += '</td>';
-    
-    output += '<td>';
-    if (sel == true)
-    {
-	output += humanizeSize(filesize, 2);
-    }
-    output += '</td>';
-
-    output+='<td>';
-
-    if (sel == true)
-    {
-	output+='<div class="gr" style="border-left: ';
-	var barsize = percentdone;
-	
-	output+=barsize;
-	output+='px solid ';
-	
-	if (percentdone == 100)
+	output += '<td>';
+	output += '<input type="checkbox" value="';
+	if (sel == true)
 	{
-	    // Green.
-	    output += '#6f0';
-	}
-	else if (percentdone >= 50)
-	{
-	    output += '#FFFF00';
+		output += '666" checked onClick="unSelectFile(';
+				output += context_id;
+				output += ',\'';
+				output += dir;
+				output += filename;
+				output += '\');"/>';
 	}
 	else
 	{
-	    output += '#FF0000';
+		output += '666" onClick="selectFile(';
+				output += context_id;
+				output += ',\'';
+				output += dir;
+				output += filename;
+				output += '\');"/>';
 	}
-	
-	output += ';">';
-	output += percentdone;
-	output += "%";
+	output += '</td>';
 
-	output+='&nbsp;</div>';
-    }
-    output+='</td>\n';
-    output+='</tr>\n';
-    
-    return output;
+	output += '<td>';
+	output += filename;
+	output += '</td>';
+
+	output += '<td>';
+	if (sel == true)
+	{
+		output += humanizeSize(filesize, 2);
+	}
+	output += '</td>';
+
+	output+='<td>';
+
+	if (sel == true)
+	{
+		output+='<div class="gr" style="border-left: ';
+		var barsize = percentdone;
+
+		output+=barsize;
+		output+='px solid ';
+
+		if (percentdone == 100)
+		{
+			// Green.
+			output += '#6f0';
+		}
+		else if (percentdone >= 50)
+		{
+			output += '#FFFF00';
+		}
+		else
+		{
+			output += '#FF0000';
+		}
+
+		output += ';">';
+		output += percentdone;
+		output += "%";
+
+		output+='&nbsp;</div>';
+	}
+	output+='</td>\n';
+	output+='</tr>\n';
+
+	return output;
 }
 
 function selectFile(context_id, filename)
@@ -2358,17 +2355,17 @@ function cb_contextSelectFile_err(error, errStr)
 
 function unSelectFile(context_id, filename)
 {
-    btg_contextUnSelectFile(cb_contextUnSelectFile, cb_contextUnSelectFile_err, context_id, filename);
+	btg_contextUnSelectFile(cb_contextUnSelectFile, cb_contextUnSelectFile_err, context_id, filename);
 }
 
 function cb_contextUnSelectFile(response)
 {
-    // TODO: do something here.
+	// TODO: do something here.
 }
 
 function cb_contextUnSelectFile_err(error, errStr)
 {
-    setError(error, lang[lng,'failunselectfile']);//Failed to un-select file.
+	setError(error, lang[lng,'failunselectfile']);//Failed to un-select file.
 }
 
 /**
@@ -2377,60 +2374,60 @@ function cb_contextUnSelectFile_err(error, errStr)
  */
 function createTorrentExtendedControls(contextID)
 {
-    var ctrl = document.createElement("table");
-    ctrl.className='extendedcontrol';
-    var cr = ctrl.insertRow(-1);
-    var cc = cr.insertCell(-1);
-    cc.innerHTML = lang[lng,'uploadlimit'];//Upload Limit (KB/s):
+	var ctrl = document.createElement("table");
+	ctrl.className='extendedcontrol';
+	var cr = ctrl.insertRow(-1);
+	var cc = cr.insertCell(-1);
+	cc.innerHTML = lang[lng,'uploadlimit'];//Upload Limit (KB/s):
 
-    cc = cr.insertCell(-1);
-    var ct = document.createElement('input');
-    ct.className='textinput';
-    ct.id = "txtUploadLimit_"+contextID;
-    ct.type="text";
-    cc.appendChild(ct);
+	cc = cr.insertCell(-1);
+	var ct = document.createElement('input');
+	ct.className='textinput';
+	ct.id = "txtUploadLimit_"+contextID;
+	ct.type="text";
+	cc.appendChild(ct);
 
-    cc = cr.insertCell(-1);
-    cc.innerHTML = lang[lng,'seedlimit'];//Seed Limit (%):
+	cc = cr.insertCell(-1);
+	cc.innerHTML = lang[lng,'seedlimit'];//Seed Limit (%):
 
-    cc = cr.insertCell(-1);
-    ct = document.createElement('input');
-    ct.className='textinput';
-    ct.id = "txtSeedLimit_"+contextID;
-    ct.type="text";
-    cc.appendChild(ct);
+	cc = cr.insertCell(-1);
+	ct = document.createElement('input');
+	ct.className='textinput';
+	ct.id = "txtSeedLimit_"+contextID;
+	ct.type="text";
+	cc.appendChild(ct);
 
-    cc = cr.insertCell(-1);
+	cc = cr.insertCell(-1);
 
-    cr = ctrl.insertRow(-1);
-    cc = cr.insertCell(-1);
-    cc.innerHTML = lang[lng,'downloadlimit'];//Download Limit (KB/s):
+	cr = ctrl.insertRow(-1);
+	cc = cr.insertCell(-1);
+	cc.innerHTML = lang[lng,'downloadlimit'];//Download Limit (KB/s):
 
-    cc = cr.insertCell(-1);
-    ct = document.createElement('input');
-    ct.className='textinput';
-    ct.id = "txtDownloadLimit_"+contextID;
-    ct.type="text";
-    cc.appendChild(ct);
+	cc = cr.insertCell(-1);
+	ct = document.createElement('input');
+	ct.className='textinput';
+	ct.id = "txtDownloadLimit_"+contextID;
+	ct.type="text";
+	cc.appendChild(ct);
 
-    cc = cr.insertCell(-1);
-    cc.innerHTML = lang[lng,'seedtimeout'];//Seed Timeout (minutes):
+	cc = cr.insertCell(-1);
+	cc.innerHTML = lang[lng,'seedtimeout'];//Seed Timeout (minutes):
 
-    cc = cr.insertCell(-1);
-    ct = document.createElement('input');
-    ct.className='textinput';
-    ct.id = "txtSeedTimeout_"+contextID;
-    ct.type="text";
-    cc.appendChild(ct);
+	cc = cr.insertCell(-1);
+	ct = document.createElement('input');
+	ct.className='textinput';
+	ct.id = "txtSeedTimeout_"+contextID;
+	ct.type="text";
+	cc.appendChild(ct);
 
-    cc = cr.insertCell(-1);
-    ct = createButton('Save');
+	cc = cr.insertCell(-1);
+	ct = createButton('Save');
 
-    ct.contextID = contextID;
-    ct.onclick = function(){saveContextLimit(this.contextID);};
-    cc.appendChild(ct);
+	ct.contextID = contextID;
+	ct.onclick = function(){saveContextLimit(this.contextID);};
+	cc.appendChild(ct);
 
-    return ctrl;
+	return ctrl;
 }
 
 /**
@@ -2440,71 +2437,71 @@ function createTorrentExtendedControls(contextID)
  */
 function updateTorrentDetails(t, s)
 {
-    var f = s.filename;
-    if (f.length > 60)
-    {
-	f = f.substr(0,60) + '...';
-    }
+	var f = s.filename;
+	if (f.length > 60)
+	{
+		f = f.substr(0,60) + '...';
+	}
 
-    t.rows[0].cells[1].innerHTML = s.statusMessage;
+	t.rows[0].cells[1].innerHTML = s.statusMessage;
 
-    /* Amount of time this torrent has been downloading or seeding. */
-    /* TODO: convert to days:hours:minutes. */
-    if (s.status == ts_downloading)
-    {
-	t.rows[1].cells[0].innerHTML = lang[lng,'downtime'];//Download time
-	t.rows[1].cells[1].innerHTML = s.activitycounter + lang[lng,'minutes'];//minutes
-    }
-    else if (s.status == ts_seeding)
-    {
-	t.rows[1].cells[0].innerHTML = lang[lng,'seedtime'];//Seed time
-	t.rows[1].cells[1].innerHTML = s.activitycounter + lang[lng,'minutes'];
-    }
-    else
-    {
-	t.rows[1].cells[0].innerHTML = "";
-	t.rows[1].cells[1].innerHTML = "";
-    }
+	/* Amount of time this torrent has been downloading or seeding. */
+	/* TODO: convert to days:hours:minutes. */
+	if (s.status == ts_downloading)
+	{
+		t.rows[1].cells[0].innerHTML = lang[lng,'downtime'];//Download time
+		t.rows[1].cells[1].innerHTML = s.activitycounter + lang[lng,'minutes'];//minutes
+	}
+	else if (s.status == ts_seeding)
+	{
+		t.rows[1].cells[0].innerHTML = lang[lng,'seedtime'];//Seed time
+		t.rows[1].cells[1].innerHTML = s.activitycounter + lang[lng,'minutes'];
+	}
+	else
+	{
+		t.rows[1].cells[0].innerHTML = "";
+		t.rows[1].cells[1].innerHTML = "";
+	}
 
-    t.rows[2].cells[1].innerHTML = f;
-    t.rows[2].cells[1].title = s.filename;
-    t.rows[2].cells[3].innerHTML = humanizeSize(s.filesize, 2);
-    t.rows[2].cells[5].innerHTML = s.seeders;
+	t.rows[2].cells[1].innerHTML = f;
+	t.rows[2].cells[1].title = s.filename;
+	t.rows[2].cells[3].innerHTML = humanizeSize(s.filesize, 2);
+	t.rows[2].cells[5].innerHTML = s.seeders;
 
-    t.rows[3].cells[1].innerHTML = humanizeSpeed(s.uploadrate, 1);
-    t.rows[3].cells[3].innerHTML = humanizeSize(s.uploadtotal, 2);
-    t.rows[3].cells[5].innerHTML = s.leechers;
+	t.rows[3].cells[1].innerHTML = humanizeSpeed(s.uploadrate, 1);
+	t.rows[3].cells[3].innerHTML = humanizeSize(s.uploadtotal, 2);
+	t.rows[3].cells[5].innerHTML = s.leechers;
 
-    t.rows[4].cells[1].innerHTML = humanizeSpeed(s.downloadrate, 1);
-    t.rows[4].cells[3].innerHTML = humanizeSize(s.downloadtotal, 2);
+	t.rows[4].cells[1].innerHTML = humanizeSpeed(s.downloadrate, 1);
+	t.rows[4].cells[3].innerHTML = humanizeSize(s.downloadtotal, 2);
 
-    t.rows[4].cells[5].innerHTML = RoundToNdp(s.done,1)+'%';
-    // Tracker url.
-    t.rows[5].cells[1].innerHTML = s.tracker;
+	t.rows[4].cells[5].innerHTML = RoundToNdp(s.done,1)+'%';
+	// Tracker url.
+	t.rows[5].cells[1].innerHTML = s.tracker;
 
-    // Ratio.
-    var dltotal = s.downloadtotal;
-    var ultotal = s.uploadtotal;
+	// Ratio.
+	var dltotal = s.downloadtotal;
+	var ultotal = s.uploadtotal;
 
-    var ratio = 0;
-    if (dltotal > 0)
-    {
-	ratio = ultotal / dltotal;
-    }
-    var ratio_tr = Math.round(ratio*100)/100;
+	var ratio = 0;
+	if (dltotal > 0)
+	{
+		ratio = ultotal / dltotal;
+	}
+	var ratio_tr = Math.round(ratio*100)/100;
 
-    t.rows[5].cells[3].innerHTML = ratio_tr.toString();
+	t.rows[5].cells[3].innerHTML = ratio_tr.toString();
 
-    // Add hash and URL.
-    t.rows[6].cells[1].innerHTML = s.fhash;
-    t.rows[6].cells[3].innerHTML = s.furl;
+	// Add hash and URL.
+	t.rows[6].cells[1].innerHTML = s.fhash;
+	t.rows[6].cells[3].innerHTML = s.furl;
 
-    // Update file list.
-    t.rows[7].cells[1].innerHTML = addFileInfoList(s);
+	// Update file list.
+	t.rows[7].cells[1].innerHTML = addFileInfoList(s);
 
-    // Not used right now.
-    //	t.rows[5].cells[4].innerHTML = "";
-    //	t.rows[5].cells[5].innerHTML = "";
+	// Not used right now.
+	//	t.rows[5].cells[4].innerHTML = "";
+	//	t.rows[5].cells[5].innerHTML = "";
 }
 
 /**************************************************
@@ -2524,244 +2521,245 @@ ts_finished = 7;
 
 function fileInfo(dir, name, selected, size, percent)
 {
-    this.dir      = dir;
-    this.name     = name;
-    this.selected = selected;
-    this.size     = size;
-    this.percent  = percent;
+	this.dir      = dir;
+	this.name     = name;
+	this.selected = selected;
+	this.size     = size;
+	this.percent  = percent;
 }
 
 // Status object (!!!).
 function Status(dom)
 {
-    this.contextID = -1;
-    this.filename = "";
-    this.status = 0;
-    this.statustext = "";
-    this.downloadTotal = 0;
-    this.uploadTotal = 0;
-    this.failedBytes = 0;
-    this.downloadRate = 0;
-    this.uploadRate = 0;
-    this.done = 0;
-    this.filesize = 0;
-    this.leechers = 0;
-    this.seeders = 0;
-    this.timeleft = "";
-    this.trackerstatus = "";
-    this.trackerstatustext = "";
-    this.trackerstatusmessage = "";
-    this.activitycounter = 0;
-    this.tracker = "";
-    this.fhash = "";
-    this.furl = "";
-    this.fileinfolist = new Array();
+	this.contextID = -1;
+	this.filename = "";
+	this.status = 0;
+	this.statustext = "";
+	this.downloadTotal = 0;
+	this.uploadTotal = 0;
+	this.failedBytes = 0;
+	this.downloadRate = 0;
+	this.uploadRate = 0;
+	this.done = 0;
+	this.filesize = 0;
+	this.leechers = 0;
+	this.seeders = 0;
+	this.timeleft = "";
+	this.trackerstatus = "";
+	this.trackerstatustext = "";
+	this.trackerstatusmessage = "";
+	this.activitycounter = 0;
+	this.tracker = "";
+	this.fhash = "";
+	this.furl = "";
+	this.fileinfolist = new Array();
 
-    if (dom)
-    {
-	    <!-- Defaults set, try to parse dom -->
-	    this.contextID = parseInt(getFirstChildValue(dom, 'id'));
-	this.filename = getFirstChildValue(dom, 'filename');
-	this.status = parseInt(getFirstChildValue(dom, 'status'));
-	this.statustext = parseInt(getFirstChildValue(dom, 'statustext'));
-	this.downloadtotal = parseInt(getFirstChildValue(dom, 'downloadtotal'));
-	this.uploadtotal = parseInt(getFirstChildValue(dom, 'uploadtotal'));
-	this.failedbytes = parseInt(getFirstChildValue(dom, 'failedbytes'));
-	this.uploadrate = parseInt(getFirstChildValue(dom, 'uploadrate'));
-	this.downloadrate = parseInt(getFirstChildValue(dom, 'downloadrate'));
-	this.done = parseInt(getFirstChildValue(dom, 'done'));
-
-	this.filesize = parseInt(getFirstChildValue(dom, 'filesize'));
-	this.leechers = parseInt(getFirstChildValue(dom, 'leechers'));
-	this.seeders = parseInt(getFirstChildValue(dom, 'seeders'));
-	this.timeleft = getFirstChildValue(dom, 'timeleft');
-
-	this.trackerstatus = getFirstChildValue(dom, 'trackerstatus');
-	this.trackerstatustext = getFirstChildValue(dom, 'trackerstatustext');
-	this.trackerstatusmessage = getFirstChildValue(dom, 'trackerstatusmessage');
-	this.activitycounter = parseInt(getFirstChildValue(dom, 'activitycounter'));
-	this.fhash = getFirstChildValue(dom, 'fhash');
-	this.furl = getFirstChildValue(dom, 'furl');
-	this.tracker = getFirstChildValue(dom, 'tracker');
-
-	/* Recalculate done */
-	if (this.status == ts_seeding || this.status == ts_finished)
+	if (dom)
 	{
-	    if (this.downloadtotal < this.filesize)
-	    {
-		// User has probably added this torrent with data
-		// currently available, use filesize instead of
-		// download total..
-		this.done = 100 * (this.uploadtotal / this.filesize);
-	    }
-	    else
-	    {
-		this.done = 100 * (this.uploadtotal / this.downloadtotal);
-	    }
+		// Defaults set, try to parse dom 
+		this.contextID = parseInt(getFirstChildValue(dom, 'id'));
+		this.filename = getFirstChildValue(dom, 'filename');
+		this.status = parseInt(getFirstChildValue(dom, 'status'));
+		this.statustext = parseInt(getFirstChildValue(dom, 'statustext'));
+		this.downloadtotal = parseInt(getFirstChildValue(dom, 'downloadtotal'));
+		this.uploadtotal = parseInt(getFirstChildValue(dom, 'uploadtotal'));
+		this.failedbytes = parseInt(getFirstChildValue(dom, 'failedbytes'));
+		this.uploadrate = parseInt(getFirstChildValue(dom, 'uploadrate'));
+		this.downloadrate = parseInt(getFirstChildValue(dom, 'downloadrate'));
+		this.done = parseInt(getFirstChildValue(dom, 'done'));
+
+		this.filesize = parseInt(getFirstChildValue(dom, 'filesize'));
+		this.leechers = parseInt(getFirstChildValue(dom, 'leechers'));
+		this.seeders = parseInt(getFirstChildValue(dom, 'seeders'));
+		this.timeleft = getFirstChildValue(dom, 'timeleft');
+
+		this.trackerstatus = getFirstChildValue(dom, 'trackerstatus');
+		this.trackerstatustext = getFirstChildValue(dom, 'trackerstatustext');
+		this.trackerstatusmessage = getFirstChildValue(dom, 'trackerstatusmessage');
+		this.activitycounter = parseInt(getFirstChildValue(dom, 'activitycounter'));
+		this.fhash = getFirstChildValue(dom, 'fhash');
+		this.furl = getFirstChildValue(dom, 'furl');
+		this.tracker = getFirstChildValue(dom, 'tracker');
+
+		/* Recalculate done */
+		if (this.status == ts_seeding || this.status == ts_finished)
+		{
+			if (this.downloadtotal < this.filesize)
+			{
+				// User has probably added this torrent with data
+				// currently available, use filesize instead of
+				// download total..
+				this.done = 100 * (this.uploadtotal / this.filesize);
+			}
+			else
+			{
+				this.done = 100 * (this.uploadtotal / this.downloadtotal);
+			}
+		}
+
+		/* Get list of files */
+
+		var fi = dom.getElementsByTagName('fileinfo');
+
+		var files = dom.getElementsByTagName('file');
+
+		for (var count = 0; count < files.length ; count++)
+		{
+			var filename = getFirstChildValue(files[count], 'name');
+			var dir      = getFirstChildValue(files[count], 'dir');
+			var selected = getFirstChildValue(files[count], 'selected');
+			var sel = false;
+			if (selected == 1)
+			{
+				sel = true;
+			}
+			var size     = getFirstChildValue(files[count], 'size');
+			var percent  = getFirstChildValue(files[count], 'percent');
+
+			this.fileinfolist.push(new fileInfo(dir, filename, sel, size, percent));
+		}
 	}
 
-	/* Get list of files */
-
-	var fi = dom.getElementsByTagName('fileinfo');
-
-	var files = dom.getElementsByTagName('file');
-
-	for (var count = 0; count < files.length ; count++)
+	this.toString = function()
 	{
-	    var filename = getFirstChildValue(files[count], 'name');
-	    var dir      = getFirstChildValue(files[count], 'dir');
-	    var selected = getFirstChildValue(files[count], 'selected');
-	    var sel = false;
-	    if (selected == 1)
-	    {
-		sel = true;
-	    }
-	    var size     = getFirstChildValue(files[count], 'size');
-	    var percent  = getFirstChildValue(files[count], 'percent');
+		// Printable representation 
+		ret = "Status object: ";
+		ret+= "context id: "+ this.contextID + "\n";
+		ret+= "filename: "+ this.filename + "\n";
+		ret+= "status: "+ this.status + "\n";
+		ret+= "dn_total: "+ this.downloadTotal + "\n";
+		ret+= "ul_total: "+ this.uploadTotal + "\n";
+		ret+= "failed_bytes: "+ this.failedBytes + "\n";
+		ret+= "dn_rate: "+ this.downloadRate + "\n";
+		ret+= "ul_rate: "+ this.uploadRate + "\n";
+		ret+= "done: "+ this.done + "\n";
+		ret+= "filesize: "+ this.filesize + "\n";
+		ret+= "leechers: "+ this.leechers+ "\n";
+		ret+= "seeders: "+ this.seeders + "\n";
+		ret+= "timeleft: "+ this.timeleft+ "\n";
+		ret+= "trackerstatus: "+ this.trackerstatus+ "\n";
+		ret+= "trackerstatustext: "+ this.trackerstatustext+ "\n";
+		ret+= "trackerstatusmessage: "+ this.trackerstatusmessage+ "\n";
+		ret+= "activitycounter: "+ this.activitycounter+ "\n";
+		ret+= "activitycounter: "+ this.tracker+ "\n";
 
-	    this.fileinfolist.push(new fileInfo(dir, filename, sel, size, percent));
+		return ret;
 	}
-    }
 
-    this.toString = function()
-    {
-	    <!-- Printable representation -->
-	    ret = "Status object: ";
-	ret+= "context id: "+ this.contextID + "\n";
-	ret+= "filename: "+ this.filename + "\n";
-	ret+= "status: "+ this.status + "\n";
-	ret+= "dn_total: "+ this.downloadTotal + "\n";
-	ret+= "ul_total: "+ this.uploadTotal + "\n";
-	ret+= "failed_bytes: "+ this.failedBytes + "\n";
-	ret+= "dn_rate: "+ this.downloadRate + "\n";
-	ret+= "ul_rate: "+ this.uploadRate + "\n";
-	ret+= "done: "+ this.done + "\n";
-	ret+= "filesize: "+ this.filesize + "\n";
-	ret+= "leechers: "+ this.leechers+ "\n";
-	ret+= "seeders: "+ this.seeders + "\n";
-	ret+= "timeleft: "+ this.timeleft+ "\n";
-	ret+= "trackerstatus: "+ this.trackerstatus+ "\n";
-	ret+= "trackerstatustext: "+ this.trackerstatustext+ "\n";
-	ret+= "trackerstatusmessage: "+ this.trackerstatusmessage+ "\n";
-	ret+= "activitycounter: "+ this.activitycounter+ "\n";
-	ret+= "activitycounter: "+ this.tracker+ "\n";
-
-	return ret;
-    }
-    
-	<!-- Test if this status object represents the same context as another status object s -->
+	// Test if this status object represents the same context as another status object s
 	this.compare = function(s)
-    {
-	if (!(s instanceof Status))
-	    return false;
-	if (s.contextID != this.contextID)	return false;
-	if (s.filename != this.filename)	return false;
-	return true;
-    }
+	{
+		if (!(s instanceof Status))
+			return false;
+		if (s.contextID != this.contextID)	return false;
+		if (s.filename != this.filename)	return false;
+		return true;
+	}
 
-	<!-- Test if the other Status object passed in s is newer than this (updated data) -->
+	// Test if the other Status object passed in s is newer than this (updated data)
 	this.isOld = function(s)
-    {
-	if (this.status != s.status)	return true;
-	if (this.dn_total != s.dn_total)	return true;
-	if (this.ul_total != s.ul_total)	return true;
-	if (this.failed_bytes != s.failed_bytes)	return true;
-	if (this.dn_rate != s.dn_rate)	return true;
-	if (this.ul_rate != s.ul_rate)	return true;
-	if (this.done != s.done)	return true;
-	if (this.filesize != s.filesize)	return true;
-	if (this.leechers != s.leechers)	return true;
-	if (this.seeders != s.seeders)	return true;
-	if (this.timeleft != s.timeleft)	return true;
-	if (this.trackerstatus != s.trackerstatus)	return true;
-	if (this.trackerstatustext != s.trackerstatustext)	return true;
-	if (this.trackerstatusmessage != s.trackerstatusmessage)	return true;
-	if (this.activitycounter != s.activitycounter) return true;
-	if (this.fhash != s.fhash) return true;
-	if (this.furl != s.furl) return true;
-	if (this.tracker != s.tracker) return true;
-	return false;
-    }
+	{
+		if (this.status != s.status)	return true;
+		if (this.dn_total != s.dn_total)	return true;
+		if (this.ul_total != s.ul_total)	return true;
+		if (this.failed_bytes != s.failed_bytes)	return true;
+		if (this.dn_rate != s.dn_rate)	return true;
+		if (this.ul_rate != s.ul_rate)	return true;
+		if (this.done != s.done)	return true;
+		if (this.filesize != s.filesize)	return true;
+		if (this.leechers != s.leechers)	return true;
+		if (this.seeders != s.seeders)	return true;
+		if (this.timeleft != s.timeleft)	return true;
+		if (this.trackerstatus != s.trackerstatus)	return true;
+		if (this.trackerstatustext != s.trackerstatustext)	return true;
+		if (this.trackerstatusmessage != s.trackerstatusmessage)	return true;
+		if (this.activitycounter != s.activitycounter) return true;
+		if (this.fhash != s.fhash) return true;
+		if (this.furl != s.furl) return true;
+		if (this.tracker != s.tracker) return true;
+		return false;
+	}
 }
 
 function Peer(dom)
 {
-    this.ip = "0.0.0.0";
-    this.seeder = false;
+	this.ip = "0.0.0.0";
+	this.seeder = false;
 
-    if(dom)
-    {
-	    <!-- Defaults set, try to parse dom -->
-	    this.ip = getFirstChildValue(dom, 'ip')
-	this.seeder = parseBool(getFirstChildValue(dom, 'seeder'))
-    }
+	if(dom)
+	{
+		// Defaults set, try to parse dom
+		this.ip = getFirstChildValue(dom, 'ip')
+			this.seeder = parseBool(getFirstChildValue(dom, 'seeder'))
+	}
 
-    this.toString = function()
-    {
-	    <!-- Printable representation -->
-	    ret = "Peer object: ";
-	ret+= "IP: "+ this.ip+ "\n";
-	ret+= "seeder: "+ this.seeder + "\n";
+	this.toString = function()
+	{
+		// Printable representation
+		ret = "Peer object: ";
+		ret+= "IP: "+ this.ip+ "\n";
+		ret+= "seeder: "+ this.seeder + "\n";
 
-	return ret;
-    }
-    
-	<!-- Test if this status object represents the same context as another status object s -->
+		return ret;
+	}
+
+	// Test if this status object represents the same context as another status object s
 	this.compare = function(s)
-    {
-	if(s.ip != this.ip)	return false;
-	return true;
-    }
+	{
+		if(s.ip != this.ip)	return false;
+		return true;
+	}
 }
 
 function Limit(dom)
 {
-    this.contextID = -1;
-    this.uploadLimit = 0;
-    this.downloadLimit = 0;
-    this.seedLimit = 0;
-    this.seedTimeout = 0;
+	this.contextID = -1;
+	this.uploadLimit = 0;
+	this.downloadLimit = 0;
+	this.seedLimit = 0;
+	this.seedTimeout = 0;
 
-    if(dom)
-    {
-	    <!-- Defaults set, try to parse dom -->
-	    this.contextID = parseInt(getFirstChildValue(dom, 'id'))
-	this.uploadLimit = parseInt(getFirstChildValue(dom, 'uploadLimit'))
-	this.downloadLimit = parseInt(getFirstChildValue(dom, 'downloadLimit'))
-	this.seedLimit = parseInt(getFirstChildValue(dom, 'seedLimit'))
-	this.seedTimeout = parseInt(getFirstChildValue(dom, 'seedTimeout'))
-    }
+	if(dom)
+	{
+		// Defaults set, try to parse dom
+		this.contextID = parseInt(getFirstChildValue(dom, 'id'));
+		this.uploadLimit = parseInt(getFirstChildValue(dom, 'uploadLimit'));
+		this.downloadLimit = parseInt(getFirstChildValue(dom, 'downloadLimit'));
+		this.seedLimit = parseInt(getFirstChildValue(dom, 'seedLimit'));
+		this.seedTimeout = parseInt(getFirstChildValue(dom, 'seedTimeout'));
+	}
 
-    this.toString = function()
-    {
-	    <!-- Printable representation -->
-	    ret = "Limit object: ";
-	ret+= "context id: "+ this.contextID + "\n";
-	ret+= "uploadLimit: "+ this.uploadLimit+ "\n";
-	ret+= "downloadLimit: "+ this.downloadLimit+ "\n";
-	ret+= "seedLimit "+ this.seedLimit+ "\n";
-	ret+= "seedTimeout: "+ this.seedTimeout;
+	this.toString = function()
+	{
+		// Printable representation 
+		ret = "Limit object: ";
+		ret+= "context id: "+ this.contextID + "\n";
+		ret+= "uploadLimit: "+ this.uploadLimit+ "\n";
+		ret+= "downloadLimit: "+ this.downloadLimit+ "\n";
+		ret+= "seedLimit "+ this.seedLimit+ "\n";
+		ret+= "seedTimeout: "+ this.seedTimeout;
 
-	return ret;
-    }
-    
-	<!-- Test if this limit object represents the same context as another liimt object l -->
+		return ret;
+	}
+
+	// Test if this limit object represents the same context as another liimt object l 
 	this.compare = function(l)
-    {
-	if(!(l instanceof Limit))
-	    return false;
-	if(l.contextID != this.contextID)	return false;
-	return true;
-    }
+	{
+		if(!(l instanceof Limit))
+			return false;
+		if(l.contextID != this.contextID)	return false;
+		return true;
+	}
 
-	<!-- Test if the other Limit object passed in l is newer than this (updated data) -->
+	// Test if the other Limit object passed in l is newer than this (updated data) 
 	this.isOld = function(l)
-    {
-	if(this.uploadLimit != l.uploadLimit)	return true;
-	if(this.downloadLimit != l.downloadLimit)	return true;
-	if(this.seedLimit != l.seedLimit)	return true;
-	if(this.seedTimeout != l.seedTimeout)	return true;
-	return false;
-    }
+	{
+		if(this.uploadLimit != l.uploadLimit)	return true;
+		if(this.downloadLimit != l.downloadLimit)	return true;
+		if(this.seedLimit != l.seedLimit)	return true;
+		if(this.seedTimeout != l.seedTimeout)	return true;
+		return false;
+	}
 }
--->
+
+// -*- vim: set ts=8
