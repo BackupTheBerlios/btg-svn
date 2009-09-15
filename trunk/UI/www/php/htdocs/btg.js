@@ -68,6 +68,12 @@ var contextsAge = 0;
 //var refreshTimeout = 20;
 var refreshTimeout = 5;
 
+/* An async contextList->contextStatus update is in progress */
+var updateInProgress = false;
+
+/* Indicates that the full list have been retreived at least once */
+var firstFull = false;
+
 var timerHandle = null;
 
 // Constant.
@@ -1096,6 +1102,7 @@ function cb_contextList(response)
     {
 	// Not providing any context IDs is ok.
 	/* setStatus("Server did not provide any context ids!"); */
+		 updateInProgress = false;
 	return;
     }
 
@@ -1105,11 +1112,18 @@ function cb_contextList(response)
 	var cid = parseInt(getFirstChildValue(entry, 'id'));
 	contextIdList.push(cid);
     }
+
+	updateInProgress = false;
+
+	// Call again to immediatly get status updates
+	if(!firstFull)
+	 refreshContextList();
 }
 
 function cb_contextList_err(error, errStr)
 {
     setError(error, lang[lng,'failedconextlist'] + errStr);//Failed to obtain context list: 
+	updateInProgress = false;
 }//lang['en','unablecleansession']
 
 /**
@@ -1127,12 +1141,14 @@ function cb_contextStatus(response)
     if (contexts == null)
     {
 	setStatus(lang[lng,'servernoconects']);//Server didnt provide any contexts!
+	updateInProgress = false;
 	return;
     }
 
     var newContextList = new Array();
     var strContexts = "";
-    for(var i=0; i < contexts.getElementsByTagName('context').length; i++)
+	 var i;
+    for(i=0; i < contexts.getElementsByTagName('context').length; i++)
     {
 	var s = new Status(contexts.getElementsByTagName('context')[i]);
 	newContextList.push(s);
@@ -1146,6 +1162,10 @@ function cb_contextStatus(response)
 	}
     }
 
+	 // Shift i elements of contextIdsToUpdate
+	 for(var count=0; count < i; count++)
+	    contextIdsToUpdate.shift();
+
     updateContextTable(newContextList);
     contextsAge = 0;
 
@@ -1155,6 +1175,15 @@ function cb_contextStatus(response)
 
     /* Updates done */
     setStatus("");
+
+	updateInProgress = false;
+
+	if(!firstFull) {
+		 if(contextIdsToUpdate.length > 0)
+			 refreshContextList();
+		 else
+			 firstFull = true;
+	}
 }
 
 /**
@@ -1165,6 +1194,7 @@ function cb_contextStatus_err(error, errStr)
 {
     setError(error, lang[lng,'failedcontextlists'] +errStr);//Failed to list contexts: 
     canGetContexts = 0;
+	updateInProgress = false;
 }
 
 function cb_sessionName(response)
@@ -1504,6 +1534,7 @@ function splitContextList()
 
 function createUpdateList()
 {
+	// All updated, fill up with ALL
     if (contextIdsToUpdate.length == 0)
     {
 	for (var count=0; count<contextIdList.length; count++) 
@@ -1567,10 +1598,17 @@ function removeOldTorrents()
 /* Refresh the context list */
 function refreshContextList()
 {
+	if(updateInProgress) {
+		return;
+	}
+
+	updateInProgress = true;
+
     if (updatesStopped == 1)
     {
 	changeUpdateMode();
     }
+
 
     if (!contextIdListUpdated)
     {
@@ -1578,7 +1616,11 @@ function refreshContextList()
 	contextIdList = new Array();
 	
 	//!!!
-	btg_contextList(cb_contextList, cb_contextList_err);
+	if(!btg_contextList(cb_contextList, cb_contextList_err)) {
+		// race detected
+		updateInProgress = false;
+		return;
+	}
 	contextIdListUpdated = true;
     }
     else
@@ -1606,11 +1648,6 @@ function refreshContextList()
 	}
 
 	btg_contextStatusForIds(cb_contextStatus, cb_contextStatus_err, str_contextIdsToUpdate);
-
-	for (var count=0; count<cid_number; count++) 
-	{
-	    var a = contextIdsToUpdate.shift();
-	}
 
 	contextIdListUpdated = false;
     }

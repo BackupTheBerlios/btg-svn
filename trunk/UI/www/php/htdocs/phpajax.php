@@ -24,6 +24,7 @@
 class PHPAjax
 {
 	private $debug = 0;
+	private $xhrtimeout = 5000;
 	private $uri="";
 	private $functions = array();
 
@@ -77,6 +78,12 @@ class PHPAjax
 	public function setDebug($debug)
 	{
 		$this->debug = ($debug?1:0);
+	}
+
+	/// Set XHR timeout
+	public function setXHRTimeout($xhrtimeout)
+	{
+		$this->xhrtimeout = $xhrtimeout;
 	}
 
 	/// Get the URI to call
@@ -172,7 +179,12 @@ class PHPAjax
 		foreach($this->functions as $fname=>$f)
 		{
 			$js.="function ".$fname."() {\n";
-			$js.="	ajax_call('".$fname."', '".$f['method']."', ".$fname.".arguments);\n";
+			$js.="	try{\n";
+			$js.="		var req = new XhrReq();\n";
+			$js.="		return req.call('".$fname."', '".$f['method']."', ".$fname.".arguments);\n";
+			$js.="	}catch(e){\n";
+			$js.="		if(console)console.error(e); else alert(e);\n";
+			$js.="	}\n";
 			$js.="}\n\n";
 		}
 
@@ -183,145 +195,184 @@ class PHPAjax
 	private function get_common_js()
 	{
 		?>
-var ajax_request = null;
 var phpajax_debug = <?php echo $this->debug;?>;
-function ajax_init()
+var xhrTimeout = <?php echo $this->xhrtimeout;?>;
+function get_xhr()
 {
+	var xhr;
 	try {
-		ajax_request = new XMLHttpRequest();
+		xhr = new XMLHttpRequest();
 	} catch (trymicrosoft) {
 		try {
-			ajax_request = new ActiveXObject("Msxml2.XMLHTTP");
+			xhr = new ActiveXObject("Msxml2.XMLHTTP");
 		} catch (othermicrosoft) {
 			try {
-				ajax_request = new ActiveXObject("Microsoft.XMLHTTP");
+				xhr = new ActiveXObject("Microsoft.XMLHTTP");
 			} catch (failed) {
-				ajax_request = null;
+				xhr = null;
 			} 
 		}
 	}
-	if (!ajax_request)
+	if (!xhr)
 		alert("Sorry, your browser is to old. To use this page, please make yourself happier and download a newer browser.");
+	return xhr;
 }
 
-function ajax_done()
-{
-	if(ajax_request)
-		delete ajax_request;
-}
+var XhrReq = function() {
+	this.xhr = null;
 
-ajax_init();
+	this.call = function(function_name, method, function_args)
+	{
+		var uri="<?php echo $this->get_uri();?>";
+		var xhr = this.xhr = get_xhr();
+		this.cb = function_args[0];
+		this.cb_err = function_args[1];
 
-
-function ajax_call(function_name, method, function_args)
-{
-	if(!ajax_request)
-		return false;
-	
-	if(ajax_request.readyState > 0 && ajax_request.readyState < 4)
-	{
-		// Another call is running! Ingore this call, hopefully its just the user who is in a hurry...
-		return;
-	}
-	else if(ajax_request.readyState > 4)
-	{
-		// Initiate a new XMLHTTPRequest object... We have to do this in Opera since they dont seem
-		// to support multiple calls per instance...
-		ajax_init();
-	}
-	
-	var uri="<?php echo $this->get_uri();?>";
-	user_callback = function_args[0];
-	user_callback_err = function_args[1];
-	if(method == "POST")
-	{
-	}
-	else
-	{
-		// Assume GET  
-		if (uri.indexOf("?") == -1) 
-			uri = uri + "?ajax_call=" + escape(function_name);
+		if(method == "POST")
+		{
+		}
 		else
-			uri = uri + "&ajax_call=" + escape(function_name);
+		{
+			// Assume GET  
+			if (uri.indexOf("?") == -1) 
+				uri = uri + "?ajax_call=" + escape(function_name);
+			else
+				uri = uri + "&ajax_call=" + escape(function_name);
 
-		// First arg is callback, dont send that... 
-		for (i = 2; i < function_args.length; i++) 
-			uri = uri + "&ajax_args[]=" + escape(function_args[i]);
+			// First arg is callback, dont send that... 
+			for (i = 2; i < function_args.length; i++) 
+				uri = uri + "&ajax_args[]=" + escape(function_args[i]);
 
-		uri = uri + "&rand=" + new Date().getTime();
-		post_data = null;
-	}
+			uri = uri + "&rand=" + new Date().getTime();
+		}
+		var self = this;
+		xhr.onreadystatechange = function(){self.onreadystatechange()};
+		xhr.open(method, uri, true);
+		if (method == "POST") {
+			xhr.setRequestHeader("Method", "POST " + uri + " HTTP/1.1");
+			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		}
+		
+		this.timer = setTimeout(function(){self.ontimeout(); }, xhrTimeout);
+		xhr.send();
+		return true;
+	};
 
-	ajax_request.open(method, uri, true);
-	if (method == "POST") {
-		ajax_request.setRequestHeader("Method", "POST " + uri + " HTTP/1.1");
-		ajax_request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-	}
-	
 	// Our ready-state-change function 
-	ajax_request.onreadystatechange = function(){
-			if (ajax_request.readyState != 4) 
-				return;
+	this.onreadystatechange = function(){
+		var xhr = this.xhr;
+		if (xhr.readyState != 4) 
+			return;
 
-			if(ajax_request.status != 200)
-			{
-				alert("Error: Got status "+ajax_request.status+ " "+ajax_request.statuStext+" from server instead of 200 OK. Call failed.");
-				return;
+		if(this.timer)
+			clearTimeout(this.timer);
+
+		if(xhr.status != 200)
+		{
+			alert("Error: Got status "+xhr.status+ " "+xhr.statusText+" from server instead of 200 OK. Call failed.");
+			return;
+		}
+
+		dom = xhr.responseXML;
+
+		if(!dom)
+		{
+			alert("Error: AJAX call failed, no XML DOM returned! Data: "+xhr.responseText);
+			return;
+		}
+
+		response = dom.getElementsByTagName('ajaxResponse')[0];
+		called_method = response.getAttribute('methodName');
+
+		// Debug messages 
+		debug = response.getElementsByTagName('debug');
+		if(phpajax_debug && debug.length > 0)
+		{
+			debugStr = "Debug information:\n\n"
+			for(i=0; i < debug.length; i++)
+				debugStr+=debug[i].childNodes[0].nodeValue+"\n";
+
+			alert(debugStr);
+		}
+
+		// A fault is a fatal error, ie php outputed error messages 
+		fault = response.getElementsByTagName('fault');
+		if(fault.length > 0)
+		{
+			faultStr = "Error: Failed to execute "+called_method+". Got error "
+			for(i=0; i < fault.length; i++)
+				faultStr+=fault[i].childNodes[0].nodeValue+"\n";
+
+			alert(faultStr);
+			delete xhr;
+			delete this.xhr;
+			return;
+		}
+
+		// A error is a less serous error, ie something made the command fail
+		error = response.getElementsByTagName('error');
+		if(error.length > 0)
+		{
+			errStr = ""
+			for(i=0; i < error.length; i++)
+				errStr+=error[i].childNodes[0].nodeValue+"\n";
+
+			try {
+				this.cb_err(error, errStr);
+			}catch(e) {
+				if(console) // Do we have firebug console?
+					console.error(e);
+				else
+					alert("Unhandled exception in user error callback: "+e);
 			}
+			delete xhr;
+			delete this.xhr;
+			return;
+		}
 
-			dom = ajax_request.responseXML;
-
-			if(!dom)
-			{
-				alert("Error: AJAX call failed, no XML DOM returned! Data: "+ajax_request.responseText);
-				return;
-			}
-
-			response = dom.getElementsByTagName('ajaxResponse')[0];
-			called_method = response.getAttribute('methodName');
-
-			// Debug messages 
-			debug = response.getElementsByTagName('debug');
-			if(phpajax_debug && debug.length > 0)
-			{
-				debugStr = "Debug information:\n\n"
-				for(i=0; i < debug.length; i++)
-					debugStr+=debug[i].childNodes[0].nodeValue+"\n";
-
-				alert(debugStr);
-			}
-
-			// A fault is a fatal error, ie php outputed error messages 
-			fault = response.getElementsByTagName('fault');
-			if(fault.length > 0)
-			{
-				faultStr = "Error: Failed to execute "+called_method+". Got error "
-				for(i=0; i < fault.length; i++)
-					faultStr+=fault[i].childNodes[0].nodeValue+"\n";
-
-				alert(faultStr);
-				return;
-			}
-
-			// A error is a less serous error, ie something made the command fail
-			error = response.getElementsByTagName('error');
-			if(error.length > 0)
-			{
-				errStr = ""
-				for(i=0; i < error.length; i++)
-					errStr+=error[i].childNodes[0].nodeValue+"\n";
-
-				user_callback_err(error, errStr);
-				return;
-			}
-
-			// All OK, call our method 
-			result = response.getElementsByTagName('result')[0];
-			user_callback(result);
-		};
+		// All OK, call our method 
+		result = response.getElementsByTagName('result')[0];
+		try {
+			this.cb(result);
+		}catch(e) {
+			if(console) // Do we have firebug console?
+				console.error(e);
+			else
+				alert("Unhandled exception in user callback: "+e);
+		}
+		delete xhr;
+		delete this.xhr;
+		return;
+	};
 	// End of ready-state-change function 
 	
-	ajax_request.send(post_data);
+	this.ontimeout = function() {
+		var xhr = this.xhr;
+		if(!this.xhr)
+			return console.error ("Timeout without an xhR?!");
+
+		clearTimeout(this.timer);
+		delete this.timer;
+
+		try {
+			if(xhr.readyState == 4 && xhr.status == 200)
+				return this.onreadystatechange();
+		} catch(e) {} // status might not always be available
+	
+		if(console) console.warn("xhr timeout, in state " + xhr.readyState);
+		xhr.abort();
+
+		try {
+			this.cb_err(error, "Timeout");
+		}catch(e) {
+			if(console) // Do we have firebug console?
+				console.error(e);
+			else
+				alert("Unhandled exception in user error callback: "+e);
+		}
+		delete xhr;
+		delete this.xhr;
+	};
 }
 		<?php
 		echo "\n";

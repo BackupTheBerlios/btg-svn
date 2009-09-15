@@ -218,6 +218,7 @@ class XMLRPC_Message
 		//$this->xml = preg_replace('/<\?xml(.*)?\?'.'>/', '', $this->xml);
 		if(trim($this->xml) == '')
 		{
+			$this->parseError = sprintf("Data empty");
 			return false;
 		}
 
@@ -750,7 +751,11 @@ class XMLRPC_Client
 		$this->message = new XMLRPC_Message($contents);
 		if(!$this->message->parse())
 		{
-			// XML error
+/* xmllint --format dump.txt
+			$fh = fopen("/tmp/dump.txt", "w");
+			fwrite($fh, $contents);
+			fclose($fh);
+*/
 			if($this->debug)
 				$this->error = new XMLRPC_Error(XMLRPC_Error::PARSE_ERROR, 'XMLRPC response parse error. Not well formed. Error: '.$this->message->parseError);
 			else

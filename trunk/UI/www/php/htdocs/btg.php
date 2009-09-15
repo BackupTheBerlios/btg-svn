@@ -975,73 +975,73 @@ $output .="</contexts>\n";
 						$output .= "<tracker>".htmlspecialchars($arr[0])."</tracker>\n";
 					}
 
-			               // Get the list of contained files.
-			               $output .= "<fileinfo>\n";
+					// Get the list of contained files.
+					$output .= "<fileinfo>\n";
 
-			               // Only get file information in certain states.
+					// Only get file information in certain states.
 					if ($contextStatus->getStatus() >= 3)
-			 		{
-					// Get list of selected files first,
-					$selected_files = $this->getSelectedFiles((int)$contextStatus->getContextID());
-					$files          = $this->getFiles((int)$contextStatus->getContextID());
-               
-					$fileId = 0;
-
-					$saved_dir = "";
-
-					foreach($selected_files as $entry)
 					{
-						$f  = $entry->getFilename();
-						$fs = 0;
-						$pc = 0;
-                           
-						if ($entry->getSelected() == true)
+						// Get list of selected files first,
+						$selected_files = $this->getSelectedFiles((int)$contextStatus->getContextID());
+						$files          = $this->getFiles((int)$contextStatus->getContextID());
+
+						$fileId = 0;
+
+						$saved_dir = "";
+
+						foreach($selected_files as $entry)
 						{
-							$selected = 1;
-							foreach($files as $file_entry)
+							$f  = $entry->getFilename();
+							$fs = 0;
+							$pc = 0;
+
+							if ($entry->getSelected() == true)
 							{
-								if ($file_entry->getFilename() == $f)
-                                          			{
-									// File size.
-									$fs = $file_entry->getFileSize();
-									// Percent done.
-									$pc = $this->fileEntryToPercent($file_entry);
+								$selected = 1;
+								foreach($files as $file_entry)
+								{
+									if ($file_entry->getFilename() == $f)
+									{
+										// File size.
+										$fs = $file_entry->getFileSize();
+										// Percent done.
+										$pc = $this->fileEntryToPercent($file_entry);
+									}
 								}
 							}
+							else
+							{
+								$selected = 0;
+							}
+
+							$output .= "<file>\n";
+
+							$output .= "<id>".$fileId."</id>\n";
+							$fileId++;
+
+							$dir = dirname($f);
+
+							if ($dir != $saved_dir)
+							{
+								$output .= "<dir>";
+								$output .= htmlspecialchars($dir);
+								$output .= "</dir>\n";
+								$saved_dir = $dir;
+							}
+							else
+							{
+								$output .= "<dir></dir>\n";
+							}
+
+							$output .= "<name>".htmlspecialchars(basename($f))."</name>\n";
+							$output .= "<selected>".$selected."</selected>\n";
+							$output .= "<size>".$fs."</size>\n";
+							$output .= "<percent>".$pc."</percent>\n";
+							$output .= "</file>";
+
+							$this->logMessage("Entry: ".$f.", ".$selected);
 						}
-				else
-				{
-					$selected = 0;
-				}
-
-				$output .= "<file>\n";
-                           
-				$output .= "<id>".$fileId."</id>\n";
-				$fileId++;
-
-				$dir = dirname($f);
-
-				if ($dir != $saved_dir)
-				{
-					$output .= "<dir>";
-					$output .= htmlspecialchars($dir);
-					$output .= "</dir>\n";
-					$saved_dir = $dir;
-				}
-				else
-				{
-					$output .= "<dir></dir>\n";
-				}
-
-				$output .= "<name>".htmlspecialchars(basename($f))."</name>\n";
-				$output .= "<selected>".$selected."</selected>\n";
-				$output .= "<size>".$fs."</size>\n";
-				$output .= "<percent>".$pc."</percent>\n";
-				$output .= "</file>";
-
-				$this->logMessage("Entry: ".$f.", ".$selected);
-			}
-		} // file information
+					} // file information
 
                $output .= "</fileinfo>\n";
                $output .= "</context>\n";
@@ -1339,6 +1339,9 @@ try
 
 	if($btg_config_debug >= 2)
 		$ajax->setDebug(1);
+
+	if($btg_config_xhrtimeout > 0)
+		$ajax->setXHRTimeout($btg_config_xhrtimeout);
 
 	// Register AJAX functions
 	$ajax->register('btg_sessionList', array($btg, 'sessionList'));

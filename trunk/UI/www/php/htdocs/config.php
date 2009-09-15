@@ -75,7 +75,12 @@ $btg_config_autostart = true;
  * and is shown to the client by default.
  * The syslog messages produced are also written to syslog.
  */
-$btg_config_debug = 0;
+$btg_config_debug = 1;
+
+/*
+ * Timeout in milliseconds for XMLHttpRequests from client side
+ */
+$btg_config_xhrtimeout = 5000;
 
 /* 
  * Set to 0 to disable using gzip. 
