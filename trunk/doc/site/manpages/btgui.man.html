@@ -1,14 +1,25 @@
-<!-- Creator     : groff version 1.18.1 -->
-<!-- CreationDate: Mon Aug 24 15:53:49 2009 -->
+<!-- Creator     : groff version 1.20.1 -->
+<!-- CreationDate: Thu Sep 17 23:24:17 2009 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
 <meta name="Content-Style" content="text/css">
+<style type="text/css">
+       p       { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       pre     { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       table   { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       h1      { text-align: center }
+</style>
 <title>BTGUI</title>
+
 </head>
 <body>
 
-<h1 align=center>BTGUI</h1>
+<h1 align="center">BTGUI</h1>
+
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
 <a href="#DESCRIPTION">DESCRIPTION</a><br>
@@ -20,321 +31,225 @@
 <a href="#BUGS">BUGS</a><br>
 
 <hr>
+
+
+<h2>NAME
 <a name="NAME"></a>
-<h2>NAME</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>btgui &minus; bittorrent client, part of the btg
-project.</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">btgui &minus;
+bittorrent client, part of the btg project.</p>
+
+<h2>SYNOPSIS
 <a name="SYNOPSIS"></a>
-<h2>SYNOPSIS</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>btgui</b> [-o <i>&lt;filename&gt;</i> ] [-u
-<i>&lt;URL&gt;</i> ] [--nostart] [-l] [-A] [-a] [-s
-<i>&lt;session ID&gt;</i> ] [--config
-<i>&lt;filename&gt;</i> ] [--dht] [--no-dht] [--encryption]
-[--no-encryption] [-v] [-h]</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>btgui</b>
+[-o <i>&lt;filename&gt;</i> ] [-u <i>&lt;URL&gt;</i> ]
+[--nostart] [-l] [-A] [-a] [-s <i>&lt;session ID&gt;</i> ]
+[--config <i>&lt;filename&gt;</i> ] [--dht] [--no-dht]
+[--encryption] [--no-encryption] [-v] [-h]</p>
+
+<h2>DESCRIPTION
 <a name="DESCRIPTION"></a>
-<h2>DESCRIPTION</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>btgui</b> is a gui bittorrent client.</p>
-<!-- INDENTATION -->
-<p>If started without any arguments, it will attempt to
-connect to the daemon (btgdaemon) and start a new
-session.</p>
-<!-- INDENTATION -->
-<p>After the client connects to the daemon and initializes,
-it will present an empty list of torrents. Use the File menu
-to open a</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>btgui</b> is
+a gui bittorrent client.</p>
+
+<p style="margin-left:11%; margin-top: 1em">If started
+without any arguments, it will attempt to connect to the
+daemon (btgdaemon) and start a new session.</p>
+
+<p style="margin-left:11%; margin-top: 1em">After the
+client connects to the daemon and initializes, it will
+present an empty list of torrents. Use the File menu to open
+a</p>
+
+<h2>OPTIONS
 <a name="OPTIONS"></a>
-<h2>OPTIONS</h2>
-<!-- TABS -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="4" cellspacing="0" cellpadding="0">
+</h2>
+
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="4%">
+<td width="3%">
 
-<p><b>-o</b></p>
-</td>
-<td width="5%"></td>
-<td width="77%">
 
-<p><i>&lt;filename&gt;</i> &minus; Name of a torrent file
-to open after initializing the client.</p>
-</td>
+<p style="margin-top: 1em"><b>-o</b></p></td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p style="margin-top: 1em"><i>&lt;filename&gt;</i> &minus;
+Name of a torrent file to open after initializing the
+client.</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="4%">
+<td width="3%">
 
-<p><b>-u</b></p>
-</td>
-<td width="5%"></td>
-<td width="77%">
+
+<p><b>-u</b></p></td>
+<td width="8%"></td>
+<td width="78%">
+
 
 <p><i>&lt;URL&gt;</i> &minus; URL to open after
 initializing the client. The URL should point to a torrent
-file.</p>
-</td>
+file.</p> </td></tr>
 </table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>--nostart</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Do not start torrents after opening them. The
-default is to start a torrent after it was opened.</p>
-</td>
-</table>
-<!-- TABS -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="4" cellspacing="0" cellpadding="0">
+
+<p style="margin-left:11%;"><b>--nostart</b></p>
+
+<p style="margin-left:22%;">&minus; Do not start torrents
+after opening them. The default is to start a torrent after
+it was opened.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="2%">
+<td width="3%">
 
-<p><b>-l</b></p>
-</td>
-<td width="7%"></td>
-<td width="77%">
 
-<p>&minus; List running sessions.</p>
-</td>
+<p><b>-l</b></p></td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p>&minus; List running sessions.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="2%">
+<td width="3%">
 
-<p><b>-A</b></p>
-</td>
-<td width="7%"></td>
-<td width="77%">
 
-<p>&minus; Attach to the first available session.</p>
-</td>
+<p><b>-A</b></p></td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p>&minus; Attach to the first available session.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="2%">
+<td width="3%">
 
-<p><b>-a</b></p>
-</td>
-<td width="7%"></td>
-<td width="77%">
+
+<p><b>-a</b></p></td>
+<td width="8%"></td>
+<td width="78%">
+
 
 <p>&minus; Show a list of sessions and let the user choose
-which session to attach to.</p>
-</td>
+which session to attach to.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="2%">
+<td width="3%">
 
-<p><b>-s</b></p>
-</td>
-<td width="7%"></td>
-<td width="77%">
+
+<p><b>-s</b></p></td>
+<td width="8%"></td>
+<td width="78%">
+
 
 <p><i>&lt;session ID&gt;</i> &minus; Attach to a session
-described by the session ID.</p>
-</td>
+described by the session ID.</p></td></tr>
 </table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>--config</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p><i>&lt;filename&gt;</i> &minus; Name of a client
-configuration file to use.</p>
-</td>
-</table>
-<!-- TABS -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="5" cellspacing="0" cellpadding="0">
+
+<p style="margin-left:11%;"><b>--config</b></p>
+
+<p style="margin-left:22%;"><i>&lt;filename&gt;</i> &minus;
+Name of a client configuration file to use.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="7%">
 
-<p><b>-v</b></p>
-</td>
-<td width="8%"></td>
-<td width="23%">
 
-<p>&minus; Be verbose.</p>
-</td>
-<td width="48%">
-</td>
+<p><b>-v</b></p></td>
+<td width="4%"></td>
+<td width="20%">
+
+
+<p>&minus; Be verbose.</p></td>
+<td width="58%">
+</td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="7%">
 
-<p><b>--dht</b></p>
-</td>
-<td width="8%"></td>
-<td width="23%">
 
-<p>&minus; Enable DHT.</p>
-</td>
-<td width="48%">
-</td>
+<p><b>--dht</b></p></td>
+<td width="4%"></td>
+<td width="20%">
+
+
+<p>&minus; Enable DHT.</p></td>
+<td width="58%">
+</td></tr>
 </table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>--no-dht</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Disable DHT.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>--encryption</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Enable encryption.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>--no-encryption</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Disable encryption.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>-h|--help</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Print a short help.</p>
-</td>
-</table>
+
+<p style="margin-left:11%;"><b>--no-dht</b></p>
+
+<p style="margin-left:22%;">&minus; Disable DHT.</p>
+
+<p style="margin-left:11%;"><b>--encryption</b></p>
+
+<p style="margin-left:22%;">&minus; Enable encryption.</p>
+
+<p style="margin-left:11%;"><b>--no-encryption</b></p>
+
+<p style="margin-left:22%;">&minus; Disable encryption.</p>
+
+<p style="margin-left:11%;"><b>-h|--help</b></p>
+
+<p style="margin-left:22%;">&minus; Print a short help.</p>
+
+<h2>FILES
 <a name="FILES"></a>
-<h2>FILES</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>See btg_config(1).</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">See
+btg_config(1).</p>
+
+<h2>CONFIGURATION
 <a name="CONFIGURATION"></a>
-<h2>CONFIGURATION</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>See btg_config(1).</p></td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">See
+btg_config(1).</p>
+
+<h2>AUTHOR
 <a name="AUTHOR"></a>
-<h2>AUTHOR</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>Written by Michael Wojciechowski.</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Written by
+Michael Wojciechowski.</p>
+
+<h2>SEE ALSO
 <a name="SEE ALSO"></a>
-<h2>SEE ALSO</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>btg(5), btg_config(5), btcli(1), btgdaemon(1)</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">btg(5),
+btg_config(5), btcli(1), btgdaemon(1)</p>
+
+<h2>BUGS
 <a name="BUGS"></a>
-<h2>BUGS</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>No known bugs.</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">No known
+bugs.</p>
 <hr>
 </body>
 </html>

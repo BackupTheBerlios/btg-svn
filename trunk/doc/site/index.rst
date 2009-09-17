@@ -166,13 +166,19 @@ Stable Releases
 Experimental Releases
 ---------------------
 
-============= ======================= ========================== ======================= ==================================
-**Codename**  **Source**              **Release note**           **Changelog**           **Rasterbar Libtorrent version**
-------------- ----------------------- -------------------------- ----------------------- ----------------------------------
-`Papa Legba`_ `btg-2.0.0-rc1.tar.gz`_ `2.0.0 RC1 release note`_  `2.0.0 RC1 changelog`_  0.14.x
-============= ======================= ========================== ======================= ==================================
+================= ======================= ========================== ======================= ==================================
+**Codename**      **Source**              **Release note**           **Changelog**           **Rasterbar Libtorrent version**
+----------------- ----------------------- -------------------------- ----------------------- ----------------------------------
+`Papa Legba RC2`_ `btg-2.0.0-RC2.tar.gz`_ `2.0.0 RC2 release note`_  `2.0.0 RC2 changelog`_  0.14.x
+`Papa Legba RC1`_ `btg-2.0.0-rc1.tar.gz`_ `2.0.0 RC1 release note`_  `2.0.0 RC1 changelog`_  0.14.x
+================= ======================= ========================== ======================= ==================================
 
-.. _Papa Legba: https://developer.berlios.de/project/shownotes.php?release_id=16632
+.. _Papa Legba RC2: https://developer.berlios.de/project/shownotes.php?release_id=16731
+.. _btg-2.0.0-RC2.tar.gz: http://prdownload.berlios.de/btg/btg-2.0.0-RC2.tar.gz
+.. _2.0.0 RC2 release note: https://developer.berlios.de/project/shownotes.php?release_id=16731
+.. _2.0.0 RC2 changelog: https://developer.berlios.de/project/shownotes.php?release_id=16731
+
+.. _Papa Legba RC1: https://developer.berlios.de/project/shownotes.php?release_id=16632
 .. _btg-2.0.0-rc1.tar.gz: http://prdownload.berlios.de/btg/btg-2.0.0-rc1.tar.gz
 .. _2.0.0 RC1 release note: https://developer.berlios.de/project/shownotes.php?release_id=16632
 .. _2.0.0 RC1 changelog: https://developer.berlios.de/project/shownotes.php?release_id=16632

@@ -1,14 +1,25 @@
-<!-- Creator     : groff version 1.18.1 -->
-<!-- CreationDate: Mon Aug 24 15:53:48 2009 -->
+<!-- Creator     : groff version 1.20.1 -->
+<!-- CreationDate: Thu Sep 17 23:24:16 2009 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
 <meta name="Content-Style" content="text/css">
+<style type="text/css">
+       p       { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       pre     { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       table   { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       h1      { text-align: center }
+</style>
 <title>BTGCALLBACK</title>
+
 </head>
 <body>
 
-<h1 align=center>BTGCALLBACK</h1>
+<h1 align="center">BTGCALLBACK</h1>
+
 <a href="#NAME">NAME</a><br>
 <a href="#DESCRIPTION">DESCRIPTION</a><br>
 <a href="#INTERFACE">INTERFACE</a><br>
@@ -19,367 +30,200 @@
 <a href="#SEE ALSO">SEE ALSO</a><br>
 
 <hr>
+
+
+<h2>NAME
 <a name="NAME"></a>
-<h2>NAME</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>btg event callback</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">btg event
+callback</p>
+
+<h2>DESCRIPTION
 <a name="DESCRIPTION"></a>
-<h2>DESCRIPTION</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>The btg daemon is capable of calling a user specified
-script or executable in order to report events. The location
-of the script or executable is specified in the passwd
-file.</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">The btg daemon
+is capable of calling a user specified script or executable
+in order to report events. The location of the script or
+executable is specified in the passwd file.</p>
+
+<h2>INTERFACE
 <a name="INTERFACE"></a>
-<h2>INTERFACE</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<pre>/path/to/script &lt;EVENT&gt; &lt;EVENTPARAMETERS&gt;
-</pre>
-<!-- INDENTATION -->
-<p>The daemon executes a script or executable specified for
-an user when an event happends. The first parameter is the
-event name. The following parameters depends on the
-event.</p>
-</td>
-</table>
+</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em">/path/to/script
+&lt;EVENT&gt; &lt;EVENTPARAMETERS&gt;</p>
+
+<p style="margin-left:11%; margin-top: 1em">The daemon
+executes a script or executable specified for an user when
+an event happends. The first parameter is the event name.
+The following parameters depends on the event.</p>
+
+<h2>EVENTS
 <a name="EVENTS"></a>
-<h2>EVENTS</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>The following events.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="4%"></td>
-<td width="95%">
-<p><b>ADD</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>Description</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>Event reported when a torrent file is added.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>Parameters</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&lt;EVENT&gt; is set to &quot;ADD&quot;.
-&lt;EVENTPARAMETERS&gt; is set to the file name of the
-torrent file which was added.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="4%"></td>
-<td width="95%">
-<p><b>REMOVE</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>Description</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>Event reported when a torrent file is removed.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>Parameters</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&lt;EVENT&gt; is set to &quot;REMOVE&quot;.
-&lt;EVENTPARAMETERS&gt; is set to the file name of the
-torrent file which was removed.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="4%"></td>
-<td width="95%">
-<p><b>FINISHED</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>Description</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>Event reported when a torrent file finishes downloading
-and is stopped. This can happen because of a set seed
-timer.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>Parameters</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&lt;EVENT&gt; is set to &quot;FINISHED&quot;.
-&lt;EVENTPARAMETERS&gt; is set to the file name of the
-torrent file which finished downloading.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="4%"></td>
-<td width="95%">
-<p><b>SEEDING</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>Description</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>Event reported when a torrent file begins seeding.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>Parameters</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&lt;EVENT&gt; is set to &quot;SEEDING&quot;.</p>
-<!-- INDENTATION -->
-<p>&lt;EVENTPARAMETERS&gt; is set to the file name of the
-torrent file which began seeding.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="4%"></td>
-<td width="95%">
-<p><b>CLEAN</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>Description</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>Event reported when a torrent file is cleaned - which
-means that it is moved from the user work directory to the
-users destination directory.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>Parameters</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&lt;EVENT&gt; is set to &quot;CLEAN&quot;.</p>
-<!-- INDENTATION -->
-<p>&lt;EVENTPARAMETERS&gt; is as follows. The first
-parameter is the name of the torrent file which was cleaned.
-The following parameters are all unique top directories or
-file names contained in the torrent file which was
-cleaned.</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">The following
+events.</p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>ADD</b> <br>
+Description</p>
+
+<p style="margin-left:22%;">Event reported when a torrent
+file is added.</p>
+
+<p style="margin-left:11%;">Parameters</p>
+
+<p style="margin-left:22%; margin-top: 1em">&lt;EVENT&gt;
+is set to &quot;ADD&quot;. &lt;EVENTPARAMETERS&gt; is set to
+the file name of the torrent file which was added.</p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>REMOVE</b>
+<br>
+Description</p>
+
+<p style="margin-left:22%;">Event reported when a torrent
+file is removed.</p>
+
+<p style="margin-left:11%;">Parameters</p>
+
+<p style="margin-left:22%; margin-top: 1em">&lt;EVENT&gt;
+is set to &quot;REMOVE&quot;. &lt;EVENTPARAMETERS&gt; is set
+to the file name of the torrent file which was removed.</p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>FINISHED</b>
+<br>
+Description</p>
+
+<p style="margin-left:22%; margin-top: 1em">Event reported
+when a torrent file finishes downloading and is stopped.
+This can happen because of a set seed timer.</p>
+
+<p style="margin-left:11%;">Parameters</p>
+
+<p style="margin-left:22%; margin-top: 1em">&lt;EVENT&gt;
+is set to &quot;FINISHED&quot;. &lt;EVENTPARAMETERS&gt; is
+set to the file name of the torrent file which finished
+downloading.</p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>SEEDING</b>
+<br>
+Description</p>
+
+<p style="margin-left:22%; margin-top: 1em">Event reported
+when a torrent file begins seeding.</p>
+
+<p style="margin-left:11%;">Parameters</p>
+
+<p style="margin-left:22%; margin-top: 1em">&lt;EVENT&gt;
+is set to &quot;SEEDING&quot;.</p>
+
+
+<p style="margin-left:22%; margin-top: 1em">&lt;EVENTPARAMETERS&gt;
+is set to the file name of the torrent file which began
+seeding.</p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>CLEAN</b>
+<br>
+Description</p>
+
+<p style="margin-left:22%; margin-top: 1em">Event reported
+when a torrent file is cleaned - which means that it is
+moved from the user work directory to the users destination
+directory.</p>
+
+<p style="margin-left:11%;">Parameters</p>
+
+<p style="margin-left:22%; margin-top: 1em">&lt;EVENT&gt;
+is set to &quot;CLEAN&quot;.</p>
+
+
+<p style="margin-left:22%; margin-top: 1em">&lt;EVENTPARAMETERS&gt;
+is as follows. The first parameter is the name of the
+torrent file which was cleaned. The following parameters are
+all unique top directories or file names contained in the
+torrent file which was cleaned.</p>
+
+<h2>EXAMPLE SCRIPT
 <a name="EXAMPLE SCRIPT"></a>
-<h2>EXAMPLE SCRIPT</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<pre>#!/bin/sh
+</h2>
 
-LOGFILE=&quot;/tmp/btgdaemon.callback.log&quot;
 
-echo &quot;New event.&quot;    &gt;&gt; $LOGFILE
-date                 &gt;&gt; $LOGFILE
-echo &quot;Arguments: $*&quot; &gt;&gt; $LOGFILE
+<p style="margin-left:11%; margin-top: 1em">#!/bin/sh</p>
 
-# Check the different events.
 
-case &quot;$1&quot; in
-  ADD)
-    echo &quot;Torrent file &rsquo;$2&rsquo; was added.&quot; &gt;&gt; $LOGFILE
-    ;;
+<p style="margin-left:11%; margin-top: 1em">LOGFILE=&quot;/tmp/btgdaemon.callback.log&quot;</p>
 
- REMOVE)
-    echo &quot;Torrent file &rsquo;$2&rsquo; was removed.&quot; &gt;&gt; $LOGFILE
-    ;;
+<p style="margin-left:11%; margin-top: 1em">echo &quot;New
+event.&quot; &gt;&gt; $LOGFILE <br>
+date &gt;&gt; $LOGFILE <br>
+echo &quot;Arguments: $*&quot; &gt;&gt; $LOGFILE</p>
 
- FINISHED)
-    echo &quot;Torrent file &rsquo;$2&rsquo; finished.&quot; &gt;&gt; $LOGFILE
-    ;;
+<p style="margin-left:11%; margin-top: 1em"># Check the
+different events.</p>
 
- SEEDING)
-    echo &quot;Torrent file &rsquo;$2&rsquo; began seeding.&quot; &gt;&gt; $LOGFILE
-    ;;
+<p style="margin-left:11%; margin-top: 1em">case
+&quot;$1&quot; in <br>
+ADD) <br>
+echo &quot;Torrent file &rsquo;$2&rsquo; was added.&quot;
+&gt;&gt; $LOGFILE <br>
+;;</p>
 
- CLEAN)
-    echo &quot;Torrent file &rsquo;$2&rsquo; was cleaned.&quot; &gt;&gt; $LOGFILE
-    ;;
+<p style="margin-left:11%; margin-top: 1em">REMOVE) <br>
+echo &quot;Torrent file &rsquo;$2&rsquo; was removed.&quot;
+&gt;&gt; $LOGFILE <br>
+;;</p>
 
- *)
-    echo &quot;Unknown option.&quot; &gt;&gt; $LOGFILE
-    ;;
-esac
-</pre>
-</td>
-</table>
+<p style="margin-left:11%; margin-top: 1em">FINISHED) <br>
+echo &quot;Torrent file &rsquo;$2&rsquo; finished.&quot;
+&gt;&gt; $LOGFILE <br>
+;;</p>
+
+<p style="margin-left:11%; margin-top: 1em">SEEDING) <br>
+echo &quot;Torrent file &rsquo;$2&rsquo; began
+seeding.&quot; &gt;&gt; $LOGFILE <br>
+;;</p>
+
+<p style="margin-left:11%; margin-top: 1em">CLEAN) <br>
+echo &quot;Torrent file &rsquo;$2&rsquo; was cleaned.&quot;
+&gt;&gt; $LOGFILE <br>
+;;</p>
+
+<p style="margin-left:11%; margin-top: 1em">*) <br>
+echo &quot;Unknown option.&quot; &gt;&gt; $LOGFILE <br>
+;; <br>
+esac</p>
+
+<h2>FILES
 <a name="FILES"></a>
-<h2>FILES</h2>
-<!-- INDENTATION -->
+</h2>
 
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>~/.btg/passwd - the daemon passwd file.</p></td>
-</table>
+
+<p style="margin-left:11%; margin-top: 1em">~/.btg/passwd -
+the daemon passwd file.</p>
+
+<h2>AUTHOR
 <a name="AUTHOR"></a>
-<h2>AUTHOR</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>Written by Michael Wojciechowski.</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Written by
+Michael Wojciechowski.</p>
+
+<h2>SEE ALSO
 <a name="SEE ALSO"></a>
-<h2>SEE ALSO</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>btgdaemon(5)</p>
-</td>
-</table>
+</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em">btgdaemon(5)</p>
 <hr>
 </body>
 </html>

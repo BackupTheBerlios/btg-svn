@@ -1,14 +1,25 @@
-<!-- Creator     : groff version 1.18.1 -->
-<!-- CreationDate: Mon Aug 24 15:53:48 2009 -->
+<!-- Creator     : groff version 1.20.1 -->
+<!-- CreationDate: Thu Sep 17 23:24:16 2009 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
 <meta name="Content-Style" content="text/css">
+<style type="text/css">
+       p       { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       pre     { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       table   { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       h1      { text-align: center }
+</style>
 <title>BTGPASSWD</title>
+
 </head>
 <body>
 
-<h1 align=center>BTGPASSWD</h1>
+<h1 align="center">BTGPASSWD</h1>
+
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
 <a href="#DESCRIPTION">DESCRIPTION</a><br>
@@ -20,382 +31,230 @@
 <a href="#BUGS">BUGS</a><br>
 
 <hr>
+
+
+<h2>NAME
 <a name="NAME"></a>
-<h2>NAME</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>btgpasswd &minus; application for managing btg daemon
-password file.</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">btgpasswd
+&minus; application for managing btg daemon password
+file.</p>
+
+<h2>SYNOPSIS
 <a name="SYNOPSIS"></a>
-<h2>SYNOPSIS</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>btgpasswd</b> [-a] [-m] [-r] [-l] [-t <i>directory</i>
-] [-w <i>directory</i> ] [-s <i>directory</i> ] [-d
+</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>btgpasswd</b>
+[-a] [-m] [-r] [-l] [-t <i>directory</i> ] [-w
+<i>directory</i> ] [-s <i>directory</i> ] [-d
 <i>directory</i> ] [-p <i>password</i> ] [-u <i>username</i>
 ] [--control <i>1</i> | --control <i>0</i> ] [-c | --create]
 [-n] [-f <i>FILE</i> |--config <i>FILE</i> ] [-v] [-h]</p>
-</td>
-</table>
+
+<h2>DESCRIPTION
 <a name="DESCRIPTION"></a>
-<h2>DESCRIPTION</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>btgpasswd</b> manages the password file used by the
-btg daemon. It supports adding, modifying, removing and
-listing entries.</p>
-<!-- INDENTATION -->
-<p><b>btgpasswd</b> reads the btg daemon config file, to
-find out which password file should be used. <b>It will not
-work without it.</b></p>
-</td>
-</table>
+</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>btgpasswd</b>
+manages the password file used by the btg daemon. It
+supports adding, modifying, removing and listing
+entries.</p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>btgpasswd</b>
+reads the btg daemon config file, to find out which password
+file should be used. <b>It will not work without it.</b></p>
+
+<h2>OPTIONS
 <a name="OPTIONS"></a>
-<h2>OPTIONS</h2>
-<!-- TABS -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="5" cellspacing="0" cellpadding="0">
+</h2>
+
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="2%">
+<td width="3%">
 
-<p><b>-a</b></p>
-</td>
-<td width="13%"></td>
-<td width="26%">
 
-<p>&minus; add a new entry.</p>
-</td>
-<td width="45%">
-</td>
+<p style="margin-top: 1em"><b>-a</b></p></td>
+<td width="8%"></td>
+<td width="27%">
+
+
+<p style="margin-top: 1em">&minus; add a new entry.</p></td>
+<td width="51%">
+</td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="2%">
+<td width="3%">
 
-<p><b>-m</b></p>
-</td>
-<td width="13%"></td>
-<td width="26%">
 
-<p>&minus; modify an entry.</p>
-</td>
-<td width="45%">
-</td>
+<p><b>-m</b></p></td>
+<td width="8%"></td>
+<td width="27%">
+
+
+<p>&minus; modify an entry.</p></td>
+<td width="51%">
+</td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="2%">
+<td width="3%">
 
-<p><b>-r</b></p>
-</td>
-<td width="13%"></td>
-<td width="26%">
 
-<p>&minus; remove an entry.</p>
-</td>
-<td width="45%">
-</td>
+<p><b>-r</b></p></td>
+<td width="8%"></td>
+<td width="27%">
+
+
+<p>&minus; remove an entry.</p></td>
+<td width="51%">
+</td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="2%">
+<td width="3%">
 
-<p><b>-l</b></p>
-</td>
-<td width="13%"></td>
-<td width="26%">
 
-<p>&minus; List entries.</p>
-</td>
-<td width="45%">
-</td>
+<p><b>-l</b></p></td>
+<td width="8%"></td>
+<td width="27%">
+
+
+<p>&minus; List entries.</p></td>
+<td width="51%">
+</td></tr>
 </table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>-t directory</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Use temp <i>directory.</i></p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>-w directory</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Use work <i>directory.</i></p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>-s directory</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Use seed <i>directory.</i></p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>-d directory</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Use destination <i>directory .</i></p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>-p password</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Use the argument as the password.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>-u username</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Use the argument as the username.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>--control 1|--control 0</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Enable/disable the control flag. It allows an
-user to: shutdown btgdaemon, set global limits.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>-c | --create</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Create a new file. <b>This is to be used in
-connection with the -a switch, for creating new
-users.</b></p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>-f filename | --config filename</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Specify the daemon configuration file to use.</p>
-</td>
-</table>
-<!-- TABS -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="5" cellspacing="0" cellpadding="0">
+
+<p style="margin-left:11%;"><b>-t directory</b></p>
+
+<p style="margin-left:22%;">&minus; Use temp
+<i>directory.</i></p>
+
+<p style="margin-left:11%;"><b>-w directory</b></p>
+
+<p style="margin-left:22%;">&minus; Use work
+<i>directory.</i></p>
+
+<p style="margin-left:11%;"><b>-s directory</b></p>
+
+<p style="margin-left:22%;">&minus; Use seed
+<i>directory.</i></p>
+
+<p style="margin-left:11%;"><b>-d directory</b></p>
+
+<p style="margin-left:22%;">&minus; Use destination
+<i>directory .</i></p>
+
+<p style="margin-left:11%;"><b>-p password</b></p>
+
+<p style="margin-left:22%;">&minus; Use the argument as the
+password.</p>
+
+<p style="margin-left:11%;"><b>-u username</b></p>
+
+<p style="margin-left:22%;">&minus; Use the argument as the
+username.</p>
+
+<p style="margin-left:11%;"><b>--control 1|--control
+0</b></p>
+
+<p style="margin-left:22%;">&minus; Enable/disable the
+control flag. It allows an user to: shutdown btgdaemon, set
+global limits.</p>
+
+<p style="margin-left:11%;"><b>-c | --create</b></p>
+
+<p style="margin-left:22%;">&minus; Create a new file.
+<b>This is to be used in connection with the -a switch, for
+creating new users.</b></p>
+
+<p style="margin-left:11%;"><b>-f filename | --config
+filename</b></p>
+
+<p style="margin-left:22%;">&minus; Specify the daemon
+configuration file to use.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="2%">
+<td width="3%">
 
-<p><b>-v</b></p>
-</td>
-<td width="13%"></td>
-<td width="29%">
 
-<p>&minus; Print the version.</p>
-</td>
-<td width="42%">
-</td>
+<p><b>-v</b></p></td>
+<td width="8%"></td>
+<td width="30%">
+
+
+<p>&minus; Print the version.</p></td>
+<td width="48%">
+</td></tr>
 </table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>-h|--help</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Print a short help.</p>
-</td>
-</table>
+
+<p style="margin-left:11%;"><b>-h|--help</b></p>
+
+<p style="margin-left:22%;">&minus; Print a short help.</p>
+
+<h2>EXAMPLES
 <a name="EXAMPLES"></a>
-<h2>EXAMPLES</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>Creating a new file (Done by adding a new user).</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>btgpasswd --create -a -u username -p password -d
-/path/to/dest -w /path/to/work -s /path/to/seed -t
-/path/to/temp</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>Adding a new user (passwd file exists).</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>btgpasswd -a -u username2 -p password2 -d /path/to/dest
--w /path/to/work -s /path/to/seed -t /path/to/temp</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Creating a new
+file (Done by adding a new user).</p>
+
+<p style="margin-left:22%;">btgpasswd --create -a -u
+username -p password -d /path/to/dest -w /path/to/work -s
+/path/to/seed -t /path/to/temp</p>
+
+<p style="margin-left:11%;">Adding a new user (passwd file
+exists).</p>
+
+<p style="margin-left:22%;">btgpasswd -a -u username2 -p
+password2 -d /path/to/dest -w /path/to/work -s /path/to/seed
+-t /path/to/temp</p>
+
+<h2>FILES
 <a name="FILES"></a>
-<h2>FILES</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>~/.btg/daemon.ini - default daemon configuration file is
-used, unless --config is used to provide another daemon
-configuration file.</p></td>
-</table>
+</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em">~/.btg/daemon.ini
+- default daemon configuration file is used, unless <br>
+--config is used to provide another daemon configuration
+file.</p>
+
+<h2>AUTHOR
 <a name="AUTHOR"></a>
-<h2>AUTHOR</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>Written by Michael Wojciechowski.</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Written by
+Michael Wojciechowski.</p>
+
+<h2>SEE ALSO
 <a name="SEE ALSO"></a>
-<h2>SEE ALSO</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>btg(5), btg_config(5)</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">btg(5),
+btg_config(5)</p>
+
+<h2>BUGS
 <a name="BUGS"></a>
-<h2>BUGS</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>No known bugs.</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">No known
+bugs.</p>
 <hr>
 </body>
 </html>

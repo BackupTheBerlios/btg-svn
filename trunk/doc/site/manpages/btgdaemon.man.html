@@ -1,14 +1,25 @@
-<!-- Creator     : groff version 1.18.1 -->
-<!-- CreationDate: Mon Aug 24 15:53:49 2009 -->
+<!-- Creator     : groff version 1.20.1 -->
+<!-- CreationDate: Thu Sep 17 23:24:16 2009 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
 <meta name="Content-Style" content="text/css">
+<style type="text/css">
+       p       { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       pre     { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       table   { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       h1      { text-align: center }
+</style>
 <title>BTGDAEMON</title>
+
 </head>
 <body>
 
-<h1 align=center>BTGDAEMON</h1>
+<h1 align="center">BTGDAEMON</h1>
+
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
 <a href="#DESCRIPTION">DESCRIPTION</a><br>
@@ -19,255 +30,165 @@
 <a href="#BUGS">BUGS</a><br>
 
 <hr>
+
+
+<h2>NAME
 <a name="NAME"></a>
-<h2>NAME</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>btgdaemon &minus; daemon part of the btg project.</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">btgdaemon
+&minus; daemon part of the btg project.</p>
+
+<h2>SYNOPSIS
 <a name="SYNOPSIS"></a>
-<h2>SYNOPSIS</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>btgdaemon</b> [-h] [-D] [-v] [--syntax] [-c
-FILE|--config FILE] [-n|--nodetach] [-s FILE|--session-file
-FILE] [-N]</p>
-</td>
-</table>
+</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>btgdaemon</b>
+[-h] [-D] [-v] [--syntax] [-c FILE|--config FILE]
+[-n|--nodetach] [-s FILE|--session-file FILE] [-N]</p>
+
+<h2>DESCRIPTION
 <a name="DESCRIPTION"></a>
-<h2>DESCRIPTION</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>btgdaemon</b> acts as a backend which performs
-bittorrent operations for a number of clients.</p>
-<!-- INDENTATION -->
-<p><b>btgdaemon</b> accepts connections using a transport.
-Currently the following transports are implemented: TCP/IP,
-secure TCP/IP, XML-RPC and secure XML-RPC. The secure
-transports are using TLS, provided by GNU TLS.</p>
-<!-- INDENTATION -->
-<p>The daemon <b>must</b> be started before using one of the
-clients.</p>
-</td>
-</table>
+</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>btgdaemon</b>
+acts as a backend which performs bittorrent operations for a
+number of clients.</p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>btgdaemon</b>
+accepts connections using a transport. Currently the
+following transports are implemented: TCP/IP, secure TCP/IP,
+XML-RPC and secure XML-RPC. The secure transports are using
+TLS, provided by GNU TLS.</p>
+
+<p style="margin-left:11%; margin-top: 1em">The daemon
+<b>must</b> be started before using one of the clients.</p>
+
+<h2>OPTIONS
 <a name="OPTIONS"></a>
-<h2>OPTIONS</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>-h | --help</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Print a short help.</p>
-</td>
-</table>
-<!-- TABS -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="5" cellspacing="0" cellpadding="0">
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>-h |
+--help</b></p>
+
+<p style="margin-left:22%;">&minus; Print a short help.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="2%">
+<td width="3%">
 
-<p><b>-D</b></p>
-</td>
-<td width="13%"></td>
-<td width="52%">
 
-<p>&minus; Write extensive debug information.</p>
-</td>
-<td width="19%">
-</td>
+<p><b>-D</b></p></td>
+<td width="8%"></td>
+<td width="55%">
+
+
+<p>&minus; Write extensive debug information.</p></td>
+<td width="23%">
+</td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="2%">
+<td width="3%">
 
-<p><b>-v</b></p>
-</td>
-<td width="13%"></td>
-<td width="52%">
 
-<p>&minus; Be verbose.</p>
-</td>
-<td width="19%">
-</td>
+<p><b>-v</b></p></td>
+<td width="8%"></td>
+<td width="55%">
+
+
+<p>&minus; Be verbose.</p></td>
+<td width="23%">
+</td></tr>
 </table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>--syntax</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Output syntax of the configuration file used to
-standard out.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>-c FILE | --config FILE</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Configuration file, FILE, to use.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>-n | --nodetach</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Do not detach from TTY.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>-s FILE | --session-file FILE</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Use session file FILE.</p>
-</td>
-</table>
-<!-- TABS -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="5" cellspacing="0" cellpadding="0">
+
+<p style="margin-left:11%;"><b>--syntax</b></p>
+
+<p style="margin-left:22%;">&minus; Output syntax of the
+configuration file used to standard out.</p>
+
+<p style="margin-left:11%;"><b>-c FILE | --config
+FILE</b></p>
+
+<p style="margin-left:22%;">&minus; Configuration file,
+FILE, to use.</p>
+
+<p style="margin-left:11%;"><b>-n | --nodetach</b></p>
+
+<p style="margin-left:22%;">&minus; Do not detach from
+TTY.</p>
+
+<p style="margin-left:11%;"><b>-s FILE | --session-file
+FILE</b></p>
+
+<p style="margin-left:22%;">&minus; Use session file
+FILE.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="2%">
+<td width="3%">
 
-<p><b>-N</b></p>
-</td>
-<td width="13%"></td>
-<td width="36%">
 
-<p>&minus; Do not reload sessions.</p>
-</td>
-<td width="35%">
-</td>
+<p><b>-N</b></p></td>
+<td width="8%"></td>
+<td width="38%">
+
+
+<p>&minus; Do not reload sessions.</p></td>
+<td width="40%">
+</td></tr>
 </table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>-p FILE | --pid-file FILE</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Write PID to file FILE.</p>
-</td>
-</table>
+
+<p style="margin-left:11%;"><b>-p FILE | --pid-file
+FILE</b></p>
+
+<p style="margin-left:22%;">&minus; Write PID to file
+FILE.</p>
+
+<h2>FILES
 <a name="FILES"></a>
-<h2>FILES</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>No config files are used by the daemon.</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>~/.btg/daemon - the default IPC que filename used for
-accepting connections from clients.</p></td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">No config files
+are used by the daemon. <br>
+~/.btg/daemon - the default IPC que filename used for
+accepting <br>
+connections from clients.</p>
+
+<h2>AUTHOR
 <a name="AUTHOR"></a>
-<h2>AUTHOR</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>Written by Michael Wojciechowski.</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Written by
+Michael Wojciechowski.</p>
+
+<h2>SEE ALSO
 <a name="SEE ALSO"></a>
-<h2>SEE ALSO</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>btg(5), btg_config(5), btgcallback(5), btgcli(1),
-btgui(1)</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">btg(5),
+btg_config(5), btgcallback(5), btgcli(1), btgui(1)</p>
+
+<h2>BUGS
 <a name="BUGS"></a>
-<h2>BUGS</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>No known bugs.</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">No known
+bugs.</p>
 <hr>
 </body>
 </html>

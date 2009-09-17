@@ -1,14 +1,25 @@
-<!-- Creator     : groff version 1.18.1 -->
-<!-- CreationDate: Mon Aug 24 15:53:49 2009 -->
+<!-- Creator     : groff version 1.20.1 -->
+<!-- CreationDate: Thu Sep 17 23:24:18 2009 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
 <meta name="Content-Style" content="text/css">
+<style type="text/css">
+       p       { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       pre     { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       table   { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       h1      { text-align: center }
+</style>
 <title>BTGNCLI</title>
+
 </head>
 <body>
 
-<h1 align=center>BTGNCLI</h1>
+<h1 align="center">BTGNCLI</h1>
+
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
 <a href="#DESCRIPTION">DESCRIPTION</a><br>
@@ -24,699 +35,359 @@
 <a href="#BUGS">BUGS</a><br>
 
 <hr>
+
+
+<h2>NAME
 <a name="NAME"></a>
-<h2>NAME</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>btgncli &minus; bittorrent client, part of the btg
-project.</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">btgncli &minus;
+bittorrent client, part of the btg project.</p>
+
+<h2>SYNOPSIS
 <a name="SYNOPSIS"></a>
-<h2>SYNOPSIS</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>btgncli</b> [-o <i>&lt;filename&gt;</i> ] [-u
-<i>&lt;URL&gt;</i> ] [--nostart] [-l] [--noutput] [--command
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>btgncli</b>
+[-o <i>&lt;filename&gt;</i> ] [-u <i>&lt;URL&gt;</i> ]
+[--nostart] [-l] [--noutput] [--command
 <i>&lt;command&gt;</i> ] [-A] [-a] [-s <i>&lt;session
 ID&gt;</i> ] [--config <i>&lt;filename&gt;</i> ] [--dht]
 [--no-dht] [--encryption] [--no-encryption] [-v] [-h]</p>
-</td>
-</table>
+
+<h2>DESCRIPTION
 <a name="DESCRIPTION"></a>
-<h2>DESCRIPTION</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>btgncli</b> is a ncurses bittorrent client.</p>
-<!-- INDENTATION -->
-<p>If started without any arguments, it will attempt to
-connect to the daemon (btgdaemon) and start a new
-session.</p>
-<!-- INDENTATION -->
-<p>After the client connects to the daemon and initializes,
-it will present a list of torrents (if the client attached
-to a session with torrents). Press the help key (default
-/h/) to get help.</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>btgncli</b>
+is a ncurses bittorrent client.</p>
+
+<p style="margin-left:11%; margin-top: 1em">If started
+without any arguments, it will attempt to connect to the
+daemon (btgdaemon) and start a new session.</p>
+
+<p style="margin-left:11%; margin-top: 1em">After the
+client connects to the daemon and initializes, it will
+present a list of torrents (if the client attached to a
+session with torrents). Press the help key (default /h/) to
+get help.</p>
+
+<h2>OPTIONS
 <a name="OPTIONS"></a>
-<h2>OPTIONS</h2>
-<!-- TABS -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="4" cellspacing="0" cellpadding="0">
+</h2>
+
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="4%">
+<td width="3%">
 
-<p><b>-o</b></p>
-</td>
-<td width="5%"></td>
-<td width="77%">
 
-<p><i>&lt;filename&gt;</i> &minus; Name of a torrent file
-to open after initializing the client.</p>
-</td>
+<p style="margin-top: 1em"><b>-o</b></p></td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p style="margin-top: 1em"><i>&lt;filename&gt;</i> &minus;
+Name of a torrent file to open after initializing the
+client.</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="4%">
+<td width="3%">
 
-<p><b>-u</b></p>
-</td>
-<td width="5%"></td>
-<td width="77%">
+
+<p><b>-u</b></p></td>
+<td width="8%"></td>
+<td width="78%">
+
 
 <p><i>&lt;URL&gt;</i> &minus; URL to open after
 initializing the client. The URL should point to a torrent
-file.</p>
-</td>
+file.</p> </td></tr>
 </table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>--nostart</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Do not start torrents after opening them. The
-default is to start a torrent after it was opened.</p>
-</td>
-</table>
-<!-- TABS -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="4" cellspacing="0" cellpadding="0">
+
+<p style="margin-left:11%;"><b>--nostart</b></p>
+
+<p style="margin-left:22%;">&minus; Do not start torrents
+after opening them. The default is to start a torrent after
+it was opened.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="2%">
+<td width="3%">
 
-<p><b>-l</b></p>
-</td>
-<td width="7%"></td>
-<td width="77%">
 
-<p>&minus; List running sessions.</p>
-</td>
+<p><b>-l</b></p></td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p>&minus; List running sessions.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="2%">
+<td width="3%">
 
-<p><b>-A</b></p>
-</td>
-<td width="7%"></td>
-<td width="77%">
 
-<p>&minus; Attach to the first available session.</p>
-</td>
+<p><b>-A</b></p></td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p>&minus; Attach to the first available session.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="2%">
+<td width="3%">
 
-<p><b>-a</b></p>
-</td>
-<td width="7%"></td>
-<td width="77%">
+
+<p><b>-a</b></p></td>
+<td width="8%"></td>
+<td width="78%">
+
 
 <p>&minus; Show a list of sessions and let the user choose
-which session to attach to.</p>
-</td>
+which session to attach to.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="2%">
+<td width="3%">
 
-<p><b>-s</b></p>
-</td>
-<td width="7%"></td>
-<td width="77%">
+
+<p><b>-s</b></p></td>
+<td width="8%"></td>
+<td width="78%">
+
 
 <p><i>&lt;session ID&gt;</i> &minus; Attach to a session
-described by the session ID.</p>
-</td>
+described by the session ID.</p></td></tr>
 </table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>--config</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p><i>&lt;filename&gt;</i> &minus; Name of a client
-configuration file to use.</p>
-</td>
-</table>
-<!-- TABS -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="5" cellspacing="0" cellpadding="0">
+
+<p style="margin-left:11%;"><b>--config</b></p>
+
+<p style="margin-left:22%;"><i>&lt;filename&gt;</i> &minus;
+Name of a client configuration file to use.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="7%">
 
-<p><b>--dht</b></p>
-</td>
-<td width="13%"></td>
-<td width="19%">
 
-<p>&minus; Enable DHT.</p>
-</td>
-<td width="48%">
-</td>
+<p><b>--dht</b></p></td>
+<td width="4%"></td>
+<td width="20%">
+
+
+<p>&minus; Enable DHT.</p></td>
+<td width="58%">
+</td></tr>
 </table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>--no-dht</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Disable DHT.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>--encryption</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Enable encryption.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>--no-encryption</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Disable encryption.</p>
-</td>
-</table>
-<!-- TABS -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="5" cellspacing="0" cellpadding="0">
+
+<p style="margin-left:11%;"><b>--no-dht</b></p>
+
+<p style="margin-left:22%;">&minus; Disable DHT.</p>
+
+<p style="margin-left:11%;"><b>--encryption</b></p>
+
+<p style="margin-left:22%;">&minus; Enable encryption.</p>
+
+<p style="margin-left:11%;"><b>--no-encryption</b></p>
+
+<p style="margin-left:22%;">&minus; Disable encryption.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="2%">
+<td width="3%">
 
-<p><b>-v</b></p>
-</td>
-<td width="13%"></td>
-<td width="19%">
 
-<p>&minus; Be verbose.</p>
-</td>
-<td width="52%">
-</td>
+<p><b>-v</b></p></td>
+<td width="8%"></td>
+<td width="20%">
+
+
+<p>&minus; Be verbose.</p></td>
+<td width="58%">
+</td></tr>
 </table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p><b>-h|--help</b></p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>&minus; Print a short help.</p>
-</td>
-</table>
+
+<p style="margin-left:11%;"><b>-h|--help</b></p>
+
+<p style="margin-left:22%;">&minus; Print a short help.</p>
+
+<h2>FILE BROWSER
 <a name="FILE BROWSER"></a>
-<h2>FILE BROWSER</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>In the file browser (used to locate torrents to load),
-one can press shift-letter to jump to that letter.</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">In the file
+browser (used to locate torrents to load), one can press
+shift-letter to jump to that letter.</p>
+
+<h2>FILES
 <a name="FILES"></a>
-<h2>FILES</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>See btg_config(1).</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">See
+btg_config(1).</p>
+
+<h2>CONFIGURATION
 <a name="CONFIGURATION"></a>
-<h2>CONFIGURATION</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>See btg_config(1).</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>One can setup the keys and colors to be used by adding a
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">See
+btg_config(1).</p>
+
+<p style="margin-left:22%; margin-top: 1em">One can setup
+the keys and colors to be used by adding a
 &quot;btgncli&quot; section to the client config file. See
 below.</p>
-</td>
-</table>
+
+<h2>COLORS
 <a name="COLORS"></a>
-<h2>COLORS</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>Colors can be setup using the following keys.</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>COLOR_NORMAL</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>COLOR_BORDER</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>COLOR_FILE</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>COLOR_DIRECTORY</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>COLOR_MARK</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>COLOR_WARNING</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>COLOR_ERROR</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>A color can be setup with the following string:
-&quot;R,G,B:R,G,B&quot;, where</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>the first RGB value is the foreground color and the
-second RGB value is the background color. Notice that while
-the terminal used may support using colors, it is not
-certain that is supports changing the defined colors. If
-that is the case, btgncli will use the default colors and
-ignore any user defined colors.</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Colors can be
+setup using the following keys. <br>
+COLOR_NORMAL <br>
+COLOR_BORDER <br>
+COLOR_FILE <br>
+COLOR_DIRECTORY <br>
+COLOR_MARK <br>
+COLOR_WARNING <br>
+COLOR_ERROR <br>
+A color can be setup with the following string:
+&quot;R,G,B:R,G,B&quot;, where</p>
+
+<p style="margin-left:22%;">the first RGB value is the
+foreground color and the second RGB value is the background
+color. Notice that while the terminal used may support using
+colors, it is not certain that is supports changing the
+defined colors. If that is the case, btgncli will use the
+default colors and ignore any user defined colors.</p>
+
+<h2>KEYBOARD
 <a name="KEYBOARD"></a>
-<h2>KEYBOARD</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>Use the following configuration to assign ASCII values to
-keys used by this client:</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>KEY_HELP &minus; show help.</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>KEY_DETACH &minus; detach from the current
-session.</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>KEY_QUIT &minus; quit the application.</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>KEY_BACK &minus; quit an entry dialog.</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>KEY_LOAD &minus; load a torrent file.</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>KEY_LOAD_URL &minus; load an URL.</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>KEY_MENU &minus; show the per torrent menu.</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>KEY_SESNAME &minus; change session name.</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>KEY_SORT &minus; change the way torrents are
-sorted.</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>KEY_STATS &minus; show statistics for the current
-session.</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>KEY_GLIMIT &minus; show global limit menu.</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>KEY_DOWN &minus; move down a list.</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>KEY_UP &minus; move up a list.</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>KEY_LIST_START &minus; go to the beginning of a
-list.</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>KEY_LIST_END &minus; go to the end of a list.</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>KEY_SELECT &minus; select an entry in a list.</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>KEY_MARK &minus; mark an entry in a list.</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>KEY_MARK_ALL &minus; mark all entries in a list.</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>KEY_NEXT &minus; Next entry (used in limit
-dialogs).</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>KEY_PREV &minus; Previous entry (used in limit
-dialogs).</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>K_DELETE &minus; Delete a character.</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>For example, to set the help key to &quot;h&quot;, one
-has to use the ASCII</p></td>
-</table>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="21%"></td>
-<td width="77%">
-<p>value 104.</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Use the
+following configuration to assign ASCII values to keys used
+by <br>
+this client: <br>
+KEY_HELP &minus; show help. <br>
+KEY_DETACH &minus; detach from the current session. <br>
+KEY_QUIT &minus; quit the application. <br>
+KEY_BACK &minus; quit an entry dialog. <br>
+KEY_LOAD &minus; load a torrent file. <br>
+KEY_LOAD_URL &minus; load an URL. <br>
+KEY_MENU &minus; show the per torrent menu. <br>
+KEY_SESNAME &minus; change session name. <br>
+KEY_SORT &minus; change the way torrents are sorted. <br>
+KEY_STATS &minus; show statistics for the current session.
+<br>
+KEY_GLIMIT &minus; show global limit menu. <br>
+KEY_DOWN &minus; move down a list. <br>
+KEY_UP &minus; move up a list. <br>
+KEY_LIST_START &minus; go to the beginning of a list. <br>
+KEY_LIST_END &minus; go to the end of a list. <br>
+KEY_SELECT &minus; select an entry in a list. <br>
+KEY_MARK &minus; mark an entry in a list. <br>
+KEY_MARK_ALL &minus; mark all entries in a list. <br>
+KEY_NEXT &minus; Next entry (used in limit dialogs). <br>
+KEY_PREV &minus; Previous entry (used in limit dialogs).
+<br>
+K_DELETE &minus; Delete a character. <br>
+For example, to set the help key to &quot;h&quot;, one has
+to use the ASCII</p>
+
+<p style="margin-left:22%;">value 104.</p>
+
+<h2>EXAMPLE CONFIG
 <a name="EXAMPLE CONFIG"></a>
-<h2>EXAMPLE CONFIG</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>An example &quot;btgncli&quot; section is below.</p>
-<!-- INDENTATION -->
-<pre>[btgncli]
-;
-; Keys:
-;
+</h2>
 
-; h
-KEY_HELP=104
-; D
-KEY_DETACH=68
-; q
-KEY_QUIT=113
-; l
-KEY_LOAD=108
-; m
-KEY_MENU=109
-; g
-KEY_GLIMIT=103
-; x
-KEY_DOWN=120
-; w
-KEY_UP=119
-; a
-KEY_LIST_START=97
-; d
-KEY_LIST_END=100
-; return
-KEY_SELECT=10
-; s
-KEY_MARK=115
-; p
-KEY_MARK_ALL=111
-; b
-KEY_NEXT=98
-; v
-KEY_PREV=118
 
-;
-; Colors;
-;
+<p style="margin-left:11%; margin-top: 1em">An example
+&quot;btgncli&quot; section is below.</p>
 
-COLOR_NORMAL=192,192,192:0,0,0
-COLOR_BORDER=142,229,238:0,0,0
+<p style="margin-left:11%; margin-top: 1em">[btgncli] <br>
+; <br>
+; Keys: <br>
+;</p>
 
-</pre>
-</td>
-</table>
+<p style="margin-left:11%; margin-top: 1em">; h <br>
+KEY_HELP=104 <br>
+; D <br>
+KEY_DETACH=68 <br>
+; q <br>
+KEY_QUIT=113 <br>
+; l <br>
+KEY_LOAD=108 <br>
+; m <br>
+KEY_MENU=109 <br>
+; g <br>
+KEY_GLIMIT=103 <br>
+; x <br>
+KEY_DOWN=120 <br>
+; w <br>
+KEY_UP=119 <br>
+; a <br>
+KEY_LIST_START=97 <br>
+; d <br>
+KEY_LIST_END=100 <br>
+; return <br>
+KEY_SELECT=10 <br>
+; s <br>
+KEY_MARK=115 <br>
+; p <br>
+KEY_MARK_ALL=111 <br>
+; b <br>
+KEY_NEXT=98 <br>
+; v <br>
+KEY_PREV=118</p>
+
+<p style="margin-left:11%; margin-top: 1em">; <br>
+; Colors; <br>
+;</p>
+
+
+<p style="margin-left:11%; margin-top: 1em">COLOR_NORMAL=192,192,192:0,0,0
+<br>
+COLOR_BORDER=142,229,238:0,0,0</p>
+
+<h2>AUTHOR
 <a name="AUTHOR"></a>
-<h2>AUTHOR</h2>
-<!-- INDENTATION -->
+</h2>
 
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>Written by Michael Wojciechowski.</p>
-</td>
-</table>
+
+<p style="margin-left:11%; margin-top: 1em">Written by
+Michael Wojciechowski.</p>
+
+<h2>SEE ALSO
 <a name="SEE ALSO"></a>
-<h2>SEE ALSO</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>btg(5), btg_config(5), btgcli(1), btgui(1),
-btgdaemon(1)</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">btg(5),
+btg_config(5), btgcli(1), btgui(1), btgdaemon(1)</p>
+
+<h2>BUGS
 <a name="BUGS"></a>
-<h2>BUGS</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="89%">
-<p>No known bugs.</p>
-</td>
-</table>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">No known
+bugs.</p>
 <hr>
 </body>
 </html>
