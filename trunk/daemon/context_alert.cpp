@@ -309,11 +309,7 @@ namespace btg
          case libtorrent::torrent_status::finished:
          case libtorrent::torrent_status::seeding:
             {
-               if (moveToSeedingDir(tid))
-                  {
-                     VERBOSE_LOG(logWrapper(), verboseFlag_, "Moved files belonging to context " << tid << " to seed dir.");
-                  }
-               else
+               if (!moveToSeedingDir(tid))
                   {
                      VERBOSE_LOG(logWrapper(), verboseFlag_, "Unable to move files belonging to context " << tid << " to seed dir.");
                   }
@@ -398,11 +394,14 @@ namespace btg
       
       void Context::handleSavedAlerts()
       {
-         boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+         std::vector<libtorrent::torrent_alert*> saved_alerts;
+         {
+            boost::mutex::scoped_lock interface_lock(interfaceMutex_);
 
-         // Handle all stored alerts.
-         std::vector<libtorrent::torrent_alert*> saved_alerts = saved_alerts_;
-         saved_alerts_.clear();
+            // Handle all stored alerts.
+            saved_alerts = saved_alerts_;
+            saved_alerts_.clear();
+         }
 
          std::vector<libtorrent::torrent_alert*>::iterator iter;
          for (iter = saved_alerts.begin();
@@ -410,7 +409,10 @@ namespace btg
               iter++)
             {
                libtorrent::alert* a = *iter;
-               handleAlert(a); 
+               {
+                  boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+                  handleAlert(a); 
+               }
                delete a;
             }
          saved_alerts.clear();

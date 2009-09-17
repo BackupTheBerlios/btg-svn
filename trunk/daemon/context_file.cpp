@@ -432,7 +432,7 @@ namespace btg
                      handleAlert(sp_alert.get());
                      // Done waiting.
                      finished = true;
-                     VERBOSE_LOG(logWrapper(), verboseFlag_, "Finished waiting for resume data.");
+                     // VERBOSE_LOG(logWrapper(), verboseFlag_, "Finished waiting for resume data.");
                   }
                else
                   {
