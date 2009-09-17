@@ -2,7 +2,10 @@ BTG version 2.0.0 (Papa Legba)
 ------------------------------
 The following bugs were fixed:
 
+016272 Web UI race.
+016212 Web UI, short open tags and $btg_config_use_gzip.
 016196 getpass() replacement.
+016185 Architecture changes.
 016168 Proxy setting not working.
 016157 Fast resume data writting does not work.
 016081 Two bugs in the www UI language files.
