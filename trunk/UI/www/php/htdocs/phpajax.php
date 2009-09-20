@@ -178,14 +178,21 @@ class PHPAjax
 		
 		foreach($this->functions as $fname=>$f)
 		{
-			$js.="function ".$fname."() {\n";
-			$js.="	try{\n";
-			$js.="		var req = new XhrReq();\n";
-			$js.="		return req.call('".$fname."', '".$f['method']."', ".$fname.".arguments);\n";
-			$js.="	}catch(e){\n";
-			$js.="		if(console)console.error(e); else alert(e);\n";
-			$js.="	}\n";
-			$js.="}\n\n";
+			$js.="function ".$fname."() {";
+			$js.="try{\n";
+			$js.=	"var req = new XhrReq(arguments);";
+			$js.=		"var cb = arguments[0];";
+			$js.=		"var cb_err = arguments[1];";
+			$js.=		"var args = [];\n";
+			$js.=		"for(var x=2; x<arguments.length; x++){\n";
+			$js.=			"args.push(arguments[x]);\n";
+			$js.=		"}\n";
+			$js.=		"req.call('".$fname."', '".$f['method']."', cb, cb_err, args);\n";
+			$js.=		"return req;";
+			$js.=	"}catch(e){";
+			$js.=		"if(console)console.error(e); else alert(e);";
+			$js.=	"}";
+			$js.="}\n";
 		}
 
 		return $js;
@@ -218,15 +225,16 @@ function get_xhr()
 	return xhr;
 }
 
-var XhrReq = function() {
+var XhrReq = function(args) {
 	this.xhr = null;
 
-	this.call = function(function_name, method, function_args)
+	this.call = function(function_name, method, cb, cb_err, function_args)
 	{
 		var uri="<?php echo $this->get_uri();?>";
 		var xhr = this.xhr = get_xhr();
-		this.cb = function_args[0];
-		this.cb_err = function_args[1];
+		this.cb = cb;
+		this.cb_err = cb_err;
+		this.args = function_args;
 
 		if(method == "POST")
 		{
@@ -240,8 +248,17 @@ var XhrReq = function() {
 				uri = uri + "&ajax_call=" + escape(function_name);
 
 			// First arg is callback, dont send that... 
-			for (i = 2; i < function_args.length; i++) 
-				uri = uri + "&ajax_args[]=" + escape(function_args[i]);
+			for (i = 0; i < function_args.length; i++) {
+				var a = function_args[i];
+				if(typeof a == 'object') {
+					var aa=a;
+					a = "";
+					for(var i = 0; i < aa.length; i++)
+						a+= (i>0?',':'') + escape(aa[i]);
+				}
+
+				uri = uri + "&ajax_args[]=" + escape(a);
+			}
 
 			uri = uri + "&rand=" + new Date().getTime();
 		}
@@ -318,7 +335,7 @@ var XhrReq = function() {
 				errStr+=error[i].childNodes[0].nodeValue+"\n";
 
 			try {
-				this.cb_err(error, errStr);
+				this.cb_err(error, errStr, this.args);
 			}catch(e) {
 				if(console) // Do we have firebug console?
 					console.error(e);
@@ -333,7 +350,7 @@ var XhrReq = function() {
 		// All OK, call our method 
 		result = response.getElementsByTagName('result')[0];
 		try {
-			this.cb(result);
+			this.cb(result, this.args);
 		}catch(e) {
 			if(console) // Do we have firebug console?
 				console.error(e);

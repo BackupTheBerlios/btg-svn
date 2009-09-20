@@ -36,20 +36,14 @@ var contextList = new Array();
 /* List of context IDs which are available. */
 var contextIdList = new Array();
 
-/* Last list of context IDs which are available. */
-var last_contextIdList = new Array();
-
 /* List of context IDs to update. */
 var contextIdsToUpdate = new Array();
 
 /* Indicates that the list was updated. */
 var contextIdListUpdated = false;
 
-/* List of new context IDs. */
-var contextIdListNewContexts = new Array();
-
 /* Update this number of context at the same time. */
-var updateNumberOfContexts = 1;
+var updateNumberOfContexts = 20;
 
 /* Indicates if we should autoupdate contexts */
 var doAutoRefresh = 0;
@@ -73,6 +67,9 @@ var updateInProgress = false;
 /* Indicates that the full list have been retreived at least once */
 var firstFull = false;
 
+/* Overrides firstFull when start/stop have been done */
+var immediateUpdateRequested = false;
+
 var timerHandle = null;
 
 // Constant.
@@ -87,8 +84,6 @@ var updatesStopped = 0;
 // Age of a message shown on the statusbar. In seconds.
 // Used to decide when to clear the statusbar.
 var StatusAge = 0;
-
-var contextAbortId = -1;
 
 /*
 * IE workaround.
@@ -335,7 +330,6 @@ function contextAbort(id)
 	}
 
 	setStatus(lang[lng,'deleting']);//Deleting torrent...
-	contextAbortId = id;
 	btg_contextAbort(cb_contextAbort, cb_contextAbort_err, id, eraseData);
 }
 
@@ -1089,7 +1083,7 @@ function cb_cleanAll_err(error, errorStr)
 
 function cb_contextList(response)
 {
-	last_contextIdList = contextIdList;
+	var last_contextIdList = contextIdList;
 
 	contextIdList = new Array();
 
@@ -1103,17 +1097,33 @@ function cb_contextList(response)
 		return;
 	}
 
+	var newContexts = new Array();
 	for(var i=0; i < ids.getElementsByTagName('entry').length; i++)
 	{
 		var entry = ids.getElementsByTagName('entry')[i];
 		var cid = parseInt(getFirstChildValue(entry, 'id'));
 		contextIdList.push(cid);
+
+		if (last_contextIdList.indexOf(cid) == -1)
+			// New entry!
+			newContexts.push(cid);
 	}
 
+	if(newContexts.length > 0)
+	{
+		// Push the new contexts to head of updateQ, but push
+		// them in the correct order so they appear
+		// in the right order in the table
+		for(var i = newContexts.length - 1; i >= 0; i--) {
+			contextIdsToUpdate.unshift(newContexts[i]);
+		}
+	}
+
+	contextIdListUpdated = true;
 	updateInProgress = false;
 
 	// Call again to immediatly get status updates
-	if(!firstFull)
+	if(!firstFull || immediateUpdateRequested)
 		refreshContextList();
 }
 
@@ -1159,10 +1169,6 @@ function cb_contextStatus(response)
 		}
 	}
 
-	// Shift i elements of contextIdsToUpdate
-	for(var count=0; count < i; count++)
-		contextIdsToUpdate.shift();
-
 	updateContextTable(newContextList);
 	contextsAge = 0;
 
@@ -1173,9 +1179,14 @@ function cb_contextStatus(response)
 	/* Updates done */
 	setStatus("");
 
+	if(firstFull || contextIdsToUpdate.length == 0)
+		// peridic update or next iteration in full,
+		// request new contexts
+		contextIdListUpdated = false;
+
 	updateInProgress = false;
 
-	if(!firstFull) {
+	if(!firstFull || immediateUpdateRequested) {
 		if(contextIdsToUpdate.length > 0)
 			refreshContextList();
 		else
@@ -1187,10 +1198,18 @@ function cb_contextStatus(response)
  * Error Callback for btg_contextStatus.
  * Called when an error occured when context status was requested.
  */
-function cb_contextStatus_err(error, errStr)
+function cb_contextStatus_err(error, errStr, args)
 {
 	setError(error, lang[lng,'failedcontextlists'] +errStr);//Failed to list contexts: 
 	canGetContexts = 0;
+
+	// args is context IDs we tried to update,
+	// unshift to update queue
+	if(args) {
+		for(var i = 0; i < args.length; i++) 
+			contextIdsToUpdate.unshift(args[i]);
+	}
+	
 	updateInProgress = false;
 }
 
@@ -1281,9 +1300,9 @@ function cb_contextLimit_err(error, errStr)
  * Callback for btg_contextStart.
  * Called when a torrent was successfully started.
  */
-function cb_contextStart(response)
+function cb_contextStart(response, args)
 {
-	refreshContextList();
+	refreshContext(args[0]);
 }
 
 /**
@@ -1299,9 +1318,9 @@ function cb_contextStart_err(error, errStr)
  * Callback for btg_contextStop.
  * Called when a torrent was successfully stopped.
  */
-function cb_contextStop(response)
+function cb_contextStop(response, args)
 {
-	refreshContextList();
+	refreshContext(args[0]);
 }
 
 /**
@@ -1344,25 +1363,10 @@ function cb_contextPeers_err(error, errStr)
  * Callback for btg_contextAbort.
  * Called when a torrent was successfully deleted.
  */
-function cb_contextAbort(response)
+function cb_contextAbort(response, args)
 {
-	// !!!
-
-	var index = contextIdsToUpdate.indexOf(contextAbortId);
-	if (index != -1)
-	{
-		contextIdsToUpdate.splice(index, 1);
-	}
-
-	index = contextIdList.indexOf(contextAbortId);
-	if (index != -1)
-	{
-		contextIdList.splice(index, 1);
-	}
-
-	contextAbortId = -1;
-
-	refreshContextList();
+	var id = args[0];
+	refreshContext(args[0], true);
 }
 
 /**
@@ -1378,9 +1382,9 @@ function cb_contextAbort_err(error, errStr)
  * Callback for btg_contextClean.
  * Called when a torrent was successfully deleted.
  */
-function cb_contextClean(response)
+function cb_contextClean(response, args)
 {
-	refreshContextList();
+	refreshContext(args[0], true);
 }
 
 /**
@@ -1463,6 +1467,7 @@ function getFirstChildValue(node, field)
 	var elem = node.getElementsByTagName(field);
 	if(elem.length == 0)
 		return "";
+
 	if(elem[0].childNodes.length == 0)
 		return "";
 	else
@@ -1512,23 +1517,6 @@ function humanizeSpeed(size, precision)
 	return humanizeSize(size, precision) + "/s";
 }
 
-function splitContextList()
-{
-	// Find new entries.
-
-	contextIdListNewContexts = new Array();
-
-	for (var count=0; count<contextIdList.length; count++) 
-	{
-		var id = contextIdList[count];
-		if (last_contextIdList.indexOf(id) != -1)
-		{
-			// New entry.
-			contextIdListNewContexts.push(id);
-		}
-	}
-}
-
 function createUpdateList()
 {
 	// All updated, fill up with ALL
@@ -1542,54 +1530,63 @@ function createUpdateList()
 
 		return;
 	}
-
-	// New, add.
-	if (contextIdListNewContexts.length > 0)
-	{
-		// New contexts.
-		for (var count=0; count<contextIdListNewContexts.length; count++) 
-		{
-			var id = contextIdListNewContexts[count];
-			contextIdsToUpdate.push(id);
-		}
-		contextIdListNewContexts = new Array();
-	}
 }
 
 function removeOldTorrents()
 {
-	// !!!
-	var table = document.getElementById('torrent_table');
-
+	// Iterate all known contexts and 
 	for(var i=0; i < contextList.length; i++)
 	{
 		var s = contextList[i];
-		if (s)
+
+		if (!s)
+			continue;
+
+		if (contextIdList.indexOf(s.contextID) != -1)
+			continue;
+
+		//setStatus("Deleting:" + s.contextID.toString());
+		removeTorrentTableRow(s.contextID);
+
+		delete s;
+		delete contextList[i];
+		contextList.splice(i, 1);
+	}
+}
+
+/* Refresh or remove a specific context, after stop/start/clean/abort */
+function refreshContext(id, isRemoved)
+{
+	if(typeof isRemoved == 'undefined')
+		isRemoved = false;
+
+	if(isRemoved)
+	{
+		// remove the actual row
+		removeTorrentTableRow(id);
+
+		// If pending in update queue, remove there
+		var index = contextIdsToUpdate.indexOf(id);
+		if (index != -1)
 		{
-			if (contextIdList.indexOf(s.contextID) == -1)
-			{
-				var row = document.getElementById('context_'+s.contextID+'_row');
-				if (row)
-				{
-					//setStatus("Deleting:" + s.contextID.toString());
+			contextIdsToUpdate.splice(index, 1);
+		}
 
-					table.deleteRow(row.rowIndex);
-					var detailsRow = document.getElementById('context_'+s.contextID+'_details_row');
-					table.deleteRow(detailsRow.rowIndex);
-					var controlRow = document.getElementById('context_'+s.contextID+'_control_row');
-					table.deleteRow(controlRow.rowIndex);
-					delete s;
-					delete contextList[i];
-
-					contextList.splice(i, 1);
-				}
-				else
-				{
-					setStatus(lang[lng,'unabledeletecontext']);//Unable to delete context from table..
-				}
-			}
+		// And finally from context list
+		index = contextIdList.indexOf(id);
+		if (index != -1)
+		{
+			contextIdList.splice(index, 1);
 		}
 	}
+	else
+	{
+		// Push to head of contextlist
+		contextIdsToUpdate.unshift(id);
+	}
+
+	immediateUpdateRequested = true;
+	refreshContextList();
 }
 
 /* Refresh the context list */
@@ -1607,46 +1604,28 @@ function refreshContextList()
 	}
 
 
-	if (!contextIdListUpdated)
+	if (!contextIdListUpdated && !immediateUpdateRequested)
 	{
 		setStatus(lang[lng,'updateidlist']);//Updating id list...
-		contextIdList = new Array();
-
-		//!!!
-		if(!btg_contextList(cb_contextList, cb_contextList_err)) {
-			// race detected
-			updateInProgress = false;
-			return;
-		}
-		contextIdListUpdated = true;
+		btg_contextList(cb_contextList, cb_contextList_err);
 	}
 	else
 	{
+		immediateUpdateRequested = false;
 		setStatus(lang[lng,'updatetorrentlist']);//Updating torrent list...
 
-		splitContextList();
 		createUpdateList();
 		removeOldTorrents();
 
-		var str_contextIdsToUpdate = "";
-		var cid_number = 0;
-		for (var count=0; count<contextIdsToUpdate.length; count++) 
+		var thisUpdate = [];
+		var cnt = 0;
+		while(contextIdsToUpdate.length > 0 &&
+				cnt++ < updateNumberOfContexts) 
 		{
-			var id = contextIdsToUpdate[count];
-
-			str_contextIdsToUpdate += id.toString() + ",";
-
-			if (cid_number > updateNumberOfContexts)
-			{
-				break;
-			}
-
-			cid_number += 1;
+			thisUpdate.push(contextIdsToUpdate.shift());
 		}
 
-		btg_contextStatusForIds(cb_contextStatus, cb_contextStatus_err, str_contextIdsToUpdate);
-
-		contextIdListUpdated = false;
+		btg_contextStatusForIds(cb_contextStatus, cb_contextStatus_err, thisUpdate);
 	}
 }
 
@@ -1857,34 +1836,23 @@ function updateContextTable(newList)
  */
 function clearContextList()
 {
-    var totalUpRate = 0;
-    var totalDownRate = 0;
-    
-    var table = document.getElementById('torrent_table');
-    /* Iterate over all items */
-    for(var i=0; i < contextList.length; i++)
-	 {
-		 var s = contextList[i];
-		 var row = document.getElementById('context_'+s.contextID+'_row');
-		 if(!row)
-		 {
-			 alert('Error! '+s.contextID+' was found in contextList on cleanup, but no table row is found!');
-			 continue;
-		 }
+	var totalUpRate = 0;
+	var totalDownRate = 0;
 
-		 table.deleteRow(row.rowIndex);
-		 var detailsRow = document.getElementById('context_'+s.contextID+'_details_row');
-		 table.deleteRow(detailsRow.rowIndex);
-		 var controlRow = document.getElementById('context_'+s.contextID+'_control_row');
-		 table.deleteRow(controlRow.rowIndex);
-		 delete s;
-		 delete contextList[i];
-	 }
-    contextList = new Array();
+	var table = document.getElementById('torrent_table');
+	/* Iterate over all items */
+	for(var i=0; i < contextList.length; i++)
+	{
+		var s = contextList[i];
+		removeTorrentTableRow(s.contextID);
+		delete s;
+		delete contextList[i];
+	}
+	contextList = new Array();
 
-    /* Refresh total counters */
-    document.getElementById('status_download').innerHTML = lang[lng,'totaldownis'] + humanizeSpeed(totalDownRate, 2);
-    document.getElementById('status_upload').innerHTML = lang[lng,'totalupis'] + humanizeSpeed(totalUpRate, 2);
+	/* Refresh total counters */
+	document.getElementById('status_download').innerHTML = lang[lng,'totaldownis'] + humanizeSpeed(totalDownRate, 2);
+	document.getElementById('status_upload').innerHTML = lang[lng,'totalupis'] + humanizeSpeed(totalUpRate, 2);
 }
 
 /**
@@ -1979,6 +1947,23 @@ function updateTorrentTableRow(r, s)
 
 	// and create new
 	createTorrentControls(s, r.cells[2]);
+}
+
+function removeTorrentTableRow(contextID)
+{
+	var table = document.getElementById('torrent_table');
+
+	var row = document.getElementById('context_'+contextID+'_row');
+	if (row != null)
+		table.deleteRow(row.rowIndex);
+
+	row = document.getElementById('context_'+contextID+'_details_row');
+	if (row != null)
+		table.deleteRow(row.rowIndex);
+
+	row = document.getElementById('context_'+contextID+'_control_row');
+	if (row != null)
+		table.deleteRow(row.rowIndex);
 }
 
 /**
