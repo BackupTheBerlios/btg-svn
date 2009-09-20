@@ -349,11 +349,11 @@ function contextPeers(id)
 	btg_contextPeers(cb_contextPeers, cb_contextPeers_err, id);
 }
 
-/* contextLimitStatus, get limits for a specific torrent (or a list of torrents, comma delimited) */
-function contextLimitStatus(id)
+/* contextLimitStatus, get limits for a specific torrent (or a list of torrents) */
+function contextLimitStatus(idlist)
 {
 	setStatus(lang[lng,'gettinglimitstatus']);//Getting limit status...
-	btg_contextLimitStatus(cb_contextLimitStatus, cb_contextLimitStatus_err, id);
+	btg_contextLimitStatus(cb_contextLimitStatus, cb_contextLimitStatus_err, idlist);
 }
 
 /* toogleContextDetails, toogles the details info for a specific torrent on/off */
@@ -1152,32 +1152,25 @@ function cb_contextStatus(response)
 		return;
 	}
 
+	var newContextIds = new Array();
 	var newContextList = new Array();
-	var strContexts = "";
 	var i;
 	for(i=0; i < contexts.getElementsByTagName('context').length; i++)
 	{
 		var s = new Status(contexts.getElementsByTagName('context')[i]);
 		newContextList.push(s);
-		if (strContexts == "")
-		{
-			strContexts += s.contextID;
-		}
-		else
-		{
-			strContexts += ","+s.contextID;
-		}
+		newContextIds.push(s.contextID);
 	}
 
 	updateContextTable(newContextList);
 	contextsAge = 0;
 
 	// Refresh limits
-	if(strContexts != "")
-		contextLimitStatus(strContexts);
-
-	/* Updates done */
-	setStatus("");
+	if(newContextIds.length > 0)
+		contextLimitStatus(newContextIds);
+	else
+		/* Updates done */
+		setStatus("");
 
 	if(firstFull || contextIdsToUpdate.length == 0)
 		// peridic update or next iteration in full,
@@ -1201,16 +1194,22 @@ function cb_contextStatus(response)
 function cb_contextStatus_err(error, errStr, args)
 {
 	setError(error, lang[lng,'failedcontextlists'] +errStr);//Failed to list contexts: 
-	canGetContexts = 0;
 
+	// Restart all context list fetching, someone might have deleted in other
+	//contextIdsToUpdate = new Array();
+	contextIdListUpdated = false;
+
+
+	/*
 	// args is context IDs we tried to update,
 	// unshift to update queue
 	if(args) {
 		for(var i = 0; i < args.length; i++) 
 			contextIdsToUpdate.unshift(args[i]);
 	}
-	
+	*/
 	updateInProgress = false;
+	refreshContextList();
 }
 
 function cb_sessionName(response)
