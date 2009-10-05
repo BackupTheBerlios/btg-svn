@@ -27,11 +27,16 @@ extern "C"
 #include <unistd.h>
 #include <termios.h>
 #include <stdio.h>
+#include <stdlib.h>
 }
 
-ssize_t getpass_replacement(char **lineptr, 
-                            size_t *n, 
-                            FILE *stream);
+#include <iostream>
+
+// getpass replacement, taken from glibc documentation .. does NOT work.
+// The problem is mixing C function calls and C++ iostream.
+// 
+// http://www.gnu.org/software/libc/manual/html_node/getpass.html
+// 
 
 namespace btg
 {
@@ -42,33 +47,37 @@ namespace btg
          bool stdIn::getPassword(std::string & _password)
          {
             bool status = false;
-#if 0
-            char *buffer = getpass("");
 
-            if (buffer != NULL)
+            struct termios old, tnew;
+            FILE* stream = stdin;
+
+            /* Turn echoing off and fail if we can't. */
+            if (tcgetattr (fileno (stream), &old) != 0)
                {
-                  if (strlen(buffer) > 0)
-                     {
-                        std::string s(buffer);
-                        _password = s;
-                        status    = true;
-                     }
+                  std::cout << "error, tcgetattr (1)." << std::endl;
+                  return status;
                }
-#endif
-            char* line = NULL;
-            FILE* fp = stdin;
-            size_t s = -1;
-            ssize_t size = getpass_replacement(&line, 
-                                               &s /*ignored */,
-                                               fp);
-
-            if ((size > 0) && (line != NULL))
+            tnew = old;
+            tnew.c_lflag &= ~ECHO;
+            if (tcsetattr (fileno (stream), TCSAFLUSH, &tnew) != 0)
                {
-                  std::string s(line);
-                  _password = s;
-                  status    = true;
+                  std::cout << "error, tcgetattr (2)." << std::endl;
+                  return status;
+               }
+            
+            std::cin >> _password;
+            if (!std::cin.good())
+               {
+                  std::cout << "Unable to get password." << std::endl;
+                  return status;
                }
 
+            /* Got input. */
+            status = true;
+
+            /* Restore terminal. */
+            (void) tcsetattr (fileno (stream), TCSAFLUSH, &old);
+     
             return status;
          }
 
@@ -76,34 +85,3 @@ namespace btg
    } // namespace core
 } // namespace btg
 
-// getpass replacement, taken from glibc documentation.
-// 
-// http://www.gnu.org/software/libc/manual/html_node/getpass.html
-// 
-ssize_t getpass_replacement(char **lineptr, 
-                            size_t *n, 
-                            FILE *stream)
-{
-   struct termios old, tnew;
-   int nread;
-   
-   /* Turn echoing off and fail if we can't. */
-   if (tcgetattr (fileno (stream), &old) != 0)
-      {
-         return -1;
-      }
-   tnew = old;
-   tnew.c_lflag &= ~ECHO;
-   if (tcsetattr (fileno (stream), TCSAFLUSH, &tnew) != 0)
-      {
-         return -1;
-      }
-
-   /* Read the password. */
-   nread = getline (lineptr, n, stream);
-     
-   /* Restore terminal. */
-   (void) tcsetattr (fileno (stream), TCSAFLUSH, &old);
-     
-   return nread;
-}

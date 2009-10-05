@@ -20,9 +20,11 @@ namespace btg
          const std::string moduleName("aut");
 
          passwordAuth::passwordAuth(btg::core::LogWrapperType _logwrapper,
+                                    bool _verbose,
                                     std::string const& _filename, 
                                     bool const _ignoreErrors)
             : Auth(_logwrapper),
+              verbose_(_verbose),
               filename_(_filename),
               initialized_(true),
               users()
@@ -50,11 +52,21 @@ namespace btg
 
             std::map<std::string, userData>::const_iterator iter = users.find(_username);
 
+            if (iter == users.end())
+               {
+                  MVERBOSE_LOG(logWrapper(), verbose_, "Unknown user, '" << _username << "'.");
+               }
+
             if (iter != users.end())
                {
-                  if (btg::core::Util::compareStringNoCase(iter->second.getHash(),_passwordHash))
+                  if (btg::core::Util::compareStringNoCase(iter->second.getHash(), _passwordHash))
                      {
                         status = true;
+                     }
+                  else
+                     {
+                        MVERBOSE_LOG(logWrapper(), verbose_, "MD5 sum does not match.");
+                        BTG_MNOTICE(logWrapper(), "Wrong md5 sum: " << std::endl << "'" << iter->second.getHash() << "'" << std::endl << "'" << _passwordHash << "'" );
                      }
                }
 
@@ -230,6 +242,7 @@ namespace btg
                                           "callback '" << callback << "'");
 #endif // BTG_AUTH_DEBUG
                               userData ud(passwd_hash, temp_dir, work_dir, seed_dir, dest_dir, control_flag, callback);
+                              MVERBOSE_LOG(logWrapper(), verbose_, "Adding user '" << username << "'.");
                               std::pair<std::string, userData> p(username, ud);
                               _dest.insert(p);
                            }

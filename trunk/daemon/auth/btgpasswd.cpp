@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
             }
       }
 
-   passwordAuth* auth = new passwordAuth(logwrapper, auth_file, newfile);
+   passwordAuth* auth = new passwordAuth(logwrapper, verboseFlag, auth_file, newfile);
 
    if (!auth->initialized())
       {

@@ -51,9 +51,11 @@ namespace btg
                   public:
                      /// Constructor.
                      /// @param [in] _logwrapper   Pointer used to send logs to.
+                     /// @param [in] _verbose      Be verbose.
                      /// @param [in] _filename     The filename from which read/write.
                      /// @param [in] _ignoreErrors When _ignoreErrors is set to true, allow reading from file to fail. Used when creating a new file.
                      passwordAuth(btg::core::LogWrapperType _logwrapper,
+                                  bool _verbose,
                                   std::string const& _filename, 
                                   bool const _ignoreErrors = false);
 
@@ -106,6 +108,9 @@ namespace btg
                   private:
                      /// Read the file containing users and user data.
                      bool read(std::map<std::string, userData> & _dest);
+
+                     /// Be verbose.
+                     bool verbose_;
 
                      /// Get an iterator or end(), using an username.
                      /// Internal function.

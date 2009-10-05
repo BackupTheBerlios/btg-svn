@@ -331,7 +331,7 @@ int main(int argc, char* argv[])
          return BTG_ERROR_EXIT;
       }
 
-   dd.auth = new btg::daemon::auth::passwordAuth(logwrapper, auth_file);
+   dd.auth = new btg::daemon::auth::passwordAuth(logwrapper, verboseFlag, auth_file);
 
    if (!dd.auth->initialized())
       {
