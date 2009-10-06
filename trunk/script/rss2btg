@@ -1,0 +1,130 @@
+#!/bin/bash
+
+# 
+# (c) 2009 Michael Wojciechowski
+#
+
+# Show a ncurses dialog which allows one to select a dir and later
+# select a number of torrent files from it, so they can be copied to
+# another destination, where a script used to 
+# 
+
+# Where to search for torrents.
+IN=$HOME/rss
+# Where to move torrents.
+OUT=$HOME/btg/incoming
+# What to execute after moving the torrents.
+OUT_SCRIPT="./btg_in.sh"
+# dialog variables.
+TEMP=/tmp/rss2btg.temp
+H=40
+W=79
+MENUENTRIES=20
+
+rm -f $TEMP
+touch $TEMP
+
+# find, use this value for -mtime.
+MTIME="-7" # days
+# One week, in hours.
+((MAXOLD_HOURS=7*24))
+
+F=""
+DIRS=`find $IN -mindepth 1 -maxdepth 2 -type d`
+TOTAL=0
+for DIR in `echo $DIRS`
+do
+        # Find number of torrent files in dir.
+	NUMBER_OF_TORRENTS=`find $DIR -mtime $MTIME -name \*.torrent|wc -l`
+        if [ "$NUMBER_OF_TORRENTS" -gt 0 ] 
+        then
+          F="$F $DIR $NUMBER_OF_TORRENTS "
+        fi
+	((TOTAL=$TOTAL+$NUMBER_OF_TORRENTS))
+done
+
+if [ "$TOTAL" -eq 0 ]
+then
+  echo "No torrents found."
+  exit 0
+fi
+
+dialog --menu 'Choose dir containing torrent files' $H $W $MENUENTRIES $F 2> $TEMP
+STATUS=$?
+
+case $STATUS in
+  "0")
+     ;; # pressed ok.
+  *)
+     echo "Script aborted by user ($STATUS)."
+     rm -f $TEMP
+     exit 0
+esac
+
+DIR=`cat $TEMP|sed -e "s/\"//g"`
+rm -f $TEMP
+
+# List files, sort by date, newest first.
+FILES=`ls -1t $DIR/*.torrent`
+MODS=(`stat --printf="%Y " $FILES`)
+F=""
+COUNT=0
+NOW=`date +%s`
+
+for FILE in `echo $FILES`
+do
+	MODTIME=${MODS[$COUNT]}
+	((SINCE=($NOW-$MODTIME)/60/60))
+	if [ "$SINCE" -lt $MAXOLD_HOURS ]
+	then
+	    BASE=${FILE##*/}
+            F="$F $BASE ${SINCE}h "
+	fi
+	((COUNT=COUNT+1))
+done
+
+dialog --menu 'Choose torrent file to add to current BTG session' $H $W $MENUENTRIES $F 2> $TEMP
+STATUS=$?
+
+case $STATUS in
+  "0")
+     ;; # pressed ok.
+  *)
+     echo "Script aborted by user ($STATUS)."
+     rm -f $TEMP
+     exit 0
+esac
+
+FILE=`cat $TEMP|sed -e "s/\"//g"`
+
+# Move file, run script which adds the torrents to BTG.
+mv $DIR/$FILE $OUT 
+STATUS=$?
+
+dialog --yesno "Add another torrent?" $H $W 2> $TEMP
+STATUS=$?
+case $STATUS in
+  "0")
+     exec $0
+     ;; # pressed ok.
+  *)
+     echo "Adding torrents .."
+     ;;
+esac
+
+STATUS=0
+(
+    echo "00" ;
+    echo "50";
+
+    cd $OUT && $OUT_SCRIPT > /dev/null
+    STATUS=$?
+    echo "100"
+    ) |
+    dialog --gauge "Adding file(s) .. " 7 30
+
+case $STATUS in
+0) echo "File(s) added to BTG session." ;;
+*) echo "File(s) NOT added to BTG session" ;;
+esac
+

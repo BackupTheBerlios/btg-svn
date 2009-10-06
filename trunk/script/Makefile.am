@@ -3,4 +3,4 @@ if GENBTGCONFIG
   man1_MANS   = btg-config.man
 endif
 
-EXTRA_DIST = btg-config.man
+EXTRA_DIST = btg-config.man rss2btg

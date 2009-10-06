@@ -1,7 +1,7 @@
 #!@BASH@
 
 # DESCRIPTION: 
-# Ask the user a number of quiestions, from which a deamon.ini and
+# Ask the user a number of questions, from which a deamon.ini and
 # client.ini files can be generated.
 
 DIALOG="@DIALOG@"
