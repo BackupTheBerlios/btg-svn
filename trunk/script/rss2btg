@@ -29,6 +29,8 @@ MTIME="-7" # days
 # One week, in hours.
 ((MAXOLD_HOURS=7*24))
 
+SELECTED_DIR="$1"
+
 F=""
 DIRS=`find $IN -mindepth 1 -maxdepth 2 -type d`
 TOTAL=0
@@ -49,8 +51,14 @@ then
   exit 0
 fi
 
+if [ -z "$SELECTED_DIR" ]
+then
 dialog --menu 'Choose dir containing torrent files' $H $W $MENUENTRIES $F 2> $TEMP
+STATUS=$?    
+else
+dialog --default-item "$SELECTED_DIR" --menu 'Choose dir containing torrent files' $H $W $MENUENTRIES $F 2> $TEMP
 STATUS=$?
+fi
 
 case $STATUS in
   "0")
@@ -105,7 +113,7 @@ dialog --yesno "Add another torrent?" $H $W 2> $TEMP
 STATUS=$?
 case $STATUS in
   "0")
-     exec $0
+     exec $0 "$DIR"
      ;; # pressed ok.
   *)
      echo "Adding torrents .."
