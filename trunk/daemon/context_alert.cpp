@@ -25,9 +25,7 @@
 #include <bcore/trackerstatus.h>
 #include <bcore/logmacro.h>
 
-#if BTG_LT_0_14
-#  include <boost/asio/ip/address_v4.hpp>
-#endif
+#include <boost/asio/ip/address_v4.hpp>
 
 //#include <boost/date_time/posix_time/posix_time.hpp>
 #include <libtorrent/time.hpp>
@@ -49,10 +47,8 @@ namespace btg
       void Context::handleBannedHost(libtorrent::peer_ban_alert* _alert)
       {
          // A peer was banned.
-#if BTG_LT_0_14
          boost::asio::ip::basic_endpoint<boost::asio::ip::tcp> endp = _alert->ip;
          boost::asio::ip::address_v4 banned_ip = endp.address().to_v4();
-#endif
          BTG_NOTICE(logWrapper(), "Banned host: " << banned_ip.to_string() << ".");
 
          VERBOSE_LOG(logWrapper(), verboseFlag_, "Banned host: " << banned_ip.to_string() << ".");
@@ -114,15 +110,11 @@ namespace btg
       void Context::handlePeerError(libtorrent::peer_error_alert* _alert)
       {
          // A peer generates errors.
-#if BTG_LT_0_14
          boost::asio::ip::basic_endpoint<boost::asio::ip::tcp> endp = _alert->ip;
          boost::asio::ip::address_v4 banned_ip = endp.address().to_v4();
-#endif
          BTG_NOTICE(logWrapper(), "Errors from peer: " << banned_ip.to_string() << ".");
       }
-#if BTG_LT_0_14
       void Context::handleTrackerAlert(libtorrent::tracker_error_alert* _alert)
-#endif
       {
          t_int torrent_id;
          torrentInfo *ti;
@@ -135,9 +127,7 @@ namespace btg
                            verboseFlag_, "Tracker alert: filename '" << 
                            filename << "', status = " << 
                            _alert->status_code << ", message '" << 
-#if BTG_LT_0_14
                            _alert->message()
-#endif
                            << "'");
 
                ti->trackerStatus.invalidate();
@@ -152,9 +142,7 @@ namespace btg
                   }               
                ti->trackerStatus.setSerial(ti->serial);
                ti->trackerStatus.setMessage(
-#if BTG_LT_0_14
                                             _alert->message()
-#endif
                );
 
                ti->serial++;
@@ -204,18 +192,14 @@ namespace btg
                getFilename(torrent_id, filename);
                VERBOSE_LOG(logWrapper(), verboseFlag_, "Tracker warning alert: filename '" << 
                            filename << "', message '" << 
-#if BTG_LT_0_14
                            _alert->message()
-#endif
                            << "'");
 
                ti->trackerStatus.invalidate();
                ti->trackerStatus.setStatus(trackerStatus::warning);
                ti->trackerStatus.setSerial(ti->serial);
                ti->trackerStatus.setMessage(
-#if BTG_LT_0_14
                _alert->message()
-#endif
                );
 
                ti->serial++;
@@ -227,7 +211,6 @@ namespace btg
             }
       }
 
-#if BTG_LT_0_14
       void Context::handleResumeDataAlert(libtorrent::save_resume_data_alert* _alert)
       {
          libtorrent::torrent_handle th = _alert->handle;
@@ -283,9 +266,6 @@ namespace btg
          BTG_NOTICE(logWrapper(), "Failed to write fast resume data: '" << _alert->msg << "'");
       }
 
-#endif
-
-#if BTG_LT_0_14
       void Context::handleStateChangeAlert(libtorrent::state_changed_alert* _alert)
       {
          libtorrent::torrent_handle th = _alert->handle;
@@ -322,7 +302,6 @@ namespace btg
             }
          }
       }
-#endif
 
       void Context::handleAlert(libtorrent::alert* _alert)
       {
@@ -352,12 +331,10 @@ namespace btg
                   {
                      handlePeerError(dynamic_cast<libtorrent::peer_error_alert*>(alert));
                   }
-#if BTG_LT_0_14
                else if (typeid(*alert) == typeid(libtorrent::tracker_error_alert))
                   {
                      handleTrackerAlert(dynamic_cast<libtorrent::tracker_error_alert*>(alert));
                   }
-#endif
                else if (typeid(*alert) == typeid(libtorrent::tracker_reply_alert))
                   {
                      handleTrackerReplyAlert(dynamic_cast<libtorrent::tracker_reply_alert*>(alert));
@@ -366,7 +343,6 @@ namespace btg
                   {
                      handleTrackerWarningAlert(dynamic_cast<libtorrent::tracker_warning_alert*>(alert));
                   }
-#if BTG_LT_0_14
                else if (typeid(*alert) == typeid(libtorrent::save_resume_data_alert))
                   {
                      handleResumeDataAlert(dynamic_cast<libtorrent::save_resume_data_alert*>(alert));
@@ -379,14 +355,11 @@ namespace btg
                   {
                      handleStateChangeAlert(dynamic_cast<libtorrent::state_changed_alert*>(alert));
                   }
-#endif
                else
                   {
                      // Log other alerts.
                      BTG_NOTICE(logWrapper(), "Alert: " << 
-#if BTG_LT_0_14
                                 alert->message()
-#endif
                                 << " (" << typeid(*alert).name() << ")");
                   }
             }

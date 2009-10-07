@@ -180,8 +180,14 @@ case "$1" in
     $CONFIGURE --with-rblibtorrent=$ROOT/$1
     ;;
   svn)
-    # Libtorrent from SVN uses boost 1.3.5, where asio is included.
-    CXXFLAGS_pkgconfig=`export PKG_CONFIG_PATH=/$ROOT/$1/lib/pkgconfig; pkg-config --cflags libtorrent`
+    export BOOST_ROOT=/pack/libboost-1.38.0/include/boost-1_38
+    export CXXFLAGS=-I/pack/libboost-1.38.0/include/boost-1_38
+    export LDFLAGS=-L/pack/libboost-1.38.0/lib
+    export BOOST_LDFLAGS=$LDFLAGS
+    export BOOST_CPPFLAGS=$CXXFLAGS
+    export LD_LIBRARY_PATH=/pack/libboost-1.38.0/lib
+
+    CXXFLAGS_pkgconfig=`export PKG_CONFIG_PATH=/$ROOT/$1/lib/pkgconfig; pkg-config --cflags libtorrent-rasterbar`
     export LIBTORRENT_CFLAGS="-I$ROOT/$1/include -I$ROOT/$1/include/libtorrent" && \
     export LIBTORRENT_LIBS="-L$ROOT/$1/lib -ltorrent-rasterbar" && \
     echo "Using $CONFIGURE";

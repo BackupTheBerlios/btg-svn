@@ -128,9 +128,7 @@ namespace btg
 
                // Peer ID.
                libtorrent::peer_id pid;
-#if BTG_LT_0_14
                pid = torrent_session->id();
-#endif
                std::string peerid = btg::core::convertToString<libtorrent::peer_id>(pid);
 
                MVERBOSE_LOG(logWrapper(), verboseFlag_, "Peer ID used: '" << peerid << "'.");
@@ -311,9 +309,7 @@ namespace btg
 							if (_version >= 0x89)
 							{
                         bool asfr = applySelectedFiles(ti,aSelectedFileEntryList);
-#if BTG_LT_0_14
 								BTG_CDC(!asfr, "call applySelectedFiles");
-#endif
 							}
 
                      // Restore state

@@ -57,14 +57,10 @@
 
 #include "lt_version.h"
 
-#if BTG_LT_0_14
 #include <libtorrent/extensions/metadata_transfer.hpp>
 #include <libtorrent/extensions/ut_pex.hpp>
-#endif
 
-#if BTG_LT_0_14
 #include <libtorrent/alert.hpp>
-#endif
 
 namespace btg
 {
@@ -155,11 +151,8 @@ namespace btg
          , cbm_(_cbm)
 #endif // BTG_OPTION_EVENTCALLBACK
          , progress_(),
-           useTorrentName_(_useTorrentName)
-#if BTG_LT_0_14
-,
+           useTorrentName_(_useTorrentName),
            allocation_mode_(libtorrent::storage_mode_sparse)
-#endif
       {
          BTG_MNOTICE(logWrapper(),
                      "using libtorrent version: " << LIBTORRENT_VERSION);
@@ -168,7 +161,6 @@ namespace btg
                     "Constructor", "_clientAttached = " << _clientAttached);
 
          portMgr->get(listen_port_range_);
-#if BTG_LT_0_14
          switch (config_->getAllocationMode())
             {
             case daemonConfiguration::SPARSE:
@@ -196,7 +188,7 @@ namespace btg
                   break;
                }
             }
-#endif
+
          bool lt_context_created = true;
 
          try
@@ -228,10 +220,8 @@ namespace btg
             {
                // Libtorrent created its threads.
                //
-#if BTG_LT_0_14
                // Add the available extensions.
                torrent_session->add_extension(&libtorrent::create_ut_pex_plugin);
-#endif
 
                if (filter_)
                   {
@@ -256,7 +246,6 @@ namespace btg
 
                setNormalHttpSettings();
 
-#if BTG_LT_0_14
                {
                   int amask = 
                      libtorrent::alert::error_notification
@@ -269,7 +258,6 @@ namespace btg
 
                   torrent_session->set_alert_mask(amask);
                }
-#endif
                setPeerIdFromConfig();
                btg::core::addressPort proxy = config_->getProxy();
                if (proxy.getPort() != 0)
@@ -491,13 +479,11 @@ namespace btg
                   }
             }
 
-#if BTG_LT_0_14
          // Enable encryption.
          if (useEncryption_)
             {
                enableEncryption();
             }
-#endif
 
          // At this point a libtorrent session was created, and it
          // needs to be limited.
@@ -542,11 +528,8 @@ namespace btg
             projectDefaults::sPATH_SEPARATOR() + 
             _torrent_filename;
 
-#if BTG_LT_0_14
          status = Context::ERR_OK;
-#endif
 
-#if BTG_LT_0_14
          boost::intrusive_ptr<libtorrent::torrent_info> tinfo;
          bool gotInfo = true;
          try
@@ -574,7 +557,6 @@ namespace btg
             }
          
          if (!gotInfo)
-#endif
             {
                // Unable to convert the entry to a torrent info.
                // Adding files cannot continue.
@@ -586,7 +568,6 @@ namespace btg
             }
 
          std::vector<std::string> contained_files;
-#if BTG_LT_0_14
          if (!torrentInfoToFiles(*tinfo, contained_files))
             {
                filetrack_->remove(tempDir_, fileTrackFilename);
@@ -594,7 +575,7 @@ namespace btg
                BTG_MEXIT(logWrapper(), "add", status);
                return status;
             }
-#endif
+
          btg_assert(contained_files.size() >= 1, 
                     logWrapper(),
                     "entryToFiles must return at least one file");
@@ -617,9 +598,7 @@ namespace btg
          // Check the torrent file against the seed dir. Attempt to
          // find out if the data resides in the seed directory.
          torrentStorage ts = tsWork;
-#if BTG_LT_0_14
          if (dataPresentInSeedDir(*tinfo))
-#endif
             {
                dataPath =  boost::filesystem::path(seedDir_, boost::filesystem::native);
                ts = tsSeed;
@@ -639,16 +618,12 @@ namespace btg
                      std::string fastResumeFileName = tempDir_ + projectDefaults::sPATH_SEPARATOR() + _torrent_filename + fastResumeFileNameEnd;
                      std::ifstream in(fastResumeFileName.c_str(), std::ios_base::binary);
                      in.unsetf(std::ios_base::skipws);
-#if BTG_LT_0_14
                      std::vector<char>* resumeData       = new std::vector<char>;
-#endif
                      try
                         {
-#if BTG_LT_0_14
                            std::copy(std::istream_iterator<char>(in), 
                                      std::istream_iterator<char>(),
                                      std::back_inserter(*resumeData));
-#endif
                         }
                      catch (std::exception& e)
                         {
@@ -659,7 +634,6 @@ namespace btg
                      if (status == Context::ERR_OK)
                         {
                            BTG_MNOTICE(logWrapper(), "using fast resume for '" << _torrent_filename << "'");
-#if BTG_LT_0_14
                            libtorrent::add_torrent_params atp;
                            atp.name         = 0; // "default name";
                            atp.ti.swap(tinfo);
@@ -670,13 +644,11 @@ namespace btg
                            atp.paused       = false;
                            atp.duplicate_is_error = true;
                            handle           = torrent_session->add_torrent(atp);
-#endif
 
                         }
                   }
                else
                   {
-#if BTG_LT_0_14
                      libtorrent::add_torrent_params atp;
                      atp.name         = 0; // "default name";
                      atp.ti.swap(tinfo);
@@ -686,7 +658,6 @@ namespace btg
                      atp.paused       = false;
                      atp.duplicate_is_error = true;
                      handle           = torrent_session->add_torrent(atp);
-#endif
                   }
             }
          catch (std::exception& e)
@@ -1193,20 +1164,16 @@ namespace btg
 
          switch (status.state)
             {
-#if BTG_LT_0_14
             case libtorrent::torrent_status::allocating:
-#endif
             case libtorrent::torrent_status::queued_for_checking:
                ts = Status::ts_queued;
                break;
             case libtorrent::torrent_status::checking_files:
                ts = Status::ts_checking;
                break;
-#if BTG_LT_0_14
             case libtorrent::torrent_status::downloading_metadata:
                ts = Status::ts_connecting;
                break;
-#endif
             case libtorrent::torrent_status::downloading:
                ts = Status::ts_downloading;
                break;
@@ -1501,11 +1468,9 @@ namespace btg
 
          libtorrent::torrent_status status = ti->handle.status();
          libtorrent::torrent_info t_i      = ti->handle.get_torrent_info();
-#if BTG_LT_0_14
          std::vector<bool> piecevector;
          bitfieldToVector(status.pieces, piecevector);
          const std::vector<bool>* pieces   = &piecevector;
-#endif
          if (pieces->size() > 0)
             {
                t_fileInfoList fileinfolist;
@@ -1605,10 +1570,8 @@ namespace btg
                for (iter = peerinfolist.begin(); iter != peerinfolist.end(); iter++)
                   {
                      // Convert the peer ip from the libtorrent implementation to 4 bytes.
-#if BTG_LT_0_14
                      boost::asio::ip::basic_endpoint<boost::asio::ip::tcp> endp = iter->ip;
                      boost::asio::ip::address_v4 addr = endp.address().to_v4();
-#endif
                      boost::array<unsigned char, 4> bytes = addr.to_bytes();
 
                      peerAddress pa(
@@ -1619,9 +1582,7 @@ namespace btg
                                     );
 
                      std::string client_identification = libtorrent::identify_client(iter->pid);
-#if BTG_LT_0_14
                      Peer peer(pa, iter->flags & libtorrent::peer_info::seed, client_identification);
-#endif
 
                      _peerlist.push_back(peer);
                   }
@@ -1646,25 +1607,19 @@ namespace btg
                      }
                      for(t_uint i = *_peerExOffset, endi = *_peerExOffset + *_peerExCount; i < endi; ++i)
                      {
-#if BTG_LT_0_14
                         std::vector<bool> fpieces;
                         bitfieldToVector(peerinfolist[i].pieces, fpieces);
-#endif
 
                         PeerEx peerEx(
                            peerinfolist[i].flags,
-#if BTG_LT_0_14
                            peerinfolist[i].source,
-#endif
                            (t_uint)peerinfolist[i].down_speed, 
                            (t_uint)peerinfolist[i].up_speed,
                            (t_uint)peerinfolist[i].payload_down_speed, 
                            (t_uint)peerinfolist[i].payload_up_speed,
                            peerinfolist[i].total_download, 
                            peerinfolist[i].total_upload,
-#if BTG_LT_0_14
                            fpieces,
-#endif
                            peerinfolist[i].download_limit, 
                            peerinfolist[i].upload_limit,
 #ifndef TORRENT_DISABLE_RESOLVE_COUNTRIES
@@ -1681,14 +1636,12 @@ namespace btg
                            peerinfolist[i].downloading_total,
                            peerinfolist[i].client,
                            peerinfolist[i].connection_type,
-#if BTG_LT_0_14
                            libtorrent::total_seconds(peerinfolist[i].last_request), 
                            libtorrent::total_seconds(peerinfolist[i].last_active),
                            peerinfolist[i].num_hashfails, 
                            peerinfolist[i].failcount,
                            peerinfolist[i].target_dl_queue_length,
                            peerinfolist[i].remote_dl_rate
-#endif
                            );
                         _peerExList->push_back(peerEx);
                      }
@@ -1844,9 +1797,7 @@ namespace btg
             {
             case libtorrent::torrent_status::queued_for_checking:
             case libtorrent::torrent_status::checking_files:
-#if BTG_LT_0_14
             case libtorrent::torrent_status::downloading_metadata:
-#endif
             case libtorrent::torrent_status::downloading:
                if (!moveToWorkingDir(_torrent_id))
                   {
@@ -1906,7 +1857,6 @@ namespace btg
                                        btg::core::selectedFileEntryList const& _input)
       {
          BTG_MENTER(logWrapper(), "applySelectedFiles", "torrent info");
-#if BTG_LT_0_14
          enum lt_file_priority
          {
             LTF_NO  = 0,
@@ -1964,7 +1914,6 @@ namespace btg
 
          BTG_MEXIT(logWrapper(), "applySelectedFiles", true);
          return true;
-#endif
       }
 
       torrentInfo* Context::getTorrentInfo(t_int const _torrent_id) const
@@ -1992,9 +1941,7 @@ namespace btg
 
          // Get the status from libtorrent:
          libtorrent::torrent_status status = ti->handle.status();
-#if BTG_LT_0_14
          if ((status.state == libtorrent::torrent_status::downloading_metadata)
-#endif
              ||
              (status.state == libtorrent::torrent_status::downloading)
              ||
@@ -2293,9 +2240,7 @@ namespace btg
          if (announceIp.size() > 0)
             {
                MVERBOSE_LOG(logWrapper(), verboseFlag_, "Using WAN (announce ip): " << announceIp);
-#if BTG_LT_0_14
                session_settings_.announce_ip = boost::asio::ip::address(boost::asio::ip::address_v4::from_string(announceIp));
-#endif
             }
          
          std::string userAgent = config_->getUserAgent();
@@ -2317,14 +2262,12 @@ namespace btg
       void Context::setProxyHttpSettings(btg::core::addressPort const& _proxy)
       {
          BTG_MNOTICE(logWrapper(), "setting session settings: proxy");
-#if BTG_LT_0_14
          libtorrent::proxy_settings ps;
          ps.hostname = _proxy.getIp();
          ps.port     = _proxy.getPort();
          //torrent_session->set_peer_proxy(ps);
          torrent_session->set_web_seed_proxy(ps);
          torrent_session->set_tracker_proxy(ps);
-#endif // libtorrent version.
       }
 
       void Context::setDestructionlHttpSettings()
@@ -2448,7 +2391,6 @@ namespace btg
 
       void Context::enableEncryption()
       {
-#if BTG_LT_0_14
          try
             {
                libtorrent::pe_settings enc_settings;
@@ -2530,7 +2472,6 @@ namespace btg
             {
                BTG_ERROR_LOG(logWrapper(), "libtorrent exception: " << e.what() );
             }
-#endif
       }
 
       std::string Context::getTempDir() const

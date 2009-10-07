@@ -81,9 +81,7 @@ extern "C"
 #    include "upnp/cyberlink.h"
 #  endif // BTG_OPTION_USECYBERLINK
 
-#if BTG_LT_0_14
-#  include "upnp/ltupnpif.h"
-#endif
+#include "upnp/ltupnpif.h"
 
 #endif // BTG_OPTION_UPNP
 

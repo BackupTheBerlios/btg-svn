@@ -646,11 +646,9 @@ namespace btg
          vrc->setOption(versionResponseCommand::UPNP);
 #endif
 
-#if BTG_LT_0_14
          vrc->setOption(versionResponseCommand::DHT);
          vrc->setOption(versionResponseCommand::ENCRYPTION);
          vrc->setOption(versionResponseCommand::SELECTIVE_DL);
-#endif
 
 #if BTG_OPTION_URL
          vrc->setOption(versionResponseCommand::URL);

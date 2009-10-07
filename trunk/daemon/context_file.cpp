@@ -57,9 +57,7 @@ namespace btg
                return false;
             }
 
-#if BTG_LT_0_14
          ti->handle.move_storage(_destination_dir);
-#endif // lt version
          BTG_MEXIT(logWrapper(), "moveToDirectory", result);
 
          return result;
@@ -472,12 +470,10 @@ namespace btg
             return op_status;
          }
 
-#if (BTG_LT_0_14)
          // The actual writing is done using a callback (handleResumeDataAlert).
          ti->handle.save_resume_data();
          // Wait for this operation to complete.
          waitForResumeDataAlert();
-#endif
 
          op_status = true;
 
@@ -509,7 +505,6 @@ namespace btg
 
          return status;
       }
-#if BTG_LT_0_14
       bool Context::torrentInfoToFiles(libtorrent::torrent_info const& _tinfo,
                                        std::vector<std::string> & _output) const
       {
@@ -546,16 +541,13 @@ namespace btg
          BTG_MEXIT(logWrapper(), "torrentInfoToFiles", status);
          return status;
       }
-#endif
 
-#if (BTG_LT_0_14)
       void Context::bitfieldToVector(libtorrent::bitfield const& _input, 
                                      std::vector<bool> & _output) const
       {
          _output.resize(_input.size());
          std::copy(_input.begin(), _input.end(), _output.begin());
       }
-#endif
 
       /// Compare two directories, return true if the first directory
       /// is the longest path of the two arguments.

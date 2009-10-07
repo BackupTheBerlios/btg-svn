@@ -459,26 +459,22 @@ namespace btg
 
                /// Handle libtorrent alert.
                void handlePeerError(libtorrent::peer_error_alert* _alert);
-#if BTG_LT_0_14
+
                void handleTrackerAlert(libtorrent::tracker_error_alert* _alert);
-#endif
+
                /// Handle libtorrent alert.
                void handleTrackerReplyAlert(libtorrent::tracker_reply_alert* _alert);
 
                /// Handle libtorrent alert.
                void handleTrackerWarningAlert(libtorrent::tracker_warning_alert* _alert);
 
-#if BTG_LT_0_14
                /// Handle libtorrent resume data
                void handleResumeDataAlert(libtorrent::save_resume_data_alert* _alert);
 
                void handleResumeDataFailedAlert(libtorrent::save_resume_data_failed_alert* _alert);
-#endif
 
-#if BTG_LT_0_14
                /// Handle torrent state change
                void handleStateChangeAlert(libtorrent::state_changed_alert* _alert);
-#endif
             public:
 #if BTG_OPTION_SAVESESSIONS
                /// Session saving: serialize the torrents so they can be reloaded later.
@@ -626,10 +622,10 @@ namespace btg
                /// Enable/disable using the torrent name from the
                /// tracker.
                bool const                                useTorrentName_;
-#if BTG_LT_0_14
+
                /// Allocation mode used.
                libtorrent::storage_mode_t                allocation_mode_;
-#endif
+
                /// Move the data belonging to a torrent file to another directory.
                /// @return True - file was moved, false otherwise.
                bool moveToDirectory(t_int const _torrent_id, std::string const& _destination_dir);
@@ -681,10 +677,8 @@ namespace btg
                                           t_strList & _destination);
 #endif // BTG_OPTION_EVENTCALLBACK
 
-#if BTG_LT_0_14
                bool torrentInfoToFiles(libtorrent::torrent_info const& _tinfo,
                                        std::vector<std::string> & _output) const;
-#endif                                                
                /// Find out if data of a torrent is present in the seed dir.
                /// @param [in] _torrent_info Torrent info.
                /// @return True - data is present, false otherwise.
@@ -725,7 +719,6 @@ namespace btg
                /// Convert an enum to a string, for debugging.
                std::string toString(addResult const _addresult) const;
 
-#if BTG_LT_0_14
                /// Convert a libtorrent bitfield into a vector of bits.
                /// 
                /// Libtorrent 0.14 changed the way a torrent's pieces
@@ -739,7 +732,6 @@ namespace btg
 
                /// List of saved alerts, to be handled later.
                std::vector<libtorrent::torrent_alert*> saved_alerts_;
-#endif
             private:
                /// Copy constructor.
                Context(Context const& _c);
