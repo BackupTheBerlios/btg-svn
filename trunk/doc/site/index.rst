@@ -169,9 +169,15 @@ Experimental Releases
 ================= ======================= ========================== ======================= ==================================
 **Codename**      **Source**              **Release note**           **Changelog**           **Rasterbar Libtorrent version**
 ----------------- ----------------------- -------------------------- ----------------------- ----------------------------------
+`Papa Legba RC3`_ `btg-2.0.0-rc3.tar.gz`_ `2.0.0 RC3 release note`_  `2.0.0 RC3 changelog`_  0.14.x
 `Papa Legba RC2`_ `btg-2.0.0-RC2.tar.gz`_ `2.0.0 RC2 release note`_  `2.0.0 RC2 changelog`_  0.14.x
 `Papa Legba RC1`_ `btg-2.0.0-rc1.tar.gz`_ `2.0.0 RC1 release note`_  `2.0.0 RC1 changelog`_  0.14.x
 ================= ======================= ========================== ======================= ==================================
+
+.. _Papa Legba RC3: https://developer.berlios.de/project/shownotes.php?release_id=16795
+.. _btg-2.0.0-rc3.tar.gz: http://prdownload.berlios.de/btg/btg-2.0.0-rc3.tar.gz
+.. _2.0.0 RC3 release note: https://developer.berlios.de/project/shownotes.php?release_id=16795
+.. _2.0.0 RC3 changelog: https://developer.berlios.de/project/shownotes.php?release_id=16795
 
 .. _Papa Legba RC2: https://developer.berlios.de/project/shownotes.php?release_id=16731
 .. _btg-2.0.0-RC2.tar.gz: http://prdownload.berlios.de/btg/btg-2.0.0-RC2.tar.gz
