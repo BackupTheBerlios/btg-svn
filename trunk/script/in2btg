@@ -1,8 +1,20 @@
 #!/bin/bash
 
+# 
+# (c) 2009 Michael Wojciechowski
+#
+
+#
+# Add one torrent from an incoming directory to the current BTG
+# session.
+#
+
+# BTG client.
 CLIENT=btgcli
+
 # The directory containing the torrent files.
 INCOMING_DIR=$HOME/btg/incoming
+
 # The directory to which .torrent files are moved
 # to after loading them into BTG.
 DONE_DIR=$INCOMING_DIR/done

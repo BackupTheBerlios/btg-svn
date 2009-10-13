@@ -6,7 +6,8 @@
 
 # Show a ncurses dialog which allows one to select a dir and later
 # select a number of torrent files from it, so they can be copied to
-# another destination, where a script used to 
+# another destination, where a script used to add them to the current
+# BTG session.
 # 
 
 # Where to search for torrents.
