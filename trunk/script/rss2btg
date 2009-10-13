@@ -14,7 +14,7 @@ IN=$HOME/rss
 # Where to move torrents.
 OUT=$HOME/btg/incoming
 # What to execute after moving the torrents.
-OUT_SCRIPT="./btg_in.sh"
+OUT_SCRIPT=`type -p in2btg` # "./btg_in.sh"
 # dialog variables.
 TEMP=/tmp/rss2btg.temp
 H=40
@@ -86,12 +86,13 @@ do
 	if [ "$SINCE" -lt $MAXOLD_HOURS ]
 	then
 	    BASE=${FILE##*/}
-            F="$F $BASE ${SINCE}h "
+            F="$F $BASE ${SINCE}h off"
 	fi
 	((COUNT=COUNT+1))
 done
 
-dialog --menu 'Choose torrent file to add to current BTG session' $H $W $MENUENTRIES $F 2> $TEMP
+# Select one or more torrents to add.
+dialog --checklist 'Choose torrent file to add to current BTG session' $H $W $MENUENTRIES $F 2> $TEMP
 STATUS=$?
 
 case $STATUS in
@@ -103,12 +104,17 @@ case $STATUS in
      exit 0
 esac
 
-FILE=`cat $TEMP|sed -e "s/\"//g"`
+FILES=`cat $TEMP|sed -e "s/\"//g"`
 
-# Move file, run script which adds the torrents to BTG.
-mv $DIR/$FILE $OUT 
-STATUS=$?
+# Move files.
+for FILE in `echo $FILES`
+do
+    echo "Moving file $FILE"
+    mv $DIR/$FILE $OUT 
+    STATUS=$?
+done
 
+# Ask about adding more torrents.
 dialog --yesno "Add another torrent?" $H $W 2> $TEMP
 STATUS=$?
 case $STATUS in
@@ -120,16 +126,29 @@ case $STATUS in
      ;;
 esac
 
+# Number of torrents to add.
+NUM_TO_ADD=`ls $OUT/*.torrent 2> /dev/null|wc -l`
+
+COUNT=0
+# run script which adds the torrents to BTG.
 STATUS=0
 (
     echo "00" ;
-    echo "50";
 
-    cd $OUT && $OUT_SCRIPT > /dev/null
-    STATUS=$?
+    for FILE in `seq $NUM_TO_ADD`
+    do
+	cd $OUT && $OUT_SCRIPT > /dev/null
+	STATUS=$?
+
+	((P=($COUNT*100)/$NUM_TO_ADD))
+
+	echo "$P"
+	((COUNT=$COUNT+1))
+    done
+
+
     echo "100"
-    ) |
-    dialog --gauge "Adding file(s) .. " 7 30
+    ) | dialog --gauge "Adding $NUM_TO_ADD file(s) .. " 7 30
 
 case $STATUS in
 0) echo "File(s) added to BTG session." ;;

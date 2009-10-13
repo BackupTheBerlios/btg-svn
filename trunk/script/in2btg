@@ -1,0 +1,39 @@
+#!/bin/bash
+
+CLIENT=btgcli
+# The directory containing the torrent files.
+INCOMING_DIR=$HOME/btg/incoming
+# The directory to which .torrent files are moved
+# to after loading them into BTG.
+DONE_DIR=$INCOMING_DIR/done
+
+GOT_SESSION=0
+$CLIENT -A -n -c "detach" &> /dev/null && GOT_SESSION=1
+
+if [ $GOT_SESSION -eq 0 ]
+then
+  $CLIENT -n -c "detach" &> /dev/null && GOT_SESSION=1
+fi
+
+if [ $GOT_SESSION -eq 0 ]
+then
+  echo "-1"
+  exit 0
+fi
+
+TORRENT_ADDED=0
+
+cd $INCOMING_DIR && \
+for f in `ls -1 *.torrent 2> /dev/null` ; do
+  echo "Loading file: $f" && \
+  $CLIENT -A -n -c "detach" -o "$f" &> /dev/null && \
+  TORRENT_ADDED=`expr $TORRENT_ADDED + 1` && \
+  mv "$f" $DONE_DIR
+  # Add one torrent only.
+  echo "1"
+  exit 0
+done
+
+# No torrents added.
+echo "0"
+exit 0
