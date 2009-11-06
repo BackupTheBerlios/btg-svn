@@ -21,3 +21,5 @@ type.
 Implementation MUST be capable to handle commands with additional
 fields at the end.
 Implementation MUST ignore fields it doesn't know about.
+
+
