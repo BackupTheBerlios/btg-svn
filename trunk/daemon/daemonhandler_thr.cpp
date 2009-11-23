@@ -40,10 +40,14 @@ namespace btg
 
       daemonHandlerThread::daemonHandlerThread(btg::core::LogWrapperType _logwrapper,
                                                bool const _ss_enable,
+#if BTG_OPTION_SAVESESSIONS                                           
                                                btg::core::os::fstream & _ss_file,
+#endif                                               
                                                t_int const _SSTimeout,
                                                sessionList*  _sessionlist,
+#if BTG_OPTION_SAVESESSIONS
                                                SessionSaver* _sessionsaver,
+#endif                                               
                                                limitManager* _limitManager,
                                                t_int const _limitTimerMax,
                                                urlManager*  _urlmgr,
@@ -53,8 +57,9 @@ namespace btg
            die_(false),
 
            ss_enable_(_ss_enable),
+#if BTG_OPTION_SAVESESSIONS
            ss_file_(_ss_file),
-          
+#endif          
            session_timer_(10), /* 10 seconds. */
            session_timer_trigger_(false),
 #if BTG_OPTION_URL
@@ -71,7 +76,9 @@ namespace btg
            periodic_ssave_timer_trigger_(false),
 
            sessionlist_(_sessionlist),
+#if BTG_OPTION_SAVESESSIONS
            sessionsaver_(_sessionsaver),
+#endif
            limitManager_(_limitManager),
 
            urlmgr_(_urlmgr),

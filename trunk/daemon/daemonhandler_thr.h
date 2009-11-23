@@ -52,10 +52,14 @@ namespace btg
          /// Constructor.
          daemonHandlerThread(btg::core::LogWrapperType _logwrapper,
                              bool const _ss_enable,
+#if BTG_OPTION_SAVESESSIONS
                              btg::core::os::fstream & _ss_file,
+#endif
                              t_int const _SSTimeout,
                              sessionList*  _sessionlist,
+#if BTG_OPTION_SAVESESSIONS
                              SessionSaver* _sessionsaver,
+#endif
                              limitManager*  _limitManager,
                              t_int const    _limitTimerMax,
                              urlManager*  _urlmgr,
@@ -106,8 +110,9 @@ namespace btg
          /// Session saving enabled?
          bool ss_enable_;
          /// Session saved to this file if enabled.
+#if BTG_OPTION_SAVESESSIONS
          btg::core::os::fstream & ss_file_;
-
+#endif
          /* Timers */
 
          /// The timer used for checking limits and alerts for

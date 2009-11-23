@@ -111,11 +111,12 @@ namespace btg
 #else
                           /* Session saving disabled. */
                           false,
-                          dd_->ss_file,
                           -1,
 #endif
                           &sessionlist_,
+#if BTG_OPTION_SAVESESSIONS
                           &sessionsaver_,
+#endif
                           &limitManager_,
                           limitTimerMax_,
 #if BTG_OPTION_URL
