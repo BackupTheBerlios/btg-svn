@@ -11,7 +11,7 @@ include $(TOPDIR)/rules.mk
 # Build using trunk from btg SVN.
 
 PKG_NAME:=btg
-PKG_REV:=541
+PKG_REV:=642
 PKG_VERSION:=r$(PKG_REV)
 PKG_RELEASE:=1
 
@@ -20,7 +20,7 @@ PKG_SOURCE_URL:=http://svn.berlios.de/svnroot/repos/btg/trunk
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_VERSION:=$(PKG_REV)
 PKG_SOURCE_PROTO:=svn
-BOOSTPOSTFIX=gcc41-mt-1_38
+BOOSTPOSTFIX=gcc43-mt-1_38
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -30,7 +30,7 @@ define Package/btg
   CATEGORY:=Network
   TITLE:=BTG - a bittorrent daemon
   URL:=btg.berlios.de
-  DEPENDS:=+rblibtorrent +libiconv +libexpat +gnutls +libcurl
+  DEPENDS:=+rblibtorrent +libiconv +libexpat +libgnutls +libcurl
 endef
 
 define Package/btg/description
@@ -42,6 +42,7 @@ CONFIGURE_ARGS+= \
 	--disable-debug \
 	--enable-session-saving \
 	--enable-url \
+	--with-boost=$(STAGING_DIR)/usr \
 	--with-boost-date-time=$(BOOSTPOSTFIX) \
 	--with-boost-filesystem=$(BOOSTPOSTFIX) \
 	--with-boost-thread=$(BOOSTPOSTFIX) \
@@ -50,6 +51,10 @@ CONFIGURE_ARGS+= \
 	--with-boost-iostreams=$(BOOSTPOSTFIX) \
 	--with-boost-program_options=$(BOOSTPOSTFIX) \
 	--with-rblibtorrent=$(STAGING_DIR)/usr \
+	--with-libiconv-prefix=$(STAGING_DIR)/usr \
+	--with-zlib=$(STAGING_DIR)/usr \
+	--oldincludedir=$(STAGING_DIR)/usr/include \
+	--enable-cli \
 
 CONFIGURE_VARS += \
 	CC="$(GNU_TARGET_NAME)-gcc" \
@@ -68,6 +73,7 @@ CONFIGURE_VARS += \
 -lboost_thread-$(BOOSTPOSTFIX) \
 -lboost_program_options-$(BOOSTPOSTFIX) \
 -lssl -lcrypto -liconv -lcurl" \
+	LIBGNUTLS_CONFIG=$(STAGING_DIR)/usr/bin/libgnutls-config \
 
 define Build/Configure
 	cd $(PKG_BUILD_DIR) && ./autogen.sh && \
@@ -101,8 +107,10 @@ define Package/btg/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(CP) $(PKG_INSTALL_DIR)/usr/bin/btgdaemon $(1)/usr/bin/
 	$(CP) $(PKG_INSTALL_DIR)/usr/bin/btgpasswd $(1)/usr/bin/
+	$(CP) $(PKG_INSTALL_DIR)/usr/bin/btgcli $(1)/usr/bin/
 #	$(CP) $(PKG_INSTALL_DIR)/usr/bin/btg-config $(1)/usr/bin/
 	$(INSTALL_DIR) $(1)/usr/lib/btg
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/btg/libbtgclient.so* $(1)/usr/lib/btg
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/btg/libbtgcore.so* $(1)/usr/lib/btg
 endef
 

@@ -18,7 +18,7 @@ PKG_MD5SUM:=6aa0ed4da604b8b160bf12bcd41d5055
 PKG_BUILD_DIR:=$(BUILD_DIR)/libtorrent-rasterbar-$(PKG_VERSION)
 PKG_BUILD_DEPENDS:=libtool
 #BOOSTPOSTFIX=mt-1_38
-BOOSTPOSTFIX=gcc41-mt-1_38
+BOOSTPOSTFIX=gcc43-mt-1_38
 
 include $(INCLUDE_DIR)/package.mk
 
