@@ -111,13 +111,20 @@ else
 fi
 
 # Use a certain boost suffix. Hopefully it will stay the same on GNU/Debian.
-CONFIGURE_BOOST="--with-boost-system=$BOOST_SUFFIX --with-boost-date-time=$BOOST_SUFFIX --with-boost-filesystem=$BOOST_SUFFIX --with-boost-thread=$BOOST_SUFFIX --with-boost-program_options=$BOOST_SUFFIX"
+# CONFIGURE_BOOST="--with-boost-system=$BOOST_SUFFIX --with-boost-date-time=$BOOST_SUFFIX --with-boost-filesystem=$BOOST_SUFFIX --with-boost-thread=$BOOST_SUFFIX --with-boost-program_options=$BOOST_SUFFIX"
 
 # Execute this configure command.
 CONFIGURE="./configure $STATIC --disable-static $DAEMON $DEBUG --enable-btg-config --enable-cli $GUI_CLIENT $GUI_VIEWER --enable-unittest --enable-session-saving --enable-command-list 
 --enable-event-callback --enable-www --enable-url --enable-upnp --prefix=/pack/btg-cvs $CONFIGURE_BOOST"
 
 case "$1" in
+  0.14.9)
+    CXXFLAGS_pkgconfig=`export PKG_CONFIG_PATH=/$ROOT/$1/lib/pkgconfig; pkg-config --cflags libtorrent-rasterbar`
+    export LIBTORRENT_CFLAGS="-I$ROOT/$1/include -I$ROOT/$1/include/libtorrent" && \
+    export LIBTORRENT_LIBS="-L$ROOT/$1/lib -ltorrent-rasterbar" && \
+    echo "Using $CONFIGURE";
+    $CONFIGURE --with-rblibtorrent=$ROOT/$1
+    ;;
   0.14.4)
     export BOOST_ROOT=/pack/libboost-1.38.0/include/boost-1_38
     export CXXFLAGS=-I/pack/libboost-1.38.0/include/boost-1_38
