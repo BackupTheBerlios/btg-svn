@@ -2,6 +2,7 @@ BTG version 2.0.0 (Papa Legba)
 ------------------------------
 The following bugs were fixed:
 
+016949 Merge openwrt patch from blajos.
 016272 Web UI race.
 016212 Web UI, short open tags and $btg_config_use_gzip.
 016196 getpass() replacement.
