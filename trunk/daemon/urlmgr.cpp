@@ -40,18 +40,22 @@ namespace btg
       const t_uint max_url_age = 30;
 
       UrlIdSessionMapping::UrlIdSessionMapping(t_uint _id, 
-                                               long _session, 
+                                               t_long _session, 
                                                std::string const& _userdir,
                                                std::string const& _filename,
-                                               bool const _start)
+                                               std::string const& _uri,
+                                               bool const _start,
+                                               bool const _is_magnet_uri)
          : id(_id),
            valid(true),
            session(_session),
            userdir(_userdir),
            filename(_filename),
+           URI(_uri),
            start(_start),
            status(UCS_UNDEF),
-           age(0)
+           age(0),
+           magnet_uri(_is_magnet_uri)
       {
       }
       
@@ -67,9 +71,30 @@ namespace btg
            filetrack(_filetrack),
            sessionlist(_sessionlist),
            httpmgr(_logwrapper, _opid),
-           urlIdSessions()
+           urlIdSessions(),
+           magnetmgr(_logwrapper,
+                     _verboseFlag,
+                     _filetrack,
+                     _sessionlist,
+                     _opid)
       {
 
+      }
+
+      std::vector<UrlIdSessionMapping>::const_iterator urlManager::getUrlMapping(t_uint _id) const
+      {
+         std::vector<UrlIdSessionMapping>::const_iterator i;
+         for (i = urlIdSessions.begin();
+              i != urlIdSessions.end();
+              i++)
+            {
+               if (i->id == _id)
+                  {
+                     return i;
+                  }
+            }
+
+         return urlIdSessions.end();
       }
 
       std::vector<UrlIdSessionMapping>::iterator urlManager::getUrlMapping(t_uint _id)
@@ -92,6 +117,22 @@ namespace btg
       {
          boost::mutex::scoped_lock interface_lock(interfaceMutex_);
 
+         if (belongs(_id))
+            {
+               return abortImpl(_id);
+            }
+         else if (magnetmgr.belongs(_id))
+            {
+               return magnetmgr.abort(_id);
+            }
+         else
+            {
+               return false;
+            }
+      }
+
+      bool urlManager::abortImpl(const t_uint _id)
+      {
          std::vector<UrlIdSessionMapping>::iterator iter = getUrlMapping(_id);
 
          if (iter == urlIdSessions.end())
@@ -115,12 +156,15 @@ namespace btg
       {
          boost::mutex::scoped_lock interface_lock(interfaceMutex_);
 
-         return urlIdSessions.size();
+         t_uint s = urlIdSessions.size() + magnetmgr.size();
+         return s;
       }
-
+      
       void urlManager::checkUrlDownloads()
       {
          boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+
+         BTG_MNOTICE(logWrapper(), "checkUrlDownloads");
 
          std::vector<UrlIdSessionMapping>::iterator i;
          for (i = urlIdSessions.begin();
@@ -133,22 +177,14 @@ namespace btg
                   }
 
                i->age++;
-
-               btg::daemon::http::httpInterface::Status s = httpmgr.getStatus(i->id);
-               if (s == btg::daemon::http::httpInterface::FINISH)
+               
+               if (belongs(i->id))
                   {
-                     // Dl finished, now create the context.
-                     addUrl(*i);
+                     checkUrlDownloadsImpl(*i);
                   }
-
-               if (s == btg::daemon::http::httpInterface::ERROR)
+               else if (magnetmgr.belongs(i->id))
                   {
-                     // Unable to download torrent, clean up.
-                     removeUrl(*i);
-
-                     filetrack->remove(i->userdir, i->filename);
-                     // Expire this download.
-                     i->valid = false;
+                     checkMagnetDownloadsImpl(*i);
                   }
             }
 
@@ -158,15 +194,87 @@ namespace btg
             {
                if (i->age > max_url_age)
                   {
-                     httpmgr.Terminate(i->id);
-                     filetrack->remove(i->userdir,
-                                       i->filename);
-                     i = urlIdSessions.erase(i);
+
+                     if (belongs(i->id))
+                        {
+                           expireUrl(i);
+                        }
+                     else if (magnetmgr.belongs(i->id))
+                        {
+                           expireMagnet(i);
+                        }
                   }
                else
                   {
                      i++;
                   }
+            }
+
+         magnetmgr.checkMagnetDownloads();
+      }
+
+      void urlManager::expireUrl(std::vector<UrlIdSessionMapping>::iterator & _iter)
+      {
+         httpmgr.Terminate(_iter->id);
+         filetrack->remove(_iter->userdir,
+                           _iter->filename);
+         _iter = urlIdSessions.erase(_iter);
+
+      }
+
+      void urlManager::expireMagnet(std::vector<UrlIdSessionMapping>::iterator & _iter)
+      {
+         magnetmgr.abort(_iter->id);
+         filetrack->remove(_iter->userdir,
+                           _iter->filename);
+         _iter = urlIdSessions.erase(_iter);
+      }
+
+      void urlManager::checkMagnetDownloadsImpl(UrlIdSessionMapping & _mapping)
+      {
+         BTG_MNOTICE(logWrapper(), "checkMagnetDownloadsImpl");
+
+         t_uint urlstat = OP_UNDEF;
+         if (!magnetmgr.getStatus(_mapping.id, urlstat))
+            {
+               return;
+            }
+
+         if (urlstat == btg::core::OP_FINISHED)
+            {
+               // Dl finished, now create the context.
+               if (addUrl(_mapping))
+                  {
+                     magnetmgr.setState(_mapping.id, MAG_CREATED);
+                  }
+               else
+                  {
+                     magnetmgr.setState(_mapping.id, MAG_CREATE_FAILED);
+                  }
+            }
+
+         if (urlstat == btg::core::OP_ERROR)
+            {
+               // Unable to download torrent, clean up.
+               removeUrl(_mapping);
+            }
+      }
+
+      void urlManager::checkUrlDownloadsImpl(UrlIdSessionMapping & _mapping)
+      {
+         BTG_MNOTICE(logWrapper(), "checkUrlDownloadsImpl");
+
+         btg::daemon::http::httpInterface::Status s = httpmgr.getStatus(_mapping.id);
+         if (s == btg::daemon::http::httpInterface::FINISH)
+            {
+               // Dl finished, now create the context.
+               addUrl(_mapping);
+            }
+         
+         if (s == btg::daemon::http::httpInterface::ERROR)
+            {
+               // Unable to download torrent, clean up.
+               removeUrl(_mapping);
             }
       }
 
@@ -192,15 +300,17 @@ namespace btg
             }
       }
 
-      void urlManager::addUrl(UrlIdSessionMapping & _mapping)
+      bool urlManager::addUrl(UrlIdSessionMapping & _mapping)
       {
+         bool status = false;
+
          // Find the required event handler.
          eventHandler* eh = 0;
          if (!sessionlist->get(_mapping.session, eh))
             {
                // No session, expire.
                _mapping.valid = false;
-               return;
+               return status;
             }
 
          btg::core::sBuffer sbuf;
@@ -208,7 +318,7 @@ namespace btg
             {
                // No data, expire.
                _mapping.valid = false;
-               return;
+               return status;
             }
 
          // Remove the file from filetrack, as it will be added when
@@ -216,8 +326,11 @@ namespace btg
          filetrack->remove(_mapping.userdir,
                            _mapping.filename);
          
+         // Downloaded file.
          btg::core::contextCreateWithDataCommand* ccwdc = 
             new btg::core::contextCreateWithDataCommand(_mapping.filename, sbuf, _mapping.start);
+         
+         _mapping.valid  = false;
 
          // Do not use a connection id.
          if (!eh->createWithData(ccwdc))
@@ -225,18 +338,20 @@ namespace btg
                BTG_MERROR(logWrapper(), 
                           "Adding '" << _mapping.filename << "' from URL failed.");
                _mapping.status = UCS_CREATE_FAILED;
-               _mapping.valid  = false;
+               status = false;
             }
          else
             {
-               _mapping.status = UCS_CREATED;
-               _mapping.valid  = false;
                MVERBOSE_LOG(logWrapper(), 
                             verboseFlag, "Added '" << _mapping.filename << "' from URL.");
+               _mapping.status = UCS_CREATED;
+               status = true;
             }
          
          delete ccwdc;
          ccwdc = 0;
+
+         return status;
       }
 
       bool urlManager::unique(std::string const & _filename, 
@@ -261,10 +376,40 @@ namespace btg
          return u;
       }
 
+      bool urlManager::belongs(const t_uint _id) const
+      {
+         std::vector<UrlIdSessionMapping>::const_iterator mapping = getUrlMapping(_id);
+
+         if (mapping->magnet_uri)
+            {
+               return false;
+            }
+
+         return true;
+      }
+
       bool urlManager::getStatus(const t_uint _id, t_uint & _urlstat)
       {
          boost::mutex::scoped_lock interface_lock(interfaceMutex_);
 
+         BTG_MNOTICE(logWrapper(), "urlManager::getStatus");
+
+         if (belongs(_id))
+            {
+               return getStatusImpl(_id, _urlstat);
+            }
+         else if (magnetmgr.belongs(_id))
+            {
+               return magnetmgr.getStatus(_id, _urlstat);
+            }
+         else
+            {
+               return false;
+            }
+      }
+
+      bool urlManager::getStatusImpl(const t_uint _id, t_uint & _urlstat)
+      {
          std::vector<UrlIdSessionMapping>::iterator mapping = getUrlMapping(_id);
 
          if (mapping == urlIdSessions.end())
@@ -319,6 +464,21 @@ namespace btg
 
       bool urlManager::getDlProgress(const t_uint _id, t_uint & _dltotal, t_uint & _dlnow, t_uint & _dlspeed)
       {
+         if (belongs(_id))
+            {
+               return getDlProgressImpl(_id, _dltotal, _dlnow, _dlspeed);
+            }
+         else if (magnetmgr.belongs(_id))
+            {
+               return magnetmgr.getDlProgress(_id, _dltotal, _dlnow, _dlspeed);
+            }
+         else
+            {
+               return false;
+            }
+      }
+      bool urlManager::getDlProgressImpl(const t_uint _id, t_uint & _dltotal, t_uint & _dlnow, t_uint & _dlspeed)
+      {
          boost::mutex::scoped_lock interface_lock(interfaceMutex_);
 
          std::vector<UrlIdSessionMapping>::iterator mapping = getUrlMapping(_id);
@@ -331,6 +491,19 @@ namespace btg
          return httpmgr.getDlProgress(_id, _dltotal, _dlnow, _dlspeed);
       }
 
+      bool urlManager::isMagnetURI(std::string const& s) const
+      {
+         bool magnet = false;
+         std::string const begin("magnet:?xt=");
+
+         if (s.find(begin) == 0)
+            {
+               magnet = true;
+            }
+
+         return magnet;
+      }
+
       t_uint urlManager::addMapping(std::string const& _url, 
                                     std::string const& _userdir,
                                     std::string const& _filename,
@@ -339,13 +512,24 @@ namespace btg
       {
          boost::mutex::scoped_lock interface_lock(interfaceMutex_);
 
-         t_uint id = httpmgr.Fetch(_url, _userdir + projectDefaults::sPATH_SEPARATOR() + _filename);
+         bool is_magnet_uri = isMagnetURI(_url);
 
-         UrlIdSessionMapping usmap(id, _session, _userdir, _filename, _start);
+         t_uint id = 0;
+
+         if (is_magnet_uri)
+            {
+               id = magnetmgr.add(_session, _userdir, _filename, _url, _start);
+            }
+         else
+            {
+               id = httpmgr.Fetch(_url, _userdir + projectDefaults::sPATH_SEPARATOR() + _filename);
+            }
+
+         UrlIdSessionMapping usmap(id, _session, _userdir, _filename, _url, _start, is_magnet_uri);
          urlIdSessions.push_back(usmap);
 
          BTG_MNOTICE(logWrapper(), "Added mapping: HID " << id << " -> " << 
-                     _session << " -> " << _filename);
+                     _session << " -> " << _filename << " (magnet:" << is_magnet_uri << ")");
 
          return id;
       }

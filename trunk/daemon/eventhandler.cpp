@@ -467,6 +467,66 @@ namespace btg
             }
       }
 
+      void eventHandler::stopMagnetDownload(t_int const _torrent_id)
+      {
+         return daemoncontext->stopMagnetDownload(_torrent_id);
+      }
+
+      void eventHandler::removeInitialMagnetDlData(t_int const _torrent_id)
+      {
+         daemoncontext->removeInitialMagnetDlData(_torrent_id);
+      }
+
+      bool eventHandler::gotTorrent(t_int const _torrent_id) const
+      {
+         return daemoncontext->gotTorrent(_torrent_id);
+      }
+
+      bool eventHandler::createFromMagnet(std::string const& _filename, 
+                                          std::string const& _magnet_URI,
+                                          bool const _start,
+                                          t_int & _handle_id)
+      {
+         bool status = false;
+
+         t_int handle_id = -1;
+
+         std::string sFileName = _filename;
+
+         btg::core::Util::getFileFromPath(sFileName, sFileName);
+         
+         Context::addResult res = daemoncontext->addFromMagnet(sFileName,
+                                                               _magnet_URI,
+                                                               handle_id);
+
+         if (!_start)
+            {
+               // Not starting torrents automagically after adding.
+               if (res == Context::ERR_OK)
+                  {
+                     daemoncontext->stop(handle_id);
+                  }
+            }
+         
+         switch(res)
+            {
+            case Context::ERR_OK:
+               {
+                  status     = true;
+                  _handle_id = handle_id;
+                  break;
+               }
+            default:
+               {
+                  status = false;
+                  break;
+               }
+            }
+
+
+         return status;
+      }
+
       bool eventHandler::createWithData(btg::core::Command* _command, t_int _connectionID)
       {
          bool status = false;

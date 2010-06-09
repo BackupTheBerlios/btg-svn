@@ -37,6 +37,11 @@
 #include <bcore/verbose.h>
 #include "lt_version.h"
 
+#include "filetrack.h"
+#include <bcore/btg_assert.h>
+
+#include <boost/filesystem.hpp>
+
 namespace btg
 {
    namespace daemon
@@ -223,6 +228,12 @@ namespace btg
             return;
          }
 
+         if (!ti->ready)
+            {
+               BTG_NOTICE(logWrapper(), "Not writting resume data for '" << ti->filename << "'.");
+               return;
+            }
+
          // The name to which the resume data is saved to.
          std::string filename;
          filename = tempDir_ + projectDefaults::sPATH_SEPARATOR() + ti->filename +
@@ -264,6 +275,80 @@ namespace btg
       void Context::handleResumeDataFailedAlert(libtorrent::save_resume_data_failed_alert* _alert)
       {
          BTG_NOTICE(logWrapper(), "Failed to write fast resume data: '" << _alert->msg << "'");
+      }
+
+      void Context::handleMetadataFailedAlert(libtorrent::metadata_failed_alert* _alert)
+      {
+         libtorrent::torrent_handle th = _alert->handle;
+         t_int tid = -1;
+         torrentInfo* ti = 0;
+
+         if (!getIdFromHandle(th, tid, ti)) // else skip it - probably deleted before alert arrived
+         {
+            BTG_ERROR_LOG(logWrapper(), "Context::handleMetadataFailedAlert, torrent is not found.");
+            return;
+         }
+         
+         BTG_NOTICE(logWrapper(), "Failed download metadata for context " << tid << ".");
+      }
+
+      void Context::handleTorrentDeletedAlert(libtorrent::torrent_deleted_alert* _alert)
+      {
+         
+      }
+
+      void Context::handleMetadataReceivedAlert(libtorrent::metadata_received_alert* _alert)
+      {
+         libtorrent::torrent_handle th = _alert->handle;
+         t_int tid = -1;
+         torrentInfo* ti = 0;
+
+         if (!getIdFromHandle(th, tid, ti)) // else skip it - probably deleted before alert arrived
+         {
+            BTG_ERROR_LOG(logWrapper(), "Context::handleMetadataReceivedAlert, torrent is not found.");
+            return;
+         }
+         
+         BTG_NOTICE(logWrapper(), "handleMetadataReceivedAlert, id=" << tid << ".");
+
+         std::string torrent_filename   = ti->filename;
+         libtorrent::torrent_info tinfo = ti->handle.get_torrent_info();
+
+         // Save meta data for future use.
+         libtorrent::entry t(libtorrent::entry::dictionary_t);
+         boost::shared_array<char> meta = tinfo.metadata();
+         libtorrent::entry meta_entry = libtorrent::bdecode(meta.get(), meta.get() + tinfo.metadata_size());
+         std::vector<libtorrent::announce_entry> tracker = ti->handle.trackers();
+         if (tracker.size())
+            { 
+               t["announce"]= tracker.front().url;
+            }
+         t["info"] = meta_entry;
+         
+
+         std::string fullFilename = tempDir_ + projectDefaults::sPATH_SEPARATOR() + ti->filename; // + ".frommagnet";
+         boost::filesystem::ofstream outfile(fullFilename, std::ios_base::binary);
+
+         if (!outfile)
+            {
+               BTG_NOTICE(logWrapper(), "handleMetadataReceivedAlert, id=" << tid << ", unable to write to file '" << fullFilename << "'.");
+               return;
+            }
+         
+         std::vector<char> encodedData;
+         libtorrent::bencode(std::back_inserter(encodedData), t);
+         
+         //libtorrent::bencode(std::ostream_iterator<char>(outfile), t);
+
+         BTG_NOTICE(logWrapper(), "handleMetadataReceivedAlert, data size = " << encodedData.size());
+
+         outfile.write(&encodedData[0], encodedData.size());
+
+         outfile.close();
+
+         ti->got_torrent = true;
+
+         BTG_NOTICE(logWrapper(), "handleMetadataReceivedAlert, id=" << tid << ", wrote to file '" << fullFilename << "'.");
       }
 
       void Context::handleStateChangeAlert(libtorrent::state_changed_alert* _alert)
@@ -354,6 +439,18 @@ namespace btg
                else if (typeid(*alert) == typeid(libtorrent::state_changed_alert))
                   {
                      handleStateChangeAlert(dynamic_cast<libtorrent::state_changed_alert*>(alert));
+                  }
+               else if (typeid(*alert) == typeid(libtorrent::metadata_received_alert))
+                  {
+                     handleMetadataReceivedAlert(dynamic_cast<libtorrent::metadata_received_alert*>(alert));
+                  }
+               else if (typeid(*alert) == typeid(libtorrent::metadata_failed_alert))
+                  {
+                     handleMetadataFailedAlert(dynamic_cast<libtorrent::metadata_failed_alert*>(alert));
+                  }
+               else if (typeid(*alert) == typeid(libtorrent::torrent_deleted_alert))
+                  {
+                     handleTorrentDeletedAlert(dynamic_cast<libtorrent::torrent_deleted_alert*>(alert));
                   }
                else
                   {

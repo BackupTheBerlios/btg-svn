@@ -27,6 +27,7 @@
 #include <bcore/logable.h>
 #include <bcore/urlstatus.h>
 #include <daemon/opid.h>
+#include <daemon/magmgr.h>
 
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/condition.hpp>
@@ -48,27 +49,33 @@ namespace btg
       {
          /// Contructor.
          UrlIdSessionMapping(t_uint _id, 
-                             long _session, 
+                             t_long _session, 
                              std::string const& _userdir,
                              std::string const& _filename,
-                             bool const _start);
+                             std::string const& _uri,
+                             bool const _start,
+                             bool const _is_magnet_uri);
          
          /// Download id.
          t_uint          id;
          /// Indicates if this download is valid.
          bool            valid;
          /// Session id.
-         long            session;
+         t_long          session;
          /// The destination directory.
          std::string     userdir;
          /// The destianation file name.
          std::string     filename;
+         /// URI.
+         std::string     URI;
          /// Should the context be started after adding.
          bool            start;
          /// Status.
          UrlCreateStatus status;
          /// Age in (x * url timer duration).
          t_uint          age;
+         /// Indicates that this is a magnet URI.
+         bool            magnet_uri;
       };
 
       class fileTrack;
@@ -122,13 +129,36 @@ namespace btg
             void addUrl(t_uint _id);
 
             /// Create torrent from the file which was downloaded.
-            void addUrl(UrlIdSessionMapping & _mapping);
+            bool addUrl(UrlIdSessionMapping & _mapping);
 
             /// Clean up, if the torrent could not be downloaded.
             void removeUrl(UrlIdSessionMapping & _mapping);
             
             /// Get a mapping when having an URL id.
             std::vector<UrlIdSessionMapping>::iterator getUrlMapping(t_uint _id);
+
+            std::vector<UrlIdSessionMapping>::const_iterator getUrlMapping(t_uint _id) const;
+
+            /// Check if string is a magnet URI.
+            bool isMagnetURI(std::string const& s) const;
+
+            bool belongs(const t_uint _id) const;
+
+            bool getStatusImpl(const t_uint _id, t_uint & _urlstat);
+
+            bool getDlProgressImpl(const t_uint _id, 
+                                   t_uint & _dltotal, 
+                                   t_uint & _dlnow, 
+                                   t_uint & _dlspeed);
+
+            bool abortImpl(const t_uint _id);
+
+            void expireUrl(std::vector<UrlIdSessionMapping>::iterator & _iter);
+            void expireMagnet(std::vector<UrlIdSessionMapping>::iterator & _iter);
+
+            void checkMagnetDownloadsImpl(UrlIdSessionMapping & _mapping);
+            void checkUrlDownloadsImpl(UrlIdSessionMapping & _mapping);
+
          protected:
             /// Verbose flag.
             bool         verboseFlag;
@@ -145,6 +175,7 @@ namespace btg
             /// Mapping between URL id and session.
             std::vector<UrlIdSessionMapping> urlIdSessions;
 
+            magnetManager    magnetmgr;
             /// Mutex used to control access to the members
             /// of this class from the outside.
             boost::mutex     interfaceMutex_;

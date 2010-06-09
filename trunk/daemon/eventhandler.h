@@ -186,11 +186,27 @@ namespace btg
                /// Create a new context.
                bool createWithData(btg::core::Command* _command, 
                                    t_int _connectionID = btg::core::messageTransport::NO_CONNECTION_ID);
+
                /// Get the temp directory used by this event handler.
                std::string getTempDir() const;
 
                /// Update the IP filter used.
                void updateFilter(IpFilterIf* _filter);
+
+               /// BOLLOX: document this.
+               void stopMagnetDownload(t_int const _torrent_id);
+
+               /// BOLLOX: document this.
+               void removeInitialMagnetDlData(t_int const _torrent_id);
+
+               /// BOLLOX: document this.
+               bool gotTorrent(t_int const _torrent_id) const;
+
+               /// BOLLOX: Create a context. !!! write what this function is really used for.
+               bool createFromMagnet(std::string const& _filename, 
+                                     std::string const& _magnet_URI,
+                                     bool const _start,
+                                     t_int & _handle_id);
 
                /// Destructor.
                ~eventHandler();

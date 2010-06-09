@@ -49,7 +49,23 @@ namespace btg
                {
                   r = true;
                }
-            
+
+            if (r == true)
+               {
+                  return r;
+               }
+
+            if (_url.size() < 10)
+               {
+                  return r;
+               }
+
+            h = _url.substr(0, 10);
+            if (h == "magnet:?xt")
+               {
+                  r = true;
+               }
+
             return r;
          }
 

@@ -40,7 +40,7 @@ namespace btg
       bool fileTrack::add(std::string const& _userdir,
                           std::string const& _filename)
       {
-         BTG_MNOTICE(logWrapper(), "adding filename '" << _filename << "'.");
+         BTG_MNOTICE(logWrapper(), "adding filename '" << _filename << "' in dir '" << _userdir << "'.");
 
          bool status = false;
 
@@ -66,6 +66,7 @@ namespace btg
                mapiter->second.push_back(_filename);
             }
 
+         BTG_MNOTICE(logWrapper(), "'" << _filename << "' in dir '" << _userdir << "', status = " << status);
          return status;
       }
 

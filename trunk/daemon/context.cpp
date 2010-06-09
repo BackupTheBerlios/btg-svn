@@ -62,6 +62,17 @@
 
 #include <libtorrent/alert.hpp>
 
+#include <libtorrent/extensions/ut_metadata.hpp>
+#include <libtorrent/extensions/metadata_transfer.hpp>
+
+#define READY_CHECK(ti,FUNCT) {                       \
+      if (!ti->ready)                                 \
+         {                                            \
+            BTG_MEXIT(logWrapper(), #FUNCT, "context not ready"); \
+            return false;                                         \
+         }                                                        \
+}
+
 namespace btg
 {
    namespace daemon
@@ -70,7 +81,7 @@ namespace btg
 
       const std::string moduleName("ctn");
 
-      torrentInfo::torrentInfo():
+      torrentInfo::torrentInfo(bool _ready, bool _got_torrent):
          handle(),
          filename(""),
          limitUpld(btg::core::limitBase::LIMIT_DISABLED),
@@ -83,7 +94,9 @@ namespace btg
          seedingAutoStopped(false),
          serial(0),
          trackerStatus(),
-         selected_files()
+         selected_files(),
+         ready(_ready),
+         got_torrent(_got_torrent)
 #if BTG_OPTION_SAVESESSIONS
          , total_download(0),
          total_upload(0),
@@ -222,6 +235,9 @@ namespace btg
                //
                // Add the available extensions.
                torrent_session->add_extension(&libtorrent::create_ut_pex_plugin);
+               torrent_session->add_extension(&libtorrent::create_metadata_plugin);
+               torrent_session->add_extension(&libtorrent::create_ut_metadata_plugin);
+
 
                if (filter_)
                   {
@@ -769,6 +785,8 @@ namespace btg
                return false;
             }
 
+         READY_CHECK(ti, remove);
+
          // Remove fast resume data, if any (is serialized before
          // remove() if we're quiting and sessionsaving is in use)
          removeFastResumeData(_torrent_id);
@@ -898,6 +916,8 @@ namespace btg
                return false;
             }
 
+         READY_CHECK(ti, start);
+
          // Allready running.
          if (!ti->handle.is_paused())
             {
@@ -944,6 +964,8 @@ namespace btg
             {
                return false;
             }
+
+         READY_CHECK(ti, stop);
 
          // if allready paused:
          if (ti->handle.is_paused())
@@ -999,6 +1021,8 @@ namespace btg
                return false;
             }
 
+         READY_CHECK(ti, limit);
+
          ti->handle.set_upload_limit(_limitUpld);
          ti->handle.set_download_limit(_limitDwnld);
 
@@ -1053,6 +1077,8 @@ namespace btg
                return false;
             }
 
+         READY_CHECK(ti, removeLimit);
+                  
          if (_upld)
             {
                ti->handle.set_upload_limit(btg::core::limitBase::LIMIT_DISABLED);
@@ -1120,6 +1146,8 @@ namespace btg
                return false;
             }
 
+         READY_CHECK(ti, getLimit);
+
          _limitUpld   = ti->limitUpld;
          _limitDwnld  = ti->limitDwnld;
          _seedLimit   = ti->seedLimit;
@@ -1133,6 +1161,23 @@ namespace btg
          return true;
       }
 
+      bool Context::gotTorrent(t_int const _torrent_id) const
+      {
+         BTG_MENTER(logWrapper(), "gotTorrent", "");
+         bool status = false;
+
+         torrentInfo* ti;
+         if ((ti = getTorrentInfo(_torrent_id)) == 0)
+            {
+               return false;
+            }
+
+         status = ti->got_torrent;
+
+         BTG_MEXIT(logWrapper(), "gotTorrent", status);
+         return status;
+      }
+
       bool Context::getStatus(t_int const _torrent_id, 
                               Status & _destination)
       {
@@ -1144,8 +1189,7 @@ namespace btg
                return false;
             }
 
-         // Get the status from libtorrent:
-         libtorrent::torrent_status status = ti->handle.status();
+         READY_CHECK(ti, getStatus);
 
          std::string filename;
          if (useTorrentName_)
@@ -1161,6 +1205,9 @@ namespace btg
 
          // Our status:
          Status::torrent_status ts;
+         
+         // Get the status from libtorrent:
+         libtorrent::torrent_status status = ti->handle.status();
 
          switch (status.state)
             {
@@ -1414,6 +1461,8 @@ namespace btg
                return false;
             }
 
+         READY_CHECK(ti, getFileInfo);
+
          if (!safeForFileInfo(_torrent_id))
             {
                // The torrent is in a state where fetching file info
@@ -1552,6 +1601,8 @@ namespace btg
                return false;
             }
 
+         READY_CHECK(ti, getPeers);
+
          bool status = true;
          std::vector<libtorrent::peer_info> peerinfolist;
 
@@ -1665,6 +1716,8 @@ namespace btg
                return false;
             }
 
+         READY_CHECK(ti, getTrackers);
+
          bool status = true;
 
          std::vector<libtorrent::announce_entry> trackers;
@@ -1708,6 +1761,8 @@ namespace btg
             {
                return false;
             }
+
+         READY_CHECK(ti, getSelectedFiles);
          
          _file_list = ti->selected_files;
 
@@ -1726,6 +1781,8 @@ namespace btg
                return false;
             }
          
+         READY_CHECK(ti, getSelectedFiles);
+
          btg::core::selectedFileEntryList file_list;
 
          if (_file_list.size() < ti->selected_files.size())
@@ -1978,6 +2035,11 @@ namespace btg
               tii++)
             {
                torrentInfo* ti = tii->second;
+               if (!ti->ready)
+                  {
+                     continue;
+                  }
+
                libtorrent::torrent_status status = ti->handle.status();
 #if BTG_OPTION_EVENTCALLBACK
                bool callback_stopped_seeding = false;
@@ -2106,6 +2168,8 @@ namespace btg
             {
                return false;
             }
+
+         READY_CHECK(ti, clean);
 
          // Check status:
          libtorrent::torrent_status status = ti->handle.status();

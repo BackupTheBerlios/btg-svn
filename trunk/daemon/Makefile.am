@@ -6,8 +6,8 @@ if BUILDUPNP
 endif
 
 if BUILDURL
-  URL_HEADER=urlmgr.h
-  URL_SOURCE=urlmgr.cpp
+  URL_HEADER=urlmgr.h magmgr.h
+  URL_SOURCE=urlmgr.cpp magmgr.cpp
   URL_DEFINES=-DBTG_OPTION_URL=@BTG_OPTION_URL@ @LIBCURL_CPPFLAGS@
   URL_LIBS=@LIBCURL@
 else
@@ -53,7 +53,7 @@ libdaemon_la_SOURCES = dconfig.cpp darg.cpp \
                        daemonhandler_thr.cpp \
                        daemonhandler_url.cpp daemonhandler_file.cpp daemonhandler.cpp progress.cpp \
                        filemgr.cpp $(URL_SOURCE) \
-                       context_alert.cpp context_file.cpp context_session.cpp context.cpp \
+                       context_alert.cpp context_file.cpp context_session.cpp context_magnet.cpp context.cpp \
                        eventhandler.cpp connectionextrastate.cpp $(SSSOURCES) $(CALLBACKSOURCES)
 
 libdaemon_la_CFLAGS   = @CFLAGS@ @XMLRPC_CFLAGS@ @DEBUG_CFLAGS@ -DBTG_DEBUG=@BTG_DEBUG@ @ZLIB_CFLAGS@ \
@@ -127,8 +127,8 @@ man1_MANS          = btgdaemon.man
 man5_MANS          = btgcallback.man
 
 if !BUILDURL
-  EXTRA_DIST_HTTP = urlmgr.h http/curlif.h http/httpmgr.h http/httpif.h http/httpproc.h \
-                    urlmgr.cpp http/curlif.cpp http/httpmgr.cpp http/httpif.cpp \
+  EXTRA_DIST_HTTP = urlmgr.h magmgr.h http/curlif.h http/httpmgr.h http/httpif.h http/httpproc.h \
+                    urlmgr.cpp magmgr.cpp http/curlif.cpp http/httpmgr.cpp http/httpif.cpp \
                     http/httpproc.cpp
 endif
 

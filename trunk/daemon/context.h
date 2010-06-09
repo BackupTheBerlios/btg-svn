@@ -83,7 +83,7 @@ namespace btg
          class torrentInfo
             {
             public:
-               torrentInfo();
+               torrentInfo(bool _ready = true, bool _got_torrent = true);
 
                /// Torrent handle
                libtorrent::torrent_handle handle;
@@ -130,6 +130,15 @@ namespace btg
                /// List of files in a torrent, 
                /// selected files can be extracted from it.
                btg::core::selectedFileEntryList selected_files;
+
+               /// Indicates that .torrent file is being downloaded
+               /// and this torrent is not yet downloading.
+               bool ready;
+
+               /// Indicates if a .torrent file was loaded.
+               /// Initially false for torrents started from magnet
+               /// URIs.
+               bool got_torrent;
 #if BTG_OPTION_SAVESESSIONS
                /// Session saving: total download in bytes.
                libtorrent::size_type total_download;
@@ -215,6 +224,14 @@ namespace btg
                /// @param [in] _nodes List of nodes.
                /// @return True - success, false otherwise.
                bool setDHTNodes(std::vector<std::pair<std::string, t_int> > const& _nodes);
+
+               addResult addFromMagnet(std::string const& _torrent_filename, 
+                                       std::string const& _magnet_URI, 
+                                       t_int & _handle_id);
+
+               void stopMagnetDownload(t_int const _torrent_id);
+
+               void removeInitialMagnetDlData(t_int const _torrent_id);
 
                /// Add a torrent file to this context.
                /// @param [in] _torrent_filename  Filename of the torrent file to add (expected to be in tempDir).
@@ -327,6 +344,8 @@ namespace btg
                /// @return True if operation was successful, false if not.
                bool getStatus(t_intList const& _contexts, 
                               t_statusList & _status);
+
+               bool gotTorrent(t_int const _torrent_id) const;
 
                /// Get status of all torrents.
                /// @return True if operation was successful, false if not.
@@ -475,6 +494,15 @@ namespace btg
 
                /// Handle torrent state change
                void handleStateChangeAlert(libtorrent::state_changed_alert* _alert);
+
+               /// Torrent received all metadata.
+               void handleMetadataReceivedAlert(libtorrent::metadata_received_alert* _alert);
+
+               /// Torrent metadata reception failed.
+               void handleMetadataFailedAlert(libtorrent::metadata_failed_alert* _alert);
+
+               /// Torrent file was deleted.
+               void handleTorrentDeletedAlert(libtorrent::torrent_deleted_alert* _alert);
             public:
 #if BTG_OPTION_SAVESESSIONS
                /// Session saving: serialize the torrents so they can be reloaded later.
@@ -587,7 +615,7 @@ namespace btg
                std::map<t_int, torrentInfo*>             torrents;
                
                /// where storage for torrent is
-               enum torrentStorage { tsWork, tsSeed, tsDest };
+               enum torrentStorage { tsTemp, tsWork, tsSeed, tsDest };
                
                /// Map of torrent storage
                std::map<t_int, torrentStorage>           torrent_storage;
