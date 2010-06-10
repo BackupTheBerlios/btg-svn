@@ -39,6 +39,8 @@ namespace btg
       const std::string moduleName("mmgr");
       const t_uint max_url_age = 30;
 
+      const t_int invalidTorrentId = -1;
+
       MagnetIdSessionMapping::MagnetIdSessionMapping(t_uint _id, 
                                                      t_long const _session,
                                                      std::string const& _userdir,
@@ -54,7 +56,7 @@ namespace btg
            handle(0),
            status(MAG_UNDEF),
            age(0),
-           tempTorrentId(-1)
+           tempTorrentId(invalidTorrentId)
       {
       }
       
@@ -330,6 +332,10 @@ namespace btg
                {
                   break;
                }
+            case MAG_ABORTED:
+               {
+                  break;
+               }
             }
       }
 
@@ -369,16 +375,67 @@ namespace btg
 
       bool magnetManager::abort(const t_uint _id)
       {
-         /* !!! BOLLOX implement this. */
          boost::mutex::scoped_lock interface_lock(interfaceMutex_);
+         
+         bool status = false;
+         std::vector<MagnetIdSessionMapping>::iterator mapping = getUrlMapping(_id);
 
-         return false;
+         if (mapping == magnetIdSessions.end())
+            {
+               return status;
+            }
+
+         return abort(*mapping);
       }
 
-      void magnetManager::abort(MagnetIdSessionMapping & mapping)
+      bool magnetManager::abort(MagnetIdSessionMapping & _mapping)
       {
-         /* Abort downloading or creation. */
-         
+         bool status = false;
+
+         switch (_mapping.status)
+            {
+            case MAG_NO_META:
+               {
+                  stopTorrentDownload(_mapping);
+
+                  if (_mapping.tempTorrentId != invalidTorrentId)
+                     {
+                        eventHandler* eh = 0;
+                        if (sessionlist->get(_mapping.session, eh))
+                           {
+                              eh->removeInitialMagnetDlData(_mapping.tempTorrentId);
+                           }
+                     }
+                  _mapping.status =  MAG_ABORTED;
+                  break;
+               }
+            case MAG_META_FAILED:
+               {
+                  _mapping.status = MAG_ABORTED;
+                  status = true;
+                  break;
+               }
+
+            case MAG_DOWNLOADED:
+               {
+                  _mapping.status = MAG_ABORTED;
+                  status = true;
+                  break;
+               }
+            case MAG_CREATED:
+               {
+                  status = false;
+                  break;
+               }
+            case MAG_CREATE_FAILED:
+            case MAG_ABORTED:
+               {
+                  status = true;
+                  break;
+               }
+            }
+
+         return status;
       }
 
       magnetManager::~magnetManager()

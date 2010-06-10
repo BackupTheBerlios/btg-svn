@@ -123,7 +123,16 @@ namespace btg
             }
          else if (magnetmgr.belongs(_id))
             {
-               return magnetmgr.abort(_id);
+               bool status = magnetmgr.abort(_id);
+
+               std::vector<UrlIdSessionMapping>::iterator iter = getUrlMapping(_id);
+
+               if (iter != urlIdSessions.end())
+                  {
+                     removeUrl(*iter);
+                  }
+
+               return status;
             }
          else
             {

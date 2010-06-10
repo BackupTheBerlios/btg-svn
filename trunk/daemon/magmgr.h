@@ -128,8 +128,8 @@ namespace btg
             /// Get a mapping when having an URL id.
             std::vector<MagnetIdSessionMapping>::iterator getUrlMapping(t_uint _id);
 
-            void abort(MagnetIdSessionMapping & mapping);
-            void checkState(MagnetIdSessionMapping & mapping);
+            bool abort(MagnetIdSessionMapping & _mapping);
+            void checkState(MagnetIdSessionMapping & _mapping);
 
             bool startTorrentDownload(MagnetIdSessionMapping & _mapping);
             void stopTorrentDownload(MagnetIdSessionMapping & _mapping);
