@@ -170,6 +170,11 @@ namespace btg
 
             t_uint buffSize = _buffer.size();
 
+            if (buffSize == 0)
+               {
+                  return false;
+               }
+
             char *s=new char[buffSize+1];
             _buffer.getBytes(reinterpret_cast<t_byteP>(s), buffSize);
             s[buffSize] = 0;
